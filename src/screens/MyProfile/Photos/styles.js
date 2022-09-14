@@ -9,77 +9,27 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.color.backgroundConatiner,
-    paddingVertical: 12,
+    // marginTop: 10,
   },
   headerConatainer: {
     backgroundColor: theme.color.backgroundGreen,
     paddingHorizontal: 15,
     paddingVertical: 15,
     elevation: 5,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.6,
     shadowRadius: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    alignItems: 'center',
   },
   locContainer: {
     width: '70%',
     flexDirection: 'row',
     // justifyContent: 'space-between',
     backgroundColor: 'white',
-  },
-  locText: {
-    fontSize: 14,
-    color: theme.color.title,
-    fontFamily: theme.fonts.fontMedium,
-    lineHeight: 18,
-    textTransform: 'capitalize',
-  },
-  locText2: {
-    fontSize: 12,
-    color: theme.color.title,
-    fontFamily: theme.fonts.fontNormal,
-    lineHeight: 18,
-    textTransform: 'capitalize',
-  },
-  boxContainer: {
-    width: '100%',
-    height: responsiveHeight(20),
-    backgroundColor: '#FFC5B2',
-    borderRadius: 8,
-    marginBottom: 20,
-    elevation: 1,
-    padding: 15,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-
-  boxContainer2: {
-    width: '100%',
-    height: responsiveHeight(20),
-    backgroundColor: '#FEF0C0',
-    borderRadius: 8,
-    marginBottom: 20,
-    elevation: 1,
-    padding: 15,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-
-  boxContainerSecton1: {
-    width: '55%',
-
-    justifyContent: 'flex-end',
-  },
-
-  boxContainerSecton2: {
-    width: '40%',
-
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 
   bcs1Text1: {
@@ -172,22 +122,7 @@ export const styles = StyleSheet.create({
     color: theme.color.buttonText,
     textTransform: 'capitalize',
   },
-  profileImageContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 108 / 2,
-    width: 108,
-    height: 108,
-    borderWidth: 2,
-    borderColor: theme.color.photoBorderColor,
-    marginTop: -50,
-  },
-  ProfileImg: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'contain',
-    borderRadius: 108 / 2,
-  },
+
   changeImgContainer: {
     position: 'absolute',
     right: -20,
@@ -591,5 +526,194 @@ export const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: theme.fonts.fontBold,
     textTransform: 'capitalize',
+  },
+
+  boxContainer: {
+    width: '99%',
+    alignSelf: 'center',
+    borderRadius: 10,
+    backgroundColor: theme.color.background,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+    paddingHorizontal: 9,
+    paddingVertical: 12,
+  },
+  boxSection1: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  ProfileImgContainer: {
+    width: '32%',
+    height: 115,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: theme.color.photoBorderColor,
+    marginBottom: 15,
+    marginRight: '2%',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+  },
+  ProfileImg: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+    borderRadius: 10,
+  },
+  imageLoader: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 10,
+  },
+
+  textContainer: {
+    width: '55%',
+    // backgroundColor: 'red',
+    top: 5,
+  },
+  textContainertitle: {
+    color: theme.color.titleGreen,
+    fontSize: 15,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
+    lineHeight: 20,
+  },
+  textContainerRatetitle1: {
+    color: theme.color.title,
+    fontSize: 13,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
+    top: -2,
+  },
+  textContainerRatetitle2: {
+    color: theme.color.subTitleLight,
+    fontSize: 13,
+    fontFamily: theme.fonts.fontMedium,
+    textDecorationLine: 'underline',
+    top: -2,
+  },
+
+  dateContainer: {
+    width: '26%',
+    // backgroundColor: 'red',
+    alignItems: 'flex-end',
+    top: 5,
+  },
+  dateContainerTitle: {
+    color: theme.color.subTitle,
+    fontSize: 12,
+    fontFamily: theme.fonts.fontMedium,
+    textTransform: 'capitalize',
+  },
+  boxSection2: {
+    marginTop: 15,
+    // backgroundColor: 'red',
+    width: '100%',
+  },
+  boxSection2title: {
+    color: theme.color.title,
+    fontSize: 12,
+    fontFamily: theme.fonts.fontNormal,
+  },
+  boxSection3: {
+    marginTop: 15,
+    // backgroundColor: 'red',
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  rBoxContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+
+  repBoxContainer: {
+    width: '86%',
+
+    borderRadius: 10,
+    backgroundColor: theme.color.background,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
+    paddingHorizontal: 9,
+    paddingVertical: 12,
+    right: 5,
+    top: 15,
+    marginBottom: 15,
+  },
+  repBoxTitile1: {
+    color: theme.color.subTitle,
+    fontSize: 12,
+    fontFamily: theme.fonts.fontMedium,
+  },
+  repBoxTitile2: {
+    color: theme.color.title,
+    fontSize: 12,
+    fontFamily: theme.fonts.fontNormal,
+    marginTop: 5,
+  },
+  repBoxButtonConainer: {
+    marginTop: 5,
+    // backgroundColor: 'red',
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  smallButtonContainer: {
+    borderRadius: 5,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    backgroundColor: theme.color.button1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sb1Text: {
+    color: theme.color.buttonText,
+    fontFamily: theme.fonts.fontBold,
+    fontSize: 11.5,
+    textTransform: 'capitalize',
+  },
+  sb2Text: {
+    color: theme.color.subTitle,
+    fontFamily: theme.fonts.fontBold,
+    fontSize: 11.5,
+    textTransform: 'capitalize',
+  },
+
+  crossContainer: {
+    width: 20,
+    height: 20,
+    borderRadius: 20 / 2,
+
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    backgroundColor: theme.color.background,
+    right: 3,
+    top: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
   },
 });

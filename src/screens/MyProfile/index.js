@@ -15,17 +15,13 @@ import {
   Dimensions,
   Modal as MModal,
 } from 'react-native';
-// import Geolocation from 'react-native-geolocation-service';
-import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
-// import Geocoder from 'react-native-geocoding';
+
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
 import utils from '../../utils/index';
 import theme from '../../theme';
-// import DynamicTabView from 'react-native-dynamic-tab-view';
-// import ImageSlider from 'react-native-image-slider';
-// import FastImage from 'react-native-fast-image';
+
 import {
   responsiveHeight,
   responsiveWidth,
@@ -2452,6 +2448,8 @@ function MyProfile(props) {
 
   const [errorMessage, seterrorMessage] = useState('');
 
+  const [isTabBarShow, setisTabBarShow] = useState(false);
+
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     {key: 'reviews', title: 'Reviews'},
@@ -2472,6 +2470,14 @@ function MyProfile(props) {
   }, [user]);
 
   useEffect(() => {
+    if (user && user !== 'guest') {
+      setTimeout(() => {
+        setisTabBarShow(true);
+      }, 100);
+    }
+  }, []);
+
+  useEffect(() => {
     if (phone != '') {
       setTimeout(() => {
         for (let index = 0; index < Countries.length; index++) {
@@ -2483,7 +2489,7 @@ function MyProfile(props) {
             break;
           }
         }
-      }, 500);
+      }, 1000);
     } else {
       setpwc('');
     }
@@ -2717,8 +2723,14 @@ function MyProfile(props) {
 
   const renderTabBar = () => {
     return (
-      <View style={{flex: 1}}>
-        <View style={{paddingHorizontal: 15, flex: 1, marginVertical: 10}}>
+      <>
+        <View
+          style={{
+            paddingHorizontal: 15,
+            flex: 1,
+            marginTop: 10,
+            marginBottom: 5,
+          }}>
           <TabView
             navigationState={{index, routes}}
             renderScene={renderScene}
@@ -2731,66 +2743,7 @@ function MyProfile(props) {
           screen={headerTitle}
           focusScreen={store.General.focusScreen}
         />
-      </View>
-    );
-  };
-
-  const renderFullImage = () => {
-    return (
-      <MModal
-        visible={pvm}
-        transparent
-        onRequestClose={() => {
-          setpvm(false);
-          setpv('');
-        }}>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: 'black',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Image
-            onLoadStart={() => {
-              setshowFullprofileImageLoader(false);
-            }}
-            onLoad={() => {
-              setshowFullprofileImageLoader(true);
-            }}
-            style={{position: 'absolute', top: 0, left: 0, bottom: 0, right: 0}}
-            resizeMode="contain"
-            source={{uri: pv}}
-          />
-
-          <TouchableOpacity
-            onPress={() => {
-              setpvm(!pvm);
-              setpv('');
-            }}
-            style={{
-              backgroundColor: theme.color.button1,
-              borderRadius: 20,
-              width: 40,
-              height: 40,
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'absolute',
-              top: Platform.OS == 'ios' ? APPBAR_HEIGHT + 12 : 12,
-              left: 12,
-            }}>
-            <utils.vectorIcon.Entypo name="cross" color="white" size={35} />
-          </TouchableOpacity>
-
-          {!showFullprofileImageLoader && (
-            <ActivityIndicator
-              size={45}
-              color={theme.color.button1}
-              style={{top: '45%', position: 'absolute'}}
-            />
-          )}
-        </View>
-      </MModal>
+      </>
     );
   };
 
@@ -2918,13 +2871,26 @@ function MyProfile(props) {
       {!internet && <utils.InternetMessage />}
 
       {renderProfileSection()}
-      {renderTabBar()}
-
+      <View style={{flex: 1}}>{isTabBarShow && renderTabBar()}</View>
       <Toast ref={toast} position="bottom" />
       {/* <utils.Loader2 load={Loader} /> */}
 
-      {pvm && renderFullImage()}
+      {!isTabBarShow && (
+        <utils.Footer
+          nav={props.navigation}
+          screen={headerTitle}
+          focusScreen={store.General.focusScreen}
+        />
+      )}
       {isSHowChangePhoto && renderShowCahngePhotoModal()}
+      {pvm && (
+        <utils.FullimageModal
+          show={pvm}
+          pv={pv}
+          setshow={c => setpvm(c)}
+          setpv={c => setpv(c)}
+        />
+      )}
     </SafeAreaView>
   );
 }

@@ -119,9 +119,9 @@ export const styles = StyleSheet.create({
     top: -2,
   },
   profileSecConatiner: {
-    marginTop: 60,
+    marginTop: 55,
     // height: 140,
-    paddingBottom: 15,
+    paddingBottom: 10,
     width: '100%',
     backgroundColor: theme.color.background,
     borderRadius: 10,
@@ -174,9 +174,9 @@ export const styles = StyleSheet.create({
   profileImageContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 108 / 2,
-    width: 108,
-    height: 108,
+    borderRadius: 100 / 2,
+    width: 100,
+    height: 100,
     borderWidth: 2,
     borderColor: theme.color.photoBorderColor,
     marginTop: -50,
@@ -185,7 +185,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
-    borderRadius: 108 / 2,
+    borderRadius: 100 / 2,
   },
   changeImgContainer: {
     position: 'absolute',
@@ -199,12 +199,12 @@ export const styles = StyleSheet.create({
   },
   editImgConatiner: {
     position: 'absolute',
-    right: 15,
-    top: 15,
+    right: 10,
+    top: 10,
   },
   editImg: {
-    width: 19,
-    height: 19,
+    width: 18,
+    height: 18,
     elevation: 3,
   },
   TextSecConatiner: {

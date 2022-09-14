@@ -69,6 +69,7 @@ const ntfctnClr = '#FCBC17';
 const photoBorderColor = '#ededed';
 
 const fieldBc = '#fafafa';
+const disableSmallButton = 'rgba(17, 17, 17, 0.07)';
 
 export default color = {
   background,
@@ -117,4 +118,5 @@ export default color = {
   mainbottombutonbackground,
   fieldBc,
   inactiveTabText,
+  disableSmallButton,
 };

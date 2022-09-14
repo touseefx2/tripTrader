@@ -26,6 +26,7 @@ import NetInfo from '@react-native-community/netinfo';
 import theme from '../../../theme';
 import utils from '../../../utils/index';
 import moment from 'moment';
+import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
 
 export default observer(Reviews);
 
@@ -63,7 +64,7 @@ function Reviews(props) {
               first_name: 'mike',
               last_name: 'monuse',
               photo:
-                'https://images.pexels.com/photos/1704488/pexels-photo-1704488.jpeg?cs=srgb&dl=pexels-suliman-sallehi-1704488.jpg&fm=jpg',
+                'https://coolhdwall.com/storage/2201/umji-viviz-profile-4k-phone-wallpaper-2160x3840-12.jpg',
               avg_rating: 3.8,
               total_reviews: 190,
             },
@@ -90,6 +91,21 @@ function Reviews(props) {
               created_at: new Date(),
             },
           },
+          {
+            _id: 23,
+            user: {
+              _id: 4,
+              first_name: 'Mano',
+              last_name: 'Twis',
+              photo:
+                'https://t3.ftcdn.net/jpg/03/67/46/48/360_F_367464887_f0w1JrL8PddfuH3P2jSPlIGjKU2BI0rn.jpg',
+              avg_rating: 2.0,
+              total_reviews: 10,
+            },
+            comment:
+              'John Thompson was a great host! I had an amazing time and enjoy.',
+            created_at: new Date(),
+          },
         ];
         store.User.attemptToGetReviews(
           user._id,
@@ -109,6 +125,14 @@ function Reviews(props) {
     }
     return () => {};
   }, [getDataOnce, internet]);
+
+  const Reply = () => {};
+
+  const Dispute = () => {};
+
+  const EditComment = () => {};
+
+  const DeleteComment = () => {};
 
   const renderShowRes = () => {
     return (
@@ -133,8 +157,9 @@ function Reviews(props) {
     let postDate = item.created_at;
     let userComment = item.comment;
     let reply = item.reply ? item.reply : '';
-    let ruserName = '';
+
     let ruserPhoto = '';
+    let ruserName = '';
     let ruserComment = '';
     let rpostDate = '';
     if (reply) {
@@ -145,141 +170,236 @@ function Reviews(props) {
     }
 
     const formatDate = date => {
-      var dd = moment(date).format('DD MMM YYYY');
+      var dd = moment(date).format('MMM DD, YYYY');
       return dd;
     };
 
-    const renderProfile = () => {
-      return (
-        <View style={styles.ProfileImgContainer}>
-          <Image
-            style={styles.ProfileImg}
-            source={
-              photo != ''
-                ? {uri: photo}
-                : require('../../../assets/images/drawer/guest/img.png')
-            }
-          />
-        </View>
-      );
-    };
-
-    const renderText = () => {
-      return (
-        <View style={styles.textContainer}>
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={styles.textContainertitle}>
-            {userName}
-          </Text>
-
-          <View style={{flexDirection: 'row', marginTop: 1}}>
-            <utils.vectorIcon.Entypo
-              name="star"
-              color={theme.color.rate}
-              size={14}
+    const renderShowCommentBox = () => {
+      const renderProfile = () => {
+        return (
+          <View style={styles.ProfileImgContainer}>
+            <ProgressiveFastImage
+              useNativeDriver
+              style={styles.ProfileImg}
+              source={
+                photo != ''
+                  ? {uri: photo}
+                  : require('../../../assets/images/drawer/guest/img.png')
+              }
+              loadingImageStyle={styles.imageLoader}
+              loadingSource={require('../../../assets/images/imgLoad/img.jpeg')}
+              blurRadius={5}
             />
-            <Text style={styles.textContainerRatetitle1}>
-              {' '}
-              {avgRating}
-              {'  '}
+
+            {/* <Image
+              style={styles.ProfileImg}
+              source={
+                photo != ''
+                  ? {uri: photo}
+                  : require('../../../assets/images/drawer/guest/img.png')
+              }
+            /> */}
+          </View>
+        );
+      };
+
+      const renderText = () => {
+        return (
+          <View style={styles.textContainer}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={styles.textContainertitle}>
+              {userName}
             </Text>
-            <Text style={styles.textContainerRatetitle2}>
-              {totalReviews > 300 ? '300+' : totalReviews} reviews
+
+            <View style={{flexDirection: 'row', marginTop: 1}}>
+              <utils.vectorIcon.Entypo
+                name="star"
+                color={theme.color.rate}
+                size={14}
+              />
+              <Text style={styles.textContainerRatetitle1}>
+                {' '}
+                {avgRating.toFixed(1)}
+                {'  '}
+              </Text>
+              <Text style={styles.textContainerRatetitle2}>
+                {totalReviews > 300 ? '300+' : totalReviews} reviews
+              </Text>
+            </View>
+          </View>
+        );
+      };
+
+      const renderDate = () => {
+        return (
+          <View style={styles.dateContainer}>
+            <Text style={styles.dateContainerTitle}>
+              {formatDate(postDate)}
             </Text>
           </View>
-        </View>
-      );
-    };
+        );
+      };
 
-    const renderDate = () => {
+      const renderComment = () => {
+        return <Text style={styles.boxSection2title}>{userComment}</Text>;
+      };
+
+      const renderShowReplyButton = () => {
+        const renderReplyButton = () => {
+          return (
+            <TouchableOpacity
+              onPress={Reply}
+              activeOpacity={0.7}
+              style={styles.smallButtonContainer}>
+              <Text style={styles.sb1Text}>Reply</Text>
+            </TouchableOpacity>
+          );
+        };
+
+        const renderDisputeButton = () => {
+          return (
+            <TouchableOpacity
+              onPress={Dispute}
+              activeOpacity={0.7}
+              style={[
+                styles.smallButtonContainer,
+                {backgroundColor: theme.color.disableSmallButton},
+              ]}>
+              <Text style={styles.sb2Text}>dispute</Text>
+            </TouchableOpacity>
+          );
+        };
+
+        return (
+          <View style={styles.boxSection3}>
+            {renderReplyButton()}
+            <View style={{width: 12}} />
+            {renderDisputeButton()}
+          </View>
+        );
+      };
+
+      const renderShowDipsutebutton = () => {
+        const renderDisputeButton = () => {
+          return (
+            <TouchableOpacity
+              onPress={Dispute}
+              activeOpacity={0.7}
+              style={[
+                styles.smallButtonContainer,
+                {backgroundColor: theme.color.disableSmallButton},
+              ]}>
+              <Text style={styles.sb2Text}>dispute review</Text>
+            </TouchableOpacity>
+          );
+        };
+
+        return <View style={styles.boxSection3}>{renderDisputeButton()}</View>;
+      };
+
       return (
-        <View style={styles.dateContainer}>
-          <Text style={styles.dateContainerTitle}>{formatDate(postDate)}</Text>
-        </View>
-      );
-    };
-
-    const renderComment = () => {
-      return <Text style={styles.boxSection2title}>{userComment}</Text>;
-    };
-
-    const renderReplyButton = () => {
-      return (
-        <TouchableOpacity
-          activeOpacity={0.7}
-          style={{
-            borderRadius: 5,
-            paddingVertical: 4,
-            paddingHorizontal: 10,
-            backgroundColor: theme.color.button1,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Text
-            style={{
-              color: theme.color.buttonText,
-              fontFamily: theme.fonts.fontBold,
-              fontSize: 12,
-              textTransform: 'capitalize',
-            }}>
-            Reply
-          </Text>
-        </TouchableOpacity>
-      );
-    };
-
-    const renderDisputeButton = () => {
-      return (
-        <TouchableOpacity
-          activeOpacity={0.7}
-          style={{
-            borderRadius: 5,
-            paddingVertical: 4,
-            paddingHorizontal: 10,
-            backgroundColor: theme.color.disableField,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Text
-            style={{
-              color: theme.color.subTitle,
-              fontFamily: theme.fonts.fontBold,
-              fontSize: 12,
-              textTransform: 'capitalize',
-            }}>
-            dispute
-          </Text>
-        </TouchableOpacity>
-      );
-    };
-
-    return (
-      <>
-        <View
-          style={[[styles.boxContainer, {marginBottom: reply == '' ? 15 : 0}]]}>
+        <View style={styles.boxContainer}>
           <View style={styles.boxSection1}>
             {renderProfile()}
             {renderText()}
             {renderDate()}
           </View>
           <View style={styles.boxSection2}>{renderComment()}</View>
-          {reply == '' && (
-            <View style={styles.boxSection3}>
-              {renderReplyButton()}
-              <View style={{width: 12}} />
-              {renderDisputeButton()}
-            </View>
-          )}
+          {reply == '' && renderShowReplyButton()}
+          {reply != '' && renderShowDipsutebutton()}
         </View>
+      );
+    };
 
-        {/* {reply != '' && <View style={styles.repBoxContainerLine} />}
-        {reply !== '' && (
-          <View style={styles.rboxContainer}>
-            <Text>as</Text>
+    const renderShowReplyBox = () => {
+      const renderLine = () => {
+        return (
+          <View
+            style={{
+              width: '15%',
+
+              alignItems: 'flex-end',
+            }}>
+            <View
+              style={{
+                width: '60%',
+                height: 35,
+                borderLeftWidth: 2,
+                borderBottomWidth: 2,
+                borderBottomLeftRadius: 10,
+                borderColor: theme.color.subTitleLight,
+                opacity: 0.4,
+              }}
+            />
           </View>
-        )} */}
+        );
+      };
+
+      const renderReplyBox = () => {
+        const renderShowActionButton = () => {
+          const renderEditButton = () => {
+            return (
+              <TouchableOpacity
+                onPress={EditComment}
+                activeOpacity={0.7}
+                style={styles.smallButtonContainer}>
+                <Text style={styles.sb1Text}>edit</Text>
+              </TouchableOpacity>
+            );
+          };
+
+          const renderDeleteButton = () => {
+            return (
+              <TouchableOpacity
+                onPress={DeleteComment}
+                activeOpacity={0.7}
+                style={[
+                  styles.smallButtonContainer,
+                  {backgroundColor: 'transparent'},
+                ]}>
+                <Text style={[styles.sb2Text, {color: '#B93B3B'}]}>delete</Text>
+              </TouchableOpacity>
+            );
+          };
+
+          return (
+            <View style={styles.repBoxButtonConainer}>
+              {renderEditButton()}
+              <View style={{width: 12}} />
+              {renderDeleteButton()}
+            </View>
+          );
+        };
+
+        return (
+          <View style={styles.repBoxContainer}>
+            <Text style={styles.repBoxTitile1}>
+              You replied on {formatDate(postDate)}
+            </Text>
+            <Text style={styles.repBoxTitile2}>{ruserComment}</Text>
+            {renderShowActionButton()}
+          </View>
+        );
+      };
+
+      return (
+        <>
+          <View style={styles.rBoxContainer}>
+            {renderLine()}
+            {renderReplyBox()}
+          </View>
+        </>
+      );
+    };
+
+    return (
+      <>
+        <View style={{marginBottom: 15}}>
+          {renderShowCommentBox()}
+          {reply != '' && renderShowReplyBox()}
+        </View>
       </>
     );
   };
@@ -312,28 +432,30 @@ function Reviews(props) {
       <View
         style={{
           position: 'absolute',
-          marginTop: '30%',
+          top: '45%',
           alignItems: 'center',
           justifyContent: 'center',
           alignSelf: 'center',
         }}>
-        <ActivityIndicator size={30} color={theme.color.button1} />
+        <ActivityIndicator size={35} color={theme.color.button1} />
       </View>
     );
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {data.length > 0 && renderShowRes()}
+      {/* {data.length > 0 && renderShowRes()} */}
       <ScrollView
+        style={{marginTop: 10}}
         nestedScrollEnabled
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
-        {getDataOnce && data.length <= 0 && renderMessage('empty')}
+        {getDataOnce && data.length <= 0 && !loader && renderMessage('empty')}
         {!getDataOnce &&
           !internet &&
+          !loader &&
           data.length <= 0 &&
           renderMessage('internet')}
 
@@ -345,8 +467,8 @@ function Reviews(props) {
             keyExtractor={(item, index) => index.toString()}
           />
         )}
-        {!getDataOnce && loader && renderLoader()}
       </ScrollView>
+      {!getDataOnce && loader && renderLoader()}
     </SafeAreaView>
   );
 }

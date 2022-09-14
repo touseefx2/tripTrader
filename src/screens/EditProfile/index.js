@@ -351,79 +351,28 @@ function EditProfile(props) {
     MultipleImage(c);
   };
 
-  const uploadPhoto = c => {
-    let imgArr = [];
+  // const uploadPhoto = c => {
+  //   let imgArr = [];
 
-    if (c == 'Profile') {
-      photo.chk = 'Profile';
-      imgArr.push(photo);
-    }
+  //   if (c == 'Profile') {
+  //     photo.chk = 'Profile';
+  //     imgArr.push(photo);
+  //   }
 
-    // if (c == 'CNICFront') {
-    //   cnicFrontImage.chk = 'CnicF';
-    //   imgArr.push(cnicFrontImage);
-    // }
+  //   // if (c == 'CNICFront') {
+  //   //   cnicFrontImage.chk = 'CnicF';
+  //   //   imgArr.push(cnicFrontImage);
+  //   // }
 
-    NetInfo.fetch().then(state => {
-      if (state.isConnected) {
-        store.User.attemptToUploadImage2(imgArr, setErrMessage, setPhoto);
-      } else {
-        // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
-      }
-    });
-  };
-
-  const renderFullImage = () => {
-    return (
-      <MModal
-        visible={pvm}
-        transparent
-        onRequestClose={() => {
-          setpvm(false);
-          setpv('');
-        }}>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: 'black',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Image
-            onLoadStart={() => {
-              setshowFullprofileImageLoader(false);
-            }}
-            onLoad={() => {
-              setshowFullprofileImageLoader(true);
-            }}
-            style={{position: 'absolute', top: 0, left: 0, bottom: 0, right: 0}}
-            resizeMode="contain"
-            source={{uri: pv}}
-          />
-
-          <TouchableOpacity
-            onPress={() => {
-              setpvm(!pvm);
-              setpv('');
-            }}
-            style={{
-              backgroundColor: theme.color.button1,
-              borderRadius: 20,
-              width: 40,
-              height: 40,
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'absolute',
-              top: Platform.OS == 'ios' ? APPBAR_HEIGHT + 12 : 12,
-              left: 12,
-            }}>
-            <utils.vectorIcon.Entypo name="cross" color="white" size={35} />
-          </TouchableOpacity>
-        </View>
-      </MModal>
-    );
-  };
+  //   NetInfo.fetch().then(state => {
+  //     if (state.isConnected) {
+  //       store.User.attemptToUploadImage2(imgArr, setErrMessage, setPhoto);
+  //     } else {
+  //       // seterrorMessage('Please connect internet');
+  //       Alert.alert('', 'Please connect internet');
+  //     }
+  //   });
+  // };
 
   const renderShowFieldError = c => {
     let text = c == 'card' ? cardErr : '';
@@ -871,9 +820,17 @@ function EditProfile(props) {
 
       <Toast ref={toast} position="bottom" />
 
-      {pvm && renderFullImage()}
       <utils.Loader load={loader} />
       {renderDateShowModal()}
+
+      {pvm && (
+        <utils.FullimageModal
+          show={pvm}
+          pv={pv}
+          setshow={c => setpvm(c)}
+          setpv={c => setpv(c)}
+        />
+      )}
     </SafeAreaView>
   );
 }

@@ -646,7 +646,7 @@ export const styles = StyleSheet.create({
   idCardContainer: {
     width: '100%',
     borderRadius: 10,
-    height: 140,
+    // height: 140,
     borderColor: '#0E2932',
     borderWidth: 1,
     borderStyle: 'dashed',
@@ -654,6 +654,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: theme.color.fieldBc,
+    height: responsiveHeight(19),
   },
   idCardContainerText: {
     color: theme.color.subTitle,
@@ -664,7 +665,15 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 10,
-    resizeMode: 'contain',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
   },
 
   idCardChangeText1: {

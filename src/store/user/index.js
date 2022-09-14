@@ -23,9 +23,9 @@ class user {
   @observable reviewLoader = false;
   @observable tripsLoader = false;
   @observable photosLoader = false;
-  @observable review = [];
-  @observable trips = [];
-  @observable photos = [];
+  @persist('object') @observable review = [];
+  @persist('object') @observable trips = [];
+  @persist('object') @observable photos = [];
 
   @action setreviewLoader = obj => {
     this.reviewLoader = obj;
@@ -54,6 +54,17 @@ class user {
       setgetdata(true);
       setrfrsh(false);
       this.setreview(dt);
+    }, 1000);
+  };
+
+  @action attemptToGetPhotos = (uid, setgetdata, setrfrsh, dt) => {
+    console.log('getPhotosData : ', 'true');
+    this.setphotosLoader(true);
+    setTimeout(() => {
+      this.setphotosLoader(false);
+      setgetdata(true);
+      setrfrsh(false);
+      this.setphotos(dt);
     }, 1000);
   };
 

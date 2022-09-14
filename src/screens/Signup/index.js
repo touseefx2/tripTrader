@@ -1862,45 +1862,6 @@ function Signup(props) {
     );
   };
 
-  const renderFullImage = () => {
-    return (
-      <MModal
-        visible={pvm}
-        transparent
-        onRequestClose={() => {
-          setpvm(false);
-          setpv('');
-        }}>
-        <View style={{flex: 1, backgroundColor: 'black'}}>
-          <Image
-            style={{position: 'absolute', top: 0, left: 0, bottom: 0, right: 0}}
-            resizeMode="contain"
-            source={{uri: pv}}
-          />
-
-          <TouchableOpacity
-            onPress={() => {
-              setpvm(!pvm);
-              setpv('');
-            }}
-            style={{
-              backgroundColor: theme.color.button1,
-              borderRadius: 20,
-              width: 40,
-              height: 40,
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'absolute',
-              top: Platform.OS == 'ios' ? APPBAR_HEIGHT + 12 : 12,
-              left: 12,
-            }}>
-            <utils.vectorIcon.Entypo name="cross" color="white" size={35} />
-          </TouchableOpacity>
-        </View>
-      </MModal>
-    );
-  };
-
   const renderStatusBar = () => {
     return (
       <>
@@ -2029,9 +1990,17 @@ function Signup(props) {
 
       <Toast ref={toast} position="center" />
       <utils.Loader load={loader} />
-      {pvm && renderFullImage()}
+
       {renderStatusBar()}
       {renderDateShowModal()}
+      {pvm && (
+        <utils.FullimageModal
+          show={pvm}
+          pv={pv}
+          setshow={c => setpvm(c)}
+          setpv={c => setpv(c)}
+        />
+      )}
     </SafeAreaView>
   );
 }

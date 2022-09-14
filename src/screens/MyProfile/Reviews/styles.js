@@ -122,22 +122,7 @@ export const styles = StyleSheet.create({
     color: theme.color.buttonText,
     textTransform: 'capitalize',
   },
-  profileImageContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 108 / 2,
-    width: 108,
-    height: 108,
-    borderWidth: 2,
-    borderColor: theme.color.photoBorderColor,
-    marginTop: -50,
-  },
-  ProfileImg: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'contain',
-    borderRadius: 108 / 2,
-  },
+
   changeImgContainer: {
     position: 'absolute',
     right: -20,
@@ -559,7 +544,6 @@ export const styles = StyleSheet.create({
     elevation: 3,
     paddingHorizontal: 9,
     paddingVertical: 12,
-    marginBottom: 15,
   },
   boxSection1: {
     flexDirection: 'row',
@@ -572,14 +556,19 @@ export const styles = StyleSheet.create({
     borderRadius: 48 / 2,
     borderWidth: 2,
     borderColor: theme.color.photoBorderColor,
-    alignItems: 'center',
-    justifyContent: 'center',
+    // alignItems: 'center',
+    // justifyContent: 'center',
   },
   ProfileImg: {
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
     borderRadius: 48 / 2,
+  },
+  imageLoader: {
+    height: '100%',
+    width: '100%',
+    resizeMode: 'contain',
   },
 
   textContainer: {
@@ -639,21 +628,15 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  repBoxContainerLine: {
-    width: '70%',
-    height: 40,
-    marginLeft: 20,
-    borderLeftWidth: 0.6,
-    borderBottomWidth: 0.6,
-    borderLeftColor: theme.color.subTitleLight,
-    borderBottomLeftRadius: 15,
-    position: 'absolute',
-    bottom: 32,
-    opacity: 0.6,
+  rBoxContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
-  rboxContainer: {
-    width: '87%',
-    marginLeft: 40,
+
+  repBoxContainer: {
+    width: '86%',
+
     borderRadius: 10,
     backgroundColor: theme.color.background,
     shadowColor: '#000',
@@ -666,7 +649,47 @@ export const styles = StyleSheet.create({
     elevation: 3,
     paddingHorizontal: 9,
     paddingVertical: 12,
+    right: 5,
+    top: 15,
     marginBottom: 15,
-    marginTop: 15,
+  },
+  repBoxTitile1: {
+    color: theme.color.subTitle,
+    fontSize: 12,
+    fontFamily: theme.fonts.fontMedium,
+  },
+  repBoxTitile2: {
+    color: theme.color.title,
+    fontSize: 12,
+    fontFamily: theme.fonts.fontNormal,
+    marginTop: 5,
+  },
+  repBoxButtonConainer: {
+    marginTop: 5,
+    // backgroundColor: 'red',
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  smallButtonContainer: {
+    borderRadius: 5,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    backgroundColor: theme.color.button1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sb1Text: {
+    color: theme.color.buttonText,
+    fontFamily: theme.fonts.fontBold,
+    fontSize: 11.5,
+    textTransform: 'capitalize',
+  },
+  sb2Text: {
+    color: theme.color.subTitle,
+    fontFamily: theme.fonts.fontBold,
+    fontSize: 11.5,
+    textTransform: 'capitalize',
   },
 });

@@ -48,6 +48,9 @@ function CustomDrawerContent(props) {
 
   const goToLogout = () => {
     store.User.setUser(false);
+    store.User.setreview([]);
+    store.User.settrips([]);
+    store.User.setphotos([]);
   };
 
   const goToProfile = () => {
@@ -440,7 +443,7 @@ function CustomDrawerContent(props) {
           activeOpacity={0.8}
           onPress={goToProfile}
           style={styles.Profile}>
-          <TouchableOpacity style={styles.ProfileImgContainer}>
+          <View style={styles.ProfileImgContainer}>
             <Image
               onLoadStart={() => {
                 setprofileImageLoader(false);
@@ -458,7 +461,7 @@ function CustomDrawerContent(props) {
                 style={{top: 17, position: 'absolute'}}
               />
             )}
-          </TouchableOpacity>
+          </View>
 
           <View style={styles.ProfileTextContainer}>
             <Text

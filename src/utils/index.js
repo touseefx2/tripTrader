@@ -29,7 +29,7 @@ import DrawerHeader from './DrawerHeader';
 // import StackHeader from "./StackHeader";
 // import DrawerHeader from "./DrawerHeader";
 // import HeaderTitle from "./hederTitle";
-// import message from "./ShowMessage";
+import FullimageModal from './FullimageModal';
 
 const utils = {
   vectorIcon,
@@ -52,6 +52,7 @@ const utils = {
   TagLine,
   DrawerHeader,
   TagLineModal,
+  FullimageModal,
 };
 
 export default utils;
