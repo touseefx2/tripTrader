@@ -16,7 +16,6 @@ import utils from '.';
 
 import store from '../store/index';
 import {observer} from 'mobx-react';
-import LinearGradient from 'react-native-linear-gradient';
 
 export default observer(Footer);
 function Footer(props) {
@@ -174,7 +173,7 @@ const styles = StyleSheet.create({
   footerContainer: {
     backgroundColor: '#f7f7f7',
     paddingHorizontal: 25,
-    paddingVertical: 10,
+    paddingVertical: 6,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

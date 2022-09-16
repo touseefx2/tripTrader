@@ -23,6 +23,7 @@ class user {
   @observable reviewLoader = false;
   @observable tripsLoader = false;
   @observable photosLoader = false;
+  @observable mLoader = false;
   @persist('object') @observable review = [];
   @persist('object') @observable trips = [];
   @persist('object') @observable photos = [];
@@ -36,6 +37,9 @@ class user {
   @action setphotosLoader = obj => {
     this.photosLoader = obj;
   };
+  @action setmLoader = obj => {
+    this.mLoader = obj;
+  };
   @action setreview = obj => {
     this.review = obj;
   };
@@ -47,7 +51,7 @@ class user {
   };
 
   @action attemptToGetReviews = (uid, setgetdata, setrfrsh, dt) => {
-    console.log('getReviesData : ', 'true');
+    console.warn('getReviesData : ', 'true');
     this.setreviewLoader(true);
     setTimeout(() => {
       this.setreviewLoader(false);
@@ -58,13 +62,72 @@ class user {
   };
 
   @action attemptToGetPhotos = (uid, setgetdata, setrfrsh, dt) => {
-    console.log('getPhotosData : ', 'true');
+    console.warn('getPhotosData : ', 'true');
     this.setphotosLoader(true);
     setTimeout(() => {
       this.setphotosLoader(false);
       setgetdata(true);
       setrfrsh(false);
       this.setphotos(dt);
+    }, 1000);
+  };
+
+  //modal actions
+  @action attemptToDeletePhotos = (obj,suc) => {
+    console.warn('deletePhoto  : ', 'true');
+    this.setmLoader(true);
+    setTimeout(() => {
+      this.setmLoader(false);
+       delete this.photos.splice(obj.i,1);
+      
+      suc();
+    }, 1000);
+  };
+  @action attemptToReplyComment = (obj,cmnt,suc) => {
+    console.warn('reply comment  : ', 'true');
+    this.setmLoader(true);
+    setTimeout(() => {
+      this.setmLoader(false);
+      let i=obj.i;
+      let  reply= {
+        user:this.user,
+        comment:cmnt,
+        created_at: new Date(),
+      }
+       this.review[i].reply=reply;
+      suc();
+    }, 1000);
+  };
+  @action attemptToEditComment = (obj,cmnt,suc) => {
+    console.warn('edit comment  : ', 'true');
+    this.setmLoader(true);
+    setTimeout(() => {
+      this.setmLoader(false);
+      let i=obj.i;
+       
+       this.review[i].reply.comment=cmnt;
+      suc();
+    }, 1000);
+  };
+  @action attemptToDeleteComment = (obj,suc) => {
+    console.warn('delete comment  : ', 'true');
+    this.setmLoader(true);
+    setTimeout(() => {
+      this.setmLoader(false);
+      let i=obj.i;
+     
+      delete this.review[i].reply
+      suc();
+    }, 1000);
+  };
+  @action attemptToDisputeComment= (obj,suc) => {
+    console.warn('delete comment  : ', 'true');
+    this.setmLoader(true);
+    setTimeout(() => {
+      this.setmLoader(false);
+      let i=obj.i;
+     this.review[i].dispute={created_at:new Date()};
+      suc();
     }, 1000);
   };
 
@@ -669,6 +732,8 @@ class user {
         plan: 'free',
         pswd: 'aaaaaaaa',
         phone: '',
+        avg_rating: 0,
+        total_reviews: 0
       };
       let token = '';
 

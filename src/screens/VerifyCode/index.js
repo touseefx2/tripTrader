@@ -29,7 +29,7 @@ import {
 } from 'react-native-responsive-dimensions';
 import Toast from 'react-native-easy-toast';
 import NetInfo from '@react-native-community/netinfo';
-import IntlPhoneInput from 'react-native-intl-phone-input';
+ 
 import CodeInput from 'react-native-code-input';
 import CountDown from 'react-native-countdown-component';
 import auth from '@react-native-firebase/auth';

@@ -31,7 +31,8 @@ const subTitleLight = 'rgba(0, 0, 0, 0.3)';
 const inactiveTabText = 'rgba(17, 17, 17, 0.5)';
 
 const button1 = '#3C6B49';
-const button2 = '#39377F';
+const button1Disable = ' #3C6B49';
+const button2 = '#F2F3F1';
 const buttonText = 'white';
 const buttonTextGreen = '#1E3625';
 const cartbutton = '#f27f33';
@@ -119,4 +120,5 @@ export default color = {
   fieldBc,
   inactiveTabText,
   disableSmallButton,
+  button1Disable
 };

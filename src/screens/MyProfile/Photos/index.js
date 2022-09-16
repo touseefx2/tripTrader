@@ -13,7 +13,7 @@ import {
   PermissionsAndroid,
   Platform,
   Dimensions,
-  Modal as MModal,
+  Modal,
   FlatList,
   ActivityIndicator,
   RefreshControl,
@@ -38,9 +38,16 @@ function Photos(props) {
   let data = store.User.photos;
   const totalData = data.length;
   let loader = store.User.photosLoader;
+  let mloader = store.User.mLoader;
+
 
   const [pvm, setpvm] = useState(false);
   const [pv, setpv] = useState('');
+  const [si, setsi] = useState('');
+
+
+  const [deletePObj, setdeletePObj] = useState(false);
+  const [deleteModal, setdeleteModal] = useState(false);
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
@@ -68,7 +75,7 @@ function Photos(props) {
           'https://images.pexels.com/photos/1371360/pexels-photo-1371360.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
           'https://wallpaperaccess.com/full/1534474.jpg',
           'https://images.wallpapersden.com/image/download/trip-night_a21tZmmUmZqaraWkpJRmbmdlrWZlbWU.jpg',
-          'https://wallpaperaccess.com/full/412780.jpg',
+          "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfHw%3D&w=1000&q=80"
         ];
         store.User.attemptToGetPhotos(
           user._id,
@@ -82,19 +89,43 @@ function Photos(props) {
     });
   };
 
+  
   useEffect(() => {
     if (!getDataOnce && internet) {
-      getDbData();
+        getDbData();
     }
     return () => {};
   }, [getDataOnce, internet]);
 
-  const photoClick = c => {
+  
+  const deletePhoto = () => {
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.User.attemptToDeletePhotos(deletePObj,closeDeleteModal);
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
+
+  const photoClick = (c,i) => {
     setpv(c);
+    setsi(i)
     setpvm(true);
   };
 
-  const crossClick = () => {};
+  const openDeleteModal = obj => {
+    setdeletePObj(obj);
+    setdeleteModal(true);
+  };
+
+  const closeDeleteModal = () => {
+    if (!mloader) {
+      setdeletePObj(false);
+      setdeleteModal(false);
+    }
+  };
 
   const renderShowRes = () => {
     return (
@@ -141,7 +172,7 @@ function Photos(props) {
             color: theme.color.subTitleLight,
             fontFamily: theme.fonts.fontMedium,
           }}>
-          {c == 'empty' ? ' No photos added.' : 'Please connect internet.'}
+          {c == 'empty' ? 'No photos added.' : 'Please connect internet.'}
         </Text>
       </View>
     );
@@ -157,11 +188,11 @@ function Photos(props) {
             {opacity: pressed ? 0.7 : 1.0},
             styles.crossContainer,
           ]}
-          onPress={() => console.log('Pressed')}>
-          <utils.vectorIcon.Entypo
-            name="cross"
-            color={'rgba(17, 17, 17, 0.6)'}
-            size={17}
+          onPress={() => openDeleteModal({uri: item, i: index})}>
+          <utils.vectorIcon.AntDesign
+            name="close"
+            color={theme.color.title}
+            size={12}
           />
         </Pressable>
       );
@@ -173,7 +204,7 @@ function Photos(props) {
           {opacity: pressed ? 0.9 : 1.0},
           styles.ProfileImgContainer,
         ]}
-        onPress={() => photoClick(photo)}>
+        onPress={() => photoClick(photo,index)}>
         <ProgressiveFastImage
           useNativeDriver
           style={styles.ProfileImg}
@@ -187,6 +218,116 @@ function Photos(props) {
     );
   };
 
+  const renderDeleteModal = () => {
+    const renderCross = () => {
+      return (
+        <Pressable
+          disabled={mloader}
+          style={({pressed}) => [
+            {opacity: pressed ? 0.7 : 1.0},
+            styles.modalCross,
+          ]}
+          onPress={closeDeleteModal}>
+          <utils.vectorIcon.EvilIcons
+            name="close"
+            color={theme.color.title}
+            size={30}
+          />
+        </Pressable>
+      );
+    };
+
+    const renderTitle = () => {
+      return <Text style={styles.modalTitle}>delete photo?</Text>;
+    };
+
+    const renderImage = () => {
+      return (
+        <View style={styles.modalImgContainer}>
+          <ProgressiveFastImage
+            useNativeDriver
+            style={styles.modalImg}
+            source={{uri: deletePObj.uri}}
+            loadingImageStyle={styles.modalImageLoader}
+            loadingSource={require('../../../assets/images/imgLoad/img.jpeg')}
+            blurRadius={5}
+          />
+        </View>
+      );
+    };
+
+    const renderBottom = () => {
+      const renderTitle = () => {
+        return (
+          <Text style={styles.modalBottomTitle}>
+            This action cannot be undone.
+          </Text>
+        );
+      };
+
+      const renderButton1 = () => {
+        return (
+          <Pressable
+            disabled={mloader}
+            style={({pressed}) => [
+              {opacity: pressed ? 0.7 : 1.0},
+              styles.ButtonContainer,
+            ]}
+            onPress={deletePhoto}>
+            {mloader && (
+              <ActivityIndicator size={20} color={theme.color.buttonText} />
+            )}
+            {!mloader && (
+              <Text style={styles.ButtonText}>Yes, delete photo</Text>
+            )}
+          </Pressable>
+        );
+      };
+
+      const renderButton2 = () => {
+        return (
+          <Pressable
+            disabled={mloader}
+            style={({pressed}) => [
+              {opacity: pressed ? 0.7 : 1.0},
+              styles.ButtonContainer,
+              {backgroundColor: theme.color.button2},
+            ]}
+            onPress={closeDeleteModal}>
+            <Text style={[styles.ButtonText, {color: theme.color.subTitle}]}>
+              No, keep it
+            </Text>
+          </Pressable>
+        );
+      };
+
+      return (
+        <View style={styles.modalBottomContainer}>
+          {renderTitle()}
+          {renderButton1()}
+          {renderButton2()}
+        </View>
+      );
+    };
+
+    return (
+      <Modal
+        visible={deleteModal}
+        transparent
+        onRequestClose={closeDeleteModal}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modal}>
+            {renderTitle()}
+            {renderCross()}
+            {renderImage()}
+            {renderBottom()}
+          </View>
+        </View>
+      </Modal>
+    );
+  };
+
+ 
   return (
     <SafeAreaView style={styles.container}>
       {/* {data.length > 0 && renderShowRes()} */}
@@ -212,28 +353,25 @@ function Photos(props) {
             initialNumToRender={18}
             maxToRenderPerBatch={6}
             data={data}
+            extraData={data}
             renderItem={renderShowData}
             keyExtractor={(item, index) => index.toString()}
-            // ItemSeparatorComponent={() => {
-            //   return (
-            //     <View
-            //       style={{
-            //         height: '100%',
-            //         width: '2%',
-            //       }}
-            //     />
-            //   );
-            // }}
+            
           />
         )}
       </ScrollView>
       {!getDataOnce && loader && renderLoader()}
-      <utils.FullimageModal
-        show={pvm}
-        pv={pv}
-        setshow={c => setpvm(c)}
-        setpv={c => setpv(c)}
-      />
+      {pvm && (
+        <utils.FullimageModal
+          data={data}
+          si={si}
+          show={pvm}
+          pv={pv}
+          setshow={c => setpvm(c)}
+          setpv={c => setpv(c)}
+        />
+      )}
+      {deleteModal && renderDeleteModal()}
     </SafeAreaView>
   );
 }

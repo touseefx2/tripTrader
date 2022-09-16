@@ -13,11 +13,14 @@ import {
   PermissionsAndroid,
   Platform,
   Dimensions,
-  Modal as MModal,
+  Modal,
   FlatList,
   ActivityIndicator,
   RefreshControl,
   ScrollView,
+  Pressable,
+  TextInput,
+  Keyboard,
 } from 'react-native';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
@@ -37,6 +40,17 @@ function Reviews(props) {
   let data = store.User.review;
   const totalData = data.length;
   let loader = store.User.reviewLoader;
+  let mloader = store.User.mLoader;
+
+  const [modalObj, setmodalObj] = useState(false);
+  const [modalChk, setmodalChk] = useState(false);
+  const [isModal, setisModal] = useState(false);
+
+  const [isTerms, setisTerms] = useState(false);
+  const [EmptyTerms, setEmptyTerms] = useState(false);
+
+  let maxCommentLength = 250;
+  const [comment, setcomment] = useState('');
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
@@ -103,7 +117,7 @@ function Reviews(props) {
               total_reviews: 10,
             },
             comment:
-              'John Thompson was a great host! I had an amazing time and enjoy.',
+              'John Thompson Thank you so much for your careful planning, attention to detail, and flexible offerings when the tropical system blew through and changed our plans! We had a blast exploring Miami, and eating so much great food.\nDinner reservations the first night we arrived were perfect- after a long day of traveling, we enjoyed a delicious meal overlooking the water',
             created_at: new Date(),
           },
         ];
@@ -126,13 +140,96 @@ function Reviews(props) {
     return () => {};
   }, [getDataOnce, internet]);
 
-  const Reply = () => {};
+  const Reply = obj => {
+    openModal(obj, 'reply');
+  };
+  const Dispute = obj => {
+    openModal(obj, 'dispute');
+  };
+  const EditComment = obj => {
+    openModal(obj, 'edit');
+  };
+  const DeleteComment = obj => {
+    openModal(obj, 'delete');
+  };
 
-  const Dispute = () => {};
+  const postReply = () => {
+    Keyboard.dismiss()
+    
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.User.attemptToReplyComment(modalObj,comment,closeModal);
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
 
-  const EditComment = () => {};
+  };
+  const actionDsipute = () => {
+    Keyboard.dismiss()
+  
+    
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.User.attemptToDisputeComment(modalObj,closeModal);
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
+  const actionEdit = () => {
+    Keyboard.dismiss()
+  
+    
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.User.attemptToEditComment(modalObj,comment,closeModal);
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
+  const actionDelete = () => {
+    Keyboard.dismiss()
+    
+    Keyboard.dismiss()
+  
+    
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.User.attemptToDeleteComment(modalObj,closeModal);
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
 
-  const DeleteComment = () => {};
+  const openModal = (obj, c) => {
+    if(c=="edit"){
+      let d = obj.item;
+      setcomment(d.reply.comment)
+    }
+
+
+    setmodalObj(obj);
+    setmodalChk(c);
+    setisModal(true);
+  };
+
+  const closeModal = () => {
+    if (!mloader) {
+      setisModal(false);
+      setmodalChk(false);
+      setmodalObj(false);
+      setcomment('');
+      setisTerms(false);
+      setEmptyTerms(false);
+    }
+  };
 
   const renderShowRes = () => {
     return (
@@ -157,17 +254,25 @@ function Reviews(props) {
     let postDate = item.created_at;
     let userComment = item.comment;
     let reply = item.reply ? item.reply : '';
+    let dispute= item.dispute ? item.dispute : false
+    let disputeDate=dispute? dispute.created_at:""
 
     let ruserPhoto = '';
     let ruserName = '';
     let ruserComment = '';
     let rpostDate = '';
-    if (reply) {
+    if (reply!="") {
       ruserPhoto = reply.user.photo;
       ruserName = reply.user.first_name + ' ' + reply.user.last_name;
       ruserComment = reply.comment;
       rpostDate = reply.created_at;
     }
+
+    
+    const formatdisputeDate = date => {
+      var dd = moment(date).format('MMM DD');
+      return dd;
+    };
 
     const formatDate = date => {
       var dd = moment(date).format('MMM DD, YYYY');
@@ -246,37 +351,53 @@ function Reviews(props) {
         return <Text style={styles.boxSection2title}>{userComment}</Text>;
       };
 
+      const renderShowDsipute=()=>{
+        return(
+            <View style={styles.boxSection3}>
+            <utils.vectorIcon.AntDesign name="warning" color={"#B93B3B"} size={14} />
+            <Text style={styles.disputeTitle}>You disputed this review on {formatdisputeDate(disputeDate)}</Text>
+            </View>
+            
+        )
+      }
+
       const renderShowReplyButton = () => {
         const renderReplyButton = () => {
           return (
-            <TouchableOpacity
-              onPress={Reply}
-              activeOpacity={0.7}
-              style={styles.smallButtonContainer}>
+            <Pressable
+              onPress={() => Reply({item: item, i: index})}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.7 : 1.0},
+                styles.smallButtonContainer,
+              ]}>
               <Text style={styles.sb1Text}>Reply</Text>
-            </TouchableOpacity>
+            </Pressable>
           );
         };
 
         const renderDisputeButton = () => {
           return (
-            <TouchableOpacity
-              onPress={Dispute}
-              activeOpacity={0.7}
-              style={[
+            <Pressable
+              style={({pressed}) => [
+                {opacity: pressed ? 0.7 : 1.0},
+
                 styles.smallButtonContainer,
                 {backgroundColor: theme.color.disableSmallButton},
-              ]}>
+              ]}
+              onPress={() => Dispute({item: item, i: index})}>
               <Text style={styles.sb2Text}>dispute</Text>
-            </TouchableOpacity>
+            </Pressable>
           );
         };
 
         return (
           <View style={styles.boxSection3}>
-            {renderReplyButton()}
+           
+           {renderReplyButton()}
             <View style={{width: 12}} />
             {renderDisputeButton()}
+              
+           
           </View>
         );
       };
@@ -284,15 +405,15 @@ function Reviews(props) {
       const renderShowDipsutebutton = () => {
         const renderDisputeButton = () => {
           return (
-            <TouchableOpacity
-              onPress={Dispute}
-              activeOpacity={0.7}
-              style={[
+            <Pressable
+              onPress={() => Dispute({item: item, i: index})}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.7 : 1.0},
                 styles.smallButtonContainer,
                 {backgroundColor: theme.color.disableSmallButton},
               ]}>
               <Text style={styles.sb2Text}>dispute review</Text>
-            </TouchableOpacity>
+            </Pressable>
           );
         };
 
@@ -307,8 +428,15 @@ function Reviews(props) {
             {renderDate()}
           </View>
           <View style={styles.boxSection2}>{renderComment()}</View>
-          {reply == '' && renderShowReplyButton()}
+          {!dispute&&(
+            <>
+         {reply == '' && renderShowReplyButton()}
           {reply != '' && renderShowDipsutebutton()}
+            </>
+          )}
+
+          {dispute&& renderShowDsipute()}
+          
         </View>
       );
     };
@@ -341,26 +469,28 @@ function Reviews(props) {
         const renderShowActionButton = () => {
           const renderEditButton = () => {
             return (
-              <TouchableOpacity
-                onPress={EditComment}
-                activeOpacity={0.7}
-                style={styles.smallButtonContainer}>
+              <Pressable
+                style={({pressed}) => [
+                  {opacity: pressed ? 0.7 : 1.0},
+                  styles.smallButtonContainer,
+                ]}
+                onPress={() => EditComment({item: item, i: index})}>
                 <Text style={styles.sb1Text}>edit</Text>
-              </TouchableOpacity>
+              </Pressable>
             );
           };
 
           const renderDeleteButton = () => {
             return (
-              <TouchableOpacity
-                onPress={DeleteComment}
-                activeOpacity={0.7}
-                style={[
+              <Pressable
+                style={({pressed}) => [
+                  {opacity: pressed ? 0.7 : 1.0},
                   styles.smallButtonContainer,
                   {backgroundColor: 'transparent'},
-                ]}>
+                ]}
+                onPress={() => DeleteComment({item: item, i: index})}>
                 <Text style={[styles.sb2Text, {color: '#B93B3B'}]}>delete</Text>
-              </TouchableOpacity>
+              </Pressable>
             );
           };
 
@@ -398,7 +528,7 @@ function Reviews(props) {
       <>
         <View style={{marginBottom: 15}}>
           {renderShowCommentBox()}
-          {reply != '' && renderShowReplyBox()}
+          {reply != '' && !dispute && renderShowReplyBox()}
         </View>
       </>
     );
@@ -420,7 +550,7 @@ function Reviews(props) {
             fontFamily: theme.fonts.fontMedium,
           }}>
           {c == 'empty'
-            ? ' No trip reviews received yet.'
+            ? 'No trip reviews received yet.'
             : 'Please connect internet.'}
         </Text>
       </View>
@@ -440,6 +570,473 @@ function Reviews(props) {
         <ActivityIndicator size={35} color={theme.color.button1} />
       </View>
     );
+  };
+
+  const renderShowFieldError = c => {
+    let text = '';
+    if (c == 'terms') {
+      text = EmptyTerms ? 'Agreeing to Terms and Conditions is required' : '';
+    }
+
+    return (
+      <View style={styles.errorMessageFieldContainer}>
+        <Text style={styles.errorMessageFieldText}>{text}</Text>
+      </View>
+    );
+  };
+
+  // console.warn("mloader : ",mloader)
+  const renderModal = () => {
+    if (modalChk == 'reply' || modalChk=="edit") {
+      const renderHeader = () => {
+        let text = 'Reply to review';
+
+        const renderCross = () => {
+          return (
+            <Pressable
+              disabled={mloader}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.7 : 1.0},
+                styles.modalCross,
+              ]}
+              onPress={closeModal}>
+              <utils.vectorIcon.EvilIcons
+                name="close"
+                color={theme.color.title}
+                size={30}
+              />
+            </Pressable>
+          );
+        };
+
+        const renderTitle = () => {
+          return <Text style={styles.modalTitle}>{text}</Text>;
+        };
+
+        return (
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            {renderTitle()}
+            {renderCross()}
+          </View>
+        );
+      };
+
+      const renderField = () => {
+        const renderTitle = () => {
+          return (
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <Text style={styles.modalFieldTitle}>Message</Text>
+              <Text
+                style={[
+                  styles.modalFieldTitle,
+                  {
+                    color:
+                      comment.length < maxCommentLength
+                        ? theme.color.subTitleLight
+                        : 'red',
+                    fontSize: 12.5,
+                  },
+                ]}>
+                {comment.length} / {maxCommentLength}
+              </Text>
+            </View>
+          );
+        };
+
+        const renderInput = () => {
+          return (
+            <View style={{marginTop: 5}}>
+              <TextInput
+                autoFocus
+                multiline
+                value={comment}
+                onChangeText={t => setcomment(t)}
+                textAlignVertical="top"
+                style={styles.modalInput}
+                maxLength={maxCommentLength}
+              />
+            </View>
+          );
+        };
+
+        return (
+          <View style={{marginTop: 15}}>
+            {renderTitle()}
+            {renderInput()}
+          </View>
+        );
+      };
+
+      const renderBottom = () => {
+        const renderButton1 = () => {
+          return (
+            <Pressable
+              disabled={mloader || comment.length <= 0}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.7 : comment.length <= 0 ? 0.5 : 1},
+                [styles.ButtonContainer],
+              ]}
+              onPress={modalChk=="reply"?postReply:actionEdit}>
+              {mloader && (
+                <ActivityIndicator size={20} color={theme.color.buttonText} />
+              )}
+              {!mloader && <Text style={styles.ButtonText}>post reply</Text>}
+            </Pressable>
+          );
+        };
+
+        const renderButton2 = () => {
+          return (
+            <Pressable
+              disabled={mloader}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.7 : 1.0},
+                styles.ButtonContainer,
+                {backgroundColor: theme.color.button2, marginLeft: 15},
+              ]}
+              onPress={closeModal}>
+              <Text style={[styles.ButtonText, {color: theme.color.subTitle}]}>
+                cancel
+              </Text>
+            </Pressable>
+          );
+        };
+
+        return (
+          <View style={styles.modalBottomContainer}>
+            {renderButton1()}
+            {renderButton2()}
+          </View>
+        );
+      };
+
+      return (
+        <Modal visible={isModal} transparent onRequestClose={closeModal}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modal}>
+              {renderHeader()}
+              {renderField()}
+              {renderBottom()}
+            </View>
+          </View>
+        </Modal>
+      );
+    }
+
+    if (modalChk == 'dispute') {
+      const renderHeader = () => {
+        let text = 'Dispute Review';
+
+        const renderCross = () => {
+          return (
+            <Pressable
+              disabled={mloader}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.7 : 1.0},
+                styles.modalCross,
+              ]}
+              onPress={closeModal}>
+              <utils.vectorIcon.EvilIcons
+                name="close"
+                color={theme.color.title}
+                size={30}
+              />
+            </Pressable>
+          );
+        };
+
+        const renderTitle = () => {
+          return <Text style={styles.modalTitle}>{text}</Text>;
+        };
+
+        return (
+          <View style={{flexDirection: 'row', justifyContent: 'space-between',paddingHorizontal:15}}>
+            {renderTitle()}
+            {renderCross()}
+          </View>
+        );
+      };
+
+      const renderSec1 = () => {
+        return (
+          <View style={{marginTop: 15, width: '100%'}}>
+            <Text style={styles.modalSec1Title}>
+              You are about to open a dispute on the member review below.{' '}
+              <Text
+                style={[
+                  styles.modalSec1Title,
+                  {fontFamily: theme.fonts.fontNormal},
+                ]}>
+                {`Once a dispute is opened, you will not be able to reply to the review or interact with this member until the dispute is settled.\n\nIf we find that this member violated any terms of our User Agreement or Privacy Policy, we will take appropriate action. We also may contact you if we need more information.`}
+              </Text>
+            </Text>
+          </View>
+        );
+      };
+
+      const renderSec2 = () => {
+        let d = modalObj.item;
+        let userName = d.user.first_name + ' ' + d.user.last_name;
+        let userComment = d.comment;
+
+        return (
+          <View style={styles.modalSec2Container}>
+            <Text style={styles.modalSec2Title}>
+              {userName}
+              <Text style={[styles.modalSec2Title, {textTransform: 'none'}]}>
+                {' '}
+                wrote:
+              </Text>
+            </Text>
+            <ScrollView showsVerticalScrollIndicator>
+              <Text style={styles.modalSec2Title2}>{userComment}</Text>
+            </ScrollView>
+          </View>
+        );
+      };
+
+      const renderSec3 = () => {
+        return (
+          <View style={{marginTop: 15}}>
+            <View style={{flexDirection: 'row', width: '100%'}}>
+              <Pressable
+                disabled={mloader}
+                style={({pressed}) => [{opacity: pressed ? 0.5 : 1.0}]}
+                onPress={() => {
+                  setisTerms(!isTerms);
+                  setEmptyTerms(false);
+                }}>
+                {!isTerms && (
+                  <utils.vectorIcon.Feather
+                    name={'square'}
+                    color={
+                      EmptyTerms
+                        ? theme.color.fieldBordeError
+                        : theme.color.subTitleLight
+                    }
+                    size={20}
+                  />
+                )}
+
+                {isTerms && (
+                  <utils.vectorIcon.AntDesign
+                    name={'checksquare'}
+                    color={theme.color.button1}
+                    size={20}
+                  />
+                )}
+              </Pressable>
+
+              <View style={{marginLeft: 7, width: '92%'}}>
+                <Text style={styles.modalSec1Title}>
+                  This review contains personally identifiable information.{' '}
+                  <Text
+                    style={[
+                      styles.modalSec1Title,
+                      {fontFamily: theme.fonts.fontNormal},
+                    ]}>
+                    {`I hereby declare that by checking this box, the information provided here is true and correct. I also understand that any willful dishonesty may result in permanent suspension of my account across all Trip Trader services.`}
+                  </Text>
+                </Text>
+              </View>
+            </View>
+            {EmptyTerms && renderShowFieldError('terms')}
+          </View>
+        );
+      };
+
+      const renderBottom = () => {
+        const renderButton1 = () => {
+          return (
+            <Pressable
+              disabled={mloader || !isTerms}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.7 : !isTerms ? 0.5 : 1},
+                [styles.ButtonContainer],
+              ]}
+              onPress={actionDsipute}>
+              {mloader && (
+                <ActivityIndicator size={20} color={theme.color.buttonText} />
+              )}
+              {!mloader && (
+                <Text style={styles.ButtonText}>submit dispute</Text>
+              )}
+            </Pressable>
+          );
+        };
+
+        const renderButton2 = () => {
+          return (
+            <Pressable
+              disabled={mloader}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.7 : 1.0},
+                styles.ButtonContainer,
+                {backgroundColor: theme.color.button2, marginLeft: 15},
+              ]}
+              onPress={closeModal}>
+              <Text style={[styles.ButtonText, {color: theme.color.subTitle}]}>
+                cancel
+              </Text>
+            </Pressable>
+          );
+        };
+
+        return (
+          <View style={[styles.modalBottomContainer,{
+            borderBottomLeftRadius:15,
+            borderBottomRightRadius:15,
+            marginTop:0,
+            paddingTop:5,
+            paddingBottom:15,
+            paddingHorizontal:15,
+           backgroundColor:theme.color.background, 
+           shadowColor: "#000",
+shadowOffset: {
+	width: 0,
+	height: 5,
+},
+shadowOpacity: 0.34,
+shadowRadius: 6.27,
+
+elevation: 10,
+           }]}>
+            {renderButton1()}
+            {renderButton2()}
+          </View>
+        );
+      };
+
+      return (
+        <Modal visible={isModal} transparent onRequestClose={closeModal}>
+          <View style={styles.modalContainer}>
+            <View style={[styles.modal, {height: theme.window.Height - 140,padding:0,paddingTop:15}]}>
+              {renderHeader()}
+              <ScrollView contentContainerStyle={{paddingHorizontal:15}} showsVerticalScrollIndicator={false} style={{flex: 1}}>
+                {renderSec1()}
+                {renderSec2()}
+                {renderSec3()}
+              </ScrollView>
+              {renderBottom()}
+            </View>
+          </View>
+        </Modal>
+      );
+    }
+
+
+    if (modalChk == 'delete') {
+      const renderHeader = () => {
+        let text = 'Delete Comment';
+
+        const renderCross = () => {
+          return (
+            <Pressable
+              disabled={mloader}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.7 : 1.0},
+                styles.modalCross,
+              ]}
+              onPress={closeModal}>
+              <utils.vectorIcon.EvilIcons
+                name="close"
+                color={theme.color.title}
+                size={30}
+              />
+            </Pressable>
+          );
+        };
+
+        const renderTitle = () => {
+          return <Text style={styles.modalTitle}>{text}</Text>;
+        };
+
+        return (
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            {renderTitle()}
+            {renderCross()}
+          </View>
+        );
+      };
+
+      const renderTitle = () => {
+        let d = modalObj.item;
+        let userName = d.user.first_name + ' ' + d.user.last_name;
+        
+
+        return (
+          <View
+            style={{
+              marginTop: 15
+            }}>
+            <Text style={styles.modalDeleteTitle}>Are you sure you want to delete your comment to <Text style={[styles.modalDeleteTitle,{fontFamily:theme.fonts.fontBold,textTransform:"capitalize"}]}>{userName}?</Text></Text>
+           
+          </View>
+        );
+      };
+
+   
+      const renderBottom = () => {
+        const renderButton1 = () => {
+          return (
+            <Pressable
+              disabled={mloader}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.7  : 1},
+                [styles.ButtonContainer,{backgroundColor:"#B93B3B"}],
+              ]}
+              onPress={actionDelete}>
+              {mloader && (
+                <ActivityIndicator size={20} color={theme.color.buttonText} />
+              )}
+              {!mloader && <Text style={styles.ButtonText}>Yes, delete it</Text>}
+            </Pressable>
+          );
+        };
+
+        const renderButton2 = () => {
+          return (
+            <Pressable
+              disabled={mloader}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.7 : 1.0},
+                styles.ButtonContainer,
+                {backgroundColor: theme.color.button2, marginLeft: 15},
+              ]}
+              onPress={closeModal}>
+              <Text style={[styles.ButtonText, {color: theme.color.subTitle}]}>
+              No, keep it
+              </Text>
+            </Pressable>
+          );
+        };
+
+        return (
+          <View style={styles.modalBottomContainer}>
+            {renderButton1()}
+            {renderButton2()}
+          </View>
+        );
+      };
+
+      return (
+        <Modal visible={isModal} transparent onRequestClose={closeModal}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modal}>
+              {renderHeader()}
+              {renderTitle()}
+              {renderBottom()}
+            </View>
+          </View>
+        </Modal>
+      );
+    }
+
   };
 
   return (
@@ -462,13 +1059,17 @@ function Reviews(props) {
         {data.length >= 0 && (
           <FlatList
             showsVerticalScrollIndicator={false}
+            initialNumToRender={18}
+            maxToRenderPerBatch={6}
             data={data}
+            extraData={data}
             renderItem={renderShowData}
             keyExtractor={(item, index) => index.toString()}
           />
         )}
       </ScrollView>
       {!getDataOnce && loader && renderLoader()}
+      {isModal && renderModal()}
     </SafeAreaView>
   );
 }

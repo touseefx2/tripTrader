@@ -37,9 +37,8 @@ import {
   CreditCardInput,
   LiteCreditCardInput,
 } from 'react-native-credit-card-input';
-import DateTimePicker from '@react-native-community/datetimepicker';
+
 import DatePicker from 'react-native-date-picker';
-// import DatePicker from 'react-native-datepicker';
 
 export default observer(Signup);
 function Signup(props) {

@@ -259,6 +259,16 @@ let ProfileStack = () => {
           });
         }}
       />
+       <Stack.Screen
+        name="Notifications"
+        component={screens.Notifications}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+      />
     </Stack.Navigator>
   );
 };

@@ -31,11 +31,10 @@ import Toast from 'react-native-easy-toast';
 
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {ActivityIndicator} from 'react-native-paper';
-import {ScrollView} from 'react-native-gesture-handler';
+ 
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import {Image as ImageCompressor} from 'react-native-compressor';
-import * as RNLocalize from 'react-native-localize';
-import {getCountries, getStates} from 'country-state-picker';
+ 
 import {TabView, SceneMap} from 'react-native-tab-view';
 import Reviews from './Reviews';
 import Trips from './Trips';
@@ -2747,6 +2746,12 @@ function MyProfile(props) {
     );
   };
 
+  const closePhotoModal=()=>{
+    if (!loader) {
+      setcphoto(false);
+    }
+  }
+
   const renderShowCahngePhotoModal = () => {
     const renderButton = c => {
       return (
@@ -2767,6 +2772,26 @@ function MyProfile(props) {
         </>
       );
     };
+
+
+    const renderButtonSkip= () => {
+      return (
+        <>
+          <TouchableOpacity
+            disabled={loader}
+            onPress={() => {
+               closePhotoModal()
+            }}
+            activeOpacity={0.7}
+            style={[styles.BottomButton,{backgroundColor: theme.color.button2}]}>
+             
+              <Text style={[styles.buttonTextBottom, {color: theme.color.subTitle,textTransform:"none",fontFamily:theme.fonts.fontNormal,fontSize:14}]}>Skip for now</Text>
+            
+          </TouchableOpacity>
+        </>
+      );
+    };
+
 
     // const renderButtonCP = c => {
     //   return (
@@ -2806,9 +2831,7 @@ function MyProfile(props) {
         visible={isSHowChangePhoto}
         transparent
         onRequestClose={() => {
-          if (!loader) {
-            setcphoto(false);
-          }
+          closePhotoModal()
         }}>
         <View
           style={{
@@ -2844,12 +2867,13 @@ function MyProfile(props) {
             </View>
 
             {renderButton('Profile')}
+            {renderButtonSkip()}
             {/* {renderButtonCP('photoChange')} */}
 
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => {
-                setcphoto(false);
+                closePhotoModal()
               }}
               style={{position: 'absolute', top: 5, right: 5}}>
               <utils.vectorIcon.Entypo

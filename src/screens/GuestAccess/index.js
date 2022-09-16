@@ -29,11 +29,6 @@ import {
 } from 'react-native-responsive-dimensions';
 import Toast from 'react-native-easy-toast';
 import NetInfo from '@react-native-community/netinfo';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import moment from 'moment';
-import Modal from 'react-native-modal';
-import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
-import {Image as ImageCompressor} from 'react-native-compressor';
 
 export default observer(GuestAccess);
 function GuestAccess(props) {

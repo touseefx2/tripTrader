@@ -35,15 +35,15 @@ import {
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
 import moment from 'moment';
-import RBSheet from 'react-native-raw-bottom-sheet';
+ 
 import {ActivityIndicator} from 'react-native-paper';
 import {ScrollView} from 'react-native-gesture-handler';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import {Image as ImageCompressor} from 'react-native-compressor';
-import Modal from 'react-native-modal';
+ 
 import IntlPhoneInput from 'react-native-intl-phone-input';
 import * as RNLocalize from 'react-native-localize';
-import DateTimePicker from '@react-native-community/datetimepicker';
+ 
 import DatePicker from 'react-native-date-picker';
 
 export default observer(EditProfile);
