@@ -8,50 +8,52 @@ import {
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.color.button1,
+    backgroundColor:theme.color.background
   },
   container2: {
     flex: 1,
+
   },
   section1: {
     marginTop: theme.window.APPBAR_HEIGHT,
+     
     // alignItems: 'center',
     // justifyContent: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
-  section2: {marginBottom: 40},
+  section2: {marginBottom: 50},
   section2Title1: {
     color: theme.color.buttonText,
-    fontSize: 34,
+    fontSize: 36,
     fontFamily: theme.fonts.fontBold,
-    alignSelf: 'center',
+    lineHeight:43.2,
+    letterSpacing:-1
   },
   section2Title2: {
     color: theme.color.buttonText,
-    fontSize: 16,
+    fontSize: 17,
     fontFamily: theme.fonts.fontNormal,
     marginTop: 10,
-    alignSelf: 'center',
+   lineHeight:23.8,
+   letterSpacing:-1
   },
   section3: {
-    paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingHorizontal: 24,
+    paddingBottom: 40,
     paddingTop: 10,
     // backgroundColor: 'red',
   },
 
   logo: {
-    width: 90,
-    height: 90,
+    width: 88,
+    height: 82.58,
     resizeMode: 'contain',
   },
   title1: {
     fontSize: 22,
-    fontFamily: theme.fonts.fontBold,
+    fontFamily: theme.fonts.titleFont,
     color: theme.color.buttonText,
     textTransform: 'uppercase',
-    marginTop: 5,
+    lineHeight:28.73
   },
   BottomButton: {
     width: '100%',
@@ -61,15 +63,7 @@ export const styles = StyleSheet.create({
     height: 50,
     borderRadius: 10,
     alignSelf: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-
-    elevation: 2,
+    
   },
   buttonTextBottom: {
     color: theme.color.buttonTextGreen,

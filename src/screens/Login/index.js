@@ -101,7 +101,7 @@ function Login(props) {
             style={[
               styles.BottomButton,
               {
-                backgroundColor: theme.color.button1,
+                backgroundColor: "transparent",
                 borderWidth: 1,
                 borderColor: theme.color.buttonText,
                 marginTop: 12,
@@ -170,8 +170,10 @@ function Login(props) {
       <ImageBackground
         source={require('../../assets/images/background/img.png')}
         style={styles.container2}>
+ 
+
         <ScrollView
-          style={{flex: 1, paddingHorizontal: 20}}
+          style={{flex: 1, paddingHorizontal: 24}}
           showsVerticalScrollIndicator={false}>
           {renderSection1()}
         </ScrollView>

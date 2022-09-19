@@ -198,7 +198,7 @@ setsi(c)
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    backgroundColor: "'rgba(0,0,0,0.3)'",
+    backgroundColor: "'rgba(0,0,0,0.5)'",
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   ImageContainer: {
-    backgroundColor: "'rgba(0,0,0,0.9)'",
+    backgroundColor: "'rgba(0,0,0,1)'",
     width: '100%',
     height: '93%',
     borderRadius: 9,

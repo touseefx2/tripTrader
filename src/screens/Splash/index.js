@@ -101,7 +101,7 @@ function Splash(props) {
     <SafeAreaView style={styles.container}>
       {renderStatusBar()}
       <ImageBackground
-        source={require('../../assets/images/background/img.png')}
+        source={require('../../assets/images/background/imgS.png')}
         style={styles.container2}>
         <Image
           style={styles.logo}

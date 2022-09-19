@@ -25,6 +25,8 @@ const title = '#000000';
 const titleGreen = '#3C6B49';
 const titleGreenForm = '#1E3625';
 
+const subTitleAuth="#101B10"
+
 const subTitle = 'rgba(17, 17, 17, 0.5)';
 const subTitleLight = 'rgba(0, 0, 0, 0.3)';
 
@@ -92,7 +94,7 @@ export default color = {
   footerCartbc2,
   footerCartText,
   footerCartSubText,
-
+  subTitleAuth,
   addcartModalBackground,
   addcartModalHeader,
   addcartModalButton,

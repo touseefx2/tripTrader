@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
     borderRadius: 15,
     marginBottom: 15,
     padding: 18,
-    marginTop: 5,
+    marginTop: 30,
   },
   section2Title1: {
     color: theme.color.title,
@@ -51,16 +51,16 @@ export const styles = StyleSheet.create({
   },
 
   logo: {
-    width: 55,
-    height: 55,
+    width: 54.93,
+    height: 50.56,
     resizeMode: 'contain',
   },
   title1: {
     fontSize: 16,
-    fontFamily: theme.fonts.fontBold,
+    fontFamily: theme.fonts.titleFont,
     color: theme.color.buttonText,
     textTransform: 'uppercase',
-    marginTop: 5,
+    lineHeight:20.9
   },
   BottomButton: {
     width: '100%',
@@ -123,7 +123,7 @@ export const styles = StyleSheet.create({
   },
   section2LogoTitle: {
     marginTop: 15,
-    color: theme.color.subTitle,
+    color: theme.color.subTitleAuth,
     fontSize: 14,
     fontFamily: theme.fonts.fontNormal,
     alignSelf: 'center',

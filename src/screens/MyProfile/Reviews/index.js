@@ -77,8 +77,9 @@ function Reviews(props) {
               _id: 2,
               first_name: 'mike',
               last_name: 'monuse',
-              photo:
-                'https://coolhdwall.com/storage/2201/umji-viviz-profile-4k-phone-wallpaper-2160x3840-12.jpg',
+              photo:"",
+              // photo:
+              //   'https://www.adobe.com/express/create/media_127540366421d3d5bfcaf8202527ca7d37741fd5d.jpeg?width=400&format=jpeg&optimize=medium',
               avg_rating: 3.8,
               total_reviews: 190,
             },
@@ -111,8 +112,9 @@ function Reviews(props) {
               _id: 4,
               first_name: 'Mano',
               last_name: 'Twis',
-              photo:
-                'https://t3.ftcdn.net/jpg/03/67/46/48/360_F_367464887_f0w1JrL8PddfuH3P2jSPlIGjKU2BI0rn.jpg',
+              photo:"",
+              // photo:
+              //   'https://t3.ftcdn.net/jpg/03/67/46/48/360_F_367464887_f0w1JrL8PddfuH3P2jSPlIGjKU2BI0rn.jpg',
               avg_rating: 2.0,
               total_reviews: 10,
             },
@@ -246,6 +248,8 @@ function Reviews(props) {
     );
   };
 
+   
+ 
   const renderShowData = ({item, index}) => {
     let photo = item.user.photo;
     let userName = item.user.first_name + ' ' + item.user.last_name;
@@ -284,12 +288,12 @@ function Reviews(props) {
         return (
           <View style={styles.ProfileImgContainer}>
             <ProgressiveFastImage
-              useNativeDriver
               style={styles.ProfileImg}
               source={
                 photo != ''
-                  ? {uri: photo}
-                  : require('../../../assets/images/drawer/guest/img.png')
+                  ? {uri:photo}
+                  :
+                   require('../../../assets/images/drawer/guest/img.png')
               }
               loadingImageStyle={styles.imageLoader}
               loadingSource={require('../../../assets/images/imgLoad/img.jpeg')}

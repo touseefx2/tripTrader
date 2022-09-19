@@ -247,45 +247,45 @@ function Signup(props) {
     clearAllField();
     Keyboard.dismiss();
 
-    if (fn == '') {
-      setEmptyfn(true);
-      return;
-    }
+    // if (fn == '') {
+    //   setEmptyfn(true);
+    //   return;
+    // }
 
-    if (ln == '') {
-      setEmptyln(true);
-      return;
-    }
+    // if (ln == '') {
+    //   setEmptyln(true);
+    //   return;
+    // }
 
-    if (email == '') {
-      setEmptyemail(true);
-      return;
-    }
+    // if (email == '') {
+    //   setEmptyemail(true);
+    //   return;
+    // }
 
-    if (emailReg.test(email) === false) {
-      setinvalidemail(true);
-      return;
-    }
+    // if (emailReg.test(email) === false) {
+    //   setinvalidemail(true);
+    //   return;
+    // }
 
-    if (dob == '') {
-      setEmptydob(true);
-      return;
-    }
+    // if (dob == '') {
+    //   setEmptydob(true);
+    //   return;
+    // }
 
-    if (pswd == '') {
-      setEmptypswd(true);
-      return;
-    }
+    // if (pswd == '') {
+    //   setEmptypswd(true);
+    //   return;
+    // }
 
-    if (pswd.length < 8) {
-      setinvalidpswd(true);
-      return;
-    }
+    // if (pswd.length < 8) {
+    //   setinvalidpswd(true);
+    //   return;
+    // }
 
-    if (isTerms == false) {
-      setEmptyTerms(true);
-      return;
-    }
+    // if (isTerms == false) {
+    //   setEmptyTerms(true);
+    //   return;
+    // }
 
     const user = {
       first_name: fn,
@@ -1072,7 +1072,7 @@ function Signup(props) {
                 marginTop: 12,
 
                 backgroundColor: theme.color.background,
-                borderWidth: 0.5,
+                // borderWidth: 0.5,
                 borderColor: theme.color.subTitle,
               },
             ]}>
@@ -1080,11 +1080,12 @@ function Signup(props) {
               style={[
                 styles.buttonTextBottom,
                 {
-                  color: theme.color.buttonTextGreen,
-                  fontFamily: theme.fonts.fontMedium,
+                  color: theme.color.subTitle,
+                  fontFamily: theme.fonts.fontBold,
+                  textTransform:"none"
                 },
               ]}>
-              Go to my profile
+              Go to My Profile
             </Text>
           </TouchableOpacity>
         </>
@@ -1848,7 +1849,7 @@ function Signup(props) {
                 Your account is ready.
               </Text>
 
-              <Text style={styles.section2LogoTitle2c}>
+              <Text style={[styles.section2LogoTitle2c,{color: theme.color.subTitleAuth}]}>
                 Good luck on your trips and trades!
               </Text>
             </View>

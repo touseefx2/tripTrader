@@ -26,10 +26,11 @@ export const styles = StyleSheet.create({
   logo: {
     width: 90,
     height: 90,
+    resizeMode:"contain"
   },
   title1: {
     fontSize: 30,
-    fontFamily: theme.fonts.fontBold,
+    fontFamily: theme.fonts.titleFont,
     color: theme.color.buttonText,
     alignSelf: 'center',
     textTransform: 'uppercase',
