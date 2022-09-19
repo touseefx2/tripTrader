@@ -54,7 +54,7 @@ function CustomDrawerContent(props) {
   };
 
   const goToProfile = () => {
-    props.navigation.navigate('MyProfile');
+    props.navigation.navigate('MyProfileTab');
   };
 
   const renderSection1 = () => {

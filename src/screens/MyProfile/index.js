@@ -2737,11 +2737,11 @@ function MyProfile(props) {
           />
         </View>
 
-        <utils.Footer
+        {/* <utils.Footer
           nav={props.navigation}
           screen={headerTitle}
           focusScreen={store.General.focusScreen}
-        />
+        /> */}
       </>
     );
   };
@@ -2899,13 +2899,13 @@ function MyProfile(props) {
       <Toast ref={toast} position="bottom" />
       {/* <utils.Loader2 load={Loader} /> */}
 
-      {!isTabBarShow && (
+      {/* {!isTabBarShow && (
         <utils.Footer
           nav={props.navigation}
           screen={headerTitle}
           focusScreen={store.General.focusScreen}
         />
-      )}
+      )} */}
       {isSHowChangePhoto && renderShowCahngePhotoModal()}
       {pvm && (
         <utils.FullimageModal

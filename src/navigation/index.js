@@ -1,9 +1,9 @@
-import HomeStack from './HomeStack/index';
+import Home from './HomeStack/index';
 // import LocationStack from './LocationStack';
 import AuthStack from './AuthStack';
 
 const stack = {
-  HomeStack,
+  Home,
   // LocationStack,
   AuthStack,
 };

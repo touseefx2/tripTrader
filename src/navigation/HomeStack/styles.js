@@ -4,8 +4,9 @@ import theme from '../../theme';
 import utils from '../../utils';
 
 const iconSize = 19;
-const focusColor = theme.color.backgroundGreenText;
-const unfocusColor = theme.color.backgroundGreenText;
+const backgroundColor='#f7f7f7'
+let focusTextColor = theme.color.button1;
+let unfocusTextColor = 'rgba(30, 54, 37, 0.4)';
 const styles = {
   icon: {
     width: 21,
@@ -13,6 +14,52 @@ const styles = {
     resizeMode: 'contain',
   },
 };
+
+const TabBar=({ route }) => ({
+  tabBarIcon: ({ focused, color, size }) => {
+  let img=""
+
+    if (route.name === 'Home') {
+     img = focused
+     ? require('../../assets/images/drawer/home/image.png')
+     : require('../../assets/images/drawer/home/image2.png');
+    } else  if (route.name === 'Inbox')  {
+     img = focused
+     ? require('../../assets/images/drawer/inbox/image.png')
+     : require('../../assets/images/drawer/inbox/image2.png');
+    }
+    else  if (route.name === 'Offers')  {
+      img = focused
+      ? require('../../assets/images/drawer/tradeoffers/image.png')
+      : require('../../assets/images/drawer/tradeoffers/image2.png');
+     }
+     else  if (route.name === 'Saved')  {
+      img = focused
+      ? require('../../assets/images/drawer/savedtrips/image.png')
+      : require('../../assets/images/drawer/savedtrips/image2.png');
+     }
+     else  if (route.name === 'Profile')  {
+      img = focused
+      ? require('../../assets/images/drawer/myprofile/image.png')
+      : require('../../assets/images/drawer/myprofile/image2.png');
+     }
+
+    // You can return any component that you like here!
+    return  <Image style={{
+      width: size,
+      height: size,
+      resizeMode: 'contain',
+    }} source={img} />
+  },
+  headerShown:false,
+  tabBarActiveTintColor: focusTextColor,
+  tabBarInactiveTintColor: unfocusTextColor,
+tabBarStyle:{
+  paddingBottom:2,
+  backgroundColor:backgroundColor,
+},
+})
+
 
 const Homeicon = {
   drawerLabel: 'Home',
@@ -173,6 +220,7 @@ const Notificationsicons = {
 };
 
 const icon = {
+  TabBar,
   Homeicon,
   Inboxicon,
   NewTripicon,

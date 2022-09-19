@@ -75,11 +75,11 @@ function SavedTrips(props) {
       {renderStatusBar()}
       <Toast ref={toast} position="bottom" />
       {/* <utils.Loader2 load={Loader} /> */}
-      <utils.Footer
+      {/* <utils.Footer
         nav={props.navigation}
         screen={headerTitle}
         focusScreen={store.General.focusScreen}
-      />
+      /> */}
     </SafeAreaView>
   );
 }

@@ -73,7 +73,7 @@ function App(props) {
           )}
 
           {!store.General.Loading && user && (
-            <Stack.Screen name="HomeStack" component={stack.HomeStack} />
+            <Stack.Screen name="HomeStack" component={stack.Home} />
           )}
 
           {/* {!store.General.Loading && store.Resturants.isSetLocOnce && (
