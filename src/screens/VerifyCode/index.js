@@ -29,7 +29,7 @@ import {
 } from 'react-native-responsive-dimensions';
 import Toast from 'react-native-easy-toast';
 import NetInfo from '@react-native-community/netinfo';
- 
+
 import CodeInput from 'react-native-code-input';
 import CountDown from 'react-native-countdown-component';
 import auth from '@react-native-firebase/auth';
@@ -378,7 +378,7 @@ function VerifyCode(props) {
     return (
       <View style={styles.section2}>
         <View>
-          <Text style={styles.section2Title1}>verify code</Text>
+          <Text style={styles.section2Title1}>Verify PIN Code</Text>
           {/* {errorMessage !== '' && renderShowError()} */}
           <Text style={styles.section2LogoTitle}>
             {chk == 'phone'
@@ -387,7 +387,7 @@ function VerifyCode(props) {
           </Text>
         </View>
 
-        <View style={[styles.Field, {marginTop: 20}]}>
+        <View style={[styles.Field, {marginTop: 10}]}>
           <CodeInput
             ref={codeInputRef2}
             activeColor="rgba(49, 180, 4, 1)"
@@ -395,17 +395,17 @@ function VerifyCode(props) {
             autoFocus={false}
             inputPosition="center"
             codeLength={6}
-            size={45}
+            size={Platform.OS == 'android' ? 43 : 48}
             onValue={c => {
               setcode(c);
             }}
             onFulfill={onFinishCheckingCode}
             codeInputStyle={{
-              borderWidth: 0.6,
+              borderWidth: 1,
               borderColor:
                 isVerifyCode == false || isEmptyCode
                   ? theme.color.fieldBordeError
-                  : theme.color.subTitleLight,
+                  : theme.color.fieldBorder,
               borderRadius: 8,
               color: theme.color.title,
               fontSize: 17,
@@ -427,20 +427,23 @@ function VerifyCode(props) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ImageBackground
         source={require('../../assets/images/background/img.png')}
         style={styles.container2}>
-        {renderHeader()}
-        <KeyboardAvoidingView style={{flex: 1}} enabled>
-          <ScrollView
-            style={{paddingHorizontal: 12}}
-            showsVerticalScrollIndicator={false}>
-            {renderSection2()}
-          </ScrollView>
-        </KeyboardAvoidingView>
-        <Toast ref={toast} position="bottom" />
+        <SafeAreaView style={styles.container2}>
+          <utils.AuthHeader props={props} />
+          <KeyboardAvoidingView style={{flex: 1}} enabled>
+            <ScrollView
+              style={{paddingHorizontal: 15}}
+              showsVerticalScrollIndicator={false}>
+              {renderSection2()}
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
       </ImageBackground>
-    </SafeAreaView>
+      {Platform.OS == 'ios' && <utils.Loader load={loader} />}
+      <Toast ref={toast} position="bottom" />
+    </View>
   );
 }

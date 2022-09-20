@@ -5,7 +5,9 @@ import {
   Text,
   TouchableOpacity,
   Platform,
+  Dimensions,
   Image,
+  StatusBar,
 } from 'react-native';
 import theme from '../theme/index';
 import {
@@ -178,13 +180,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
-    shadowOpacity: 0.53,
-    shadowRadius: 13.97,
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 10,
+    // },
+    // shadowOpacity: 0.53,
+    // shadowRadius: 13.97,
     elevation: 21,
   },
   iconContainer: {

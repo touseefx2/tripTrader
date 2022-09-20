@@ -134,9 +134,8 @@ function GuestAccess(props) {
             style={[
               styles.BottomButton,
               {
-                backgroundColor: theme.color.background,
-                borderWidth: 0.5,
-                borderColor: theme.color.subTitle,
+                backgroundColor: theme.color.button2,
+
                 marginTop: 12,
               },
             ]}>
@@ -144,8 +143,8 @@ function GuestAccess(props) {
               style={[
                 styles.buttonTextBottom,
                 {
-                  color: theme.color.buttonTextGreen,
-                  fontFamily: theme.fonts.fontMedium,
+                  color: '#30563A',
+                  fontFamily: theme.fonts.fontBold,
                 },
               ]}>
               sign in
@@ -168,11 +167,18 @@ function GuestAccess(props) {
 
             <Text style={styles.section2Title1}>Limited Guest Access</Text>
 
-            <Text style={styles.section2LogoTitle}>
-              You may use Trip Trader as a guest, but some features will not be
-              available. For the best experience, we recommend creating an
-              account or signing in.
-            </Text>
+            <View
+              style={{
+                width: '98%',
+
+                alignSelf: 'center',
+              }}>
+              <Text style={styles.section2LogoTitle}>
+                You may use Trip Trader as a guest, but some features will not
+                be available. For the best experience, we recommend creating an
+                account or signing in.
+              </Text>
+            </View>
           </View>
           {renderButton1()}
           {renderButton2()}
@@ -190,22 +196,24 @@ function GuestAccess(props) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ImageBackground
         source={require('../../assets/images/background/img.png')}
         style={styles.container2}>
-        {renderHeader()}
-        <KeyboardAvoidingView style={{flex: 1}} enabled>
-          <ScrollView
-            style={{paddingHorizontal: 12}}
-            showsVerticalScrollIndicator={false}>
-            {renderSection2()}
-          </ScrollView>
-        </KeyboardAvoidingView>
+        <SafeAreaView style={styles.container2}>
+          <utils.AuthHeader props={props} />
+          <KeyboardAvoidingView style={{flex: 1}} enabled>
+            <ScrollView
+              style={{paddingHorizontal: 15}}
+              showsVerticalScrollIndicator={false}>
+              {renderSection2()}
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
       </ImageBackground>
 
       <Toast ref={toast} position="bottom" />
       <utils.Loader load={loader} />
-    </SafeAreaView>
+    </View>
   );
 }

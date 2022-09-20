@@ -3,7 +3,9 @@ import theme from '../../theme/index';
 import {
   responsiveHeight,
   responsiveWidth,
+  responsiveScreenFontSize,
 } from 'react-native-responsive-dimensions';
+let aph = theme.window.APPBAR_HEIGHT + (Platform.OS == 'ios' ? 12 : 0);
 
 export const styles = StyleSheet.create({
   container: {
@@ -14,7 +16,7 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   Header: {
-    marginTop: theme.window.APPBAR_HEIGHT,
+    marginTop: aph,
     width: '100%',
 
     alignItems: 'center',
@@ -25,7 +27,8 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.color.background,
     borderRadius: 15,
     marginBottom: 15,
-    padding: 18,
+    paddingHorizontal: 15,
+    paddingVertical: 20,
     marginTop: 30,
   },
   section2Title1: {
@@ -60,39 +63,31 @@ export const styles = StyleSheet.create({
     fontFamily: theme.fonts.titleFont,
     color: theme.color.buttonText,
     textTransform: 'uppercase',
-    lineHeight:20.9
+    lineHeight: 20.9,
   },
   BottomButton: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: theme.color.button1,
-    height: 50,
+    // height: 59,
+    height: responsiveHeight(8),
     borderRadius: 10,
     alignSelf: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-    elevation: 2,
     marginTop: 25,
   },
   buttonTextBottom: {
     color: theme.color.buttonText,
-    fontSize: 16,
+    // fontSize: 16,
+    fontSize: responsiveScreenFontSize(2.15),
     fontFamily: theme.fonts.fontBold,
-
     textTransform: 'capitalize',
   },
-
   BottomButtonT: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 25,
     justifyContent: 'center',
   },
   buttonTextBottomTtitle1: {
@@ -126,7 +121,7 @@ export const styles = StyleSheet.create({
     color: theme.color.subTitleAuth,
     fontSize: 14,
     fontFamily: theme.fonts.fontNormal,
-    alignSelf: 'center',
+    letterSpacing: 0.02,
     textAlign: 'center',
   },
   section2bottomTitle: {
@@ -171,7 +166,7 @@ export const styles = StyleSheet.create({
   },
   Field3: {marginTop: 20, alignItems: 'center', justifyContent: 'center'},
   Field3Title1: {
-    color: theme.color.titleGreen,
+    color: '#30563A',
     fontSize: 13,
     fontFamily: theme.fonts.fontBold,
     textDecorationLine: 'underline',

@@ -114,7 +114,7 @@ export const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: theme.fonts.fontBold,
+    fontFamily: theme.fonts.fontBold,
     color: theme.color.backgroundGreenText,
     top: -2,
   },
@@ -300,7 +300,7 @@ export const styles = StyleSheet.create({
     height: 50,
     borderRadius: 10,
     alignSelf: 'center',
-     
+
     marginTop: 25,
   },
   buttonTextBottom: {

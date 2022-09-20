@@ -19,9 +19,10 @@ import ServerRes from './ServerRes';
 import TagLine from './TagLine';
 import TagLineModal from './TagLineModal';
 
+import AuthHeader from './AuthHeader';
 import DrawerHeader from './DrawerHeader';
 // import { AlertMessage } from "./AlertMessage";
-// import { PhoneModalComponent } from "./PhoneModel";
+import navBarHeight from './navBarHeight';
 // import { strLength } from "./strLength";
 // import Validation from "./Validation";
 // import ToastAndroid from "./ToastAndroid";
@@ -34,16 +35,17 @@ import FullimageModal from './FullimageModal';
 const utils = {
   vectorIcon,
   InternetMessage,
-  
+
   Loader,
   Loader2,
   Footer,
-   
+  AuthHeader,
   ServerRes,
   TagLine,
   DrawerHeader,
   TagLineModal,
   FullimageModal,
+  navBarHeight,
 };
 
 export default utils;

@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {AppState, Alert, UIManager} from 'react-native';
+import {AppState, Platform, UIManager} from 'react-native';
 import stack from './src/navigation/index';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -21,7 +21,12 @@ function App(props) {
   let user = store.User.user;
 
   useEffect(() => {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
+    if (Platform.OS === 'android') {
+      if (UIManager.setLayoutAnimationEnabledExperimental) {
+        UIManager.setLayoutAnimationEnabledExperimental(true);
+      }
+    }
+
     GlobalFont.applyGlobal(theme.fonts.fontNormal);
     const unsubscribeNetinfo = NetInfo.addEventListener(state => {
       store.General.setInternet(state.isConnected);

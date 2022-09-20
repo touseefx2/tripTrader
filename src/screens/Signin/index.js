@@ -126,7 +126,7 @@ function Signin(props) {
           <utils.vectorIcon.Ionicons
             name={'chevron-back-outline'}
             color={theme.color.buttonText}
-            size={27}
+            size={25}
           />
         </TouchableOpacity>
       );
@@ -222,7 +222,7 @@ function Signin(props) {
 
         {/* {errorMessage !== '' && renderShowError()} */}
 
-        <View style={[styles.Field, {marginTop: 20}]}>
+        <View style={[styles.Field, {marginTop: 25}]}>
           <Text style={styles.FieldTitle1}>email address</Text>
           <TextInput
             placeholder=""
@@ -318,21 +318,23 @@ function Signin(props) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ImageBackground
         source={require('../../assets/images/background/img.png')}
         style={styles.container2}>
-        {renderHeader()}
-        <KeyboardAvoidingView style={{flex: 1}} enabled>
-          <ScrollView
-            style={{paddingHorizontal: 12}}
-            showsVerticalScrollIndicator={false}>
-            {renderSection2()}
-          </ScrollView>
-        </KeyboardAvoidingView>
-        <Toast ref={toast} position="bottom" />
-        <utils.Loader load={loader} />
+        <SafeAreaView style={styles.container2}>
+          <utils.AuthHeader props={props} />
+          <KeyboardAvoidingView style={{flex: 1}} enabled>
+            <ScrollView
+              style={{paddingHorizontal: 15}}
+              showsVerticalScrollIndicator={false}>
+              {renderSection2()}
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
       </ImageBackground>
-    </SafeAreaView>
+      <Toast ref={toast} position="bottom" />
+      <utils.Loader load={loader} />
+    </View>
   );
 }

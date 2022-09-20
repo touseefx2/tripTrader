@@ -8,7 +8,7 @@ import {
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.color.button1,
+    backgroundColor: theme.color.backgroundGreen,
   },
   container2: {
     flex: 1,
@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
   logo: {
     width: 90,
     height: 90,
-    resizeMode:"contain"
+    resizeMode: 'contain',
   },
   title1: {
     fontSize: 30,

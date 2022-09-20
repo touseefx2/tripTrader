@@ -65,7 +65,7 @@ export const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: theme.fonts.fontBold,
+    fontFamily: theme.fonts.fontBold,
     color: theme.color.backgroundGreenText,
     top: -2,
   },
@@ -717,89 +717,82 @@ export const styles = StyleSheet.create({
     elevation: 3,
   },
 
-
   modalContainer: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: 'rgba(0,0,0,0.5)',
     alignItems: 'center',
     justifyContent: 'center',
-    padding:20
- 
+    padding: 20,
   },
   modal: {
-    width:"90%",
-    alignSelf:"center",
+    width: '90%',
+    alignSelf: 'center',
 
-   padding:15,
- backgroundColor:theme.color.background,
-borderRadius:15,
-shadowColor: "#000",
-shadowOffset: {
-	width: 0,
-	height: 1,
-},
-shadowOpacity: 0.22,
-shadowRadius: 2.22,
+    padding: 15,
+    backgroundColor: theme.color.background,
+    borderRadius: 15,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
 
-elevation: 3,
+    elevation: 3,
   },
-  modalCross : {
-     
+  modalCross: {
     position: 'absolute',
-    top:17,
+    top: 17,
     right: 15,
   },
-  modalTitle:{
-    fontSize:19,
-    color:theme.color.title,
-     fontFamily:theme.fonts.fontBold,
-     alignSelf:"center",
-     textTransform:"capitalize"
+  modalTitle: {
+    fontSize: 19,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontBold,
+    alignSelf: 'center',
+    textTransform: 'capitalize',
   },
- modalImgContainer: {
+  modalImgContainer: {
     width: '100%',
     height: 220,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: theme.color.photoBorderColor,
-    marginTop:15
- 
+    marginTop: 15,
   },
   modalImg: {
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
-    borderRadius:8,
+    borderRadius: 8,
   },
   modalImageLoader: {
     width: '100%',
     height: '100%',
     borderRadius: 8,
   },
-  modalBottomContainer:{
-    marginTop:15
+  modalBottomContainer: {
+    marginTop: 15,
   },
-  modalBottomTitle:{
-    fontSize:12,
-    color:theme.color.subTitle,
-     fontWeight:theme.fonts.fontNormal,
-     alignSelf:"center",
+  modalBottomTitle: {
+    fontSize: 12,
+    color: theme.color.subTitle,
+    fontFamily: theme.fonts.fontNormal,
+    alignSelf: 'center',
   },
-  ButtonContainer:{
-    width:"100%",
-    height:50,
-    borderRadius:8,
-    alignItems:"center",
-    justifyContent:"center",
-    backgroundColor:"#B93B3B",
-    marginTop:10
+  ButtonContainer: {
+    width: '100%',
+    height: 50,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#B93B3B',
+    marginTop: 10,
   },
-  ButtonText:{
-    fontSize:15,
-    color:theme.color.buttonText,
-   fontWeight:theme.fonts.fontBold,
-  
-
+  ButtonText: {
+    fontSize: 15,
+    color: theme.color.buttonText,
+    fontFamily: theme.fonts.fontBold,
   },
- 
 });

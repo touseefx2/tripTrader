@@ -114,7 +114,7 @@ export const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: theme.fonts.fontBold,
+    fontFamily: theme.fonts.fontBold,
     color: theme.color.backgroundGreenText,
     top: -2,
   },

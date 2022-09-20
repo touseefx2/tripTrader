@@ -378,21 +378,24 @@ function ForgotPassword(props) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ImageBackground
         source={require('../../assets/images/background/img.png')}
         style={styles.container2}>
-        {renderHeader()}
-        <KeyboardAvoidingView style={{flex: 1}} enabled>
-          <ScrollView
-            style={{paddingHorizontal: 12}}
-            showsVerticalScrollIndicator={false}>
-            {renderSection2()}
-          </ScrollView>
-        </KeyboardAvoidingView>
+        <SafeAreaView style={styles.container2}>
+          <utils.AuthHeader props={props} />
+
+          <KeyboardAvoidingView style={{flex: 1}} enabled>
+            <ScrollView
+              style={{paddingHorizontal: 15}}
+              showsVerticalScrollIndicator={false}>
+              {renderSection2()}
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
       </ImageBackground>
       <Toast ref={toast} position="center" />
-      <utils.Loader load={loader} />
-    </SafeAreaView>
+      {Platform.OS == 'ios' && <utils.Loader load={loader} />}
+    </View>
   );
 }

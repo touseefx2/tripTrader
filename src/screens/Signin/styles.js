@@ -2,19 +2,23 @@ import {Platform, StyleSheet} from 'react-native';
 import theme from '../../theme/index';
 import {
   responsiveHeight,
+  responsiveScreenFontSize,
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
+
+let aph = theme.window.APPBAR_HEIGHT - (Platform.OS == 'ios' ? 20 : 0);
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.color.button1,
+    backgroundColor: theme.color.backgroundGreen,
   },
   container2: {
     flex: 1,
   },
+
   Header: {
-    marginTop: theme.window.APPBAR_HEIGHT,
+    marginTop: aph,
     width: '100%',
 
     alignItems: 'center',
@@ -25,7 +29,8 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.color.background,
     borderRadius: 15,
     marginBottom: 15,
-    padding: 18,
+    paddingHorizontal: 15,
+    paddingVertical: 20,
     marginTop: 30,
   },
   section2Title1: {
@@ -59,31 +64,24 @@ export const styles = StyleSheet.create({
     fontFamily: theme.fonts.titleFont,
     color: theme.color.buttonText,
     textTransform: 'uppercase',
-    lineHeight:20.9
+    lineHeight: 20.9,
   },
   BottomButton: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: theme.color.button1,
-    height: 50,
+    height: 59,
+    // height: responsiveHeight(8),
     borderRadius: 10,
     alignSelf: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-    elevation: 2,
     marginTop: 25,
   },
   buttonTextBottom: {
     color: theme.color.buttonText,
     fontSize: 16,
+    // fontSize: responsiveScreenFontSize(2.15),
     fontFamily: theme.fonts.fontBold,
-
     textTransform: 'capitalize',
   },
 
@@ -91,7 +89,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 30,
     justifyContent: 'center',
   },
   buttonTextBottomTtitle1: {
@@ -117,40 +115,40 @@ export const styles = StyleSheet.create({
   },
 
   errorMessageFieldContainer: {
-    marginTop: 4,
+    marginTop: 2,
   },
   errorMessageFieldText: {
     color: theme.color.fieldBordeError,
-    fontSize: 11,
+    fontSize: 10,
     fontFamily: theme.fonts.fontNormal,
   },
 
-  Field: {marginTop: 12},
+  Field: {marginTop: 15},
   FieldTitle1: {
-    color: theme.color.titleGreen,
+    color: theme.color.titleGreenForm,
     fontSize: 12.5,
     fontFamily: theme.fonts.fontBold,
     textTransform: 'capitalize',
   },
   FieldInput: {
     width: '100%',
-    borderWidth: 0.5,
+    borderWidth: 1,
+
     height: 45,
     borderRadius: 8,
     paddingHorizontal: 10,
-    marginTop: 5,
   },
-  Field2: {marginTop: 20, flexDirection: 'row', alignItems: 'center'},
+  Field2: {marginTop: 25, flexDirection: 'row', alignItems: 'center'},
   Field2Title: {
-    color: theme.color.titleGreen,
+    color: theme.color.titleGreenForm,
     fontSize: 13.5,
     fontFamily: theme.fonts.fontMedium,
     textTransform: 'capitalize',
     marginLeft: 10,
   },
-  Field3: {marginTop: 20, alignItems: 'center', justifyContent: 'center'},
+  Field3: {marginTop: 25, alignItems: 'center', justifyContent: 'center'},
   Field3Title1: {
-    color: theme.color.titleGreen,
+    color: theme.color.titleGreenForm,
     fontSize: 13.5,
     fontFamily: theme.fonts.fontBold,
     textTransform: 'capitalize',
@@ -158,18 +156,19 @@ export const styles = StyleSheet.create({
   },
 
   Field31: {
-    marginTop: 20,
+    marginTop: 25,
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 4,
   },
   Field31Title1: {
-    color: theme.color.titleGreen,
+    color: theme.color.titleGreenForm,
     fontSize: 13.5,
     fontFamily: theme.fonts.fontNormal,
   },
 
   Field31Title2: {
-    color: theme.color.titleGreen,
+    color: theme.color.titleGreenForm,
     fontSize: 13.5,
     fontFamily: theme.fonts.fontBold,
     textDecorationLine: 'underline',

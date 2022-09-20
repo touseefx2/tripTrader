@@ -25,7 +25,7 @@ export default HomeStack = () => {
         headerShown: false,
         drawerStyle: {
           backgroundColor: theme.color.background,
-          width: theme.window.Width - 80,
+          width: theme.window.Width - 50,
           height: theme.window.Height,
         },
         drawerLabelStyle: {
@@ -46,17 +46,18 @@ export default HomeStack = () => {
         component={InboxStack}
         options={icon.Inboxicon}
       />
+
+      <Drawer.Screen
+        name="NewTrip"
+        component={screens.NewTrips}
+        options={icon.NewTripicon}
+      />
       <Drawer.Screen
         name="MyProfile"
         component={ProfileStack}
         options={icon.MyProfileicon}
       />
       {/* sec */}
-      <Drawer.Screen
-        name="NewTrip"
-        component={screens.NewTrips}
-        options={icon.NewTripicon}
-      />
       <Drawer.Screen
         name="TradeOffers"
         component={TradeOfferStack}
@@ -75,15 +76,17 @@ export default HomeStack = () => {
       {/* sctn */}
 
       <Drawer.Screen
-        name="LatestNews"
-        component={screens.LatestNews}
-        options={icon.LatestNewsicon}
-      />
-      <Drawer.Screen
         name="Support"
         component={screens.Support}
         options={icon.Supporticon}
       />
+
+      <Drawer.Screen
+        name="LatestNews"
+        component={screens.LatestNews}
+        options={icon.LatestNewsicon}
+      />
+
       <Drawer.Screen
         name="PrivacyPolicy"
         component={screens.PrivacyPolicy}
@@ -259,7 +262,7 @@ let ProfileStack = () => {
           });
         }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="Notifications"
         component={screens.Notifications}
         options={props => {

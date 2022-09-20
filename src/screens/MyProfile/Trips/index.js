@@ -27,7 +27,7 @@ import NetInfo from '@react-native-community/netinfo';
 import theme from '../../../theme';
 import utils from '../../../utils/index';
 import moment from 'moment';
- 
+
 export default observer(Trips);
 
 function Trips(props) {
@@ -74,16 +74,16 @@ function Trips(props) {
             title: 'Hunting Trip',
             offer: '3 Day Central N.C Whitetail Hunting',
             for_trade: 'Florida Alligator Hunt or an Oseola Turkey Hunt',
-            availablity: myFutureDate,
-            status:"pending"
+            availablity: new Date(),
+            status: 'pending',
           },
           {
             _id: 32,
             title: 'Fishing Trip',
             offer: 'Whole Day Blue Catfish Jugging',
             for_trade: 'Open to Offers',
-            availablity: myFutureDate,
-            status:"suspended"
+            availablity: new Date(),
+            status: 'suspended',
           },
         ];
         store.User.attemptToGetPhotos(
@@ -104,9 +104,7 @@ function Trips(props) {
     }
     return () => {};
   }, [getDataOnce, internet]);
- 
 
-  
   const renderShowRes = () => {
     return (
       <View style={{marginVertical: 5}}>
@@ -161,7 +159,7 @@ function Trips(props) {
   };
 
   const renderShowData = ({item, index}) => {
-    let title=item.title || ""
+    let title = item.title || '';
     return (
       <Pressable
         style={({pressed}) => [
@@ -174,7 +172,6 @@ function Trips(props) {
     );
   };
 
-  
   return (
     <SafeAreaView style={styles.container}>
       {/* {data.length > 0 && renderShowRes()} */}
@@ -195,7 +192,6 @@ function Trips(props) {
         {data.length >= 0 && (
           <FlatList
             showsVerticalScrollIndicator={false}
-           
             initialNumToRender={18}
             maxToRenderPerBatch={6}
             data={data}
@@ -206,8 +202,6 @@ function Trips(props) {
         )}
       </ScrollView>
       {!getDataOnce && loader && renderLoader()}
-     
-    
     </SafeAreaView>
   );
 }

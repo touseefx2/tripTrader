@@ -1,14 +1,14 @@
-import {StyleSheet} from 'react-native';
+import {Platform, StyleSheet} from 'react-native';
 import theme from '../../theme/index';
 import {
   responsiveHeight,
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
-
+let aph = theme.window.APPBAR_HEIGHT;
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.color.backgroundConatiner,
+    backgroundColor: theme.color.backgroundGreen,
   },
   headerConatainer: {
     backgroundColor: theme.color.backgroundGreen,
@@ -23,6 +23,7 @@ export const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.6,
     shadowRadius: 1,
+    marginTop: Platform.OS == 'ios' ? aph : 0,
   },
   locContainer: {
     width: '70%',
@@ -114,7 +115,7 @@ export const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: theme.fonts.fontBold,
+    fontFamily: theme.fonts.fontBold,
     color: theme.color.backgroundGreenText,
     top: -2,
   },

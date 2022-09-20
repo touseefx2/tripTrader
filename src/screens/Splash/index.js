@@ -17,6 +17,7 @@ import {create} from 'mobx-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import theme from '../../theme';
 import ConnectivityManager from 'react-native-connectivity-status';
+import utils from '../../utils/index';
 
 const getToken = async () => {
   let tok = await messaging().getToken();
@@ -81,25 +82,31 @@ function Splash(props) {
   // };
 
   // render
+
+  const StatusBarIos = ({backgroundColor, ...props}) => (
+    <View style={[{backgroundColor, height: theme.window.STATUSBAR_HEIGHT}]}>
+      <SafeAreaView>
+        <StatusBar translucent backgroundColor={backgroundColor} {...props} />
+      </SafeAreaView>
+    </View>
+  );
+
   const renderStatusBar = () => {
     return (
       <>
         <StatusBar
-          translucent={Platform.OS == 'android' ? true : false}
-          backgroundColor={
-            Platform.OS == 'android'
-              ? 'transparent'
-              : theme.color.backgroundGreen
-          }
-          barStyle={Platform.OS == 'android' ? 'light-content' : 'dark-content'}
+          translucent={true}
+          backgroundColor={'transparent'}
+          barStyle={'light-content'}
         />
       </>
     );
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {renderStatusBar()}
+
       <ImageBackground
         source={require('../../assets/images/background/imgS.png')}
         style={styles.container2}>
@@ -110,6 +117,6 @@ function Splash(props) {
 
         <Text style={styles.title1}>{store.General.AppName}</Text>
       </ImageBackground>
-    </SafeAreaView>
+    </View>
   );
 }

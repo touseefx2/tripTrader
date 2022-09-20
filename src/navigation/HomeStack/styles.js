@@ -41,7 +41,7 @@ const Inboxicon = {
 };
 
 const NewTripicon = {
-  drawerLabel: 'Create Trip',
+  drawerLabel: 'New Trip',
   // headerShown: false,
   // swipeEnabled: true,
   // unmountOnBlur: true,

@@ -503,6 +503,7 @@ function CustomDrawerContent(props) {
         {renderSection2()}
       </DrawerContentScrollView>
       {renderBottom()}
+      {Platform.OS == 'ios' && <utils.navBarHeight />}
     </View>
   );
 }
@@ -511,7 +512,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.color.backgroundGreen,
-    paddingVertical: 25,
+    paddingTop: Platform.OS == 'ios' ? theme.window.STATUSBAR_HEIGHT + 12 : 25,
+    paddingBottom: 25,
   },
   drwaerContentContainer: {
     flex: 1,
@@ -523,9 +525,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   Section1Text: {
-    fontSize: 18,
+    fontSize: 17,
     color: theme.color.buttonText,
-    fontFamily: theme.fonts.fontBold,
+    fontFamily: theme.fonts.titleFont,
 
     textTransform: 'uppercase',
   },
@@ -589,7 +591,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 60 / 2,
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: theme.color.photoBorderColor,
     alignItems: 'center',
     justifyContent: 'center',

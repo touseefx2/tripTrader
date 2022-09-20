@@ -40,11 +40,9 @@ function Photos(props) {
   let loader = store.User.photosLoader;
   let mloader = store.User.mLoader;
 
-
   const [pvm, setpvm] = useState(false);
   const [pv, setpv] = useState('');
   const [si, setsi] = useState('');
-
 
   const [deletePObj, setdeletePObj] = useState(false);
   const [deleteModal, setdeleteModal] = useState(false);
@@ -89,19 +87,17 @@ function Photos(props) {
     });
   };
 
-  
   useEffect(() => {
     if (!getDataOnce && internet) {
-        getDbData();
+      getDbData();
     }
     return () => {};
   }, [getDataOnce, internet]);
 
-  
   const deletePhoto = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToDeletePhotos(deletePObj,closeDeleteModal);
+        store.User.attemptToDeletePhotos(deletePObj, closeDeleteModal);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -109,9 +105,9 @@ function Photos(props) {
     });
   };
 
-  const photoClick = (c,i) => {
+  const photoClick = (c, i) => {
     setpv(c);
-    setsi(i)
+    setsi(i);
     setpvm(true);
   };
 
@@ -204,14 +200,10 @@ function Photos(props) {
           {opacity: pressed ? 0.9 : 1.0},
           styles.ProfileImgContainer,
         ]}
-        onPress={() => photoClick(photo,index)}>
+        onPress={() => photoClick(photo, index)}>
         <ProgressiveFastImage
-      
           style={styles.ProfileImg}
-          source={
-            
-          {uri: photo}
-          }
+          source={{uri: photo}}
           loadingImageStyle={styles.imageLoader}
           loadingSource={require('../../../assets/images/imgLoad/img.jpeg')}
           blurRadius={3}
@@ -330,7 +322,6 @@ function Photos(props) {
     );
   };
 
- 
   return (
     <SafeAreaView style={styles.container}>
       {/* {data.length > 0 && renderShowRes()} */}
@@ -359,7 +350,6 @@ function Photos(props) {
             extraData={data}
             renderItem={renderShowData}
             keyExtractor={(item, index) => index.toString()}
-            
           />
         )}
       </ScrollView>

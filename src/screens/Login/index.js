@@ -101,7 +101,7 @@ function Login(props) {
             style={[
               styles.BottomButton,
               {
-                backgroundColor: "transparent",
+                backgroundColor: 'transparent',
                 borderWidth: 1,
                 borderColor: theme.color.buttonText,
                 marginTop: 12,
@@ -152,36 +152,32 @@ function Login(props) {
     return (
       <>
         <StatusBar
-          translucent={Platform.OS == 'android' ? true : false}
-          backgroundColor={
-            Platform.OS == 'android'
-              ? 'transparent'
-              : theme.color.backgroundGreen
-          }
-          barStyle={Platform.OS == 'android' ? 'light-content' : 'dark-content'}
+          translucent={true}
+          backgroundColor={'transparent'}
+          barStyle={'light-content'}
         />
       </>
     );
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {renderStatusBar()}
       <ImageBackground
         source={require('../../assets/images/background/img.png')}
         style={styles.container2}>
- 
+        <SafeAreaView style={styles.container2}>
+          <ScrollView
+            style={{flex: 1, paddingHorizontal: 24}}
+            showsVerticalScrollIndicator={false}>
+            {renderSection1()}
+          </ScrollView>
 
-        <ScrollView
-          style={{flex: 1, paddingHorizontal: 24}}
-          showsVerticalScrollIndicator={false}>
-          {renderSection1()}
-        </ScrollView>
-
-        {renderSection3()}
+          {renderSection3()}
+        </SafeAreaView>
 
         <Toast ref={toast} position="center" />
       </ImageBackground>
-    </SafeAreaView>
+    </View>
   );
 }

@@ -25,7 +25,7 @@ const title = '#000000';
 const titleGreen = '#3C6B49';
 const titleGreenForm = '#1E3625';
 
-const subTitleAuth="#101B10"
+const subTitleAuth = '#101B10';
 
 const subTitle = 'rgba(17, 17, 17, 0.5)';
 const subTitleLight = 'rgba(0, 0, 0, 0.3)';
@@ -35,7 +35,7 @@ const inactiveTabText = 'rgba(17, 17, 17, 0.5)';
 const button1 = '#3C6B49';
 const button1Disable = ' #3C6B49';
 const button2 = '#F2F3F1';
-const buttonText = 'white';
+const buttonText = '#FAFAFA';
 const buttonTextGreen = '#1E3625';
 const cartbutton = '#f27f33';
 const cartbuttonText = 'white';
@@ -64,8 +64,8 @@ const enableField = 'rgba(196, 196, 196, 0.2)';
 const disableBack = '#E9E9E9';
 const disableBackDark = '#d1d1d1';
 
-const fieldBorder = 'rgba(0, 0, 0, 0.3)';
-const fieldBordeError = 'red';
+const fieldBorder = '#D8E1DB';
+const fieldBordeError = '#B93B3B';
 
 const ntfctnClr = '#FCBC17';
 
@@ -122,5 +122,5 @@ export default color = {
   fieldBc,
   inactiveTabText,
   disableSmallButton,
-  button1Disable
+  button1Disable,
 };

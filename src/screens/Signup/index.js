@@ -25,6 +25,7 @@ import utils from '../../utils/index';
 import theme from '../../theme';
 import {
   responsiveHeight,
+  responsiveScreenFontSize,
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
 import Toast from 'react-native-easy-toast';
@@ -1038,7 +1039,10 @@ function Signup(props) {
               setisPhoto1Upload(3);
             }}
             activeOpacity={0.7}
-            style={[styles.BottomButton, {marginTop: 0, width: '60%'}]}>
+            style={[
+              styles.BottomButton,
+              {marginTop: 0, width: '60%', height: 59},
+            ]}>
             <Text style={[styles.buttonTextBottom, {fontSize: 14}]}>
               choose {plan.name} plan
             </Text>
@@ -1071,7 +1075,7 @@ function Signup(props) {
               {
                 marginTop: 12,
 
-                backgroundColor: theme.color.background,
+                backgroundColor: theme.color.button2,
                 // borderWidth: 0.5,
                 borderColor: theme.color.subTitle,
               },
@@ -1082,7 +1086,7 @@ function Signup(props) {
                 {
                   color: theme.color.subTitle,
                   fontFamily: theme.fonts.fontBold,
-                  textTransform:"none"
+                  textTransform: 'none',
                 },
               ]}>
               Go to My Profile
@@ -1474,7 +1478,11 @@ function Signup(props) {
                 <Text
                   style={[
                     styles.section2bottomTitle,
-                    {marginTop: 0, marginLeft: 25},
+                    {
+                      marginTop: 0,
+                      marginLeft: 25,
+                      fontSize: 14,
+                    },
                   ]}>
                   Try for free
                 </Text>
@@ -1522,8 +1530,6 @@ function Signup(props) {
                 style={{
                   flexDirection: 'row',
                   width: '100%',
-
-                  justifyContent: 'space-between',
                 }}>
                 <Text style={styles.paymenttitle1}>total due Now :</Text>
                 {!isPromoApply && (
@@ -1532,7 +1538,8 @@ function Signup(props) {
                       styles.paymenttitle1,
                       {
                         color: theme.color.title,
-                        width: '69%',
+                        width: '65%',
+                        marginLeft: 5,
                         textTransform: 'none',
                       },
                     ]}>
@@ -1545,11 +1552,13 @@ function Signup(props) {
                 )}
 
                 {isPromoApply && (
-                  <View style={{flexDirection: 'row', width: '69%'}}>
+                  <View
+                    style={{flexDirection: 'row', marginLeft: 5, width: '65%'}}>
                     <Text
                       style={{
                         color: theme.color.title,
                         fontSize: 11,
+
                         fontFamily: theme.fonts.fontBold,
                         textTransform: 'capitalize',
                         textDecorationLine: 'line-through',
@@ -1619,7 +1628,7 @@ function Signup(props) {
                       borderColor: Emptycfn
                         ? theme.color.fieldBordeError
                         : theme.color.fieldBorder,
-                      fontSize: 13,
+                      fontSize: 12,
                       color: 'black',
                     },
                   ]}
@@ -1661,6 +1670,8 @@ function Signup(props) {
                           alignItems: 'center',
                           justifyContent: 'space-between',
                           paddingHorizontal: 0,
+                          borderWidth: 1,
+                          borderColor: theme.color.fieldBorder,
                         },
                       ]}>
                       <TextInput
@@ -1668,8 +1679,8 @@ function Signup(props) {
                         value={pc}
                         onChangeText={enterpc}
                         style={{
-                          borderColor: theme.color.fieldBorder,
                           fontSize: 13,
+
                           color: 'black',
                           width: '70%',
                           height: '100%',
@@ -1761,9 +1772,9 @@ function Signup(props) {
               )}
 
               <View style={{marginTop: 20}}>
-                <View style={styles.Field2}>
+                <View
+                  style={[styles.Field2, {justifyContent: 'space-between'}]}>
                   <TouchableOpacity
-                    style={{marginRight: 10}}
                     activeOpacity={0.5}
                     onPress={() => {
                       setiscTerms(!iscTerms);
@@ -1790,7 +1801,7 @@ function Signup(props) {
                     )}
                   </TouchableOpacity>
 
-                  <View>
+                  <View style={{width: '90%'}}>
                     <TouchableOpacity
                       activeOpacity={0.7}
                       onPress={TermsnCndtnClickCard}>
@@ -1805,9 +1816,9 @@ function Signup(props) {
                       and understand that upon clicking “Subscribe” below, I
                       will be charged{' '}
                       {plan.name == 'annual'
-                        ? `$${totalAnually}`
+                        ? `$${toFixed(totalAnually, 2)}`
                         : `$${monthly}`}{' '}
-                      annually.
+                      {plan.name}.
                     </Text>
                   </View>
                 </View>
@@ -1816,6 +1827,7 @@ function Signup(props) {
             </View>
 
             {renderButtonSubscribe()}
+
             <TouchableOpacity activeOpacity={0.7} onPress={changePlan}>
               <Text style={styles.section2bottomTitle}>Cancel and go back</Text>
             </TouchableOpacity>
@@ -1849,7 +1861,11 @@ function Signup(props) {
                 Your account is ready.
               </Text>
 
-              <Text style={[styles.section2LogoTitle2c,{color: theme.color.subTitleAuth}]}>
+              <Text
+                style={[
+                  styles.section2LogoTitle2c,
+                  {color: theme.color.subTitleAuth},
+                ]}>
                 Good luck on your trips and trades!
               </Text>
             </View>
@@ -1867,13 +1883,9 @@ function Signup(props) {
       <>
         {!pvm && (
           <StatusBar
-            translucent={Platform.OS == 'android' ? true : false}
-            backgroundColor={
-              Platform.OS == 'android' ? 'transparent' : theme.color.button1
-            }
-            barStyle={
-              Platform.OS == 'android' ? 'light-content' : 'dark-content'
-            }
+            translucent={true}
+            backgroundColor={'transparent'}
+            barStyle={'light-content'}
           />
         )}
 
@@ -1973,26 +1985,24 @@ function Signup(props) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ImageBackground
         source={require('../../assets/images/background/img.png')}
         style={styles.container2}>
-        {renderHeader()}
-        <KeyboardAvoidingView style={{flex: 1}} enabled>
-          <ScrollView
-            style={{paddingHorizontal: 12}}
-            showsVerticalScrollIndicator={false}>
-            {!isUserCreate && renderSection2()}
-            {isUserCreate && renderSection2User()}
-          </ScrollView>
-        </KeyboardAvoidingView>
+        <SafeAreaView style={styles.container2}>
+          <utils.AuthHeader props={props} />
+          <KeyboardAvoidingView style={{flex: 1}} enabled>
+            <ScrollView
+              style={{paddingHorizontal: 15}}
+              showsVerticalScrollIndicator={false}>
+              {!isUserCreate && renderSection2()}
+
+              {isUserCreate && renderSection2User()}
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
       </ImageBackground>
 
-      <Toast ref={toast} position="center" />
-      <utils.Loader load={loader} />
-
-      {renderStatusBar()}
-      {renderDateShowModal()}
       {pvm && (
         <utils.FullimageModal
           show={pvm}
@@ -2001,6 +2011,11 @@ function Signup(props) {
           setpv={c => setpv(c)}
         />
       )}
-    </SafeAreaView>
+      <Toast ref={toast} position="center" />
+      <utils.Loader load={loader} />
+
+      {renderStatusBar()}
+      {renderDateShowModal()}
+    </View>
   );
 }
