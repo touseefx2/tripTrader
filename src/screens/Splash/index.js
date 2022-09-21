@@ -115,7 +115,7 @@ function Splash(props) {
           source={require('../../assets/images/logo/img.png')}
         />
 
-        <Text style={styles.title1}>{store.General.AppName}</Text>
+        {/* <Text style={styles.title1}>{store.General.AppName}</Text> */}
       </ImageBackground>
     </View>
   );

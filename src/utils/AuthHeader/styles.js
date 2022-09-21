@@ -6,7 +6,7 @@ import {
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
 
-let aph = theme.window.APPBAR_HEIGHT - (Platform.OS == 'ios' ? 20 : 0);
+let aph = theme.window.APPBAR_HEIGHT - (Platform.OS == 'ios' ? 25 : 5);
 
 export const styles = StyleSheet.create({
   Header: {

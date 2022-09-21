@@ -221,13 +221,7 @@ export const styles = StyleSheet.create({
     height: 55,
     resizeMode: 'contain',
   },
-  title1: {
-    fontSize: 16,
-    fontFamily: theme.fonts.fontBold,
-    color: theme.color.buttonText,
-    textTransform: 'uppercase',
-    marginTop: 5,
-  },
+
   BottomButton: {
     width: '100%',
     alignItems: 'center',
@@ -528,23 +522,6 @@ export const styles = StyleSheet.create({
     textTransform: 'capitalize',
   },
 
-  boxContainer: {
-    width: '99%',
-    alignSelf: 'center',
-    borderRadius: 10,
-    backgroundColor: theme.color.background,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-
-    elevation: 3,
-    paddingHorizontal: 9,
-    paddingVertical: 12,
-  },
   boxSection1: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -794,5 +771,76 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     color: theme.color.buttonText,
     fontFamily: theme.fonts.fontBold,
+  },
+  boxContainer: {
+    width: '99%',
+    alignSelf: 'center',
+    borderRadius: 10,
+    backgroundColor: theme.color.background,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+    padding: 12,
+    marginBottom: 15,
+  },
+  title1Container: {
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+  },
+  title1: {
+    fontSize: 16,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontBold,
+    lineHeight: 22.8,
+  },
+  title11: {
+    fontSize: 13,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontMedium,
+    lineHeight: 22.8,
+    textTransform: 'capitalize',
+  },
+  field: {
+    marginTop: 12,
+    width: '100%',
+  },
+  filedTitle: {
+    fontSize: 12,
+    color: theme.color.subTitleLight,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'uppercase',
+    lineHeight: 17.2,
+  },
+  filedTitle2: {
+    fontSize: 13,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontMedium,
+    lineHeight: 18.6,
+  },
+  fieldContainer: {
+    marginTop: 12,
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  buttonContainer: {
+    borderRadius: 8,
+    backgroundColor: theme.color.button2,
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+  },
+  buttonText: {
+    fontSize: 13,
+    color: '#30563A',
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
   },
 });

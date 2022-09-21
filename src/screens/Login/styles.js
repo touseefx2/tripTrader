@@ -7,7 +7,7 @@ import {
   responsiveScreenFontSize,
 } from 'react-native-responsive-dimensions';
 
-let aph = theme.window.APPBAR_HEIGHT - (Platform.OS == 'ios' ? 20 : 0);
+let aph = theme.window.APPBAR_HEIGHT - (Platform.OS == 'ios' ? 25 : 5);
 
 export const styles = StyleSheet.create({
   container: {
@@ -19,19 +19,18 @@ export const styles = StyleSheet.create({
   },
   section1: {
     marginTop: aph,
-
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
   section2: {
     marginBottom: 40,
     width: '96%',
     alignSelf: 'center',
+
     // backgroundColor: 'red',
   },
   section2Title1: {
     color: theme.color.buttonText,
-    fontSize: responsiveScreenFontSize(4.6),
+    fontSize: responsiveFontSize(4.6),
+
     fontFamily: theme.fonts.fontBold,
     letterSpacing: -1,
     lineHeight: 43.2,
@@ -39,13 +38,14 @@ export const styles = StyleSheet.create({
   },
   section2Title2: {
     color: '#FAFAFA',
-    fontSize: responsiveScreenFontSize(2),
+
+    fontSize: responsiveFontSize(2),
     fontFamily: theme.fonts.fontNormal,
     lineHeight: 23.8,
   },
   section3: {
-    paddingHorizontal: 24,
-    paddingBottom: responsiveHeight(3),
+    paddingHorizontal: 20,
+    paddingBottom: Platform.OS == 'android' ? responsiveHeight(4.5) : 10,
     paddingTop: 10,
     // backgroundColor: 'red',
   },
@@ -56,24 +56,28 @@ export const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   title1: {
-    fontSize: responsiveScreenFontSize(2.95),
+    fontSize: responsiveFontSize(2.7),
     fontFamily: theme.fonts.titleFont,
     color: theme.color.buttonText,
     textTransform: 'uppercase',
     lineHeight: 28.73,
-    marginTop: 5,
+    marginTop: 2,
+
+    marginLeft: 5,
   },
   BottomButton: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: theme.color.button1,
-    height: 64,
+
+    height: responsiveHeight(8.4),
     borderRadius: 10,
     alignSelf: 'center',
   },
   buttonTextBottom: {
     color: theme.color.buttonTextGreen,
+
     fontSize: responsiveScreenFontSize(2.1),
     fontFamily: theme.fonts.fontBold,
 
@@ -89,13 +93,14 @@ export const styles = StyleSheet.create({
   },
   buttonTextBottomTtitle1: {
     color: theme.color.buttonText,
-    fontSize: 14,
+
+    fontSize: responsiveFontSize(1.85),
     fontFamily: theme.fonts.fontNormal,
     opacity: 0.7,
   },
   buttonTextBottomTtitle2: {
     color: theme.color.buttonText,
-    fontSize: 14,
+    fontSize: responsiveFontSize(1.85),
     fontFamily: theme.fonts.fontBold,
     marginLeft: 5,
     textDecorationLine: 'underline',

@@ -61,6 +61,17 @@ class user {
     }, 1000);
   };
 
+  @action attemptToGetTrips = (uid, setgetdata, setrfrsh, dt) => {
+    console.warn('getTripsData : ', 'true');
+    this.settripLoader(true);
+    setTimeout(() => {
+      this.settripLoader(false);
+      setgetdata(true);
+      setrfrsh(false);
+      this.settrips(dt);
+    }, 1000);
+  };
+
   @action attemptToGetPhotos = (uid, setgetdata, setrfrsh, dt) => {
     console.warn('getPhotosData : ', 'true');
     this.setphotosLoader(true);
@@ -73,60 +84,60 @@ class user {
   };
 
   //modal actions
-  @action attemptToDeletePhotos = (obj,suc) => {
+  @action attemptToDeletePhotos = (obj, suc) => {
     console.warn('deletePhoto  : ', 'true');
     this.setmLoader(true);
     setTimeout(() => {
       this.setmLoader(false);
-       delete this.photos.splice(obj.i,1);
-      
+      delete this.photos.splice(obj.i, 1);
+
       suc();
     }, 1000);
   };
-  @action attemptToReplyComment = (obj,cmnt,suc) => {
+  @action attemptToReplyComment = (obj, cmnt, suc) => {
     console.warn('reply comment  : ', 'true');
     this.setmLoader(true);
     setTimeout(() => {
       this.setmLoader(false);
-      let i=obj.i;
-      let  reply= {
-        user:this.user,
-        comment:cmnt,
+      let i = obj.i;
+      let reply = {
+        user: this.user,
+        comment: cmnt,
         created_at: new Date(),
-      }
-       this.review[i].reply=reply;
+      };
+      this.review[i].reply = reply;
       suc();
     }, 1000);
   };
-  @action attemptToEditComment = (obj,cmnt,suc) => {
+  @action attemptToEditComment = (obj, cmnt, suc) => {
     console.warn('edit comment  : ', 'true');
     this.setmLoader(true);
     setTimeout(() => {
       this.setmLoader(false);
-      let i=obj.i;
-       
-       this.review[i].reply.comment=cmnt;
+      let i = obj.i;
+
+      this.review[i].reply.comment = cmnt;
       suc();
     }, 1000);
   };
-  @action attemptToDeleteComment = (obj,suc) => {
+  @action attemptToDeleteComment = (obj, suc) => {
     console.warn('delete comment  : ', 'true');
     this.setmLoader(true);
     setTimeout(() => {
       this.setmLoader(false);
-      let i=obj.i;
-     
-      delete this.review[i].reply
+      let i = obj.i;
+
+      delete this.review[i].reply;
       suc();
     }, 1000);
   };
-  @action attemptToDisputeComment= (obj,suc) => {
+  @action attemptToDisputeComment = (obj, suc) => {
     console.warn('delete comment  : ', 'true');
     this.setmLoader(true);
     setTimeout(() => {
       this.setmLoader(false);
-      let i=obj.i;
-     this.review[i].dispute={created_at:new Date()};
+      let i = obj.i;
+      this.review[i].dispute = {created_at: new Date()};
       suc();
     }, 1000);
   };
@@ -733,7 +744,7 @@ class user {
         pswd: 'aaaaaaaa',
         phone: '',
         avg_rating: 0,
-        total_reviews: 0
+        total_reviews: 0,
       };
       let token = '';
 
@@ -988,7 +999,7 @@ class user {
     // }
   }
 
-  attemptToUploadImage2(imgArr, seterror, sp) {
+  attemptToUploadImage2(imgArr, seterror, sp, cpm) {
     this.setregLoader(true);
     setTimeout(() => {
       let body = {};
@@ -1004,7 +1015,7 @@ class user {
         };
       }
 
-      this.updateUser2(body, seterror, sp);
+      this.updateUser2(body, seterror, sp, cpm);
     }, 2000);
 
     // if (imgArr.length > 0) {
@@ -1114,7 +1125,7 @@ class user {
   }
 
   @action.bound
-  updateUser2(body, seterror, sp) {
+  updateUser2(body, seterror, sp, cpm) {
     console.warn('Update user body : ', body);
 
     this.setregLoader(false);
@@ -1122,7 +1133,7 @@ class user {
     let myObject = {...this.user, ...body};
 
     this.setUser(myObject);
-
+    cpm();
     sp(false);
     // hitApi('user/' + this.user._id, 'put', body, this.authToken)
     //   ?.then((resp: any) => {

@@ -173,21 +173,17 @@ function Footer(props) {
 
 const styles = StyleSheet.create({
   footerContainer: {
-    backgroundColor: '#f7f7f7',
+    backgroundColor: theme.color.background,
     paddingHorizontal: 25,
     paddingVertical: 6,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 10,
-    // },
-    // shadowOpacity: 0.53,
-    // shadowRadius: 13.97,
-    elevation: 21,
+    shadowColor: '#000000',
+    shadowOffset: {width: 0, height: -0.5}, // change this for more shadow
+    shadowOpacity: 0.3,
+    elevation: 15,
   },
   iconContainer: {
     alignItems: 'center',

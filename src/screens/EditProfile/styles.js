@@ -8,6 +8,14 @@ import {
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: theme.color.backgroundGreen,
+  },
+  container2: {
+    flex: 1,
+    backgroundColor: theme.color.background,
+  },
+  container3: {
+    flex: 1,
     backgroundColor: theme.color.backgroundConatiner,
   },
   headerConatainer: {
@@ -116,26 +124,25 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: theme.fonts.fontBold,
     color: theme.color.backgroundGreenText,
-    top: -2,
   },
   profileSecConatiner: {
-    marginTop: 20,
+    marginTop: 15,
     alignSelf: 'center',
   },
   profileImageContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 104 / 2,
-    width: 104,
-    height: 104,
+    borderRadius: 100 / 2,
+    width: 100,
+    height: 100,
     borderWidth: 2,
     borderColor: theme.color.photoBorderColor,
   },
   ProfileImg: {
     width: '100%',
     height: '100%',
-    resizeMode: 'contain',
-    borderRadius: 104 / 2,
+
+    borderRadius: 100 / 2,
   },
   changeImgContainer: {
     position: 'absolute',

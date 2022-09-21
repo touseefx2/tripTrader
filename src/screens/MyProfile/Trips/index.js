@@ -64,17 +64,13 @@ function Trips(props) {
   const getDbData = c => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        var myCurrentDate = new Date();
-        var myFutureDate = new Date(myCurrentDate);
-        myFutureDate.setDate(myFutureDate.getDate() + 3);
-
         const dt = [
           {
             _id: 31,
             title: 'Hunting Trip',
             offer: '3 Day Central N.C Whitetail Hunting',
             for_trade: 'Florida Alligator Hunt or an Oseola Turkey Hunt',
-            availablity: new Date(),
+            availability: new Date(),
             status: 'pending',
           },
           {
@@ -82,11 +78,11 @@ function Trips(props) {
             title: 'Fishing Trip',
             offer: 'Whole Day Blue Catfish Jugging',
             for_trade: 'Open to Offers',
-            availablity: new Date(),
+            availability: new Date(),
             status: 'suspended',
           },
         ];
-        store.User.attemptToGetPhotos(
+        store.User.attemptToGetTrips(
           user._id,
           setGetDataOnce,
           setrefeshing,
@@ -158,16 +154,119 @@ function Trips(props) {
     );
   };
 
+  const formatDate = date => {
+    var dd = moment(date).format('MMM DD, YYYY');
+    return dd;
+  };
+
   const renderShowData = ({item, index}) => {
     let title = item.title || '';
+    let offer = item.offer || '';
+    let trade = item.for_trade || '';
+    let availability = item.availability || '';
+    let status = item.status || '';
+    let c = status == 'suspended' ? true : false;
     return (
       <Pressable
         style={({pressed}) => [
-          {opacity: pressed ? 0.9 : 1.0},
-          styles.ProfileImgContainer,
+          {opacity: pressed ? 0.8 : 1.0},
+          styles.boxContainer,
         ]}
         onPress={() => {}}>
-        <Text>{title}</Text>
+        <Text
+          style={[
+            styles.title1,
+            {color: !c ? theme.color.title : theme.color.subTitle},
+          ]}>
+          {title}
+          {c && (
+            <Text style={styles.title11}>
+              {'  '}({status})
+            </Text>
+          )}
+        </Text>
+
+        <View style={styles.field}>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={styles.filedTitle}>
+            Offering
+          </Text>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={[
+              styles.filedTitle2,
+              {color: !c ? theme.color.title : theme.color.subTitle},
+            ]}>
+            {offer}
+          </Text>
+        </View>
+
+        <View style={styles.field}>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={styles.filedTitle}>
+            for trade
+          </Text>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={[
+              styles.filedTitle2,
+              {color: !c ? theme.color.title : theme.color.subTitle},
+            ]}>
+            {trade}
+          </Text>
+        </View>
+
+        <View style={styles.field}>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={styles.filedTitle}>
+            TRIP AVAILABILITY
+          </Text>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={[
+              styles.filedTitle2,
+              {color: !c ? theme.color.title : theme.color.subTitle},
+            ]}>
+            {formatDate(availability)}
+          </Text>
+        </View>
+
+        {/* <View style={styles.fieldContainer}>
+          <View style={{width: '50%'}}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={styles.filedTitle}>
+              TRIP AVAILABILITY
+            </Text>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={[
+                styles.filedTitle2,
+                {color: !c ? theme.color.title : theme.color.subTitle},
+              ]}>
+              {formatDate(availability)}
+            </Text>
+          </View>
+          <Pressable
+            style={({pressed}) => [
+              {opacity: pressed ? 0.9 : 1.0},
+              styles.buttonContainer,
+            ]}
+            onPress={() => {}}>
+            <Text style={styles.buttonText}>Edit Trip</Text>
+          </Pressable>
+        </View> */}
       </Pressable>
     );
   };

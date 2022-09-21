@@ -8,6 +8,14 @@ import {
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: theme.color.backgroundGreen,
+  },
+  container2: {
+    flex: 1,
+    backgroundColor: theme.color.background,
+  },
+  container3: {
+    flex: 1,
     backgroundColor: theme.color.backgroundConatiner,
   },
   headerConatainer: {
@@ -119,7 +127,7 @@ export const styles = StyleSheet.create({
     top: -2,
   },
   profileSecConatiner: {
-    marginTop: 55,
+    marginTop: 60,
     // height: 140,
     paddingBottom: 10,
     width: '100%',
@@ -184,7 +192,7 @@ export const styles = StyleSheet.create({
   ProfileImg: {
     width: '100%',
     height: '100%',
-    resizeMode: 'contain',
+
     borderRadius: 100 / 2,
   },
   changeImgContainer: {
@@ -497,7 +505,7 @@ export const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    resizeMode: 'contain',
+
     borderWidth: 2,
     borderColor: theme.color.photoBorderColor,
   },
@@ -505,7 +513,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 110 / 2,
-    resizeMode: 'contain',
+
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -583,5 +591,9 @@ export const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: theme.fonts.fontBold,
     textTransform: 'capitalize',
+  },
+  modalCross: {
+    position: 'absolute',
+    right: 0,
   },
 });

@@ -77,9 +77,9 @@ function Reviews(props) {
               _id: 2,
               first_name: 'mike',
               last_name: 'monuse',
-              photo:"",
-              // photo:
-              //   'https://www.adobe.com/express/create/media_127540366421d3d5bfcaf8202527ca7d37741fd5d.jpeg?width=400&format=jpeg&optimize=medium',
+              // photo:"",
+              photo:
+                'https://www.adobe.com/express/create/media_127540366421d3d5bfcaf8202527ca7d37741fd5d.jpeg?width=400&format=jpeg&optimize=medium',
               avg_rating: 3.8,
               total_reviews: 190,
             },
@@ -112,9 +112,9 @@ function Reviews(props) {
               _id: 4,
               first_name: 'Mano',
               last_name: 'Twis',
-              photo:"",
-              // photo:
-              //   'https://t3.ftcdn.net/jpg/03/67/46/48/360_F_367464887_f0w1JrL8PddfuH3P2jSPlIGjKU2BI0rn.jpg',
+              // photo:"",
+              photo:
+                'https://t3.ftcdn.net/jpg/03/67/46/48/360_F_367464887_f0w1JrL8PddfuH3P2jSPlIGjKU2BI0rn.jpg',
               avg_rating: 2.0,
               total_reviews: 10,
             },
@@ -156,25 +156,23 @@ function Reviews(props) {
   };
 
   const postReply = () => {
-    Keyboard.dismiss()
-    
+    Keyboard.dismiss();
+
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToReplyComment(modalObj,comment,closeModal);
+        store.User.attemptToReplyComment(modalObj, comment, closeModal);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
-
   };
   const actionDsipute = () => {
-    Keyboard.dismiss()
-  
-    
+    Keyboard.dismiss();
+
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToDisputeComment(modalObj,closeModal);
+        store.User.attemptToDisputeComment(modalObj, closeModal);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -182,12 +180,11 @@ function Reviews(props) {
     });
   };
   const actionEdit = () => {
-    Keyboard.dismiss()
-  
-    
+    Keyboard.dismiss();
+
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToEditComment(modalObj,comment,closeModal);
+        store.User.attemptToEditComment(modalObj, comment, closeModal);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -195,14 +192,13 @@ function Reviews(props) {
     });
   };
   const actionDelete = () => {
-    Keyboard.dismiss()
-    
-    Keyboard.dismiss()
-  
-    
+    Keyboard.dismiss();
+
+    Keyboard.dismiss();
+
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToDeleteComment(modalObj,closeModal);
+        store.User.attemptToDeleteComment(modalObj, closeModal);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -211,11 +207,10 @@ function Reviews(props) {
   };
 
   const openModal = (obj, c) => {
-    if(c=="edit"){
+    if (c == 'edit') {
       let d = obj.item;
-      setcomment(d.reply.comment)
+      setcomment(d.reply.comment);
     }
-
 
     setmodalObj(obj);
     setmodalChk(c);
@@ -248,8 +243,6 @@ function Reviews(props) {
     );
   };
 
-   
- 
   const renderShowData = ({item, index}) => {
     let photo = item.user.photo;
     let userName = item.user.first_name + ' ' + item.user.last_name;
@@ -258,21 +251,20 @@ function Reviews(props) {
     let postDate = item.created_at;
     let userComment = item.comment;
     let reply = item.reply ? item.reply : '';
-    let dispute= item.dispute ? item.dispute : false
-    let disputeDate=dispute? dispute.created_at:""
+    let dispute = item.dispute ? item.dispute : false;
+    let disputeDate = dispute ? dispute.created_at : '';
 
     let ruserPhoto = '';
     let ruserName = '';
     let ruserComment = '';
     let rpostDate = '';
-    if (reply!="") {
+    if (reply != '') {
       ruserPhoto = reply.user.photo;
       ruserName = reply.user.first_name + ' ' + reply.user.last_name;
       ruserComment = reply.comment;
       rpostDate = reply.created_at;
     }
 
-    
     const formatdisputeDate = date => {
       var dd = moment(date).format('MMM DD');
       return dd;
@@ -291,9 +283,8 @@ function Reviews(props) {
               style={styles.ProfileImg}
               source={
                 photo != ''
-                  ? {uri:photo}
-                  :
-                   require('../../../assets/images/drawer/guest/img.png')
+                  ? {uri: photo}
+                  : require('../../../assets/images/drawer/guest/img.png')
               }
               loadingImageStyle={styles.imageLoader}
               loadingSource={require('../../../assets/images/imgLoad/img.jpeg')}
@@ -355,15 +346,20 @@ function Reviews(props) {
         return <Text style={styles.boxSection2title}>{userComment}</Text>;
       };
 
-      const renderShowDsipute=()=>{
-        return(
-            <View style={styles.boxSection3}>
-            <utils.vectorIcon.AntDesign name="warning" color={"#B93B3B"} size={14} />
-            <Text style={styles.disputeTitle}>You disputed this review on {formatdisputeDate(disputeDate)}</Text>
-            </View>
-            
-        )
-      }
+      const renderShowDsipute = () => {
+        return (
+          <View style={styles.boxSection3}>
+            <utils.vectorIcon.AntDesign
+              name="warning"
+              color={'#B93B3B'}
+              size={14}
+            />
+            <Text style={styles.disputeTitle}>
+              You disputed this review on {formatdisputeDate(disputeDate)}
+            </Text>
+          </View>
+        );
+      };
 
       const renderShowReplyButton = () => {
         const renderReplyButton = () => {
@@ -396,12 +392,9 @@ function Reviews(props) {
 
         return (
           <View style={styles.boxSection3}>
-           
-           {renderReplyButton()}
+            {renderReplyButton()}
             <View style={{width: 12}} />
             {renderDisputeButton()}
-              
-           
           </View>
         );
       };
@@ -432,15 +425,14 @@ function Reviews(props) {
             {renderDate()}
           </View>
           <View style={styles.boxSection2}>{renderComment()}</View>
-          {!dispute&&(
+          {!dispute && (
             <>
-         {reply == '' && renderShowReplyButton()}
-          {reply != '' && renderShowDipsutebutton()}
+              {reply == '' && renderShowReplyButton()}
+              {reply != '' && renderShowDipsutebutton()}
             </>
           )}
 
-          {dispute&& renderShowDsipute()}
-          
+          {dispute && renderShowDsipute()}
         </View>
       );
     };
@@ -591,7 +583,7 @@ function Reviews(props) {
 
   // console.warn("mloader : ",mloader)
   const renderModal = () => {
-    if (modalChk == 'reply' || modalChk=="edit") {
+    if (modalChk == 'reply' || modalChk == 'edit') {
       const renderHeader = () => {
         let text = 'Reply to review';
 
@@ -685,7 +677,7 @@ function Reviews(props) {
                 {opacity: pressed ? 0.7 : comment.length <= 0 ? 0.5 : 1},
                 [styles.ButtonContainer],
               ]}
-              onPress={modalChk=="reply"?postReply:actionEdit}>
+              onPress={modalChk == 'reply' ? postReply : actionEdit}>
               {mloader && (
                 <ActivityIndicator size={20} color={theme.color.buttonText} />
               )}
@@ -721,13 +713,15 @@ function Reviews(props) {
 
       return (
         <Modal visible={isModal} transparent onRequestClose={closeModal}>
-          <View style={styles.modalContainer}>
-            <View style={styles.modal}>
-              {renderHeader()}
-              {renderField()}
-              {renderBottom()}
+          <SafeAreaView style={styles.modalContainer}>
+            <View style={styles.modalContainer2}>
+              <View style={styles.modal}>
+                {renderHeader()}
+                {renderField()}
+                {renderBottom()}
+              </View>
             </View>
-          </View>
+          </SafeAreaView>
         </Modal>
       );
     }
@@ -759,7 +753,12 @@ function Reviews(props) {
         };
 
         return (
-          <View style={{flexDirection: 'row', justifyContent: 'space-between',paddingHorizontal:15}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingHorizontal: 15,
+            }}>
             {renderTitle()}
             {renderCross()}
           </View>
@@ -892,24 +891,23 @@ function Reviews(props) {
         };
 
         return (
-          <View style={[styles.modalBottomContainer,{
-            borderBottomLeftRadius:15,
-            borderBottomRightRadius:15,
-            marginTop:0,
-            paddingTop:5,
-            paddingBottom:15,
-            paddingHorizontal:15,
-           backgroundColor:theme.color.background, 
-           shadowColor: "#000",
-shadowOffset: {
-	width: 0,
-	height: 5,
-},
-shadowOpacity: 0.34,
-shadowRadius: 6.27,
-
-elevation: 10,
-           }]}>
+          <View
+            style={[
+              styles.modalBottomContainer,
+              {
+                borderBottomLeftRadius: 15,
+                borderBottomRightRadius: 15,
+                marginTop: 0,
+                paddingTop: 5,
+                paddingBottom: 15,
+                paddingHorizontal: 15,
+                backgroundColor: theme.color.background,
+                shadowColor: '#000000',
+                shadowOffset: {width: 0, height: -1}, // change this for more shadow
+                shadowOpacity: 0.1,
+                elevation: 22,
+              },
+            ]}>
             {renderButton1()}
             {renderButton2()}
           </View>
@@ -918,21 +916,33 @@ elevation: 10,
 
       return (
         <Modal visible={isModal} transparent onRequestClose={closeModal}>
-          <View style={styles.modalContainer}>
-            <View style={[styles.modal, {height: theme.window.Height - 140,padding:0,paddingTop:15}]}>
-              {renderHeader()}
-              <ScrollView contentContainerStyle={{paddingHorizontal:15}} showsVerticalScrollIndicator={false} style={{flex: 1}}>
-                {renderSec1()}
-                {renderSec2()}
-                {renderSec3()}
-              </ScrollView>
-              {renderBottom()}
+          <SafeAreaView style={styles.modalContainer}>
+            <View style={styles.modalContainer2}>
+              <View
+                style={[
+                  styles.modal,
+                  {
+                    height: '85%',
+                    padding: 0,
+                    paddingTop: 15,
+                  },
+                ]}>
+                {renderHeader()}
+                <ScrollView
+                  contentContainerStyle={{paddingHorizontal: 15}}
+                  showsVerticalScrollIndicator={false}
+                  style={{flex: 1}}>
+                  {renderSec1()}
+                  {renderSec2()}
+                  {renderSec3()}
+                </ScrollView>
+                {renderBottom()}
+              </View>
             </View>
-          </View>
+          </SafeAreaView>
         </Modal>
       );
     }
-
 
     if (modalChk == 'delete') {
       const renderHeader = () => {
@@ -971,34 +981,45 @@ elevation: 10,
       const renderTitle = () => {
         let d = modalObj.item;
         let userName = d.user.first_name + ' ' + d.user.last_name;
-        
 
         return (
           <View
             style={{
-              marginTop: 15
+              marginTop: 15,
             }}>
-            <Text style={styles.modalDeleteTitle}>Are you sure you want to delete your comment to <Text style={[styles.modalDeleteTitle,{fontFamily:theme.fonts.fontBold,textTransform:"capitalize"}]}>{userName}?</Text></Text>
-           
+            <Text style={styles.modalDeleteTitle}>
+              Are you sure you want to delete your comment to{' '}
+              <Text
+                style={[
+                  styles.modalDeleteTitle,
+                  {
+                    fontFamily: theme.fonts.fontBold,
+                    textTransform: 'capitalize',
+                  },
+                ]}>
+                {userName}?
+              </Text>
+            </Text>
           </View>
         );
       };
 
-   
       const renderBottom = () => {
         const renderButton1 = () => {
           return (
             <Pressable
               disabled={mloader}
               style={({pressed}) => [
-                {opacity: pressed ? 0.7  : 1},
-                [styles.ButtonContainer,{backgroundColor:"#B93B3B"}],
+                {opacity: pressed ? 0.7 : 1},
+                [styles.ButtonContainer, {backgroundColor: '#B93B3B'}],
               ]}
               onPress={actionDelete}>
               {mloader && (
                 <ActivityIndicator size={20} color={theme.color.buttonText} />
               )}
-              {!mloader && <Text style={styles.ButtonText}>Yes, delete it</Text>}
+              {!mloader && (
+                <Text style={styles.ButtonText}>Yes, delete it</Text>
+              )}
             </Pressable>
           );
         };
@@ -1014,7 +1035,7 @@ elevation: 10,
               ]}
               onPress={closeModal}>
               <Text style={[styles.ButtonText, {color: theme.color.subTitle}]}>
-              No, keep it
+                No, keep it
               </Text>
             </Pressable>
           );
@@ -1030,17 +1051,18 @@ elevation: 10,
 
       return (
         <Modal visible={isModal} transparent onRequestClose={closeModal}>
-          <View style={styles.modalContainer}>
-            <View style={styles.modal}>
-              {renderHeader()}
-              {renderTitle()}
-              {renderBottom()}
+          <SafeAreaView style={styles.modalContainer}>
+            <View style={styles.modalContainer2}>
+              <View style={styles.modal}>
+                {renderHeader()}
+                {renderTitle()}
+                {renderBottom()}
+              </View>
             </View>
-          </View>
+          </SafeAreaView>
         </Modal>
       );
     }
-
   };
 
   return (

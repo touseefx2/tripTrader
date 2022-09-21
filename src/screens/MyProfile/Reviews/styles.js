@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import {Platform, StyleSheet} from 'react-native';
 import theme from '../../../theme/index';
 import {
   responsiveHeight,
@@ -694,135 +694,136 @@ export const styles = StyleSheet.create({
     textTransform: 'capitalize',
   },
 
-
   modalContainer: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContainer2: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding:20
- 
+    margin: 20,
   },
   modal: {
-    width:"98%",
-    alignSelf:"center",
+    // width: Platform.OS == 'android' ? '98%' : '88%',
+    width: '98%',
+    alignSelf: 'center',
+    padding: 15,
+    backgroundColor: theme.color.background,
+    borderRadius: 15,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
 
-   padding:15,
- backgroundColor:theme.color.background,
-borderRadius:15,
-shadowColor: "#000",
-shadowOffset: {
-	width: 0,
-	height: 1,
-},
-shadowOpacity: 0.22,
-shadowRadius: 2.22,
-
-elevation: 3,
+    elevation: 3,
   },
-  modalCross : {
-  
+  modalCross: {},
+  modalTitle: {
+    fontSize: 19,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontBold,
   },
-  modalTitle:{
-    fontSize:19,
-    color:theme.color.title,
-     fontFamily:theme.fonts.fontBold,
- 
-     
-  },
- modalImgContainer: {
+  modalImgContainer: {
     width: '100%',
     height: 220,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: theme.color.photoBorderColor,
-    marginTop:15
- 
+    marginTop: 15,
   },
   modalImg: {
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
-    borderRadius:8,
+    borderRadius: 8,
   },
   modalImageLoader: {
     width: '100%',
     height: '100%',
     borderRadius: 8,
   },
-  modalBottomContainer:{
-    marginTop:15,
-    flexDirection:"row",
-    alignItems:"center",
+  modalBottomContainer: {
+    marginTop: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 
-  ButtonContainer:{
-    paddingHorizontal:15,
-    paddingVertical:10,
-    borderRadius:8,
-    alignItems:"center",
-    justifyContent:"center",
-    backgroundColor:theme.color.button1,
-    marginTop:10
+  ButtonContainer: {
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.color.button1,
+    marginTop: 10,
   },
-  ButtonText:{
-    fontSize:12.5,
-    color:theme.color.buttonText,
-   fontFamily:theme.fonts.fontBold,
-   textTransform:"capitalize"
+  ButtonText: {
+    fontSize: 12.5,
+    color: theme.color.buttonText,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
   },
 
-  modalFieldTitle:{
-    fontSize:13.5,
-    color:theme.color.title,
-     fontFamily :theme.fonts.fontBold,
-     textTransform:"capitalize"
+  modalFieldTitle: {
+    fontSize: 13.5,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
   },
-  modalInput:{
-    width:"100%",
-    height:170,
-    padding:10,
-    borderColor:theme.color.subTitleLight,
-    borderWidth:0.6,
-    color:theme.color.title,
-    fontSize:13,
-  borderRadius:8,
+  modalInput: {
+    width: '100%',
+    height: 170,
+    padding: 10,
+    borderColor: theme.color.subTitleLight,
+    borderWidth: 0.6,
+    color: theme.color.title,
+    fontSize: 13,
+    borderRadius: 8,
   },
-  modalSec1Title:{
-    fontSize:12,
-    color:theme.color.title,
-     fontFamily:theme.fonts.fontBold,
-     lineHeight:18,
-     
+  modalSec1Title: {
+    fontSize: 12,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontBold,
+    lineHeight: 18,
   },
- modalSec2Container:{marginTop: 15,width:"100%",height:120,borderWidth:0.6,borderRadius:5,borderColor:theme.color.subTitleLight,paddingHorizontal:7,paddingVertical:5} ,
- modalSec2Title:{
-  fontSize:11,
-  color:"#111111",
-   fontFamily:theme.fonts.fontBold,
-   textTransform:"capitalize",
-   opacity:0.8
-},
-modalSec2Title2:{
-  fontSize:11,
-  color:"#111111",
-  opacity:0.8,
-   fontFamily:theme.fonts.fontNormal,
-  
-},
- 
-modalDeleteTitle:{
-  fontSize:13,
-  color:theme.color.title,
-   fontFamily :theme.fonts.fontNormal,
+  modalSec2Container: {
+    marginTop: 15,
+    width: '100%',
+    height: 120,
+    borderWidth: 0.6,
+    borderRadius: 5,
+    borderColor: theme.color.subTitleLight,
+    paddingHorizontal: 7,
+    paddingVertical: 5,
+  },
+  modalSec2Title: {
+    fontSize: 11,
+    color: '#111111',
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
+    opacity: 0.8,
+  },
+  modalSec2Title2: {
+    fontSize: 11,
+    color: '#111111',
+    opacity: 0.8,
+    fontFamily: theme.fonts.fontNormal,
+  },
 
-},
-disputeTitle:{
-  fontSize:12,
-  color:"#B93B3B",
-   fontFamily :theme.fonts.fontMedium,
-   marginLeft:5,
-   top:2
-
-}
+  modalDeleteTitle: {
+    fontSize: 13,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontNormal,
+  },
+  disputeTitle: {
+    fontSize: 12,
+    color: '#B93B3B',
+    fontFamily: theme.fonts.fontMedium,
+    marginLeft: 5,
+    top: 2,
+  },
 });

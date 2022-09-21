@@ -28,7 +28,7 @@ const titleGreenForm = '#1E3625';
 const subTitleAuth = '#101B10';
 
 const subTitle = 'rgba(17, 17, 17, 0.5)';
-const subTitleLight = 'rgba(0, 0, 0, 0.3)';
+const subTitleLight = 'rgba(17, 17, 17, 0.4)';
 
 const inactiveTabText = 'rgba(17, 17, 17, 0.5)';
 

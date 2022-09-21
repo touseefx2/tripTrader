@@ -16,6 +16,7 @@ import {
   Modal,
   Platform,
   StatusBar,
+  PixelRatio,
 } from 'react-native';
 import {styles} from './styles';
 import {inject, observer} from 'mobx-react';
@@ -103,7 +104,7 @@ function Login(props) {
               {
                 backgroundColor: 'transparent',
                 borderWidth: 1,
-                borderColor: theme.color.buttonText,
+                borderColor: theme.color.fieldBorder,
                 marginTop: 12,
               },
             ]}>
@@ -168,7 +169,7 @@ function Login(props) {
         style={styles.container2}>
         <SafeAreaView style={styles.container2}>
           <ScrollView
-            style={{flex: 1, paddingHorizontal: 24}}
+            style={{flex: 1, paddingHorizontal: 20}}
             showsVerticalScrollIndicator={false}>
             {renderSection1()}
           </ScrollView>

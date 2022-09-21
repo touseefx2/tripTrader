@@ -1,6 +1,7 @@
 import {Platform, StyleSheet} from 'react-native';
 import theme from '../../theme/index';
 import {
+  responsiveFontSize,
   responsiveHeight,
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
@@ -114,9 +115,9 @@ export const styles = StyleSheet.create({
     top: 1,
   },
   headerTitle: {
-    fontSize: 18,
+    // fontSize: 18,
+    fontSize: responsiveFontSize(2.4),
     fontFamily: theme.fonts.fontBold,
     color: theme.color.backgroundGreenText,
-    top: -2,
   },
 });

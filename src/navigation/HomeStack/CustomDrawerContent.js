@@ -16,7 +16,10 @@ import {
 import theme from '../../theme/index';
 import {inject, observer} from 'mobx-react';
 import utils from '../../utils/index';
-import {responsiveHeight} from 'react-native-responsive-dimensions';
+import {
+  responsiveFontSize,
+  responsiveHeight,
+} from 'react-native-responsive-dimensions';
 import {ScrollView} from 'react-native-gesture-handler';
 import store from '../../store';
 
@@ -525,7 +528,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   Section1Text: {
-    fontSize: 17,
+    // fontSize: 17,
+    fontSize: responsiveFontSize(2.3),
     color: theme.color.buttonText,
     fontFamily: theme.fonts.titleFont,
 
@@ -600,7 +604,7 @@ const styles = StyleSheet.create({
   ProfileImg: {
     width: '100%',
     height: '100%',
-    resizeMode: 'contain',
+    // resizeMode: 'contain',
     borderRadius: 60 / 2,
   },
 

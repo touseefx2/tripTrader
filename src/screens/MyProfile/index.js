@@ -14,6 +14,7 @@ import {
   Platform,
   Dimensions,
   Modal as MModal,
+  Pressable,
 } from 'react-native';
 
 import {styles} from './styles';
@@ -2476,32 +2477,6 @@ function MyProfile(props) {
     }
   }, []);
 
-  useEffect(() => {
-    if (phone != '') {
-      setTimeout(() => {
-        for (let index = 0; index < Countries.length; index++) {
-          const e = Countries[index];
-          let result = phone.includes(e.dialCode);
-          if (result) {
-            setcntry(e.code);
-            setpwc(phone.slice(e.dialCode.length));
-            break;
-          }
-        }
-      }, 1000);
-    } else {
-      setpwc('');
-    }
-  }, [phone]);
-
-  useEffect(() => {
-    if (cphoto) {
-      setisSHowChangePhoto(true);
-    } else {
-      setisSHowChangePhoto(false);
-    }
-  }, [cphoto]);
-
   const setErrMessage = c => {
     seterrorMessage(c);
   };
@@ -2535,7 +2510,9 @@ function MyProfile(props) {
             };
             console.log('Compress image  : ', imageObject);
             if (button == 'photoChange') {
+              setisSHowChangePhoto(true);
               setcphoto(imageObject);
+
               return;
             } else if (button == 'CNICFront') {
               // setCnicFrontImage(imageObject);
@@ -2598,7 +2575,12 @@ function MyProfile(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToUploadImage2(imgArr, setErrMessage, setPhoto);
+        store.User.attemptToUploadImage2(
+          imgArr,
+          setErrMessage,
+          setPhoto,
+          closePhotoModal,
+        );
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -2748,11 +2730,44 @@ function MyProfile(props) {
 
   const closePhotoModal = () => {
     if (!loader) {
+      setisSHowChangePhoto(false);
       setcphoto(false);
     }
   };
 
   const renderShowCahngePhotoModal = () => {
+    const renderHeader = () => {
+      let text = 'review profile photo';
+
+      const renderCross = () => {
+        return (
+          <Pressable
+            style={({pressed}) => [
+              {opacity: pressed ? 0.5 : 1.0},
+              styles.modalCross,
+            ]}
+            onPress={closePhotoModal}>
+            <utils.vectorIcon.EvilIcons
+              name="close"
+              color={theme.color.title}
+              size={30}
+            />
+          </Pressable>
+        );
+      };
+
+      const renderTitle = () => {
+        return <Text style={styles.section2Title1}>{text}</Text>;
+      };
+
+      return (
+        <View style={{alignItems: 'center'}}>
+          {renderTitle()}
+          {renderCross()}
+        </View>
+      );
+    };
+
     const renderButton = c => {
       return (
         <>
@@ -2835,6 +2850,10 @@ function MyProfile(props) {
     //   );
     // };
 
+    let src =
+      cphoto != ''
+        ? {uri: cphoto.uri}
+        : require('../../assets/images/imgLoad/img.jpeg');
     return (
       <MModal
         animationType="slide"
@@ -2859,39 +2878,26 @@ function MyProfile(props) {
               padding: 18,
               width: '100%',
             }}>
+            {renderHeader()}
             <View style={{alignItems: 'center', justifyContent: 'center'}}>
-              <Text style={styles.section2Title1}>review profile photo</Text>
-
               <Text style={styles.section2LogoTitle}>
                 If you are happy with the result, click Confirm & Continue below
                 or try a different photo.
               </Text>
 
               <TouchableOpacity
-                disabled={loader}
                 style={styles.imageContainerP}
                 activeOpacity={0.7}
-                onPress={() => changePhoto('photoViewC')}>
-                <Image source={{uri: cphoto.uri}} style={styles.imageP} />
+                onPress={() =>
+                  Platform.OS == 'android' ? changePhoto('photoViewC') : null
+                }>
+                <Image source={src} style={styles.imageP} />
               </TouchableOpacity>
             </View>
 
             {renderButton('Profile')}
             {renderButtonSkip()}
             {/* {renderButtonCP('photoChange')} */}
-
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => {
-                closePhotoModal();
-              }}
-              style={{position: 'absolute', top: 5, right: 5}}>
-              <utils.vectorIcon.Entypo
-                name="cross"
-                color={theme.color.subTitleLight}
-                size={24}
-              />
-            </TouchableOpacity>
           </View>
         </View>
       </MModal>
@@ -2899,24 +2905,27 @@ function MyProfile(props) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* {tagLine != '' && <utils.TagLine tagLine={tagLine} />} */}
       <utils.DrawerHeader props={props} headerTitle={headerTitle} />
       {!internet && <utils.InternetMessage />}
+      <SafeAreaView style={styles.container2}>
+        <View style={styles.container3}>
+          {renderProfileSection()}
+          <View style={{flex: 1}}>{isTabBarShow && renderTabBar()}</View>
+          <Toast ref={toast} position="bottom" />
+          {/* <utils.Loader2 load={Loader} /> */}
 
-      {renderProfileSection()}
-      <View style={{flex: 1}}>{isTabBarShow && renderTabBar()}</View>
-      <Toast ref={toast} position="bottom" />
-      {/* <utils.Loader2 load={Loader} /> */}
-
-      {!isTabBarShow && (
-        <utils.Footer
-          nav={props.navigation}
-          screen={headerTitle}
-          focusScreen={store.General.focusScreen}
-        />
-      )}
-      {isSHowChangePhoto && renderShowCahngePhotoModal()}
+          {!isTabBarShow && (
+            <utils.Footer
+              nav={props.navigation}
+              screen={headerTitle}
+              focusScreen={store.General.focusScreen}
+            />
+          )}
+          {renderShowCahngePhotoModal()}
+        </View>
+      </SafeAreaView>
       {pvm && (
         <utils.FullimageModal
           show={pvm}
@@ -2925,6 +2934,6 @@ function MyProfile(props) {
           setpv={c => setpv(c)}
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 }
