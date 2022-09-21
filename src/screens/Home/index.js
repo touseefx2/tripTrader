@@ -76,7 +76,11 @@ function Home(props) {
       {!internet && <utils.InternetMessage />}
       <SafeAreaView style={styles.container2}>
         <View style={styles.container3}>
-          <ScrollView contentContainerStyle={{padding: 20}}>
+          <ScrollView
+            contentContainerStyle={{
+              paddingHorizontal: 15,
+              paddingVertical: 20,
+            }}>
             {/* {renderMain()} */}
           </ScrollView>
           {/* <utils.Loader2 load={Loader} /> */}

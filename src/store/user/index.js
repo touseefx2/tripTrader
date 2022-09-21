@@ -16,6 +16,20 @@ class user {
     makeObservable(this);
   }
 
+  @observable phn = '';
+  @observable cntr = '';
+  @observable pwc = '';
+
+  @action setphn = obj => {
+    this.phn = obj;
+  };
+  @action setcntr = obj => {
+    this.cntr = obj;
+  };
+  @action setpwc = obj => {
+    this.pwc = obj;
+  };
+
   @persist('object') @observable email = '';
   @persist('object') @observable pswd = '';
   @persist('object') @observable sp = false;

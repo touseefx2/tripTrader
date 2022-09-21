@@ -54,6 +54,9 @@ function CustomDrawerContent(props) {
     store.User.setreview([]);
     store.User.settrips([]);
     store.User.setphotos([]);
+    store.User.setphn('');
+    store.User.setcntr('');
+    store.User.setpwc('');
   };
 
   const goToProfile = () => {

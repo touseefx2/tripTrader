@@ -57,6 +57,11 @@ export default HomeStack = () => {
         component={ProfileStack}
         options={icon.MyProfileicon}
       />
+      <Drawer.Screen
+        name="EditProfile"
+        component={EditProfileStack}
+        options={icon.EditProfileicon}
+      />
       {/* sec */}
       <Drawer.Screen
         name="TradeOffers"
@@ -252,9 +257,10 @@ let ProfileStack = () => {
           });
         }}
       />
+
       <Stack.Screen
-        name="EditProfile"
-        component={screens.EditProfile}
+        name="Notifications"
+        component={screens.Notifications}
         options={props => {
           let parent = props.navigation.getParent();
           parent.setOptions({
@@ -262,6 +268,29 @@ let ProfileStack = () => {
           });
         }}
       />
+    </Stack.Navigator>
+  );
+};
+
+let EditProfileStack = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="EditProfilee"
+      screenOptions={{
+        animationEnabled: false,
+        headerShown: false,
+      }}>
+      <Stack.Screen
+        name="EditProfilee"
+        component={screens.EditProfile}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: true,
+          });
+        }}
+      />
+
       <Stack.Screen
         name="Notifications"
         component={screens.Notifications}

@@ -66,12 +66,15 @@ function EditProfile(props) {
   let totalItems = cart.data.length > 0 ? cart.totalitems : 0;
   let tagLine = '';
 
-  let phn = props.route.params.phn;
-  let cntry =
-    props.route.params.cntry == ''
-      ? RNLocalize.getCountry()
-      : props.route.params.cntry;
-  let pwc = props.route.params.pwc;
+  // let phn = props.route.params.phn;
+  // let cntry =
+  //   props.route.params.cntry == ''
+  //
+  // let pwc = props.route.params.pwc;
+
+  let phn = store.User.phn;
+  let cntry = store.User.cntr == '' ? RNLocalize.getCountry() : store.User.cntr;
+  let pwc = store.User.pwc;
 
   let userFName = '';
   let userLName = '';
@@ -129,8 +132,8 @@ function EditProfile(props) {
 
   let isEmailDisable = false;
 
-  const goBack = () => {
-    props.navigation.goBack();
+  const suc = () => {
+    props.navigation.navigate('MyProfile');
   };
 
   const saveProfile = () => {
@@ -196,7 +199,7 @@ function EditProfile(props) {
           photo.uri ? photo.uri : photo,
           cnicFrontImage.uri ? cnicFrontImage.uri : cnicFrontImage,
           setErrMessage,
-          goBack,
+          suc,
         );
       } else {
         // seterrorMessage('Please connect internet');
@@ -807,7 +810,8 @@ function EditProfile(props) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {renderHeader()}
+      {/* {renderHeader()} */}
+      <utils.DrawerHeader props={props} headerTitle={headerTitle} />
       {!internet && <utils.InternetMessage />}
 
       <SafeAreaView style={styles.container2}>
@@ -818,6 +822,11 @@ function EditProfile(props) {
             {renderFields()}
             {rendermainButton2()}
           </ScrollView>
+          <utils.Footer
+            nav={props.navigation}
+            screen={headerTitle}
+            focusScreen={store.General.focusScreen}
+          />
         </View>
       </SafeAreaView>
       {/* {rendermainButton()} */}

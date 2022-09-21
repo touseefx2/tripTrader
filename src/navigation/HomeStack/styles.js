@@ -66,6 +66,19 @@ const MyProfileicon = {
   ),
 };
 
+const EditProfileicon = {
+  drawerLabel: 'Edit Profile',
+  // headerShown: false,
+  // swipeEnabled: true,
+  // unmountOnBlur: true,
+  drawerIcon: ({focused, size}) => (
+    <Image
+      style={styles.icon}
+      source={require('../../assets/images/drawer/myprofile/img.png')}
+    />
+  ),
+};
+
 const TradeOffersicon = {
   drawerLabel: 'Trade Offers',
   // headerShown: false,
@@ -180,6 +193,7 @@ const icon = {
   ConfirmedTripsicon,
   SavedTripsicons,
   MyProfileicon,
+  EditProfileicon,
 
   Supporticon,
   LatestNewsicon,
