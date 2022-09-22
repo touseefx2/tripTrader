@@ -1,383 +1,345 @@
-import {StyleSheet, Platform} from 'react-native';
+import {StyleSheet} from 'react-native';
 import theme from '../../theme/index';
 import {
   responsiveHeight,
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
 
+let iconContainerColor = theme.color.button2;
+let textColor = '#30563A';
+
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.color.backgroundGreen,
   },
-  section1: {
-    marginTop: '12%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 12,
+  container2: {
+    flex: 1,
+    backgroundColor: theme.color.background,
   },
-  logo: {
-    width: responsiveWidth(30),
-    height: responsiveHeight(20),
-    resizeMode: 'cover',
+  container3: {
+    flex: 1,
+    backgroundColor: theme.color.backgroundConatiner,
   },
-  htitle: {
-    fontSize: 18,
-    fontFamily: theme.fonts.fontMedium,
-    color: theme.color.title,
-    alignSelf: 'center',
-    textAlign: 'center',
-    textTransform: 'capitalize',
-    marginLeft: 15,
-  },
-  title: {
-    fontSize: 30,
-    fontFamily: theme.fonts.fontBold,
-    color: theme.color.title,
-    alignSelf: 'center',
-    textTransform: 'capitalize',
-  },
-
-  title2: {
-    fontSize: 17,
-    fontFamily: theme.fonts.fontMedium,
-    color: theme.color.title,
-    alignSelf: 'center',
-    textTransform: 'capitalize',
-    marginTop: 30,
-  },
-
-  title3: {
-    fontSize: 14,
-    fontFamily: theme.fonts.fontNormal,
-    color: theme.color.title,
-    alignSelf: 'center',
-    marginTop: 5,
-  },
-  title4: {
-    fontSize: 16,
-    fontFamily: theme.fonts.fontMedium,
-    color: theme.color.button1,
-    alignSelf: 'center',
-    marginTop: 20,
-  },
-  title5: {
-    fontSize: 16,
-    fontFamily: theme.fonts.fontMedium,
-    color: theme.color.button1,
-    alignSelf: 'center',
-    marginTop: 5,
-  },
-
-  back: {},
-  titleSection: {
-    width: '100%',
-    marginTop: 20,
+  headerConatainer: {
+    backgroundColor: theme.color.backgroundGreen,
     paddingHorizontal: 15,
+    paddingVertical: 15,
+    elevation: 5,
     flexDirection: 'row',
-
+    justifyContent: 'space-between',
+    width: '100%',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.6,
+    shadowRadius: 1,
+  },
+  locContainer: {
+    width: '70%',
+    flexDirection: 'row',
+    // justifyContent: 'space-between',
+    backgroundColor: 'white',
+  },
+  locText: {
+    fontSize: 14,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontMedium,
+    lineHeight: 18,
+    textTransform: 'capitalize',
+  },
+  locText2: {
+    fontSize: 12,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontNormal,
+    lineHeight: 18,
+    textTransform: 'capitalize',
+  },
+  boxContainer: {
+    width: '100%',
+    height: responsiveHeight(20),
+    backgroundColor: '#FFC5B2',
+    borderRadius: 8,
+    marginBottom: 20,
+    elevation: 1,
+    padding: 15,
+    flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  descriptionSection: {
+
+  boxContainer2: {
     width: '100%',
-    marginTop: 20,
-    paddingHorizontal: 15,
-  },
-  header: {
-    width: responsiveWidth(100),
-    paddingHorizontal: 12,
-    elevation: 10,
-    backgroundColor: theme.color.background,
-    paddingVertical: 12,
+    height: responsiveHeight(20),
+    backgroundColor: '#FEF0C0',
+    borderRadius: 8,
+    marginBottom: 20,
+    elevation: 1,
+    padding: 15,
     flexDirection: 'row',
+    justifyContent: 'space-between',
   },
-  headerSection1: {
-    width: '45%',
-    // backgroundColor: 'red',
-  },
-  headerSection2: {
-    width: '45%',
-    // backgroundColor: 'red',
-    flexDirection: 'row',
+
+  boxContainerSecton1: {
+    width: '55%',
+
     justifyContent: 'flex-end',
   },
 
-  title1: {
+  boxContainerSecton2: {
+    width: '40%',
+
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  bcs1Text1: {
+    fontSize: 16,
+    fontFamily: theme.fonts.fontMedium,
+    color: theme.color.title,
+  },
+
+  bcs1Text2: {
     fontSize: 13,
     fontFamily: theme.fonts.fontNormal,
-    color: theme.color.subTitle,
-    marginRight: 5,
-    textTransform: 'capitalize',
+    color: theme.color.title,
   },
-
-  icon: {
-    width: 35,
-    height: 35,
+  bcs2Image: {flex: 1, resizeMode: 'contain', elevation: 5},
+  circleC: {
+    width: 18,
+    height: 18,
+    borderRadius: 218 / 2,
     alignItems: 'center',
     justifyContent: 'center',
-    // backgroundColor: 'yellow',
-    marginLeft: 10,
-  },
-  imageConatiner: {
-    width: responsiveWidth(100),
-    height: responsiveHeight(34),
-    backgroundColor: theme.color.background,
-    elevation: 7,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  emptySECTION: {
-    alignSelf: 'center',
-    marginTop: '45%',
-    width: '80%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyImg: {
-    width: responsiveWidth(14),
-    height: responsiveHeight(7),
-    resizeMode: 'contain',
-    opacity: 0.5,
-  },
-  emptyText: {
-    fontSize: 14,
-    fontFamily: theme.fonts.fontMedium,
-    color: theme.color.subTitle,
-    alignSelf: 'center',
-    marginTop: 0,
-  },
-  foodCard: {
-    width: '100%',
-    height: responsiveHeight(20),
-    elevation: 7,
-    backgroundColor: 'white',
-    borderRadius: 7,
-
-    justifyContent: 'center',
-    flexDirection: 'row',
-
-    justifyContent: 'space-between',
-  },
-  foodCardImg: {
-    width: '40%',
-    height: '100%',
-    elevation: 5,
-    backgroundColor: 'white',
-    borderTopLeftRadius: 7,
-    borderBottomLeftRadius: 7,
-    // marginBottom: 20,
-    // justifyContent: 'center',
-  },
-  addTitle1: {
-    fontSize: 14,
-    fontFamily: theme.fonts.fontMedium,
-    color: theme.color.title,
-    marginHorizontal: 15,
-    textTransform: 'capitalize',
-  },
-  addTitle2: {
-    fontSize: 14,
-    fontFamily: theme.fonts.fontNormal,
-    color: theme.color.subTitle,
-    marginLeft: 15,
-    marginRight: 5,
-  },
-  foodCardTitle2: {
-    fontSize: 14,
-    fontFamily: theme.fonts.fontMedium,
-    color: theme.color.subTitle,
-  },
-  foodCardTitle3: {
-    fontSize: 18,
-    fontFamily: theme.fonts.fontMedium,
-    color: theme.color.button1,
-    lineHeight: 20,
-  },
-  fcBottom: {
-    marginTop: 50,
-    paddingHorizontal: 15,
-    paddingBottom: 20,
-    width: '100%',
-  },
-  foodCardBottom: {
-    marginTop: 10,
-  },
-  addcart: {
-    width: '100%',
-    height: responsiveHeight(6),
-    backgroundColor: theme.color.cartbutton,
-    borderRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    elevation: 4,
-  },
-  foodCardButtonText: {
-    fontSize: 16,
-    fontFamily: theme.fonts.fontMedium,
-    color: theme.color.cartbuttonText,
-    lineHeight: 20,
-    marginLeft: 5,
-  },
-  likecart: {
-    alignSelf: 'flex-end',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  section2: {
-    padding: 12,
-    // backgroundColor: 'yellow',
-  },
-  section2Title: {
-    fontSize: 16,
-    fontFamily: theme.fonts.fontMedium,
-    color: theme.color.title,
-  },
-  section2subTitle: {
-    fontSize: 14,
-    fontFamily: theme.fonts.fontNormal,
-    color: theme.color.title,
-  },
-
-  section3: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    // backgroundColor: 'yellow',
-  },
-  section3Title: {
-    fontSize: 14,
-    fontFamily: theme.fonts.fontMedium,
-    color: theme.color.title,
-  },
-  section3subTitle: {
-    fontSize: 12,
-    fontFamily: theme.fonts.fontNormal,
-    color: theme.color.title,
-  },
-
-  sectionsTitle: {
-    fontSize: 14,
-    fontFamily: theme.fonts.fontMedium,
-    color: theme.color.title,
-    textTransform: 'uppercase',
-  },
-
-  // Input: {
-  //   borderBottomWidth: 0.6,
-  //   borderColor: theme.color.subTitle,
-  //   width: '100%',
-  //   height: responsiveHeight(6),
-  //   borderRadius: 4,
-  //   alignItems: 'center',
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-
-  //   marginTop: 5,
-  // },
-  CountryLogo: {
-    height: 35,
-    width: 28,
-    resizeMode: 'contain',
-    alignItems: 'center',
-    justifyContent: 'center',
-    top: -1,
-    elevation: 5,
-  },
-
-  Input: {
-    width: '100%',
-    color: theme.color.title,
-    backgroundColor: theme.color.background,
-    fontSize: 12,
-    fontFamily: theme.fonts.fontNormal,
-    height: 40,
-    borderRadius: 5,
-    borderWidth: 0.6,
-    borderColor: theme.color.subTitle,
-    marginTop: 20,
-    paddingHorizontal: 10,
-  },
-  MobileInput: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    color: theme.color.title,
-    backgroundColor: theme.color.background,
-    fontSize: 12,
-    fontFamily: theme.fonts.fontNormal,
-    height: 40,
-    borderRadius: 5,
-    borderWidth: 0.6,
-    borderColor: theme.color.subTitle,
-    marginTop: 20,
-    paddingHorizontal: 10,
-  },
-  MobileInput2: {
-    width: '80%',
-    color: theme.color.title,
-    fontSize: 12,
-    fontFamily: theme.fonts.fontNormal,
-    height: 40,
-  },
-
-  pswdInput: {
-    width: '92%',
-    color: theme.color.title,
-
-    fontSize: 12,
-    fontFamily: theme.fonts.fontNormal,
-    height: 40,
-  },
-
-  Profile: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-  ProfileImageContainer: {
-    width: 100,
-    height: 100,
-    borderColor: theme.color.subTitle,
-    borderRadius: 50,
-    borderWidth: 0.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ProfileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-  },
-  ImageUploadConatiner: {
-    height: 30,
-    width: 30,
-    backgroundColor: '#DBDBDB',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 15,
     borderWidth: 1,
-    borderColor: 'white',
+    borderColor: theme.color.buttonText,
     position: 'absolute',
-    bottom: -2,
-    right: -2,
-    opacity: 0.9,
-    elevation: 5,
+    right: -7,
+    bottom: -1,
+    backgroundColor: theme.color.button1,
   },
-  fullImageModalCross: {
-    backgroundColor: 'black',
-    borderRadius: 20,
+  circleCText: {
+    fontSize: 8,
+    color: theme.color.buttonText,
+    fontFamily: theme.fonts.fontMedium,
+    top: 1,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontFamily: theme.fonts.fontBold,
+    color: theme.color.backgroundGreenText,
+    top: -2,
+  },
+
+  mainContainer: {
+    width: '100%',
+    padding: 7,
+    borderRadius: 5,
+    backgroundColor: theme.color.background,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+
+    elevation: 6,
+    marginBottom: 15,
+  },
+  sec1Container: {
+    width: '15%',
+  },
+  iconConatiner: {
     width: 40,
     height: 40,
+    borderRadius: 40 / 2,
+    backgroundColor: iconContainerColor,
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'absolute',
-    top: Platform.OS == 'ios' ? theme.window.APPBAR_HEIGHT + 12 : 12,
-    left: 12,
+  },
+  icon: {
+    width: '44%',
+    height: '44%',
+    resizeMode: 'contain',
+  },
+  sec2Container: {
+    width: '83%',
+  },
+  sec2Title: {
+    fontSize: 16,
+    color: textColor,
+    fontFamily: theme.fonts.fontBold,
+    lineHeight: 22.8,
+    textTransform: 'capitalize',
+  },
+  section2: {},
+  section2Title1: {
+    color: theme.color.titleGreenForm,
+    fontSize: 20,
+    fontFamily: theme.fonts.fontBold,
+    alignSelf: 'center',
+    textTransform: 'capitalize',
+  },
+  section2Title2: {
+    color: theme.color.buttonText,
+    fontSize: 16,
+    fontFamily: theme.fonts.fontNormal,
+    marginTop: 10,
+    alignSelf: 'center',
+  },
+  section3: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    paddingTop: 10,
+    // backgroundColor: 'red',
+  },
+
+  logo: {
+    width: 54.93,
+    height: 50.56,
+    resizeMode: 'contain',
+  },
+  title1: {
+    fontSize: 16,
+    fontFamily: theme.fonts.titleFont,
+    color: theme.color.buttonText,
+    textTransform: 'uppercase',
+    lineHeight: 20.9,
+  },
+  BottomButton: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.color.button1,
+    height: 55,
+    // height: responsiveHeight(8),
+    borderRadius: 10,
+    alignSelf: 'center',
+    marginTop: 35,
+  },
+  buttonTextBottom: {
+    color: theme.color.buttonText,
+    fontSize: 16,
+    // fontSize: responsiveScreenFontSize(2.15),
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
+  },
+
+  BottomButtonT: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20,
+    justifyContent: 'center',
+  },
+  buttonTextBottomTtitle1: {
+    color: theme.color.buttonText,
+    fontSize: 14,
+    fontFamily: theme.fonts.fontNormal,
+    opacity: 0.7,
+  },
+  buttonTextBottomTtitle2: {
+    color: theme.color.buttonText,
+    fontSize: 14,
+    fontFamily: theme.fonts.fontBold,
+    marginLeft: 5,
+    textDecorationLine: 'underline',
+  },
+
+  errorMessageContainer: {},
+  errorMessageText: {
+    color: theme.color.fieldBordeError,
+    fontSize: 13,
+    fontFamily: theme.fonts.fontMedium,
+    alignSelf: 'center',
+  },
+
+  errorMessageFieldContainer: {
+    marginTop: 2,
+  },
+  errorMessageFieldText: {
+    color: theme.color.fieldBordeError,
+    fontSize: 11,
+    fontFamily: theme.fonts.fontNormal,
+  },
+
+  Field: {marginTop: 15},
+  FieldTitle1: {
+    color: theme.color.titleGreenForm,
+    fontSize: 12.5,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
+  },
+  FieldTitle11: {
+    color: theme.color.titleGreenForm,
+    fontSize: 14,
+    fontFamily: theme.fonts.fontBold,
+
+    textDecorationLine: 'underline',
+    alignSelf: 'center',
+    textDecorationColor: theme.color.titleGreenForm,
+  },
+  FieldInput: {
+    width: '100%',
+    borderWidth: 1,
+    height: 45,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    backgroundColor: theme.color.background,
+  },
+  Field2: {marginTop: 20, flexDirection: 'row', alignItems: 'center'},
+  Field2Title: {
+    color: theme.color.titleGreen,
+    fontSize: 13.5,
+    fontFamily: theme.fonts.fontMedium,
+    textTransform: 'capitalize',
+    marginLeft: 10,
+  },
+  Field3: {marginTop: 20, alignItems: 'center', justifyContent: 'center'},
+  Field3Title1: {
+    color: theme.color.titleGreen,
+    fontSize: 13.5,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
+    textDecorationLine: 'underline',
+  },
+
+  Field31: {
+    marginTop: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  Field31Title1: {
+    color: theme.color.titleGreen,
+    fontSize: 13.5,
+    fontFamily: theme.fonts.fontNormal,
+  },
+
+  Field31Title2: {
+    color: theme.color.titleGreen,
+    fontSize: 13,
+    fontFamily: theme.fonts.fontBold,
+  },
+  section2LogoTitle: {
+    marginTop: 20,
+    color: theme.color.title,
+    fontSize: 14,
+    fontFamily: theme.fonts.fontNormal,
+    alignSelf: 'center',
+  },
+
+  phoneInputContainer: {
+    width: '100%',
+    marginTop: 5,
+
+    borderRadius: 8,
+    borderWidth: 0.5,
+    borderColor: theme.color.fieldBorder,
+    paddingHorizontal: 10,
+    alignItems: 'center', //for ios
+    justifyContent: 'center', //for ios
   },
 });

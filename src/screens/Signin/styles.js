@@ -71,7 +71,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: theme.color.button1,
-    height: 59,
+    height: 55,
     // height: responsiveHeight(8),
     borderRadius: 10,
     alignSelf: 'center',

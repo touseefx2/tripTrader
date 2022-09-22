@@ -31,7 +31,7 @@ import {
 } from 'react-native-responsive-dimensions';
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
-
+import ToggleSwitch from 'toggle-switch-react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {ActivityIndicator} from 'react-native-paper';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -45,6 +45,8 @@ function Settings(props) {
 
   let internet = store.General.isInternet;
   let user = store.User.user;
+
+  let isNotification = store.User.isNotification;
 
   let phn = '';
   if (user != 'guest' && user) {
@@ -83,11 +85,28 @@ function Settings(props) {
     }
   }, [user]);
 
-  const onClick = c => {};
+  const onClick = c => {
+    if (c == 'edit profile') {
+      props.navigation.navigate('EditProfile');
+    }
+    if (c == 'change password') {
+      props.navigation.navigate('ChangePassword');
+    }
+    if (c == 'notifications') {
+    }
+
+    if (c == 'contact us') {
+    }
+    if (c == 'news') {
+    }
+    if (c == 'privacy') {
+    }
+    if (c == 'logout') {
+    }
+  };
 
   const renderMain = () => {
     let ao = 0.8;
-
     let editprofileIcon = require('../../assets/images/settings/editprofile/img.png');
     let cpIcon = require('../../assets/images/settings/cp/img.png');
     let notificationsIcon = require('../../assets/images/settings/notifications/img.png');
@@ -123,7 +142,7 @@ function Settings(props) {
       );
     };
 
-    const rendercp = () => {
+    const renderCp = () => {
       let title = 'change password';
       return (
         <TouchableOpacity
@@ -150,10 +169,171 @@ function Settings(props) {
       );
     };
 
+    const renderNotifications = () => {
+      let title = 'notifications';
+      return (
+        <TouchableOpacity
+          activeOpacity={ao}
+          onPress={() => {
+            onClick(title);
+          }}
+          style={styles.mainContainer}>
+          <View style={styles.sec1Container}>
+            <View style={styles.iconConatiner}>
+              <Image source={notificationsIcon} style={styles.icon} />
+            </View>
+          </View>
+
+          <View style={[styles.sec2Container, {width: '41.5%'}]}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={styles.sec2Title}>
+              {title}
+            </Text>
+          </View>
+
+          <View
+            style={{
+              width: '41.5%',
+              alignItems: 'flex-end',
+            }}>
+            <ToggleSwitch
+              isOn={isNotification}
+              onColor={theme.color.button2}
+              offColor={theme.color.button2}
+              label={isNotification ? 'Enabled' : 'Disabled'}
+              labelStyle={{
+                color: '#50555C',
+                fontFamily: theme.fonts.fontNormal,
+                fontSize: 12.5,
+                opacity: 0.5,
+              }}
+              size="small"
+              onToggle={isOn => store.User.setisNotification(isOn)}
+            />
+          </View>
+        </TouchableOpacity>
+      );
+    };
+
+    const renderContactus = () => {
+      let title = 'contact us';
+      return (
+        <TouchableOpacity
+          activeOpacity={ao}
+          onPress={() => {
+            onClick(title);
+          }}
+          style={styles.mainContainer}>
+          <View style={styles.sec1Container}>
+            <View style={styles.iconConatiner}>
+              <Image source={contactusIcon} style={styles.icon} />
+            </View>
+          </View>
+
+          <View style={styles.sec2Container}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={styles.sec2Title}>
+              {title}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      );
+    };
+
+    const renderNews = () => {
+      let title = 'news';
+      return (
+        <TouchableOpacity
+          activeOpacity={ao}
+          onPress={() => {
+            onClick(title);
+          }}
+          style={styles.mainContainer}>
+          <View style={styles.sec1Container}>
+            <View style={styles.iconConatiner}>
+              <Image source={newsIcon} style={styles.icon} />
+            </View>
+          </View>
+
+          <View style={styles.sec2Container}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={styles.sec2Title}>
+              {title}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      );
+    };
+
+    const renderPrivacy = () => {
+      let title = 'privacy';
+      return (
+        <TouchableOpacity
+          activeOpacity={ao}
+          onPress={() => {
+            onClick(title);
+          }}
+          style={styles.mainContainer}>
+          <View style={styles.sec1Container}>
+            <View style={styles.iconConatiner}>
+              <Image source={privacyIcon} style={styles.icon} />
+            </View>
+          </View>
+
+          <View style={styles.sec2Container}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={styles.sec2Title}>
+              {title}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      );
+    };
+
+    const renderLogout = () => {
+      let title = 'logout';
+      return (
+        <TouchableOpacity
+          activeOpacity={ao}
+          onPress={() => {
+            onClick(title);
+          }}
+          style={styles.mainContainer}>
+          <View style={styles.sec1Container}>
+            <View style={styles.iconConatiner}>
+              <Image source={logoutIcon} style={styles.icon} />
+            </View>
+          </View>
+
+          <View style={styles.sec2Container}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={styles.sec2Title}>
+              {title}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      );
+    };
+
     return (
       <>
         {renderEditProfile()}
-        {rendercp()}
+        {renderCp()}
+        {renderNotifications()}
+        {renderContactus()}
+        {renderNews()}
+        {renderPrivacy()}
+        {renderLogout()}
       </>
     );
   };
@@ -168,7 +348,7 @@ function Settings(props) {
           <ScrollView
             contentContainerStyle={{
               paddingHorizontal: 15,
-              paddingVertical: 20,
+              paddingTop: 15,
             }}>
             {renderMain()}
           </ScrollView>

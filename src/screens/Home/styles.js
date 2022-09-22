@@ -126,4 +126,24 @@ export const styles = StyleSheet.create({
     color: theme.color.backgroundGreenText,
     top: -2,
   },
+  SerchBarContainer: {
+    width: '100%',
+    borderRadius: 100,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    backgroundColor: theme.color.background,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+
+    elevation: 2,
+    border: '1',
+    borderColor: '#D8E1DB',
+  },
 });

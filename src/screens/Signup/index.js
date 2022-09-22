@@ -51,7 +51,7 @@ function Signup(props) {
   const toastduration = 700;
 
   let user = store.User.user;
-  let userFirstName = user.first_name || '';
+
   let loader = store.User.regLoader;
 
   const [isUserCreate, setisUserCreate] = useState(false);
@@ -94,6 +94,9 @@ function Signup(props) {
   const [Emptypswd, setEmptypswd] = useState(false);
   const [invalidpswd, setinvalidpswd] = useState(false);
   const [showPaswd, setshowPaswd] = useState(false);
+
+  const [isShowGalleryPrmsn, setisShowGalleryPrmsn] = useState(false);
+  const [isShowCameraPrmsn, setisShowCameraPrmsn] = useState(false);
 
   const [photo, setphoto] = useState('');
   const [isPhotoUpload, setisPhotoUpload] = useState(true);
@@ -207,7 +210,7 @@ function Signup(props) {
   useEffect(() => {
     if (isValidCard == false) {
       if (cn == '' || inValidcn == 'incomplete') {
-        setcardErr('Please enter card number');
+        setcardErr('Please enter full card number');
         return;
       }
 
@@ -217,12 +220,12 @@ function Signup(props) {
       }
 
       if (ce == '' || inValidce == 'incomplete') {
-        setcardErr('Please enter card expiry date');
+        setcardErr('Please enter card expiration date');
         return;
       }
 
       if (inValidce == 'invalid') {
-        setcardErr('Card expiry date is invalid');
+        setcardErr('Card expiration date is invalid');
         return;
       }
 
@@ -431,6 +434,84 @@ function Signup(props) {
     setucnicF(c);
   };
 
+  const onclickImage = c => {
+    Keyboard.dismiss();
+
+    if (c == 'cnicFV') {
+      setpv(cnicFrontImage.uri);
+      setpvm(true);
+      return;
+    }
+
+    // if (c == 'cnicBV') {
+    //   setpv(cnicBackImage.uri);
+    //   setpvm(true);
+    //   return;
+    // }
+
+    if (c == 'profileV') {
+      setpv(photo.uri);
+      setpvm(true);
+      return;
+    }
+
+    MultipleImage(c);
+  };
+
+  const MultipleImage = async button => {
+    let apiLevel = store.General.apiLevel;
+    try {
+      let options = {
+        mediaType: 'image',
+        isPreview: false,
+        singleSelectedMode: true,
+      };
+
+      if (button == 'Profile') {
+        setisPhotoUpload(true);
+      }
+      if (button == 'CNICFront') {
+        setisCnicFrontUplaod(true);
+      }
+
+      const res = await MultipleImagePicker.openPicker(options);
+      if (res) {
+        console.log('mutipicker image res true  ');
+        const {path, fileName, mime} = res;
+        let uri = path;
+        if (Platform.OS == 'android' && apiLevel < 29) {
+          uri = 'file://' + uri;
+        }
+
+        ImageCompressor.compress(uri, {
+          compressionMethod: 'auto',
+        })
+          .then(async res => {
+            let imageObject = {
+              uri: res,
+              type: mime,
+              fileName: fileName,
+            };
+            console.log('Compress image  : ', imageObject);
+            if (button == 'Profile') {
+              setphoto(imageObject);
+              return;
+            } else if (button == 'CNICFront') {
+              setCnicFrontImage(imageObject);
+              return;
+            } else {
+              return;
+            }
+          })
+          .catch(err => {
+            console.log('Image compress error : ', err);
+          });
+      }
+    } catch (error) {
+      console.log('multi photo picker error : ', error);
+    }
+  };
+
   const goTOProfile = () => {
     let u = {...usr};
     u.photo = uphoto;
@@ -449,6 +530,61 @@ function Signup(props) {
 
     store.General.setgoto('home');
     store.User.addUser(token, u);
+  };
+
+  const checkPermsn = async (c, dt) => {
+    if (Platform.OS == 'android') {
+      if (c == 'camera') {
+        const permissionAndroid = await PermissionsAndroid.check(
+          'android.permission.CAMERA',
+        );
+
+        if (!permissionAndroid) {
+          setisShowGalleryPrmsn(false);
+          setisShowCameraPrmsn(true);
+        } else {
+          onclickImage(dt);
+        }
+      }
+
+      if (c == 'gallery') {
+        const permissionAndroid = await PermissionsAndroid.check(
+          'android.permission.READ_EXTERNAL_STORAGE',
+        );
+        if (!permissionAndroid) {
+          setisShowCameraPrmsn(false);
+          setisShowGalleryPrmsn(true);
+        } else {
+          onclickImage(dt);
+        }
+      }
+    }
+  };
+
+  const GalleryPermission = async () => {
+    if (Platform.OS == 'android') {
+      const reqPer = await PermissionsAndroid.request(
+        'android.permission.READ_EXTERNAL_STORAGE',
+      );
+      if (reqPer != 'granted') {
+        setisShowGalleryPrmsn(false);
+      } else {
+        setisShowGalleryPrmsn(false);
+      }
+    }
+  };
+
+  const CameraPermission = async () => {
+    if (Platform.OS == 'android') {
+      const reqPer = await PermissionsAndroid.request(
+        'android.permission.CAMERA',
+      );
+      if (reqPer != 'granted') {
+        setisShowCameraPrmsn(false);
+      } else {
+        setisShowCameraPrmsn(false);
+      }
+    }
   };
 
   const renderShowError = () => {
@@ -727,7 +863,7 @@ function Signup(props) {
 
             <utils.vectorIcon.AntDesign
               name={'calendar'}
-              color={theme.color.button1}
+              color={'#30563A'}
               size={20}
             />
           </View>
@@ -759,11 +895,19 @@ function Signup(props) {
 
             {pswd.length > 0 && (
               <TouchableOpacity activeOpacity={0.5} onPress={showPasswd}>
-                <utils.vectorIcon.Entypo
-                  name={!showPaswd ? 'eye' : 'eye-with-line'}
-                  color={theme.color.button1}
-                  size={20}
-                />
+                {!showPaswd && (
+                  <Image
+                    style={{width: 20, height: 12, resizeMode: 'contain'}}
+                    source={require('../../assets/images/sp/img.png')}
+                  />
+                )}
+                {showPaswd && (
+                  <utils.vectorIcon.Ionicons
+                    name={'eye-off-outline'}
+                    color={theme.color.button1}
+                    size={20}
+                  />
+                )}
               </TouchableOpacity>
             )}
           </View>
@@ -773,7 +917,31 @@ function Signup(props) {
 
         <View style={{marginTop: 20}}>
           <View style={styles.Field2}>
-            <TouchableOpacity activeOpacity={0.5} onPress={changeTerms}>
+            <TouchableOpacity
+              style={{
+                width: 20,
+                height: 20,
+                borderRadius: 4,
+                backgroundColor: !isTerms ? 'white' : theme.color.button1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderWidth: 1,
+                borderColor: !EmptyTerms
+                  ? theme.color.fieldBorder
+                  : theme.color.fieldBordeError,
+              }}
+              activeOpacity={0.5}
+              onPress={changeTerms}>
+              {isTerms && (
+                <utils.vectorIcon.FontAwesome5
+                  name={'check'}
+                  color={theme.color.buttonText}
+                  size={11}
+                />
+              )}
+            </TouchableOpacity>
+
+            {/* <TouchableOpacity activeOpacity={0.5} onPress={changeTerms}>
               {!isTerms && (
                 <utils.vectorIcon.Feather
                   name={'square'}
@@ -793,7 +961,7 @@ function Signup(props) {
                   size={20}
                 />
               )}
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <Text style={styles.Field2Title}>I agree to the </Text>
             <TouchableOpacity activeOpacity={0.7} onPress={TermsnCndtnClick}>
@@ -813,7 +981,7 @@ function Signup(props) {
 
         <View style={styles.Field3}>
           <View style={styles.Field31}>
-            <Text style={styles.Field31Title1}>Already a memeber?</Text>
+            <Text style={styles.Field31Title1}>Already a member?</Text>
             <TouchableOpacity activeOpacity={0.7} onPress={goToSignin}>
               <Text style={styles.Field31Title2}>Sign in</Text>
             </TouchableOpacity>
@@ -854,84 +1022,6 @@ function Signup(props) {
       setce(ce);
       setccvc(ccvc);
       setct(ct);
-    };
-
-    const MultipleImage = async button => {
-      let apiLevel = store.General.apiLevel;
-      try {
-        let options = {
-          mediaType: 'image',
-          isPreview: false,
-          singleSelectedMode: true,
-        };
-
-        if (button == 'Profile') {
-          setisPhotoUpload(true);
-        }
-        if (button == 'CNICFront') {
-          setisCnicFrontUplaod(true);
-        }
-
-        const res = await MultipleImagePicker.openPicker(options);
-        if (res) {
-          console.log('mutipicker image res true  ');
-          const {path, fileName, mime} = res;
-          let uri = path;
-          if (Platform.OS == 'android' && apiLevel < 29) {
-            uri = 'file://' + uri;
-          }
-
-          ImageCompressor.compress(uri, {
-            compressionMethod: 'auto',
-          })
-            .then(async res => {
-              let imageObject = {
-                uri: res,
-                type: mime,
-                fileName: fileName,
-              };
-              console.log('Compress image  : ', imageObject);
-              if (button == 'Profile') {
-                setphoto(imageObject);
-                return;
-              } else if (button == 'CNICFront') {
-                setCnicFrontImage(imageObject);
-                return;
-              } else {
-                return;
-              }
-            })
-            .catch(err => {
-              console.log('Image compress error : ', err);
-            });
-        }
-      } catch (error) {
-        console.log('multi photo picker error : ', error);
-      }
-    };
-
-    const onclickImage = c => {
-      Keyboard.dismiss();
-
-      if (c == 'cnicFV') {
-        setpv(cnicFrontImage.uri);
-        setpvm(true);
-        return;
-      }
-
-      // if (c == 'cnicBV') {
-      //   setpv(cnicBackImage.uri);
-      //   setpvm(true);
-      //   return;
-      // }
-
-      if (c == 'profileV') {
-        setpv(photo.uri);
-        setpvm(true);
-        return;
-      }
-
-      MultipleImage(c);
     };
 
     const Skip = () => {
@@ -999,6 +1089,36 @@ function Signup(props) {
       );
     };
 
+    const renderButtonPermission = () => {
+      return (
+        <View
+          style={{
+            width: '100%',
+            marginTop: 10,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <TouchableOpacity
+            onPress={isShowCameraPrmsn ? CameraPermission : GalleryPermission}
+            activeOpacity={0.7}
+            style={styles.BottomButtonP}>
+            <Text style={styles.buttonPTextBottom}>Yes</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              if (isShowCameraPrmsn) setisShowCameraPrmsn(false);
+              else setisShowGalleryPrmsn(false);
+            }}
+            activeOpacity={0.7}
+            style={styles.BottomButtonP}>
+            <Text style={styles.buttonPTextBottom}>No</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    };
+
     const renderButtonCP = c => {
       return (
         <>
@@ -1038,10 +1158,10 @@ function Signup(props) {
             onPress={() => {
               setisPhoto1Upload(3);
             }}
-            activeOpacity={0.7}
+            activeOpacity={0.9}
             style={[
               styles.BottomButton,
-              {marginTop: 0, width: '60%', height: 59},
+              {marginTop: 0, width: '60%', height: 55},
             ]}>
             <Text style={[styles.buttonTextBottom, {fontSize: 14}]}>
               choose {plan.name} plan
@@ -1058,7 +1178,7 @@ function Signup(props) {
             onPress={subscribePlan}
             activeOpacity={0.7}
             style={styles.BottomButton}>
-            <Text style={styles.buttonTextBottom}>Subcsribe</Text>
+            <Text style={styles.buttonTextBottom}>Subscribe</Text>
           </TouchableOpacity>
         </>
       );
@@ -1186,14 +1306,15 @@ function Signup(props) {
               marginTop: 2,
               width: '100%',
             }}>
-            <utils.vectorIcon.Entypo name="check" color={'green'} size={20} />
+            <utils.vectorIcon.Entypo name="check" color={'#16953A'} size={20} />
             <Text
               style={{
                 fontSize: 14,
-                color: theme.color.subTitle,
+                color: theme.color.subTitleAuth,
                 fontFamily: theme.fonts.fontNormal,
                 marginLeft: 10,
                 bottom: 1,
+                opacity: 0.6,
               }}>
               {feature}
             </Text>
@@ -1207,7 +1328,7 @@ function Signup(props) {
     return (
       <>
         {/* profile  0*/}
-        {isPhoto1Upload == 0 && (
+        {isPhoto1Upload == 0 && !isShowCameraPrmsn && !isShowGalleryPrmsn && (
           <View style={styles.section2}>
             <View style={{alignItems: 'center', justifyContent: 'center'}}>
               <Text style={styles.section2Title1}>
@@ -1232,7 +1353,7 @@ function Signup(props) {
                   <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() => {
-                      onclickImage('Profile');
+                      checkPermsn('gallery', 'Profile');
                     }}>
                     <Image
                       source={require('../../assets/images/uploadphoto/img.png')}
@@ -1242,7 +1363,7 @@ function Signup(props) {
                   <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() => {
-                      onclickImage('Profile');
+                      checkPermsn('camera', 'Profile');
                     }}>
                     <Image
                       source={require('../../assets/images/takephoto/img.png')}
@@ -1265,20 +1386,22 @@ function Signup(props) {
             {renderButton('Profile')}
             {photo != '' && renderButtonCP('Profile')}
 
-            <TouchableOpacity activeOpacity={0.7} onPress={Skip}>
-              <Text style={styles.section2bottomTitle}>Skip for now</Text>
-            </TouchableOpacity>
+            {photo == '' && (
+              <TouchableOpacity activeOpacity={0.7} onPress={Skip}>
+                <Text style={styles.section2bottomTitle}>Skip for now</Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
 
         {/* Cnic 1 */}
-        {isPhoto1Upload == 1 && (
+        {isPhoto1Upload == 1 && !isShowCameraPrmsn && !isShowGalleryPrmsn && (
           <View style={styles.section2}>
             <View style={{alignItems: 'center', justifyContent: 'center'}}>
               <Text style={styles.section2Title1}>
                 {cnicFrontImage == ''
                   ? 'verify identity'
-                  : 'review you id card'}
+                  : 'review your id card'}
               </Text>
               {cnicFrontImage == '' && (
                 <Image
@@ -1300,17 +1423,17 @@ function Signup(props) {
                   <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() => {
-                      onclickImage('CNICFront');
+                      checkPermsn('gallery', 'CNICFront');
                     }}>
                     <Image
-                      source={require('../../assets/images/uploadphoto/img.png')}
+                      source={require('../../assets/images/uploadphoto/imgg.png')}
                       style={styles.uploadIndicationLogo}
                     />
                   </TouchableOpacity>
                   <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() => {
-                      onclickImage('CNICFront');
+                      checkPermsn('camera', 'CNICFront');
                     }}>
                     <Image
                       source={require('../../assets/images/takephoto/img.png')}
@@ -1336,15 +1459,51 @@ function Signup(props) {
 
             {renderButton('CNICFront')}
             {cnicFrontImage != '' && renderButtonCP('CNICFront')}
-            <TouchableOpacity activeOpacity={0.7} onPress={Skip}>
-              <Text style={styles.section2bottomTitle}>Skip for now</Text>
-            </TouchableOpacity>
+            {cnicFrontImage == '' && (
+              <TouchableOpacity activeOpacity={0.7} onPress={Skip}>
+                <Text style={styles.section2bottomTitle}>Skip for now</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+
+        {/* permsiion */}
+
+        {(isShowCameraPrmsn || isShowGalleryPrmsn) && (
+          <View style={styles.section2}>
+            <View style={{alignItems: 'center', justifyContent: 'center'}}>
+              <Text style={styles.section2Title1}>
+                {isShowCameraPrmsn ? 'Camera Access' : 'Storage Access'}
+              </Text>
+
+              <Image
+                source={
+                  isShowCameraPrmsn
+                    ? require('../../assets/images/ca/img.png')
+                    : require('../../assets/images/ca/img.png')
+                }
+                style={styles.section2Logo}
+              />
+
+              <Text
+                style={[
+                  styles.section2LogoTitle,
+                  {textAlign: 'center', width: '90%', alignSelf: 'center'},
+                ]}>
+                {isShowCameraPrmsn
+                  ? 'Trip Trader wants permission to access your camera.'
+                  : 'Trip Trader wants permission to access your storage.'}
+              </Text>
+              <Text style={styles.section2LogoTitlee}>Grant access?</Text>
+            </View>
+
+            {renderButtonPermission()}
           </View>
         )}
 
         {/* Plan 2 */}
 
-        {isPhoto1Upload == 2 && (
+        {isPhoto1Upload == 2 && !isShowCameraPrmsn && !isShowGalleryPrmsn && (
           <View style={styles.section2}>
             <View>
               <Text
@@ -1402,8 +1561,9 @@ function Signup(props) {
                       <Text
                         style={{
                           fontSize: 12,
-                          color: theme.color.subTitle,
-                          fontFamily: theme.fonts.fontMedium,
+                          color: theme.color.subTitleAuth,
+                          fontFamily: theme.fonts.fontBold,
+                          opacity: 0.6,
                           marginLeft: 5,
                         }}>
                         /month{' '}
@@ -1414,12 +1574,12 @@ function Signup(props) {
                       <Text
                         style={{
                           fontSize: 12,
-                          color: 'green',
+                          color: '#16953A',
                           fontFamily: theme.fonts.fontMedium,
                           textTransform: 'capitalize',
                           top: -5,
                         }}>
-                        best value ${toFixed(save, 0)} savings
+                        Best Value • ${toFixed(save, 0)} savings
                       </Text>
                     )}
                     {plan.name == 'monthly' && (
@@ -1482,6 +1642,7 @@ function Signup(props) {
                       marginTop: 0,
                       marginLeft: 25,
                       fontSize: 14,
+                      color: 'rgba(17, 17, 17, 0.6)',
                     },
                   ]}>
                   Try for free
@@ -1564,7 +1725,7 @@ function Signup(props) {
                         textDecorationLine: 'line-through',
                       }}>
                       {plan.name == 'annual'
-                        ? `$${totalAnually}`
+                        ? `$${toFixed(totalAnually, 2)}`
                         : `$${monthly}`}
                       {'  '}
                     </Text>
@@ -1806,13 +1967,13 @@ function Signup(props) {
                       activeOpacity={0.7}
                       onPress={TermsnCndtnClickCard}>
                       <Text style={styles.Field2Titlec}>
-                        I agree to the Trip Trader’s{' '}
+                        I agree to Trip Trader’s{' '}
                         <Text style={styles.Field2Titlecc}>
                           Terms & Conditions
                         </Text>
                       </Text>
                     </TouchableOpacity>
-                    <Text style={styles.Field2Titlec}>
+                    <Text style={[styles.Field2Titlec, {top: -3}]}>
                       and understand that upon clicking “Subscribe” below, I
                       will be charged{' '}
                       {plan.name == 'annual'
@@ -1829,7 +1990,13 @@ function Signup(props) {
             {renderButtonSubscribe()}
 
             <TouchableOpacity activeOpacity={0.7} onPress={changePlan}>
-              <Text style={styles.section2bottomTitle}>Cancel and go back</Text>
+              <Text
+                style={[
+                  styles.section2bottomTitle,
+                  {color: 'rgba(17, 17, 17, 0.6)'},
+                ]}>
+                Cancel and go back
+              </Text>
             </TouchableOpacity>
           </View>
         )}
@@ -1842,7 +2009,7 @@ function Signup(props) {
                 numberOfLines={1}
                 ellipsizeMode="tail"
                 style={styles.section2Title1}>
-                welcome {userFirstName}
+                welcome, {usr.first_name}!
               </Text>
               <View style={styles.section2LogoC}>
                 <Image

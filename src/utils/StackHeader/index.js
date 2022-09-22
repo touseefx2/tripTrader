@@ -23,21 +23,25 @@ import Svg, {Path} from 'react-native-svg';
 import {responsiveHeight} from 'react-native-responsive-dimensions';
 import {Utils} from '@react-native-firebase/app';
 
-export default observer(DrawerHeader);
-function DrawerHeader(props) {
+export default observer(StackHeader);
+function StackHeader(props) {
   let prop = props.props;
   let headerTitle = props.headerTitle || '';
 
+  const goBack = () => {
+    prop.navigation.goBack();
+  };
+
   const render1 = () => {
     const onClick = () => {
-      prop.navigation.openDrawer();
+      goBack();
     };
     return (
       <TouchableOpacity activeOpacity={0.5} onPress={onClick}>
-        <utils.vectorIcon.Octicons
-          name="three-bars"
+        <utils.vectorIcon.Ionicons
+          name="ios-chevron-back"
           color={theme.color.backgroundGreenText}
-          size={22}
+          size={24}
         />
       </TouchableOpacity>
     );
@@ -58,7 +62,11 @@ function DrawerHeader(props) {
       prop.navigation.navigate('Notifications', {screen: headerTitle});
     };
     return (
-      <TouchableOpacity activeOpacity={0.5} onPress={onClick}>
+      // <View style={{width: 22}} />
+      <TouchableOpacity
+        onPress={onClick}
+        disabled={headerTitle == 'Notifications' ? true : false}
+        activeOpacity={0.5}>
         <utils.vectorIcon.SimpleLineIcons
           name="bell"
           color={theme.color.backgroundGreenText}

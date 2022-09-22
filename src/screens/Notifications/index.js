@@ -45,108 +45,35 @@ function Notifications(props) {
 
   let internet = store.General.isInternet;
   let user = store.User.user;
-  let goto = store.General.goto;
-  let loc = store.User.location;
-  let cart = store.User.cart;
-  let totalItems = cart.data.length > 0 ? cart.totalitems : 0;
-  let tagLine = '';
-
-  useEffect(() => {
-    if (goto == 'profile') {
-      props.navigation.navigate('MyProfile');
-    }
-  }, []);
 
   const goBack = () => {
     props.navigation.goBack();
   };
 
-  const renderStatusBar = () => {
-    return (
-      <>
-        <StatusBar
-          translucent={false}
-          backgroundColor={theme.color.backgroundGreen}
-          barStyle={Platform.OS == 'android' ? 'light-content' : 'dark-content'}
-        />
-      </>
-    );
-  };
-
-  const renderHeader = () => {
-    const render1 = () => {
-      const onClick = () => {
-        goBack();
-      };
-      return (
-        <TouchableOpacity activeOpacity={0.4} onPress={onClick}>
-          <utils.vectorIcon.Ionicons
-            name="ios-chevron-back"
-            color={theme.color.backgroundGreenText}
-            size={24}
-          />
-        </TouchableOpacity>
-      );
-    };
-
-    const render2 = () => {
-      return (
-        <View style={{width: '75%'}}>
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={styles.headerTitle}>
-            {headerTitle}
-          </Text>
-        </View>
-      );
-    };
-
-    const render3 = () => {
-      const onClick = () => {};
-      return (
-        <View style={{width: 22}} />
-        // <TouchableOpacity disabled activeOpacity={0.4}>
-        //   <utils.vectorIcon.SimpleLineIcons
-        //     name="bell"
-        //     color={theme.color.backgroundGreenText}
-        //     size={22}
-        //   />
-        //   <View
-        //     style={{
-        //       width: 8,
-        //       height: 8,
-        //       borderRadius: 8 / 2,
-        //       position: 'absolute',
-        //       right: 0,
-        //       top: 2,
-        //       backgroundColor: theme.color.ntfctnClr,
-        //     }}></View>
-        // </TouchableOpacity>
-      );
-    };
-
-    return (
-      <View style={styles.headerConatainer}>
-        {render1()}
-        {render2()}
-        {render3()}
-      </View>
-    );
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* {tagLine != '' && <utils.TagLine tagLine={tagLine} />} */}
-      {renderHeader()}
+      <utils.StackHeader props={props} headerTitle={headerTitle} />
       {!internet && <utils.InternetMessage />}
-      <ScrollView contentContainerStyle={{padding: 20}}>
-        {/* {renderMain()} */}
-      </ScrollView>
+      <SafeAreaView style={styles.container2}>
+        <View style={styles.container3}>
+          <ScrollView
+            contentContainerStyle={{
+              paddingHorizontal: 15,
+              paddingTop: 15,
+            }}>
+            {/* {renderMain()} */}
+          </ScrollView>
+          {/* <utils.Loader2 load={Loader} /> */}
+        </View>
+        <utils.Footer
+          nav={props.navigation}
+          screen={headerTitle}
+          focusScreen={store.General.focusScreen}
+        />
+      </SafeAreaView>
 
-      {renderStatusBar()}
       <Toast ref={toast} position="bottom" />
-      {/* <utils.Loader2 load={Loader} /> */}
-    </SafeAreaView>
+    </View>
   );
 }

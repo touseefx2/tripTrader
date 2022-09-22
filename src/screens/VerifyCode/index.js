@@ -37,6 +37,7 @@ import auth from '@react-native-firebase/auth';
 export default observer(VerifyCode);
 function VerifyCode(props) {
   let resendTime = 60; //second
+  let screen = props.route.params.screen || '';
 
   const mobileReg = /^[0][3]\d{9}$/;
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
@@ -119,7 +120,7 @@ function VerifyCode(props) {
 
   const goToResetPassword = () => {
     setisVerifyCode(true);
-    props.navigation.navigate('ResetPassword');
+    props.navigation.navigate('ResetPassword', {screen});
   };
 
   async function verfyCode(c) {
@@ -354,7 +355,7 @@ function VerifyCode(props) {
               styles.TimerText,
               {textDecorationLine: isFinish ? 'underline' : 'none'},
             ]}>
-            Resent PIN{!isFinish ? ' in' : ''}
+            Resend Code{!isFinish ? ' in' : ''}
           </Text>
           {!isFinish && (
             <>
@@ -382,8 +383,8 @@ function VerifyCode(props) {
           {/* {errorMessage !== '' && renderShowError()} */}
           <Text style={styles.section2LogoTitle}>
             {chk == 'phone'
-              ? `Enter the 6-digit PIN code we sent to your device at  ${value}`
-              : `Enter the 6-digit PIN code we sent to your email at ${value}`}
+              ? `Enter the 6-digit verification code we sent to your device at  ${value}`
+              : `Enter the 6-digit verification code we sent to your email at ${value}`}
           </Text>
         </View>
 

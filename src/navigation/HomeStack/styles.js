@@ -161,7 +161,7 @@ const Settingsicons = {
   drawerLabel: 'Settings',
   // headerShown: false,
   // swipeEnabled: true,
-  // unmountOnBlur: true,
+  unmountOnBlur: true,
 
   drawerIcon: ({focused, size}) => (
     <Image

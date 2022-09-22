@@ -16,6 +16,12 @@ class user {
     makeObservable(this);
   }
 
+  @persist('object') @observable isNotification = true;
+
+  @action setisNotification = obj => {
+    this.isNotification = obj;
+  };
+
   @observable phn = '';
   @observable cntr = '';
   @observable pwc = '';
@@ -904,15 +910,16 @@ class user {
   }
 
   // @action.bound
-  Logout(goHome) {
-    this.authToken = '';
-    this.user = false;
-    this.setfvrtList([]);
-    this.setadrsList([]);
-    store.Orders.setorders([]);
-    this.setisGetAllDatainSplash(false);
-    // this.setcart({totalbill: 0, totalitems: 0, data: []});
-    goHome();
+  Logout() {
+    this.addauthToken('');
+    this.setUser(false);
+    this.setreview([]);
+    this.settrips([]);
+    this.setphotos([]);
+    this.setphn('');
+    this.setcntr('');
+    this.setpwc('');
+    this.setisNotification(true);
   }
 
   attemptToUploadImage(imgArr, seterror, setPhoto1Upload, setup, setuc) {
@@ -1310,6 +1317,37 @@ class user {
       this.setregLoader(false);
       sucs();
 
+      // Alert.alert('', msg.toString());
+      // seterror('asa as');
+    }, 1000);
+
+    // db.hitApi(db.apis.REGISTER_USER, 'post', body, null)
+    //   ?.then(resp => {
+    //     console.log(`response  ${db.apis.REGISTER_USER} : `, resp.data);
+    //     this.setregLoader(false);
+    //     this.addUser(resp.data.token, resp.data.data);
+    //   })
+    //   .catch(err => {
+    //     this.setregLoader(false);
+    //     let msg = err.response.data.message || err.response.status;
+    //     console.log(`Error in ${db.apis.REGISTER_USER} : `, msg);
+    //     if (msg == 503 || msg == 500) {
+    //       store.General.setisServerError(true);
+    //       return;
+    //     }
+    //     seterror(msg.toString())
+    //     // Alert.alert('', msg.toString());
+    //   });
+  }
+
+  changePasword(body, seterror, incp, sucs) {
+    console.warn('Update Psswd user body : ', body);
+    this.setregLoader(true);
+
+    setTimeout(() => {
+      this.setregLoader(false);
+      sucs();
+      // incp(true);
       // Alert.alert('', msg.toString());
       // seterror('asa as');
     }, 1000);

@@ -162,7 +162,7 @@ function Signin(props) {
     };
 
     const forgotPswd = () => {
-      props.navigation.navigate('ForgotPasswords');
+      props.navigation.navigate('ForgotPasswords', {screen: 'signin'});
     };
 
     const goToSignup = () => {
@@ -266,11 +266,19 @@ function Signin(props) {
 
             {pswd.length > 0 && (
               <TouchableOpacity activeOpacity={0.5} onPress={showPasswd}>
-                <utils.vectorIcon.Entypo
-                  name={!showPaswd ? 'eye' : 'eye-with-line'}
-                  color={theme.color.button1}
-                  size={20}
-                />
+                {!showPaswd && (
+                  <Image
+                    style={{width: 20, height: 12, resizeMode: 'contain'}}
+                    source={require('../../assets/images/sp/img.png')}
+                  />
+                )}
+                {showPaswd && (
+                  <utils.vectorIcon.Ionicons
+                    name={'eye-off-outline'}
+                    color={theme.color.button1}
+                    size={20}
+                  />
+                )}
               </TouchableOpacity>
             )}
           </View>
@@ -279,24 +287,28 @@ function Signin(props) {
         </View>
 
         <View style={styles.Field2}>
-          <TouchableOpacity activeOpacity={0.5} onPress={savePaswd}>
-            {!savePswd && (
-              <utils.vectorIcon.Feather
-                name={'square'}
-                color={theme.color.subTitleLight}
-                size={20}
-              />
-            )}
-
+          <TouchableOpacity
+            style={{
+              width: 20,
+              height: 20,
+              borderRadius: 4,
+              backgroundColor: !savePswd ? 'white' : theme.color.button1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 1,
+              borderColor: theme.color.fieldBorder,
+            }}
+            activeOpacity={0.5}
+            onPress={savePaswd}>
             {savePswd && (
-              <utils.vectorIcon.AntDesign
-                name={'checksquare'}
-                color={theme.color.button1}
-                size={20}
+              <utils.vectorIcon.FontAwesome5
+                name={'check'}
+                color={theme.color.buttonText}
+                size={11}
               />
             )}
           </TouchableOpacity>
-          <Text style={styles.Field2Title}>save password</Text>
+          <Text style={styles.Field2Title}>Save password</Text>
         </View>
 
         {renderButton()}
@@ -307,7 +319,7 @@ function Signin(props) {
           </TouchableOpacity>
 
           <View style={styles.Field31}>
-            <Text style={styles.Field31Title1}>Not a memeber?</Text>
+            <Text style={styles.Field31Title1}>Not a member?</Text>
             <TouchableOpacity activeOpacity={0.7} onPress={goToSignup}>
               <Text style={styles.Field31Title2}>Join now</Text>
             </TouchableOpacity>

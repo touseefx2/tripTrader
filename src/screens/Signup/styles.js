@@ -70,7 +70,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: theme.color.button1,
-    height: 59,
+    height: 55,
     // height: responsiveHeight(8),
     borderRadius: 10,
     alignSelf: 'center',
@@ -118,12 +118,19 @@ export const styles = StyleSheet.create({
     width: 70,
     height: 70,
     marginTop: 10,
+    resizeMode: 'contain',
   },
   section2LogoTitle: {
     marginTop: 20,
     color: theme.color.subTitleAuth,
     fontSize: 14,
     fontFamily: theme.fonts.fontNormal,
+  },
+  section2LogoTitlee: {
+    marginTop: 20,
+    color: theme.color.subTitleAuth,
+    fontSize: 15,
+    fontFamily: theme.fonts.fontBold,
   },
   section2bottomTitle: {
     marginTop: 20,
@@ -184,7 +191,7 @@ export const styles = StyleSheet.create({
     color: theme.color.titleGreen,
     fontSize: 11.5,
     fontFamily: theme.fonts.fontMedium,
-    textDecorationLine: 'underline',
+    // textDecorationLine: 'underline',
     letterSpacing: -0.5,
     // textTransform: 'capitalize',
   },
@@ -323,10 +330,12 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     marginTop: 10,
+    resizeMode: 'contain',
   },
   section2LogoCImg2: {
     width: 70,
     height: 70,
+    resizeMode: 'contain',
     position: 'absolute',
   },
   section2LogoTitle1c: {
@@ -353,6 +362,26 @@ export const styles = StyleSheet.create({
   paymenttitle2: {
     color: theme.color.subTitle,
     fontSize: 11,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
+  },
+
+  BottomButtonP: {
+    width: '45%',
+    height: 55,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.color.button2,
+
+    // height: responsiveHeight(8),
+    borderRadius: 8,
+    alignSelf: 'center',
+
+    marginTop: 25,
+  },
+  buttonPTextBottom: {
+    color: '#30563A',
+    fontSize: 16,
     fontFamily: theme.fonts.fontBold,
     textTransform: 'capitalize',
   },

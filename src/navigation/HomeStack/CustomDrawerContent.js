@@ -50,13 +50,7 @@ function CustomDrawerContent(props) {
   store.General.setFocusScreen(focusedRoute);
 
   const goToLogout = () => {
-    store.User.setUser(false);
-    store.User.setreview([]);
-    store.User.settrips([]);
-    store.User.setphotos([]);
-    store.User.setphn('');
-    store.User.setcntr('');
-    store.User.setpwc('');
+    store.User.Logout();
   };
 
   const goToProfile = () => {

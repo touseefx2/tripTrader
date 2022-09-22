@@ -39,17 +39,28 @@ function ForgotPassword(props) {
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
   const cnicReg = /\d{5}\d{8}\d/;
 
+  let screen = props.route.params?.screen || '';
+
   const loader = store.User.regLoader;
+
+  let user = store.User.user;
+  let em = '';
+  if (user != 'guest' && user) {
+    em = user.email;
+  }
+  let phn = store.User.phn;
+  let cntry = store.User.cntr == '' ? RNLocalize.getCountry() : store.User.cntr;
+  let pwc = store.User.pwc;
 
   const toast = useRef(null);
   const toastduration = 700;
 
-  const [email, setemail] = useState('');
+  const [email, setemail] = useState(em);
   const [Emptyemail, setEmptyemail] = useState(false);
   const [invalidemail, setinvalidemail] = useState(false);
 
-  const [phone, setphone] = useState('');
-  const [isVerifyPhone, setisVerifyPhone] = useState('a');
+  const [phone, setphone] = useState(phn);
+  const [isVerifyPhone, setisVerifyPhone] = useState(phn != '' ? true : 'a');
   const [invalidphone, setinvalidphone] = useState(false);
 
   const [errorMessage, seterrorMessage] = useState('');
@@ -72,7 +83,12 @@ function ForgotPassword(props) {
   };
 
   const gotoVerifyCode = (c, v, res) => {
-    props.navigation.navigate('VerifyCode', {chk: c, value: v, res: res});
+    props.navigation.navigate('VerifyCode', {
+      chk: c,
+      value: v,
+      res: res,
+      screen,
+    });
   };
 
   async function SendOtpCode() {
@@ -300,6 +316,7 @@ function ForgotPassword(props) {
               <Text style={styles.FieldTitle1}>email address</Text>
               <TextInput
                 placeholder=""
+                value={email}
                 onChangeText={enterEmail}
                 style={[
                   styles.FieldInput,
@@ -333,7 +350,8 @@ function ForgotPassword(props) {
                   onChangeText={p => {
                     setPhoneNumber(p);
                   }}
-                  defaultCountry={RNLocalize.getCountry()}
+                  phone={pwc}
+                  defaultCountry={cntry}
                   lang="EN"
                   renderAction={() => (
                     <>

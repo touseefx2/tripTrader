@@ -5,10 +5,21 @@ import {
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
 
+let iconContainerColor = theme.color.button2;
+let textColor = '#30563A';
+
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: theme.color.backgroundGreen,
+  },
+  container2: {
+    flex: 1,
     backgroundColor: theme.color.background,
+  },
+  container3: {
+    flex: 1,
+    backgroundColor: theme.color.backgroundConatiner,
   },
   headerConatainer: {
     backgroundColor: theme.color.backgroundGreen,
@@ -117,5 +128,51 @@ export const styles = StyleSheet.create({
     fontFamily: theme.fonts.fontBold,
     color: theme.color.backgroundGreenText,
     top: -2,
+  },
+
+  mainContainer: {
+    width: '100%',
+    padding: 7,
+    borderRadius: 5,
+    backgroundColor: theme.color.background,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+
+    elevation: 6,
+    marginBottom: 15,
+  },
+  sec1Container: {
+    width: '15%',
+  },
+  iconConatiner: {
+    width: 40,
+    height: 40,
+    borderRadius: 40 / 2,
+    backgroundColor: iconContainerColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  icon: {
+    width: '44%',
+    height: '44%',
+    resizeMode: 'contain',
+  },
+  sec2Container: {
+    width: '83%',
+  },
+  sec2Title: {
+    fontSize: 16,
+    color: textColor,
+    fontFamily: theme.fonts.fontBold,
+    lineHeight: 22.8,
+    textTransform: 'capitalize',
   },
 });

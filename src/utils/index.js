@@ -27,7 +27,7 @@ import navBarHeight from './navBarHeight';
 // import Validation from "./Validation";
 // import ToastAndroid from "./ToastAndroid";
 // import Header from "./header";
-// import StackHeader from "./StackHeader";
+import StackHeader from './StackHeader';
 // import DrawerHeader from "./DrawerHeader";
 import {Countries} from './Countries';
 import FullimageModal from './FullimageModal';
@@ -46,6 +46,7 @@ const utils = {
   TagLineModal,
   FullimageModal,
   navBarHeight,
+  StackHeader,
 };
 
 export default utils;

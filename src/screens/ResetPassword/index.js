@@ -37,6 +37,7 @@ function ResetPassword(props) {
   const mobileReg = /^[0][3]\d{9}$/;
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
   const cnicReg = /\d{5}\d{8}\d/;
+  let screen = props.route.params.screen || '';
 
   const loader = store.User.regLoader;
 
@@ -65,7 +66,6 @@ function ResetPassword(props) {
     setEmptynp(false);
     setinvalidnp(false);
     setEmptycp(false);
-
     seterrorMessage('');
   };
 
@@ -77,11 +77,19 @@ function ResetPassword(props) {
     props.navigation.navigate('Login');
   };
 
+  const goToChangePassword = () => {
+    props.navigation.navigate('ChangePasswordd');
+  };
+
   const showToast = () => {
-    toast?.current?.show('Update Paswword success', 1000);
+    toast?.current?.show('Password update successfully', 1000);
     setTimeout(() => {
-      goToLogin();
-    }, 700);
+      if (screen == 'cp') {
+        goToChangePassword();
+      } else {
+        goToLogin();
+      }
+    }, 500);
   };
 
   const updatePassword = () => {
@@ -199,15 +207,15 @@ function ResetPassword(props) {
         text = Emptynp
           ? 'Please enter new password'
           : invalidnp
-          ? 'Password must contains 8 or more characters'
+          ? 'Password must contain 8 or more characters'
           : '';
       }
 
       if (c == 'cp') {
         text = Emptycp
-          ? 'Please Re-enter Password'
+          ? 'Please enter confirm password'
           : invalidCP
-          ? 'Passwords do not match'
+          ? 'Confirm password do not match'
           : '';
       }
 
@@ -266,7 +274,7 @@ function ResetPassword(props) {
 
         <View style={[styles.Field, {marginTop: 20}]}>
           <Text style={[styles.FieldTitle1, {textTransform: 'none'}]}>
-            Re-enter Password
+            Confirm Password
           </Text>
           <View
             style={[

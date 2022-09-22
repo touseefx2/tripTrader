@@ -13,6 +13,7 @@ import {
   PermissionsAndroid,
   Platform,
   Dimensions,
+  Pressable,
 } from 'react-native';
 // import Geolocation from 'react-native-geolocation-service';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
@@ -42,13 +43,10 @@ function Home(props) {
   const toast = useRef(null);
   const toastduration = 700;
   let headerTitle = 'Home';
-
   let internet = store.General.isInternet;
   let user = store.User.user;
   let goto = store.General.goto;
-  let loc = store.User.location;
-  let cart = store.User.cart;
-  let totalItems = cart.data.length > 0 ? cart.totalitems : 0;
+
   let tagLine = '';
 
   useEffect(() => {
@@ -69,6 +67,25 @@ function Home(props) {
     );
   };
 
+  const renderSearchBar = () => {
+    const onclickSearchBar = () => {};
+
+    return (
+      <Pressable
+        style={({pressed}) => [
+          {opacity: pressed ? 0.7 : 1},
+          [styles.SerchBarContainer],
+        ]}
+        onPress={onclickSearchBar}>
+        <utils.vectorIcon.Octicons
+          name="search"
+          color={theme.color.button1}
+          size={22}
+        />
+      </Pressable>
+    );
+  };
+
   return (
     <View style={styles.container}>
       {/* {tagLine != '' && <utils.TagLine tagLine={tagLine} />} */}
@@ -79,11 +96,10 @@ function Home(props) {
           <ScrollView
             contentContainerStyle={{
               paddingHorizontal: 15,
-              paddingVertical: 20,
+              paddingVertical: 15,
             }}>
-            {/* {renderMain()} */}
+            {renderSearchBar()}
           </ScrollView>
-          {/* <utils.Loader2 load={Loader} /> */}
         </View>
         <utils.Footer
           nav={props.navigation}

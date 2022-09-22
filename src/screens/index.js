@@ -11,7 +11,7 @@
 // import ResturantDetails from './ResturantDetails/index';
 // import OrderLocation from './OrderLocation';
 // import OTP from './OTP';
-// import ChangePassword from './ChangePassword';
+
 // import Favourite from './Favourite';
 // import Orders from './Orders';
 // import OrdersDetails from './OrdersDetails';
@@ -48,6 +48,8 @@ import LatestNews from './LatestNews';
 import PrivacyPolicy from './PrivacyPolicy';
 import Settings from './Settings';
 
+import ChangePassword from './ChangePassword';
+
 export default screens = {
   Splash,
 
@@ -72,4 +74,5 @@ export default screens = {
   LatestNews,
   PrivacyPolicy,
   Settings,
+  ChangePassword,
 };
