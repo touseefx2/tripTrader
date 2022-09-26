@@ -161,8 +161,8 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   icon: {
-    width: '44%',
-    height: '44%',
+    width: '55%',
+    height: '55%',
     resizeMode: 'contain',
   },
   sec2Container: {
@@ -174,5 +174,44 @@ export const styles = StyleSheet.create({
     fontFamily: theme.fonts.fontBold,
     lineHeight: 22.8,
     textTransform: 'capitalize',
+  },
+  bottomContainer: {
+    width: '100%',
+    paddingHorizontal: 15,
+    paddingTop: 15,
+    paddingBottom: 32,
+
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.color.backgroundConatiner,
+  },
+  bottomTitle1: {
+    fontSize: 14.5,
+    color: theme.color.subTitle,
+    fontFamily: theme.fonts.fontMedium,
+    textAlign: 'center',
+  },
+
+  BottomButton: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.color.button1,
+    height: 55,
+    // height: responsiveHeight(8),
+    borderRadius: 10,
+    alignSelf: 'center',
+    marginTop: 15,
+  },
+  buttonTextBottom: {
+    color: theme.color.buttonText,
+    fontSize: 16,
+    // fontSize: responsiveScreenFontSize(2.15),
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
+  },
+  arrow: {
+    marginLeft: 12,
+    top: 2,
   },
 });

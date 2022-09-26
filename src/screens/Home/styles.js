@@ -128,22 +128,33 @@ export const styles = StyleSheet.create({
   },
   SerchBarContainer: {
     width: '100%',
+    height: 48,
     borderRadius: 100,
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 15,
-    paddingVertical: 8,
     backgroundColor: theme.color.background,
-    shadowColor: '#000',
+    shadowColor: 'rgba(0, 0, 0, 0.2)',
     shadowOffset: {
       width: 0,
       height: 1,
     },
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
-
     elevation: 2,
-    border: '1',
+    borderWidth: 1,
     borderColor: '#D8E1DB',
+  },
+  SerchBarInput: {
+    width: '100%',
+    height: '100%',
+    fontSize: 16,
+    fontFamily: theme.fonts.fontNormal,
+    top: 2,
+  },
+  Baricon: {
+    flex: 1,
+    resizeMode: 'contain',
   },
 });

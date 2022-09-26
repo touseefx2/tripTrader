@@ -796,13 +796,13 @@ export const styles = StyleSheet.create({
   },
   title1: {
     fontSize: 16,
-    color: theme.color.title,
+    color: '#101B10',
     fontFamily: theme.fonts.fontBold,
     lineHeight: 22.8,
   },
   title11: {
     fontSize: 13,
-    color: theme.color.title,
+    color: '#101B10',
     fontFamily: theme.fonts.fontMedium,
     lineHeight: 22.8,
     textTransform: 'capitalize',

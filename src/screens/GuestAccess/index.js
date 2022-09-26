@@ -114,7 +114,7 @@ function GuestAccess(props) {
         <>
           <TouchableOpacity
             onPress={onClickButton}
-            activeOpacity={0.7}
+            activeOpacity={0.9}
             style={styles.BottomButton}>
             <Text style={styles.buttonTextBottom}>Join now</Text>
           </TouchableOpacity>
@@ -130,7 +130,7 @@ function GuestAccess(props) {
         <>
           <TouchableOpacity
             onPress={onClickButton}
-            activeOpacity={0.7}
+            activeOpacity={0.9}
             style={[
               styles.BottomButton,
               {

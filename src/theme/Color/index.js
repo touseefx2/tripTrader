@@ -27,10 +27,10 @@ const titleGreenForm = '#1E3625';
 
 const subTitleAuth = '#101B10';
 
-const subTitle = 'rgba(17, 17, 17, 0.5)';
+const subTitle = 'rgba(17, 17, 17, 0.6)';
 const subTitleLight = 'rgba(17, 17, 17, 0.4)';
 
-const inactiveTabText = 'rgba(17, 17, 17, 0.5)';
+const inactiveTabText = 'rgba(17, 17, 17, 0.6)';
 
 const button1 = '#3C6B49';
 const button1Disable = ' #3C6B49';
@@ -73,6 +73,8 @@ const photoBorderColor = '#ededed';
 
 const fieldBc = '#fafafa';
 const disableSmallButton = 'rgba(17, 17, 17, 0.07)';
+
+const shadowColor = 'rgba(0, 0, 0, 0.1)';
 
 export default color = {
   background,
@@ -123,4 +125,5 @@ export default color = {
   inactiveTabText,
   disableSmallButton,
   button1Disable,
+  shadowColor,
 };

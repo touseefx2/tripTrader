@@ -45,6 +45,8 @@
 	<string>Food delivery would like permission to access your current location</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>App would like permission to access your Gallery for photos and camera</string>
+	<key>NSCameraUsageDescription</key>
+ <string>App would like permission to access your camera</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

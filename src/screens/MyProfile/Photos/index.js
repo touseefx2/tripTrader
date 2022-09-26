@@ -185,10 +185,9 @@ function Photos(props) {
             styles.crossContainer,
           ]}
           onPress={() => openDeleteModal({uri: item, i: index})}>
-          <utils.vectorIcon.AntDesign
-            name="close"
-            color={theme.color.title}
-            size={12}
+          <Image
+            source={require('../../../assets/images/cross/img.png')}
+            style={{width: 9, height: 9, resizeMode: 'contain'}}
           />
         </Pressable>
       );
@@ -198,7 +197,7 @@ function Photos(props) {
       <Pressable
         style={({pressed}) => [
           {opacity: pressed ? 0.9 : 1.0},
-          styles.ProfileImgContainer,
+          [styles.ProfileImgContainer, {marginTop: index < 3 ? 12 : 0}],
         ]}
         onPress={() => photoClick(photo, index)}>
         <ProgressiveFastImage
@@ -326,7 +325,7 @@ function Photos(props) {
     <SafeAreaView style={styles.container}>
       {/* {data.length > 0 && renderShowRes()} */}
       <ScrollView
-        style={{marginTop: 10}}
+        style={{marginTop: 3}}
         nestedScrollEnabled
         showsVerticalScrollIndicator={false}
         refreshControl={

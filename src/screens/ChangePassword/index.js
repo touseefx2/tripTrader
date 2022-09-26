@@ -246,11 +246,19 @@ function ChangePassword(props) {
                 onPress={() => {
                   setscurrentp(!scurrentp);
                 }}>
-                <utils.vectorIcon.Entypo
-                  name={!scurrentp ? 'eye' : 'eye-with-line'}
-                  color={theme.color.button1}
-                  size={20}
-                />
+                {!scurrentp && (
+                  <Image
+                    style={{width: 20, height: 12, resizeMode: 'contain'}}
+                    source={require('../../assets/images/sp/img.png')}
+                  />
+                )}
+                {scurrentp && (
+                  <utils.vectorIcon.Ionicons
+                    name={'eye-off-outline'}
+                    color={theme.color.button1}
+                    size={20}
+                  />
+                )}
               </TouchableOpacity>
             )}
           </View>
@@ -286,11 +294,19 @@ function ChangePassword(props) {
                 onPress={() => {
                   setsnp(!snp);
                 }}>
-                <utils.vectorIcon.Entypo
-                  name={!snp ? 'eye' : 'eye-with-line'}
-                  color={theme.color.button1}
-                  size={20}
-                />
+                {!snp && (
+                  <Image
+                    style={{width: 20, height: 12, resizeMode: 'contain'}}
+                    source={require('../../assets/images/sp/img.png')}
+                  />
+                )}
+                {snp && (
+                  <utils.vectorIcon.Ionicons
+                    name={'eye-off-outline'}
+                    color={theme.color.button1}
+                    size={20}
+                  />
+                )}
               </TouchableOpacity>
             )}
           </View>
@@ -327,11 +343,19 @@ function ChangePassword(props) {
                 onPress={() => {
                   setscp(!scp);
                 }}>
-                <utils.vectorIcon.Entypo
-                  name={!scp ? 'eye' : 'eye-with-line'}
-                  color={theme.color.button1}
-                  size={20}
-                />
+                {!scp && (
+                  <Image
+                    style={{width: 20, height: 12, resizeMode: 'contain'}}
+                    source={require('../../assets/images/sp/img.png')}
+                  />
+                )}
+                {scp && (
+                  <utils.vectorIcon.Ionicons
+                    name={'eye-off-outline'}
+                    color={theme.color.button1}
+                    size={20}
+                  />
+                )}
               </TouchableOpacity>
             )}
           </View>

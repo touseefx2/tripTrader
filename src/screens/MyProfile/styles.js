@@ -132,17 +132,18 @@ export const styles = StyleSheet.create({
     paddingBottom: 10,
     width: '100%',
     backgroundColor: theme.color.background,
-    borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 1,
     },
-    shadowOpacity: 0.23,
-    shadowRadius: 2.62,
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
 
-    elevation: 4,
+    elevation: 3,
     alignItems: 'center',
+    borderColor: '#D8E1DB',
+    borderRadius: 10,
   },
 
   tabBarConatiner: {
@@ -309,7 +310,7 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     alignSelf: 'center',
 
-    marginTop: 25,
+    marginTop: 12,
   },
   buttonTextBottom: {
     color: theme.color.buttonText,
@@ -355,7 +356,7 @@ export const styles = StyleSheet.create({
   },
   section2LogoTitle: {
     marginTop: 20,
-    color: theme.color.subTitle,
+    color: theme.color.subTitleAuth,
     fontSize: 14,
     fontFamily: theme.fonts.fontNormal,
     alignSelf: 'center',

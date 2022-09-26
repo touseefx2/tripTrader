@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    shadowColor: '#000000',
+    shadowColor: 'black',
     shadowOffset: {width: 0, height: -0.5}, // change this for more shadow
     shadowOpacity: 0.3,
     elevation: 15,

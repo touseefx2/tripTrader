@@ -484,12 +484,25 @@ function CustomDrawerContent(props) {
     return (
       <View style={styles.bottomContainer}>
         {renderProfile()}
-        <TouchableOpacity activeOpacity={0.7} onPress={goToLogout}>
-          <Image
+        {user && user !== 'guest' ? (
+          <TouchableOpacity activeOpacity={0.7} onPress={goToLogout}>
+            <Image
+              style={[styles.icon, {width: 24, height: 24}]}
+              source={require('../../assets/images/drawer/logout/img.png')}
+            />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            disabled
+            style={{width: 24}}
+            activeOpacity={0.7}
+            onPress={goToLogout}>
+            {/* <Image
             style={[styles.icon, {width: 24, height: 24}]}
             source={require('../../assets/images/drawer/logout/img.png')}
-          />
-        </TouchableOpacity>
+          /> */}
+          </TouchableOpacity>
+        )}
       </View>
     );
   };

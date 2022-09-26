@@ -606,7 +606,7 @@ export const styles = StyleSheet.create({
     top: 5,
   },
   dateContainerTitle: {
-    color: theme.color.subTitle,
+    color: '#717171',
     fontSize: 12,
     fontFamily: theme.fonts.fontMedium,
     textTransform: 'capitalize',
@@ -617,9 +617,9 @@ export const styles = StyleSheet.create({
     width: '100%',
   },
   boxSection2title: {
-    color: theme.color.title,
+    color: '#313131',
     fontSize: 12,
-    fontFamily: theme.fonts.fontNormal,
+    fontFamily: theme.fonts.fontMedium,
   },
   boxSection3: {
     marginTop: 15,

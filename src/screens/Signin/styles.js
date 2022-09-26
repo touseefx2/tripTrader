@@ -140,7 +140,7 @@ export const styles = StyleSheet.create({
   },
   Field2: {marginTop: 25, flexDirection: 'row', alignItems: 'center'},
   Field2Title: {
-    color: theme.color.titleGreenForm,
+    color: '#0E2932',
     fontSize: 13.5,
     fontFamily: theme.fonts.fontMedium,
     textTransform: 'capitalize',

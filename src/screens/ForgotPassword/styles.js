@@ -174,12 +174,10 @@ export const styles = StyleSheet.create({
     color: theme.color.subTitleAuth,
     fontSize: 14,
     fontFamily: theme.fonts.fontNormal,
-    alignSelf: 'center',
   },
 
   phoneInputContainer: {
     width: '100%',
-    marginTop: 5,
 
     borderRadius: 8,
     borderWidth: 0.5,

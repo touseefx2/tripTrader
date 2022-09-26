@@ -522,7 +522,7 @@ function Reviews(props) {
 
     return (
       <>
-        <View style={{marginBottom: 15}}>
+        <View style={{marginBottom: 15, marginTop: index == 0 ? 12 : 0}}>
           {renderShowCommentBox()}
           {reply != '' && !dispute && renderShowReplyBox()}
         </View>
@@ -809,28 +809,29 @@ function Reviews(props) {
             <View style={{flexDirection: 'row', width: '100%'}}>
               <Pressable
                 disabled={mloader}
-                style={({pressed}) => [{opacity: pressed ? 0.5 : 1.0}]}
+                style={({pressed}) => [
+                  {opacity: pressed ? 0.5 : 1.0},
+                  {
+                    width: 20,
+                    height: 20,
+                    borderRadius: 4,
+                    backgroundColor: !isTerms ? 'white' : theme.color.button1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderWidth: 1,
+                    borderColor: theme.color.fieldBorder,
+                  },
+                ]}
+                activeOpacity={0.5}
                 onPress={() => {
                   setisTerms(!isTerms);
                   setEmptyTerms(false);
                 }}>
-                {!isTerms && (
-                  <utils.vectorIcon.Feather
-                    name={'square'}
-                    color={
-                      EmptyTerms
-                        ? theme.color.fieldBordeError
-                        : theme.color.subTitleLight
-                    }
-                    size={20}
-                  />
-                )}
-
                 {isTerms && (
-                  <utils.vectorIcon.AntDesign
-                    name={'checksquare'}
-                    color={theme.color.button1}
-                    size={20}
+                  <utils.vectorIcon.FontAwesome5
+                    name={'check'}
+                    color={theme.color.buttonText}
+                    size={11}
                   />
                 )}
               </Pressable>
@@ -1069,7 +1070,7 @@ function Reviews(props) {
     <SafeAreaView style={styles.container}>
       {/* {data.length > 0 && renderShowRes()} */}
       <ScrollView
-        style={{marginTop: 10}}
+        style={{marginTop: 3}}
         nestedScrollEnabled
         showsVerticalScrollIndicator={false}
         refreshControl={

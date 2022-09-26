@@ -19,6 +19,8 @@ class general {
   @persist('object') @observable apiLevel = '';
   @persist('object') @observable appBuildNumber = '';
   @persist('object') @observable appVersionNumber = '';
+  @persist('object') @observable package = '';
+
   @observable isSheetOpen = false;
   @observable focusScreen = '';
   @observable goto = 'home';
@@ -53,6 +55,10 @@ class general {
 
   @action setappVersionNumber = obj => {
     this.appVersionNumber = obj;
+  };
+
+  @action setpackage = obj => {
+    this.package = obj;
   };
 
   @action setLoading = obj => {

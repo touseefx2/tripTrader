@@ -377,7 +377,6 @@ function MyProfile(props) {
             paddingHorizontal: 15,
             flex: 1,
             marginTop: 10,
-            marginBottom: 5,
           }}>
           <TabView
             navigationState={{index, routes}}
@@ -474,7 +473,7 @@ function MyProfile(props) {
                 {
                   color: theme.color.subTitle,
                   textTransform: 'none',
-                  fontFamily: theme.fonts.fontNormal,
+                  fontFamily: theme.fonts.fontBold,
                   fontSize: 14,
                 },
               ]}>

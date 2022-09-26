@@ -38,8 +38,9 @@ import {
   CreditCardInput,
   LiteCreditCardInput,
 } from 'react-native-credit-card-input';
-
+import {request, PERMISSIONS, check} from 'react-native-permissions';
 import DatePicker from 'react-native-date-picker';
+import IntentLauncher, {IntentConstant} from 'react-native-intent-launcher';
 
 export default observer(Signup);
 function Signup(props) {
@@ -97,6 +98,7 @@ function Signup(props) {
 
   const [isShowGalleryPrmsn, setisShowGalleryPrmsn] = useState(false);
   const [isShowCameraPrmsn, setisShowCameraPrmsn] = useState(false);
+  const [DT, setDT] = useState(false);
 
   const [photo, setphoto] = useState('');
   const [isPhotoUpload, setisPhotoUpload] = useState(true);
@@ -209,12 +211,17 @@ function Signup(props) {
 
   useEffect(() => {
     if (isValidCard == false) {
+      // if (cn == '' || inValidcn == 'incomplete') {
+      //   setcardErr('Please enter full card number');
+      //   return;
+      // }
+
       if (cn == '' || inValidcn == 'incomplete') {
         setcardErr('Please enter full card number');
         return;
       }
 
-      if (inValidcn == 'invalid') {
+      if (inValidcn != 'incomplete' && inValidcn == 'invalid') {
         setcardErr('Card number is invalid');
         return;
       }
@@ -473,7 +480,8 @@ function Signup(props) {
       if (button == 'CNICFront') {
         setisCnicFrontUplaod(true);
       }
-
+      setisShowGalleryPrmsn(false);
+      setisShowCameraPrmsn(false);
       const res = await MultipleImagePicker.openPicker(options);
       if (res) {
         console.log('mutipicker image res true  ');
@@ -532,61 +540,240 @@ function Signup(props) {
     store.User.addUser(token, u);
   };
 
+  // const checkPermsn = async (c, dt) => {
+  //   if (Platform.OS == 'android') {
+  //     if (c == 'camera') {
+  //       const permissionAndroid = await PermissionsAndroid.check(
+  //         'android.permission.CAMERA',
+  //       );
+
+  //       if (!permissionAndroid) {
+  //         setisShowGalleryPrmsn(false);
+  //         setisShowCameraPrmsn(true);
+  //       } else {
+  //         onclickImage(dt);
+  //       }
+  //     }
+
+  //     if (c == 'gallery') {
+  //       const permissionAndroid = await PermissionsAndroid.check(
+  //         'android.permission.READ_EXTERNAL_STORAGE',
+  //       );
+  //       if (!permissionAndroid) {
+  //         setisShowCameraPrmsn(false);
+  //         setisShowGalleryPrmsn(true);
+  //       } else {
+  //         onclickImage(dt);
+  //       }
+  //     }
+  //   }
+  // };
+
+  // const GalleryPermission = async () => {
+  //   if (Platform.OS == 'android') {
+  //     const reqPer = await PermissionsAndroid.request(
+  //       'android.permission.READ_EXTERNAL_STORAGE',
+  //     );
+  //     if (reqPer != 'granted') {
+  //       setisShowGalleryPrmsn(false);
+  //     } else {
+  //       setisShowGalleryPrmsn(false);
+  //     }
+  //   }
+  // };
+
+  // const CameraPermission = async () => {
+  //   if (Platform.OS == 'android') {
+  //     const reqPer = await PermissionsAndroid.request(
+  //       'android.permission.CAMERA',
+  //     );
+  //     if (reqPer != 'granted') {
+  //       setisShowCameraPrmsn(false);
+  //     } else {
+  //       setisShowCameraPrmsn(false);
+  //     }
+  //   }
+  // };
+
   const checkPermsn = async (c, dt) => {
     if (Platform.OS == 'android') {
-      if (c == 'camera') {
-        const permissionAndroid = await PermissionsAndroid.check(
-          'android.permission.CAMERA',
-        );
+      const permissionAndroid = await check(PERMISSIONS.ANDROID.CAMERA);
+      const permissionAndroid2 = await check(
+        PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+      );
+      setDT(dt);
 
-        if (!permissionAndroid) {
+      if (permissionAndroid != 'granted' || permissionAndroid2 != 'granted') {
+        if (c == 'camera') {
           setisShowGalleryPrmsn(false);
           setisShowCameraPrmsn(true);
         } else {
-          onclickImage(dt);
-        }
-      }
-
-      if (c == 'gallery') {
-        const permissionAndroid = await PermissionsAndroid.check(
-          'android.permission.READ_EXTERNAL_STORAGE',
-        );
-        if (!permissionAndroid) {
           setisShowCameraPrmsn(false);
           setisShowGalleryPrmsn(true);
+        }
+      } else {
+        onclickImage(dt);
+      }
+    }
+
+    if (Platform.OS == 'ios') {
+      try {
+        const permissionIos = await check(PERMISSIONS.IOS.CAMERA);
+        const permissionIos2 = await check(PERMISSIONS.IOS.PHOTO_LIBRARY);
+        setDT(dt);
+
+        if (permissionIos != 'granted' || permissionIos2 != 'granted') {
+          if (c == 'camera') {
+            setisShowGalleryPrmsn(false);
+            setisShowCameraPrmsn(true);
+          } else {
+            setisShowCameraPrmsn(false);
+            setisShowGalleryPrmsn(true);
+          }
         } else {
           onclickImage(dt);
         }
+      } catch (error) {
+        console.warn('Permsiion error : ', error);
       }
     }
   };
 
-  const GalleryPermission = async () => {
+  //never ask again walas set krna
+  //is se https://stackoverflow.com/questions/54075629/reactnative-permission-always-return-never-ask-again
+  const reqPermission = async () => {
     if (Platform.OS == 'android') {
-      const reqPer = await PermissionsAndroid.request(
-        'android.permission.READ_EXTERNAL_STORAGE',
-      );
-      if (reqPer != 'granted') {
-        setisShowGalleryPrmsn(false);
-      } else {
-        setisShowGalleryPrmsn(false);
+      try {
+        const reqPer = await PermissionsAndroid.request(
+          PERMISSIONS.ANDROID.CAMERA,
+        );
+
+        if (reqPer == 'never_ask_again') {
+          let title = 'Camera Permission Blocked';
+          let text = 'Please allow grant permission to acces camera';
+
+          Alert.alert(title, text, [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {
+              text: 'Open Settings',
+              onPress: () => {
+                IntentLauncher.startActivity({
+                  action: 'android.settings.APPLICATION_DETAILS_SETTINGS',
+                  data: 'package:' + store.General.package,
+                });
+              },
+            },
+          ]);
+
+          return;
+        }
+
+        if (reqPer == 'granted') {
+          const reqPer2 = await PermissionsAndroid.request(
+            PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+          );
+
+          if (reqPer2 == 'never_ask_again') {
+            let title = 'Storage Permission Blocked';
+            let text =
+              'Please allow grant permission to acces photos in storage';
+
+            Alert.alert(title, text, [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              {
+                text: 'Open Settings',
+                onPress: () => {
+                  IntentLauncher.startActivity({
+                    action: 'android.settings.APPLICATION_DETAILS_SETTINGS',
+                    data: 'package:' + store.General.package,
+                  });
+                },
+              },
+            ]);
+            return;
+          }
+
+          if (reqPer2 == 'granted') {
+            onclickImage(DT);
+          }
+        }
+      } catch (error) {
+        console.log('req permsiion error : ', error);
+      }
+    }
+
+    if (Platform.OS == 'ios') {
+      const pc = await check(PERMISSIONS.IOS.CAMERA);
+      const pp = await check(PERMISSIONS.IOS.PHOTO_LIBRARY);
+      console.log('pc: ', pc);
+      console.log('pp: ', pp);
+
+      if (pc == 'blocked' || pp == 'blocked') {
+        let title =
+          pc == 'blocked'
+            ? 'Camera Permission Blocked'
+            : 'Photo Permission Blocked';
+        let text =
+          pc == 'blocked'
+            ? 'Please allow grant permission to acces camera'
+            : 'Please allow grant permission to acces all photos';
+        Alert.alert(title, text, [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {
+            text: 'Open Settings',
+            onPress: () => {
+              Linking.openURL('app-settings:');
+            },
+          },
+        ]);
+        return;
+      }
+
+      if (pp == 'limited') {
+        let title = 'Photo Permission Limited';
+        let text = 'Please allow grant permission to select all photos';
+        Alert.alert(title, text, [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {
+            text: 'Open Settings',
+            onPress: () => {
+              Linking.openURL('app-settings:');
+              //react-native-permissions // openSettings('App-Prefs:root=Photos');
+            },
+          },
+        ]);
+        return;
+      }
+
+      try {
+        const reqPer = await request(PERMISSIONS.IOS.CAMERA);
+        if (reqPer == 'granted') {
+          const reqPer2 = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
+          if (reqPer2 == 'granted') {
+            onclickImage(DT);
+          }
+        }
+      } catch (error) {
+        console.log('req permsiion error : ', error);
       }
     }
   };
-
-  const CameraPermission = async () => {
-    if (Platform.OS == 'android') {
-      const reqPer = await PermissionsAndroid.request(
-        'android.permission.CAMERA',
-      );
-      if (reqPer != 'granted') {
-        setisShowCameraPrmsn(false);
-      } else {
-        setisShowCameraPrmsn(false);
-      }
-    }
-  };
-
   const renderShowError = () => {
     return (
       <View style={styles.errorMessageContainer}>
@@ -1100,7 +1287,7 @@ function Signup(props) {
             justifyContent: 'space-between',
           }}>
           <TouchableOpacity
-            onPress={isShowCameraPrmsn ? CameraPermission : GalleryPermission}
+            onPress={reqPermission}
             activeOpacity={0.7}
             style={styles.BottomButtonP}>
             <Text style={styles.buttonPTextBottom}>Yes</Text>
@@ -1592,7 +1779,7 @@ function Signup(props) {
                         <Text
                           style={{
                             fontSize: 12,
-                            color: theme.color.subTitle,
+                            color: '#767676',
                             fontFamily: theme.fonts.fontMedium,
                           }}>
                           Save ${toFixed(save, 0)} with an
@@ -1609,7 +1796,7 @@ function Signup(props) {
                               fontFamily: theme.fonts.fontMedium,
                               marginLeft: 5,
                             }}>
-                            annual plan
+                            Annual Plan
                           </Text>
                         </TouchableOpacity>
                       </View>
@@ -1798,7 +1985,14 @@ function Signup(props) {
               </View>
 
               <View style={styles.Field}>
-                <Text style={styles.FieldTitle1}>card</Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text style={styles.FieldTitle1}>card</Text>
+                </View>
+
                 <View
                   style={[
                     [
@@ -1808,7 +2002,7 @@ function Signup(props) {
                           isValidCard == false
                             ? theme.color.fieldBordeError
                             : isValidCard == true
-                            ? 'green'
+                            ? theme.color.button1
                             : theme.color.fieldBorder,
                       },
                     ],
@@ -1936,28 +2130,28 @@ function Signup(props) {
                 <View
                   style={[styles.Field2, {justifyContent: 'space-between'}]}>
                   <TouchableOpacity
+                    style={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: 4,
+                      backgroundColor: !iscTerms
+                        ? 'white'
+                        : theme.color.button1,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 1,
+                      borderColor: theme.color.fieldBorder,
+                    }}
                     activeOpacity={0.5}
                     onPress={() => {
                       setiscTerms(!iscTerms);
                       setEmptycTerms(false);
                     }}>
-                    {!iscTerms && (
-                      <utils.vectorIcon.Feather
-                        name={'square'}
-                        color={
-                          EmptycTerms
-                            ? theme.color.fieldBordeError
-                            : theme.color.subTitleLight
-                        }
-                        size={20}
-                      />
-                    )}
-
                     {iscTerms && (
-                      <utils.vectorIcon.AntDesign
-                        name={'checksquare'}
-                        color={theme.color.button1}
-                        size={20}
+                      <utils.vectorIcon.FontAwesome5
+                        name={'check'}
+                        color={theme.color.buttonText}
+                        size={11}
                       />
                     )}
                   </TouchableOpacity>

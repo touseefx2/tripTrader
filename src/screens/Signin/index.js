@@ -216,6 +216,10 @@ function Signin(props) {
       );
     };
 
+    // const securePasswordEntry = value => {
+    //   return value && value.replace(/./g, '*');
+    // };
+
     return (
       <View style={styles.section2}>
         <Text style={styles.section2Title1}>Sign in</Text>

@@ -53,6 +53,7 @@ function App(props) {
 
     store.General.setapiLevel(DeviceInfo.getApiLevel());
     store.General.setappBuildNumber(DeviceInfo.getBuildNumber());
+    store.General.setpackage(DeviceInfo.getBundleId());
     store.General.setappVersionNumber(DeviceInfo.getVersion());
     return () => {
       unsubscribeConnectivityStatusSubscription.remove();

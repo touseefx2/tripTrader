@@ -14,6 +14,7 @@ import {
   Platform,
   Dimensions,
   Pressable,
+  TextInput,
 } from 'react-native';
 // import Geolocation from 'react-native-geolocation-service';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
@@ -34,7 +35,6 @@ import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
 
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {ActivityIndicator} from 'react-native-paper';
 import {ScrollView} from 'react-native-gesture-handler';
 
 export default observer(Home);
@@ -70,18 +70,50 @@ function Home(props) {
   const renderSearchBar = () => {
     const onclickSearchBar = () => {};
 
+    const renderSearch = () => {
+      return (
+        <TouchableOpacity disabled>
+          <Image
+            source={require('../../assets/images/searchBar/search/img.png')}
+            style={styles.Baricon}
+          />
+        </TouchableOpacity>
+      );
+    };
+
+    const renderInput = () => {
+      return (
+        <View style={{width: '80%'}}>
+          <TextInput
+            editable={false}
+            style={styles.SerchBarInput}
+            placeholder="Search"
+          />
+        </View>
+      );
+    };
+
+    const renderFilter = () => {
+      return (
+        <TouchableOpacity disabled>
+          <Image
+            source={require('../../assets/images/searchBar/filter/img.png')}
+            style={styles.Baricon}
+          />
+        </TouchableOpacity>
+      );
+    };
+
     return (
       <Pressable
         style={({pressed}) => [
-          {opacity: pressed ? 0.7 : 1},
+          {opacity: pressed ? 0.9 : 1},
           [styles.SerchBarContainer],
         ]}
         onPress={onclickSearchBar}>
-        <utils.vectorIcon.Octicons
-          name="search"
-          color={theme.color.button1}
-          size={22}
-        />
+        {renderSearch()}
+        {renderInput()}
+        {renderFilter()}
       </Pressable>
     );
   };

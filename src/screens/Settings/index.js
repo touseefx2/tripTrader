@@ -85,6 +85,10 @@ function Settings(props) {
     }
   }, [user]);
 
+  const JoinNow = () => {
+    store.User.Logout();
+  };
+
   const onClick = c => {
     if (c == 'edit profile') {
       props.navigation.navigate('EditProfile');
@@ -102,6 +106,7 @@ function Settings(props) {
     if (c == 'privacy') {
     }
     if (c == 'logout') {
+      store.User.Logout();
     }
   };
 
@@ -327,14 +332,60 @@ function Settings(props) {
 
     return (
       <>
-        {renderEditProfile()}
-        {renderCp()}
-        {renderNotifications()}
-        {renderContactus()}
-        {renderNews()}
-        {renderPrivacy()}
-        {renderLogout()}
+        <View>
+          {user && user !== 'guest' && (
+            <>
+              {renderEditProfile()}
+              {renderCp()}
+              {renderNotifications()}
+              {renderContactus()}
+              {renderNews()}
+              {renderPrivacy()}
+              {renderLogout()}
+            </>
+          )}
+
+          {user && user == 'guest' && (
+            <>
+              {renderContactus()}
+              {renderNews()}
+              {renderPrivacy()}
+            </>
+          )}
+        </View>
       </>
+    );
+  };
+
+  const renderBottom = () => {
+    const renderButton = () => {
+      return (
+        <>
+          <TouchableOpacity
+            onPress={JoinNow}
+            activeOpacity={0.7}
+            style={styles.BottomButton}>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={styles.buttonTextBottom}>Join now</Text>
+              <utils.vectorIcon.AntDesign
+                size={22}
+                name="arrowright"
+                style={styles.arrow}
+                color={theme.color.buttonText}
+              />
+            </View>
+          </TouchableOpacity>
+        </>
+      );
+    };
+
+    return (
+      <View style={styles.bottomContainer}>
+        <Text style={styles.bottomTitle1}>
+          Get full access and start trading today!
+        </Text>
+        {renderButton()}
+      </View>
     );
   };
 
@@ -354,6 +405,7 @@ function Settings(props) {
           </ScrollView>
           {/* <utils.Loader2 load={Loader} /> */}
         </View>
+        {renderBottom()}
         <utils.Footer
           nav={props.navigation}
           screen={headerTitle}

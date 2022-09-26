@@ -164,10 +164,11 @@ function Login(props) {
   return (
     <View style={styles.container}>
       {renderStatusBar()}
+
       <ImageBackground
         source={require('../../assets/images/background/img.png')}
         style={styles.container2}>
-        <SafeAreaView style={styles.container2}>
+        <SafeAreaView style={styles.container3}>
           <ScrollView
             style={{flex: 1, paddingHorizontal: 20}}
             showsVerticalScrollIndicator={false}>

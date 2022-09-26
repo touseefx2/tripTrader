@@ -166,18 +166,16 @@ function Trips(props) {
     let availability = item.availability || '';
     let status = item.status || '';
     let c = status == 'suspended' ? true : false;
+    let tc = '#101B10';
     return (
       <Pressable
         style={({pressed}) => [
           {opacity: pressed ? 0.8 : 1.0},
-          styles.boxContainer,
+          [styles.boxContainer, {marginTop: index == 0 ? 12 : 0}],
         ]}
         onPress={() => {}}>
         <Text
-          style={[
-            styles.title1,
-            {color: !c ? theme.color.title : theme.color.subTitle},
-          ]}>
+          style={[styles.title1, {color: !c ? tc : theme.color.subTitleLight}]}>
           {title}
           {c && (
             <Text style={styles.title11}>
@@ -198,7 +196,7 @@ function Trips(props) {
             ellipsizeMode="tail"
             style={[
               styles.filedTitle2,
-              {color: !c ? theme.color.title : theme.color.subTitle},
+              {color: !c ? tc : theme.color.subTitleLight},
             ]}>
             {offer}
           </Text>
@@ -216,7 +214,7 @@ function Trips(props) {
             ellipsizeMode="tail"
             style={[
               styles.filedTitle2,
-              {color: !c ? theme.color.title : theme.color.subTitle},
+              {color: !c ? tc : theme.color.subTitleLight},
             ]}>
             {trade}
           </Text>
@@ -234,7 +232,7 @@ function Trips(props) {
             ellipsizeMode="tail"
             style={[
               styles.filedTitle2,
-              {color: !c ? theme.color.title : theme.color.subTitle},
+              {color: !c ? tc : theme.color.subTitleLight},
             ]}>
             {formatDate(availability)}
           </Text>
@@ -275,7 +273,7 @@ function Trips(props) {
     <SafeAreaView style={styles.container}>
       {/* {data.length > 0 && renderShowRes()} */}
       <ScrollView
-        style={{marginTop: 10}}
+        style={{marginTop: 3}}
         nestedScrollEnabled
         showsVerticalScrollIndicator={false}
         refreshControl={
