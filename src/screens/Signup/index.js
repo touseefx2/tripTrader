@@ -10,13 +10,12 @@ import {
   ScrollView,
   TextInput,
   PermissionsAndroid,
-  Dimensions,
   Alert,
   Keyboard,
   Platform,
   StatusBar,
   KeyboardAvoidingView,
-  Modal as MModal,
+  BackHandler,
 } from 'react-native';
 import {styles} from './styles';
 import {inject, observer} from 'mobx-react';
@@ -59,7 +58,6 @@ function Signup(props) {
 
   const [cfn, setcfn] = useState('');
   const [Emptycfn, setEmptycfn] = useState(false);
-
   const [isValidCard, setisValidCard] = useState('null');
   const [cardErr, setcardErr] = useState('');
   const [cn, setcn] = useState('');
@@ -122,7 +120,9 @@ function Signup(props) {
   const [token, setToken] = useState('');
   const [uphoto, setuphoto] = useState('');
   const [ucnicF, setucnicF] = useState('');
+
   const [plan, setPlan] = useState(false);
+  const [sPlan, setsPlan] = useState('free'); //selected Plan
 
   const [plans, setplans] = useState(false);
   const [savePerMonth, setSavePerMonth] = useState(0);
@@ -178,6 +178,124 @@ function Signup(props) {
     }
   }, [plan, savePerMonth, isPromoApply]);
 
+  useEffect(() => {
+    const subscription = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleBackButtonClick,
+    );
+
+    return () => {
+      BackHandler.removeEventListener(
+        'hardwareBackPress',
+        handleBackButtonClick,
+      );
+      subscription.remove();
+    };
+  }, [
+    isUserCreate,
+    isPhoto1Upload,
+    isShowCameraPrmsn,
+    isShowGalleryPrmsn,
+    sPlan,
+  ]);
+
+  const clearCard = () => {
+    setcfn('');
+    setccvc('');
+    setcn('');
+    setce('');
+    setct('');
+    setpc('');
+    setcardErr('');
+    setEmptycfn(false);
+    setisShowPromoFiled(false);
+    setisPromoApply(false);
+    setiscTerms(false);
+    setpromoValue(0);
+    setinValidccvc('null');
+    setinValidce('null');
+    setinValidcn('null');
+    setisValidCard('null');
+  };
+
+  function handleBackButtonClick() {
+    if (!props.navigation.isFocused()) {
+      return false;
+    } else {
+      if (
+        !isUserCreate &&
+        isPhoto1Upload == 0 &&
+        !isShowCameraPrmsn &&
+        !isShowGalleryPrmsn
+      ) {
+        goBack();
+      } else {
+        if (
+          isUserCreate &&
+          isPhoto1Upload == 0 &&
+          !isShowCameraPrmsn &&
+          !isShowGalleryPrmsn
+        ) {
+          setisUserCreate(false);
+          setphoto('');
+        }
+
+        if (
+          isUserCreate &&
+          isPhoto1Upload == 1 &&
+          !isShowCameraPrmsn &&
+          !isShowGalleryPrmsn
+        ) {
+          setCnicFrontImage('');
+          setisPhoto1Upload(0);
+        }
+
+        if (
+          isUserCreate &&
+          isPhoto1Upload == 2 &&
+          !isShowCameraPrmsn &&
+          !isShowGalleryPrmsn
+        ) {
+          setSavePerMonth(0);
+          setisPhoto1Upload(1);
+        }
+
+        if (
+          isUserCreate &&
+          isPhoto1Upload == 3 &&
+          !isShowCameraPrmsn &&
+          !isShowGalleryPrmsn
+        ) {
+          clearCard();
+          setisPhoto1Upload(2);
+        }
+
+        if (
+          isUserCreate &&
+          isPhoto1Upload == 4 &&
+          !isShowCameraPrmsn &&
+          !isShowGalleryPrmsn
+        ) {
+          if (sPlan == 'free') {
+            setisPhoto1Upload(2);
+          } else {
+            setisPhoto1Upload(3);
+          }
+        }
+
+        if (
+          isUserCreate &&
+          (isPhoto1Upload == 0 || isPhoto1Upload == 1) &&
+          (isShowCameraPrmsn || isShowGalleryPrmsn)
+        ) {
+          setisShowCameraPrmsn(false);
+          setisShowGalleryPrmsn(false);
+        }
+      }
+      return true;
+    }
+  }
+
   const goBack = () => {
     props.navigation.goBack();
   };
@@ -211,10 +329,10 @@ function Signup(props) {
 
   useEffect(() => {
     if (isValidCard == false) {
-      // if (cn == '' || inValidcn == 'incomplete') {
-      //   setcardErr('Please enter full card number');
-      //   return;
-      // }
+      if (cn == '' || inValidcn == 'incomplete') {
+        setcardErr('Please enter full card number');
+        return;
+      }
 
       if (cn == '' || inValidcn == 'incomplete') {
         setcardErr('Please enter full card number');
@@ -307,7 +425,7 @@ function Signup(props) {
       //not requires if acnt create optional
       photo: '',
       cnic_front_image: '',
-      plan: 'free',
+      plan: sPlan,
       phone: '',
     };
 
@@ -427,6 +545,8 @@ function Signup(props) {
 
   const subPlanSuc = () => {
     setisPhoto1Upload(4);
+    setsPlan(plan);
+    clearCard();
   };
 
   const applyPromoSuc = res => {
@@ -524,7 +644,7 @@ function Signup(props) {
     let u = {...usr};
     u.photo = uphoto;
     u.cnic_front_image = ucnicF;
-    u.plan = plan;
+    u.plan = sPlan;
 
     store.General.setgoto('profile');
     store.User.addUser(token, u);
@@ -534,7 +654,7 @@ function Signup(props) {
     let u = {...usr};
     u.photo = uphoto;
     u.cnic_front_image = ucnicF;
-    u.plan = plan;
+    u.plan = sPlan;
 
     store.General.setgoto('home');
     store.User.addUser(token, u);
@@ -969,6 +1089,7 @@ function Signup(props) {
             <Text style={styles.FieldTitle1}>first name</Text>
             <TextInput
               placeholder=""
+              value={fn}
               onChangeText={enterFn}
               style={[
                 styles.FieldInput,
@@ -986,6 +1107,7 @@ function Signup(props) {
           <View style={[styles.Field, {width: '48%'}]}>
             <Text style={styles.FieldTitle1}>last name</Text>
             <TextInput
+              value={ln}
               placeholder=""
               onChangeText={enterLn}
               style={[
@@ -1005,6 +1127,7 @@ function Signup(props) {
         <View style={styles.Field}>
           <Text style={styles.FieldTitle1}>email address</Text>
           <TextInput
+            value={email}
             placeholder=""
             onChangeText={enterEmail}
             style={[
@@ -1074,6 +1197,7 @@ function Signup(props) {
               },
             ]}>
             <TextInput
+              value={pswd}
               onChangeText={enterPaswd}
               secureTextEntry={!showPaswd}
               placeholder=""
@@ -1213,10 +1337,12 @@ function Signup(props) {
 
     const Skip = () => {
       if (isPhoto1Upload == 0) {
+        setisPhotoUpload(true);
         setisPhoto1Upload(1);
       }
 
       if (isPhoto1Upload == 1) {
+        setisCnicFrontUplaod(true);
         setisPhoto1Upload(2);
       }
     };
@@ -1690,7 +1816,7 @@ function Signup(props) {
 
         {/* Plan 2 */}
 
-        {isPhoto1Upload == 2 && !isShowCameraPrmsn && !isShowGalleryPrmsn && (
+        {isPhoto1Upload == 2 && (
           <View style={styles.section2}>
             <View>
               <Text
@@ -1819,7 +1945,8 @@ function Signup(props) {
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => {
-                  setPlan('free');
+                  // setPlan('free');
+                  setsPlan('free');
                   setisPhoto1Upload(4);
                 }}>
                 <Text

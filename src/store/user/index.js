@@ -318,6 +318,7 @@ class user {
     console.log('user : ', user);
     this.addauthToken(token);
     this.setUser(user);
+    store.General.setgoto('home');
     return;
   }
 

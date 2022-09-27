@@ -34,8 +34,13 @@ export default observer(Login);
 function Login(props) {
   const toast = useRef(null);
   const toastduration = 700;
+  let goto = store.General.goto;
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (goto == 'joinnow') {
+      props.navigation.navigate('Signup');
+    }
+  }, []);
 
   const goToGuestAccess = () => {
     props.navigation.navigate('GuestAccess');

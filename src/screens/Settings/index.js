@@ -86,6 +86,7 @@ function Settings(props) {
   }, [user]);
 
   const JoinNow = () => {
+    store.General.setgoto('joinnow');
     store.User.Logout();
   };
 
@@ -106,6 +107,7 @@ function Settings(props) {
     if (c == 'privacy') {
     }
     if (c == 'logout') {
+      store.General.setgoto('home');
       store.User.Logout();
     }
   };
@@ -405,7 +407,7 @@ function Settings(props) {
           </ScrollView>
           {/* <utils.Loader2 load={Loader} /> */}
         </View>
-        {renderBottom()}
+        {user && user == 'guest' && renderBottom()}
         <utils.Footer
           nav={props.navigation}
           screen={headerTitle}

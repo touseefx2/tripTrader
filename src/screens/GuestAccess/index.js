@@ -64,6 +64,7 @@ function GuestAccess(props) {
     // });
     let token = '';
     let rslt = 'guest';
+    store.General.setgoto('home');
     store.User.addUser(token, rslt);
   };
 
