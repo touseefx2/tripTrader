@@ -42,6 +42,7 @@ function Photos(props) {
 
   const [pvm, setpvm] = useState(false);
   const [pv, setpv] = useState('');
+  const [tripPhotos, settripPhotos] = useState([]);
   const [si, setsi] = useState('');
 
   const [deletePObj, setdeletePObj] = useState(false);

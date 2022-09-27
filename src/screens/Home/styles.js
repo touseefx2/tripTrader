@@ -52,74 +52,7 @@ export const styles = StyleSheet.create({
     lineHeight: 18,
     textTransform: 'capitalize',
   },
-  boxContainer: {
-    width: '100%',
-    height: responsiveHeight(20),
-    backgroundColor: '#FFC5B2',
-    borderRadius: 8,
-    marginBottom: 20,
-    elevation: 1,
-    padding: 15,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
 
-  boxContainer2: {
-    width: '100%',
-    height: responsiveHeight(20),
-    backgroundColor: '#FEF0C0',
-    borderRadius: 8,
-    marginBottom: 20,
-    elevation: 1,
-    padding: 15,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-
-  boxContainerSecton1: {
-    width: '55%',
-
-    justifyContent: 'flex-end',
-  },
-
-  boxContainerSecton2: {
-    width: '40%',
-
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  bcs1Text1: {
-    fontSize: 16,
-    fontFamily: theme.fonts.fontMedium,
-    color: theme.color.title,
-  },
-
-  bcs1Text2: {
-    fontSize: 13,
-    fontFamily: theme.fonts.fontNormal,
-    color: theme.color.title,
-  },
-  bcs2Image: {flex: 1, resizeMode: 'contain', elevation: 5},
-  circleC: {
-    width: 18,
-    height: 18,
-    borderRadius: 218 / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: theme.color.buttonText,
-    position: 'absolute',
-    right: -7,
-    bottom: -1,
-    backgroundColor: theme.color.button1,
-  },
-  circleCText: {
-    fontSize: 8,
-    color: theme.color.buttonText,
-    fontFamily: theme.fonts.fontMedium,
-    top: 1,
-  },
   headerTitle: {
     fontSize: 18,
     fontFamily: theme.fonts.fontBold,
@@ -143,7 +76,7 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
     elevation: 2,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: '#D8E1DB',
   },
   SerchBarInput: {
@@ -156,5 +89,127 @@ export const styles = StyleSheet.create({
   Baricon: {
     flex: 1,
     resizeMode: 'contain',
+  },
+  resultContainer: {
+    marginTop: 10,
+    marginLeft: 5,
+  },
+  resultText: {
+    fontSize: 13,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontMedium,
+    opacity: 0.4,
+  },
+  emptyListStyle: {
+    marginTop: '50%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    fontSize: 13,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontMedium,
+    opacity: 0.4,
+  },
+
+  boxContainer: {
+    width: '100%',
+    alignSelf: 'center',
+    borderRadius: 10,
+    backgroundColor: theme.color.background,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+
+    paddingVertical: 12,
+  },
+  boxSection1: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingHorizontal: 9,
+  },
+  ProfileImgContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 48 / 2,
+    borderWidth: 2,
+    borderColor: theme.color.photoBorderColor,
+    // alignItems: 'center',
+    // justifyContent: 'center',
+  },
+  ProfileImg: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+    borderRadius: 48 / 2,
+  },
+  imageLoader: {
+    height: '100%',
+    width: '100%',
+    resizeMode: 'contain',
+    borderRadius: 48 / 2,
+  },
+
+  textContainer: {
+    width: '66%',
+    // backgroundColor: 'red',
+    top: 5,
+  },
+  textContainertitle: {
+    color: theme.color.titleGreen,
+    fontSize: 15,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
+    lineHeight: 20,
+  },
+  textContainerRatetitle1: {
+    color: theme.color.title,
+    fontSize: 13,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
+    top: -2,
+  },
+  textContainerRatetitle2: {
+    color: theme.color.subTitleLight,
+    fontSize: 13,
+    fontFamily: theme.fonts.fontMedium,
+    textDecorationLine: 'underline',
+    top: -2,
+  },
+
+  iconContainer: {
+    width: '12%',
+
+    alignItems: 'flex-end',
+  },
+  iconSave: {
+    position: 'absolute',
+    // flex: 1,
+    width: 27,
+    height: 32,
+    bottom: 5,
+    resizeMode: 'contain',
+  },
+  boxSection2: {
+    marginTop: 10,
+  },
+  tripImageConatiner: {
+    width: '100%',
+    height: 250,
+  },
+  tripImg: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+  },
+  boxSection3: {
+    marginTop: 10,
+    paddingHorizontal: 9,
   },
 });

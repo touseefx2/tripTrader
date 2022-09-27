@@ -72,6 +72,10 @@ function Trips(props) {
             for_trade: 'Florida Alligator Hunt or an Oseola Turkey Hunt',
             availability: new Date(),
             status: 'pending',
+            loc: {
+              name: 'Dylan, NC',
+              coords: [],
+            },
           },
           {
             _id: 32,
@@ -80,6 +84,10 @@ function Trips(props) {
             for_trade: 'Open to Offers',
             availability: new Date(),
             status: 'suspended',
+            loc: {
+              name: 'Tim, ID',
+              coords: [],
+            },
           },
         ];
         store.User.attemptToGetTrips(

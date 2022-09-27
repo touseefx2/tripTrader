@@ -70,7 +70,7 @@ function FullimageModal(props) {
           ]}>
           <utils.vectorIcon.AntDesign
             name="close"
-            color={theme.color.title}
+            color={theme.color.subTitleLight}
             size={16}
           />
         </Pressable>
@@ -114,7 +114,7 @@ function FullimageModal(props) {
             ]}>
             <utils.vectorIcon.EvilIcons
               name="chevron-left"
-              color={!c ? theme.color.title : theme.color.subTitleLight}
+              color={!c ? theme.color.button1 : theme.color.subTitleLight}
               size={35}
             />
           </Pressable>
@@ -136,7 +136,7 @@ function FullimageModal(props) {
             ]}>
             <utils.vectorIcon.EvilIcons
               name="chevron-right"
-              color={!c ? theme.color.title : theme.color.subTitleLight}
+              color={!c ? theme.color.button1 : theme.color.subTitleLight}
               size={35}
             />
           </Pressable>
