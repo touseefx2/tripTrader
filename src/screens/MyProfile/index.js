@@ -203,12 +203,12 @@ function MyProfile(props) {
 
   const changePhoto = c => {
     if (c == 'photoView') {
-      setpv(photo.uri ? photo.uri : photo);
+      setpv([photo.uri ? photo.uri : photo]);
       setpvm(true);
       return;
     }
     if (c == 'photoViewC') {
-      setpv(cphoto.uri);
+      setpv([cphoto.uri]);
       setpvm(true);
       return;
     }
@@ -592,12 +592,13 @@ function MyProfile(props) {
           {renderShowCahngePhotoModal()}
         </View>
       </SafeAreaView>
+
       {pvm && (
         <utils.FullimageModal
+          data={pv}
+          si={0}
           show={pvm}
-          pv={pv}
-          setshow={c => setpvm(c)}
-          setpv={c => setpv(c)}
+          closModal={() => setpvm(!pvm)}
         />
       )}
     </View>

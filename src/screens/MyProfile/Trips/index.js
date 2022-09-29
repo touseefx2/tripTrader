@@ -67,8 +67,9 @@ function Trips(props) {
         const dt = [
           {
             _id: 31,
+            duration: 3,
             title: 'Hunting Trip',
-            offer: '3 Day Central N.C Whitetail Hunting',
+            offer: 'Central N.C Whitetail Hunting',
             for_trade: 'Florida Alligator Hunt or an Oseola Turkey Hunt',
             availability: new Date(),
             status: 'pending',
@@ -79,8 +80,9 @@ function Trips(props) {
           },
           {
             _id: 32,
+            duration: 1,
             title: 'Fishing Trip',
-            offer: 'Whole Day Blue Catfish Jugging',
+            offer: 'Blue Catfish Jugging',
             for_trade: 'Open to Offers',
             availability: new Date(),
             status: 'suspended',
@@ -169,12 +171,15 @@ function Trips(props) {
 
   const renderShowData = ({item, index}) => {
     let title = item.title || '';
+    let duration = item.duration || '';
+    let dt =
+      duration == 1 ? 'Whole Day' : duration > 1 ? duration + ' Day' : '';
     let offer = item.offer || '';
     let trade = item.for_trade || '';
     let availability = item.availability || '';
     let status = item.status || '';
     let c = status == 'suspended' ? true : false;
-    let tc = '#101B10';
+    let tc = theme.color.boxTitle;
     return (
       <Pressable
         style={({pressed}) => [
@@ -206,7 +211,7 @@ function Trips(props) {
               styles.filedTitle2,
               {color: !c ? tc : theme.color.subTitleLight},
             ]}>
-            {offer}
+            {dt} {offer}
           </Text>
         </View>
 

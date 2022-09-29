@@ -59,6 +59,7 @@
     "react-native-gesture-handler": "^2.5.0",
     "react-native-global-font": "^1.0.3",
     "react-native-image-slider": "^2.0.3",
+    "react-native-image-slider-banner": "^1.0.3",
     "react-native-intent-launcher": "^0.2.1",
     "react-native-intl-phone-input": "^1.2.27",
     "react-native-localize": "^2.2.3",

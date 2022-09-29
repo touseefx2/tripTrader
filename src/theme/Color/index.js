@@ -76,6 +76,8 @@ const disableSmallButton = 'rgba(17, 17, 17, 0.07)';
 
 const shadowColor = 'rgba(0, 0, 0, 0.1)';
 
+const boxTitle = '#101B10';
+
 export default color = {
   background,
   backgroundGreen,
@@ -126,4 +128,5 @@ export default color = {
   disableSmallButton,
   button1Disable,
   shadowColor,
+  boxTitle,
 };

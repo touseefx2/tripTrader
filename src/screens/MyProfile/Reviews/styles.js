@@ -554,7 +554,7 @@ export const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 48 / 2,
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: theme.color.photoBorderColor,
     // alignItems: 'center',
     // justifyContent: 'center',
@@ -585,7 +585,7 @@ export const styles = StyleSheet.create({
     lineHeight: 20,
   },
   textContainerRatetitle1: {
-    color: theme.color.title,
+    color: theme.color.boxTitle,
     fontSize: 13,
     fontFamily: theme.fonts.fontBold,
     textTransform: 'capitalize',
@@ -825,5 +825,13 @@ export const styles = StyleSheet.create({
     fontFamily: theme.fonts.fontMedium,
     marginLeft: 5,
     top: 2,
+  },
+  iconVerify: {
+    width: 22,
+    height: 22,
+    position: 'absolute',
+    resizeMode: 'contain',
+    bottom: -6,
+    right: -7,
   },
 });

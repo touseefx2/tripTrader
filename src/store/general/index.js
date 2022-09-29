@@ -9,6 +9,7 @@ class general {
 
   @observable AppName = 'Trip Trader';
   @observable isServerError = false;
+  @observable photoSelInd = 0;
   @observable Loading = true;
   @observable isInternet = false;
   @persist('object') @observable isGLocation = false;
@@ -24,6 +25,10 @@ class general {
   @observable isSheetOpen = false;
   @observable focusScreen = '';
   @observable goto = 'home';
+
+  @action setphotoSelInd = obj => {
+    this.photoSelInd = obj;
+  };
 
   @action setgoto = obj => {
     this.goto = obj;

@@ -565,7 +565,7 @@ function Signup(props) {
     Keyboard.dismiss();
 
     if (c == 'cnicFV') {
-      setpv(cnicFrontImage.uri);
+      setpv([cnicFrontImage.uri]);
       setpvm(true);
       return;
     }
@@ -577,7 +577,7 @@ function Signup(props) {
     // }
 
     if (c == 'profileV') {
-      setpv(photo.uri);
+      setpv([photo.uri]);
       setpvm(true);
       return;
     }
@@ -2493,10 +2493,10 @@ function Signup(props) {
 
       {pvm && (
         <utils.FullimageModal
+          data={pv}
+          si={0}
           show={pvm}
-          pv={pv}
-          setshow={c => setpvm(c)}
-          setpv={c => setpv(c)}
+          closModal={() => setpvm(!pvm)}
         />
       )}
       <Toast ref={toast} position="center" />

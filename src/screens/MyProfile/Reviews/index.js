@@ -96,6 +96,7 @@ function Reviews(props) {
               photo: '',
               avg_rating: 4.5,
               total_reviews: 45,
+              isVerified: true,
             },
             comment: 'John Thompson was a great host! I had an amazing time.',
             created_at: new Date(),
@@ -245,6 +246,7 @@ function Reviews(props) {
 
   const renderShowData = ({item, index}) => {
     let photo = item.user.photo;
+    let isuVeirfy = item.user.isVerified || false;
     let userName = item.user.first_name + ' ' + item.user.last_name;
     let avgRating = item.user.avg_rating;
     let totalReviews = item.user.total_reviews;
@@ -258,8 +260,10 @@ function Reviews(props) {
     let ruserName = '';
     let ruserComment = '';
     let rpostDate = '';
+    let isrVeirfy = false;
     if (reply != '') {
       ruserPhoto = reply.user.photo;
+      isrVeirfy = reply.user.isVerified || false;
       ruserName = reply.user.first_name + ' ' + reply.user.last_name;
       ruserComment = reply.comment;
       rpostDate = reply.created_at;
@@ -291,14 +295,12 @@ function Reviews(props) {
               blurRadius={5}
             />
 
-            {/* <Image
-              style={styles.ProfileImg}
-              source={
-                photo != ''
-                  ? {uri: photo}
-                  : require('../../../assets/images/drawer/guest/img.png')
-              }
-            /> */}
+            {isuVeirfy && (
+              <Image
+                style={styles.iconVerify}
+                source={require('../../../assets/images/verified/img.png')}
+              />
+            )}
           </View>
         );
       };

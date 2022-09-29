@@ -766,6 +766,7 @@ class user {
         phone: '',
         avg_rating: 0,
         total_reviews: 0,
+        isVerified: false,
       };
       let token = '';
 

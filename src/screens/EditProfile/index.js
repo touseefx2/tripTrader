@@ -340,13 +340,13 @@ function EditProfile(props) {
 
   const changePhoto = c => {
     if (c == 'photoView') {
-      setpv(photo.uri ? photo.uri : photo);
+      setpv([photo.uri ? photo.uri : photo]);
       setpvm(true);
       return;
     }
 
     if (c == 'cnicfView') {
-      setpv(cnicFrontImage.uri ? cnicFrontImage.uri : cnicFrontImage);
+      setpv([cnicFrontImage.uri ? cnicFrontImage.uri : cnicFrontImage]);
       setpvm(true);
       return;
     }
@@ -838,10 +838,10 @@ function EditProfile(props) {
 
       {pvm && (
         <utils.FullimageModal
+          data={pv}
+          si={0}
           show={pvm}
-          pv={pv}
-          setshow={c => setpvm(c)}
-          setpv={c => setpv(c)}
+          closModal={() => setpvm(!pvm)}
         />
       )}
     </SafeAreaView>
