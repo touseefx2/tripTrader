@@ -653,11 +653,13 @@ function Home(props) {
         <SafeAreaView style={styles.modalContainer}>
           <View style={styles.modalContainer2}>
             <View style={styles.modal}>
-              {renderHeader()}
-              {renderTitle()}
-              {renderInfo()}
-              {renderField()}
-              {renderBottom()}
+              <>
+                {renderHeader()}
+                {renderTitle()}
+                {renderInfo()}
+                {renderField()}
+                {renderBottom()}
+              </>
             </View>
           </View>
         </SafeAreaView>
