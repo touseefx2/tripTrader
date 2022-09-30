@@ -312,11 +312,11 @@ function FullimageModal(props) {
       setsi(index);
     }
   });
-  const viewConfigRef2 = React.useRef({viewAreaCoveragePercentThreshold: 25});
+  const viewConfigRef2 = React.useRef({viewAreaCoveragePercentThreshold: 30});
 
-  React.useEffect(() => {
-    flatListRef.current?.scrollToIndex({animated: true, index: si});
-  }, [si]);
+  const move = num => {
+    flatListRef.current?.scrollToIndex({animated: true, index: num});
+  };
 
   const closeModal = () => {
     props.closModal();
@@ -325,11 +325,13 @@ function FullimageModal(props) {
   const nextPhoto = () => {
     let c = si + 1;
     setsi(c);
+    move(c);
   };
 
   const prevPhoto = () => {
     let c = si - 1;
     setsi(c);
+    move(c);
   };
 
   const renderLoader = () => {

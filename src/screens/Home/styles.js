@@ -82,9 +82,9 @@ export const styles = StyleSheet.create({
   SerchBarInput: {
     width: '100%',
     height: '100%',
-    fontSize: 16,
+    fontSize: 15.5,
     fontFamily: theme.fonts.fontNormal,
-    top: 2,
+    top: 3,
   },
   Baricon: {
     flex: 1,
@@ -351,7 +351,10 @@ export const styles = StyleSheet.create({
 
     elevation: 3,
   },
-  modalCross: {},
+  modalCross: {
+    position: 'absolute',
+    right: 0,
+  },
   modalTitle: {
     fontSize: 19,
     color: theme.color.title,
@@ -377,7 +380,7 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
   },
   modalBottomContainer: {
-    marginTop: 20,
+    marginTop: 30,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -390,7 +393,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: theme.color.button1,
-    marginTop: 10,
   },
   ButtonText: {
     fontSize: 12.5,
@@ -532,5 +534,66 @@ export const styles = StyleSheet.create({
     width: 25,
     height: 25,
     resizeMode: 'contain',
+  },
+  mT1: {
+    fontSize: 14,
+    color: theme.color.subTitle,
+    fontFamily: theme.fonts.fontNormal,
+  },
+  mT2: {
+    fontSize: 14.5,
+    color: theme.color.boxTitle,
+    fontFamily: theme.fonts.fontBold,
+    lineHeight: 22.5,
+    textTransform: 'capitalize',
+    width: '81%',
+  },
+  mProfileImgContainerm: {
+    width: 35,
+    height: 35,
+    borderRadius: 35 / 2,
+    borderWidth: 1,
+    borderColor: theme.color.photoBorderColor,
+    // alignItems: 'center',
+    // justifyContent: 'center',
+  },
+  mProfileImgm: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+    borderRadius: 35 / 2,
+  },
+
+  mimageLoaderm: {
+    height: '100%',
+    width: '100%',
+    resizeMode: 'contain',
+    borderRadius: 35 / 2,
+  },
+  miconVerifym: {
+    width: 16,
+    height: 16,
+    position: 'absolute',
+    resizeMode: 'contain',
+    bottom: -5,
+    right: -5,
+  },
+  textArea: {
+    width: '100%',
+    height: 200,
+    backgroundColor: '#FAFAFA',
+    borderRadius: 4,
+    marginTop: 12,
+
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  mTextInpt: {
+    height: '100%',
+    paddingHorizontal: 15,
+    textAlignVertical: 'top',
   },
 });

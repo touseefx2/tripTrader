@@ -110,7 +110,10 @@ function Home(props) {
   let mloader = store.User.mLoader;
 
   const [modalObj, setmodalObj] = useState(false);
+  const [modalChk, setmodalChk] = useState(false);
   const [isModal, setisModal] = useState(false);
+
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     if (goto == 'profile') {
@@ -121,9 +124,11 @@ function Home(props) {
   const onclickSearchBar = () => {};
   const onClickSaveTrips = (dt, ind) => {};
   const onClickMakeOffer = (dt, ind) => {
-    openModal({item: dt, i: ind});
+    openModal({item: dt, i: ind}, 'offer');
   };
-  const onClickMessage = (dt, ind) => {};
+  const onClickMessage = (dt, ind) => {
+    openModal({item: dt, i: ind}, 'message');
+  };
   const onClickCal = () => {};
 
   const renderStatusBar = () => {
@@ -444,227 +449,374 @@ function Home(props) {
     );
   };
 
-  const openModal = obj => {
+  const openModal = (obj, c) => {
     setmodalObj(obj);
+    setmodalChk(c);
     setisModal(true);
   };
 
   const closeModal = () => {
     if (!mloader) {
       setisModal(false);
+      setmodalChk(false);
       setmodalObj(false);
+      setMessage('');
     }
   };
 
   const renderModal = () => {
-    const renderHeader = () => {
-      let text = 'Make Offer';
+    if (modalChk == 'offer') {
+      const renderHeader = () => {
+        let text = 'Make Offer';
 
-      const renderCross = () => {
+        const renderCross = () => {
+          return (
+            <Pressable
+              disabled={mloader}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.7 : 1.0},
+                styles.modalCross,
+              ]}
+              onPress={closeModal}>
+              <utils.vectorIcon.EvilIcons
+                name="close"
+                color={theme.color.title}
+                size={30}
+              />
+            </Pressable>
+          );
+        };
+
+        const renderTitle = () => {
+          return <Text style={styles.modalTitle}>{text}</Text>;
+        };
+
         return (
-          <Pressable
-            disabled={mloader}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.7 : 1.0},
-              styles.modalCross,
-            ]}
-            onPress={closeModal}>
-            <utils.vectorIcon.EvilIcons
-              name="close"
-              color={theme.color.title}
-              size={30}
-            />
-          </Pressable>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            {renderTitle()}
+            {renderCross()}
+          </View>
         );
       };
 
       const renderTitle = () => {
-        return <Text style={styles.modalTitle}>{text}</Text>;
-      };
+        let text = 'To get started, choose your preferred dates for this trip.';
 
-      return (
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          {renderTitle()}
-          {renderCross()}
-        </View>
-      );
-    };
-
-    const renderTitle = () => {
-      let text = 'To get started, choose your preferred dates for this trip.';
-
-      return (
-        <View style={{marginTop: 10}}>
-          <Text style={styles.modalsubTitle}>{text}</Text>
-        </View>
-      );
-    };
-
-    const renderInfo = () => {
-      let item = modalObj.item;
-      let duration = item.duration || '';
-      let photo = item.user.photo || '';
-      let isVeirfy = item.user.isVerified || false;
-      let offer = item.offer || '';
-      let dt =
-        duration == 1 ? 'Whole day' : duration > 1 ? duration + ' days' : '';
-      let userName = item.user.first_name + ' ' + item.user.last_name;
-
-      const renderProfile = () => {
         return (
-          <View style={styles.mProfileImgContainer}>
-            <ProgressiveFastImage
-              style={styles.mProfileImg}
-              source={
-                photo != ''
-                  ? {uri: photo}
-                  : require('../../assets/images/drawer/guest/img.png')
-              }
-              loadingImageStyle={styles.mimageLoader}
-              loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
-              blurRadius={5}
-            />
-            {isVeirfy && (
-              <Image
-                style={styles.miconVerify}
-                source={require('../../assets/images/verified/img.png')}
-              />
-            )}
+          <View style={{marginTop: 10}}>
+            <Text style={styles.modalsubTitle}>{text}</Text>
           </View>
         );
       };
 
-      const renderText = () => {
+      const renderInfo = () => {
+        let item = modalObj.item;
+        let duration = item.duration || '';
+        let photo = item.user.photo || '';
+        let isVeirfy = item.user.isVerified || false;
+        let offer = item.offer || '';
+        let dt =
+          duration == 1 ? 'Whole day' : duration > 1 ? duration + ' days' : '';
+        let userName = item.user.first_name + ' ' + item.user.last_name;
+
+        const renderProfile = () => {
+          return (
+            <View style={styles.mProfileImgContainer}>
+              <ProgressiveFastImage
+                style={styles.mProfileImg}
+                source={
+                  photo != ''
+                    ? {uri: photo}
+                    : require('../../assets/images/drawer/guest/img.png')
+                }
+                loadingImageStyle={styles.mimageLoader}
+                loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
+                blurRadius={5}
+              />
+              {/* {isVeirfy && (
+                <Image
+                  style={styles.miconVerify}
+                  source={require('../../assets/images/verified/img.png')}
+                />
+              )} */}
+            </View>
+          );
+        };
+
+        const renderText = () => {
+          return (
+            <View style={styles.mtextContainer}>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={styles.mtextContainertitle}>
+                {offer}
+              </Text>
+
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={styles.textContainertitle2}>
+                Duration : {dt}
+              </Text>
+
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={styles.textContainertitle3}>
+                Hosted by :{' '}
+                <Text
+                  style={[
+                    styles.textContainertitle3,
+                    {textTransform: 'capitalize'},
+                  ]}>
+                  {userName}
+                </Text>
+              </Text>
+            </View>
+          );
+        };
+
         return (
-          <View style={styles.mtextContainer}>
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={styles.mtextContainertitle}>
-              {offer}
-            </Text>
+          <View style={styles.modalinfoConatiner}>
+            {renderProfile()}
+            {renderText()}
+          </View>
+        );
+      };
 
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={styles.textContainertitle2}>
-              Duration : {dt}
-            </Text>
+      const renderField = () => {
+        return (
+          <View style={styles.modalFieldConatiner}>
+            <Text style={styles.mfT1}>Preferred Trip Date</Text>
 
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={styles.textContainertitle3}>
-              Hosted by :{' '}
+            <Pressable
+              onPress={onClickCal}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.8 : 1.0},
+                styles.mFieldContainer,
+              ]}>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={[styles.mfT2, {opacity: 0.4}]}>
+                Choose a date or date range
+              </Text>
+              <Image
+                source={require('../../assets/images/cal/img.png')}
+                style={styles.mfT2icon}
+              />
+            </Pressable>
+          </View>
+        );
+      };
+
+      const renderBottom = () => {
+        const renderButton1 = () => {
+          return (
+            <View
+            // style={[styles.ButtonContainer, {backgroundColor: 'transparent'}]}
+            >
               <Text
                 style={[
-                  styles.textContainertitle3,
-                  {textTransform: 'capitalize'},
+                  styles.ButtonText,
+                  {
+                    color: theme.color.title,
+                    opacity: 0.5,
+                    fontFamily: theme.fonts.fontNormal,
+                    textTransform: 'none',
+                  },
                 ]}>
-                {userName}
+                Step 1 of 4
               </Text>
-            </Text>
-          </View>
-        );
-      };
+            </View>
+          );
+        };
 
-      return (
-        <View style={styles.modalinfoConatiner}>
-          {renderProfile()}
-          {renderText()}
-        </View>
-      );
-    };
-
-    const renderField = () => {
-      return (
-        <View style={styles.modalFieldConatiner}>
-          <Text style={styles.mfT1}>Preferred Trip Date</Text>
-
-          <Pressable
-            onPress={onClickCal}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.8 : 1.0},
-              styles.mFieldContainer,
-            ]}>
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={[styles.mfT2, {opacity: 0.4}]}>
-              Choose a date or date range
-            </Text>
-            <Image
-              source={require('../../assets/images/cal/img.png')}
-              style={styles.mfT2icon}
-            />
-          </Pressable>
-        </View>
-      );
-    };
-
-    const renderBottom = () => {
-      const renderButton1 = () => {
-        return (
-          <View
-          // style={[styles.ButtonContainer, {backgroundColor: 'transparent'}]}
-          >
-            <Text
-              style={[
-                styles.ButtonText,
-                {
-                  color: theme.color.title,
-                  opacity: 0.5,
-                  fontFamily: theme.fonts.fontNormal,
-                  textTransform: 'none',
-                },
+        const renderButton2 = () => {
+          return (
+            <Pressable
+              disabled={mloader}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.8 : 1.0},
+                styles.ButtonContainer,
+                {backgroundColor: theme.color.button1},
               ]}>
-              Step 1 of 4
-            </Text>
+              <Text
+                style={[styles.ButtonText, {color: theme.color.buttonText}]}>
+                Continue
+              </Text>
+            </Pressable>
+          );
+        };
+
+        return (
+          <View style={styles.modalBottomContainer}>
+            {renderButton1()}
+            {renderButton2()}
           </View>
         );
       };
 
-      const renderButton2 = () => {
-        return (
-          <Pressable
-            disabled={mloader}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.8 : 1.0},
-              styles.ButtonContainer,
-              {backgroundColor: theme.color.button1},
-            ]}>
-            <Text style={[styles.ButtonText, {color: theme.color.buttonText}]}>
-              Continue
-            </Text>
-          </Pressable>
-        );
-      };
-
       return (
-        <View style={styles.modalBottomContainer}>
-          {renderButton1()}
-          {renderButton2()}
-        </View>
-      );
-    };
-
-    return (
-      <Modal visible={isModal} transparent onRequestClose={closeModal}>
-        <SafeAreaView style={styles.modalContainer}>
-          <View style={styles.modalContainer2}>
-            <View style={styles.modal}>
-              <>
+        <Modal visible={isModal} transparent onRequestClose={closeModal}>
+          <SafeAreaView style={styles.modalContainer}>
+            <View style={styles.modalContainer2}>
+              <View style={styles.modal}>
                 {renderHeader()}
                 {renderTitle()}
                 {renderInfo()}
                 {renderField()}
                 {renderBottom()}
-              </>
+              </View>
+            </View>
+          </SafeAreaView>
+        </Modal>
+      );
+    }
+    if (modalChk == 'message') {
+      const renderHeader = () => {
+        let text = 'Message User';
+
+        const renderCross = () => {
+          return (
+            <Pressable
+              disabled={mloader}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.7 : 1.0},
+                styles.modalCross,
+              ]}
+              onPress={closeModal}>
+              <utils.vectorIcon.EvilIcons
+                name="close"
+                color={theme.color.title}
+                size={30}
+              />
+            </Pressable>
+          );
+        };
+
+        const renderTitle = () => {
+          return <Text style={styles.modalTitle}>{text}</Text>;
+        };
+
+        return (
+          <View style={{alignItems: 'center', justifyContent: 'center'}}>
+            {renderTitle()}
+            {renderCross()}
+          </View>
+        );
+      };
+
+      const renderField = () => {
+        let item = modalObj.item;
+        let photo = item.user.photo || '';
+        let isVeirfy = item.user.isVerified || false;
+        let userName = item.user.first_name + ' ' + item.user.last_name;
+
+        const renderProfile = () => {
+          return (
+            <View style={styles.mProfileImgContainerm}>
+              <ProgressiveFastImage
+                style={styles.mProfileImgm}
+                source={
+                  photo != ''
+                    ? {uri: photo}
+                    : require('../../assets/images/drawer/guest/img.png')
+                }
+                loadingImageStyle={styles.mimageLoaderm}
+                loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
+                blurRadius={5}
+              />
+              {/* {isVeirfy && (
+                <Image
+                  style={styles.miconVerifym}
+                  source={require('../../assets/images/verified/img.png')}
+                />
+              )} */}
+            </View>
+          );
+        };
+
+        return (
+          <View style={[styles.modalFieldConatiner, {marginTop: 15}]}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <Text style={styles.mT1}>To:</Text>
+              <View
+                style={{
+                  width: '89%',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                }}>
+                {renderProfile()}
+                <Text numberOfLines={1} ellipsizeMode="tail" style={styles.mT2}>
+                  {userName}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.textArea}>
+              <TextInput
+                value={message}
+                onChangeText={c => {
+                  setMessage(c);
+                }}
+                style={styles.mTextInpt}
+                placeholder="Type your message here"
+                multiline={true}
+                numberOfLines={10}
+              />
             </View>
           </View>
-        </SafeAreaView>
-      </Modal>
-    );
+        );
+      };
+
+      const renderBottom = () => {
+        const renderButton = () => {
+          return (
+            <Pressable
+              disabled={mloader}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.9 : message == '' ? 0.6 : 1},
+                styles.ButtonContainer,
+                {backgroundColor: theme.color.button1, width: '100%'},
+              ]}>
+              <Text
+                style={[
+                  styles.ButtonText,
+                  {color: theme.color.buttonText, fontSize: 13},
+                ]}>
+                Send Message
+              </Text>
+            </Pressable>
+          );
+        };
+
+        return (
+          <View style={styles.modalBottomContainer}>{renderButton()}</View>
+        );
+      };
+
+      return (
+        <Modal visible={isModal} transparent onRequestClose={closeModal}>
+          <SafeAreaView style={styles.modalContainer}>
+            <View style={styles.modalContainer2}>
+              <View style={styles.modal}>
+                {renderHeader()}
+                {renderField()}
+                {renderBottom()}
+              </View>
+            </View>
+          </SafeAreaView>
+        </Modal>
+      );
+    }
   };
 
   return (
