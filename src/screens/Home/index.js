@@ -30,6 +30,8 @@ import Toast from 'react-native-easy-toast';
 import {ActivityIndicator} from 'react-native-paper';
 import FastImage from 'react-native-fast-image';
 import {ImageSlider} from 'react-native-image-slider-banner';
+import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
+import moment from 'moment/moment';
 
 export default observer(Home);
 
@@ -115,6 +117,14 @@ function Home(props) {
 
   const [message, setMessage] = useState('');
 
+  const [showCalender, setshowCalender] = useState(false);
+  const [selDates, setselDates] = useState([]);
+
+  const [iDate, setiDate] = useState(new Date());
+  const [minDate, setminDate] = useState(new Date());
+  const [maxDate, setmaxDate] = useState(new Date());
+  const [month, setmonth] = useState(new Date());
+
   useEffect(() => {
     if (goto == 'profile') {
       props.navigation.navigate('MyProfile');
@@ -129,7 +139,12 @@ function Home(props) {
   const onClickMessage = (dt, ind) => {
     openModal({item: dt, i: ind}, 'message');
   };
-  const onClickCal = () => {};
+  const onClickCal = () => {
+    setshowCalender(!showCalender);
+  };
+  const sendMessage = () => {
+    console.warn('msg send');
+  };
 
   const renderStatusBar = () => {
     return (
@@ -461,6 +476,7 @@ function Home(props) {
       setmodalChk(false);
       setmodalObj(false);
       setMessage('');
+      setshowCalender(false);
     }
   };
 
@@ -593,7 +609,7 @@ function Home(props) {
             <Pressable
               onPress={onClickCal}
               style={({pressed}) => [
-                {opacity: pressed ? 0.8 : 1.0},
+                {opacity: pressed ? 0.7 : 1.0},
                 styles.mFieldContainer,
               ]}>
               <Text
@@ -781,9 +797,10 @@ function Home(props) {
         const renderButton = () => {
           return (
             <Pressable
-              disabled={mloader}
+              onPress={sendMessage}
+              disabled={mloader == true ? true : message == '' ? true : false}
               style={({pressed}) => [
-                {opacity: pressed ? 0.9 : message == '' ? 0.6 : 1},
+                {opacity: pressed ? 0.9 : message == '' ? 0.5 : 1},
                 styles.ButtonContainer,
                 {backgroundColor: theme.color.button1, width: '100%'},
               ]}>
@@ -819,6 +836,162 @@ function Home(props) {
     }
   };
 
+  const renderCalender = () => {
+    const closeCalModal = () => {
+      setshowCalender(false);
+    };
+
+    const formatDate = date => {
+      var dd = moment(date).format('MMMM YYYY');
+      return dd;
+    };
+
+    const renderBottom = () => {
+      let c = selDates.length > 0 ? false : true;
+      return (
+        <View style={{marginTop: 10, alignItems: 'flex-end', width: '100%'}}>
+          <View
+            style={{
+              width: '55%',
+              paddingRight: 10,
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexDirection: 'row',
+            }}>
+            <Pressable
+              onPress={closeCalModal}
+              style={({pressed}) => [
+                {
+                  opacity: pressed ? 0.9 : 1.0,
+                  paddingHorizontal: 15,
+                  paddingVertical: 8,
+                  borderRadius: 8,
+                  borderWidth: 1,
+                  borderColor: theme.color.fieldBorder,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                },
+              ]}>
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontFamily: theme.fonts.fontBold,
+                  color: '#30563A',
+                }}>
+                Cancel
+              </Text>
+            </Pressable>
+
+            <Pressable
+              style={({pressed}) => [
+                {
+                  opacity: pressed ? 0.9 : c ? 0.5 : 1.0,
+                  paddingHorizontal: 15,
+                  paddingVertical: 8,
+                  borderRadius: 8,
+                  backgroundColor: theme.color.button1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                },
+              ]}>
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontFamily: theme.fonts.fontBold,
+                  color: theme.color.buttonText,
+                }}>
+                Apply
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+      );
+    };
+
+    let cusTheme = {
+      textDisabledColor: theme.color.subTitleLight,
+      dayTextColor: theme.color.title,
+      textDayFontSize: 13,
+      textDayFontFamily: theme.fonts.fontMedium,
+      textDayHeaderFontSize: 13,
+      textSectionTitleColor: theme.color.title,
+      textDayHeaderFontFamily: theme.fonts.fontMedium,
+    };
+
+    return (
+      <Modal visible={showCalender} transparent onRequestClose={closeCalModal}>
+        <SafeAreaView
+          style={[
+            {
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 20,
+              backgroundColor: 'rgba(0,0,0,0.5)',
+            },
+          ]}>
+          <View
+            style={{
+              width: '100%',
+              alignSelf: 'center',
+              paddingBottom: 20,
+              backgroundColor: theme.color.background,
+              borderRadius: 10,
+              paddingTop: 5,
+              paddingHorizontal: 5,
+            }}>
+            <Calendar
+              theme={cusTheme}
+              hideDayNames={false}
+              hideArrows={false}
+              hideExtraDays={false}
+              disableMonthChange={true} // If hideArrows = false and hideExtraDays = false do not switch month when tapping on greyed out
+              initialDate={iDate}
+              // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
+              minDate={minDate}
+              // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
+              // maxDate={maxDate}
+              // Handler which gets executed on day press. Default = undefined
+              onDayPress={day => {
+                console.log('selected day', day);
+              }}
+              // Handler which gets executed on day long press. Default = undefined
+              onDayLongPress={day => {
+                console.log('selected day', day);
+              }}
+              // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
+              monthFormat={'yyyy MM'}
+              // Handler which gets executed when visible month changes in calendar. Default = undefined
+              onMonthChange={month => {
+                console.log('month changed', month);
+                let d = new Date(month.dateString);
+                setmonth(d);
+              }}
+              // If firstDay=1 week starts from Monday. Note that dayNames and dayNamesShort should still start from Sunday
+              firstDay={7}
+              onPressArrowLeft={subtractMonth => subtractMonth()}
+              onPressArrowRight={addMonth => addMonth()}
+              renderHeader={date => {
+                return (
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      fontFamily: theme.fonts.fontMedium,
+                      color: theme.color.title,
+                    }}>
+                    {formatDate(month)}
+                  </Text>
+                );
+              }}
+              enableSwipeMonths={true}
+            />
+            {renderBottom()}
+          </View>
+        </SafeAreaView>
+      </Modal>
+    );
+  };
+
   return (
     <View style={styles.container}>
       {/* {tagLine != '' && <utils.TagLine tagLine={tagLine} />} */}
@@ -837,14 +1010,17 @@ function Home(props) {
             ListFooterComponent={ListFooter}
           />
         </View>
+
         <utils.Footer
           nav={props.navigation}
           screen={headerTitle}
           focusScreen={store.General.focusScreen}
         />
       </SafeAreaView>
+
       {renderStatusBar()}
       {isModal && renderModal()}
+      {showCalender && renderCalender()}
       <Toast ref={toast} position="bottom" />
     </View>
   );
