@@ -66,8 +66,7 @@ function Login(props) {
         </Text>
 
         <Text style={styles.section2Title2}>
-          Join other outdoor enthusiasts and turn trades into memorable
-          experiences!
+          Join other outdoor enthusiasts to trade memorable experiences!
         </Text>
       </View>
     );

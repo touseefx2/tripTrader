@@ -8,7 +8,7 @@ import {
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.color.background,
+    backgroundColor: theme.color.backgroundConatiner,
   },
   headerConatainer: {
     backgroundColor: theme.color.backgroundGreen,

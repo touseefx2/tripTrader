@@ -125,6 +125,7 @@ export const styles = StyleSheet.create({
     color: theme.color.subTitleAuth,
     fontSize: 14,
     fontFamily: theme.fonts.fontNormal,
+    textAlign: 'center',
   },
   section2LogoTitlee: {
     marginTop: 20,
@@ -344,6 +345,7 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: theme.fonts.fontBold,
     alignSelf: 'center',
+    textAlign: 'center',
   },
   section2LogoTitle2c: {
     color: theme.color.subTitleAuth,

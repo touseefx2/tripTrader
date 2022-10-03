@@ -448,8 +448,8 @@ export const styles = StyleSheet.create({
   phoneInputContainer: {
     width: '100%',
     marginTop: 5,
-    backgroundColor: theme.color.fieldBc,
-    height: 45,
+    backgroundColor: theme.color.background,
+    // height: 45,
     borderRadius: 8,
     borderWidth: 0.5,
     borderColor: theme.color.fieldBorder,

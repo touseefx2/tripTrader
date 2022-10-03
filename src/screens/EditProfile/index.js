@@ -704,7 +704,7 @@ function EditProfile(props) {
                   style={{marginBottom: 10}}
                 /> */}
                 <Text style={styles.idCardContainerText}>
-                  Upolad id card photo for account verification
+                  Upload id card photo for account verification
                 </Text>
               </View>
             )}
@@ -742,7 +742,7 @@ function EditProfile(props) {
 
             <Text style={styles.idCardChangeText2}>
               {cnicFrontImage == ''
-                ? 'to uplaod a new ID card.'
+                ? 'to upload a new ID card.'
                 : 'to change a new ID card.'}
             </Text>
           </View>

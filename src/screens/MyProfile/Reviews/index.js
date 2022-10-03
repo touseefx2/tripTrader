@@ -840,7 +840,7 @@ function Reviews(props) {
 
               <View style={{marginLeft: 7, width: '92%'}}>
                 <Text style={styles.modalSec1Title}>
-                  This review contains personally identifiable information.{' '}
+                  This review may contain personally identifiable information.{' '}
                   <Text
                     style={[
                       styles.modalSec1Title,

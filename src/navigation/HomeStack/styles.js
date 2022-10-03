@@ -70,7 +70,7 @@ const EditProfileicon = {
   drawerLabel: 'Edit Profile',
   // headerShown: false,
   // swipeEnabled: true,
-  // unmountOnBlur: true,
+  unmountOnBlur: true,
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}
@@ -174,7 +174,7 @@ const Settingsicons = {
 const Notificationsicons = {
   drawerLabel: 'Notifications',
   // headerShown: false,
-  swipeEnabled: false,
+  // swipeEnabled: true,
   // unmountOnBlur: true,
 
   drawerIcon: ({focused, size}) => (

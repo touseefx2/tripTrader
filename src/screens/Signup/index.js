@@ -2300,7 +2300,7 @@ function Signup(props) {
                       {plan.name == 'annual'
                         ? `$${toFixed(totalAnually, 2)}`
                         : `$${monthly}`}{' '}
-                      {plan.name}.
+                      {plan.name == 'annual' ? plan.name + 'y' : plan.name}.
                     </Text>
                   </View>
                 </View>
@@ -2352,7 +2352,7 @@ function Signup(props) {
               <Text
                 style={[
                   styles.section2LogoTitle2c,
-                  {color: theme.color.subTitleAuth},
+                  {color: theme.color.subTitleAuth, textAlign: 'center'},
                 ]}>
                 Good luck on your trips and trades!
               </Text>

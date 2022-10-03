@@ -55,7 +55,7 @@ function DrawerHeader(props) {
 
   const render3 = () => {
     const onClick = () => {
-      prop.navigation.navigate('Notifications', {screen: headerTitle});
+      prop.navigation.navigate('Notifications');
     };
     return (
       <TouchableOpacity activeOpacity={0.5} onPress={onClick}>

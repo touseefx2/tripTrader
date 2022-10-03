@@ -233,7 +233,7 @@ function Trips(props) {
           </Text>
         </View>
 
-        <View style={styles.field}>
+        {/* <View style={styles.field}>
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"
@@ -251,7 +251,18 @@ function Trips(props) {
           </Text>
         </View>
 
-        {/* <View style={styles.fieldContainer}>
+        <View style={styles.field}>
+          <Pressable
+            style={({pressed}) => [
+              {opacity: pressed ? 0.9 : 1.0},
+              styles.buttonContainer2,
+            ]}
+            onPress={() => {}}>
+            <Text style={styles.buttonText2}>Edit Trip</Text>
+          </Pressable>
+        </View> */}
+
+        <View style={styles.fieldContainer}>
           <View style={{width: '50%'}}>
             <Text
               numberOfLines={1}
@@ -277,7 +288,7 @@ function Trips(props) {
             onPress={() => {}}>
             <Text style={styles.buttonText}>Edit Trip</Text>
           </Pressable>
-        </View> */}
+        </View>
       </Pressable>
     );
   };

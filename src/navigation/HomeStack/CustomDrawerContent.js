@@ -426,7 +426,7 @@ function CustomDrawerContent(props) {
     const renderProfile = () => {
       let title1 =
         user == 'guest' ? 'guest user' : user.first_name + ' ' + user.last_name;
-      let title2 = user == 'guest' ? 'limited access' : 'memeber';
+      let title2 = user == 'guest' ? 'limited access' : 'member';
       let src = '';
       if (user == 'guest') {
         src = require('../../assets/images/drawer/guest/img.png');
