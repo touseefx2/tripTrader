@@ -64,6 +64,7 @@ const disableField = 'rgba(196, 196, 196, 1)';
 const enableField = 'rgba(196, 196, 196, 0.2)';
 
 const disableBack = '#E9E9E9';
+
 const disableBackDark = '#d1d1d1';
 
 const fieldBorder = '#D8E1DB';
