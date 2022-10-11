@@ -269,7 +269,7 @@ function NewTrips(props) {
         }
 
         //agar sd k month 1 se chck krein or end date k month end ke to kaise ho ga wo be chk krna
-
+        // wo be chk krna
         var result = [];
         var current = start.clone();
         while (current.day(7 + day).isBefore(end)) {
