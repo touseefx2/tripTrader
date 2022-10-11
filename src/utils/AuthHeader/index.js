@@ -26,8 +26,13 @@ import {Utils} from '@react-native-firebase/app';
 export default observer(AuthHeader);
 function AuthHeader(props) {
   let prop = props.props;
+  let screen = props.screen || '';
 
   const goBack = () => {
+    if (screen == 'signup') {
+      props.goBack();
+      return;
+    }
     prop.navigation.goBack();
   };
 

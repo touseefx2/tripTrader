@@ -182,6 +182,7 @@ function Trips(props) {
     let tc = theme.color.boxTitle;
     return (
       <Pressable
+        disabled
         style={({pressed}) => [
           {opacity: pressed ? 0.8 : 1.0},
           [styles.boxContainer, {marginTop: index == 0 ? 12 : 0}],
@@ -282,7 +283,7 @@ function Trips(props) {
           </View>
           <Pressable
             style={({pressed}) => [
-              {opacity: pressed ? 0.9 : 1.0},
+              {opacity: pressed ? 0.8 : 1.0},
               styles.buttonContainer,
             ]}
             onPress={() => {}}>

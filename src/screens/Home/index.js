@@ -30,8 +30,15 @@ import Toast from 'react-native-easy-toast';
 import {ActivityIndicator} from 'react-native-paper';
 import FastImage from 'react-native-fast-image';
 import {ImageSlider} from 'react-native-image-slider-banner';
-import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
+import {Calendar} from 'react-native-calendars';
 import moment from 'moment/moment';
+
+function isObjectEmpty(value) {
+  return (
+    Object.prototype.toString.call(value) === '[object Object]' &&
+    JSON.stringify(value) === '{}'
+  );
+}
 
 export default observer(Home);
 
@@ -54,12 +61,12 @@ const data = [
     offer: 'Central N.C. Whitetail Hunting In The Back Country',
     for_trade: 'Alligator or Osceola Turkey ',
     availability: new Date(),
+    unavailable_days: ['2022-10-25', '2022-10-20', '2022-10-5'],
     status: 'pending',
     photos: [
       'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfHw%3D&w=1000&q=80',
       'https://wallpaperaccess.com/full/1534474.jpg',
       'https://www.pixelstalk.net/wp-content/uploads/images6/4K-Travel-Wallpaper-HD-Free-download.jpg',
-
       'https://images.wallpapersden.com/image/download/trip-night_a21tZmmUmZqaraWkpJRmbmdlrWZlbWU.jpg',
     ],
     loc: {
@@ -87,6 +94,7 @@ const data = [
     offer: 'North Idaho Black Bear Spot and Stalk',
     for_trade: 'Alligator or Osceola Turkey',
     availability: new Date(),
+    unavailable_days: ['2022-10-15', '2022-10-23', '2022-10-10'],
     status: 'pending',
     photos: [
       'https://images.wallpapersden.com/image/download/trip-night_a21tZmmUmZqaraWkpJRmbmdlrWZlbWU.jpg',
@@ -118,12 +126,31 @@ function Home(props) {
   const [message, setMessage] = useState('');
 
   const [showCalender, setshowCalender] = useState(false);
-  const [selDates, setselDates] = useState([]);
 
   const [iDate, setiDate] = useState(new Date());
   const [minDate, setminDate] = useState(new Date());
   const [maxDate, setmaxDate] = useState(new Date());
   const [month, setmonth] = useState(new Date());
+
+  const [markedDates, setmarkedDates] = useState({});
+  const [isSelDate, setisSelDate] = useState(false);
+  const [selDates, setselDates] = useState({});
+
+  useEffect(() => {
+    if (!isObjectEmpty(markedDates)) {
+      // let obj = markedDates;
+      // Object.keys(obj).reduce((acc, elem) => {
+      //   let d = obj[elem];
+      //   if (d.selected) {
+      //     setisSelDate(true);
+      //     return;
+      //   }
+      // }, {});
+      setisSelDate(true);
+    } else {
+      setisSelDate(false);
+    }
+  }, [markedDates]);
 
   useEffect(() => {
     if (goto == 'profile') {
@@ -192,6 +219,7 @@ function Home(props) {
     let locName = item.loc ? item.loc.name : '';
     let trade = item.for_trade || '';
     let availability = item.availability || '';
+
     let status = item.status || '';
 
     const renderSec1 = () => {
@@ -477,6 +505,8 @@ function Home(props) {
       setmodalObj(false);
       setMessage('');
       setshowCalender(false);
+      setselDates({});
+      setmarkedDates({});
     }
   };
 
@@ -602,6 +632,12 @@ function Home(props) {
       };
 
       const renderField = () => {
+        let t = '';
+        if (!isObjectEmpty(selDates)) {
+          const size = Object.keys(selDates).length;
+          t = size > 0 ? size + ' dates selected' : '';
+        }
+
         return (
           <View style={styles.modalFieldConatiner}>
             <Text style={styles.mfT1}>Preferred Trip Date</Text>
@@ -609,19 +645,21 @@ function Home(props) {
             <Pressable
               onPress={onClickCal}
               style={({pressed}) => [
-                {opacity: pressed ? 0.7 : 1.0},
+                {opacity: pressed ? 0.8 : 1.0},
                 styles.mFieldContainer,
               ]}>
               <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
-                style={[styles.mfT2, {opacity: 0.4}]}>
-                Choose a date or date range
+                style={[styles.mfT2, {opacity: t == '' ? 0.4 : 1}]}>
+                {t == '' ? 'Choose a date or date range' : t}
               </Text>
-              <Image
-                source={require('../../assets/images/cal/img.png')}
-                style={styles.mfT2icon}
-              />
+              <View style={{width: '13%', alignItems: 'flex-end'}}>
+                <Image
+                  source={require('../../assets/images/cal/img.png')}
+                  style={styles.mfT2icon}
+                />
+              </View>
             </Pressable>
           </View>
         );
@@ -837,7 +875,42 @@ function Home(props) {
   };
 
   const renderCalender = () => {
+    let item = modalObj.item;
+    let unavailable_days = item.unavailable_days;
+    let md = {};
+    if (unavailable_days.length > 0) {
+      let css = {
+        container: {
+          backgroundColor: 'transparent',
+          borderWidth: 1.5,
+          borderColor: '#cccccc',
+          borderStyle: 'dashed',
+        },
+        text: {
+          color: theme.color.subTitleLight,
+          fontFamily: theme.fonts.fontMedium,
+        },
+      };
+
+      unavailable_days.map((e, i, a) => {
+        md[e] = {
+          marked: false,
+          selected: true,
+          customStyles: css,
+          selectedColor: 'red',
+          disabled: true,
+          disableTouchEvent: true,
+        };
+      });
+    }
+
     const closeCalModal = () => {
+      setshowCalender(false);
+      setmarkedDates(selDates);
+    };
+    const ApplyCalModal = () => {
+      setselDates(markedDates);
+      setmarkedDates(markedDates);
       setshowCalender(false);
     };
 
@@ -846,8 +919,59 @@ function Home(props) {
       return dd;
     };
 
+    const getSelectedDayEvents = date => {
+      let cs = {
+        container: {
+          backgroundColor: theme.color.button1,
+        },
+        text: {
+          color: theme.color.buttonText,
+          fontFamily: theme.fonts.fontMedium,
+          top: 2,
+        },
+      };
+
+      if (isObjectEmpty(markedDates)) {
+        let markedDates = {};
+        markedDates[date] = {
+          customStyles: cs,
+          marked: false,
+          selected: true,
+          selectedColor: theme.color.button1,
+          disabled: false,
+          disableTouchEvent: false,
+        };
+        setmarkedDates(markedDates);
+      } else {
+        let md = {...markedDates};
+        let o = md[date];
+        if (o !== undefined) {
+          console.warn('The key exists.');
+          delete md[date];
+          // o.selected = !o.selected;
+          // md[date] = o;
+          setmarkedDates(md);
+
+          return;
+        } else {
+          console.warn('The key does not exist.');
+          let md = {...markedDates};
+          md[date] = {
+            marked: false,
+            selected: true,
+            customStyles: cs,
+            selectedColor: theme.color.button1,
+            disabled: false,
+            disableTouchEvent: false,
+          };
+          setmarkedDates(md);
+          return;
+        }
+      }
+    };
+
     const renderBottom = () => {
-      let c = selDates.length > 0 ? false : true;
+      let c = isSelDate ? false : true;
       return (
         <View style={{marginTop: 10, alignItems: 'flex-end', width: '100%'}}>
           <View
@@ -883,6 +1007,8 @@ function Home(props) {
             </Pressable>
 
             <Pressable
+              onPress={ApplyCalModal}
+              disabled={!isSelDate ? true : false}
               style={({pressed}) => [
                 {
                   opacity: pressed ? 0.9 : c ? 0.5 : 1.0,
@@ -917,7 +1043,6 @@ function Home(props) {
       textSectionTitleColor: theme.color.title,
       textDayHeaderFontFamily: theme.fonts.fontMedium,
     };
-
     return (
       <Modal visible={showCalender} transparent onRequestClose={closeCalModal}>
         <SafeAreaView
@@ -953,19 +1078,17 @@ function Home(props) {
               // maxDate={maxDate}
               // Handler which gets executed on day press. Default = undefined
               onDayPress={day => {
-                console.log('selected day', day);
+                getSelectedDayEvents(day.dateString);
               }}
               // Handler which gets executed on day long press. Default = undefined
               onDayLongPress={day => {
-                console.log('selected day', day);
+                console.log('selected long press day', day);
               }}
               // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
               monthFormat={'yyyy MM'}
               // Handler which gets executed when visible month changes in calendar. Default = undefined
               onMonthChange={month => {
-                console.log('month changed', month);
-                let d = new Date(month.dateString);
-                setmonth(d);
+                setmonth(new Date(month.dateString));
               }}
               // If firstDay=1 week starts from Monday. Note that dayNames and dayNamesShort should still start from Sunday
               firstDay={7}
@@ -976,14 +1099,19 @@ function Home(props) {
                   <Text
                     style={{
                       fontSize: 14,
-                      fontFamily: theme.fonts.fontMedium,
-                      color: theme.color.title,
+                      fontFamily: theme.fonts.fontBold,
+                      color: '#111111',
                     }}>
                     {formatDate(month)}
                   </Text>
                 );
               }}
               enableSwipeMonths={true}
+              disableAllTouchEventsForDisabledDays={true}
+              markingType="custom"
+              markedDates={{...md, ...markedDates}}
+
+              // displayLoadingIndicator
             />
             {renderBottom()}
           </View>

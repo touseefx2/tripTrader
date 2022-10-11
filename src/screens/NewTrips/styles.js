@@ -8,114 +8,137 @@ import {
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: theme.color.backgroundGreen,
+  },
+  container2: {
+    flex: 1,
     backgroundColor: theme.color.background,
   },
-  headerConatainer: {
-    backgroundColor: theme.color.backgroundGreen,
+  container3: {
+    flex: 1,
+    backgroundColor: theme.color.backgroundConatiner,
+  },
+  Sec: {
+    width: '100%',
+    borderRadius: 10,
     paddingHorizontal: 15,
     paddingVertical: 15,
-    elevation: 5,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    alignItems: 'center',
+    backgroundColor: theme.color.background,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.6,
-    shadowRadius: 1,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+
+    elevation: 4,
   },
-  locContainer: {
-    width: '70%',
-    flexDirection: 'row',
-    // justifyContent: 'space-between',
-    backgroundColor: 'white',
+  fieldContainer: {
+    width: '100%',
   },
-  locText: {
+  fieldText: {
+    color: theme.color.titleGreenForm,
+    fontFamily: theme.fonts.fontBold,
     fontSize: 14,
-    color: theme.color.title,
-    fontFamily: theme.fonts.fontMedium,
-    lineHeight: 18,
-    textTransform: 'capitalize',
   },
-  locText2: {
-    fontSize: 12,
-    color: theme.color.title,
-    fontFamily: theme.fonts.fontNormal,
-    lineHeight: 18,
-    textTransform: 'capitalize',
-  },
-  boxContainer: {
+
+  inputConatiner: {
     width: '100%',
-    height: responsiveHeight(20),
-    backgroundColor: '#FFC5B2',
-    borderRadius: 8,
-    marginBottom: 20,
-    elevation: 1,
-    padding: 15,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-
-  boxContainer2: {
-    width: '100%',
-    height: responsiveHeight(20),
-    backgroundColor: '#FEF0C0',
-    borderRadius: 8,
-    marginBottom: 20,
-    elevation: 1,
-    padding: 15,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-
-  boxContainerSecton1: {
-    width: '55%',
-
-    justifyContent: 'flex-end',
-  },
-
-  boxContainerSecton2: {
-    width: '40%',
-
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  bcs1Text1: {
-    fontSize: 16,
-    fontFamily: theme.fonts.fontMedium,
-    color: theme.color.title,
-  },
-
-  bcs1Text2: {
-    fontSize: 13,
-    fontFamily: theme.fonts.fontNormal,
-    color: theme.color.title,
-  },
-  bcs2Image: {flex: 1, resizeMode: 'contain', elevation: 5},
-  circleC: {
-    width: 18,
-    height: 18,
-    borderRadius: 218 / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
     borderWidth: 1,
-    borderColor: theme.color.buttonText,
+    borderColor: theme.color.fieldBorder,
+    borderRadius: 8,
+    height: 45,
+    paddingHorizontal: 7,
+  },
+  input: {
+    width: '100%',
+    height: '100%',
+  },
+  inputIcon: {
+    width: 25,
+    height: 25,
+    resizeMode: 'contain',
+  },
+  Field2Title: {
+    color: '#0E2932',
+    fontSize: 12.5,
+    fontFamily: theme.fonts.fontNormal,
+
+    marginLeft: 10,
+  },
+  bottomText: {
+    color: theme.color.button1,
+    fontSize: 12.5,
+    fontFamily: theme.fonts.fontMedium,
+    textDecorationLine: 'underline',
+    textDecorationColor: theme.color.button1,
+  },
+  dropDownText: {
+    color: '#111111',
+    fontSize: 14,
+    fontFamily: theme.fonts.fontNormal,
+    textTransform: 'capitalize',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContainer2: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 15,
+  },
+  modal: {
+    // width: Platform.OS == 'android' ? '98%' : '88%',
+    width: '98%',
+    alignSelf: 'center',
+    padding: 15,
+    backgroundColor: theme.color.background,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+  },
+  modalCross: {
     position: 'absolute',
-    right: -7,
-    bottom: -1,
+    right: 0,
+  },
+  modalTitle: {
+    fontSize: 19,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontBold,
+  },
+  modalsubTitle: {
+    fontSize: 13,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontNormal,
+  },
+  modalBottomContainer: {
+    marginTop: 30,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  ButtonContainer: {
+    paddingHorizontal: 17,
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: theme.color.button1,
   },
-  circleCText: {
-    fontSize: 8,
+  ButtonText: {
+    fontSize: 12.5,
     color: theme.color.buttonText,
-    fontFamily: theme.fonts.fontMedium,
-    top: 1,
-  },
-  headerTitle: {
-    fontSize: 18,
     fontFamily: theme.fonts.fontBold,
-    color: theme.color.backgroundGreenText,
-    top: -2,
+    textTransform: 'capitalize',
   },
 });

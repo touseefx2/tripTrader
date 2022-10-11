@@ -19,6 +19,7 @@ export default HomeStack = () => {
   return (
     <Drawer.Navigator
       initialRouteName="Home"
+      // backBehavior=''
       screenOptions={{
         // swipeEnabled: true,
         // unmountOnBlur: true,

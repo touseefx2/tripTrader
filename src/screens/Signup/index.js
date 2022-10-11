@@ -228,7 +228,7 @@ function Signup(props) {
         !isShowCameraPrmsn &&
         !isShowGalleryPrmsn
       ) {
-        goBack();
+        props.navigation.goBack();
       } else {
         if (
           isUserCreate &&
@@ -297,7 +297,76 @@ function Signup(props) {
   }
 
   const goBack = () => {
-    props.navigation.goBack();
+    if (
+      !isUserCreate &&
+      isPhoto1Upload == 0 &&
+      !isShowCameraPrmsn &&
+      !isShowGalleryPrmsn
+    ) {
+      props.navigation.goBack();
+    } else {
+      if (
+        isUserCreate &&
+        isPhoto1Upload == 0 &&
+        !isShowCameraPrmsn &&
+        !isShowGalleryPrmsn
+      ) {
+        setisUserCreate(false);
+        setphoto('');
+      }
+
+      if (
+        isUserCreate &&
+        isPhoto1Upload == 1 &&
+        !isShowCameraPrmsn &&
+        !isShowGalleryPrmsn
+      ) {
+        setCnicFrontImage('');
+        setisPhoto1Upload(0);
+      }
+
+      if (
+        isUserCreate &&
+        isPhoto1Upload == 2 &&
+        !isShowCameraPrmsn &&
+        !isShowGalleryPrmsn
+      ) {
+        setSavePerMonth(0);
+        setisPhoto1Upload(1);
+      }
+
+      if (
+        isUserCreate &&
+        isPhoto1Upload == 3 &&
+        !isShowCameraPrmsn &&
+        !isShowGalleryPrmsn
+      ) {
+        clearCard();
+        setisPhoto1Upload(2);
+      }
+
+      if (
+        isUserCreate &&
+        isPhoto1Upload == 4 &&
+        !isShowCameraPrmsn &&
+        !isShowGalleryPrmsn
+      ) {
+        if (sPlan == 'free') {
+          setisPhoto1Upload(2);
+        } else {
+          setisPhoto1Upload(3);
+        }
+      }
+
+      if (
+        isUserCreate &&
+        (isPhoto1Upload == 0 || isPhoto1Upload == 1) &&
+        (isShowCameraPrmsn || isShowGalleryPrmsn)
+      ) {
+        setisShowCameraPrmsn(false);
+        setisShowGalleryPrmsn(false);
+      }
+    }
   };
 
   const clearAllField = () => {
@@ -2478,7 +2547,11 @@ function Signup(props) {
         source={require('../../assets/images/background/img.png')}
         style={styles.container2}>
         <SafeAreaView style={styles.container2}>
-          <utils.AuthHeader props={props} />
+          <utils.AuthHeader
+            props={props}
+            screen="signup"
+            goBack={() => goBack()}
+          />
           <KeyboardAvoidingView style={{flex: 1}} enabled>
             <ScrollView
               style={{paddingHorizontal: 15}}

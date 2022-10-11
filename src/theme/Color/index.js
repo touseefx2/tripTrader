@@ -19,6 +19,8 @@
 const background = '#FFFFFF';
 const backgroundGreen = '#283C2E';
 const backgroundConatiner = '#E5E5E5';
+// const backgroundConatiner = '#f5f5f5';
+
 const mainbottombutonbackground = '#e8e8e8';
 const backgroundGreenText = 'white';
 const title = '#000000';
