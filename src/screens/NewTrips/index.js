@@ -121,8 +121,8 @@ function NewTrips(props) {
     },
   ];
 
-  const toast = useRef(null);
-  const toastduration = 700;
+  // const toast = useRef(null);
+  // const toastduration = 700;
   let headerTitle = 'New Trip';
   let internet = store.General.isInternet;
   let user = store.User.user;
