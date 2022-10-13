@@ -598,10 +598,10 @@ function Reviews(props) {
                 styles.modalCross,
               ]}
               onPress={closeModal}>
-              <utils.vectorIcon.EvilIcons
-                name="close"
+              <utils.vectorIcon.Ionicons
+                name="ios-close-outline"
                 color={theme.color.title}
-                size={30}
+                size={32}
               />
             </Pressable>
           );
@@ -741,10 +741,10 @@ function Reviews(props) {
                 styles.modalCross,
               ]}
               onPress={closeModal}>
-              <utils.vectorIcon.EvilIcons
-                name="close"
+              <utils.vectorIcon.Ionicons
+                name="ios-close-outline"
                 color={theme.color.title}
-                size={30}
+                size={32}
               />
             </Pressable>
           );
@@ -960,10 +960,10 @@ function Reviews(props) {
                 styles.modalCross,
               ]}
               onPress={closeModal}>
-              <utils.vectorIcon.EvilIcons
-                name="close"
+              <utils.vectorIcon.Ionicons
+                name="ios-close-outline"
                 color={theme.color.title}
-                size={30}
+                size={32}
               />
             </Pressable>
           );

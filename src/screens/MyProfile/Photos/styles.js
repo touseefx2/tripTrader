@@ -743,7 +743,7 @@ export const styles = StyleSheet.create({
   },
   modalCross: {
     position: 'absolute',
-    top: 17,
+    top: 15,
     right: 15,
   },
   modalTitle: {

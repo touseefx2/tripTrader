@@ -37,10 +37,21 @@ export const styles = StyleSheet.create({
   fieldContainer: {
     width: '100%',
   },
+
   fieldText: {
     color: theme.color.titleGreenForm,
     fontFamily: theme.fonts.fontBold,
     fontSize: 14,
+  },
+  fieldText2: {
+    color: '#111111',
+    fontFamily: theme.fonts.fontBold,
+    fontSize: 15,
+  },
+  fieldText22: {
+    color: '#101B10',
+    fontFamily: theme.fonts.fontNormal,
+    fontSize: 13.5,
   },
 
   inputConatiner: {
@@ -83,6 +94,8 @@ export const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   modalContainer2: {
     flex: 1,
@@ -92,9 +105,8 @@ export const styles = StyleSheet.create({
   },
   modal: {
     // width: Platform.OS == 'android' ? '98%' : '88%',
-    width: '98%',
+    width: '100%',
     alignSelf: 'center',
-    padding: 15,
     backgroundColor: theme.color.background,
     borderRadius: 10,
     shadowColor: '#000',
@@ -107,9 +119,44 @@ export const styles = StyleSheet.create({
 
     elevation: 3,
   },
+  umodal: {
+    // width: Platform.OS == 'android' ? '98%' : '88%',
+    width: '98%',
+    alignSelf: 'center',
+    backgroundColor: theme.color.background,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    padding: 15,
+
+    elevation: 3,
+  },
+  dmodal: {
+    width: '90%',
+    alignSelf: 'center',
+
+    padding: 15,
+    backgroundColor: theme.color.background,
+    borderRadius: 15,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+  },
   modalCross: {
     position: 'absolute',
-    right: 0,
+    top: 15,
+    right: 15,
   },
   modalTitle: {
     fontSize: 19,
@@ -140,5 +187,146 @@ export const styles = StyleSheet.create({
     color: theme.color.buttonText,
     fontFamily: theme.fonts.fontBold,
     textTransform: 'capitalize',
+  },
+
+  uploadIndication: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '90%',
+    alignSelf: 'center',
+  },
+  uploadIndicationLogo: {
+    width: 120,
+    height: 120,
+    resizeMode: 'contain',
+  },
+  section2Title1: {
+    color: theme.color.title,
+    fontSize: 20,
+    fontFamily: theme.fonts.fontBold,
+    alignSelf: 'center',
+    textTransform: 'capitalize',
+  },
+  section2Logo: {
+    width: 70,
+    height: 70,
+    marginTop: 10,
+    resizeMode: 'contain',
+  },
+  section2LogoTitle: {
+    marginTop: 20,
+    color: theme.color.subTitleAuth,
+    fontSize: 14,
+    fontFamily: theme.fonts.fontNormal,
+    textAlign: 'center',
+  },
+  section2LogoTitlee: {
+    marginTop: 20,
+    color: theme.color.subTitleAuth,
+    fontSize: 15,
+    fontFamily: theme.fonts.fontBold,
+  },
+  BottomButtonP: {
+    width: '45%',
+    height: 55,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.color.button2,
+
+    // height: responsiveHeight(8),
+    borderRadius: 8,
+    alignSelf: 'center',
+
+    marginTop: 25,
+  },
+  buttonPTextBottom: {
+    color: '#30563A',
+    fontSize: 16,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
+  },
+
+  addImgContainer: {
+    width: '31%',
+    height: 106,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: theme.color.photoBorderColor,
+    marginRight: '2.3%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addImg: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+    borderRadius: 10,
+  },
+  crossContainer: {
+    width: 22,
+    height: 22,
+    borderRadius: 22 / 2,
+
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    backgroundColor: theme.color.background,
+    right: 3,
+    top: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+  },
+
+  dmodalTitle: {
+    fontSize: 19,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontBold,
+    alignSelf: 'center',
+    textTransform: 'capitalize',
+  },
+  dmodalImgContainer: {
+    width: '100%',
+    height: 220,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: theme.color.photoBorderColor,
+    marginTop: 15,
+  },
+  dmodalImg: {
+    width: '100%',
+    height: '100%',
+    // resizeMode: 'contain',
+    borderRadius: 8,
+  },
+  dmodalBottomTitle: {
+    fontSize: 12,
+    color: theme.color.subTitle,
+    fontFamily: theme.fonts.fontNormal,
+    alignSelf: 'center',
+  },
+  dmodalBottomContainer: {
+    marginTop: 15,
+  },
+  dButtonContainer: {
+    width: '100%',
+    height: 50,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#B93B3B',
+    marginTop: 10,
+  },
+  dButtonText: {
+    fontSize: 15,
+    color: theme.color.buttonText,
+    fontFamily: theme.fonts.fontBold,
   },
 });
