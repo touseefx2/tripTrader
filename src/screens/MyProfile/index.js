@@ -105,6 +105,7 @@ function MyProfile(props) {
   ]);
   const renderScene = SceneMap({
     reviews: Reviews,
+    // trips: () => <Trips p={props} />,
     trips: Trips,
     photos: Photos,
   });
@@ -141,6 +142,7 @@ function MyProfile(props) {
   }, [user]);
 
   useEffect(() => {
+    store.User.setMyProfileProps(props);
     if (user && user !== 'guest') {
       setTimeout(() => {
         setisTabBarShow(true);

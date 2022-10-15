@@ -41,8 +41,6 @@ function Photos(props) {
   let mloader = store.User.mLoader;
 
   const [pvm, setpvm] = useState(false);
-  const [pv, setpv] = useState('');
-  const [tripPhotos, settripPhotos] = useState([]);
   const [si, setsi] = useState('');
 
   const [deletePObj, setdeletePObj] = useState(false);
@@ -106,8 +104,7 @@ function Photos(props) {
     });
   };
 
-  const photoClick = (c, i) => {
-    setpv(c);
+  const photoClick = i => {
     setsi(i);
     setpvm(true);
   };
@@ -200,7 +197,7 @@ function Photos(props) {
           {opacity: pressed ? 0.9 : 1.0},
           [styles.ProfileImgContainer, {marginTop: index < 3 ? 12 : 0}],
         ]}
-        onPress={() => photoClick(photo, index)}>
+        onPress={() => photoClick(index)}>
         <ProgressiveFastImage
           style={styles.ProfileImg}
           source={{uri: photo}}

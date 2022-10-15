@@ -39,7 +39,7 @@ import Toast from 'react-native-easy-toast';
 
 import {ScrollView} from 'react-native-gesture-handler';
 import {Calendar} from 'react-native-calendars';
-import moment from 'moment';
+import moment, {duration} from 'moment';
 
 function isObjectEmpty(value) {
   return (
@@ -95,19 +95,19 @@ function NewTrips(props) {
     {
       _id: 1,
       is_active: true,
-      title: 'week',
+      title: 'weeks',
       type: 'durType',
     },
     {
       _id: 2,
       is_active: true,
-      title: 'month',
+      title: 'months',
       type: 'durType',
     },
     {
       _id: 2,
       is_active: true,
-      title: 'year',
+      title: 'years',
       type: 'durType',
     },
   ];
@@ -116,16 +116,41 @@ function NewTrips(props) {
     {
       _id: 0,
       is_active: true,
-      title: 'Week(s)',
+      title: 'Weeks',
+      type: 'durType',
+    },
+    {
+      _id: 1,
+      is_active: true,
+      title: 'Days',
+      type: 'durType',
+    },
+    {
+      _id: 2,
+      is_active: true,
+      title: 'Months',
       type: 'durType',
     },
   ];
 
-  // const toast = useRef(null);
-  // const toastduration = 700;
-  let headerTitle = 'New Trip';
+  const toast = useRef(null);
+  const toastduration = 700;
+  let editTrip = store.User.editTripObj;
+  let isEdit = store.User.editTrip ? true : false;
+
+  let headerTitle = !isEdit ? 'New Trip' : 'Edit Trip';
   let internet = store.General.isInternet;
   let user = store.User.user;
+
+  let maxModalHeight = theme.window.Height - 100;
+  const [modalHeight, setmodalHeight] = useState(0);
+
+  const [location, setlocation] = useState({
+    name: 'Miami, Florida',
+    coords: [],
+  });
+
+  const [title, settitle] = useState('Hunting Trip');
 
   const [dur, setdur] = useState(durtn[0]); //time solts
   const [rdur, setrdur] = useState(rdurtn[0]);
@@ -177,8 +202,34 @@ function NewTrips(props) {
   let maxPhotos = 6;
   const [photos, setPhotos] = useState([]);
 
+  const [pvm, setpvm] = useState(false);
+  const [si, setsi] = useState('');
+
   const [deletePObj, setdeletePObj] = useState(false);
   const [deleteModal, setdeleteModal] = useState(false);
+
+  const [isButtonDisable, setisButtonDisable] = useState(false);
+  const [isReviewTrip, setisReviewTrip] = useState(false);
+
+  const [isTripCreate, setisTripCreate] = useState(false);
+
+  let loader = store.User.ctripsLoader;
+
+  useEffect(() => {
+    return () => {
+      store.User.seteditTrip(false);
+      store.User.seteditTripObj(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (editTrip) {
+      let data = editTrip.data;
+      let index = editTrip.index;
+      console.log('edit data : ', data);
+      console.log('edit index : ', index);
+    }
+  }, [editTrip]);
 
   useEffect(() => {
     if (isSelDate1 != '' && isSelDate2 != '') {
@@ -190,15 +241,16 @@ function NewTrips(props) {
       let t = dur.title;
       if (t == 'days') {
         totaldays = durNum;
-      } else if (t == 'week') {
+      } else if (t == 'weeks') {
         totaldays = durNum * 7;
-      } else if (t == 'month') {
+      } else if (t == 'months') {
         totaldays = durNum * 30;
-      } else if (t == 'year') {
+      } else if (t == 'years') {
         totaldays = durNum * 365;
       }
       if (no_of_days < totaldays) {
-        clearFields();
+        clearFields('');
+
         return;
       }
     }
@@ -233,7 +285,7 @@ function NewTrips(props) {
     }
   }, [selDates]);
 
-  const clearFields = () => {
+  const clearFields = c => {
     setmarkedDates({});
     setisSelDate(false);
     setselDates({});
@@ -250,6 +302,27 @@ function NewTrips(props) {
     setunavlblmarkedDates({});
     setunavlblSLCTmarkedDates({});
     setselunmarkedSLCTDates({});
+    if (c == 'all') {
+      settrader('');
+      setReturn('');
+      setdurNum(1);
+      setrdurNum(1);
+      setdur(durtn[0]);
+      setrdur(rdurtn[0]);
+      setacceptOther(false);
+      setisAddPhotoModal(false);
+      setisSetUnavailable(false);
+      setPhotos([]);
+      setpvm(false);
+      setsi('');
+      setdeleteModal(false);
+      setdeletePObj(false);
+      setisButtonDisable(false);
+      setlocation({
+        name: 'Miami, Florida',
+        coords: [],
+      });
+    }
   };
 
   const siERpOn = d => {
@@ -277,12 +350,12 @@ function NewTrips(props) {
     }
   }, [isSelDate1, isSelDate2]);
 
-  function weekOfMonth(m) {
-    // end me  +1 id start week from monday
-    return m.week() - moment(m).startOf('month').week();
-  }
-
   useEffect(() => {
+    if (rdurNum == '') {
+      setunavlblmarkedDates({});
+      return;
+    }
+
     let ar = [];
     if (dow.length > 0) {
       dow.map((e, i, a) => {
@@ -291,7 +364,6 @@ function NewTrips(props) {
         }
       });
     }
-
     if (ar.length > 0) {
       var rweekNum = rdurNum;
       var start = moment(isSelDate1);
@@ -324,64 +396,21 @@ function NewTrips(props) {
     } else {
       setunavlblmarkedDates({});
     }
+  }, [dow, endRepOn, rdurNum]);
 
-    // let sem = moment(isSelDate1).endOf('month').format('YYYY-MM-DD');
-    // if (end > sem) {
-    // } else {
-    //   var weeknumber = weekOfMonth(moment(isSelDate1));
-    //   if (weeknumber <= rweekNum) {
-    //     console.error('wn : ', weeknumber);
-    //     // let mm = {};
-    //     // if (ar.length > 0) {
-    //     //   ar.map((e, i, a) => {
-    //     //     var day = 0; // Sunday
-    //     //     if (e == 'sun') {
-    //     //       day = 0;
-    //     //     }
-    //     //     if (e == 'mon') {
-    //     //       day = 1;
-    //     //     }
-    //     //     if (e == 'tue') {
-    //     //       day = 2;
-    //     //     }
-    //     //     if (e == 'wed') {
-    //     //       day = 3;
-    //     //     }
-    //     //     if (e == 'thu') {
-    //     //       day = 4;
-    //     //     }
-    //     //     if (e == 'fri') {
-    //     //       day = 5;
-    //     //     }
-    //     //     if (e == 'sat') {
-    //     //       day = 6;
-    //     //     }
-
-    //     //     var result = [];
-    //     //     var current = start.clone();
-    //     //     while (current.day(7 + day).isBefore(end)) {
-    //     //       result.push(current.clone());
-    //     //     }
-    //     //     if (result.length > 0) {
-    //     //       result.map((e, i, a) => {
-    //     //         let d = e.format('YYYY-MM-DD');
-    //     //         mm[d] = {
-    //     //           marked: false,
-    //     //           selected: true,
-    //     //           customStyles: css,
-    //     //           selectedColor: 'red',
-    //     //           disabled: true,
-    //     //           disableTouchEvent: true,
-    //     //         };
-    //     //       });
-    //     //     }
-    //     //   });
-
-    //     //   setunavlblmarkedDates(mm);
-    //     // }
-    //   }
-    // }
-  }, [dow, endRepOn]);
+  useEffect(() => {
+    if (
+      isSelDate1 != '' &&
+      isSelDate2 != '' &&
+      trade != '' &&
+      Return != '' &&
+      durNum != ''
+    ) {
+      setisButtonDisable(false);
+    } else {
+      setisButtonDisable(true);
+    }
+  }, [isSelDate1, isSelDate2, trade, Return, durNum]);
 
   const onClickCal = () => {
     setshowCalender(!showCalender);
@@ -406,13 +435,28 @@ function NewTrips(props) {
             dw2[e].isSel = true;
           });
         }
-
         setdow(dw2);
         setrdurNum(d.repeat_every.num);
-        setrdur(d.rdur);
+        let tt = d.repeat_every.title;
+        let index = rdurtn.findIndex(x => x.title === tt);
+        setrdur(rdurtn[index]);
         siERpOn(d.repeat_every.endRepeatOn);
-        setselunmarkedSLCTDates(d.selunmarkeSLCTdDates);
-        setunavlblSLCTmarkedDates(d.selunmarkeSLCTdDates);
+        let dt = d.exclude_specific_dates;
+        let md = {};
+        if (dt.length > 0) {
+          dt.map((e, i, a) => {
+            md[e] = {
+              customStyles: cs,
+              marked: false,
+              selected: true,
+              selectedColor: theme.color.button1,
+              disabled: false,
+              disableTouchEvent: false,
+            };
+          });
+        }
+        setselunmarkedSLCTDates(md);
+        setunavlblSLCTmarkedDates(md);
       }
 
       setisShowUnavliableModal(true);
@@ -460,7 +504,7 @@ function NewTrips(props) {
     Keyboard.dismiss();
     closeAllDropDown();
     setisShowPrmsn(false);
-
+    setisAddPhotoModal(false);
     let d = photos.length;
     let max = maxPhotos;
     let msg = 'You can upload only ' + max + ' images';
@@ -551,6 +595,63 @@ function NewTrips(props) {
   const closeAllDropDown = () => {
     setisDropDownDur(false);
     setisDropDownrDur(false);
+  };
+
+  const photoClick = i => {
+    setsi(i);
+    setpvm(true);
+  };
+
+  const closeReviewModal = () => {
+    if (!loader) {
+      setmodalHeight(0);
+      if (isTripCreate) {
+        clearFields('all');
+      }
+      setisReviewTrip(false);
+      setisTripCreate(false);
+    }
+  };
+
+  const setIsTripCreatSuc = v => {
+    setisTripCreate(v);
+  };
+
+  const CreateTrip = () => {
+    Keyboard.dismiss();
+
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        const obj = {
+          _id: (Math.random() * 10).toFixed(0),
+          title: title,
+          user: store.User.user._id,
+          offer: trade,
+          return: Return,
+          loc: {
+            name: 'Miami, Florida',
+            coords: [],
+          },
+          status: 'pending',
+          acceptOtherTrades: acceptOther,
+          duration: {
+            number: durNum,
+            title: dur.title,
+          },
+          availablity: {
+            startDate: isSelDate1,
+            endDate: isSelDate2,
+          },
+          photos: photos,
+          unavailable: isSetUnavailable != false ? isSetUnavailable : {},
+        };
+        console.warn('create trip obj : ', obj);
+        store.User.attemptToCreateTrip(obj, setIsTripCreatSuc);
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
   };
 
   const renderDropDown = c => {
@@ -705,11 +806,11 @@ function NewTrips(props) {
           let t = dur.title;
           if (t == 'days') {
             totaldays = durNum;
-          } else if (t == 'week') {
+          } else if (t == 'weeks') {
             totaldays = durNum * 7;
-          } else if (t == 'month') {
+          } else if (t == 'months') {
             totaldays = durNum * 30;
-          } else if (t == 'year') {
+          } else if (t == 'years') {
             totaldays = durNum * 365;
           }
           if (no_of_days < totaldays) {
@@ -911,6 +1012,11 @@ function NewTrips(props) {
   };
 
   const renderUNavlblModal = () => {
+    let c = modalHeight >= maxModalHeight ? true : false;
+    let style = c
+      ? [styles.umodal, {paddingTop: 0, height: maxModalHeight}]
+      : styles.umodal2;
+
     let tt = '';
 
     let esd = [];
@@ -983,6 +1089,7 @@ function NewTrips(props) {
 
     const closeModal = () => {
       setisShowUnavliableModal(false);
+      setmodalHeight(0);
       if (!isSetUnavailable) {
         setdow(dw);
         setrdur(rdurtn[0]);
@@ -1019,7 +1126,7 @@ function NewTrips(props) {
         });
       }
       if (wtxt != '') {
-        wtxt = wtxt + ` (${rdur.title == 'Week(s)' ? 'weekly' : ''})`;
+        wtxt = wtxt + ` (${rdur.title == 'Weeks' ? 'weekly' : rdur.title})`;
       }
 
       let unw = [];
@@ -1059,9 +1166,6 @@ function NewTrips(props) {
         },
         wtxt: wtxt,
         esd_text: tt,
-        rdur: rdur,
-
-        selunmarkeSLCTdDates: selunmarkeSLCTdDates,
 
         unavailable_days_of_week: unw, //main
         exclude_specific_dates: esd, //main
@@ -1078,15 +1182,12 @@ function NewTrips(props) {
       const renderCross = () => {
         return (
           <Pressable
-            style={({pressed}) => [
-              {opacity: pressed ? 0.7 : 1.0},
-              styles.modalCross,
-            ]}
+            style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
             onPress={closeModal}>
-            <utils.vectorIcon.EvilIcons
-              name="close"
+            <utils.vectorIcon.Ionicons
+              name="ios-close-outline"
               color={theme.color.title}
-              size={30}
+              size={32}
             />
           </Pressable>
         );
@@ -1097,8 +1198,29 @@ function NewTrips(props) {
       };
 
       return (
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          {renderTitle()}
+        <View
+          style={
+            c
+              ? {
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  paddingHorizontal: 15,
+                  paddingTop: 15,
+                  paddingBottom: 7,
+                  shadowColor: '#000000',
+                  shadowOffset: {width: 0, height: 1}, // change this for more shadow
+                  shadowOpacity: 0.1,
+                  elevation: 1,
+                  backgroundColor: theme.color.background,
+                  borderTopLeftRadius: 10,
+                  borderTopRightRadius: 10,
+                }
+              : {
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }
+          }>
+          <View style={{width: '80%'}}>{renderTitle()}</View>
           {renderCross()}
         </View>
       );
@@ -1206,7 +1328,7 @@ function NewTrips(props) {
       return (
         <>
           <View style={[styles.fieldContainer, {marginTop: 15}]}>
-            <Text style={styles.fieldText}>Repeat Every</Text>
+            <Text style={styles.fieldText}>Repeat for</Text>
             <View
               style={[
                 styles.fieldContainer,
@@ -1233,10 +1355,10 @@ function NewTrips(props) {
 
               <View style={{width: '40%', marginLeft: 10}}>
                 <TouchableOpacity
-                  // onPress={() => {
-                  //   closeAllDropDown();
-                  //   setisDropDownrDur(!isDropDownrDur);
-                  // }}
+                  onPress={() => {
+                    closeAllDropDown();
+                    setisDropDownrDur(!isDropDownrDur);
+                  }}
                   activeOpacity={0.6}
                   style={[
                     styles.inputConatiner,
@@ -1255,7 +1377,11 @@ function NewTrips(props) {
                         styles.dropDownText,
                         {fontSize: 12.5, textTransform: 'none'},
                       ]}>
-                      {rdur.title ? rdur.title : ''}
+                      {rdur.title
+                        ? rdur.title == 'Weeks'
+                          ? 'Week(s)'
+                          : rdur.title
+                        : ''}
                     </Text>
                   </View>
                   <View
@@ -1420,8 +1546,29 @@ function NewTrips(props) {
       };
 
       return (
-        <View style={{alignItems: 'flex-end'}}>
-          <View style={styles.modalBottomContainer}>
+        <View
+          style={
+            c
+              ? {
+                  alignItems: 'flex-end',
+                  backgroundColor: theme.color.background,
+                  shadowColor: '#000000',
+                  shadowOffset: {width: 0, height: -1}, // change this for more shadow
+                  shadowOpacity: 0.1,
+                  elevation: 15,
+                  borderBottomLeftRadius: 10,
+                  borderBottomRightRadius: 10,
+                  marginTop: 15,
+                }
+              : {
+                  alignItems: 'flex-end',
+                  marginTop: 30,
+                }
+          }>
+          <View
+            style={
+              c ? styles.rmodalBottomContainer : styles.rmodalBottomContainer2
+            }>
             {renderButton1()}
             {renderButton2()}
           </View>
@@ -1436,13 +1583,40 @@ function NewTrips(props) {
         onRequestClose={closeModal}>
         <SafeAreaView style={styles.modalContainer}>
           <View style={styles.modalContainer2}>
-            <View style={styles.umodal}>
-              {renderHeader()}
-              {renderTitle()}
-              {renderWeek()}
-              {renderRepeat()}
-              {renderOtherDates()}
-              {renderBottom()}
+            <View
+              onLayout={event => {
+                if (!c) {
+                  let {height} = event.nativeEvent.layout;
+                  setmodalHeight(height);
+                }
+              }}
+              style={style}>
+              {c && (
+                <>
+                  {renderHeader()}
+                  <ScrollView
+                    contentContainerStyle={{paddingHorizontal: 15}}
+                    showsVerticalScrollIndicator={false}
+                    style={{flex: 1}}>
+                    {renderTitle()}
+                    {renderWeek()}
+                    {renderRepeat()}
+                    {renderOtherDates()}
+                  </ScrollView>
+                  {renderBottom()}
+                </>
+              )}
+
+              {!c && (
+                <>
+                  {renderHeader()}
+                  {renderTitle()}
+                  {renderWeek()}
+                  {renderRepeat()}
+                  {renderOtherDates()}
+                  {renderBottom()}
+                </>
+              )}
             </View>
           </View>
         </SafeAreaView>
@@ -1453,17 +1627,38 @@ function NewTrips(props) {
   const renderCalender2 = () => {
     const closeCalModal = () => {
       setisShowUnavliabledaysCal(false);
-      // setunavlblmarkedDates(selunmarkedDates);
+
       setischk('');
-      setendRepOnM(endRepOnS);
-      setendRepOn(Object.keys(endRepOnS)[0]);
+      let d = Object.keys(endRepOnS)[0];
+      siERpOn(d);
       setunavlblSLCTmarkedDates(selunmarkeSLCTdDates);
     };
     const ApplyCalModal = () => {
       if (ischk == 'endrepeat') {
         setisShowUnavliabledaysCal(false);
-        setendRepOnS(endRepOnM);
-        setendRepOn(Object.keys(endRepOnM)[0]);
+        let d = Object.keys(endRepOnM)[0];
+        siERpOn(d);
+
+        let esd = [];
+        if (!isObjectEmpty(selunmarkeSLCTdDates)) {
+          var myObject = selunmarkeSLCTdDates;
+          Object.keys(myObject).forEach(function (key, index) {
+            esd.push(key);
+          });
+        }
+        if (esd.length > 0) {
+          esd.sort(function (a, b) {
+            return Number(new Date(a)) - Number(new Date(b));
+          });
+        }
+
+        if (esd.length > 0) {
+          if (d >= esd[0]) {
+            setunavlblSLCTmarkedDates({});
+            setselunmarkedSLCTDates({});
+          }
+        }
+
         return;
       } else {
         setisShowUnavliabledaysCal(false);
@@ -2251,7 +2446,7 @@ function NewTrips(props) {
               styles.fieldContainer,
               {marginTop: 5, flexDirection: 'row'},
             ]}>
-            <View style={[styles.inputConatiner, {width: '22%'}]}>
+            <View style={[styles.inputConatiner, {width: '23%'}]}>
               <TextInput
                 keyboardType="number-pad"
                 maxLength={5}
@@ -2270,7 +2465,7 @@ function NewTrips(props) {
               />
             </View>
 
-            <View style={{width: '33%', marginLeft: 10}}>
+            <View style={{width: '36%', marginLeft: 10}}>
               <TouchableOpacity
                 onPress={() => {
                   closeAllDropDown();
@@ -2412,7 +2607,7 @@ function NewTrips(props) {
   const renderSec2 = () => {
     const renderShowPhotos = () => {
       let p = photos.map((e, i, a) => {
-        let uri = e.uri;
+        let uri = e.uri ? e.uri : e;
         const renderPhotoCross = () => {
           return (
             <Pressable
@@ -2432,13 +2627,11 @@ function NewTrips(props) {
           <>
             {a.length == maxPhotos && (
               <Pressable
-                disabled
+                onPress={() => photoClick(i)}
                 style={({pressed}) => [
                   {opacity: pressed ? 0.9 : 1.0},
                   [styles.addImgContainer, {marginTop: 15}],
-                ]}
-                // onPress={() => photoClick(photo, index)}
-              >
+                ]}>
                 <Image style={styles.addImg} source={{uri: uri}} />
                 {renderPhotoCross()}
               </Pressable>
@@ -2447,7 +2640,7 @@ function NewTrips(props) {
             {a.length < maxPhotos && (
               <>
                 <Pressable
-                  disabled
+                  onPress={() => photoClick(i)}
                   style={({pressed}) => [
                     {opacity: pressed ? 0.9 : 1.0},
                     [styles.addImgContainer, {marginTop: 15}],
@@ -2580,16 +2773,414 @@ function NewTrips(props) {
     );
   };
 
-  console.log('photos : ', photos);
+  const renderButton = () => {
+    return (
+      <>
+        <TouchableOpacity
+          disabled={isButtonDisable}
+          onPress={() => {
+            setisReviewTrip(true);
+          }}
+          activeOpacity={0.7}
+          style={[styles.BottomButton, {opacity: isButtonDisable ? 0.5 : 1}]}>
+          <Text style={styles.buttonTextBottom}>Create Trip</Text>
+        </TouchableOpacity>
+      </>
+    );
+  };
 
-  // if (isSetUnavailable) {
-  //   console.log(
-  //     'is unavlbl : ',
-  //     isSetUnavailable.all_unavailable_dates.map((e, i, a) => {
-  //       console.log('e : ', e);
-  //     }),
-  //   );
-  // }
+  const renderReviewTripModal = () => {
+    let c = modalHeight >= maxModalHeight ? true : false;
+    let style = c
+      ? [styles.rmodal, {paddingTop: 0, height: maxModalHeight}]
+      : styles.rmodal2;
+
+    const renderHeader = () => {
+      let text = !isTripCreate
+        ? 'Review Trip Details'
+        : 'Trip Created Successfully!';
+
+      const renderCross = () => {
+        return (
+          <Pressable
+            disabled={loader}
+            style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
+            onPress={closeReviewModal}>
+            <utils.vectorIcon.Ionicons
+              name="ios-close-outline"
+              color={theme.color.title}
+              size={32}
+            />
+          </Pressable>
+        );
+      };
+
+      const renderTitle = () => {
+        return <Text style={styles.modalTitle}>{text}</Text>;
+      };
+
+      return (
+        <View
+          style={
+            c
+              ? {
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+
+                  paddingHorizontal: 15,
+                  paddingTop: 15,
+                  paddingBottom: 7,
+                  shadowColor: '#000000',
+                  shadowOffset: {width: 0, height: 1}, // change this for more shadow
+                  shadowOpacity: 0.1,
+                  elevation: 1,
+                  backgroundColor: theme.color.background,
+                  borderTopLeftRadius: 10,
+                  borderTopRightRadius: 10,
+                }
+              : {
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }
+          }>
+          {/* <View style={{width: '80%'}}> */}
+          {renderTitle()}
+          {/* </View> */}
+
+          {/* {renderCross()} */}
+        </View>
+      );
+    };
+
+    const renderTitle = () => {
+      return (
+        <View style={{marginTop: 10}}>
+          <Text style={styles.rmodalsubTitle}>
+            Review your trip details below. If everything looks good, click{' '}
+            <Text
+              style={[
+                styles.rmodalsubTitle,
+                {fontFamily: theme.fonts.fontBold},
+              ]}>
+              Create Trip
+            </Text>{' '}
+            to make the trip available for trade offers.
+          </Text>
+        </View>
+      );
+    };
+
+    const renderShowPhotos = () => {
+      let p = photos.map((e, i, a) => {
+        let uri = e.uri ? e.uri : e;
+        return (
+          <>
+            <Pressable
+              disabled
+              style={({pressed}) => [
+                {opacity: pressed ? 0.9 : 1.0},
+                [styles.raddImgContainer, {marginTop: 10}],
+              ]}>
+              <Image style={styles.raddImg} source={{uri: uri}} />
+            </Pressable>
+          </>
+        );
+      });
+
+      return p;
+    };
+
+    const renderFields = () => {
+      let offer = trade;
+      let locationName = location.name ? location.name : '';
+      let duration = durNum + ' ' + dur.title;
+      let availablity =
+        moment(isSelDate1).format('MMM DD') +
+        '  -  ' +
+        moment(isSelDate2).format('MMM DD');
+      let unavailable = '';
+      let t1 = '';
+      let t2 = '';
+      if (isSetUnavailable) {
+        t1 = isSetUnavailable.wtxt;
+        t2 = isSetUnavailable.esd_text;
+
+        if (t1 != '' && t2 != '') {
+          unavailable = t1 + ', ' + t2;
+        }
+        if (t1 == '' && t2 != '') {
+          unavailable = t2;
+        } else if (t1 != '' && t2 == '') {
+          unavailable = t1;
+        }
+      }
+
+      return (
+        <View style={{marginTop: 20}}>
+          <View style={[styles.rField, {width: '85%'}]}>
+            <Text style={styles.rTitle}>YOUR OFFERING</Text>
+            <Text
+              // numberOfLines={2}
+              // ellipsizeMode="tail"
+              style={[styles.rTitle2, {color: theme.color.titleGreenForm}]}>
+              {offer}
+            </Text>
+          </View>
+
+          <View style={styles.rField2}>
+            <View style={[styles.rField, {width: '49%'}]}>
+              <Text style={styles.rTitle}>TRIP LOCATION</Text>
+              <Text
+                // numberOfLines={2}
+                // ellipsizeMode="tail"
+                style={styles.rTitle2}>
+                {locationName}
+              </Text>
+            </View>
+
+            <View style={[styles.rField, {width: '49%'}]}>
+              <Text style={styles.rTitle}>TRIP DURATION</Text>
+              <Text
+                // numberOfLines={2}
+                // ellipsizeMode="tail"
+                style={[styles.rTitle2, {textTransform: 'none'}]}>
+                {duration}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.rField2}>
+            <View style={[styles.rField, {width: '49%'}]}>
+              <Text style={styles.rTitle}>TRIP Availability</Text>
+              <Text
+                // numberOfLines={2}
+                // ellipsizeMode="tail"
+                style={styles.rTitle2}>
+                {availablity}
+              </Text>
+            </View>
+
+            <View style={[styles.rField, {width: '49%'}]}>
+              <Text style={styles.rTitle}>UNAVAILABLE DAYS</Text>
+              <Text
+                // numberOfLines={4}
+                // ellipsizeMode="tail"
+                style={[styles.rTitle2, {textTransform: 'none'}]}>
+                {unavailable}
+              </Text>
+            </View>
+          </View>
+
+          {photos.length > 0 && (
+            <View style={[styles.rField, {marginTop: 20}]}>
+              <Text style={styles.rTitle}>TRIP PHOTOS</Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  flexShrink: 1,
+                  flexWrap: 'wrap',
+                }}>
+                {renderShowPhotos()}
+              </View>
+            </View>
+          )}
+        </View>
+      );
+    };
+
+    const renderBottom = () => {
+      const renderButton1 = () => {
+        return (
+          <Pressable
+            disabled={loader}
+            onPress={closeReviewModal}
+            style={({pressed}) => [
+              {opacity: pressed ? 0.8 : 1.0},
+              styles.ButtonContainer,
+              {
+                backgroundColor: 'transparent',
+                borderWidth: 1,
+                borderColor: theme.color.fieldBorder,
+                marginRight: 15,
+              },
+            ]}>
+            <Text style={[styles.ButtonText, {color: '#30563A'}]}>Cancel</Text>
+          </Pressable>
+        );
+      };
+
+      const renderButton2 = () => {
+        return (
+          <Pressable
+            disabled={loader}
+            onPress={() => CreateTrip()}
+            style={({pressed}) => [
+              {opacity: pressed ? 0.8 : 1.0},
+              styles.ButtonContainer,
+              {backgroundColor: theme.color.button1},
+            ]}>
+            {loader && (
+              <ActivityIndicator size={20} color={theme.color.buttonText} />
+            )}
+            {!loader && (
+              <Text
+                style={[styles.ButtonText, {color: theme.color.buttonText}]}>
+                Create Trip
+              </Text>
+            )}
+          </Pressable>
+        );
+      };
+
+      return (
+        <View
+          style={
+            c
+              ? {
+                  alignItems: 'flex-end',
+                  backgroundColor: theme.color.background,
+                  shadowColor: '#000000',
+                  shadowOffset: {width: 0, height: -1}, // change this for more shadow
+                  shadowOpacity: 0.1,
+                  elevation: 15,
+                  borderBottomLeftRadius: 10,
+                  borderBottomRightRadius: 10,
+                  marginTop: 15,
+                }
+              : {
+                  alignItems: 'flex-end',
+                  marginTop: 30,
+                }
+          }>
+          <View
+            style={
+              c ? styles.rmodalBottomContainer : styles.rmodalBottomContainer2
+            }>
+            {renderButton1()}
+            {renderButton2()}
+          </View>
+        </View>
+      );
+    };
+
+    const renderBottom2 = () => {
+      const renderButton1 = () => {
+        return (
+          <Pressable
+            onPress={() => {
+              closeReviewModal();
+              store.User.seteditTrip(true);
+            }}
+            style={({pressed}) => [
+              {opacity: pressed ? 0.8 : 1.0},
+              styles.ButtonContainer,
+              {
+                backgroundColor: 'transparent',
+                borderWidth: 1,
+                borderColor: theme.color.fieldBorder,
+                marginRight: 15,
+              },
+            ]}>
+            <Text style={[styles.ButtonText, {color: '#30563A'}]}>
+              Edit Trip
+            </Text>
+          </Pressable>
+        );
+      };
+
+      const renderButton2 = () => {
+        return (
+          <Pressable
+            onPress={() => {
+              props.navigation.navigate('MyProfile');
+            }}
+            style={({pressed}) => [
+              {opacity: pressed ? 0.8 : 1.0},
+              styles.ButtonContainer,
+              {backgroundColor: theme.color.button1},
+            ]}>
+            <Text style={[styles.ButtonText, {color: theme.color.buttonText}]}>
+              Go to My Profile
+            </Text>
+          </Pressable>
+        );
+      };
+
+      return (
+        <View
+          style={
+            c
+              ? {
+                  alignItems: 'flex-end',
+                  backgroundColor: theme.color.background,
+                  shadowColor: '#000000',
+                  shadowOffset: {width: 0, height: -1}, // change this for more shadow
+                  shadowOpacity: 0.1,
+                  elevation: 15,
+                  borderBottomLeftRadius: 10,
+                  borderBottomRightRadius: 10,
+                }
+              : {
+                  alignItems: 'flex-end',
+                  marginTop: 30,
+                }
+          }>
+          <View
+            style={
+              c ? styles.rmodalBottomContainer : styles.rmodalBottomContainer2
+            }>
+            {renderButton1()}
+            {renderButton2()}
+          </View>
+        </View>
+      );
+    };
+
+    return (
+      <Modal
+        visible={isReviewTrip}
+        transparent
+        onRequestClose={closeReviewModal}>
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalContainer2}>
+            <View
+              onLayout={event => {
+                if (!c) {
+                  let {height} = event.nativeEvent.layout;
+                  setmodalHeight(height);
+                }
+              }}
+              style={style}>
+              {c && (
+                <>
+                  {renderHeader()}
+                  <ScrollView
+                    contentContainerStyle={{paddingHorizontal: 15}}
+                    showsVerticalScrollIndicator={false}
+                    style={{flex: 1}}>
+                    {!isTripCreate && renderTitle()}
+                    {renderFields()}
+                  </ScrollView>
+                  {!isTripCreate ? renderBottom() : renderBottom2()}
+                </>
+              )}
+
+              {!c && (
+                <>
+                  {renderHeader()}
+                  {!isTripCreate && renderTitle()}
+                  {renderFields()}
+                  {!isTripCreate ? renderBottom() : renderBottom2()}
+                </>
+              )}
+            </View>
+          </View>
+        </SafeAreaView>
+      </Modal>
+    );
+  };
+
   return (
     <View style={styles.container}>
       {/* {tagLine != '' && <utils.TagLine tagLine={tagLine} />} */}
@@ -2605,6 +3196,7 @@ function NewTrips(props) {
             }}>
             {renderSec1()}
             {renderSec2()}
+            {renderButton()}
           </ScrollView>
         </View>
 
@@ -2619,6 +3211,16 @@ function NewTrips(props) {
       {isShowUnavliabledaysCal && renderCalender2()}
       {isAddPhotoModal && renderAddPhotoModal()}
       {deleteModal && renderDeleteModal()}
+      {isReviewTrip && renderReviewTripModal()}
+      {pvm && (
+        <utils.FullimageModal
+          device={true}
+          data={photos}
+          si={si}
+          show={pvm}
+          closModal={() => setpvm(!pvm)}
+        />
+      )}
       <Toast ref={toast} position="bottom" />
     </View>
   );

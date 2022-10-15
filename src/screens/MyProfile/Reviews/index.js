@@ -760,6 +760,15 @@ function Reviews(props) {
               flexDirection: 'row',
               justifyContent: 'space-between',
               paddingHorizontal: 15,
+              paddingTop: 15,
+              paddingBottom: 7,
+              shadowColor: '#000000',
+              shadowOffset: {width: 0, height: 1}, // change this for more shadow
+              shadowOpacity: 0.1,
+              elevation: 1,
+              backgroundColor: theme.color.background,
+              borderTopLeftRadius: 15,
+              borderTopRightRadius: 15,
             }}>
             {renderTitle()}
             {renderCross()}
@@ -769,7 +778,7 @@ function Reviews(props) {
 
       const renderSec1 = () => {
         return (
-          <View style={{marginTop: 15, width: '100%'}}>
+          <View style={{marginTop: 7, width: '100%'}}>
             <Text style={styles.modalSec1Title}>
               You are about to open a dispute on the member review below.{' '}
               <Text
@@ -927,7 +936,6 @@ function Reviews(props) {
                   {
                     height: '85%',
                     padding: 0,
-                    paddingTop: 15,
                   },
                 ]}>
                 {renderHeader()}

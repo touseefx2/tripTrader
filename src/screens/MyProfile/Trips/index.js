@@ -67,29 +67,89 @@ function Trips(props) {
         const dt = [
           {
             _id: 31,
-            duration: 3,
             title: 'Hunting Trip',
+            acceptOtherTrades: true,
+            availablity: {endDate: '2022-11-05', startDate: '2022-10-15'},
+            duration: {number: '3', title: 'days'},
+            loc: {coords: [], name: 'Miami, Florida'},
             offer: 'Central N.C Whitetail Hunting',
-            for_trade: 'Florida Alligator Hunt or an Oseola Turkey Hunt',
-            availability: new Date(),
+            photos: [
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0OqjKG4QLGg-hvzwhf76mCB1shxkUchZN9Q&usqp=CAU',
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbyQRxBY8uSBj1VaS26kR0_7Uk6BJ-YNz4XQ&usqp=CAU',
+              'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTV8fHRyYXZlbGxpbmd8ZW58MHx8MHx8&w=1000&q=80',
+            ],
+            return: 'Florida Alligator Hunt or an Oseola Turkey Hunt',
             status: 'pending',
-            loc: {
-              name: 'Dylan, NC',
-              coords: [],
+            unavailable: {
+              all_unavailable_dates: [
+                '2022-10-22',
+                '2022-10-24',
+                '2022-10-25',
+                '2022-10-26',
+                '2022-10-29',
+                '2022-11-02',
+              ],
+              days_of_week: ['Sat'],
+              esd_text: 'Oct 24-26, Nov 2',
+              exclude_specific_dates: [
+                '2022-10-24',
+                '2022-10-25',
+                '2022-10-26',
+                '2022-11-02',
+              ],
+              repeat_every: {endRepeatOn: '2022-11-05', num: 1, title: 'Weeks'},
+              unavailable_days_of_week: [
+                '2022-10-24',
+                '2022-10-25',
+                '2022-10-26',
+                '2022-11-02',
+              ],
+              wtxt: 'Sat (weekly)',
             },
+            user: 1,
           },
           {
             _id: 32,
-            duration: 1,
             title: 'Fishing Trip',
+            acceptOtherTrades: true,
+            availablity: {endDate: '2022-10-05', startDate: '2022-09-15'},
+            duration: {number: '1', title: 'days'},
+            loc: {coords: [], name: 'Miami, Florida'},
             offer: 'Blue Catfish Jugging',
-            for_trade: 'Open to Offers',
-            availability: new Date(),
+            photos: [
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0OqjKG4QLGg-hvzwhf76mCB1shxkUchZN9Q&usqp=CAU',
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbyQRxBY8uSBj1VaS26kR0_7Uk6BJ-YNz4XQ&usqp=CAU',
+              'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTV8fHRyYXZlbGxpbmd8ZW58MHx8MHx8&w=1000&q=80',
+            ],
+            return: 'Open to Offers',
             status: 'suspended',
-            loc: {
-              name: 'Tim, ID',
-              coords: [],
+            unavailable: {
+              all_unavailable_dates: [
+                '2022-10-22',
+                '2022-10-24',
+                '2022-10-25',
+                '2022-10-26',
+                '2022-10-29',
+                '2022-11-02',
+              ],
+              days_of_week: ['Sat'],
+              esd_text: 'Oct 24-26, Nov 2',
+              exclude_specific_dates: [
+                '2022-10-24',
+                '2022-10-25',
+                '2022-10-26',
+                '2022-11-02',
+              ],
+              repeat_every: {endRepeatOn: '2022-11-05', num: 1, title: 'Weeks'},
+              unavailable_days_of_week: [
+                '2022-10-24',
+                '2022-10-25',
+                '2022-10-26',
+                '2022-11-02',
+              ],
+              wtxt: 'Sat (weekly)',
             },
+            user: 1,
           },
         ];
         store.User.attemptToGetTrips(
@@ -102,6 +162,12 @@ function Trips(props) {
         setrefeshing(false);
       }
     });
+  };
+
+  const gotoEditTrip = (item, index) => {
+    store.User.seteditTrip(true);
+    store.User.seteditTripObj({data: item, index: index});
+    store.User.MyProfileProps.navigation.navigate('NewTrip');
   };
 
   useEffect(() => {
@@ -171,12 +237,21 @@ function Trips(props) {
 
   const renderShowData = ({item, index}) => {
     let title = item.title || '';
-    let duration = item.duration || '';
-    let dt =
-      duration == 1 ? 'Whole Day' : duration > 1 ? duration + ' Day' : '';
+    let duration = parseInt(item.duration.number) || '';
+    let dtitile = item.duration.title;
+    let dt = '';
+    let d1 = '';
+    d1 =
+      duration <= 1 && dtitile == 'days'
+        ? 'Whole'
+        : duration <= 1 && dtitile != 'days'
+        ? duration
+        : duration;
+    let cc = d1 == 'Whole' ? 'day' : dtitile == 'days' ? 'day' : dtitile;
+    dt = d1 + ' ' + cc;
     let offer = item.offer || '';
-    let trade = item.for_trade || '';
-    let availability = item.availability || '';
+    let trade = item.return || '';
+    let availability = item.availablity.startDate || '';
     let status = item.status || '';
     let c = status == 'suspended' ? true : false;
     let tc = theme.color.boxTitle;
@@ -212,7 +287,17 @@ function Trips(props) {
               styles.filedTitle2,
               {color: !c ? tc : theme.color.subTitleLight},
             ]}>
-            {dt} {offer}
+            <Text
+              style={[
+                styles.filedTitle2,
+                {
+                  color: !c ? tc : theme.color.subTitleLight,
+                  textTransform: 'capitalize',
+                },
+              ]}>
+              {dt}
+            </Text>{' '}
+            {offer}
           </Text>
         </View>
 
@@ -276,7 +361,7 @@ function Trips(props) {
               ellipsizeMode="tail"
               style={[
                 styles.filedTitle2,
-                {color: !c ? theme.color.title : theme.color.subTitle},
+                {color: !c ? tc : theme.color.subTitleLight},
               ]}>
               {formatDate(availability)}
             </Text>
@@ -286,7 +371,9 @@ function Trips(props) {
               {opacity: pressed ? 0.8 : 1.0},
               styles.buttonContainer,
             ]}
-            onPress={() => {}}>
+            onPress={() => {
+              gotoEditTrip(item, index);
+            }}>
             <Text style={styles.buttonText}>Edit Trip</Text>
           </Pressable>
         </View>

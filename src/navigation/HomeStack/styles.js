@@ -44,7 +44,7 @@ const NewTripicon = {
   drawerLabel: 'New Trip',
   // headerShown: false,
   // swipeEnabled: true,
-  // unmountOnBlur: true,
+  unmountOnBlur: true,
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}

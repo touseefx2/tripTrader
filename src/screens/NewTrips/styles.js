@@ -120,8 +120,9 @@ export const styles = StyleSheet.create({
     elevation: 3,
   },
   umodal: {
-    // width: Platform.OS == 'android' ? '98%' : '88%',
-    width: '98%',
+    width: '100%',
+
+    paddingTop: 15,
     alignSelf: 'center',
     backgroundColor: theme.color.background,
     borderRadius: 10,
@@ -132,7 +133,57 @@ export const styles = StyleSheet.create({
     },
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
+
+    elevation: 3,
+  },
+  umodal2: {
+    width: '100%',
+
     padding: 15,
+    alignSelf: 'center',
+    backgroundColor: theme.color.background,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+  },
+  rmodal: {
+    width: '100%',
+
+    paddingTop: 15,
+    alignSelf: 'center',
+    backgroundColor: theme.color.background,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+  },
+  rmodal2: {
+    width: '100%',
+
+    padding: 15,
+    alignSelf: 'center',
+    backgroundColor: theme.color.background,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
 
     elevation: 3,
   },
@@ -158,6 +209,16 @@ export const styles = StyleSheet.create({
     top: 15,
     right: 15,
   },
+  umodalCross: {
+    position: 'absolute',
+
+    right: 0,
+  },
+  rmodalCross: {
+    position: 'absolute',
+    top: 15,
+    right: 15,
+  },
   modalTitle: {
     fontSize: 19,
     color: theme.color.title,
@@ -168,12 +229,50 @@ export const styles = StyleSheet.create({
     color: theme.color.title,
     fontFamily: theme.fonts.fontNormal,
   },
+  rmodalsubTitle: {
+    fontSize: 13,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontNormal,
+  },
+  rField: {
+    // width: '100%',
+  },
+  rField2: {
+    // width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  rTitle: {
+    fontSize: 12,
+    color: theme.color.subTitleLight,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'uppercase',
+  },
+  rTitle2: {
+    fontSize: 13,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontMedium,
+    textTransform: 'capitalize',
+    lineHeight: 19,
+  },
   modalBottomContainer: {
     marginTop: 30,
     flexDirection: 'row',
     alignItems: 'center',
   },
+  rmodalBottomContainer: {
+    paddingTop: 10,
+    paddingBottom: 15,
+    paddingHorizontal: 15,
 
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rmodalBottomContainer2: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   ButtonContainer: {
     paddingHorizontal: 17,
     paddingVertical: 10,
@@ -249,7 +348,7 @@ export const styles = StyleSheet.create({
 
   addImgContainer: {
     width: '31%',
-    height: 106,
+    height: 100,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: theme.color.photoBorderColor,
@@ -260,8 +359,25 @@ export const styles = StyleSheet.create({
   addImg: {
     width: '100%',
     height: '100%',
-    resizeMode: 'contain',
+    // resizeMode: 'contain',
     borderRadius: 10,
+  },
+
+  raddImgContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: theme.color.photoBorderColor,
+    marginRight: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  raddImg: {
+    width: '100%',
+    height: '100%',
+    // resizeMode: 'contain',
+    borderRadius: 5,
   },
   crossContainer: {
     width: 22,
@@ -328,5 +444,24 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     color: theme.color.buttonText,
     fontFamily: theme.fonts.fontBold,
+  },
+
+  BottomButton: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.color.button1,
+    height: 50,
+    // height: responsiveHeight(8),
+    borderRadius: 8,
+    alignSelf: 'center',
+    marginTop: 25,
+  },
+  buttonTextBottom: {
+    color: theme.color.buttonText,
+    fontSize: 15,
+    // fontSize: responsiveScreenFontSize(2.15),
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
   },
 });

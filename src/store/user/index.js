@@ -66,6 +66,9 @@ class user {
   @action settrips = obj => {
     this.trips = obj;
   };
+  @action addtrips = obj => {
+    this.trips.push(obj);
+  };
   @action setphotos = obj => {
     this.photos = obj;
   };
@@ -160,6 +163,42 @@ class user {
       this.review[i].dispute = {created_at: new Date()};
       suc();
     }, 1000);
+  };
+
+  @observable ctripsLoader = false;
+  @observable editTripObj = false;
+  @observable editTrip = false;
+
+  @observable MyProfileProps = false;
+
+  @action setMyProfileProps = obj => {
+    this.MyProfileProps = obj;
+  };
+
+  @action setctripLoader = obj => {
+    this.ctripsLoader = obj;
+  };
+  @action seteditTrip = obj => {
+    this.editTrip = obj;
+  };
+  @action seteditTripObj = obj => {
+    this.editTripObj = obj;
+  };
+
+  @action attemptToCreateTrip = (obj, suc) => {
+    console.warn('create trip  : ', 'true');
+    this.setctripLoader(true);
+    setTimeout(() => {
+      this.setctripLoader(false);
+      this.seteditTripObj(obj);
+      //   let d=this.trips.slice();
+      //   d.push(obj)
+      // this.settrips(dt);
+
+      // this.addtrips(obj);
+
+      suc(true);
+    }, 1500);
   };
 
   @observable cart = {totalbill: 0, totalitems: 0, data: []};
