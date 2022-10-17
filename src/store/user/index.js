@@ -67,7 +67,10 @@ class user {
     this.trips = obj;
   };
   @action addtrips = obj => {
-    this.trips.push(obj);
+    this.trips.unshift(obj);
+  };
+  @action updatetrips = (obj, ind) => {
+    this.trips[ind] = obj;
   };
   @action setphotos = obj => {
     this.photos = obj;
@@ -190,12 +193,28 @@ class user {
     this.setctripLoader(true);
     setTimeout(() => {
       this.setctripLoader(false);
+      this.seteditTripObj({data: obj, index: 0});
+      //   let d=this.trips.slice();
+      //   d.push(obj)
+      // this.settrips(dt);
+
+      this.addtrips(obj);
+
+      suc(true);
+    }, 1500);
+  };
+
+  @action attemptToUpdateTrip = (obj, index, suc) => {
+    console.warn('update trip  : ', 'true');
+    this.setctripLoader(true);
+    setTimeout(() => {
+      this.setctripLoader(false);
       this.seteditTripObj(obj);
       //   let d=this.trips.slice();
       //   d.push(obj)
       // this.settrips(dt);
 
-      // this.addtrips(obj);
+      this.updatetrips(obj, index);
 
       suc(true);
     }, 1500);

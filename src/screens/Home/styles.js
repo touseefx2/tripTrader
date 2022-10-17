@@ -336,7 +336,24 @@ export const styles = StyleSheet.create({
   },
   modal: {
     // width: Platform.OS == 'android' ? '98%' : '88%',
-    width: '98%',
+    width: '100%',
+    alignSelf: 'center',
+    paddingTop: 0,
+    backgroundColor: theme.color.background,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+  },
+  modal2: {
+    // width: Platform.OS == 'android' ? '98%' : '88%',
+    width: '100%',
     alignSelf: 'center',
     padding: 15,
     backgroundColor: theme.color.background,
@@ -380,7 +397,14 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
   },
   modalBottomContainer: {
-    marginTop: 30,
+    paddingTop: 10,
+    paddingBottom: 15,
+    paddingHorizontal: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  modalBottomContainer2: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -504,6 +528,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     marginTop: 10,
   },
+
   mfT1: {
     fontSize: 12,
     color: theme.color.title,
@@ -511,6 +536,7 @@ export const styles = StyleSheet.create({
     textTransform: 'capitalize',
     lineHeight: 19,
   },
+
   mFieldContainer: {
     marginTop: 5,
     width: '100%',
@@ -595,5 +621,34 @@ export const styles = StyleSheet.create({
     height: '100%',
     paddingHorizontal: 15,
     textAlignVertical: 'top',
+  },
+
+  dropDownMainConatiner: {
+    width: '100%',
+    marginTop: 15,
+  },
+  dropdownFieldTitle: {
+    fontSize: 13,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontBold,
+    lineHeight: 20,
+  },
+  dropDowninputConatiner: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: theme.color.fieldBorder,
+    borderRadius: 8,
+    height: 45,
+    paddingHorizontal: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  dropDownText: {
+    color: theme.color.title,
+    fontSize: 13,
+    fontFamily: theme.fonts.fontNormal,
+    lineHeight: 18.6,
   },
 });

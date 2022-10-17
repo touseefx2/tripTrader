@@ -35,7 +35,7 @@ function FullimageModal(props) {
   const flatListRef = React.useRef();
   let data = props.data || [];
   const show = props.show;
-  let device = props.device;
+
   let scrollEnable = data.length > 1 ? true : false;
 
   const scrollX = React.useRef(new Animated.Value(0)).current;
@@ -180,7 +180,7 @@ function FullimageModal(props) {
               return (
                 <Animated.Image
                   key={ind}
-                  source={{uri: !device ? val : val.uri}}
+                  source={{uri: val.uri ? val.uri : val}}
                   style={[styles.Image, {opacity}]}
                   // style={[StyleSheet.absoluteFillObject, {opacity}]}
                   blurRadius={0}
@@ -227,7 +227,13 @@ function FullimageModal(props) {
                             </TouchableOpacity> */}
 
                       <Image
-                        source={{uri: !device ? item.img : item.uri}}
+                        source={{
+                          uri: item.img
+                            ? item.iamge
+                            : item.uri
+                            ? item.uri
+                            : item,
+                        }}
                         style={styles.previewImageStyle}
                       />
                     </View>

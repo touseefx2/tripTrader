@@ -29,6 +29,7 @@ import theme from '../../theme';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import {Image as ImageCompressor} from 'react-native-compressor';
 import {request, PERMISSIONS, check} from 'react-native-permissions';
+import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
 
 import {
   responsiveHeight,
@@ -50,6 +51,20 @@ function isObjectEmpty(value) {
 
 export default observer(NewTrips);
 function NewTrips(props) {
+  let seDayColor = theme.color.button1;
+  let ocolor = '#569969';
+
+  var getDaysArray = function (start, end) {
+    for (
+      var arr = [], dt = new Date(start);
+      dt <= new Date(end);
+      dt.setDate(dt.getDate() + 1)
+    ) {
+      arr.push(new Date(dt));
+    }
+    return arr;
+  };
+
   let cs = {
     container: {
       backgroundColor: theme.color.button1,
@@ -151,10 +166,13 @@ function NewTrips(props) {
   });
 
   const [title, settitle] = useState('Hunting Trip');
+  const [status, setstatus] = useState('pending');
+
+  const [isDropDownDur, setisDropDownDur] = useState(false);
 
   const [dur, setdur] = useState(durtn[0]); //time solts
   const [rdur, setrdur] = useState(rdurtn[0]);
-  const [isDropDownDur, setisDropDownDur] = useState(false);
+
   const [isDropDownrDur, setisDropDownrDur] = useState(false);
 
   const [trade, settrader] = useState('');
@@ -223,13 +241,84 @@ function NewTrips(props) {
   }, []);
 
   useEffect(() => {
-    if (editTrip) {
-      let data = editTrip.data;
+    if (isEdit == true) {
+      let d = editTrip.data;
       let index = editTrip.index;
-      console.log('edit data : ', data);
-      console.log('edit index : ', index);
+      console.log('d unavlbl: ', d.unavailable);
+      console.log('d  : ', d);
+      let title = d.title || '';
+      let trade = d.offer || '';
+      let retrn = d.return || '';
+      let loc = !isObjectEmpty(d.loc) ? d.loc : {};
+      let stts = d.status || '';
+      let acceptOtherTrades = d.acceptOtherTrades;
+      let durNo = d.duration.number;
+      let durTitle = d.duration.title;
+      let ind = durtn.findIndex(x => x.title === durTitle);
+      let sd = d.availablity.startDate;
+      let ed = d.availablity.endDate;
+      let photos = d.photos;
+      let unavailable = !isObjectEmpty(d.unavailable) ? d.unavailable : false;
+
+      settitle(title);
+      settrader(trade);
+      setReturn(retrn);
+      setlocation(loc);
+      setstatus(stts);
+      setacceptOther(acceptOtherTrades);
+      setdurNum(durNo);
+      setdur(durtn[ind]);
+      setPhotos(photos);
+      if (stts != 'suspended') {
+        setisSelDate1(sd);
+        setisSelDate2(ed);
+        setisSelDate(true);
+        var daylist = getDaysArray(new Date(sd), new Date(ed));
+        let mdd = {};
+        if (daylist.length > 0) {
+          daylist.map((e, i, a) => {
+            let d = moment(e).format('YYYY-MM-DD');
+            if (i == 0) {
+              mdd[d] = {
+                startingDay: true,
+                color: seDayColor,
+                textColor: 'white',
+                disabled: false,
+                disableTouchEvent: false,
+              };
+            }
+            if (i > 0 && i < a.length - 1) {
+              mdd[d] = {
+                color: ocolor,
+                textColor: 'white',
+                disabled: true,
+                disableTouchEvent: true,
+              };
+            }
+            if (i == a.length - 1) {
+              mdd[d] = {
+                endingDay: true,
+                color: seDayColor,
+                textColor: 'white',
+                disabled: false,
+                disableTouchEvent: false,
+              };
+            }
+          });
+        }
+        setmarkedDates(mdd);
+        setselDates(mdd);
+        setisSetUnavailable(unavailable);
+      } else {
+        setisSelDate1('');
+        setisSelDate2('');
+        setisSelDate(false);
+        setmarkedDates({});
+        setselDates({});
+        setisSetUnavailable(false);
+      }
     }
-  }, [editTrip]);
+  }, [isEdit]);
 
   useEffect(() => {
     if (isSelDate1 != '' && isSelDate2 != '') {
@@ -249,7 +338,7 @@ function NewTrips(props) {
         totaldays = durNum * 365;
       }
       if (no_of_days < totaldays) {
-        clearFields('');
+        clearFields('', '');
 
         return;
       }
@@ -285,7 +374,7 @@ function NewTrips(props) {
     }
   }, [selDates]);
 
-  const clearFields = c => {
+  const clearFields = (c, c2) => {
     setmarkedDates({});
     setisSelDate(false);
     setselDates({});
@@ -322,6 +411,16 @@ function NewTrips(props) {
         name: 'Miami, Florida',
         coords: [],
       });
+      setstatus('pending');
+      settitle('Hunting Trip');
+      setmind(undefined);
+      setmaxd(undefined);
+      if (c2 != 'nill') {
+        store.User.seteditTrip(false);
+        store.User.seteditTripObj(false);
+      } else {
+        store.User.seteditTrip(true);
+      }
     }
   };
 
@@ -346,9 +445,11 @@ function NewTrips(props) {
     }
     if (isSelDate2 != '') {
       setmaxd(isSelDate2);
-      siERpOn(isSelDate2);
+      if (!isSetUnavailable) {
+        siERpOn(isSelDate2);
+      }
     }
-  }, [isSelDate1, isSelDate2]);
+  }, [isSelDate1, isSelDate2, isSetUnavailable]);
 
   useEffect(() => {
     if (rdurNum == '') {
@@ -602,11 +703,11 @@ function NewTrips(props) {
     setpvm(true);
   };
 
-  const closeReviewModal = () => {
+  const closeReviewModal = c => {
     if (!loader) {
       setmodalHeight(0);
       if (isTripCreate) {
-        clearFields('all');
+        clearFields('all', c);
       }
       setisReviewTrip(false);
       setisTripCreate(false);
@@ -632,7 +733,7 @@ function NewTrips(props) {
             name: 'Miami, Florida',
             coords: [],
           },
-          status: 'pending',
+          status: status,
           acceptOtherTrades: acceptOther,
           duration: {
             number: durNum,
@@ -647,6 +748,44 @@ function NewTrips(props) {
         };
         console.warn('create trip obj : ', obj);
         store.User.attemptToCreateTrip(obj, setIsTripCreatSuc);
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
+
+  const UpdateTrip = () => {
+    Keyboard.dismiss();
+
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        const obj = {
+          _id: (Math.random() * 10).toFixed(0),
+          title: title,
+          user: store.User.user._id,
+          offer: trade,
+          return: Return,
+          loc: {
+            name: 'Miami, Florida',
+            coords: [],
+          },
+          status: status,
+          acceptOtherTrades: acceptOther,
+          duration: {
+            number: durNum,
+            title: dur.title,
+          },
+          availablity: {
+            startDate: isSelDate1,
+            endDate: isSelDate2,
+          },
+          photos: photos,
+          unavailable: isSetUnavailable != false ? isSetUnavailable : {},
+        };
+        let index = editTrip.index;
+        console.warn('update trip obj : ', obj);
+        store.User.attemptToUpdateTrip(obj, index, setIsTripCreatSuc);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -706,32 +845,7 @@ function NewTrips(props) {
       return dd;
     };
 
-    var getDaysArray = function (start, end) {
-      for (
-        var arr = [], dt = new Date(start);
-        dt <= new Date(end);
-        dt.setDate(dt.getDate() + 1)
-      ) {
-        arr.push(new Date(dt));
-      }
-      return arr;
-    };
-
     const getSelectedDayEvents = date => {
-      let cs = {
-        container: {
-          backgroundColor: theme.color.button1,
-        },
-        text: {
-          color: theme.color.buttonText,
-          fontFamily: theme.fonts.fontMedium,
-          top: 2,
-        },
-      };
-
-      let seDayColor = theme.color.button1;
-      let ocolor = '#569969';
-
       if (isObjectEmpty(markedDates)) {
         let markedDates = {};
         markedDates[date] = {
@@ -863,63 +977,95 @@ function NewTrips(props) {
 
     const renderBottom = () => {
       let c = isSelDate ? false : true;
+      let dn = durNum;
+      let t = dn < 1 ? dur.title.substring(0, dur.title.length - 1) : dur.title;
+      t = dn + ' ' + t;
       return (
-        <View style={{marginTop: 10, alignItems: 'flex-end', width: '100%'}}>
+        <View
+          style={{
+            marginTop: 10,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            width: '100%',
+            alignItems: 'center',
+          }}>
+          <View
+            style={{
+              width: '40%',
+            }}>
+            <Text
+              style={{
+                fontSize: 11,
+                fontFamily: theme.fonts.fontNormal,
+                color: theme.color.subTitleLight,
+                paddingLeft: 10,
+              }}>
+              Duration : {t}
+            </Text>
+          </View>
+
           <View
             style={{
               width: '55%',
-              paddingRight: 10,
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              flexDirection: 'row',
-            }}>
-            <Pressable
-              onPress={closeCalModal}
-              style={({pressed}) => [
-                {
-                  opacity: pressed ? 0.9 : 1.0,
-                  paddingHorizontal: 15,
-                  paddingVertical: 8,
-                  borderRadius: 8,
-                  borderWidth: 1,
-                  borderColor: theme.color.fieldBorder,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                },
-              ]}>
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontFamily: theme.fonts.fontBold,
-                  color: '#30563A',
-                }}>
-                Cancel
-              </Text>
-            </Pressable>
 
-            <Pressable
-              onPress={ApplyCalModal}
-              disabled={!isSelDate ? true : false}
-              style={({pressed}) => [
-                {
-                  opacity: pressed ? 0.9 : c ? 0.5 : 1.0,
-                  paddingHorizontal: 15,
-                  paddingVertical: 8,
-                  borderRadius: 8,
-                  backgroundColor: theme.color.button1,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                },
-              ]}>
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontFamily: theme.fonts.fontBold,
-                  color: theme.color.buttonText,
-                }}>
-                Apply
-              </Text>
-            </Pressable>
+              alignItems: 'flex-end',
+              paddingRight: 10,
+            }}>
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+              }}>
+              <Pressable
+                onPress={closeCalModal}
+                style={({pressed}) => [
+                  {
+                    opacity: pressed ? 0.9 : 1.0,
+                    paddingHorizontal: 15,
+                    paddingVertical: 8,
+                    borderRadius: 8,
+                    borderWidth: 1,
+                    borderColor: theme.color.fieldBorder,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: 10,
+                  },
+                ]}>
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontFamily: theme.fonts.fontBold,
+                    color: '#30563A',
+                  }}>
+                  Cancel
+                </Text>
+              </Pressable>
+
+              <Pressable
+                onPress={ApplyCalModal}
+                disabled={!isSelDate ? true : false}
+                style={({pressed}) => [
+                  {
+                    opacity: pressed ? 0.9 : c ? 0.5 : 1.0,
+                    paddingHorizontal: 15,
+                    paddingVertical: 8,
+                    borderRadius: 8,
+                    backgroundColor: theme.color.button1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  },
+                ]}>
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontFamily: theme.fonts.fontBold,
+                    color: theme.color.buttonText,
+                  }}>
+                  Apply
+                </Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       );
@@ -1130,23 +1276,31 @@ function NewTrips(props) {
       }
 
       let unw = [];
+      let exsd = [];
+
       let ad = [];
       if (!isObjectEmpty(selunmarkeSLCTdDates)) {
         var myObject = selunmarkeSLCTdDates;
         Object.keys(myObject).forEach(function (key, index) {
           ad.push(key);
-          unw.push(key);
+          exsd.push(key);
         });
       }
       if (!isObjectEmpty(unavlblmarkedDates)) {
         var myObject = unavlblmarkedDates;
         Object.keys(myObject).forEach(function (key, index) {
           ad.push(key);
+          unw.push(key);
         });
       }
 
       if (unw.length > 0) {
         unw.sort(function (a, b) {
+          return Number(new Date(a)) - Number(new Date(b));
+        });
+      }
+      if (exsd.length > 0) {
+        exsd.sort(function (a, b) {
           return Number(new Date(a)) - Number(new Date(b));
         });
       }
@@ -1168,7 +1322,7 @@ function NewTrips(props) {
         esd_text: tt,
 
         unavailable_days_of_week: unw, //main
-        exclude_specific_dates: esd, //main
+        exclude_specific_dates: exsd, //main
         all_unavailable_dates: ad, //main
       };
       setisShowUnavliableModal(false);
@@ -1558,7 +1712,7 @@ function NewTrips(props) {
                   elevation: 15,
                   borderBottomLeftRadius: 10,
                   borderBottomRightRadius: 10,
-                  marginTop: 15,
+                  marginTop: 5,
                 }
               : {
                   alignItems: 'flex-end',
@@ -2608,6 +2762,7 @@ function NewTrips(props) {
     const renderShowPhotos = () => {
       let p = photos.map((e, i, a) => {
         let uri = e.uri ? e.uri : e;
+        let c = e.uri ? true : false;
         const renderPhotoCross = () => {
           return (
             <Pressable
@@ -2615,7 +2770,7 @@ function NewTrips(props) {
                 {opacity: pressed ? 0.7 : 1.0},
                 styles.crossContainer,
               ]}
-              onPress={() => openDeleteModal({uri: e.uri, i: i})}>
+              onPress={() => openDeleteModal({uri: e.uri ? e.uri : e, i: i})}>
               <Image
                 source={require('../../assets/images/cross/img.png')}
                 style={{width: 9, height: 9, resizeMode: 'contain'}}
@@ -2632,7 +2787,17 @@ function NewTrips(props) {
                   {opacity: pressed ? 0.9 : 1.0},
                   [styles.addImgContainer, {marginTop: 15}],
                 ]}>
-                <Image style={styles.addImg} source={{uri: uri}} />
+                {!c && (
+                  <ProgressiveFastImage
+                    style={styles.addImg}
+                    source={{uri: uri}}
+                    loadingImageStyle={styles.imageLoader}
+                    loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
+                    blurRadius={3}
+                  />
+                )}
+                {c && <Image style={styles.addImg} source={{uri: uri}} />}
+
                 {renderPhotoCross()}
               </Pressable>
             )}
@@ -2645,7 +2810,16 @@ function NewTrips(props) {
                     {opacity: pressed ? 0.9 : 1.0},
                     [styles.addImgContainer, {marginTop: 15}],
                   ]}>
-                  <Image style={styles.addImg} source={{uri: uri}} />
+                  {!c && (
+                    <ProgressiveFastImage
+                      style={styles.addImg}
+                      source={{uri: uri}}
+                      loadingImageStyle={styles.imageLoader}
+                      loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
+                      blurRadius={3}
+                    />
+                  )}
+                  {c && <Image style={styles.addImg} source={{uri: uri}} />}
                   {renderPhotoCross()}
                 </Pressable>
 
@@ -2663,6 +2837,8 @@ function NewTrips(props) {
                           borderStyle: 'dashed',
                           borderColor: theme.color.button1,
                           backgroundColor: '#F2F3F1',
+                          alignItems: 'center',
+                          justifyContent: 'center',
                         },
                       ],
                     ]}>
@@ -2783,7 +2959,9 @@ function NewTrips(props) {
           }}
           activeOpacity={0.7}
           style={[styles.BottomButton, {opacity: isButtonDisable ? 0.5 : 1}]}>
-          <Text style={styles.buttonTextBottom}>Create Trip</Text>
+          <Text style={styles.buttonTextBottom}>
+            {!isEdit ? 'Create Trip' : 'Update Trip'}
+          </Text>
         </TouchableOpacity>
       </>
     );
@@ -2796,9 +2974,22 @@ function NewTrips(props) {
       : styles.rmodal2;
 
     const renderHeader = () => {
-      let text = !isTripCreate
-        ? 'Review Trip Details'
-        : 'Trip Created Successfully!';
+      let text = '';
+      if (!isEdit) {
+        if (!isTripCreate) {
+          text = 'Review Trip Details';
+        } else {
+          text = 'Trip Created Successfully!';
+        }
+      }
+
+      if (isEdit) {
+        if (!isTripCreate) {
+          text = 'Review Trip Details';
+        } else {
+          text = 'Trip Update Successfully!';
+        }
+      }
 
       const renderCross = () => {
         return (
@@ -2862,9 +3053,11 @@ function NewTrips(props) {
                 styles.rmodalsubTitle,
                 {fontFamily: theme.fonts.fontBold},
               ]}>
-              Create Trip
+              {!isEdit ? 'Create Trip' : 'Update Trip'}
             </Text>{' '}
-            to make the trip available for trade offers.
+            {!isEdit
+              ? 'to make the trip available for trade offers.'
+              : 'to update the trip available for trade offers'}
           </Text>
         </View>
       );
@@ -2966,7 +3159,7 @@ function NewTrips(props) {
                 // numberOfLines={4}
                 // ellipsizeMode="tail"
                 style={[styles.rTitle2, {textTransform: 'none'}]}>
-                {unavailable}
+                {unavailable == '' ? 'Null' : unavailable}
               </Text>
             </View>
           </View>
@@ -3014,7 +3207,7 @@ function NewTrips(props) {
         return (
           <Pressable
             disabled={loader}
-            onPress={() => CreateTrip()}
+            onPress={!isEdit ? CreateTrip : UpdateTrip}
             style={({pressed}) => [
               {opacity: pressed ? 0.8 : 1.0},
               styles.ButtonContainer,
@@ -3026,7 +3219,7 @@ function NewTrips(props) {
             {!loader && (
               <Text
                 style={[styles.ButtonText, {color: theme.color.buttonText}]}>
-                Create Trip
+                {!isEdit ? 'Create Trip' : 'Update Trip'}
               </Text>
             )}
           </Pressable>
@@ -3046,7 +3239,7 @@ function NewTrips(props) {
                   elevation: 15,
                   borderBottomLeftRadius: 10,
                   borderBottomRightRadius: 10,
-                  marginTop: 15,
+                  marginTop: 5,
                 }
               : {
                   alignItems: 'flex-end',
@@ -3069,8 +3262,7 @@ function NewTrips(props) {
         return (
           <Pressable
             onPress={() => {
-              closeReviewModal();
-              store.User.seteditTrip(true);
+              closeReviewModal('nill');
             }}
             style={({pressed}) => [
               {opacity: pressed ? 0.8 : 1.0},
@@ -3085,6 +3277,25 @@ function NewTrips(props) {
             <Text style={[styles.ButtonText, {color: '#30563A'}]}>
               Edit Trip
             </Text>
+          </Pressable>
+        );
+      };
+
+      const renderButton11 = () => {
+        return (
+          <Pressable
+            onPress={closeReviewModal}
+            style={({pressed}) => [
+              {opacity: pressed ? 0.8 : 1.0},
+              styles.ButtonContainer,
+              {
+                backgroundColor: 'transparent',
+                borderWidth: 1,
+                borderColor: theme.color.fieldBorder,
+                marginRight: 15,
+              },
+            ]}>
+            <Text style={[styles.ButtonText, {color: '#30563A'}]}>Close</Text>
           </Pressable>
         );
       };
@@ -3130,7 +3341,7 @@ function NewTrips(props) {
             style={
               c ? styles.rmodalBottomContainer : styles.rmodalBottomContainer2
             }>
-            {renderButton1()}
+            {!isEdit ? renderButton1() : renderButton11()}
             {renderButton2()}
           </View>
         </View>
@@ -3214,7 +3425,6 @@ function NewTrips(props) {
       {isReviewTrip && renderReviewTripModal()}
       {pvm && (
         <utils.FullimageModal
-          device={true}
           data={photos}
           si={si}
           show={pvm}

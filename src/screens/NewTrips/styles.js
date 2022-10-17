@@ -353,13 +353,16 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.color.photoBorderColor,
     marginRight: '2.3%',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   addImg: {
     width: '100%',
     height: '100%',
     // resizeMode: 'contain',
+    borderRadius: 10,
+  },
+  imageLoader: {
+    width: '100%',
+    height: '100%',
     borderRadius: 10,
   },
 

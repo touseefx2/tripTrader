@@ -199,25 +199,6 @@ function Signup(props) {
     sPlan,
   ]);
 
-  const clearCard = () => {
-    setcfn('');
-    setccvc('');
-    setcn('');
-    setce('');
-    setct('');
-    setpc('');
-    setcardErr('');
-    setEmptycfn(false);
-    setisShowPromoFiled(false);
-    setisPromoApply(false);
-    setiscTerms(false);
-    setpromoValue(0);
-    setinValidccvc('null');
-    setinValidce('null');
-    setinValidcn('null');
-    setisValidCard('null');
-  };
-
   function handleBackButtonClick() {
     if (!props.navigation.isFocused()) {
       return false;
@@ -295,6 +276,25 @@ function Signup(props) {
       return true;
     }
   }
+
+  const clearCard = () => {
+    setcfn('');
+    setccvc('');
+    setcn('');
+    setce('');
+    setct('');
+    setpc('');
+    setcardErr('');
+    setEmptycfn(false);
+    setisShowPromoFiled(false);
+    setisPromoApply(false);
+    setiscTerms(false);
+    setpromoValue(0);
+    setinValidccvc('null');
+    setinValidce('null');
+    setinValidcn('null');
+    setisValidCard('null');
+  };
 
   const goBack = () => {
     if (
