@@ -104,11 +104,11 @@ export default HomeStack = () => {
         options={icon.Settingsicons}
       />
 
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="Notifications"
         component={NotificationsStack}
         options={icon.Notificationsicons}
-      />
+      /> */}
     </Drawer.Navigator>
   );
 };
@@ -131,7 +131,17 @@ let HomeStack = () => {
           });
         }}
       />
-      {/* <Stack.Screen
+      <Stack.Screen
+        name="UserProfile"
+        component={UserProfileStack}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: true,
+          });
+        }}
+      />
+      <Stack.Screen
         name="Notifications"
         component={screens.Notifications}
         options={props => {
@@ -140,7 +150,7 @@ let HomeStack = () => {
             swipeEnabled: false,
           });
         }}
-      /> */}
+      />
     </Stack.Navigator>
   );
 };
@@ -163,7 +173,7 @@ let InboxStack = () => {
           });
         }}
       />
-      {/* <Stack.Screen
+      <Stack.Screen
         name="Notifications"
         component={screens.Notifications}
         options={props => {
@@ -172,7 +182,7 @@ let InboxStack = () => {
             swipeEnabled: false,
           });
         }}
-      /> */}
+      />
     </Stack.Navigator>
   );
 };
@@ -195,7 +205,7 @@ let TradeOfferStack = () => {
           });
         }}
       />
-      {/* <Stack.Screen
+      <Stack.Screen
         name="Notifications"
         component={screens.Notifications}
         options={props => {
@@ -204,7 +214,7 @@ let TradeOfferStack = () => {
             swipeEnabled: false,
           });
         }}
-      /> */}
+      />
     </Stack.Navigator>
   );
 };
@@ -227,7 +237,7 @@ let SavedTripsStack = () => {
           });
         }}
       />
-      {/* <Stack.Screen
+      <Stack.Screen
         name="Notifications"
         component={screens.Notifications}
         options={props => {
@@ -236,7 +246,7 @@ let SavedTripsStack = () => {
             swipeEnabled: false,
           });
         }}
-      /> */}
+      />
     </Stack.Navigator>
   );
 };
@@ -259,7 +269,18 @@ let ProfileStack = () => {
           });
         }}
       />
-      {/* 
+
+      <Stack.Screen
+        name="ShowFollowers"
+        component={screens.ShowFollowers}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+      />
+
       <Stack.Screen
         name="Notifications"
         component={screens.Notifications}
@@ -269,7 +290,51 @@ let ProfileStack = () => {
             swipeEnabled: false,
           });
         }}
-      /> */}
+      />
+    </Stack.Navigator>
+  );
+};
+
+let UserProfileStack = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="UserProfilee"
+      screenOptions={{
+        animationEnabled: false,
+        headerShown: false,
+      }}>
+      <Stack.Screen
+        name="UserProfilee"
+        component={screens.UserProfile}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: true,
+          });
+        }}
+      />
+
+      <Stack.Screen
+        name="ShowFollowers"
+        component={screens.ShowFollowers}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+      />
+
+      <Stack.Screen
+        name="Notifications"
+        component={screens.Notifications}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+      />
     </Stack.Navigator>
   );
 };
@@ -293,7 +358,7 @@ let EditProfileStack = () => {
         }}
       />
 
-      {/* <Stack.Screen
+      <Stack.Screen
         name="Notifications"
         component={screens.Notifications}
         options={props => {
@@ -302,7 +367,7 @@ let EditProfileStack = () => {
             swipeEnabled: false,
           });
         }}
-      /> */}
+      />
     </Stack.Navigator>
   );
 };
@@ -326,7 +391,7 @@ let SettingsStack = () => {
         }}
       />
 
-      {/* <Stack.Screen
+      <Stack.Screen
         name="Notifications"
         component={screens.Notifications}
         options={props => {
@@ -335,7 +400,7 @@ let SettingsStack = () => {
             swipeEnabled: false,
           });
         }}
-      /> */}
+      />
 
       <Stack.Screen
         name="ChangePassword"
@@ -363,7 +428,7 @@ let ChangePasswordStack = () => {
       <Stack.Screen name="ForgotPassword" component={screens.ForgotPassword} />
       <Stack.Screen name="VerifyCode" component={screens.VerifyCode} />
       <Stack.Screen name="ResetPassword" component={screens.ResetPassword} />
-      {/* <Stack.Screen name="Notifications" component={screens.Notifications} /> */}
+      <Stack.Screen name="Notifications" component={screens.Notifications} />
     </Stack.Navigator>
   );
 };

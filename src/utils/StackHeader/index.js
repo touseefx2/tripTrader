@@ -27,7 +27,8 @@ export default observer(StackHeader);
 function StackHeader(props) {
   let prop = props.props;
   let headerTitle = props.headerTitle || '';
-
+  let bell = props.bell || false;
+  let scrn = props.screen || '';
   const goBack = () => {
     prop.navigation.goBack();
   };
@@ -36,12 +37,16 @@ function StackHeader(props) {
     const onClick = () => {
       goBack();
     };
+    let src = require('../../assets/images/back/img.png');
     return (
       <TouchableOpacity activeOpacity={0.5} onPress={onClick}>
-        <utils.vectorIcon.Ionicons
-          name="ios-chevron-back"
-          color={theme.color.backgroundGreenText}
-          size={24}
+        <Image
+          source={src}
+          style={{
+            width: 20,
+            height: 20,
+            resizeMode: 'contain',
+          }}
         />
       </TouchableOpacity>
     );
@@ -49,7 +54,7 @@ function StackHeader(props) {
 
   const render2 = () => {
     return (
-      <View style={{width: '75%'}}>
+      <View style={{width: '76%'}}>
         <Text numberOfLines={1} ellipsizeMode="tail" style={styles.headerTitle}>
           {headerTitle}
         </Text>
@@ -59,7 +64,7 @@ function StackHeader(props) {
 
   const render3 = () => {
     const onClick = () => {
-      prop.navigation.navigate('Notifications', {screen: headerTitle});
+      prop.navigation.navigate('Notifications', {screen: scrn});
     };
     return (
       // <View style={{width: 22}} />
@@ -70,9 +75,9 @@ function StackHeader(props) {
         <utils.vectorIcon.SimpleLineIcons
           name="bell"
           color={theme.color.backgroundGreenText}
-          size={22}
+          size={23}
         />
-        {/* <View
+        <View
           style={{
             width: 8,
             height: 8,
@@ -82,7 +87,7 @@ function StackHeader(props) {
             top: 2,
             backgroundColor: theme.color.ntfctnClr,
           }}
-        /> */}
+        />
       </TouchableOpacity>
     );
   };
@@ -91,7 +96,7 @@ function StackHeader(props) {
     <View style={styles.headerConatainer}>
       {render1()}
       {render2()}
-      {render3()}
+      {bell && render3()}
     </View>
   );
 }

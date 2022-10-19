@@ -34,6 +34,9 @@ import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-ima
 export default observer(Reviews);
 
 function Reviews(props) {
+  let maxModalHeight = theme.window.Height - 100;
+  const [modalHeight, setmodalHeight] = useState(0);
+
   let headerTitle = 'Reviews';
   let internet = store.General.isInternet;
   let user = store.User.user;
@@ -226,6 +229,7 @@ function Reviews(props) {
       setcomment('');
       setisTerms(false);
       setEmptyTerms(false);
+      setmodalHeight(0);
     }
   };
 
@@ -729,17 +733,16 @@ function Reviews(props) {
     }
 
     if (modalChk == 'dispute') {
+      let c = modalHeight >= maxModalHeight ? true : false;
+      let style = c ? [styles.modal2, {height: maxModalHeight}] : styles.modal;
+
       const renderHeader = () => {
         let text = 'Dispute Review';
 
         const renderCross = () => {
           return (
             <Pressable
-              disabled={mloader}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.7 : 1.0},
-                styles.modalCross,
-              ]}
+              style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
               onPress={closeModal}>
               <utils.vectorIcon.Ionicons
                 name="ios-close-outline"
@@ -756,21 +759,28 @@ function Reviews(props) {
 
         return (
           <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              paddingHorizontal: 15,
-              paddingTop: 15,
-              paddingBottom: 7,
-              shadowColor: '#000000',
-              shadowOffset: {width: 0, height: 1}, // change this for more shadow
-              shadowOpacity: 0.1,
-              elevation: 1,
-              backgroundColor: theme.color.background,
-              borderTopLeftRadius: 15,
-              borderTopRightRadius: 15,
-            }}>
-            {renderTitle()}
+            style={
+              c
+                ? {
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    paddingHorizontal: 15,
+                    paddingTop: 15,
+                    paddingBottom: 7,
+                    shadowColor: '#000000',
+                    shadowOffset: {width: 0, height: 1}, // change this for more shadow
+                    shadowOpacity: 0.1,
+                    elevation: 1,
+                    backgroundColor: theme.color.background,
+                    borderTopLeftRadius: 10,
+                    borderTopRightRadius: 10,
+                  }
+                : {
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }
+            }>
+            <View style={{width: '80%'}}>{renderTitle()}</View>
             {renderCross()}
           </View>
         );
@@ -902,15 +912,14 @@ function Reviews(props) {
           );
         };
 
-        return (
-          <View
-            style={[
+        let sty = c
+          ? [
               styles.modalBottomContainer,
               {
                 borderBottomLeftRadius: 15,
                 borderBottomRightRadius: 15,
-                marginTop: 0,
-                paddingTop: 5,
+                marginTop: 5,
+                paddingTop: 10,
                 paddingBottom: 15,
                 paddingHorizontal: 15,
                 backgroundColor: theme.color.background,
@@ -919,7 +928,11 @@ function Reviews(props) {
                 shadowOpacity: 0.1,
                 elevation: 22,
               },
-            ]}>
+            ]
+          : [styles.modalBottomContainer];
+
+        return (
+          <View style={sty}>
             {renderButton1()}
             {renderButton2()}
           </View>
@@ -931,23 +944,37 @@ function Reviews(props) {
           <SafeAreaView style={styles.modalContainer}>
             <View style={styles.modalContainer2}>
               <View
-                style={[
-                  styles.modal,
-                  {
-                    height: '85%',
-                    padding: 0,
-                  },
-                ]}>
-                {renderHeader()}
-                <ScrollView
-                  contentContainerStyle={{paddingHorizontal: 15}}
-                  showsVerticalScrollIndicator={false}
-                  style={{flex: 1}}>
-                  {renderSec1()}
-                  {renderSec2()}
-                  {renderSec3()}
-                </ScrollView>
-                {renderBottom()}
+                onLayout={event => {
+                  if (!c) {
+                    let {height} = event.nativeEvent.layout;
+                    setmodalHeight(height);
+                  }
+                }}
+                style={style}>
+                {c && (
+                  <>
+                    {renderHeader()}
+                    <ScrollView
+                      contentContainerStyle={{paddingHorizontal: 15}}
+                      showsVerticalScrollIndicator={false}
+                      style={{flex: 1}}>
+                      {renderSec1()}
+                      {renderSec2()}
+                      {renderSec3()}
+                    </ScrollView>
+                    {renderBottom()}
+                  </>
+                )}
+
+                {!c && (
+                  <>
+                    {renderHeader()}
+                    {renderSec1()}
+                    {renderSec2()}
+                    {renderSec3()}
+                    {renderBottom()}
+                  </>
+                )}
               </View>
             </View>
           </SafeAreaView>

@@ -115,8 +115,8 @@ export const styles = StyleSheet.create({
     top: 1,
   },
   headerTitle: {
-    // fontSize: 18,
-    fontSize: responsiveFontSize(2.4),
+    fontSize: 19,
+
     fontFamily: theme.fonts.fontBold,
     color: theme.color.backgroundGreenText,
   },

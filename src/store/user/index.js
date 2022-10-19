@@ -22,6 +22,27 @@ class user {
     this.isNotification = obj;
   };
 
+  @observable vuser = false;
+
+  @persist('object') @observable user = false;
+
+  @persist('object') @observable followers = [];
+  @persist('object') @observable totalfollowers = 0;
+  @persist('object') @observable following = [];
+  @persist('object') @observable totalfollowing = 0;
+  @action setfollowers = obj => {
+    this.followers = obj;
+  };
+  @action settotalfollowers = obj => {
+    this.totalfollowers = obj;
+  };
+  @action setfollowing = obj => {
+    this.following = obj;
+  };
+  @action settotalfollowing = obj => {
+    this.totalfollowing = obj;
+  };
+
   @observable phn = '';
   @observable cntr = '';
   @observable pwc = '';
@@ -72,6 +93,11 @@ class user {
   @action updatetrips = (obj, ind) => {
     this.trips[ind] = obj;
   };
+
+  @action deletetrips = ind => {
+    this.trips.splice(ind, 1);
+  };
+
   @action setphotos = obj => {
     this.photos = obj;
   };
@@ -172,6 +198,35 @@ class user {
   @observable editTripObj = false;
   @observable editTrip = false;
 
+  @observable homeModalLoder = false;
+  @action attemptToOfferSend = (obj, suc) => {
+    console.warn('send offer  : ', 'true');
+    this.sethomeModalLoder(true);
+    setTimeout(() => {
+      this.sethomeModalLoder(false);
+      suc(true);
+    }, 1000);
+  };
+
+  @action attemptToMessageSend = (obj, suc) => {
+    console.warn('message send  : ', 'true');
+    this.sethomeModalLoder(true);
+    setTimeout(() => {
+      this.sethomeModalLoder(false);
+      suc(true);
+    }, 1000);
+  };
+
+  @observable offerSend = false;
+  @action setofferSend = obj => {
+    this.offerSend = obj;
+  };
+
+  @observable offerRecieve = false;
+  @action setofferRecieve = obj => {
+    this.offerRecieve = obj;
+  };
+
   @observable MyProfileProps = false;
 
   @action setMyProfileProps = obj => {
@@ -186,6 +241,10 @@ class user {
   };
   @action seteditTripObj = obj => {
     this.editTripObj = obj;
+  };
+
+  @action sethomeModalLoder = obj => {
+    this.homeModalLoder = obj;
   };
 
   @action attemptToCreateTrip = (obj, suc) => {
@@ -237,7 +296,7 @@ class user {
   @observable rd = false; //curemt resturant detail
   // @persist('object')
   // @persist('object')
-  @persist('object') @observable user = false;
+
   @persist('object') @observable polygons = [];
 
   @persist('object') @observable fvrtList = [];
@@ -364,6 +423,11 @@ class user {
   @action.bound
   setUser(val) {
     this.user = val;
+  }
+
+  @action.bound
+  setvUser(val) {
+    this.vuser = val;
   }
 
   @action.bound
@@ -969,18 +1033,28 @@ class user {
       });
   }
 
-  // @action.bound
+  @action.bound
   Logout() {
+    this.clearUser();
+    store.Trips.clearTrips();
+    this.setisNotification(true);
+  }
+
+  @action.bound
+  clearUser = () => {
     this.addauthToken('');
     this.setUser(false);
+    this.setfollowers([]);
+    this.setfollowing([]);
+    this.settotalfollowers(0);
+    this.settotalfollowing(0);
     this.setreview([]);
     this.settrips([]);
     this.setphotos([]);
     this.setphn('');
     this.setcntr('');
     this.setpwc('');
-    this.setisNotification(true);
-  }
+  };
 
   attemptToUploadImage(imgArr, seterror, setPhoto1Upload, setup, setuc) {
     this.setregLoader(true);

@@ -32,12 +32,16 @@ function DrawerHeader(props) {
     const onClick = () => {
       prop.navigation.openDrawer();
     };
+    let src = require('../../assets/images/drawers/img.png');
     return (
       <TouchableOpacity activeOpacity={0.5} onPress={onClick}>
-        <utils.vectorIcon.Octicons
-          name="three-bars"
-          color={theme.color.backgroundGreenText}
-          size={22}
+        <Image
+          source={src}
+          style={{
+            width: 25,
+            height: 20,
+            resizeMode: 'contain',
+          }}
         />
       </TouchableOpacity>
     );
@@ -55,16 +59,16 @@ function DrawerHeader(props) {
 
   const render3 = () => {
     const onClick = () => {
-      prop.navigation.navigate('Notifications');
+      prop.navigation.navigate('Notifications', {screen: ''});
     };
     return (
       <TouchableOpacity activeOpacity={0.5} onPress={onClick}>
         <utils.vectorIcon.SimpleLineIcons
           name="bell"
           color={theme.color.backgroundGreenText}
-          size={22}
+          size={23}
         />
-        {/* <View
+        <View
           style={{
             width: 8,
             height: 8,
@@ -74,7 +78,7 @@ function DrawerHeader(props) {
             top: 2,
             backgroundColor: theme.color.ntfctnClr,
           }}
-        /> */}
+        />
       </TouchableOpacity>
     );
   };

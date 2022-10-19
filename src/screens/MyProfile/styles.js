@@ -239,7 +239,7 @@ export const styles = StyleSheet.create({
   },
   profileTitle2Conatiner: {
     width: '100%',
-
+    // backgroundColor: 'red',
     marginTop: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -248,10 +248,12 @@ export const styles = StyleSheet.create({
   profileTitle2Conatiner1: {
     width: '46%',
     alignItems: 'flex-end',
+    // backgroundColor: 'blue',
   },
   profileTitle2Conatiner2: {
     width: '46%',
     alignItems: 'flex-start',
+    // backgroundColor: 'blue',
   },
   profileTitle2ConatinerTitle: {
     fontSize: 14,

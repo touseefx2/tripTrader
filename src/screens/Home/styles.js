@@ -61,12 +61,12 @@ export const styles = StyleSheet.create({
   },
   SerchBarContainer: {
     width: '100%',
-    height: 45,
+    height: 46,
     borderRadius: 100,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 15,
+    paddingHorizontal: 18,
     backgroundColor: theme.color.background,
     shadowColor: 'rgba(0, 0, 0, 0.2)',
     shadowOffset: {
@@ -82,12 +82,12 @@ export const styles = StyleSheet.create({
   SerchBarInput: {
     width: '100%',
     height: '100%',
-    fontSize: 15.5,
     fontFamily: theme.fonts.fontNormal,
     top: 3,
   },
   Baricon: {
-    flex: 1,
+    width: 18,
+    height: 18,
     resizeMode: 'contain',
   },
   resultContainer: {
@@ -260,11 +260,13 @@ export const styles = StyleSheet.create({
   },
   sec3T2Container: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: 5,
   },
   sec3Icon: {
-    flex: 1,
+    width: 11,
+    height: 15,
     resizeMode: 'contain',
   },
   sec3T2: {
@@ -296,8 +298,8 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   sec4B: {
-    width: '47.5%',
-    height: 42,
+    width: '47%',
+    height: 46,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 8,
@@ -410,6 +412,10 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 
+  modalBottomContainerrr: {
+    marginTop: 20,
+  },
+
   ButtonContainer: {
     paddingHorizontal: 15,
     paddingVertical: 10,
@@ -494,12 +500,23 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  modalinfoConatiner2: {
+    width: '100%',
+    marginTop: 10,
+    padding: 10,
+    borderRadius: 8,
+
+    backgroundColor: '#F5F5F5',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   mProfileImgContainer: {
     width: 55,
     height: 55,
     borderRadius: 55 / 2,
-    borderWidth: 1,
-    borderColor: theme.color.photoBorderColor,
+    borderWidth: 2,
+    borderColor: theme.color.background,
     // alignItems: 'center',
     // justifyContent: 'center',
   },
@@ -643,12 +660,129 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 5,
   },
   dropDownText: {
     color: theme.color.title,
     fontSize: 13,
     fontFamily: theme.fonts.fontNormal,
     lineHeight: 18.6,
+  },
+
+  //make offer modal
+  fieldContainer: {
+    width: '100%',
+    marginTop: 12,
+  },
+
+  fieldText: {
+    color: theme.color.titleGreenForm,
+    fontFamily: theme.fonts.fontBold,
+    fontSize: 14,
+  },
+  inputConatiner: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: theme.color.fieldBorder,
+    borderRadius: 8,
+    height: 45,
+    paddingHorizontal: 7,
+  },
+  input: {
+    width: '100%',
+    height: '100%',
+  },
+  bottomText: {
+    color: theme.color.button1,
+    fontSize: 12.5,
+    fontFamily: theme.fonts.fontMedium,
+    textDecorationLine: 'underline',
+    textDecorationColor: theme.color.button1,
+  },
+  umodal: {
+    width: '100%',
+
+    paddingTop: 15,
+    alignSelf: 'center',
+    backgroundColor: theme.color.background,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+  },
+  umodal2: {
+    width: '100%',
+
+    padding: 15,
+    alignSelf: 'center',
+    backgroundColor: theme.color.background,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+  },
+  rmodalBottomContainer: {
+    paddingTop: 10,
+    paddingBottom: 15,
+    paddingHorizontal: 15,
+
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rmodalBottomContainer2: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  rmodalsubTitle: {
+    fontSize: 13,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontNormal,
+  },
+  rField: {
+    // width: '100%',
+  },
+  rField2: {
+    // width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  rTitle: {
+    fontSize: 12,
+    color: theme.color.subTitleLight,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'uppercase',
+  },
+  rTitle2: {
+    fontSize: 13,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontMedium,
+    textTransform: 'capitalize',
+    lineHeight: 19,
+  },
+
+  rmodalBottomContainer: {
+    paddingTop: 10,
+    paddingBottom: 15,
+    paddingHorizontal: 15,
+
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rmodalBottomContainer2: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

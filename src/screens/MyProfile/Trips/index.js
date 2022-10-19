@@ -78,7 +78,7 @@ function Trips(props) {
               'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTV8fHRyYXZlbGxpbmd8ZW58MHx8MHx8&w=1000&q=80',
             ],
             return: 'Florida Alligator Hunt or an Oseola Turkey Hunt',
-            status: 'pending',
+            status: 'activate',
             availablity: {endDate: '2022-11-05', startDate: '2022-10-17'},
             duration: {number: '3', title: 'days'},
             unavailable: {
@@ -106,8 +106,27 @@ function Trips(props) {
             _id: 32,
             title: 'Fishing Trip',
             acceptOtherTrades: true,
-            availablity: {endDate: '2022-10-05', startDate: '2022-09-15'},
-            duration: {number: '1', title: 'days'},
+            availablity: {endDate: '2022-09-05', startDate: '2022-08-17'},
+            duration: {number: '3', title: 'days'},
+            unavailable: {
+              all_unavailable_dates: [
+                '2022-08-25',
+                '2022-08-26',
+                '2022-08-28',
+                '2022-09-02',
+                '2022-09-04',
+              ],
+              days_of_week: ['Fri'],
+              esd_text: 'Aug 25-26, Sep 2',
+              exclude_specific_dates: [
+                '2022-08-25',
+                '2022-08-26',
+                '2022-09-02',
+              ],
+              repeat_every: {endRepeatOn: '2022-09-05', num: 1, title: 'Weeks'},
+              unavailable_days_of_week: ['2022-08-28', '2022-09-04'],
+              wtxt: 'Fri (weekly)',
+            },
             loc: {coords: [], name: 'Miami, Florida'},
             offer: 'Blue Catfish Jugging',
             photos: [
@@ -117,32 +136,7 @@ function Trips(props) {
             ],
             return: 'Open to Offers',
             status: 'suspended',
-            unavailable: {
-              all_unavailable_dates: [
-                '2022-10-22',
-                '2022-10-24',
-                '2022-10-25',
-                '2022-10-26',
-                '2022-10-29',
-                '2022-11-02',
-              ],
-              days_of_week: ['Sat'],
-              esd_text: 'Oct 24-26, Nov 2',
-              exclude_specific_dates: [
-                '2022-10-24',
-                '2022-10-25',
-                '2022-10-26',
-                '2022-11-02',
-              ],
-              repeat_every: {endRepeatOn: '2022-11-05', num: 1, title: 'Weeks'},
-              unavailable_days_of_week: [
-                '2022-10-24',
-                '2022-10-25',
-                '2022-10-26',
-                '2022-11-02',
-              ],
-              wtxt: 'Sat (weekly)',
-            },
+
             user: 1,
           },
         ];
@@ -234,15 +228,12 @@ function Trips(props) {
     let duration = parseInt(item.duration.number) || '';
     let dtitile = item.duration.title;
     let dt = '';
-    let d1 = '';
-    d1 =
-      duration <= 1 && dtitile == 'days'
-        ? 'Whole'
-        : duration <= 1 && dtitile != 'days'
-        ? duration
-        : duration;
-    let cc = d1 == 'Whole' ? 'day' : dtitile == 'days' ? 'day' : dtitile;
-    dt = d1 + ' ' + cc;
+
+    if (duration <= 1) {
+      duration = 'Whole';
+      dtitile = dtitile.substring(0, dtitile.length - 1);
+    }
+    dt = duration + ' ' + dtitile;
     let offer = item.offer || '';
     let trade = item.return || '';
     let availability = item.availablity.startDate || '';

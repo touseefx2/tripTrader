@@ -1,5 +1,6 @@
 import {General} from './general/index';
 import {User} from './user/index';
+import {Trips} from './trips/index';
 import {Food} from './food/index';
 import {Orders} from './orders/index';
 import {Promos} from './promos/index';
@@ -19,6 +20,7 @@ export default {
   Orders,
   Promos,
   Resturants,
+  Trips,
   // userStore,
   // carStore,
   // tripStore,

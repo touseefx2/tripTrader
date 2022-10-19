@@ -18,8 +18,8 @@
 
 const background = '#FFFFFF';
 const backgroundGreen = '#283C2E';
-const backgroundConatiner = '#E5E5E5';
-// const backgroundConatiner = '#f5f5f5';
+// const backgroundConatiner = '#E5E5E5';
+const backgroundConatiner = '#f5f5f5';
 
 const mainbottombutonbackground = '#e8e8e8';
 const backgroundGreenText = 'white';
@@ -38,6 +38,7 @@ const button1 = '#3C6B49';
 const button1Disable = ' #3C6B49';
 const button2 = '#F2F3F1';
 const buttonText = '#FAFAFA';
+const button2Text = '#30563A';
 const buttonTextGreen = '#1E3625';
 const cartbutton = '#f27f33';
 const cartbuttonText = 'white';
@@ -92,6 +93,7 @@ export default color = {
   button1,
   button2,
   buttonText,
+  button2Text,
   cartbutton,
   cartbuttonText,
   heart,

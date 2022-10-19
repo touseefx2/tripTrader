@@ -116,8 +116,10 @@ export const styles = StyleSheet.create({
   },
   headerTitle: {
     // fontSize: 18,
-    fontSize: responsiveFontSize(2.4),
+    fontSize: 20,
     fontFamily: theme.fonts.fontBold,
     color: theme.color.backgroundGreenText,
+    textTransform: 'capitalize',
+    lineHeight: 30,
   },
 });

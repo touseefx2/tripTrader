@@ -22,7 +22,7 @@
 // import Notification_Detail from "./Notification_Detail/index";
 // import RegisterProfile from "./RegisterProfile/index";
 // import Car from "./Car/index";
-// import CarDetail from "./CarDetail/index";
+import ShowFollowers from './ShowFollowers/index';
 
 import Splash from './Splash';
 import Home from './Home';
@@ -38,6 +38,8 @@ import VerifyCode from './VerifyCode';
 
 import Inbox from './Inbox';
 import NewTrips from './NewTrips';
+
+import UserProfile from './UserProfile';
 import MyProfile from './MyProfile';
 import EditProfile from './EditProfile';
 import TradeOffers from './TradeOffers';
@@ -75,4 +77,6 @@ export default screens = {
   PrivacyPolicy,
   Settings,
   ChangePassword,
+  ShowFollowers,
+  UserProfile,
 };

@@ -59,8 +59,8 @@ function MyProfile(props) {
 
   let userName = '';
   let phn = '';
-  let followers = 102;
-  let following = 100;
+  let followers = store.User.totalfollowers;
+  let following = store.User.totalfollowing;
   let src = '';
   let srccnic = '';
 
@@ -109,6 +109,11 @@ function MyProfile(props) {
     trips: Trips,
     photos: Photos,
   });
+
+  useEffect(() => {
+    store.User.settotalfollowers(10);
+    store.User.settotalfollowing(5);
+  }, []);
 
   useEffect(() => {
     if (phone != '') {
@@ -257,6 +262,10 @@ function MyProfile(props) {
     });
   };
 
+  const ShowFollowersScreen = c => {
+    props.navigation.navigate('ShowFollowers', {chk: c, user: userName});
+  };
+
   const renderProfileSection = () => {
     const renderProfileShow = () => {
       return (
@@ -329,31 +338,41 @@ function MyProfile(props) {
           </View>
           {user && user !== 'guest' && (
             <View style={styles.profileTitle2Conatiner}>
-              <View style={styles.profileTitle2Conatiner1}>
+              <Pressable
+                style={({pressed}) => [
+                  {opacity: pressed ? 0.8 : 1.0},
+                  [styles.profileTitle2Conatiner1],
+                ]}
+                onPress={() => ShowFollowersScreen('followers')}>
                 <Text
                   numberOfLines={1}
                   ellipsizeMode="tail"
                   style={styles.profileTitle2ConatinerTitle}>
                   <Text style={styles.profileTitle2ConatinerTitle2}>
-                    {followers}
+                    {parseInt(followers) > 90000 ? '90000+' : followers}
                     {'  '}
                   </Text>
                   followers
                 </Text>
-              </View>
+              </Pressable>
 
-              <View style={styles.profileTitle2Conatiner2}>
+              <Pressable
+                onPress={() => ShowFollowersScreen('following')}
+                style={({pressed}) => [
+                  {opacity: pressed ? 0.8 : 1.0},
+                  [styles.profileTitle2Conatiner2],
+                ]}>
                 <Text
                   numberOfLines={1}
                   ellipsizeMode="tail"
                   style={styles.profileTitle2ConatinerTitle}>
                   <Text style={styles.profileTitle2ConatinerTitle2}>
-                    {following}
+                    {parseInt(following) > 90000 ? '90000+' : following}
                     {'  '}
                   </Text>
                   following
                 </Text>
-              </View>
+              </Pressable>
             </View>
           )}
         </View>
@@ -473,7 +492,7 @@ function MyProfile(props) {
               style={[
                 styles.buttonTextBottom,
                 {
-                  color: theme.color.subTitle,
+                  color: theme.color.button2Text,
                   textTransform: 'none',
                   fontFamily: theme.fonts.fontBold,
                   fontSize: 14,
@@ -485,38 +504,6 @@ function MyProfile(props) {
         </>
       );
     };
-
-    // const renderButtonCP = c => {
-    //   return (
-    //     <>
-    //       <TouchableOpacity
-    //         onPress={() => {
-    //           changePhoto(c);
-    //         }}
-    //         activeOpacity={0.7}
-    //         style={[
-    //           styles.BottomButton,
-    //           {
-    //             marginTop: 12,
-    //             backgroundColor: theme.color.background,
-    //             borderWidth: 0.5,
-    //             borderColor: theme.color.subTitle,
-    //           },
-    //         ]}>
-    //         <Text
-    //           style={[
-    //             styles.buttonTextBottom,
-    //             {
-    //               color: theme.color.buttonTextGreen,
-    //               fontFamily: theme.fonts.fontMedium,
-    //             },
-    //           ]}>
-    //           Change Photo
-    //         </Text>
-    //       </TouchableOpacity>
-    //     </>
-    //   );
-    // };
 
     let src =
       cphoto != ''
@@ -565,7 +552,6 @@ function MyProfile(props) {
 
             {renderButton('Profile')}
             {renderButtonSkip()}
-            {/* {renderButtonCP('photoChange')} */}
           </View>
         </View>
       </MModal>

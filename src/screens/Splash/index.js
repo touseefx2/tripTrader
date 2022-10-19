@@ -50,6 +50,7 @@ function Splash(props) {
     const hydrate = create({storage: AsyncStorage});
     await hydrate('General', store.General);
     await hydrate('User', store.User);
+    await hydrate('Trips', store.Trips);
     // await hydrate('Resturants', store.Resturants);
   };
 

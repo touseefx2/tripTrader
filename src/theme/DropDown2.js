@@ -11,6 +11,7 @@ import {
   SafeAreaView,
   ActivityIndicator,
   Alert,
+  TouchableHighlight,
   FlatList,
   StyleSheet,
   Dimensions,
@@ -97,70 +98,89 @@ export default function DropDown(props) {
     props.setVisible(false);
   };
 
-  const renderItems = ({item, index}) => {
-    let title = c == 'trip' ? item.offer : '';
-
+  const renderBottom = () => {
     return (
-      <TouchableOpacity
+      <TouchableHighlight
+        underlayColor={'#EEF6EF'}
+        onPress={() => {
+          onClickItem('customOffer');
+        }}>
+        <View style={[styles.rowContainer2, {}]}>
+          <Text style={styles.Textc}>Create Custom Offer...</Text>
+        </View>
+      </TouchableHighlight>
+    );
+  };
+
+  const renderItems = ({item, index}) => {
+    let title = item.offer;
+    return (
+      <TouchableHighlight
+        underlayColor={'#EEF6EF'}
         onPress={() => {
           onClickItem(item);
         }}>
         <View
           style={[
             styles.rowContainer,
-            {borderBottomWidth: index < data.length - 1 ? 0.7 : 0},
+            {
+              // borderBottomWidth: index < data.length - 1 ? 0.7 : 0
+            },
           ]}>
           <Text style={styles.Text}>{title}</Text>
         </View>
-      </TouchableOpacity>
+      </TouchableHighlight>
     );
   };
 
   const style =
-    data.length > 5
+    data.length > 4
       ? {
-          height: responsiveHeight(30),
-          marginTop: absolute ? 75 : 10,
+          height: responsiveHeight(20),
+          marginTop: absolute ? 55 : 7,
           position: absolute ? 'absolute' : 'relative',
         }
       : {
-          marginTop: absolute ? 75 : 10,
+          marginTop: absolute ? 55 : 7,
           position: absolute ? 'absolute' : 'relative',
         };
 
   return (
-    <SafeAreaView style={[styles.Container, style]}>
-      <KeyboardAvoidingView style={{flex: 1}} enabled>
-        {isSearchBar && renderSearchBar()}
-        {data.length <= 0 && rendershowMessage()}
-        <FlatList
-          initialNumToRender={24}
-          maxToRenderPerBatch={10}
-          data={data}
-          nestedScrollEnabled
-          renderItem={renderItems}
-          keyExtractor={(item, index) => item.title}
-        />
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+    <>
+      <SafeAreaView style={[styles.Container, style]}>
+        <KeyboardAvoidingView enabled>
+          {isSearchBar && renderSearchBar()}
+          {data.length <= 0 && rendershowMessage()}
+          <FlatList
+            // contentContainerStyle={{paddingVertical: 5}}
+            initialNumToRender={24}
+            maxToRenderPerBatch={10}
+            data={data}
+            nestedScrollEnabled
+            renderItem={renderItems}
+            keyExtractor={(item, index) => item.title}
+          />
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+      {renderBottom()}
+    </>
   );
 }
 
 const windowHeight = Dimensions.get('window').height;
 let fontSize = 2;
 let bordercolor = '#D8E1DB';
-// theme.color.fieldBorder;
+//  theme.color.fieldBorder;
 const styles = StyleSheet.create({
   Container: {
     width: '100%',
     borderColor: bordercolor,
     borderWidth: 1,
     alignSelf: 'center',
-    borderRadius: 6,
-    backgroundColor: '#E5E5E5',
-    zIndex: 999,
-    marginBottom: 5,
-    elevation: 4,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    backgroundColor: 'white',
+    zIndex: 100,
   },
   searchBarContainer: {
     width: '100%',
@@ -173,14 +193,39 @@ const styles = StyleSheet.create({
   },
   rowContainer: {
     width: '100%',
-    paddingVertical: 10,
+    paddingVertical: 15,
     borderColor: bordercolor,
     paddingHorizontal: 15,
+  },
+  rowContainer2: {
+    width: '100%',
+    paddingVertical: 15,
+    borderColor: bordercolor,
+    borderWidth: 1,
+    paddingHorizontal: 15,
+    // backgroundColor: 'white',
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 1,
+    // },
+    // shadowOpacity: 0.18,
+    // shadowRadius: 1.0,
+
+    // elevation: 1,
   },
   Text: {
     color: 'black',
     fontSize: 13,
-    fontFamily: theme.fonts.fontNormal,
+    fontFamily: 'Poppins-Regular',
+    lineHeight: 19,
+  },
+  Textc: {
+    color: '#3C6B49',
+    fontSize: 13,
+    fontFamily: 'Poppins-SemiBold',
     lineHeight: 19,
   },
   emptyMessageConatiner: {

@@ -704,8 +704,25 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     margin: 20,
   },
+  modal2: {
+    height: '85%',
+    padding: 0,
+    width: '98%',
+    alignSelf: 'center',
+
+    backgroundColor: theme.color.background,
+    borderRadius: 15,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+  },
   modal: {
-    // width: Platform.OS == 'android' ? '98%' : '88%',
     width: '98%',
     alignSelf: 'center',
     padding: 15,

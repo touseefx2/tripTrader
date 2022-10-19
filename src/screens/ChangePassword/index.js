@@ -376,7 +376,7 @@ function ChangePassword(props) {
   return (
     <View style={styles.container}>
       {/* {tagLine != '' && <utils.TagLine tagLine={tagLine} />} */}
-      <utils.StackHeader props={props} headerTitle={headerTitle} />
+      <utils.StackHeader bell={true} props={props} headerTitle={headerTitle} />
       {!internet && <utils.InternetMessage />}
       <SafeAreaView style={styles.container2}>
         <View style={styles.container3}>

@@ -104,8 +104,9 @@ export const styles = StyleSheet.create({
     margin: 15,
   },
   modal: {
-    // width: Platform.OS == 'android' ? '98%' : '88%',
     width: '100%',
+
+    padding: 15,
     alignSelf: 'center',
     backgroundColor: theme.color.background,
     borderRadius: 10,
@@ -120,7 +121,7 @@ export const styles = StyleSheet.create({
     elevation: 3,
   },
   umodal: {
-    width: '100%',
+    width: '98%',
 
     paddingTop: 15,
     alignSelf: 'center',
@@ -137,7 +138,7 @@ export const styles = StyleSheet.create({
     elevation: 3,
   },
   umodal2: {
-    width: '100%',
+    width: '98%',
 
     padding: 15,
     alignSelf: 'center',
@@ -291,12 +292,11 @@ export const styles = StyleSheet.create({
   uploadIndication: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '90%',
+
     alignSelf: 'center',
   },
   uploadIndicationLogo: {
-    width: 120,
+    width: 130,
     height: 120,
     resizeMode: 'contain',
   },
@@ -466,5 +466,61 @@ export const styles = StyleSheet.create({
     // fontSize: responsiveScreenFontSize(2.15),
     fontFamily: theme.fonts.fontBold,
     textTransform: 'capitalize',
+  },
+
+  modal11: {
+    // width: Platform.OS == 'android' ? '98%' : '88%',
+    width: '100%',
+    alignSelf: 'center',
+    paddingTop: 0,
+    backgroundColor: theme.color.background,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+  },
+  modal22: {
+    // width: Platform.OS == 'android' ? '98%' : '88%',
+    width: '100%',
+    alignSelf: 'center',
+    padding: 15,
+    backgroundColor: theme.color.background,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+  },
+  modalContainer22: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 20,
+  },
+  modalBottomContaine3r: {
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingHorizontal: 15,
+  },
+  modalBottomContainer2: {},
+
+  modalBottomContainerrr: {
+    marginTop: 20,
+  },
+
+  modalContainerg: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
 });
