@@ -45,6 +45,12 @@ function ShowFollowers(props) {
   // let data = chk == 'followers' ? store.User.followers : store.User.following;
   let headerTitle = props.route.params.user || '';
 
+  let fscreen = store.User.fscreen || '';
+  let db = false;
+  if (fscreen == 'confirmedtrips' || fscreen == 'home') {
+    db = true;
+  }
+
   let internet = store.General.isInternet;
   let user = store.User.user;
 
@@ -411,6 +417,7 @@ function ShowFollowers(props) {
           </View>
 
           <utils.Footer
+            doubleBack={db}
             nav={props.navigation}
             screen={'Followers'}
             focusScreen={store.General.focusScreen}

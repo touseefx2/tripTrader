@@ -66,16 +66,11 @@ function UserProfile(props) {
 
   if (user) {
     userName = user.first_name + ' ' + user.last_name;
-    phn = user.phone;
+
     src = user.photo != '' ? user.photo : '';
-    srccnic = user.cnic_front_image != '' ? user.cnic_front_image : '';
   }
 
   const [photo, setphoto] = useState(src);
-
-  const [phone, setPhone] = useState(phn);
-  const [cntry, setcntry] = useState('');
-  const [pwc, setpwc] = useState('');
 
   const [pvm, setpvm] = useState(false); //show fulll image modal
   const [pv, setpv] = useState(''); //photo view
@@ -90,6 +85,8 @@ function UserProfile(props) {
   const [errorMessage, seterrorMessage] = useState('');
 
   const [isTabBarShow, setisTabBarShow] = useState(false);
+
+  const [isFollow, setisFollow] = useState(false);
 
   const [index, setIndex] = useState(0);
   const [routes] = useState([
@@ -107,6 +104,12 @@ function UserProfile(props) {
   useEffect(() => {
     store.User.settotalfollowers(10);
     store.User.settotalfollowing(5);
+
+    store.User.setOtherProfileProps(props);
+
+    return () => {
+      store.User.clearOtherUser();
+    };
   }, []);
 
   const setErrMessage = c => {
@@ -304,9 +307,10 @@ function UserProfile(props) {
                   {opacity: pressed ? 0.8 : 1.0},
                   [styles.profileTitle2Conatinerm],
                 ]}
-                // onPress={() => ShowFollowersScreen('followers')}
-              >
-                <Text style={styles.profileTitle2ConatinerTitle2m}>Follow</Text>
+                onPress={() => setisFollow(!isFollow)}>
+                <Text style={styles.profileTitle2ConatinerTitle2m}>
+                  {isFollow ? 'Unfollow' : 'Follow'}
+                </Text>
               </Pressable>
 
               <Pressable

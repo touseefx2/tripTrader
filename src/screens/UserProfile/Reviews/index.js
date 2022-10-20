@@ -39,11 +39,11 @@ function Reviews(props) {
 
   let headerTitle = 'Reviews';
   let internet = store.General.isInternet;
-  let user = store.User.user;
-  let data = store.User.review;
+  let user = store.User.vuser;
+  let data = store.User.reviewo;
   const totalData = data.length;
-  let loader = store.User.reviewLoader;
-  let mloader = store.User.mLoader;
+  let loader = store.User.reviewLoadero;
+  let mloader = store.User.mLoadero;
 
   const [modalObj, setmodalObj] = useState(false);
   const [modalChk, setmodalChk] = useState(false);
@@ -127,7 +127,7 @@ function Reviews(props) {
           //   created_at: new Date(),
           // },
         ];
-        store.User.attemptToGetReviews(
+        store.User.attemptToGetReviewso(
           user._id,
           setGetDataOnce,
           setrefeshing,

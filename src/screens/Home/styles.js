@@ -164,9 +164,9 @@ export const styles = StyleSheet.create({
     top: 5,
   },
   mtextContainer: {
-    width: '75%',
+    width: '78%',
     // backgroundColor: 'red',
-    top: 5,
+    top: 3,
   },
   textContainertitle: {
     color: theme.color.titleGreen,
@@ -530,8 +530,6 @@ export const styles = StyleSheet.create({
   mimageLoader: {
     height: '100%',
     width: '100%',
-    resizeMode: 'contain',
-    borderRadius: 55 / 2,
   },
   miconVerify: {
     width: 24,

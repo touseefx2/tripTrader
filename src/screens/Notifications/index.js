@@ -106,10 +106,33 @@ function Notifications(props) {
       },
     ];
 
-    setdata(dt);
+    const dt2 = [
+      {
+        title: 'Get full access for free',
+        subTitle:
+          'As a member, you’ll unlock all features and benefits for the best experience.',
+        createdAt: '3 mins ago',
+        topic: 'fullaccess',
+        isRead: false,
+      },
+      {
+        title: 'Welcome to Trip Trader!',
+        subTitle:
+          'We’re excited you’re here. Feel free to browse the community as a guest before signing up.',
+        createdAt: '3 days ago',
+        isRead: '10 mins ago',
+      },
+    ];
+
+    setdata(user == 'guest' ? dt2 : dt);
 
     return () => {};
   }, []);
+
+  const JoinNow = () => {
+    store.General.setgoto('joinnow');
+    store.User.Logout();
+  };
 
   const onclickSearchBar = () => {};
 
@@ -334,6 +357,113 @@ function Notifications(props) {
     );
   };
 
+  const ItemView2 = ({item, index}) => {
+    let title = item.title || '';
+    let subtitle = item.subTitle || '';
+    let topic = item.topic || '';
+    let create = item.createdAt || '';
+    let isread = item.isRead || false;
+    let c = false;
+
+    if (topic == 'fullaccess') {
+      c = true;
+    }
+
+    let photo =
+      title == 'Get full access for free'
+        ? pswdchng
+        : title == 'Welcome to Trip Trader!'
+        ? profileupd
+        : ntfctn;
+
+    const renderProfile = () => {
+      return (
+        <>
+          <View style={[styles.mProfileImgContainer2]}>
+            <Image style={styles.mProfileImg2} source={photo} />
+          </View>
+        </>
+      );
+    };
+
+    const renderText = () => {
+      return (
+        <View style={[styles.mtextContainer]}>
+          <Text
+            style={{
+              color: '#101B10',
+              fontSize: 16,
+              fontFamily: theme.fonts.fontBold,
+              lineHeight: 22.4,
+              textTransform: 'capitalize',
+            }}>
+            {title}
+          </Text>
+
+          {subtitle != '' && (
+            <View style={{marginTop: 3}}>
+              <Text
+                style={{
+                  color: ' #101B10',
+                  fontSize: 14,
+
+                  fontFamily: theme.fonts.fontNormal,
+
+                  lineHeight: 21,
+                }}>
+                {subtitle}{' '}
+                {c && (
+                  <Text
+                    onPress={JoinNow}
+                    style={{
+                      color: theme.color.title,
+                      fontSize: 14,
+                      textDecorationLine: 'underline',
+                      fontFamily: theme.fonts.fontBold,
+
+                      lineHeight: 21,
+                    }}>
+                    Join now
+                  </Text>
+                )}
+              </Text>
+            </View>
+          )}
+
+          <View style={{marginTop: 3}}>
+            <Text
+              style={{
+                color: isread ? theme.color.subTitleLight : '#3C6B49',
+                fontSize: 13,
+
+                fontFamily: theme.fonts.fontMedium,
+
+                lineHeight: 19.5,
+              }}>
+              {create}
+            </Text>
+          </View>
+        </View>
+      );
+    };
+
+    return (
+      <View
+        style={[
+          styles.modalinfoConatiner,
+          {
+            marginTop: index == 0 ? 15 : 0,
+            borderBottomWidth: index == data.length - 1 ? 0.7 : 0,
+            borderBottomColor: theme.color.fieldBorder,
+            backgroundColor: isread ? theme.color.background : '#EAF1E3',
+          },
+        ]}>
+        {renderProfile()}
+        {renderText()}
+      </View>
+    );
+  };
+
   const ListFooter = () => {
     return (
       <>
@@ -363,7 +493,7 @@ function Notifications(props) {
                 paddingBottom: 40,
               }}
               data={data}
-              renderItem={ItemView}
+              renderItem={user == 'guest' ? ItemView2 : ItemView}
               // keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}

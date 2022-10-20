@@ -33,11 +33,11 @@ export default observer(Trips);
 function Trips(props) {
   let headerTitle = 'Trips';
   let internet = store.General.isInternet;
-  let user = store.User.user;
-  let data = store.User.trips;
+  let user = store.User.vuser;
+  let data = store.User.tripso;
   const totalData = data.length;
-  let loader = store.User.tripsLoader;
-  let mloader = store.User.mLoader;
+  let loader = store.User.tripsLoadero;
+  let mloader = store.User.mLoadero;
 
   const [pvm, setpvm] = useState(false);
   const [pv, setpv] = useState('');
@@ -140,7 +140,7 @@ function Trips(props) {
             user: 1,
           },
         ];
-        store.User.attemptToGetTrips(
+        store.User.attemptToGetTripso(
           user._id,
           setGetDataOnce,
           setrefeshing,

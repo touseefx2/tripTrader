@@ -154,7 +154,7 @@ const data = [
       total_reviews: 190,
       isVerified: true,
     },
-    availablity: {endDate: '2022-11-05', startDate: '2022-10-17'},
+    availablity: {endDate: '2022-12-05', startDate: '2022-10-24'},
     duration: {number: '3', title: 'days'},
     unavailable: {
       all_unavailable_dates: [
@@ -306,10 +306,9 @@ function Home(props) {
   const [modalObj, setmodalObj] = useState(false);
   const [modalChk, setmodalChk] = useState(false);
   const [isModal, setisModal] = useState(false);
+  const [message, setMessage] = useState('');
 
   const [step, setstep] = useState(1);
-
-  const [message, setMessage] = useState('');
 
   const [showCal1, setshowCal1] = useState(false);
 
@@ -452,20 +451,20 @@ function Home(props) {
     }
   }, []);
 
+  const setIsSendMessage = v => {
+    setsendObj(modalObj.item.user);
+    setisSendMessage(v);
+    setTimeout(() => {
+      closeMessageModal();
+    }, 10);
+  };
+
   const setIsSendObj = v => {
     setsendObj(modalObj.item.user);
     setisOfferSend(v);
 
     setTimeout(() => {
       closeModalAll();
-    }, 10);
-  };
-
-  const setIsSendMessage = v => {
-    setsendObj(modalObj.item.user);
-    setisSendMessage(v);
-    setTimeout(() => {
-      closeMessageModal();
     }, 10);
   };
 
@@ -865,6 +864,8 @@ function Home(props) {
           <View style={styles.textContainer}>
             <Pressable
               onPress={() => {
+                store.User.clearOtherUser();
+                store.User.setfscreen('home');
                 store.User.setvUser(item.user);
                 props.navigation.navigate('UserProfile');
               }}
@@ -1461,8 +1462,8 @@ function Home(props) {
           let duration = parseInt(item.duration.number);
           t =
             duration <= 1
-              ? 'Select a trip date'
-              : 'Select a trip date or date range';
+              ? 'Choose a trip date'
+              : 'Choose a trip date or date range';
         }
 
         return (
@@ -1482,7 +1483,7 @@ function Home(props) {
                   styles.mfT2,
                   {opacity: isObjectEmpty(selDatess) ? 0.4 : 1},
                 ]}>
-                {t == '' ? 'Choose a date or date range' : t}
+                {t == '' ? 'Choose a trip date' : t}
               </Text>
               <View style={{width: '13%', alignItems: 'flex-end'}}>
                 <Image
@@ -2308,7 +2309,7 @@ function Home(props) {
                 {
                   opacity: pressed ? 0.9 : 1.0,
                   paddingHorizontal: 8,
-                  paddingVertical: 8,
+                  paddingVertical: 10,
                   borderRadius: 8,
                   borderWidth: 1,
                   borderColor: theme.color.fieldBorder,
@@ -4960,12 +4961,12 @@ function Home(props) {
               width: '100%',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: 'white',
+              backgroundColor: theme.color.button2,
               height: 50,
               borderRadius: 10,
               alignSelf: 'center',
-              borderWidth: 1,
-              borderColor: theme.color.fieldBorder,
+              // borderWidth: 1,
+              // borderColor: theme.color.fieldBorder,
               marginTop: 12,
             }}>
             <Text

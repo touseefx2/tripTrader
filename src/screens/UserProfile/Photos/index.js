@@ -34,11 +34,11 @@ export default observer(Photos);
 function Photos(props) {
   let headerTitle = 'Photos';
   let internet = store.General.isInternet;
-  let user = store.User.user;
-  let data = store.User.photos;
+  let user = store.User.vuser;
+  let data = store.User.photoso;
   const totalData = data.length;
-  let loader = store.User.photosLoader;
-  let mloader = store.User.mLoader;
+  let loader = store.User.photosLoadero;
+  let mloader = store.User.mLoadero;
 
   const [pvm, setpvm] = useState(false);
   const [si, setsi] = useState('');
@@ -74,7 +74,7 @@ function Photos(props) {
           'https://images.wallpapersden.com/image/download/trip-night_a21tZmmUmZqaraWkpJRmbmdlrWZlbWU.jpg',
           'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfHw%3D&w=1000&q=80',
         ];
-        store.User.attemptToGetPhotos(
+        store.User.attemptToGetPhotoso(
           user._id,
           setGetDataOnce,
           setrefeshing,

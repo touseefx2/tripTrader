@@ -32,17 +32,17 @@ export const styles = StyleSheet.create({
   },
   section2Title1: {
     color: theme.color.buttonText,
-    fontSize: responsiveFontSize(4.6),
-
+    // fontSize: responsiveFontSize(4.6),
+    fontSize: 36,
     fontFamily: theme.fonts.fontBold,
     letterSpacing: -1,
     lineHeight: 43.2,
-    marginBottom: 5,
+    marginBottom: 10,
   },
   section2Title2: {
     color: '#FAFAFA',
-
-    fontSize: responsiveFontSize(2),
+    fontSize: 17,
+    // fontSize: responsiveFontSize(2),
     fontFamily: theme.fonts.fontNormal,
     lineHeight: 23.8,
   },
@@ -59,7 +59,8 @@ export const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   title1: {
-    fontSize: responsiveFontSize(2.7),
+    // fontSize: responsiveFontSize(2.7),
+    fontSize: 22,
     fontFamily: theme.fonts.titleFont,
     color: theme.color.buttonText,
     textTransform: 'uppercase',
@@ -73,15 +74,15 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: theme.color.button1,
-
-    height: responsiveHeight(8.4),
+    height: 64,
+    // height: responsiveHeight(8.4),
     borderRadius: 10,
     alignSelf: 'center',
   },
   buttonTextBottom: {
     color: theme.color.buttonTextGreen,
 
-    fontSize: responsiveScreenFontSize(2.1),
+    fontSize: 18,
     fontFamily: theme.fonts.fontBold,
 
     textTransform: 'capitalize',
@@ -96,14 +97,15 @@ export const styles = StyleSheet.create({
   },
   buttonTextBottomTtitle1: {
     color: theme.color.buttonText,
-
-    fontSize: responsiveFontSize(1.85),
+    fontSize: 16,
+    // fontSize: responsiveFontSize(1.85),
     fontFamily: theme.fonts.fontNormal,
     opacity: 0.7,
   },
   buttonTextBottomTtitle2: {
     color: theme.color.buttonText,
-    fontSize: responsiveFontSize(1.85),
+    fontSize: 16,
+    // fontSize: responsiveFontSize(1.85),
     fontFamily: theme.fonts.fontBold,
     marginLeft: 5,
     textDecorationLine: 'underline',

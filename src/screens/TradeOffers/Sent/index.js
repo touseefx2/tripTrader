@@ -21,12 +21,11 @@ import {
   Modal,
 } from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-// import ImageSlider from 'react-native-image-slider';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
-import store from '../../store/index';
-import utils from '../../utils/index';
-import theme from '../../theme';
+import store from '../../../store/index';
+import utils from '../../../utils/index';
+import theme from '../../../theme';
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
 import {ActivityIndicator} from 'react-native-paper';
@@ -35,24 +34,24 @@ import {ImageSlider} from 'react-native-image-slider-banner';
 import {Calendar} from 'react-native-calendars';
 import moment, {duration} from 'moment/moment';
 
-export default observer(ConfirmTrips);
+export default observer(Sent);
 
-function ConfirmTrips(props) {
+function Sent(props) {
   let maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
 
   let headerTitle = 'Confirmed Trips';
 
-  let guest = require('../../assets/images/drawer/guest/img.png');
-  let trnfericon = require('../../assets/images/transfer/img.png');
-  let durtnicon = require('../../assets/images/confirmTrip/duration/img.png');
-  let avlblicon = require('../../assets/images/confirmTrip/available/img.png');
-  let locationicon = require('../../assets/images/confirmTrip/location/img.png');
+  let guest = require('../../../assets/images/drawer/guest/img.png');
+  let trnfericon = require('../../../assets/images/transfer/img.png');
+  let durtnicon = require('../../../assets/images/confirmTrip/duration/img.png');
+  let avlblicon = require('../../../assets/images/confirmTrip/available/img.png');
+  let locationicon = require('../../../assets/images/confirmTrip/location/img.png');
 
   let internet = store.General.isInternet;
   let user = store.User.user;
 
-  let data = store.Trips.confirmTrips;
+  let data = store.Trips.sendOffers;
 
   const [modalObj, setmodalObj] = useState(false);
   const [modalChk, setmodalChk] = useState(false);
@@ -77,7 +76,8 @@ function ConfirmTrips(props) {
           userName: 'John Thompson',
           first_name: 'Jhon',
           last_name: 'Thompson',
-          createdAt: 'Confirmed 2 hrs ago',
+          avg_rating: 3.8,
+          total_reviews: 190,
           photo:
             'https://www.adobe.com/express/create/media_127540366421d3d5bfcaf8202527ca7d37741fd5d.jpeg?width=400&format=jpeg&optimize=medium',
         },
@@ -100,41 +100,11 @@ function ConfirmTrips(props) {
           },
         },
         offerNote: '',
-      },
-      {
-        user: {
-          first_name: 'Mike',
-          last_name: 'Monuse',
-          userName: 'Mike Monuse',
-          createdAt: 'Confirmed Jun 12, 2022',
-          photo:
-            'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-10.jpg',
-        },
-
-        offering: {
-          offer: 'Whole Day Blue Catfish Jugging',
-          duration: '1 day',
-          availablity: 'Oct 8, 2022',
-          location: {
-            coords: [],
-            name: 'Lafayette, LA',
-          },
-        },
-        fortrade: {
-          offer: 'Osceola Turkey Hunting',
-          duration: '3 days',
-          availablity: 'Oct 17-20, 2022',
-          location: {
-            coords: [],
-            name: 'Boise, ID',
-          },
-        },
-        offerNote:
-          'I have a bad knee and will need to stay on flat terrain most of the time. Is this something that could be accomodated?',
+        createdAt: '2 days ago',
       },
     ];
 
-    store.Trips.setconfirmTrips(dt);
+    store.Trips.setsendOffers(dt);
 
     return () => {};
   }, []);
@@ -188,7 +158,7 @@ function ConfirmTrips(props) {
     return (
       <View
         style={{
-          height: 10,
+          height: 15,
         }}
       />
     );
@@ -208,9 +178,7 @@ function ConfirmTrips(props) {
       let length = data.length || 0;
       return (
         <View style={styles.resultContainer}>
-          <Text style={styles.resultText}>
-            You have {length} upcoming trips
-          </Text>
+          <Text style={styles.resultText}>You sent {length} offer</Text>
         </View>
       );
     };
@@ -219,7 +187,7 @@ function ConfirmTrips(props) {
       return (
         <TouchableOpacity disabled>
           <Image
-            source={require('../../assets/images/searchBar/search/img.png')}
+            source={require('../../../assets/images/searchBar/search/img.png')}
             style={styles.Baricon}
           />
         </TouchableOpacity>
@@ -244,7 +212,7 @@ function ConfirmTrips(props) {
       return (
         <TouchableOpacity style={styles.Baricon} onPress={onclick} disabled>
           {/* <Image
-            source={require('../../assets/images/searchBar/filter/img.png')}
+            source={require('../../../assets/images/searchBar/filter/img.png')}
             style={styles.Baricon}
           /> */}
         </TouchableOpacity>
@@ -253,7 +221,7 @@ function ConfirmTrips(props) {
 
     return (
       <>
-        <Pressable
+        {/* <Pressable
           style={({pressed}) => [
             {opacity: pressed ? 0.9 : 1},
             [styles.SerchBarContainer],
@@ -262,7 +230,8 @@ function ConfirmTrips(props) {
           {renderSearch()}
           {renderInput()}
           {renderFilter()}
-        </Pressable>
+        </Pressable> */}
+
         {data.length > 0 && renderResult()}
       </>
     );
@@ -273,11 +242,12 @@ function ConfirmTrips(props) {
     let ofer = item.offering;
     let trade = item.fortrade;
     let offernote = item.offerNote || '';
+    let create = item.createdAt || '';
 
-    let photo = '';
+    let photo = user.photo && user.photo != '' ? {uri: user.photo} : guest;
     let userName = user.userName || '';
-    let create = user.createdAt || '';
-    photo = user.photo && user.photo != '' ? {uri: user.photo} : guest;
+    let avgRating = parseInt(user.avg_rating);
+    let totalReviews = parseInt(user.total_reviews);
 
     let title = ofer.offer;
     let dur = ofer.duration;
@@ -297,7 +267,7 @@ function ConfirmTrips(props) {
               style={styles.mProfileImg}
               source={photo}
               loadingImageStyle={styles.mimageLoader}
-              loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
+              loadingSource={require('../../../assets/images/imgLoad/img.jpeg')}
               blurRadius={5}
             />
           </View>
@@ -308,37 +278,61 @@ function ConfirmTrips(props) {
     const renderText = () => {
       return (
         <View style={[styles.mtextContainer]}>
-          <View style={{width: '100%'}}>
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
+          <View
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            <View style={{width: '72%'}}>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{
+                  color: '#101B10',
+                  fontSize: 16,
+                  fontFamily: theme.fonts.fontBold,
+                  lineHeight: 22.4,
+                  textTransform: 'capitalize',
+                }}>
+                {userName}
+              </Text>
+            </View>
+            <View
               style={{
-                color: '#101B10',
-                fontSize: 16,
-                fontFamily: theme.fonts.fontBold,
-                lineHeight: 22.4,
-                textTransform: 'capitalize',
+                width: '27%',
+
+                alignItems: 'flex-end',
               }}>
-              {userName}
-            </Text>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{
+                  color: theme.color.subTitleLight,
+                  fontSize: 11,
+                  fontFamily: theme.fonts.fontMedium,
+                  lineHeight: 22.4,
+                }}>
+                {create}
+              </Text>
+            </View>
           </View>
 
-          {/* <View style={{flexDirection: 'row', justifyContent: 'space-between',marginTop: 3}}> */}
-          <View style={{width: '100%'}}>
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={{
-                color: theme.color.subTitleLight,
-                fontSize: 13,
-                fontFamily: theme.fonts.fontMedium,
-                lineHeight: 18.2,
-              }}>
-              {create}
+          <View style={{flexDirection: 'row', marginTop: 2}}>
+            <utils.vectorIcon.Entypo
+              name="star"
+              color={theme.color.rate}
+              size={14}
+            />
+            <Text style={styles.textContainerRatetitle1}>
+              {' '}
+              {avgRating.toFixed(1)}
+              {'  '}
+            </Text>
+            <Text style={styles.textContainerRatetitle2}>
+              {totalReviews > 300 ? '300+' : totalReviews} reviews
             </Text>
           </View>
-
-          {/* </View> */}
         </View>
       );
     };
@@ -492,20 +486,77 @@ function ConfirmTrips(props) {
       );
     };
 
+    // const renderBottom = () => {
+    //   let bc = {
+    //     width: '46%',
+    //     alignItems: 'center',
+    //     justifyContent: 'center',
+    //     borderRadius: 5,
+    //     height: 46,
+    //     borderWidth: 1,
+    //     borderColor: theme.color.fieldBorder,
+    //   };
+
+    //   let btS = {
+    //     color: '#3C6B49',
+    //     fontSize: 15,
+    //     fontFamily: theme.fonts.fontBold,
+    //   };
+
+    //   return (
+    //     <View
+    //       style={{
+    //         width: '100%',
+    //         marginTop: 20,
+    //         alignSelf: 'center',
+    //         flexDirection: 'row',
+    //         alignItems: 'center',
+    //         justifyContent: 'space-between',
+    //       }}>
+    //       <Pressable
+    //         style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc]}
+    //         onPress={() => {
+    //           setmodalObj({item: item, i: index});
+    //           setmodalChk('message');
+    //           setisModal(true);
+    //         }}>
+    //         <Text numberOfLines={1} ellipsizeMode="tail" style={btS}>
+    //           Message
+    //         </Text>
+    //       </Pressable>
+
+    //       <Pressable
+    //         onPress={() => {
+    //           store.User.clearOtherUser();
+    //           store.User.setfscreen('confirmedtrips');
+    //           store.User.setvUser(item.user);
+
+    //           props.navigation.navigate('UserProfile');
+    //         }}
+    //         style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc]}>
+    //         <Text numberOfLines={1} ellipsizeMode="tail" style={btS}>
+    //           View Profile
+    //         </Text>
+    //       </Pressable>
+    //     </View>
+    //   );
+    // };
+
     const renderBottom = () => {
       let bc = {
-        width: '46%',
+        width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: 5,
-        height: 46,
-        borderWidth: 1,
-        borderColor: theme.color.fieldBorder,
+        borderRadius: 8,
+        height: 48,
+        backgroundColor: '#F8ECEC',
+        // borderWidth: 1,
+        // borderColor: theme.color.fieldBorder,
       };
 
       let btS = {
-        color: '#3C6B49',
-        fontSize: 15,
+        color: '#B93B3B',
+        fontSize: 14,
         fontFamily: theme.fonts.fontBold,
       };
 
@@ -513,35 +564,13 @@ function ConfirmTrips(props) {
         <View
           style={{
             width: '100%',
-            marginTop: 20,
-            alignSelf: 'center',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+            marginTop: 30,
           }}>
           <Pressable
-            style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc]}
-            onPress={() => {
-              setmodalObj({item: item, i: index});
-              setmodalChk('message');
-              setisModal(true);
-            }}>
-            <Text numberOfLines={1} ellipsizeMode="tail" style={btS}>
-              Message
-            </Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => {
-              store.User.clearOtherUser();
-              store.User.setfscreen('confirmedtrips');
-              store.User.setvUser(item.user);
-
-              props.navigation.navigate('UserProfile');
-            }}
+            onPress={() => {}}
             style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc]}>
             <Text numberOfLines={1} ellipsizeMode="tail" style={btS}>
-              View Profile
+              Cancel Offer
             </Text>
           </Pressable>
         </View>
@@ -565,7 +594,7 @@ function ConfirmTrips(props) {
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
-            width: '95%',
+            width: '100%',
           }}>
           {renderProfile()}
           {renderText()}
@@ -664,7 +693,7 @@ function ConfirmTrips(props) {
     let ln = sendObj.last_name;
     let sendOfferUsername = fn + ' ' + ln;
     let un = sendObj.userName;
-    let src = require('../../assets/images/msgSentDone/img.png');
+    let src = require('../../../assets/images/msgSentDone/img.png');
     return (
       <Modal
         animationType="slide"
@@ -801,10 +830,10 @@ function ConfirmTrips(props) {
                 source={
                   photo != ''
                     ? {uri: photo}
-                    : require('../../assets/images/drawer/guest/img.png')
+                    : require('../../../assets/images/drawer/guest/img.png')
                 }
                 loadingImageStyle={styles.mimageLoaderm}
-                loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
+                loadingSource={require('../../../assets/images/imgLoad/img.jpeg')}
                 blurRadius={5}
               />
               {/* {isVeirfy && (
@@ -907,31 +936,33 @@ function ConfirmTrips(props) {
   return (
     <>
       <View style={styles.container}>
-        <utils.DrawerHeader props={props} headerTitle={headerTitle} />
+        {/* <utils.DrawerHeader props={props} headerTitle={headerTitle} /> */}
         {!internet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <FlatList
+              style={{marginTop: 5}}
               contentContainerStyle={{
-                paddingTop: 12,
+                paddingTop: 5,
                 paddingBottom: 40,
-                paddingHorizontal: 15,
+                paddingHorizontal: 2,
               }}
+              showsVerticalScrollIndicator={false}
               data={data}
               renderItem={ItemView}
               keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
               ListHeaderComponent={ListHeader}
-              ListFooterComponent={ListFooter}
+              // ListFooterComponent={ListFooter}
             />
           </View>
 
-          <utils.Footer
+          {/* <utils.Footer
             nav={props.navigation}
             screen={headerTitle}
             focusScreen={store.General.focusScreen}
-          />
+          /> */}
 
           {isModal && !isSendMessage && renderModal()}
           {isSendMessage && renderMessageSendModal()}

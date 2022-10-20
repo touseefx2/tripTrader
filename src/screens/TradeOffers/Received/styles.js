@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import theme from '../../theme/index';
+import theme from '../../../theme/index';
 import {
   responsiveHeight,
   responsiveWidth,
@@ -485,24 +485,26 @@ export const styles = StyleSheet.create({
   },
   modalinfoConatiner: {
     width: '100%',
-    // marginTop: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 12,
-    // borderRadius: 10,
-    // borderColor: theme.color.fieldBorder,
-    // borderWidth: 1,
-    flexDirection: 'row',
-    // alignItems: 'center',
-    justifyContent: 'space-between',
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 3.84,
+    borderRadius: 5,
 
-    // elevation: 5,
+    // marginTop: 10,
+
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+
+    // borderRadius: 10,
+
+    // alignItems: 'center',
+
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
     backgroundColor: theme.color.background,
   },
   modalinfoConatiner2: {
@@ -820,5 +822,63 @@ export const styles = StyleSheet.create({
     fontSize: 13,
     color: theme.color.title,
     fontFamily: theme.fonts.fontMedium,
+  },
+
+  mmProfileImgContainer: {
+    width: 55,
+    height: 55,
+    borderRadius: 55 / 2,
+    borderWidth: 2,
+    borderColor: theme.color.background,
+    // alignItems: 'center',
+    // justifyContent: 'center',
+  },
+  mmProfileImg: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+    borderRadius: 55 / 2,
+  },
+
+  mmimageLoader: {
+    height: '100%',
+    width: '100%',
+  },
+  mmtextContainer: {
+    width: '78%',
+    // backgroundColor: 'red',
+    top: 3,
+  },
+
+  mmodalBottomContainer: {
+    paddingTop: 10,
+    paddingBottom: 15,
+    paddingHorizontal: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  mmodalBottomContainer2: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+
+  mProfileImgContainerr: {
+    // borderWidth: 2,
+    borderColor: theme.color.fieldBorder,
+    width: 50,
+    height: 50,
+    borderRadius: 50 / 2,
+    marginBottom: 10,
+    left: 5,
+    // alignItems: 'center',
+    // justifyContent: 'center',
+  },
+  mProfileImgr: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+    borderRadius: 50 / 2,
   },
 });

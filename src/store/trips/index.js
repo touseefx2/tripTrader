@@ -9,11 +9,15 @@ class trips {
 
   @observable stLoader = false;
   @observable dLoader = false;
+  @observable confirmTripsSendMessageLoader = false;
   @action setstLoader = obj => {
     this.stLoader = obj;
   };
   @action setdLoader = obj => {
     this.dLoader = obj;
+  };
+  @action setconfirmTripsSendMessageLoader = obj => {
+    this.confirmTripsSendMessageLoader = obj;
   };
 
   @persist('object') @observable saveTrips = [];
@@ -31,7 +35,6 @@ class trips {
     c.unshift(obj);
     this.setsaveTrips(c);
   };
-
   @action attemptToDeleteTrip = (item, ind, suc) => {
     console.warn('delete  save trip  : ', 'true');
     this.setdLoader(true);
@@ -65,8 +68,34 @@ class trips {
     }, 700);
   };
 
+  @observable confirmTrips = [];
+  @action setconfirmTrips = obj => {
+    this.confirmTrips = obj;
+  };
+  @action attemptToMessageSend = (obj, suc) => {
+    console.warn('message send  : ', 'true');
+    this.setconfirmTripsSendMessageLoader(true);
+    setTimeout(() => {
+      this.setconfirmTripsSendMessageLoader(false);
+      suc(true);
+    }, 1000);
+  };
+
+  @observable sendOffers = [];
+  @action setsendOffers = obj => {
+    this.sendOffers = obj;
+  };
+
+  @observable receiveOffers = [];
+  @action setreceiveOffers = obj => {
+    this.receiveOffers = obj;
+  };
+
   @action clearTrips = () => {
     this.setsaveTrips([]);
+    this.setconfirmTrips([]);
+    this.setsendOffers([]);
+    this.setreceiveOffers([]);
   };
 }
 export const Trips = new trips();

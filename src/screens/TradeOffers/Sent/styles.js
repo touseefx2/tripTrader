@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import theme from '../../theme/index';
+import theme from '../../../theme/index';
 import {
   responsiveHeight,
   responsiveWidth,
@@ -200,14 +200,14 @@ export const styles = StyleSheet.create({
   },
   textContainerRatetitle1: {
     color: theme.color.title,
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: theme.fonts.fontBold,
     textTransform: 'capitalize',
     top: -2,
   },
   textContainerRatetitle2: {
     color: theme.color.subTitleLight,
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: theme.fonts.fontMedium,
     textDecorationLine: 'underline',
     top: -2,
@@ -485,24 +485,26 @@ export const styles = StyleSheet.create({
   },
   modalinfoConatiner: {
     width: '100%',
-    // marginTop: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 12,
-    // borderRadius: 10,
-    // borderColor: theme.color.fieldBorder,
-    // borderWidth: 1,
-    flexDirection: 'row',
-    // alignItems: 'center',
-    justifyContent: 'space-between',
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 3.84,
+    borderRadius: 5,
 
-    // elevation: 5,
+    // marginTop: 10,
+
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+
+    // borderRadius: 10,
+
+    // alignItems: 'center',
+
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
     backgroundColor: theme.color.background,
   },
   modalinfoConatiner2: {

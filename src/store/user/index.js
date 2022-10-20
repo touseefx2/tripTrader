@@ -23,6 +23,7 @@ class user {
   };
 
   @observable vuser = false;
+  @observable fscreen = '';
 
   @persist('object') @observable user = false;
 
@@ -61,6 +62,7 @@ class user {
   @persist('object') @observable pswd = '';
   @persist('object') @observable sp = false;
 
+  //other users
   @observable reviewLoader = false;
   @observable tripsLoader = false;
   @observable photosLoader = false;
@@ -68,6 +70,14 @@ class user {
   @persist('object') @observable review = [];
   @persist('object') @observable trips = [];
   @persist('object') @observable photos = [];
+
+  @observable reviewo = [];
+  @observable tripso = [];
+  @observable photoso = [];
+  @observable reviewLoadero = false;
+  @observable tripsLoadero = false;
+  @observable photosLoadero = false;
+  @observable mLoadero = false;
 
   @action setreviewLoader = obj => {
     this.reviewLoader = obj;
@@ -102,6 +112,17 @@ class user {
     this.photos = obj;
   };
 
+  @action clearcurrentUser = () => {
+    this.setUser(false);
+    this.setphotos([]);
+    this.setreview([]);
+    this.settrips([]);
+    this.setfollowers([]);
+    this.setfollowing([]);
+    this.settotalfollowers(0);
+    this.settotalfollowing(0);
+  };
+
   @action attemptToGetReviews = (uid, setgetdata, setrfrsh, dt) => {
     console.warn('getReviesData : ', 'true');
     this.setreviewLoader(true);
@@ -132,6 +153,75 @@ class user {
       setgetdata(true);
       setrfrsh(false);
       this.setphotos(dt);
+    }, 1000);
+  };
+
+  //
+  @action setphotoso = obj => {
+    this.photoso = obj;
+  };
+  @action setreviewo = obj => {
+    this.reviewo = obj;
+  };
+  @action settripso = obj => {
+    this.tripso = obj;
+  };
+  @action setreviewLoadero = obj => {
+    this.reviewLoadero = obj;
+  };
+  @action settripLoadero = obj => {
+    this.tripsLoadero = obj;
+  };
+  @action setphotosLoadero = obj => {
+    this.photosLoadero = obj;
+  };
+  @action setmLoadero = obj => {
+    this.mLoadero = obj;
+  };
+
+  @action clearOtherUser = () => {
+    this.setvUser(false);
+    this.setphotoso([]);
+    this.setreviewo([]);
+    this.settripso([]);
+    this.setfscreen('');
+
+    // this.setfollowers([]);
+    // this.setfollowing([]);
+    // this.settotalfollowers(0);
+    // this.settotalfollowing(0);
+  };
+
+  @action attemptToGetReviewso = (uid, setgetdata, setrfrsh, dt) => {
+    console.warn('getReviesData : ', 'true');
+    this.setreviewLoadero(true);
+    setTimeout(() => {
+      this.setreviewLoadero(false);
+      setgetdata(true);
+      setrfrsh(false);
+      this.setreviewo(dt);
+    }, 1000);
+  };
+
+  @action attemptToGetTripso = (uid, setgetdata, setrfrsh, dt) => {
+    console.warn('getTripsData : ', 'true');
+    this.settripLoadero(true);
+    setTimeout(() => {
+      this.settripLoadero(false);
+      setgetdata(true);
+      setrfrsh(false);
+      this.settripso(dt);
+    }, 1000);
+  };
+
+  @action attemptToGetPhotoso = (uid, setgetdata, setrfrsh, dt) => {
+    console.warn('getPhotosData : ', 'true');
+    this.setphotosLoadero(true);
+    setTimeout(() => {
+      this.setphotosLoadero(false);
+      setgetdata(true);
+      setrfrsh(false);
+      this.setphotoso(dt);
     }, 1000);
   };
 
@@ -228,9 +318,17 @@ class user {
   };
 
   @observable MyProfileProps = false;
+  @observable OtherProfileProps = false;
+  @observable offersProfileProps = false;
 
   @action setMyProfileProps = obj => {
     this.MyProfileProps = obj;
+  };
+  @action setOtherProfileProps = obj => {
+    this.OtherProfileProps = obj;
+  };
+  @action setOfferProfileProps = obj => {
+    this.offersProfileProps = obj;
   };
 
   @action setctripLoader = obj => {
@@ -428,6 +526,11 @@ class user {
   @action.bound
   setvUser(val) {
     this.vuser = val;
+  }
+
+  @action.bound
+  setfscreen(val) {
+    this.fscreen = val;
   }
 
   @action.bound
@@ -1043,14 +1146,8 @@ class user {
   @action.bound
   clearUser = () => {
     this.addauthToken('');
-    this.setUser(false);
-    this.setfollowers([]);
-    this.setfollowing([]);
-    this.settotalfollowers(0);
-    this.settotalfollowing(0);
-    this.setreview([]);
-    this.settrips([]);
-    this.setphotos([]);
+    this.clearcurrentUser();
+    this.clearOtherUser();
     this.setphn('');
     this.setcntr('');
     this.setpwc('');

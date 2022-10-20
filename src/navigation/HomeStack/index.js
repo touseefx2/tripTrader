@@ -71,7 +71,7 @@ export default HomeStack = () => {
       />
       <Drawer.Screen
         name="ConfirmedTrips"
-        component={screens.ConfirmTrips}
+        component={ConfirmedTripsStack}
         options={icon.ConfirmedTripsicon}
       />
       <Drawer.Screen
@@ -448,6 +448,48 @@ let NotificationsStack = () => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: true,
+          });
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+let ConfirmedTripsStack = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="ConfirmedTripss"
+      screenOptions={{
+        animationEnabled: false,
+        headerShown: false,
+      }}>
+      <Stack.Screen
+        name="ConfirmedTripss"
+        component={screens.ConfirmTrips}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: true,
+          });
+        }}
+      />
+      <Stack.Screen
+        name="UserProfile"
+        component={UserProfileStack}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: true,
+          });
+        }}
+      />
+      <Stack.Screen
+        name="Notifications"
+        component={screens.Notifications}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
           });
         }}
       />

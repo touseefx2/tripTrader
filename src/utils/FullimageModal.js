@@ -284,6 +284,12 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     height: '100%',
   },
+  // previewImageStyle: {
+  //   width: width,
+  //   resizeMode: 'cover',
+  //   height: '100%',
+  //   borderRadius: 9,
+  // },
   modalContainer: {
     flex: 1,
     backgroundColor: "'rgba(0,0,0,0.5)'",
@@ -312,9 +318,16 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     resizeMode: 'contain',
-    // width: '100%',
-    // height: '100%',
   },
+  // Image: {
+  //   position: 'absolute',
+  //   top: 0,
+  //   left: 0,
+  //   bottom: 0,
+  //   right: 0,
+  //   resizeMode: 'cover',
+  //   borderRadius: 9,
+  // },
   modalButtonContainer: {
     backgroundColor: theme.color.background,
     borderRadius: 35 / 2,
