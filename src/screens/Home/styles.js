@@ -530,6 +530,7 @@ export const styles = StyleSheet.create({
   mimageLoader: {
     height: '100%',
     width: '100%',
+    borderRadius: 55 / 2,
   },
   miconVerify: {
     width: 24,

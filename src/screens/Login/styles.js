@@ -33,23 +33,23 @@ export const styles = StyleSheet.create({
   section2Title1: {
     color: theme.color.buttonText,
     // fontSize: responsiveFontSize(4.6),
-    fontSize: 36,
+    fontSize: 34,
     fontFamily: theme.fonts.fontBold,
     letterSpacing: -1,
-    lineHeight: 43.2,
+    lineHeight: 41.2,
     marginBottom: 10,
   },
   section2Title2: {
     color: '#FAFAFA',
-    fontSize: 17,
+    fontSize: 15,
     // fontSize: responsiveFontSize(2),
     fontFamily: theme.fonts.fontNormal,
-    lineHeight: 23.8,
+    lineHeight: 21.8,
   },
   section3: {
     paddingHorizontal: 20,
     paddingBottom: Platform.OS == 'android' ? responsiveHeight(4.5) : 10,
-    paddingTop: 10,
+
     // backgroundColor: 'red',
   },
 
@@ -60,7 +60,7 @@ export const styles = StyleSheet.create({
   },
   title1: {
     // fontSize: responsiveFontSize(2.7),
-    fontSize: 22,
+    fontSize: 20.5,
     fontFamily: theme.fonts.titleFont,
     color: theme.color.buttonText,
     textTransform: 'uppercase',
@@ -74,7 +74,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: theme.color.button1,
-    height: 64,
+    height: 58,
     // height: responsiveHeight(8.4),
     borderRadius: 10,
     alignSelf: 'center',
@@ -82,7 +82,7 @@ export const styles = StyleSheet.create({
   buttonTextBottom: {
     color: theme.color.buttonTextGreen,
 
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: theme.fonts.fontBold,
 
     textTransform: 'capitalize',
@@ -96,15 +96,16 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonTextBottomTtitle1: {
-    color: theme.color.buttonText,
-    fontSize: 16,
+    color: '#FFFFFF',
+    fontSize: 14,
     // fontSize: responsiveFontSize(1.85),
     fontFamily: theme.fonts.fontNormal,
     opacity: 0.7,
+    lineHeight: 22,
   },
   buttonTextBottomTtitle2: {
-    color: theme.color.buttonText,
-    fontSize: 16,
+    color: '#FFFFFF',
+    fontSize: 14,
     // fontSize: responsiveFontSize(1.85),
     fontFamily: theme.fonts.fontBold,
     marginLeft: 5,

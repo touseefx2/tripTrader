@@ -38,8 +38,8 @@ function DrawerHeader(props) {
         <Image
           source={src}
           style={{
-            width: 25,
-            height: 20,
+            width: 26,
+            height: 21,
             resizeMode: 'contain',
           }}
         />
@@ -61,12 +61,21 @@ function DrawerHeader(props) {
     const onClick = () => {
       prop.navigation.navigate('Notifications', {screen: ''});
     };
+    let src = require('../../assets/images/bell/img.png');
     return (
-      <TouchableOpacity activeOpacity={0.5} onPress={onClick}>
-        <utils.vectorIcon.SimpleLineIcons
+      <TouchableOpacity activeOpacity={0.8} onPress={onClick}>
+        {/* <utils.vectorIcon.SimpleLineIcons
           name="bell"
           color={theme.color.backgroundGreenText}
           size={23}
+        /> */}
+        <Image
+          source={src}
+          style={{
+            width: 26,
+            height: 26,
+            resizeMode: 'contain',
+          }}
         />
         <View
           style={{
@@ -74,8 +83,8 @@ function DrawerHeader(props) {
             height: 8,
             borderRadius: 8 / 2,
             position: 'absolute',
-            right: 0,
-            top: 2,
+            right: 3,
+            top: 3,
             backgroundColor: theme.color.ntfctnClr,
           }}
         />

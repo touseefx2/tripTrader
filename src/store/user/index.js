@@ -67,6 +67,8 @@ class user {
   @observable tripsLoader = false;
   @observable photosLoader = false;
   @observable mLoader = false;
+  @observable otherUserModalLoader = false;
+
   @persist('object') @observable review = [];
   @persist('object') @observable trips = [];
   @persist('object') @observable photos = [];
@@ -78,6 +80,10 @@ class user {
   @observable tripsLoadero = false;
   @observable photosLoadero = false;
   @observable mLoadero = false;
+
+  @action setotherUserModalLoader = obj => {
+    this.otherUserModalLoader = obj;
+  };
 
   @action setreviewLoader = obj => {
     this.reviewLoader = obj;
@@ -303,6 +309,15 @@ class user {
     this.sethomeModalLoder(true);
     setTimeout(() => {
       this.sethomeModalLoder(false);
+      suc(true);
+    }, 1000);
+  };
+
+  @action attemptToOtherUserMessageSend = (obj, suc) => {
+    console.warn('message send  : ', 'true');
+    this.setotherUserModalLoader(true);
+    setTimeout(() => {
+      this.setotherUserModalLoader(false);
       suc(true);
     }, 1000);
   };

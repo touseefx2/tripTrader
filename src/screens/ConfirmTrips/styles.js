@@ -165,7 +165,7 @@ export const styles = StyleSheet.create({
     top: 5,
   },
   mtextContainer: {
-    width: '83%',
+    width: '80%',
     top: 3,
     // backgroundColor: 'red',
   },

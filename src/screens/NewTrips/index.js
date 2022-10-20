@@ -3313,9 +3313,11 @@ function NewTrips(props) {
 
   const renderSec3 = () => {
     let bc = {
-      paddingHorizontal: 15,
-      paddingVertical: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
       borderRadius: 8,
+      paddingVertical: 12,
+      width: '47%',
     };
     let dt = editTrip.data || [];
     let status = '';
@@ -3332,6 +3334,7 @@ function NewTrips(props) {
           {
             marginTop: 15,
             flexDirection: 'row',
+            justifyContent: 'space-between',
             alignItems: 'center',
           },
         ]}>
@@ -3341,7 +3344,7 @@ function NewTrips(props) {
             setmodalChk(!ch ? 'suspend' : 'activate');
             setisModal(true);
           }}
-          style={[bc, {backgroundColor: theme.color.button2, marginRight: 15}]}>
+          style={[bc, {backgroundColor: theme.color.button2}]}>
           <Text
             style={{
               color: '#30563A',
@@ -3359,10 +3362,10 @@ function NewTrips(props) {
             setmodalChk('delete');
             setisModal(true);
           }}
-          style={[bc, {backgroundColor: '#B93B3B'}]}>
+          style={[bc, {backgroundColor: '#F8ECEC'}]}>
           <Text
             style={{
-              color: theme.color.buttonText,
+              color: '#B93B3B',
               fontSize: 13,
               fontFamily: theme.fonts.fontBold,
               textTransform: 'capitalize',

@@ -343,11 +343,9 @@ function Received(props) {
   };
 
   const setIsSendObj = v => {
+    closeModalAll();
     setsendObj(modalObj.item.user);
     setisOfferSend(v);
-    setTimeout(() => {
-      closeModalAll();
-    }, 10);
   };
 
   const ConfirmSend = () => {
@@ -355,32 +353,11 @@ function Received(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        setIsSendObj(true);
-        // const obj = {
-        //   _id: (Math.random() * 10).toFixed(0),
-        //   title: title,
-        //   user: store.User.user._id,
-        //   offer: trade,
-        //   return: Return,
-        //   loc: {
-        //     name: 'Miami, Florida',
-        //     coords: [],
-        //   },
-        //   status: status,
-        //   acceptOtherTrades: acceptOther,
-        //   duration: {
-        //     number: durNum,
-        //     title: dur.title,
-        //   },
-        //   availablity: {
-        //     startDate: isSelDate1,
-        //     endDate: isSelDate2,
-        //   },
-        //   photos: photos,
-        //   unavailable: isSetUnavailable != false ? isSetUnavailable : {},
-        // };
-        // console.warn('create trip obj : ', obj);
-        // store.User.attemptToOfferSend({}, setIsSendObj);
+        let item = modalObj.item;
+        let ind = item.i;
+
+        // console.warn('confirm offer  obj : ', obj);
+        store.Trips.attemptToAcceptOffer({}, setIsSendObj);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -552,7 +529,7 @@ function Received(props) {
             </View>
           </View>
 
-          <View style={{flexDirection: 'row', marginTop: 2}}>
+          <View style={{flexDirection: 'row', marginTop: 3}}>
             <utils.vectorIcon.Entypo
               name="star"
               color={theme.color.rate}
@@ -607,7 +584,7 @@ function Received(props) {
       };
 
       return (
-        <View style={{width: '96%', marginTop: 20, alignSelf: 'center'}}>
+        <View style={{width: '97%', marginTop: 20, alignSelf: 'center'}}>
           <View
             style={{
               width: '100%',
@@ -625,7 +602,7 @@ function Received(props) {
                     justifyContent: 'space-between',
                   }}>
                   <Image style={iconS} source={durtnicon} />
-                  <View style={{width: '80%'}}>
+                  <View style={{width: '78%'}}>
                     <Text style={titleM2}>{dur}</Text>
                   </View>
                 </View>
@@ -637,7 +614,7 @@ function Received(props) {
                     marginTop: 10,
                   }}>
                   <Image style={iconS} source={avlblicon} />
-                  <View style={{width: '80%'}}>
+                  <View style={{width: '78%'}}>
                     <Text style={titleM2}>{avlbl}</Text>
                   </View>
                 </View>
@@ -649,7 +626,7 @@ function Received(props) {
                     marginTop: 10,
                   }}>
                   <Image style={iconS} source={locationicon} />
-                  <View style={{width: '80%'}}>
+                  <View style={{width: '78%'}}>
                     <Text style={titleM2}>{loc}</Text>
                   </View>
                 </View>
@@ -677,7 +654,7 @@ function Received(props) {
                     justifyContent: 'space-between',
                   }}>
                   <Image style={iconS} source={durtnicon} />
-                  <View style={{width: '80%'}}>
+                  <View style={{width: '78%'}}>
                     <Text style={titleM2}>{durt}</Text>
                   </View>
                 </View>
@@ -689,7 +666,7 @@ function Received(props) {
                     marginTop: 10,
                   }}>
                   <Image style={iconS} source={avlblicon} />
-                  <View style={{width: '80%'}}>
+                  <View style={{width: '78%'}}>
                     <Text style={titleM2}>{avlblt}</Text>
                   </View>
                 </View>
@@ -701,7 +678,7 @@ function Received(props) {
                     marginTop: 10,
                   }}>
                   <Image style={iconS} source={locationicon} />
-                  <View style={{width: '80%'}}>
+                  <View style={{width: '78%'}}>
                     <Text style={titleM2}>{loct}</Text>
                   </View>
                 </View>
@@ -821,7 +798,7 @@ function Received(props) {
             }}
             style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc]}>
             <Text numberOfLines={1} ellipsizeMode="tail" style={btS}>
-              Choose Trip Date...
+              Choose Trip Date
             </Text>
           </Pressable>
         </View>
@@ -1037,10 +1014,12 @@ function Received(props) {
   };
 
   const closeModalAll = () => {
-    clearModal1();
-    clearModal2();
-    setmodalHeight(0);
-    setstep(1);
+    if (!mloader) {
+      clearModal1();
+      clearModal2();
+      setmodalHeight(0);
+      setstep(1);
+    }
   };
 
   const closeModal = () => {
@@ -1076,8 +1055,10 @@ function Received(props) {
   };
 
   const clearModal2 = () => {
-    setstep(1);
-    setmodalHeight(0);
+    if (!mloader) {
+      setstep(1);
+      setmodalHeight(0);
+    }
   };
 
   const renderModal = () => {
@@ -1622,7 +1603,7 @@ function Received(props) {
         };
 
         return (
-          <View style={{width: '96%', marginTop: 20, alignSelf: 'center'}}>
+          <View style={{width: '97%', marginTop: 20, alignSelf: 'center'}}>
             <View
               style={{
                 width: '100%',
@@ -1650,7 +1631,7 @@ function Received(props) {
                       justifyContent: 'space-between',
                     }}>
                     <Image style={iconS} source={durtnicon} />
-                    <View style={{width: '80%'}}>
+                    <View style={{width: '78%'}}>
                       <Text style={titleM2}>{dur}</Text>
                     </View>
                   </View>
@@ -1662,7 +1643,7 @@ function Received(props) {
                       marginTop: 10,
                     }}>
                     <Image style={iconS} source={avlblicon} />
-                    <View style={{width: '80%'}}>
+                    <View style={{width: '78%'}}>
                       <Text style={titleM2}>{avlbl}</Text>
                     </View>
                   </View>
@@ -1674,7 +1655,7 @@ function Received(props) {
                       marginTop: 10,
                     }}>
                     <Image style={iconS} source={locationicon} />
-                    <View style={{width: '80%'}}>
+                    <View style={{width: '78%'}}>
                       <Text style={titleM2}>{loc}</Text>
                     </View>
                   </View>
@@ -1712,7 +1693,7 @@ function Received(props) {
                       justifyContent: 'space-between',
                     }}>
                     <Image style={iconS} source={durtnicon} />
-                    <View style={{width: '80%'}}>
+                    <View style={{width: '78%'}}>
                       <Text style={titleM2}>{durt}</Text>
                     </View>
                   </View>
@@ -1724,7 +1705,7 @@ function Received(props) {
                       marginTop: 10,
                     }}>
                     <Image style={iconS} source={avlblicon} />
-                    <View style={{width: '80%'}}>
+                    <View style={{width: '78%'}}>
                       <Text style={titleM2}>{avlblt}</Text>
                     </View>
                   </View>
@@ -1736,7 +1717,7 @@ function Received(props) {
                       marginTop: 10,
                     }}>
                     <Image style={iconS} source={locationicon} />
-                    <View style={{width: '80%'}}>
+                    <View style={{width: '78%'}}>
                       <Text style={titleM2}>{loct}</Text>
                     </View>
                   </View>
@@ -1770,6 +1751,7 @@ function Received(props) {
         const renderButton1 = () => {
           return (
             <Pressable
+              disabled={mloader}
               onPress={closeModalAll}
               style={({pressed}) => [
                 {
@@ -1943,10 +1925,10 @@ function Received(props) {
                 styles.modalCross,
               ]}
               onPress={closeMessageModal}>
-              <utils.vectorIcon.EvilIcons
-                name="close"
+              <utils.vectorIcon.Ionicons
+                name="ios-close-outline"
                 color={theme.color.title}
-                size={30}
+                size={32}
               />
             </Pressable>
           );

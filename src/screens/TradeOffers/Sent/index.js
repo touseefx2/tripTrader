@@ -56,16 +56,19 @@ function Sent(props) {
   const [modalObj, setmodalObj] = useState(false);
   const [modalChk, setmodalChk] = useState(false);
   const [isModal, setisModal] = useState(false);
+
   const [isSendMessage, setisSendMessage] = useState(false);
   const [sendObj, setsendObj] = useState('');
 
   let mloader = store.Trips.confirmTripsSendMessageLoader;
 
   const [message, setMessage] = useState('');
-  const closeMessageModal = () => {
+
+  const closeModal = () => {
     setisModal(false);
-    setmodalChk(false);
     setmodalObj(false);
+    setmodalChk(false);
+    setmodalHeight(0);
     setMessage('');
   };
 
@@ -78,8 +81,7 @@ function Sent(props) {
           last_name: 'Thompson',
           avg_rating: 3.8,
           total_reviews: 190,
-          photo:
-            'https://www.adobe.com/express/create/media_127540366421d3d5bfcaf8202527ca7d37741fd5d.jpeg?width=400&format=jpeg&optimize=medium',
+          photo: store.User.user.photo,
         },
         offering: {
           offer: 'Whitetail Hunting in Central NC',
@@ -113,7 +115,7 @@ function Sent(props) {
 
   const setIsSendMessage = v => {
     setsendObj(modalObj.item.user);
-    closeMessageModal();
+    closeModal();
     setisSendMessage(v);
   };
 
@@ -318,7 +320,7 @@ function Sent(props) {
             </View>
           </View>
 
-          <View style={{flexDirection: 'row', marginTop: 2}}>
+          <View style={{flexDirection: 'row', marginTop: 3}}>
             <utils.vectorIcon.Entypo
               name="star"
               color={theme.color.rate}
@@ -390,7 +392,7 @@ function Sent(props) {
                     justifyContent: 'space-between',
                   }}>
                   <Image style={iconS} source={durtnicon} />
-                  <View style={{width: '80%'}}>
+                  <View style={{width: '78%'}}>
                     <Text style={titleM2}>{dur}</Text>
                   </View>
                 </View>
@@ -402,7 +404,7 @@ function Sent(props) {
                     marginTop: 10,
                   }}>
                   <Image style={iconS} source={avlblicon} />
-                  <View style={{width: '80%'}}>
+                  <View style={{width: '78%'}}>
                     <Text style={titleM2}>{avlbl}</Text>
                   </View>
                 </View>
@@ -414,7 +416,7 @@ function Sent(props) {
                     marginTop: 10,
                   }}>
                   <Image style={iconS} source={locationicon} />
-                  <View style={{width: '80%'}}>
+                  <View style={{width: '78%'}}>
                     <Text style={titleM2}>{loc}</Text>
                   </View>
                 </View>
@@ -426,6 +428,7 @@ function Sent(props) {
                 width: 24,
                 height: 24,
                 resizeMode: 'contain',
+                top: 26,
               }}
               source={trnfericon}
             />
@@ -441,7 +444,7 @@ function Sent(props) {
                     justifyContent: 'space-between',
                   }}>
                   <Image style={iconS} source={durtnicon} />
-                  <View style={{width: '80%'}}>
+                  <View style={{width: '78%'}}>
                     <Text style={titleM2}>{durt}</Text>
                   </View>
                 </View>
@@ -453,7 +456,7 @@ function Sent(props) {
                     marginTop: 10,
                   }}>
                   <Image style={iconS} source={avlblicon} />
-                  <View style={{width: '80%'}}>
+                  <View style={{width: '78%'}}>
                     <Text style={titleM2}>{avlblt}</Text>
                   </View>
                 </View>
@@ -465,7 +468,7 @@ function Sent(props) {
                     marginTop: 10,
                   }}>
                   <Image style={iconS} source={locationicon} />
-                  <View style={{width: '80%'}}>
+                  <View style={{width: '78%'}}>
                     <Text style={titleM2}>{loct}</Text>
                   </View>
                 </View>
@@ -567,7 +570,12 @@ function Sent(props) {
             marginTop: 30,
           }}>
           <Pressable
-            onPress={() => {}}
+            disabled={mloader}
+            onPress={() => {
+              setmodalObj({item: item, i: index});
+              setmodalChk('cancelOffer');
+              setisModal(true);
+            }}
             style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc]}>
             <Text numberOfLines={1} ellipsizeMode="tail" style={btS}>
               Cancel Offer
@@ -782,6 +790,10 @@ function Sent(props) {
   };
 
   const renderModal = () => {
+    let c = modalHeight >= maxModalHeight ? true : false;
+    let style = c ? [styles.modal, {height: maxModalHeight}] : styles.modal2;
+    let item = modalObj.item;
+
     if (modalChk == 'message') {
       const renderHeader = () => {
         let text = 'Message User';
@@ -794,7 +806,7 @@ function Sent(props) {
                 {opacity: pressed ? 0.7 : 1.0},
                 styles.modalCross,
               ]}
-              onPress={closeMessageModal}>
+              onPress={closeModal}>
               <utils.vectorIcon.EvilIcons
                 name="close"
                 color={theme.color.title}
@@ -918,13 +930,338 @@ function Sent(props) {
       };
 
       return (
-        <Modal visible={isModal} transparent onRequestClose={closeMessageModal}>
+        <Modal visible={isModal} transparent onRequestClose={closeModal}>
           <SafeAreaView style={styles.modalContainer}>
             <View style={styles.modalContainer2}>
               <View style={styles.modal2}>
                 {renderHeader()}
                 {renderField()}
                 {renderBottom()}
+              </View>
+            </View>
+          </SafeAreaView>
+        </Modal>
+      );
+    }
+
+    if (modalChk == 'cancelOffer') {
+      const renderHeader = () => {
+        let text = 'Cancel Offer?';
+
+        const renderCross = () => {
+          return (
+            <Pressable
+              disabled={mloader}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.7 : 1.0},
+                [
+                  !c
+                    ? {
+                        position: 'absolute',
+                        bottom: 0,
+                        right: 0,
+                      }
+                    : {
+                        position: 'absolute',
+                        bottom: 7,
+                        right: 15,
+                      },
+                ],
+              ]}
+              onPress={closeModal}>
+              <utils.vectorIcon.Ionicons
+                name="ios-close-outline"
+                color={theme.color.title}
+                size={32}
+              />
+            </Pressable>
+          );
+        };
+
+        const renderTitle = () => {
+          return <Text style={styles.modalTitle}>{text}</Text>;
+        };
+
+        return (
+          <View
+            style={
+              c
+                ? {
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    paddingHorizontal: 15,
+                    paddingTop: 15,
+                    paddingBottom: 7,
+                    shadowColor: '#000000',
+                    shadowOffset: {width: 0, height: 1}, // change this for more shadow
+                    shadowOpacity: 0.1,
+                    elevation: 1,
+                    backgroundColor: theme.color.background,
+                    borderTopLeftRadius: 10,
+                    borderTopRightRadius: 10,
+                  }
+                : {
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }
+            }>
+            {renderTitle()}
+            {renderCross()}
+          </View>
+        );
+      };
+
+      const renderInfo = () => {
+        let userName = item.user.first_name + ' ' + item.user.last_name;
+        let photo = item.user.photo || '';
+
+        const renderProfile = () => {
+          return (
+            <View style={styles.mProfileImgContainer}>
+              <ProgressiveFastImage
+                style={styles.mProfileImg}
+                source={
+                  photo != ''
+                    ? {uri: photo}
+                    : require('../../../assets/images/drawer/guest/img.png')
+                }
+                loadingImageStyle={styles.mimageLoader}
+                loadingSource={require('../../../assets/images/imgLoad/img.jpeg')}
+                blurRadius={5}
+              />
+              {/* {isVeirfy && (
+                <Image
+                  style={styles.miconVerify}
+                  source={require('../../assets/images/verified/img.png')}
+                />
+              )} */}
+            </View>
+          );
+        };
+
+        const renderText = () => {
+          return (
+            <View style={styles.mtextContainer}>
+              <Text
+                style={{
+                  color: theme.color.subTitleLight,
+                  fontSize: 12,
+                  fontFamily: theme.fonts.fontBold,
+                  textTransform: 'capitalize',
+                }}>
+                Member
+              </Text>
+
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{
+                  color: '#081A24',
+                  fontSize: 15,
+                  fontFamily: theme.fonts.fontBold,
+                  lineHeight: 23,
+                  textTransform: 'capitalize',
+                }}>
+                {userName}
+              </Text>
+            </View>
+          );
+        };
+
+        return (
+          <View style={styles.modalinfoConatiner}>
+            {renderProfile()}
+            {renderText()}
+          </View>
+        );
+      };
+
+      const renderField = () => {
+        let duration = parseInt(item.duration.number) || '';
+        let dtitile = item.duration.title;
+        let dt = '';
+
+        if (duration <= 1) {
+          duration = 'Whole';
+          dtitile = dtitile.substring(0, dtitile.length - 1);
+        }
+        dt = duration + ' ' + dtitile;
+        let offer = item.offer || '';
+        let trade = item.return || '';
+        return (
+          <>
+            <View style={{paddingLeft: 10, paddingRight: 20}}>
+              <View style={styles.field}>
+                <Text style={styles.filedTitle}>Offering</Text>
+                <Text style={[styles.filedTitle2, {color: theme.color.title}]}>
+                  <Text
+                    style={[
+                      styles.filedTitle2,
+                      {
+                        color: theme.color.title,
+                        textTransform: 'capitalize',
+                      },
+                    ]}>
+                    {dt}
+                  </Text>{' '}
+                  {offer}
+                </Text>
+              </View>
+
+              <View style={styles.field}>
+                <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  style={styles.filedTitle}>
+                  for trade
+                </Text>
+                <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  style={[styles.filedTitle2, {color: theme.color.title}]}>
+                  {trade}
+                </Text>
+              </View>
+            </View>
+          </>
+        );
+      };
+
+      const renderBottom = () => {
+        const renderButton1 = () => {
+          return (
+            <>
+              <TouchableOpacity
+                disabled={mloader}
+                onPress={
+                  () => {
+                    closeModal();
+                  }
+                  // deleteTrip(item, modalObj.i)
+                }
+                activeOpacity={0.7}
+                style={{
+                  width: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#B93B3B',
+                  height: 50,
+                  borderRadius: 10,
+                  alignSelf: 'center',
+                }}>
+                {!mloader && (
+                  <Text
+                    style={{
+                      color: theme.color.buttonText,
+                      fontSize: 16,
+                      fontFamily: theme.fonts.fontBold,
+                      textTransform: 'none',
+                    }}>
+                    Yes, cancel offer
+                  </Text>
+                )}
+                {mloader && (
+                  <ActivityIndicator size={20} color={theme.color.buttonText} />
+                )}
+              </TouchableOpacity>
+            </>
+          );
+        };
+
+        const renderButton2 = () => {
+          return (
+            <>
+              <TouchableOpacity
+                disabled={mloader}
+                onPress={closeModal}
+                activeOpacity={0.7}
+                style={{
+                  width: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: theme.color.button2,
+                  height: 50,
+                  borderRadius: 10,
+                  alignSelf: 'center',
+                  // borderWidth: 1,
+                  // borderColor: theme.color.fieldBorder,
+                  marginTop: 12,
+                }}>
+                <Text
+                  style={{
+                    color: '#30563A',
+                    textTransform: 'none',
+                    fontFamily: theme.fonts.fontBold,
+                    fontSize: 16,
+                  }}>
+                  No, keep it
+                </Text>
+              </TouchableOpacity>
+            </>
+          );
+        };
+
+        return (
+          <View
+            style={
+              c
+                ? {
+                    backgroundColor: theme.color.background,
+                    shadowColor: '#000000',
+                    shadowOffset: {width: 0, height: -1}, // change this for more shadow
+                    shadowOpacity: 0.1,
+                    elevation: 5,
+                    borderBottomLeftRadius: 10,
+                    borderBottomRightRadius: 10,
+                    marginTop: 5,
+                  }
+                : {marginTop: 40}
+            }>
+            <View
+              style={
+                c ? styles.modalBottomContainer : styles.modalBottomContainer2
+              }>
+              {renderButton1()}
+              {renderButton2()}
+            </View>
+          </View>
+        );
+      };
+
+      return (
+        <Modal visible={isModal} transparent onRequestClose={closeModal}>
+          <SafeAreaView style={styles.modalContainer}>
+            <View style={styles.modalContainer2}>
+              <View
+                onLayout={event => {
+                  if (!c) {
+                    let {height} = event.nativeEvent.layout;
+                    setmodalHeight(height);
+                  }
+                }}
+                style={style}>
+                {c && (
+                  <>
+                    {renderHeader()}
+                    <ScrollView
+                      contentContainerStyle={{paddingHorizontal: 15}}
+                      showsVerticalScrollIndicator={false}
+                      style={{flex: 1}}>
+                      {renderInfo()}
+                      {renderField()}
+                    </ScrollView>
+                    {renderBottom()}
+                  </>
+                )}
+
+                {!c && (
+                  <>
+                    {renderHeader()}
+                    {/* {renderInfo()}
+                    {renderField()} */}
+                    {renderBottom()}
+                  </>
+                )}
               </View>
             </View>
           </SafeAreaView>

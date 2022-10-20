@@ -165,7 +165,7 @@ export const styles = StyleSheet.create({
     top: 5,
   },
   mtextContainer: {
-    width: '83%',
+    width: '81%',
     top: 3,
     // backgroundColor: 'red',
   },
@@ -485,7 +485,7 @@ export const styles = StyleSheet.create({
   },
   modalinfoConatiner: {
     width: '100%',
-    borderRadius: 5,
+    borderRadius: 10,
 
     // marginTop: 10,
 

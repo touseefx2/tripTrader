@@ -207,9 +207,10 @@ export const styles = StyleSheet.create({
     elevation: 3,
   },
   editImgConatiner: {
-    position: 'absolute',
-    right: 15,
-    top: 20,
+    width: 35,
+    paddingVertical: 7,
+    alignItems: 'flex-end',
+    // backgroundColor: 'red',
   },
   editImg: {
     width: 21,
@@ -613,8 +614,276 @@ export const styles = StyleSheet.create({
     fontFamily: theme.fonts.fontBold,
     textTransform: 'capitalize',
   },
+
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContainer2: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 20,
+  },
+  modal: {
+    // width: Platform.OS == 'android' ? '98%' : '88%',
+    width: '100%',
+    alignSelf: 'center',
+    paddingTop: 0,
+    backgroundColor: theme.color.background,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+  },
+  modal2: {
+    // width: Platform.OS == 'android' ? '98%' : '88%',
+    width: '100%',
+    alignSelf: 'center',
+    padding: 15,
+    backgroundColor: theme.color.background,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+  },
   modalCross: {
     position: 'absolute',
     right: 0,
+  },
+  modalTitle: {
+    fontSize: 19,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontBold,
+  },
+  modalFieldConatiner: {
+    width: '100%',
+    marginTop: 10,
+  },
+
+  mfT1: {
+    fontSize: 12,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
+    lineHeight: 19,
+  },
+
+  mFieldContainer: {
+    marginTop: 5,
+    width: '100%',
+    height: 42,
+    padding: 10,
+    borderRadius: 8,
+    borderColor: theme.color.fieldBorder,
+    borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  mfT2: {
+    fontSize: 12,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontNormal,
+    lineHeight: 19,
+    width: '85%',
+  },
+  mfT2icon: {
+    width: 25,
+    height: 25,
+    resizeMode: 'contain',
+  },
+  mT1: {
+    fontSize: 14,
+    color: theme.color.subTitle,
+    fontFamily: theme.fonts.fontNormal,
+  },
+  mT2: {
+    fontSize: 14.5,
+    color: theme.color.boxTitle,
+    fontFamily: theme.fonts.fontBold,
+    lineHeight: 22.5,
+    textTransform: 'capitalize',
+    width: '81%',
+  },
+  mProfileImgContainerm: {
+    width: 35,
+    height: 35,
+    borderRadius: 35 / 2,
+    borderWidth: 1,
+    borderColor: theme.color.photoBorderColor,
+  },
+  mProfileImgm: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+    borderRadius: 35 / 2,
+  },
+
+  ButtonContainer: {
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.color.button1,
+  },
+  ButtonText: {
+    fontSize: 12.5,
+    color: theme.color.buttonText,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
+  },
+  modalBottomContainerrr: {
+    marginTop: 20,
+  },
+  textArea: {
+    width: '100%',
+    height: 200,
+    backgroundColor: '#FAFAFA',
+    borderRadius: 4,
+    marginTop: 12,
+
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 2,
+    marginBottom: 5,
+  },
+  mTextInpt: {
+    height: '100%',
+    paddingHorizontal: 15,
+    textAlignVertical: 'top',
+  },
+
+  mProfileImgContainerss: {
+    // borderWidth: 2,
+    borderColor: theme.color.fieldBorder,
+    width: 80,
+    height: 80,
+    borderRadius: 80 / 2,
+    borderWidth: 1,
+    borderColor: theme.color.fieldBc,
+
+    // alignItems: 'center',
+    // justifyContent: 'center',
+  },
+
+  mProfileImgContainer: {
+    // borderWidth: 2,
+    borderColor: theme.color.fieldBorder,
+    width: 48,
+    height: 48,
+    borderRadius: 48 / 2,
+    top: 5,
+
+    // alignItems: 'center',
+    // justifyContent: 'center',
+  },
+  mProfileImg: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+    borderRadius: 48 / 2,
+  },
+
+  mProfileImgss: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+    borderRadius: 80 / 2,
+  },
+
+  mimageLoader: {
+    height: '100%',
+    width: '100%',
+    // resizeMode: 'contain',
+    borderRadius: 80 / 2,
+  },
+
+  mProfileImgContainer2: {
+    width: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mProfileImg2: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+  },
+
+  modalinfoConatiner: {
+    width: '100%',
+    borderRadius: 10,
+
+    // marginTop: 10,
+
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+
+    // borderRadius: 10,
+
+    // alignItems: 'center',
+
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
+    backgroundColor: theme.color.background,
+  },
+  modalinfoConatiner2: {
+    width: '100%',
+    marginTop: 10,
+    padding: 10,
+    borderRadius: 8,
+
+    backgroundColor: '#F5F5F5',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  rmodalBottomContainer: {
+    paddingTop: 10,
+    paddingBottom: 15,
+    paddingHorizontal: 15,
+
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rmodalBottomContainer2: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  modalBottomContainer: {
+    paddingTop: 10,
+    paddingBottom: 15,
+    paddingHorizontal: 15,
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    // justifyContent: 'space-between',
+  },
+  modalBottomContainer2: {
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    // justifyContent: 'space-between',
   },
 });

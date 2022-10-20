@@ -81,6 +81,15 @@ class trips {
     }, 1000);
   };
 
+  @action attemptToAcceptOffer = (obj, suc) => {
+    console.warn('accept offer  : ', 'true');
+    this.setconfirmTripsSendMessageLoader(true);
+    setTimeout(() => {
+      this.setconfirmTripsSendMessageLoader(false);
+      suc(true);
+    }, 1200);
+  };
+
   @observable sendOffers = [];
   @action setsendOffers = obj => {
     this.sendOffers = obj;

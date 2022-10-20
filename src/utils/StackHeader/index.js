@@ -66,16 +66,21 @@ function StackHeader(props) {
     const onClick = () => {
       prop.navigation.navigate('Notifications', {screen: scrn});
     };
+    let src = require('../../assets/images/bell/img.png');
+
     return (
       // <View style={{width: 22}} />
       <TouchableOpacity
         onPress={onClick}
         disabled={headerTitle == 'Notifications' ? true : false}
-        activeOpacity={0.5}>
-        <utils.vectorIcon.SimpleLineIcons
-          name="bell"
-          color={theme.color.backgroundGreenText}
-          size={23}
+        activeOpacity={0.8}>
+        <Image
+          source={src}
+          style={{
+            width: 26,
+            height: 26,
+            resizeMode: 'contain',
+          }}
         />
         <View
           style={{
@@ -83,8 +88,8 @@ function StackHeader(props) {
             height: 8,
             borderRadius: 8 / 2,
             position: 'absolute',
-            right: 0,
-            top: 2,
+            right: 3,
+            top: 3,
             backgroundColor: theme.color.ntfctnClr,
           }}
         />

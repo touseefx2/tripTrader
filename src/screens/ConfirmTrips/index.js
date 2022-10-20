@@ -324,7 +324,7 @@ function ConfirmTrips(props) {
           </View>
 
           {/* <View style={{flexDirection: 'row', justifyContent: 'space-between',marginTop: 3}}> */}
-          <View style={{width: '100%'}}>
+          <View style={{width: '100%', marginTop: 2}}>
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
@@ -396,7 +396,7 @@ function ConfirmTrips(props) {
                     justifyContent: 'space-between',
                   }}>
                   <Image style={iconS} source={durtnicon} />
-                  <View style={{width: '80%'}}>
+                  <View style={{width: '78%'}}>
                     <Text style={titleM2}>{dur}</Text>
                   </View>
                 </View>
@@ -408,7 +408,7 @@ function ConfirmTrips(props) {
                     marginTop: 10,
                   }}>
                   <Image style={iconS} source={avlblicon} />
-                  <View style={{width: '80%'}}>
+                  <View style={{width: '78%'}}>
                     <Text style={titleM2}>{avlbl}</Text>
                   </View>
                 </View>
@@ -420,7 +420,7 @@ function ConfirmTrips(props) {
                     marginTop: 10,
                   }}>
                   <Image style={iconS} source={locationicon} />
-                  <View style={{width: '80%'}}>
+                  <View style={{width: '78%'}}>
                     <Text style={titleM2}>{loc}</Text>
                   </View>
                 </View>
@@ -431,6 +431,7 @@ function ConfirmTrips(props) {
               style={{
                 width: 24,
                 height: 24,
+                top: 26,
                 resizeMode: 'contain',
               }}
               source={trnfericon}
@@ -447,7 +448,7 @@ function ConfirmTrips(props) {
                     justifyContent: 'space-between',
                   }}>
                   <Image style={iconS} source={durtnicon} />
-                  <View style={{width: '80%'}}>
+                  <View style={{width: '78%'}}>
                     <Text style={titleM2}>{durt}</Text>
                   </View>
                 </View>
@@ -459,7 +460,7 @@ function ConfirmTrips(props) {
                     marginTop: 10,
                   }}>
                   <Image style={iconS} source={avlblicon} />
-                  <View style={{width: '80%'}}>
+                  <View style={{width: '78%'}}>
                     <Text style={titleM2}>{avlblt}</Text>
                   </View>
                 </View>
@@ -471,7 +472,7 @@ function ConfirmTrips(props) {
                     marginTop: 10,
                   }}>
                   <Image style={iconS} source={locationicon} />
-                  <View style={{width: '80%'}}>
+                  <View style={{width: '78%'}}>
                     <Text style={titleM2}>{loct}</Text>
                   </View>
                 </View>
@@ -766,10 +767,10 @@ function ConfirmTrips(props) {
                 styles.modalCross,
               ]}
               onPress={closeMessageModal}>
-              <utils.vectorIcon.EvilIcons
-                name="close"
+              <utils.vectorIcon.Ionicons
+                name="ios-close-outline"
                 color={theme.color.title}
-                size={30}
+                size={32}
               />
             </Pressable>
           );
