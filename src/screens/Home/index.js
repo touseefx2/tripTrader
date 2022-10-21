@@ -199,20 +199,27 @@ const data = [
       total_reviews: 100,
       isVerified: false,
     },
-    availablity: {endDate: '2022-11-05', startDate: '2022-10-23'},
+    availablity: {endDate: '2022-12-01', startDate: '2022-11-01'},
     duration: {number: '1', title: 'days'},
     unavailable: {
       all_unavailable_dates: [
-        '2022-10-24',
-        '2022-10-25',
-        '2022-10-27',
         '2022-11-03',
+        '2022-11-10',
+        '2022-11-17',
+        '2022-11-21',
+        '2022-11-24',
+        '2022-11-25',
       ],
       days_of_week: ['Thu'],
-      esd_text: 'Oct 24-25',
-      exclude_specific_dates: ['2022-10-24', '2022-10-25'],
-      repeat_every: {endRepeatOn: '2022-11-05', num: 1, title: 'Weeks'},
-      unavailable_days_of_week: ['2022-10-27', '2022-11-03'],
+      esd_text: 'Nov 21, Nov 25',
+      exclude_specific_dates: ['2022-11-21', '2022-11-25'],
+      repeat_every: {endRepeatOn: '2022-12-01', num: 1, title: 'Weeks'},
+      unavailable_days_of_week: [
+        '2022-11-03',
+        '2022-11-10',
+        '2022-11-17',
+        '2022-11-24',
+      ],
       wtxt: 'Thu (weekly)',
     },
   },
@@ -379,6 +386,7 @@ function Home(props) {
   const closeAllDropDown = () => {
     setisDropDownTrip(false);
     setisDropDownDur(false);
+    setisDropDownrDur(false);
   };
 
   useEffect(() => {
@@ -3313,6 +3321,42 @@ function Home(props) {
               {renderShowData()}
             </View>
           </View>
+        );
+      };
+
+      const renderDropDown = c => {
+        let data = [];
+
+        if (c == 'dur') {
+          data = durtn;
+        }
+        if (c == 'rdur') {
+          data = rdurtn;
+        }
+
+        const onclickSelect = d => {
+          if (c == 'dur') {
+            setdur(d);
+          }
+          if (c == 'rdur') {
+            setrdur(d);
+          }
+        };
+
+        // console.log('drop down data : ', data);
+        let abs = Platform.OS == 'ios' ? false : true;
+        return (
+          <theme.DropDown
+            data={data}
+            onSelectItem={d => {
+              onclickSelect(d);
+            }}
+            setVisible={d => {
+              closeAllDropDown();
+            }}
+            c={c}
+            absolute={abs}
+          />
         );
       };
 

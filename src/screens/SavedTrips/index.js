@@ -320,8 +320,11 @@ function SavedTrips(props) {
             </View>
           </View>
           <View style={{marginTop: 10}}>
-            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.sec3T31}>
-              In Return For
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={[styles.sec3T31, {color: theme.color.subTitleLight}]}>
+              FOR TRADE
             </Text>
             <Text numberOfLines={1} ellipsizeMode="tail" style={styles.sec3T32}>
               {trade}

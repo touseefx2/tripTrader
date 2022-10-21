@@ -286,7 +286,7 @@ function Photos(props) {
               {backgroundColor: theme.color.button2},
             ]}
             onPress={closeDeleteModal}>
-            <Text style={[styles.ButtonText, {color: theme.color.subTitle}]}>
+            <Text style={[styles.ButtonText, {color: '#30563A'}]}>
               No, keep it
             </Text>
           </Pressable>

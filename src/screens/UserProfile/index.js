@@ -221,7 +221,7 @@ function UserProfile(props) {
     store.User.setOtherProfileProps(props);
 
     return () => {
-      //  store.User.clearOtherUser();
+      store.User.clearOtherUser();
     };
   }, []);
 

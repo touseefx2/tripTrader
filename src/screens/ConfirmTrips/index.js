@@ -924,7 +924,7 @@ function ConfirmTrips(props) {
               ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
               ListHeaderComponent={ListHeader}
-              ListFooterComponent={ListFooter}
+              // ListFooterComponent={ListFooter}
             />
           </View>
 

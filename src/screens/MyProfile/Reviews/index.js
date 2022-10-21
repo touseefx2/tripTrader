@@ -659,6 +659,7 @@ function Reviews(props) {
                 value={comment}
                 onChangeText={t => setcomment(t)}
                 textAlignVertical="top"
+                placeholder="What do you want to say?"
                 style={styles.modalInput}
                 maxLength={maxCommentLength}
               />

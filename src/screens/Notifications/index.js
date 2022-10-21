@@ -119,8 +119,8 @@ function Notifications(props) {
         title: 'Welcome to Trip Trader!',
         subTitle:
           'We’re excited you’re here. Feel free to browse the community as a guest before signing up.',
-        createdAt: '3 days ago',
-        isRead: '10 mins ago',
+        createdAt: '10 mins ago',
+        isRead: true,
       },
     ];
 
@@ -229,7 +229,7 @@ function Notifications(props) {
 
     if (topic == 'userFollow') {
       user = item.user;
-      userm = 'followd you';
+      userm = 'followed you';
       photo = item.photo != '' ? {uri: item.photo} : guest;
     } else {
       photo =

@@ -36,6 +36,7 @@ export default function DropDown(props) {
     c == 'timeslots' ? 'No any time slot available' : 'No record found';
 
   const [data, setData] = useState(props.data);
+
   const [search, setsearch] = useState('');
 
   useEffect(() => {
@@ -150,16 +151,18 @@ export default function DropDown(props) {
       <SafeAreaView style={[styles.Container, style]}>
         <KeyboardAvoidingView enabled>
           {isSearchBar && renderSearchBar()}
-          {data.length <= 0 && rendershowMessage()}
-          <FlatList
-            // contentContainerStyle={{paddingVertical: 5}}
-            initialNumToRender={24}
-            maxToRenderPerBatch={10}
-            data={data}
-            nestedScrollEnabled
-            renderItem={renderItems}
-            keyExtractor={(item, index) => item.title}
-          />
+          {/* {data.length <= 0 && rendershowMessage()} */}
+          {data.length > 0 && (
+            <FlatList
+              // contentContainerStyle={{paddingVertical: 5}}
+              initialNumToRender={24}
+              maxToRenderPerBatch={10}
+              data={data}
+              nestedScrollEnabled
+              renderItem={renderItems}
+              keyExtractor={(item, index) => item.title}
+            />
+          )}
         </KeyboardAvoidingView>
       </SafeAreaView>
       {renderBottom()}

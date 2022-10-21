@@ -65,21 +65,109 @@ function Trips(props) {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         const dt = [
+          // {
+          //   _id: 31,
+          //   title: 'Hunting Trip',
+          //   acceptOtherTrades: true,
+
+          //   loc: {coords: [], name: 'Miami, Florida'},
+          //   offer: 'Central N.C Whitetail Hunting',
+          //   photos: [
+          //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0OqjKG4QLGg-hvzwhf76mCB1shxkUchZN9Q&usqp=CAU',
+          //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbyQRxBY8uSBj1VaS26kR0_7Uk6BJ-YNz4XQ&usqp=CAU',
+          //     'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTV8fHRyYXZlbGxpbmd8ZW58MHx8MHx8&w=1000&q=80',
+          //   ],
+          //   return: 'Florida Alligator Hunt or an Oseola Turkey Hunt',
+          //   status: 'activate',
+          //   availablity: {endDate: '2022-11-05', startDate: '2022-10-17'},
+          //   duration: {number: '3', title: 'days'},
+          //   unavailable: {
+          //     all_unavailable_dates: [
+          //       '2022-10-25',
+          //       '2022-10-26',
+          //       '2022-10-28',
+          //       '2022-11-02',
+          //       '2022-11-04',
+          //     ],
+          //     days_of_week: ['Fri'],
+          //     esd_text: 'Oct 25-26, Nov 2',
+          //     exclude_specific_dates: [
+          //       '2022-10-25',
+          //       '2022-10-26',
+          //       '2022-11-02',
+          //     ],
+          //     repeat_every: {endRepeatOn: '2022-11-05', num: 1, title: 'Weeks'},
+          //     unavailable_days_of_week: ['2022-10-28', '2022-11-04'],
+          //     wtxt: 'Fri (weekly)',
+          //   },
+          //   user: 1,
+          // },
+          // {
+          //   _id: 32,
+          //   title: 'Fishing Trip',
+          //   acceptOtherTrades: true,
+          //   availablity: {endDate: '2022-09-05', startDate: '2022-08-17'},
+          //   duration: {number: '3', title: 'days'},
+          //   unavailable: {
+          //     all_unavailable_dates: [
+          //       '2022-08-25',
+          //       '2022-08-26',
+          //       '2022-08-28',
+          //       '2022-09-02',
+          //       '2022-09-04',
+          //     ],
+          //     days_of_week: ['Fri'],
+          //     esd_text: 'Aug 25-26, Sep 2',
+          //     exclude_specific_dates: [
+          //       '2022-08-25',
+          //       '2022-08-26',
+          //       '2022-09-02',
+          //     ],
+          //     repeat_every: {endRepeatOn: '2022-09-05', num: 1, title: 'Weeks'},
+          //     unavailable_days_of_week: ['2022-08-28', '2022-09-04'],
+          //     wtxt: 'Fri (weekly)',
+          //   },
+          //   loc: {coords: [], name: 'Miami, Florida'},
+          //   offer: 'Blue Catfish Jugging',
+          //   photos: [
+          //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0OqjKG4QLGg-hvzwhf76mCB1shxkUchZN9Q&usqp=CAU',
+          //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbyQRxBY8uSBj1VaS26kR0_7Uk6BJ-YNz4XQ&usqp=CAU',
+          //     'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTV8fHRyYXZlbGxpbmd8ZW58MHx8MHx8&w=1000&q=80',
+          //   ],
+          //   return: 'Open to Offers',
+          //   status: 'suspended',
+
+          //   user: 1,
+          // },
+
           {
             _id: 31,
             title: 'Hunting Trip',
             acceptOtherTrades: true,
 
             loc: {coords: [], name: 'Miami, Florida'},
-            offer: 'Central N.C Whitetail Hunting',
+            offer: 'Central N.C. Whitetail Hunting In The Back Country',
             photos: [
               'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0OqjKG4QLGg-hvzwhf76mCB1shxkUchZN9Q&usqp=CAU',
               'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbyQRxBY8uSBj1VaS26kR0_7Uk6BJ-YNz4XQ&usqp=CAU',
               'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTV8fHRyYXZlbGxpbmd8ZW58MHx8MHx8&w=1000&q=80',
             ],
-            return: 'Florida Alligator Hunt or an Oseola Turkey Hunt',
+            return: 'Alligator or Osceola Turkey',
             status: 'activate',
-            availablity: {endDate: '2022-11-05', startDate: '2022-10-17'},
+
+            user: {
+              _id: 2,
+              first_name: 'mike',
+              last_name: 'monuse',
+              userName: 'mmouse',
+              // photo:"",
+              photo:
+                'https://www.adobe.com/express/create/media_127540366421d3d5bfcaf8202527ca7d37741fd5d.jpeg?width=400&format=jpeg&optimize=medium',
+              avg_rating: 3.8,
+              total_reviews: 190,
+              isVerified: true,
+            },
+            availablity: {endDate: '2022-12-05', startDate: '2022-10-24'},
             duration: {number: '3', title: 'days'},
             unavailable: {
               all_unavailable_dates: [
@@ -100,35 +188,14 @@ function Trips(props) {
               unavailable_days_of_week: ['2022-10-28', '2022-11-04'],
               wtxt: 'Fri (weekly)',
             },
-            user: 1,
           },
           {
             _id: 32,
             title: 'Fishing Trip',
             acceptOtherTrades: true,
-            availablity: {endDate: '2022-09-05', startDate: '2022-08-17'},
-            duration: {number: '3', title: 'days'},
-            unavailable: {
-              all_unavailable_dates: [
-                '2022-08-25',
-                '2022-08-26',
-                '2022-08-28',
-                '2022-09-02',
-                '2022-09-04',
-              ],
-              days_of_week: ['Fri'],
-              esd_text: 'Aug 25-26, Sep 2',
-              exclude_specific_dates: [
-                '2022-08-25',
-                '2022-08-26',
-                '2022-09-02',
-              ],
-              repeat_every: {endRepeatOn: '2022-09-05', num: 1, title: 'Weeks'},
-              unavailable_days_of_week: ['2022-08-28', '2022-09-04'],
-              wtxt: 'Fri (weekly)',
-            },
-            loc: {coords: [], name: 'Miami, Florida'},
-            offer: 'Blue Catfish Jugging',
+
+            loc: {coords: [], name: 'Dylan, Nc'},
+            offer: 'North Idaho Black Bear Spot and Stalk',
             photos: [
               'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0OqjKG4QLGg-hvzwhf76mCB1shxkUchZN9Q&usqp=CAU',
               'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbyQRxBY8uSBj1VaS26kR0_7Uk6BJ-YNz4XQ&usqp=CAU',
@@ -136,8 +203,42 @@ function Trips(props) {
             ],
             return: 'Open to Offers',
             status: 'suspended',
+            user: {
+              _id: 7,
+              first_name: 'James',
+              last_name: 'Bond',
+              userName: 'jbonds',
+              // photo:"",
+              photo:
+                'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfHw%3D&w=1000&q=80',
 
-            user: 1,
+              avg_rating: 3.5,
+              total_reviews: 100,
+              isVerified: false,
+            },
+            availablity: {endDate: '2022-12-01', startDate: '2022-11-01'},
+            duration: {number: '1', title: 'days'},
+            unavailable: {
+              all_unavailable_dates: [
+                '2022-11-03',
+                '2022-11-10',
+                '2022-11-17',
+                '2022-11-21',
+                '2022-11-24',
+                '2022-11-25',
+              ],
+              days_of_week: ['Thu'],
+              esd_text: 'Nov 21, Nov 25',
+              exclude_specific_dates: ['2022-11-21', '2022-11-25'],
+              repeat_every: {endRepeatOn: '2022-12-01', num: 1, title: 'Weeks'},
+              unavailable_days_of_week: [
+                '2022-11-03',
+                '2022-11-10',
+                '2022-11-17',
+                '2022-11-24',
+              ],
+              wtxt: 'Thu (weekly)',
+            },
           },
         ];
         store.User.attemptToGetTrips(

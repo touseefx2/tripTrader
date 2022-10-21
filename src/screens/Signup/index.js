@@ -445,45 +445,45 @@ function Signup(props) {
     clearAllField();
     Keyboard.dismiss();
 
-    // if (fn == '') {
-    //   setEmptyfn(true);
-    //   return;
-    // }
+    if (fn == '') {
+      setEmptyfn(true);
+      return;
+    }
 
-    // if (ln == '') {
-    //   setEmptyln(true);
-    //   return;
-    // }
+    if (ln == '') {
+      setEmptyln(true);
+      return;
+    }
 
-    // if (email == '') {
-    //   setEmptyemail(true);
-    //   return;
-    // }
+    if (email == '') {
+      setEmptyemail(true);
+      return;
+    }
 
-    // if (emailReg.test(email) === false) {
-    //   setinvalidemail(true);
-    //   return;
-    // }
+    if (emailReg.test(email) === false) {
+      setinvalidemail(true);
+      return;
+    }
 
-    // if (dob == '') {
-    //   setEmptydob(true);
-    //   return;
-    // }
+    if (dob == '') {
+      setEmptydob(true);
+      return;
+    }
 
-    // if (pswd == '') {
-    //   setEmptypswd(true);
-    //   return;
-    // }
+    if (pswd == '') {
+      setEmptypswd(true);
+      return;
+    }
 
-    // if (pswd.length < 8) {
-    //   setinvalidpswd(true);
-    //   return;
-    // }
+    if (pswd.length < 8) {
+      setinvalidpswd(true);
+      return;
+    }
 
-    // if (isTerms == false) {
-    //   setEmptyTerms(true);
-    //   return;
-    // }
+    if (isTerms == false) {
+      setEmptyTerms(true);
+      return;
+    }
 
     const user = {
       first_name: fn,

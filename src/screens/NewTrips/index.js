@@ -960,37 +960,38 @@ function NewTrips(props) {
     Keyboard.dismiss();
 
     NetInfo.fetch().then(state => {
-      if (state.isConnected) {
-        // const obj = {
-        //   _id: (Math.random() * 10).toFixed(0),
-        //   title: title,
-        //   user: store.User.user._id,
-        //   offer: trade,
-        //   return: Return,
-        //   loc: {
-        //     name: 'Miami, Florida',
-        //     coords: [],
-        //   },
-        //   status: 'activate',
-        //   acceptOtherTrades: acceptOther,
-        //   duration: {
-        //     number: durNum,
-        //     title: dur.title,
-        //   },
-        //   availablity: {
-        //     startDate: isSelDate1,
-        //     endDate: isSelDate2,
-        //   },
-        //   photos: photos,
-        //   unavailable: isSetUnavailable != false ? isSetUnavailable : {},
-        // };
-        let index = editTrip.index;
-        // console.warn('update trip obj : ', obj);
-        store.User.attemptToDeleteTrip({}, index, goToProfile);
-      } else {
-        // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
-      }
+      // if (state.isConnected) {
+      //   // const obj = {
+      //   //   _id: (Math.random() * 10).toFixed(0),
+      //   //   title: title,
+      //   //   user: store.User.user._id,
+      //   //   offer: trade,
+      //   //   return: Return,
+      //   //   loc: {
+      //   //     name: 'Miami, Florida',
+      //   //     coords: [],
+      //   //   },
+      //   //   status: 'activate',
+      //   //   acceptOtherTrades: acceptOther,
+      //   //   duration: {
+      //   //     number: durNum,
+      //   //     title: dur.title,
+      //   //   },
+      //   //   availablity: {
+      //   //     startDate: isSelDate1,
+      //   //     endDate: isSelDate2,
+      //   //   },
+      //   //   photos: photos,
+      //   //   unavailable: isSetUnavailable != false ? isSetUnavailable : {},
+      //   // };
+      //   let index = editTrip.index;
+      //   // console.warn('update trip obj : ', obj);
+      //   store.Trips.attemptToDeleteTrip({}, index, goToProfile);
+      // } else {
+      //   // seterrorMessage('Please connect internet');
+      //   Alert.alert('', 'Please connect internet');
+      // }
+      closeModalg();
     });
   };
 
