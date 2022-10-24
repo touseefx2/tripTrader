@@ -34,7 +34,6 @@ import FastImage from 'react-native-fast-image';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import {Calendar} from 'react-native-calendars';
 import moment from 'moment/moment';
-import {load} from 'npm';
 
 function isObjectEmpty(value) {
   return (
@@ -102,8 +101,6 @@ let css = {
     fontFamily: theme.fonts.fontMedium,
   },
 };
-
-export default observer(Home);
 
 let td = {
   [moment().format('YYYY-MM-DD')]: {
@@ -295,9 +292,12 @@ var getDaysArray = function (start, end) {
   return arr;
 };
 
+export default observer(Home);
+
 function Home(props) {
   let maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
+  const scrollRef = useRef(null);
 
   const toast = useRef(null);
   const toastduration = 700;
@@ -383,6 +383,9 @@ function Home(props) {
   const [sendObj, setsendObj] = useState('');
   const [isSendMessage, setisSendMessage] = useState(false);
 
+  const [isShowSearch, setisShowSearch] = useState(false);
+  const [isShowFilters, setisShowFilters] = useState(false);
+
   const closeAllDropDown = () => {
     setisDropDownTrip(false);
     setisDropDownDur(false);
@@ -450,8 +453,8 @@ function Home(props) {
     }
   }, [minDatee]);
   //end
-  console.log('minde : ', minDatee);
-  console.log('isdtdy : ', isDisableToday);
+  // console.log('minde : ', minDatee);
+  // console.log('isdtdy : ', isDisableToday);
 
   useEffect(() => {
     if (goto == 'profile') {
@@ -574,7 +577,13 @@ function Home(props) {
     });
   };
 
-  const onclickSearchBar = () => {};
+  const onclickSearchBar = () => {
+    setisShowSearch(true);
+  };
+
+  const onclickFilter = () => {
+    setisShowFilters(true);
+  };
 
   const onClickMakeOffer = (dt, ind) => {
     openModal({item: dt, i: ind}, 'offer');
@@ -1057,55 +1066,63 @@ function Home(props) {
 
     const renderSearch = () => {
       return (
-        <TouchableOpacity disabled>
-          <Image
-            source={require('../../assets/images/searchBar/search/img.png')}
-            style={styles.Baricon}
-          />
-        </TouchableOpacity>
+        <Image
+          source={require('../../assets/images/searchBar/search/img.png')}
+          style={styles.Baricon}
+        />
       );
     };
 
     const renderInput = () => {
       return (
-        <View style={{width: '85%'}}>
-          <TextInput
-            editable={false}
-            style={styles.SerchBarInput}
-            placeholder="Search"
-          />
+        <View style={{width: '87%'}}>
+          <Text
+            style={{
+              fontSize: 16,
+              top: -2,
+              color: theme.color.subTitleLight,
+            }}>
+            Search
+          </Text>
         </View>
       );
     };
 
     const renderFilter = () => {
-      const onclick = () => {};
-
       return (
-        <TouchableOpacity onPress={onclick} disabled>
-          <Image
-            source={require('../../assets/images/searchBar/filter/img.png')}
-            style={styles.Baricon}
-          />
-        </TouchableOpacity>
+        <Image
+          source={require('../../assets/images/searchBar/filter/img.png')}
+          style={styles.Baricon}
+        />
       );
     };
 
     return (
-      <View>
-        <Pressable
-          style={({pressed}) => [
-            {opacity: pressed ? 0.9 : 1},
-            [styles.SerchBarContainer],
-          ]}
-          onPress={onclickSearchBar}>
-          {renderSearch()}
-          {renderInput()}
-          {renderFilter()}
-        </Pressable>
+      <>
+        <View style={styles.SerchBarContainer}>
+          <Pressable
+            style={({pressed}) => [
+              {opacity: pressed ? 0.7 : 1},
+              {
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
 
+                width: '80%',
+              },
+            ]}
+            onPress={onclickSearchBar}>
+            {renderSearch()}
+            {renderInput()}
+          </Pressable>
+          <Pressable
+            style={({pressed}) => [{opacity: pressed ? 0.7 : 1}]}
+            onPress={onclickFilter}>
+            {renderFilter()}
+          </Pressable>
+        </View>
         {data.length > 0 && renderResult()}
-      </View>
+      </>
     );
   };
 
@@ -1808,6 +1825,9 @@ function Home(props) {
                 onPress={() => {
                   closeAllDropDown();
                   setisDropDownTrip(!isDropDownTrip);
+                  if (!isDropDownTrip) {
+                    scrollRef?.current?.scrollToEnd();
+                  }
                 }}
                 activeOpacity={0.7}
                 style={[styles.dropDowninputConatiner]}>
@@ -2051,6 +2071,7 @@ function Home(props) {
                   <>
                     {renderHeader()}
                     <ScrollView
+                      ref={scrollRef}
                       contentContainerStyle={{paddingHorizontal: 15}}
                       showsVerticalScrollIndicator={false}
                       style={{flex: 1}}>
@@ -5300,6 +5321,14 @@ function Home(props) {
         {isShowUnavliabledaysCal && renderCalender2()}
         {isOfferSend && renderShowOfferSendModal()}
         {isSendMessage && renderMessageSendModal()}
+        <utils.Search
+          isVisible={isShowSearch}
+          setisVisible={c => setisShowSearch(c)}
+        />
+        <utils.Filters
+          isVisible={isShowFilters}
+          setisVisible={c => setisShowFilters(c)}
+        />
         <Toast ref={toast} position="bottom" />
       </View>
     </>

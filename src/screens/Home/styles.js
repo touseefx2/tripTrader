@@ -61,7 +61,7 @@ export const styles = StyleSheet.create({
   },
   SerchBarContainer: {
     width: '100%',
-    height: 46,
+    height: 48,
     borderRadius: 100,
     flexDirection: 'row',
     alignItems: 'center',
@@ -77,13 +77,12 @@ export const styles = StyleSheet.create({
     shadowRadius: 1.41,
     elevation: 2,
     borderWidth: 1,
-    borderColor: '#D8E1DB',
+    borderColor: theme.color.fieldBorder,
   },
   SerchBarInput: {
     width: '100%',
     height: '100%',
     fontFamily: theme.fonts.fontNormal,
-    top: 3,
   },
   Baricon: {
     width: 18,

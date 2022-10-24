@@ -38,8 +38,8 @@ function DrawerHeader(props) {
         <Image
           source={src}
           style={{
-            width: 26,
-            height: 21,
+            width: 24,
+            height: 24,
             resizeMode: 'contain',
           }}
         />

@@ -5,6 +5,9 @@ import {Food} from './food/index';
 import {Orders} from './orders/index';
 import {Promos} from './promos/index';
 import {Resturants} from './resturants';
+import {Search} from './search';
+import {Filters} from './filters';
+
 // import notificationmanager from "./notificationmanager";
 
 // const userStore = new userstore();
@@ -21,6 +24,8 @@ export default {
   Promos,
   Resturants,
   Trips,
+  Search,
+  Filters,
   // userStore,
   // carStore,
   // tripStore,
