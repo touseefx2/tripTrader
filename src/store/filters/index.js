@@ -7,17 +7,18 @@ class filters {
     makeObservable(this);
   }
 
+  //general
+
   @observable tripType = [
-    'fishing',
-    'hunting',
-    'stay',
-    'newly added',
-    'closest distance',
+    {name: 'fishing', isSel: false},
+    {name: 'hunting', isSel: false},
+    {name: 'stay', isSel: false},
+    {name: 'newly added', isSel: false},
+    {name: 'closest distance', isSel: false},
   ];
   @action settripType = obj => {
     this.tripType = obj;
   };
-
   @observable tripLocation = [
     {name: 'islamabad', corrd: []},
     {name: 'rawalpindi', corrd: []},
@@ -26,7 +27,6 @@ class filters {
   @action settripLocation = obj => {
     this.tripLocation = obj;
   };
-
   @observable activity = [
     {name: 'islamabad', corrd: []},
     {name: 'rawalpindi', corrd: []},
@@ -35,7 +35,6 @@ class filters {
   @action setactivity = obj => {
     this.activity = obj;
   };
-
   @observable species = [
     {name: 'islamabad', corrd: []},
     {name: 'rawalpindi', corrd: []},
@@ -45,17 +44,48 @@ class filters {
     this.species = obj;
   };
 
-  @observable hostRating = 0;
-  @action sethostRating = obj => {
-    this.hostRating = obj;
+  //selected
+  @observable stripType = false;
+  @action setstripType = obj => {
+    this.stripType = obj;
+  };
+  @observable stripLocation = false;
+  @action setstripLocation = obj => {
+    this.stripLocation = obj;
+  };
+  @observable sactivity = false;
+  @action setsactivity = obj => {
+    this.sactivity = obj;
+  };
+  @observable sspecies = false;
+  @action setsspecies = obj => {
+    this.sspecies = obj;
+  };
+  @observable shostRating = 0;
+  @action setshostRating = obj => {
+    this.shostRating = obj;
   };
 
-  @action clearSearches = () => {
+  @observable isFilter = false;
+  @action setisFilter = obj => {
+    this.isFilter = obj;
+  };
+
+  @action clearFilters = () => {
+    this.setstripType(false);
+    this.setstripLocation(false);
+    this.setsactivity(false);
+    this.setsspecies(false);
+    this.setshostRating(0);
+    this.setisFilter(false);
+  };
+
+  @action clearAllFilters = () => {
     this.settripType([]);
     this.settripLocation([]);
     this.setactivity([]);
     this.setspecies([]);
-    this.hostRating(0);
+    this.clearFilters();
   };
 }
 export const Filters = new filters();

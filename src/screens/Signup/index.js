@@ -125,7 +125,6 @@ function Signup(props) {
   const [sPlan, setsPlan] = useState('free'); //selected Plan
 
   const [plans, setplans] = useState(false);
-  const [savePerMonth, setSavePerMonth] = useState(0);
 
   const [monthly, setmonthly] = useState(0);
   const [annualy, setannualy] = useState(0);
@@ -139,44 +138,38 @@ function Signup(props) {
 
   useEffect(() => {
     if (plan) {
-      let monthly = plan.price || 0;
-      let annualy = plan.price || 0;
-      let totalAnually = 0;
-      let percnt = savePerMonth || 0;
-      let save = 0;
-      percnt = percnt / 100;
-
-      // annualy = toFixed(percnt * plan.price, 2);
-      // save = toFixed((plan.price - annualy) * 12, 0);
-      // totalAnually = toFixed(annualy * 12, 2);
-
-      // annualy = (percnt * plan.price).toFixed(2);
-      // save = ((plan.price - annualy) * 12).toFixed(2);
-      // totalAnually = (annualy * 12).toFixed(2);
-
-      annualy = percnt * plan.price;
-      save = (plan.price - annualy) * 12;
-      totalAnually = annualy * 12;
-
+      let monthly = 0;
+      let annualy = 0;
+      if (plans && plans.data.length > 0) {
+        plans.data.map((e, i, a) => {
+          if (e.type == 'annual') {
+            annualy = e.charges;
+          }
+          if (e.type == 'monthly') {
+            monthly = e.charges;
+          }
+        });
+      }
+      let aa = annualy * 12;
+      let ta = aa - 0.01;
       setmonthly(monthly);
       setannualy(annualy);
-      setsave(save);
-      settotalAnually(totalAnually);
+      settotalAnually(ta);
 
       if (isPromoApply) {
         let p = (isPromoApply.discount || 0) / 100;
         let discount = 0;
-        if (plan.name == 'monthly') {
-          discount = (monthly - p * monthly).toFixed(2);
+        if (plan.type == 'monthly') {
+          discount = monthly - p * monthly;
         }
-        if (plan.name == 'annual') {
-          discount = (totalAnually - p * totalAnually).toFixed(2);
+        if (plan.type == 'annual') {
+          discount = totalAnually - p * totalAnually;
         }
 
-        setpromoValue(discount);
+        setpromoValue((discount + 0.01).toFixed(2));
       }
     }
-  }, [plan, savePerMonth, isPromoApply]);
+  }, [plan, isPromoApply]);
 
   useEffect(() => {
     const subscription = BackHandler.addEventListener(
@@ -237,7 +230,6 @@ function Signup(props) {
           !isShowCameraPrmsn &&
           !isShowGalleryPrmsn
         ) {
-          setSavePerMonth(0);
           setisPhoto1Upload(1);
         }
 
@@ -392,7 +384,7 @@ function Signup(props) {
   useEffect(() => {
     if (plans && plans.data.length > 0) {
       setPlan(plans.data[0]);
-      setSavePerMonth(plans.save_per_month);
+      setsave(plans.annual_discount);
     }
   }, [plans]);
 
@@ -445,62 +437,72 @@ function Signup(props) {
     clearAllField();
     Keyboard.dismiss();
 
-    if (fn == '') {
-      setEmptyfn(true);
-      return;
-    }
+    // if (fn == '') {
+    //   setEmptyfn(true);
+    //   return;
+    // }
 
-    if (ln == '') {
-      setEmptyln(true);
-      return;
-    }
+    // if (ln == '') {
+    //   setEmptyln(true);
+    //   return;
+    // }
 
-    if (email == '') {
-      setEmptyemail(true);
-      return;
-    }
+    // if (email == '') {
+    //   setEmptyemail(true);
+    //   return;
+    // }
 
-    if (emailReg.test(email) === false) {
-      setinvalidemail(true);
-      return;
-    }
+    // if (emailReg.test(email) === false) {
+    //   setinvalidemail(true);
+    //   return;
+    // }
 
-    if (dob == '') {
-      setEmptydob(true);
-      return;
-    }
+    // if (dob == '') {
+    //   setEmptydob(true);
+    //   return;
+    // }
 
-    if (pswd == '') {
-      setEmptypswd(true);
-      return;
-    }
+    // if (pswd == '') {
+    //   setEmptypswd(true);
+    //   return;
+    // }
 
-    if (pswd.length < 8) {
-      setinvalidpswd(true);
-      return;
-    }
+    // if (pswd.length < 8) {
+    //   setinvalidpswd(true);
+    //   return;
+    // }
 
-    if (isTerms == false) {
-      setEmptyTerms(true);
-      return;
-    }
+    // if (isTerms == false) {
+    //   setEmptyTerms(true);
+    //   return;
+    // }
 
-    const user = {
-      first_name: fn,
-      last_name: ln,
+    const body = {
+      firstName: fn,
+      lastName: ln,
       email: email,
-      dob: dob,
-      pswd: pswd,
-      //not requires if acnt create optional
-      photo: '',
-      cnic_front_image: '',
-      plan: sPlan,
-      phone: '',
+      birthDate: dob,
+      termsAccepted: isTerms,
+      password: pswd,
     };
+
+    // const user = {
+    //   first_name: fn,
+    //   last_name: ln,
+    //   email: email,
+    //   dob: dob,
+    //   pswd: pswd,
+    //   termsAccepted: isTerms,
+    //   //not requires if acnt create optional
+    //   photo: '',
+    //   cnic_front_image: '',
+    //   plan: sPlan,
+    //   phone: '',
+    // };
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.registerUser(user, setErrMessage, isusercreate);
+        store.User.registerUser(body, setErrMessage, isusercreate);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -537,9 +539,9 @@ function Signup(props) {
           imgArr,
           setErrMessage,
           setPhoto1Upload,
-
           SetUP,
           SetUCnicF,
+          usr._id,
         );
       } else {
         // seterrorMessage('Please connect internet');
@@ -552,7 +554,7 @@ function Signup(props) {
     Keyboard.dismiss();
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.applyPromo(pc.toLowerCase(), setErrMessage, applyPromoSuc);
+        store.User.applyPromo(pc, setErrMessage, applyPromoSuc);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -561,8 +563,9 @@ function Signup(props) {
   };
 
   const isusercreate = (t, r, p) => {
-    console.log('t : ', t);
-    console.log('res : ', r);
+    console.log('token : ', t);
+    console.log('result : ', r);
+    console.log('plan : ', p);
     setToken(t);
     setusr(r);
     setplans(p);
@@ -590,7 +593,7 @@ function Signup(props) {
 
       const obj = {
         plan: plan,
-        totalValue: plan.name == 'annual' ? totalAnually : monthly,
+        totalValue: plan.type == 'annual' ? totalAnually : monthly,
         isPromoApply: isPromoApply,
         card: {
           name: cfn,
@@ -1546,7 +1549,7 @@ function Signup(props) {
               {marginTop: 0, width: '60%', height: 55},
             ]}>
             <Text style={[styles.buttonTextBottom, {fontSize: 14}]}>
-              choose {plan.name} plan
+              choose {plan.type} plan
             </Text>
           </TouchableOpacity>
         </>
@@ -1636,7 +1639,7 @@ function Signup(props) {
 
     const renderPlanBar = () => {
       const p = plans.data.map((e, i, a) => {
-        let name = e.name || '';
+        let name = e.type || '';
 
         return (
           <TouchableOpacity
@@ -1650,7 +1653,7 @@ function Signup(props) {
               alignItems: 'center',
               justifyContent: 'center',
               backgroundColor:
-                plan.name == name
+                plan.type == name
                   ? theme.color.button1
                   : theme.color.disableBack,
               borderTopLeftRadius: i == 0 ? 8 : 0,
@@ -1662,7 +1665,7 @@ function Signup(props) {
               style={{
                 fontSize: 13,
                 color:
-                  plan.name == name
+                  plan.type == name
                     ? theme.color.buttonText
                     : theme.color.subTitle,
                 fontFamily: theme.fonts.fontMedium,
@@ -1938,7 +1941,7 @@ function Signup(props) {
                           color: theme.color.title,
                           fontFamily: theme.fonts.fontBold,
                         }}>
-                        ${plan.name == 'annual' ? annualy.toFixed(2) : monthly}
+                        ${plan.type == 'annual' ? annualy.toFixed(2) : monthly}
                       </Text>
                       <Text
                         style={{
@@ -1949,10 +1952,10 @@ function Signup(props) {
                           marginLeft: 5,
                         }}>
                         /month{' '}
-                        {plan.name == 'annual' ? '(Billed annually)' : ''}
+                        {plan.type == 'annual' ? '(Billed annually)' : ''}
                       </Text>
                     </View>
-                    {plan.name == 'annual' && (
+                    {plan.type == 'annual' && (
                       <Text
                         style={{
                           fontSize: 12,
@@ -1964,7 +1967,7 @@ function Signup(props) {
                         Best Value • ${toFixed(save, 0)} savings
                       </Text>
                     )}
-                    {plan.name == 'monthly' && (
+                    {plan.type == 'monthly' && (
                       <View
                         style={{
                           flexDirection: 'row',
@@ -2087,7 +2090,7 @@ function Signup(props) {
                         textTransform: 'none',
                       },
                     ]}>
-                    {plan.name == 'annual'
+                    {plan.type == 'annual'
                       ? `$${toFixed(totalAnually, 2)} ($${annualy.toFixed(
                           2,
                         )} /mo)`
@@ -2107,7 +2110,7 @@ function Signup(props) {
                         textTransform: 'capitalize',
                         textDecorationLine: 'line-through',
                       }}>
-                      {plan.name == 'annual'
+                      {plan.type == 'annual'
                         ? `$${toFixed(totalAnually, 2)}`
                         : `$${monthly}`}
                       {'  '}
@@ -2140,7 +2143,7 @@ function Signup(props) {
                       marginLeft: 5,
                     },
                   ]}>
-                  {plan.name}
+                  {plan.type}
                 </Text>
                 <TouchableOpacity activeOpacity={0.6} onPress={changePlan}>
                   <Text
@@ -2284,7 +2287,7 @@ function Signup(props) {
                           fontFamily: theme.fonts.fontMedium,
                           textTransform: 'uppercase',
                         }}>
-                        {isPromoApply.name}
+                        {isPromoApply.code}
                       </Text>
 
                       <TouchableOpacity
@@ -2366,10 +2369,10 @@ function Signup(props) {
                     <Text style={[styles.Field2Titlec, {top: -3}]}>
                       and understand that upon clicking “Subscribe” below, I
                       will be charged{' '}
-                      {plan.name == 'annual'
+                      {plan.type == 'annual'
                         ? `$${toFixed(totalAnually, 2)}`
                         : `$${monthly}`}{' '}
-                      {plan.name == 'annual' ? plan.name + 'y' : plan.name}.
+                      {plan.type == 'annual' ? plan.type + 'y' : plan.type}.
                     </Text>
                   </View>
                 </View>
@@ -2399,7 +2402,7 @@ function Signup(props) {
                 numberOfLines={1}
                 ellipsizeMode="tail"
                 style={styles.section2Title1}>
-                welcome, {usr.first_name}!
+                welcome, {usr.firstName}!
               </Text>
               <View style={styles.section2LogoC}>
                 <Image

@@ -915,207 +915,277 @@ class user {
   // }
 
   @action.bound
-  registerUser(body, seterror, suc) {
-    console.warn('Register user body : ', body);
-    this.setregLoader(true);
-    let msg = 'Please connect internet';
-
-    setTimeout(() => {
-      this.setregLoader(false);
-      let token = '';
-      let reslt = body;
-      const p = {
-        save_per_month: 41.8,
-        data: [
-          {
-            _id: 11,
-            name: 'annual',
-
-            price: 2.99,
-
-            features: [
-              'Create trips and get offers',
-              'Make trade offers',
-              'Send and receive messages',
-              'Bookmark trips',
-              'Advanced trip search',
-            ],
-          },
-
-          {
-            _id: 22,
-            name: 'monthly',
-
-            price: 2.99,
-
-            features: [
-              'Create trips and get offers',
-              'Make trade offers',
-              'Send and receive messages',
-              'Bookmark trips',
-              'Advanced trip search',
-            ],
-          },
-        ],
-      };
-
-      // this.addUser(token, reslt);
-
-      suc(token, reslt, p);
-      // Alert.alert('', msg.toString());
-      // seterror('asa as');
-    }, 1500);
-
-    // db.hitApi(db.apis.REGISTER_USER, 'post', body, null)
-    //   ?.then(resp => {
-    //     console.log(`response  ${db.apis.REGISTER_USER} : `, resp.data);
-    //     this.setregLoader(false);
-    //     this.addUser(resp.data.token, resp.data.data);
-    //   })
-    //   .catch(err => {
-    //     this.setregLoader(false);
-    //     let msg = err.response.data.message || err.response.status;
-    //     console.log(`Error in ${db.apis.REGISTER_USER} : `, msg);
-    //     if (msg == 503 || msg == 500) {
-    //       store.General.setisServerError(true);
-    //       return;
-    //     }
-    //     seterror(msg.toString())
-    //     // Alert.alert('', msg.toString());
-    //   });
-  }
-
   LoginUser(body, svp, seterror) {
     console.warn('Login user body : ', body);
-    this.setregLoader(true);
-    let msg = 'Please connect internet';
+    // this.setregLoader(true);
 
-    setTimeout(() => {
-      this.setregLoader(false);
-      let reslt = {
-        _id: 1,
-        cnic_front_image: '',
-        dob: new Date(),
-        email: 'jhon@gmail.com',
-        first_name: 'jhon',
-        last_name: 'thompson',
-        photo:
-          'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfHw%3D&w=1000&q=80',
-        plan: 'free',
-        pswd: 'aaaaaaaa',
-        phone: '',
-        avg_rating: 0,
-        total_reviews: 0,
-        isVerified: false,
-      };
-      let token = '';
+    // setTimeout(() => {
+    //   this.setregLoader(false);
+    //   let reslt = {
+    //     _id: 1,
+    //     cnic_front_image: '',
+    //     dob: new Date(),
+    //     email: 'jhon@gmail.com',
+    //     first_name: 'jhon',
+    //     last_name: 'thompson',
+    //     photo:
+    //       'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfHw%3D&w=1000&q=80',
+    //     plan: 'free',
+    //     pswd: 'aaaaaaaa',
+    //     phone: '',
+    //     avg_rating: 0,
+    //     total_reviews: 0,
+    //     isVerified: false,
+    //   };
+    //   let token = '';
 
-      if (body.email == reslt.email) {
-        if (body.pswd == reslt.pswd) {
-          this.addUser(token, reslt);
-          this.setemail(body.email);
-          this.setsp(svp);
+    //   if (body.email == reslt.email) {
+    //     if (body.pswd == reslt.pswd) {
+    //       this.addUser(token, reslt);
+    //       this.setemail(body.email);
+    //       this.setsp(svp);
 
-          if (svp) {
-            this.setpswd(body.pswd);
-          } else {
-            this.setpswd('');
-          }
-        } else {
-          Alert.alert('', 'Paswword is incorrect');
-        }
-      } else {
-        Alert.alert('', 'User not found');
-      }
-
-      // Alert.alert('', msg.toString());
-      // seterror('asa as');
-    }, 1200);
-
-    // db.hitApi(db.apis.REGISTER_USER, 'post', body, null)
-    //   ?.then(resp => {
-    //     console.log(`response  ${db.apis.REGISTER_USER} : `, resp.data);
-    //     this.setregLoader(false);
-    //     this.addUser(resp.data.token, resp.data.data);
-    //   })
-    //   .catch(err => {
-    //     this.setregLoader(false);
-    //     let msg = err.response.data.message || err.response.status;
-    //     console.log(`Error in ${db.apis.REGISTER_USER} : `, msg);
-    //     if (msg == 503 || msg == 500) {
-    //       store.General.setisServerError(true);
-    //       return;
+    //       if (svp) {
+    //         this.setpswd(body.pswd);
+    //       } else {
+    //         this.setpswd('');
+    //       }
+    //     } else {
+    //       Alert.alert('', 'Paswword is incorrect');
     //     }
-    //     seterror(msg.toString())
-    //     // Alert.alert('', msg.toString());
-    //   });
+    //   } else {
+    //     Alert.alert('', 'User not found');
+    //   }
+
+    //   // Alert.alert('', msg.toString());
+    //   // seterror('asa as');
+    // }, 1200);
+
+    db.hitApi(db.apis.LOGIN_USER, 'post', body, null)
+      ?.then(resp => {
+        console.log(`response  ${db.apis.LOGIN_USER} : `, resp.data);
+        // this.setregLoader(false);
+        // this.addUser(resp.data.token, resp.data.data);
+      })
+      .catch(err => {
+        this.setregLoader(false);
+        // let msg = err.response.data.message || err.response.status;
+        // console.log(`Error in ${db.apis.REGISTER_USER} : `, msg);
+        // if (msg == 503 || msg == 500) {
+        //   store.General.setisServerError(true);
+        //   return;
+        // }
+        // seterror(msg.toString())
+        // Alert.alert('', msg.toString());
+      });
   }
 
   @action.bound
-  attemptToRegister(dataa, goHome, goCheckout, s) {
-    const {image} = dataa;
+  registerUser(body, seterror, suc) {
+    console.warn('Register user body : ', body);
     this.setregLoader(true);
-    let imgArr = [];
-    if (image != '') {
-      image.chk = 'profile';
-      imgArr.push(image);
-    }
 
-    if (imgArr.length > 0) {
-      try {
-        imgArr.map((e, i, a) => {
-          const data = new FormData();
-          const newFile = {
-            uri: e.uri,
-            type: e.type,
-            name: e.fileName,
-          };
-          data.append('files', newFile);
-          fetch(db.apis.BASE_URL + db.apis.IMAGE_UPLOAD, {
-            method: 'post',
-            body: data,
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
+    db.hitApi(db.apis.REGISTER_USER, 'post', body, null)
+      ?.then(resp => {
+        console.log(`response create ${db.apis.REGISTER_USER} : `, resp.data);
+        let token = resp.data.token;
+        let reslt = resp.data.data;
+        db.hitApi(db.apis.GET_All_Plan, 'get', body, null)
+          ?.then(resp => {
+            this.setregLoader(false);
+            console.log(
+              `response get all plan  ${db.apis.GET_All_Plan} : `,
+              resp.data,
+            );
+            let rsp = resp.data.data;
+            let plan = {annual_discount: 0, data: []};
+            let dt = [];
+            let features = [
+              'Create trips and get offers',
+              'Make trade offers',
+              'Send and receive messages',
+              'Bookmark trips',
+              'Advanced trip search',
+            ];
+            if (rsp.length > 0) {
+              rsp.map((e, i, a) => {
+                if (e.type == 'annual') {
+                  plan.annual_discount = e.discount;
+                }
+                let o = {...e};
+                o.features = features;
+                dt.push(o);
+              });
+            }
+            plan.data = dt;
+            suc(token, reslt, plan);
           })
-            .then(response => response.json())
-            .then(responseData => {
-              let c = '';
-              if (e.chk == 'profile') {
-                c = responseData.data[0].imgrUrl;
-              }
-              if (i == a.length - 1) {
-                const dt = {...dataa};
-                delete dt.image;
-                dt.image = c;
-                this.registerUser(dt, goHome, goCheckout, s);
-                return;
-              }
-            })
-            .catch(err => {
-              this.setregLoader(false);
-              let msg = err.response.data.message || err.response.status;
-              console.log('Error in Upload Images arr', msg);
-              if (msg == 503 || msg == 500) {
-                store.General.setisServerError(true);
-                return;
-              }
-              Alert.alert('', msg);
-            });
-        });
-      } catch (err) {
+          .catch(err => {
+            this.setregLoader(false);
+            let msg = err.response.data.message || err.response.status;
+            console.log(
+              `Error in get all plan ${db.apis.GET_All_Plan} : `,
+              msg,
+            );
+            if (msg == 503 || msg == 500) {
+              Alert.alert('', 'Server not response');
+              // store.General.setisServerError(true);
+              return;
+            }
+            // seterror(msg.toString())
+            Alert.alert('', msg.toString());
+          });
+      })
+      .catch(err => {
         this.setregLoader(false);
         let msg = err.response.data.message || err.response.status;
-        console.log('Error in Upload Images arr', msg);
+        console.log(`Error in create ${db.apis.REGISTER_USER} : `, msg);
         if (msg == 503 || msg == 500) {
-          store.General.setisServerError(true);
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
           return;
         }
-        Alert.alert('', msg);
-      }
-    } else {
-      this.registerUser(dataa, goHome, goCheckout, s);
-    }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  }
+
+  @action.bound
+  applyPromo(body, seterror, suc) {
+    console.warn('apply promo body : ', body);
+    this.setregLoader(true);
+
+    db.hitApi(db.apis.CHECK_PROMO + body, 'get', {}, null)
+      ?.then(resp => {
+        this.setregLoader(false);
+        console.log(
+          `response check promo  ${db.apis.CHECK_PROMO} : `,
+          resp.data,
+        );
+        let rsp = resp.data.data[0];
+        suc(rsp);
+      })
+      .catch(err => {
+        this.setregLoader(false);
+        let msg = err.response.data.message || err.response.status;
+        console.log(`Error in check promo  ${db.apis.CHECK_PROMO} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        if (msg == 'No records found') {
+          Alert.alert('', 'Promo code not exist!');
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  }
+
+  @action.bound
+  updateUser(body, c, seterror, setPhoto1Upload, setup, setuc, id) {
+    console.warn('Update user photo body : ', body);
+
+    let bd =
+      c == 'Profile'
+        ? {
+            image: body.photo,
+          }
+        : {
+            identityProof: body.cnic_front_image,
+            identityStatus: 'pending',
+          };
+    let uid = id;
+    db.hitApi(db.apis.UPDATE_USER + uid, 'put', bd, null)
+      ?.then(resp => {
+        this.setregLoader(false);
+        console.log(
+          `response update user ${db.apis.UPDATE_USER + uid} : `,
+          resp.data,
+        );
+
+        if (c == 'Profile') {
+          setup(body.photo);
+          setPhoto1Upload(1);
+        }
+        if (c == 'CnicF') {
+          setuc(body.cnic_front_image);
+          setPhoto1Upload(2);
+        }
+      })
+      .catch(err => {
+        this.setregLoader(false);
+        let msg = err.response.data.message || err.response.status;
+        console.log(`Error in update user ${db.apis.UPDATE_USER} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  }
+
+  attemptToUploadImage(imgArr, seterror, setPhoto1Upload, setup, setuc, uid) {
+    console.warn('upload photo body : ', imgArr);
+    this.setregLoader(true);
+    let e = imgArr[0];
+    let body = {};
+    const data = new FormData();
+    const newFile = {
+      uri: e.uri,
+      type: e.type,
+      name: e.fileName,
+    };
+    data.append('files', newFile);
+    fetch(db.apis.BASE_URL + db.apis.IMAGE_UPLOAD, {
+      method: 'post',
+      body: data,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+      .then(response => response.json())
+      .then(responseData => {
+        console.warn('upload photo success : ', body);
+        let rsp = responseData.data[0].imgrUrl;
+        if (e[0].chk == 'Profile') {
+          body = {
+            photo: rsp,
+          };
+        }
+
+        if (e[0].chk == 'CnicF') {
+          body = {
+            cnic_front_image: rsp,
+          };
+        }
+
+        this.updateUser(
+          body,
+          e[0].chk,
+          seterror,
+          setPhoto1Upload,
+          setup,
+          setuc,
+          uid,
+        );
+      })
+      .catch(err => {
+        this.setregLoader(false);
+        console.log(`Error in upload image ${db.apis.IMAGE_UPLOAD} : `, err);
+        // let msg = err.response.data.message || err.response.status;
+        // console.log(`Error in upload image ${db.apis.IMAGE_UPLOAD} : `, msg);
+        // if (msg == 503 || msg == 500) {
+        //   Alert.alert('', 'Server not response');
+        //   // store.General.setisServerError(true);
+        //   return;
+        // }
+        // // seterror(msg.toString())
+        // Alert.alert('', msg.toString());
+      });
   }
 
   @action.bound
@@ -1167,104 +1237,6 @@ class user {
     this.setcntr('');
     this.setpwc('');
   };
-
-  attemptToUploadImage(imgArr, seterror, setPhoto1Upload, setup, setuc) {
-    this.setregLoader(true);
-    setTimeout(() => {
-      let body = {};
-      if (imgArr[0].chk == 'Profile') {
-        body = {
-          photo: imgArr[0].uri,
-        };
-      }
-
-      if (imgArr[0].chk == 'CnicF') {
-        body = {
-          cnic_front_image: imgArr[0].uri,
-        };
-      }
-
-      this.updateUser(
-        body,
-        imgArr[0].chk,
-        seterror,
-        setPhoto1Upload,
-        setup,
-        setuc,
-      );
-    }, 2000);
-
-    // if (imgArr.length > 0) {
-    //   let ra = [];
-    //   this.setregLoader(true);
-    //   try {
-    //     imgArr.map((e, i, a) => {
-    //       const data = new FormData();
-    //       const newFile = {
-    //         uri: e.uri,
-    //         type: e.type,
-    //         name: e.fileName,
-    //       };
-    //       data.append('files', newFile);
-    //       fetch(db.apis.BASE_URL + db.apis.IMAGE_UPLOAD, {
-    //         method: 'post',
-    //         body: data,
-    //         headers: {
-    //           'Content-Type': 'multipart/form-data',
-    //         },
-    //       })
-    //         .then(response => response.json())
-    //         .then(responseData => {
-    //           let c = responseData.data[0].imgrUrl;
-    //           if (e.chk == 'Profile') {
-    //             ra.push({c: e.chk, uri: c});
-    //           }
-    //           if (i == a.length - 1) {
-    //             if (ra.length > 0) {
-    //               if (ra[0].c == 'Profile') {
-    //                 const body = {
-    //                   photo: ra[0].uri,
-    //                 };
-    //                 this.updateUser(body, ra[0].c,seterror,setPhoto1Upload, setup,setuc);
-    //                 return;
-    //               }
-
-    //               if (ra[0].c == 'CnicF') {
-    //                 const body = {
-    //                 cnic_front_image: ra[0].uri,
-    //                 };
-    //                 this.updateUser(body, ra[0].c,,seterror,setPhoto1Upload);
-    //                 return;
-    //               }
-
-    //             }
-    //           }
-    //         })
-    //         .catch(err => {
-    //           this.setregLoader(false);
-    //           let msg = err.response.data.message || err.response.status;
-    //           console.log('Error in Upload Images arr', msg);
-    //           if (msg == 503 || msg == 500) {
-    //             store.General.setisServerError(true);
-    //             return;
-    //           }
-    //           // seterror(msg.toString())
-    //           Alert.alert('', msg.toString());
-    //         });
-    //     });
-    //   } catch (err) {
-    //     this.setregLoader(false);
-    //     let msg = err.response.data.message || err.response.status;
-    //     console.log('Error in Upload Images arr', msg);
-    //     if (msg == 503 || msg == 500) {
-    //       store.General.setisServerError(true);
-    //       return;
-    //     }
-    //     // seterror(msg.toString())
-    //     Alert.alert('', msg.toString());
-    //   }
-    // }
-  }
 
   attemptToUploadImage2(imgArr, seterror, sp, cpm) {
     this.setregLoader(true);
@@ -1355,40 +1327,6 @@ class user {
     //     Alert.alert('', msg.toString());
     //   }
     // }
-  }
-
-  @action.bound
-  updateUser(body, c, seterror, setPhoto1Upload, setup, setuc) {
-    console.warn('Update user body : ', body);
-
-    this.setregLoader(false);
-
-    if (c == 'Profile') {
-      setup(body.photo);
-      setPhoto1Upload(1);
-    }
-    if (c == 'CnicF') {
-      setuc(body.cnic_front_image);
-      setPhoto1Upload(2);
-    }
-
-    // hitApi('user/' + this.user._id, 'put', body, this.authToken)
-    //   ?.then((resp: any) => {
-    //     console.log('Update user  resp : ', resp.data.data);
-    //     this.setregLoader(false);
-    //     // this.setUser(resp.data.data);
-    //   })
-    //   .catch(err => {
-    //     // this.setregLoader(false);
-    //     //     let msg = err.response.data.message || err.response.status;
-    //     //     console.log(`Error in ${db.apis.REGISTER_USER} : `, msg);
-    //     //     if (msg == 503 || msg == 500) {
-    //     //       store.General.setisServerError(true);
-    //     //       return;
-    //     //     }
-    //     //     seterror(msg.toString())
-    //     //     // Alert.alert('', msg.toString());
-    //   });
   }
 
   @action.bound
@@ -1658,45 +1596,6 @@ class user {
     setTimeout(() => {
       this.setregLoader(false);
       suc();
-    }, 1500);
-
-    // db.hitApi(db.apis.REGISTER_USER, 'post', body, null)
-    //   ?.then(resp => {
-    //     console.log(`response  ${db.apis.REGISTER_USER} : `, resp.data);
-    //     this.setregLoader(false);
-    //     this.addUser(resp.data.token, resp.data.data);
-    //   })
-    //   .catch(err => {
-    //     this.setregLoader(false);
-    //     let msg = err.response.data.message || err.response.status;
-    //     console.log(`Error in ${db.apis.REGISTER_USER} : `, msg);
-    //     if (msg == 503 || msg == 500) {
-    //       store.General.setisServerError(true);
-    //       return;
-    //     }
-    //     seterror(msg.toString())
-    //     // Alert.alert('', msg.toString());
-    //   });
-  }
-
-  @action.bound
-  applyPromo(body, seterror, suc) {
-    console.warn('apply promo body : ', body);
-    this.setregLoader(true);
-    let msg = 'Please connect internet';
-
-    setTimeout(() => {
-      this.setregLoader(false);
-
-      if (body == '1freemonth') {
-        const res = {
-          name: '1freemonth',
-          discount: 10,
-        };
-        suc(res);
-      } else {
-        Alert.alert('', 'Promo code not exist!');
-      }
     }, 1500);
 
     // db.hitApi(db.apis.REGISTER_USER, 'post', body, null)

@@ -392,10 +392,12 @@ function Search(props) {
         <View style={styles.mainContainer}>
           {renderStatusBar()}
           {renderContent()}
-          <utils.Filters
-            isVisible={isShowFilters}
-            setisVisible={c => setisShowFilters(c)}
-          />
+          {isShowFilters && (
+            <utils.Filters
+              isVisible={isShowFilters}
+              setisVisible={c => setisShowFilters(c)}
+            />
+          )}
         </View>
       </Modal>
     </>

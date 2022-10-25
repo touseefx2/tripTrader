@@ -94,7 +94,7 @@ function Signin(props) {
       if (state.isConnected) {
         const body = {
           email: email.toLowerCase(),
-          pswd: pswd,
+          password: pswd,
         };
         store.User.LoginUser(body, savePswd, setErrMessage);
       } else {

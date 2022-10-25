@@ -18,6 +18,7 @@ import Modal from 'react-native-modal';
 import store from '../../store/index';
 import utils from '../index';
 import theme from '../../theme';
+import StarRating from 'react-native-star-rating';
 import FastImage from 'react-native-fast-image';
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
@@ -35,22 +36,213 @@ function Filters(props) {
   let locSrc = require('../../assets/images/filters/location/img.png');
   let actSrc = require('../../assets/images/filters/activity/img.png');
   let spcSrc = require('../../assets/images/filters/species/img.png');
-  const [isShowFilters, setisShowFilters] = useState(false);
   let activeOpacity = 0.8;
   let headerTitle = 'Filters';
   let isModalVisible = props.isVisible;
-  let isApplyFilter = false;
+  let isApplyFilter = store.Filters.isFilter;
+  const [rfrsh, setrfrsh] = useState(false);
+  const [isFilter, setisFilter] = useState(false);
+
+  const trptype = [...store.Filters.tripType];
+  const settripType = c => {
+    store.Filters.settripType(c);
+  };
   const [isDropDownLoc, setisDropDownLoc] = useState(false);
   const [isDropDownActivity, setisDropDownActivity] = useState(false);
   const [isDropDownSpecies, setisDropDownSpecies] = useState(false);
   const [loc, setloc] = useState(false);
   const [actvty, setactvty] = useState(false);
   const [spcs, setspcs] = useState(false);
+  const [host, sethost] = useState(0);
+
+  //general
+  const tripLoc = store.Filters.tripLocation;
+  const activity = store.Filters.activity;
+  const species = store.Filters.species;
+  //filters
+  const stripType = store.Filters.stripType
+    ? [...store.Filters.stripType]
+    : false;
+  const setstripType = c => {
+    store.Filters.setstripType(c);
+  };
+  let stripLoc = store.Filters.stripLocation;
+  const setstripLoc = c => {
+    store.Filters.setstripLocation(c);
+  };
+  let sactivity = store.Filters.sactivity;
+  const setsactivity = c => {
+    store.Filters.setsactivity(c);
+  };
+  let sspecies = store.Filters.sspecies;
+  const setsspecies = c => {
+    store.Filters.setsspecies(c);
+  };
+  let shostRating = store.Filters.shostRating;
+  const setshostRating = c => {
+    store.Filters.setshostRating(c);
+  };
+
+  //selct trip khud hi chnage hta ja ra
+  useEffect(() => {
+    if (isApplyFilter && isModalVisible) {
+      const stt = [...stripType];
+      let ST = [];
+      if (stt.length > 0) {
+        stt.map((e, i, a) => {
+          ST.push(e);
+        });
+      }
+
+      const dt = [...trptype];
+
+      if (dt.length > 0) {
+        dt.map((e, i, a) => {
+          if (ST.length > 0) {
+            let index = ST.findIndex(d => d === e.name);
+            if (index > -1) {
+              dt[i].isSel = true;
+            } else {
+              dt[i].isSel = false;
+            }
+          }
+        });
+      }
+
+      if (stripLoc) {
+        setloc(stripLoc);
+      }
+
+      if (sactivity) {
+        if (activity.length > 0) {
+          let index = activity.findIndex(e => e.name === sactivity);
+          if (index > -1) {
+            setactvty(activity[index]);
+          }
+        }
+      }
+
+      if (sspecies) {
+        if (species.length > 0) {
+          let index = species.findIndex(e => e.name === sspecies);
+          if (index > -1) {
+            setspcs(species[index]);
+          }
+        }
+      }
+
+      if (shostRating > 0) {
+        sethost(shostRating);
+      }
+    }
+  }, [isApplyFilter, isModalVisible]);
+
+  useEffect(() => {
+    if (isModalVisible) {
+      let chk = false;
+      const dt = [...trptype];
+      if (dt.length > 0) {
+        dt.map((e, i, a) => {
+          if (e.isSel == true) {
+            chk = true;
+            return;
+          }
+        });
+      }
+      if (loc) {
+        chk = true;
+      }
+      if (actvty) {
+        chk = true;
+      }
+      if (spcs) {
+        chk = true;
+      }
+      if (host > 0) {
+        chk = true;
+      }
+      setisFilter(chk);
+    }
+  }, [isModalVisible, trptype, loc, actvty, spcs, host]);
+
+  const onClickApplyFilters = () => {
+    let chk = false;
+    let tt = [];
+    const dt = [...trptype];
+    if (dt.length > 0) {
+      dt.map((e, i, a) => {
+        if (e.isSel == true) {
+          tt.push(e.name);
+        }
+      });
+    }
+
+    if (tt.length > 0) {
+      chk = true;
+      setstripType(tt);
+    } else {
+      setstripType(false);
+    }
+
+    if (loc) {
+      chk = true;
+      setstripLoc(loc);
+    } else {
+      setstripLoc(false);
+    }
+    if (actvty) {
+      chk = true;
+      setsactivity(actvty.name);
+    } else {
+      setsactivity(false);
+    }
+
+    if (spcs) {
+      chk = true;
+      setsspecies(spcs.name);
+    } else {
+      setsspecies(false);
+    }
+
+    if (host > 0) {
+      chk = true;
+      setshostRating(host);
+    }
+
+    if (chk) {
+      store.Filters.setisFilter(true);
+      props.setisVisible(false);
+    } else {
+      store.Filters.setisFilter(false);
+      props.setisVisible(false);
+    }
+  };
+
+  const resetFilters = () => {
+    closeAllDropDown();
+    clearAllDrowdopField();
+    sethost(0);
+    const dt = [...trptype];
+    if (dt.length > 0) {
+      dt.map((e, i, a) => {
+        e.isSel = false;
+      });
+    }
+    settripType(dt);
+  };
 
   const closeModal = () => {
     props.setisVisible(false);
     closeAllDropDown();
     clearAllDrowdopField();
+    sethost(0);
+    const dt = [...trptype];
+    if (dt.length > 0) {
+      dt.map((e, i, a) => {
+        e.isSel = false;
+      });
+    }
+    settripType(dt);
   };
   const closeAllDropDown = () => {
     setisDropDownLoc(false);
@@ -61,26 +253,6 @@ function Filters(props) {
     setloc(false);
     setactvty(false);
     setspcs(false);
-  };
-  let tripType = store.Filters.tripType;
-  const settripType = c => {
-    store.Filters.settripType(c);
-  };
-  let tripLoc = store.Filters.tripLocation;
-  const setripLoc = c => {
-    store.Filters.settripLocation(c);
-  };
-  let activity = store.Filters.activity;
-  const setactivity = c => {
-    store.Filters.setactivity(c);
-  };
-  let species = store.Filters.species;
-  const setspecies = c => {
-    store.Filters.setspecies(c);
-  };
-  let hostRating = store.Filters.hostRating;
-  const sethostRating = c => {
-    store.Filters.sethostRating(c);
   };
 
   const renderStatusBar = () => {
@@ -126,14 +298,17 @@ function Filters(props) {
 
       const render3 = () => {
         return (
-          <TouchableOpacity activeOpacity={activeOpacity}>
+          <TouchableOpacity
+            onPress={resetFilters}
+            disabled={isFilter ? false : true}
+            activeOpacity={activeOpacity}>
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[
                 styles.headerTitle2,
                 {
-                  color: isApplyFilter
+                  color: isFilter
                     ? theme.color.subTitle
                     : theme.color.subTitleLight,
                 },
@@ -172,22 +347,37 @@ function Filters(props) {
       };
 
       const ItemView = ({item, index}) => {
-        let title = item;
+        const onClickItem = () => {
+          const dt = [...trptype];
+          dt[index].isSel = !dt[index].isSel;
+          settripType(dt);
+          setrfrsh(!rfrsh);
+        };
 
+        let title = item.name;
+        let isSel = item.isSel;
         return (
           <>
             <Pressable
+              onPress={() => onClickItem(index)}
               style={({pressed}) => [
                 {
                   opacity: pressed ? activeOpacity : 1,
                 },
 
-                styles.itemContainer2,
+                [
+                  styles.itemContainer2,
+                  {
+                    backgroundColor: !isSel
+                      ? theme.color.button2
+                      : theme.color.button1,
+                  },
+                ],
               ]}>
               <Text
                 style={{
                   fontSize: 14,
-                  color: '#30563A',
+                  color: !isSel ? '#30563A' : '#FAFAFA',
                   fontFamily: theme.fonts.fontMedium,
                   textTransform: 'capitalize',
                 }}>
@@ -203,8 +393,9 @@ function Filters(props) {
           {ListHeader()}
           <FlatList
             numColumns={2}
+            extraData={rfrsh}
             columnWrapperStyle={{justifyContent: 'space-between'}}
-            data={tripType}
+            data={trptype}
             renderItem={ItemView}
             keyExtractor={(item, index) => index.toString()}
           />
@@ -321,7 +512,7 @@ function Filters(props) {
                         textTransform: !actvty ? 'none' : 'capitalize',
                       },
                     ]}>
-                    {!actvty ? 'Select activity' : !actvty.name}
+                    {!actvty ? 'Select activity' : actvty.name}
                   </Text>
                 </View>
                 <utils.vectorIcon.Fontisto
@@ -358,7 +549,7 @@ function Filters(props) {
                         textTransform: !spcs ? 'none' : 'capitalize',
                       },
                     ]}>
-                    {!spcs ? 'Select species' : !spcs.name}
+                    {!spcs ? 'Select species' : spcs.name}
                   </Text>
                 </View>
                 <utils.vectorIcon.Fontisto
@@ -375,9 +566,61 @@ function Filters(props) {
       );
     };
 
+    const renderHosting = () => {
+      const ListHeader = () => {
+        return (
+          <View style={styles.itemHeader}>
+            <View style={{width: '100%'}}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: '#101B10',
+                  fontFamily: theme.fonts.fontBold,
+                  textTransform: 'capitalize',
+                }}>
+                Host Rating
+              </Text>
+            </View>
+          </View>
+        );
+      };
+
+      const renderRating = () => {
+        return (
+          <View
+            style={{
+              width: '46%',
+              marginTop: 10,
+            }}>
+            <StarRating
+              starSize={30}
+              disabled={false}
+              maxStars={5}
+              rating={host}
+              selectedStar={rating => sethost(rating)}
+              emptyStarColor={'rgba(17, 17, 17, 0.3)'}
+              fullStarColor={'#FCBC17'}
+              emptyStar={'star'}
+              fullStar={'star'}
+              iconSet={'FontAwesome'}
+            />
+          </View>
+        );
+      };
+
+      return (
+        <>
+          {ListHeader()}
+          {renderRating()}
+        </>
+      );
+    };
+
     const renderBottom = () => {
       return (
-        <TouchableOpacity style={styles.bottomFullButtonContainer}>
+        <TouchableOpacity
+          onPress={onClickApplyFilters}
+          style={[styles.bottomFullButtonContainer]}>
           <Text style={styles.bottomFullButtonText}>Apply Filters</Text>
         </TouchableOpacity>
       );
@@ -388,10 +631,12 @@ function Filters(props) {
         {renderHeder()}
         <Sep />
         <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}}>
-          {tripType.length > 0 && renderTripTypes()}
+          {trptype.length > 0 && renderTripTypes()}
           <Sep />
           {renderDropDownFields()}
           <Sep />
+          {renderHosting()}
+          <Sep height={30} />
           {renderBottom()}
           <Sep />
         </ScrollView>
@@ -414,10 +659,6 @@ function Filters(props) {
         <View style={styles.mainContainer}>
           {renderStatusBar()}
           {renderContent()}
-          <utils.Filters
-            isVisible={isShowFilters}
-            setisVisible={c => setisShowFilters(c)}
-          />
         </View>
       </Modal>
     </>

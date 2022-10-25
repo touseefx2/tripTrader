@@ -5321,14 +5321,19 @@ function Home(props) {
         {isShowUnavliabledaysCal && renderCalender2()}
         {isOfferSend && renderShowOfferSendModal()}
         {isSendMessage && renderMessageSendModal()}
-        <utils.Search
-          isVisible={isShowSearch}
-          setisVisible={c => setisShowSearch(c)}
-        />
-        <utils.Filters
-          isVisible={isShowFilters}
-          setisVisible={c => setisShowFilters(c)}
-        />
+        {isShowSearch && (
+          <utils.Search
+            isVisible={isShowSearch}
+            setisVisible={c => setisShowSearch(c)}
+          />
+        )}
+        {isShowFilters && (
+          <utils.Filters
+            isVisible={isShowFilters}
+            setisVisible={c => setisShowFilters(c)}
+          />
+        )}
+
         <Toast ref={toast} position="bottom" />
       </View>
     </>
