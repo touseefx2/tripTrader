@@ -95,6 +95,7 @@ function Signin(props) {
         const body = {
           email: email.toLowerCase(),
           password: pswd,
+          registrationCode: store.User.notificationToken,
         };
         store.User.LoginUser(body, savePswd, setErrMessage);
       } else {

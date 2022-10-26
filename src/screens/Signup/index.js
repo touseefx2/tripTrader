@@ -172,6 +172,13 @@ function Signup(props) {
   }, [plan, isPromoApply]);
 
   useEffect(() => {
+    if (plans && plans.data.length > 0) {
+      setPlan(plans.data[0]);
+      setsave(plans.annual_discount);
+    }
+  }, [plans]);
+
+  useEffect(() => {
     const subscription = BackHandler.addEventListener(
       'hardwareBackPress',
       handleBackButtonClick,
@@ -382,13 +389,6 @@ function Signup(props) {
   };
 
   useEffect(() => {
-    if (plans && plans.data.length > 0) {
-      setPlan(plans.data[0]);
-      setsave(plans.annual_discount);
-    }
-  }, [plans]);
-
-  useEffect(() => {
     if (isValidCard == false) {
       if (cn == '' || inValidcn == 'incomplete') {
         setcardErr('Please enter full card number');
@@ -484,6 +484,8 @@ function Signup(props) {
       birthDate: dob,
       termsAccepted: isTerms,
       password: pswd,
+      phone: '',
+      registrationCode: store.User.notificationToken,
     };
 
     // const user = {
@@ -542,7 +544,122 @@ function Signup(props) {
           SetUP,
           SetUCnicF,
           usr._id,
+          token,
         );
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
+
+  const subscribePlan = () => {
+    Keyboard.dismiss();
+    if (cfn == '') {
+      setEmptycfn(true);
+      return;
+    }
+
+    if (isValidCard == 'null') {
+      setcardErr('Please enter card number');
+      setisValidCard(false);
+      return;
+    }
+
+    if (isValidCard == true) {
+      if (iscTerms == false) {
+        setEmptycTerms(true);
+        return;
+      }
+
+      // const obj = {
+      //   plan: plan,
+      //   totalValue: tv,
+      //   isPromoApply: isPromoApply,
+      //   card: {
+      //     name: cfn,
+      //     number: cn,
+      //     expiry: ce,
+      //     cvc: ccvc,
+      //     type: ct,
+      //   },
+      // };
+
+      let tv = plan.type == 'annual' ? totalAnually : monthly;
+      tv = isPromoApply ? promoValue : tv;
+      let pda = 0;
+      if (isPromoApply) {
+        let p = (isPromoApply.discount || 0) / 100;
+
+        if (plan.type == 'monthly') {
+          pda = p * monthly;
+        }
+        if (plan.type == 'annual') {
+          pda = p * totalAnually;
+        }
+      }
+      let subscription = !isPromoApply
+        ? {
+            type: plan.type,
+            charges: plan.charges,
+            discount: plan.discount,
+            startDate: new Date(),
+            endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
+            amtPaid: tv,
+          }
+        : {
+            type: plan.type,
+            charges: plan.charges,
+            discount: plan.discount,
+            startDate: new Date(),
+            endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
+            amtPaid: tv,
+            promoCode: isPromoApply.code,
+            promoCodeDiscount: isPromoApply.discount,
+            promoCodeDiscountAmt: pda,
+          };
+
+      const obj = {
+        subscription: subscription,
+        subscriptionStatus: 'paid',
+      };
+
+      NetInfo.fetch().then(state => {
+        if (state.isConnected) {
+          store.User.SubPlan(obj, usr._id, token, setErrMessage, subPlanSuc);
+        } else {
+          // seterrorMessage('Please connect internet');
+          Alert.alert('', 'Please connect internet');
+        }
+      });
+    }
+  };
+
+  const goTOProfile = () => {
+    // let u = {...usr};
+    // // u.photo = uphoto;
+    // // u.cnic_front_image = ucnicF;
+    // // u.plan = sPlan;
+
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.User.getUserById(usr._id, token, 'profile');
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
+
+  const goTOFindTrips = () => {
+    // let u = {...usr};
+    // // u.photo = uphoto;
+    // // u.cnic_front_image = ucnicF;
+    // // u.plan = sPlan;
+
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.User.getUserById(usr._id, token, 'home');
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -572,52 +689,18 @@ function Signup(props) {
     setisUserCreate(true);
   };
 
-  const subscribePlan = () => {
-    Keyboard.dismiss();
-    if (cfn == '') {
-      setEmptycfn(true);
-      return;
+  function addMonths(date, months) {
+    var d = date.getDate();
+    date.setMonth(date.getMonth() + +months);
+    if (date.getDate() != d) {
+      date.setDate(0);
     }
+    return date;
+  }
 
-    if (isValidCard == 'null') {
-      setcardErr('Please enter card number');
-      setisValidCard(false);
-      return;
-    }
-
-    if (isValidCard == true) {
-      if (iscTerms == false) {
-        setEmptycTerms(true);
-        return;
-      }
-
-      const obj = {
-        plan: plan,
-        totalValue: plan.type == 'annual' ? totalAnually : monthly,
-        isPromoApply: isPromoApply,
-        card: {
-          name: cfn,
-          number: cn,
-          expiry: ce,
-          cvc: ccvc,
-          type: ct,
-        },
-      };
-
-      NetInfo.fetch().then(state => {
-        if (state.isConnected) {
-          store.User.SubPlan(obj, setErrMessage, subPlanSuc);
-        } else {
-          // seterrorMessage('Please connect internet');
-          Alert.alert('', 'Please connect internet');
-        }
-      });
-    }
-  };
-
-  const subPlanSuc = () => {
+  const subPlanSuc = p => {
     setisPhoto1Upload(4);
-    setsPlan(plan);
+    setsPlan(p);
     clearCard();
   };
 
@@ -710,26 +793,6 @@ function Signup(props) {
     } catch (error) {
       console.log('multi photo picker error : ', error);
     }
-  };
-
-  const goTOProfile = () => {
-    let u = {...usr};
-    u.photo = uphoto;
-    u.cnic_front_image = ucnicF;
-    u.plan = sPlan;
-
-    store.General.setgoto('profile');
-    store.User.addUser(token, u);
-  };
-
-  const goTOFindTrips = () => {
-    let u = {...usr};
-    u.photo = uphoto;
-    u.cnic_front_image = ucnicF;
-    u.plan = sPlan;
-
-    store.General.setgoto('home');
-    store.User.addUser(token, u);
   };
 
   // const checkPermsn = async (c, dt) => {

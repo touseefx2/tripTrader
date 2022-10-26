@@ -118,17 +118,6 @@ class user {
     this.photos = obj;
   };
 
-  @action clearcurrentUser = () => {
-    this.setUser(false);
-    this.setphotos([]);
-    this.setreview([]);
-    this.settrips([]);
-    this.setfollowers([]);
-    this.setfollowing([]);
-    this.settotalfollowers(0);
-    this.settotalfollowing(0);
-  };
-
   @action attemptToGetReviews = (uid, setgetdata, setrfrsh, dt) => {
     console.warn('getReviesData : ', 'true');
     this.setreviewLoader(true);
@@ -183,19 +172,6 @@ class user {
   };
   @action setmLoadero = obj => {
     this.mLoadero = obj;
-  };
-
-  @action clearOtherUser = () => {
-    this.setvUser(false);
-    this.setphotoso([]);
-    this.setreviewo([]);
-    this.settripso([]);
-    this.setfscreen('');
-
-    // this.setfollowers([]);
-    // this.setfollowing([]);
-    // this.settotalfollowers(0);
-    // this.settotalfollowing(0);
   };
 
   @action attemptToGetReviewso = (uid, setgetdata, setrfrsh, dt) => {
@@ -553,12 +529,14 @@ class user {
     this.notificationToken = n;
   }
 
-  addUser(token, user) {
+  addUser(token, user, c) {
+    let chk = c || '';
     console.log('token : ', token);
     console.log('user : ', user);
     this.addauthToken(token);
     this.setUser(user);
-    store.General.setgoto('home');
+
+    store.General.setgoto(chk == '' ? 'home' : chk);
     return;
   }
 
@@ -917,66 +895,36 @@ class user {
   @action.bound
   LoginUser(body, svp, seterror) {
     console.warn('Login user body : ', body);
-    // this.setregLoader(true);
-
-    // setTimeout(() => {
-    //   this.setregLoader(false);
-    //   let reslt = {
-    //     _id: 1,
-    //     cnic_front_image: '',
-    //     dob: new Date(),
-    //     email: 'jhon@gmail.com',
-    //     first_name: 'jhon',
-    //     last_name: 'thompson',
-    //     photo:
-    //       'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfHw%3D&w=1000&q=80',
-    //     plan: 'free',
-    //     pswd: 'aaaaaaaa',
-    //     phone: '',
-    //     avg_rating: 0,
-    //     total_reviews: 0,
-    //     isVerified: false,
-    //   };
-    //   let token = '';
-
-    //   if (body.email == reslt.email) {
-    //     if (body.pswd == reslt.pswd) {
-    //       this.addUser(token, reslt);
-    //       this.setemail(body.email);
-    //       this.setsp(svp);
-
-    //       if (svp) {
-    //         this.setpswd(body.pswd);
-    //       } else {
-    //         this.setpswd('');
-    //       }
-    //     } else {
-    //       Alert.alert('', 'Paswword is incorrect');
-    //     }
-    //   } else {
-    //     Alert.alert('', 'User not found');
-    //   }
-
-    //   // Alert.alert('', msg.toString());
-    //   // seterror('asa as');
-    // }, 1200);
+    this.setregLoader(true);
 
     db.hitApi(db.apis.LOGIN_USER, 'post', body, null)
       ?.then(resp => {
-        console.log(`response  ${db.apis.LOGIN_USER} : `, resp.data);
-        // this.setregLoader(false);
-        // this.addUser(resp.data.token, resp.data.data);
+        this.setregLoader(false);
+        console.log(`response Login user  ${db.apis.LOGIN_USER} : `);
+        let rsp = resp.data.doc;
+        let token = resp.data.token;
+
+        this.addUser(token, rsp, '');
+        this.setemail(body.email);
+        this.setsp(svp);
+
+        if (svp) {
+          this.setpswd(body.pswd);
+        } else {
+          this.setpswd('');
+        }
       })
       .catch(err => {
         this.setregLoader(false);
-        // let msg = err.response.data.message || err.response.status;
-        // console.log(`Error in ${db.apis.REGISTER_USER} : `, msg);
-        // if (msg == 503 || msg == 500) {
-        //   store.General.setisServerError(true);
-        //   return;
-        // }
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(`Error in Login user ${db.apis.LOGIN_USER} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
         // seterror(msg.toString())
-        // Alert.alert('', msg.toString());
+        Alert.alert('', msg.toString());
       });
   }
 
@@ -1038,7 +986,7 @@ class user {
       })
       .catch(err => {
         this.setregLoader(false);
-        let msg = err.response.data.message || err.response.status;
+        let msg = err.response.data.message || err.response.status || err;
         console.log(`Error in create ${db.apis.REGISTER_USER} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
@@ -1067,7 +1015,7 @@ class user {
       })
       .catch(err => {
         this.setregLoader(false);
-        let msg = err.response.data.message || err.response.status;
+        let msg = err.response.data.message || err.response.status || err;
         console.log(`Error in check promo  ${db.apis.CHECK_PROMO} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
@@ -1084,9 +1032,7 @@ class user {
   }
 
   @action.bound
-  updateUser(body, c, seterror, setPhoto1Upload, setup, setuc, id) {
-    console.warn('Update user photo body : ', body);
-
+  updateUser(body, c, seterror, setPhoto1Upload, setup, setuc, uid, token) {
     let bd =
       c == 'Profile'
         ? {
@@ -1096,8 +1042,8 @@ class user {
             identityProof: body.cnic_front_image,
             identityStatus: 'pending',
           };
-    let uid = id;
-    db.hitApi(db.apis.UPDATE_USER + uid, 'put', bd, null)
+    console.warn('Update user photo body : ', bd);
+    db.hitApi(db.apis.UPDATE_USER + uid, 'put', bd, token)
       ?.then(resp => {
         this.setregLoader(false);
         console.log(
@@ -1116,7 +1062,7 @@ class user {
       })
       .catch(err => {
         this.setregLoader(false);
-        let msg = err.response.data.message || err.response.status;
+        let msg = err.response.data.message || err.response.status || err;
         console.log(`Error in update user ${db.apis.UPDATE_USER} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
@@ -1128,8 +1074,16 @@ class user {
       });
   }
 
-  attemptToUploadImage(imgArr, seterror, setPhoto1Upload, setup, setuc, uid) {
-    console.warn('upload photo body : ', imgArr);
+  attemptToUploadImage(
+    imgArr,
+    seterror,
+    setPhoto1Upload,
+    setup,
+    setuc,
+    uid,
+    token,
+  ) {
+    console.warn('upload photo body : ', imgArr[0]);
     this.setregLoader(true);
     let e = imgArr[0];
     let body = {};
@@ -1149,15 +1103,15 @@ class user {
     })
       .then(response => response.json())
       .then(responseData => {
-        console.warn('upload photo success : ', body);
+        console.warn('upload photo success : ');
         let rsp = responseData.data[0].imgrUrl;
-        if (e[0].chk == 'Profile') {
+        if (e.chk == 'Profile') {
           body = {
             photo: rsp,
           };
         }
 
-        if (e[0].chk == 'CnicF') {
+        if (e.chk == 'CnicF') {
           body = {
             cnic_front_image: rsp,
           };
@@ -1165,28 +1119,235 @@ class user {
 
         this.updateUser(
           body,
-          e[0].chk,
+          e.chk,
           seterror,
           setPhoto1Upload,
           setup,
           setuc,
           uid,
+          token,
         );
       })
       .catch(err => {
         this.setregLoader(false);
-        console.log(`Error in upload image ${db.apis.IMAGE_UPLOAD} : `, err);
-        // let msg = err.response.data.message || err.response.status;
-        // console.log(`Error in upload image ${db.apis.IMAGE_UPLOAD} : `, msg);
-        // if (msg == 503 || msg == 500) {
-        //   Alert.alert('', 'Server not response');
-        //   // store.General.setisServerError(true);
-        //   return;
-        // }
-        // // seterror(msg.toString())
-        // Alert.alert('', msg.toString());
+        // console.log(`Error in upload image ${db.apis.IMAGE_UPLOAD} : `, err);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(`Error in upload image ${db.apis.IMAGE_UPLOAD} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
       });
   }
+
+  @action.bound
+  SubPlan(body, uid, token, seterror, suc) {
+    console.warn('plan subscribe body : ', body);
+    this.setregLoader(true);
+    db.hitApi(db.apis.UPDATE_USER + uid, 'put', body, token)
+      ?.then(resp => {
+        this.setregLoader(false);
+        console.log(
+          `response pan subscribe  ${db.apis.UPDATE_USER + uid} : `,
+          resp.data,
+        );
+        let rsp = resp.data.data;
+
+        suc(rsp.subscription);
+      })
+      .catch(err => {
+        this.setregLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(`Error in update user ${db.apis.UPDATE_USER} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  }
+
+  @action.bound
+  getUserById(uid, token, c) {
+    console.warn(' get user by id : ', uid);
+    this.setregLoader(true);
+    db.hitApi(db.apis.GET_USER_BY_ID + uid, 'get', {}, token)
+      ?.then(resp => {
+        this.setregLoader(false);
+        console.log(
+          `response get user by id  ${db.apis.GET_USER_BY_ID + uid} : `,
+          resp.data,
+        );
+        let rsp = resp.data.data[0];
+        store.General.setgoto(c);
+        this.addUser(token, rsp, c);
+      })
+      .catch(err => {
+        this.setregLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in get user by id ${db.apis.GET_USER_BY_ID + uid} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  }
+
+  @action.bound
+  forgotPassword(body, goto, seterror) {
+    console.warn('Forgot Pswd  body : ', body);
+    this.setregLoader(true);
+
+    db.hitApi(db.apis.FORGOT_PSWD, 'put', body, null)
+      ?.then(resp => {
+        this.setregLoader(false);
+        console.log(`Forgot Pswd res ${db.apis.FORGOT_PSWD} : `, resp.data);
+        goto('email', body.email);
+      })
+      .catch(err => {
+        this.setregLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(`Error in update user ${db.apis.UPDATE_USER} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  }
+
+  @action.bound
+  isPhoneExist(phone, suc, seterror) {
+    console.warn('isPhoneExist  body : ', phone);
+    this.setregLoader(true);
+
+    db.hitApi(db.apis.IS_PHONE_EXIST, 'get', {}, null)
+      ?.then(resp => {
+        this.setregLoader(false);
+        console.log(`isPhoneExist res ${db.apis.IS_PHONE_EXIST} : `, resp.data);
+        // suc(phone);
+      })
+      .catch(err => {
+        this.setregLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(`Error in isPhoneExist ${db.apis.IS_PHONE_EXIST} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  }
+
+  @action.bound
+  attemptToVerifyCode(body, suc) {
+    console.warn('attemptToVerifyCode  body : ', body);
+    this.setregLoader(true);
+
+    db.hitApi(db.apis.VERIFY_PIN, 'put', body, null)
+      ?.then(resp => {
+        this.setregLoader(false);
+        console.log(
+          `attemptToVerifyCode res ${db.apis.VERIFY_PIN} : `,
+          resp.data,
+        );
+        suc(body.email);
+      })
+      .catch(err => {
+        this.setregLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(`Error in update user ${db.apis.UPDATE_USER} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  }
+
+  @action.bound
+  updatePasword(body, seterror, sucs) {
+    console.warn('Update Psswd user body : ', body);
+    this.setregLoader(true);
+
+    db.hitApi(db.apis.UPD_PSWD, 'put', body, null)
+      ?.then(resp => {
+        this.setregLoader(false);
+        console.log(`Update Psswd res ${db.apis.UPD_PSWD} : `, resp.data);
+        sucs();
+      })
+      .catch(err => {
+        this.setregLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(`Error in Update Psswd ${db.apis.UPD_PSWD} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  }
+
+  @action.bound
+  Logout() {
+    this.clearUser();
+    store.Trips.clearTrips();
+    store.Filters.clearAllFilters();
+    this.setisNotification(true);
+  }
+
+  @action.bound
+  clearUser = () => {
+    this.addauthToken('');
+    this.setphn('');
+    this.setcntr('');
+    this.setpwc('');
+    this.clearcurrentUser();
+    this.clearOtherUser();
+  };
+
+  @action clearcurrentUser = () => {
+    this.setUser(false);
+    this.setphotos([]);
+    this.setreview([]);
+    this.settrips([]);
+    this.setfollowers([]);
+    this.setfollowing([]);
+    this.settotalfollowers(0);
+    this.settotalfollowing(0);
+  };
+
+  @action clearOtherUser = () => {
+    this.setvUser(false);
+    this.setphotoso([]);
+    this.setreviewo([]);
+    this.settripso([]);
+    this.setfscreen('');
+
+    // this.setfollowers([]);
+    // this.setfollowing([]);
+    // this.settotalfollowers(0);
+    // this.settotalfollowing(0);
+  };
 
   @action.bound
   ChangePassword(cp, np, rp, suc) {
@@ -1220,23 +1381,6 @@ class user {
         Alert.alert('', err.response.data.message);
       });
   }
-
-  @action.bound
-  Logout() {
-    this.clearUser();
-    store.Trips.clearTrips();
-    this.setisNotification(true);
-  }
-
-  @action.bound
-  clearUser = () => {
-    this.addauthToken('');
-    this.clearcurrentUser();
-    this.clearOtherUser();
-    this.setphn('');
-    this.setcntr('');
-    this.setpwc('');
-  };
 
   attemptToUploadImage2(imgArr, seterror, sp, cpm) {
     this.setregLoader(true);
@@ -1458,72 +1602,6 @@ class user {
   //   }
   // }
 
-  forgotPassword(body, chk, value, goto, seterror, c, sucs) {
-    console.warn('Forgot Psswd user body : ', body);
-    this.setregLoader(true);
-
-    setTimeout(() => {
-      this.setregLoader(false);
-      if (c == '') {
-        goto(chk, value, '000000');
-      } else {
-        sucs('000000');
-      }
-
-      // Alert.alert('', msg.toString());
-      // seterror('asa as');
-    }, 1500);
-
-    // db.hitApi(db.apis.REGISTER_USER, 'post', body, null)
-    //   ?.then(resp => {
-    //     console.log(`response  ${db.apis.REGISTER_USER} : `, resp.data);
-    //     this.setregLoader(false);
-    //     this.addUser(resp.data.token, resp.data.data);
-    //   })
-    //   .catch(err => {
-    //     this.setregLoader(false);
-    //     let msg = err.response.data.message || err.response.status;
-    //     console.log(`Error in ${db.apis.REGISTER_USER} : `, msg);
-    //     if (msg == 503 || msg == 500) {
-    //       store.General.setisServerError(true);
-    //       return;
-    //     }
-    //     seterror(msg.toString())
-    //     // Alert.alert('', msg.toString());
-    //   });
-  }
-
-  updatePasword(body, seterror, sucs) {
-    console.warn('Update Psswd user body : ', body);
-    this.setregLoader(true);
-
-    setTimeout(() => {
-      this.setregLoader(false);
-      sucs();
-
-      // Alert.alert('', msg.toString());
-      // seterror('asa as');
-    }, 1000);
-
-    // db.hitApi(db.apis.REGISTER_USER, 'post', body, null)
-    //   ?.then(resp => {
-    //     console.log(`response  ${db.apis.REGISTER_USER} : `, resp.data);
-    //     this.setregLoader(false);
-    //     this.addUser(resp.data.token, resp.data.data);
-    //   })
-    //   .catch(err => {
-    //     this.setregLoader(false);
-    //     let msg = err.response.data.message || err.response.status;
-    //     console.log(`Error in ${db.apis.REGISTER_USER} : `, msg);
-    //     if (msg == 503 || msg == 500) {
-    //       store.General.setisServerError(true);
-    //       return;
-    //     }
-    //     seterror(msg.toString())
-    //     // Alert.alert('', msg.toString());
-    //   });
-  }
-
   changePasword(body, seterror, incp, sucs) {
     console.warn('Update Psswd user body : ', body);
     this.setregLoader(true);
@@ -1567,36 +1645,6 @@ class user {
     // Alert.alert('', msg.toString());
     // seterror('asa as');
     // }, 1200);
-
-    // db.hitApi(db.apis.REGISTER_USER, 'post', body, null)
-    //   ?.then(resp => {
-    //     console.log(`response  ${db.apis.REGISTER_USER} : `, resp.data);
-    //     this.setregLoader(false);
-    //     this.addUser(resp.data.token, resp.data.data);
-    //   })
-    //   .catch(err => {
-    //     this.setregLoader(false);
-    //     let msg = err.response.data.message || err.response.status;
-    //     console.log(`Error in ${db.apis.REGISTER_USER} : `, msg);
-    //     if (msg == 503 || msg == 500) {
-    //       store.General.setisServerError(true);
-    //       return;
-    //     }
-    //     seterror(msg.toString())
-    //     // Alert.alert('', msg.toString());
-    //   });
-  }
-
-  @action.bound
-  SubPlan(body, seterror, suc) {
-    console.warn('plan subscribe body : ', body);
-    this.setregLoader(true);
-    let msg = 'Please connect internet';
-
-    setTimeout(() => {
-      this.setregLoader(false);
-      suc();
-    }, 1500);
 
     // db.hitApi(db.apis.REGISTER_USER, 'post', body, null)
     //   ?.then(resp => {

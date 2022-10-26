@@ -39,6 +39,9 @@ function ResetPassword(props) {
   const cnicReg = /\d{5}\d{8}\d/;
   let screen = props.route.params.screen || '';
 
+  let chk = props.route.params.chk || ''; //isemail or isphone
+  let value = props.route.params.value || ''; //email/phone
+
   const loader = store.User.regLoader;
 
   const toast = useRef(null);
@@ -120,7 +123,8 @@ function ResetPassword(props) {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         let body = {
-          password: np,
+          newPassword: np,
+          email: value,
         };
         store.User.updatePasword(body, setErrMessage, showToast);
       } else {

@@ -1,7 +1,7 @@
 //online link  ec2
 // const BASE_URL = 'http://ec2-13-126-235-46.ap-south-1.compute.amazonaws.com/';
 //local link
-const BASE_URL = 'http://10.7.148.142:3001/';
+const BASE_URL = 'http://192.168.0.108:3001/';
 
 //apis
 const GET_CITIES_AREAS = 'api/area/getAllAreas';
@@ -10,9 +10,10 @@ const GET_FOOD_CATEGORY = 'api/category/getAllCategories?branch=';
 const PLACE_ORDER = 'api/orders';
 const REGISTER_USER = 'api/user';
 const UPDATE_USER = 'api/user/';
-const LOGIN_USER = 'api/users/login';
+const FORGOT_PSWD = 'api/user/password/forgot';
+const LOGIN_USER = 'api/user/login';
 const IMAGE_UPLOAD = 'api/upload';
-const GET_USER_BY_ID = 'api/users?_id=';
+const GET_USER_BY_ID = 'api/user?_id=';
 const GET_ORDERS_BY_USER_ID = 'api/orders?customer=';
 const GET_FAVRT_FOOD_LIST_BY_USER_ID = 'api/orders?customer=';
 const GET_ADDRESS_BY_USER_ID = 'api/orders?customer=';
@@ -24,8 +25,10 @@ const CHANGE_PASSWORD = 'api/users/changePassword/';
 const SUBSCRIBE_TOPIC = 'api/pushnotification/subscribeToTopic';
 const CHECK_PROMO = 'api/code?code=';
 const GET_All_PROMOS_BY_ID = 'api/promocode/getActiveCodes?city=';
-
 const GET_All_Plan = 'api/plan?status=active';
+const VERIFY_PIN = 'api/user/password/verifyOtp';
+const UPD_PSWD = 'api/user/password/reset';
+const IS_PHONE_EXIST = 'api/user/verifyPhoneNumber?phone=';
 
 export default apis = {
   BASE_URL,
@@ -50,6 +53,10 @@ export default apis = {
   CHECK_PROMO,
   GET_All_PROMOS_BY_ID,
   GET_All_Plan,
+  FORGOT_PSWD,
+  VERIFY_PIN,
+  UPD_PSWD,
+  IS_PHONE_EXIST,
 };
 
 // const login = 'user/loginCaptain';

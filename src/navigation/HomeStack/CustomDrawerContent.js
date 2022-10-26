@@ -422,20 +422,20 @@ function CustomDrawerContent(props) {
     );
   };
 
+  console.log('user : ', user);
+
   const renderBottom = () => {
     const renderProfile = () => {
       let title1 =
-        user == 'guest' ? 'guest user' : user.first_name + ' ' + user.last_name;
+        user == 'guest' ? 'guest user' : user.firstName + ' ' + user.lastName;
       let title2 = user == 'guest' ? 'limited access' : 'member';
       let src = '';
+      let gsrc = require('../../assets/images/drawer/guest/img.png');
       if (user == 'guest') {
-        src = require('../../assets/images/drawer/guest/img.png');
+        src = gsrc;
       }
       if (user != 'guest' && user) {
-        src =
-          user.photo != ''
-            ? {uri: user.photo}
-            : require('../../assets/images/drawer/guest/img.png');
+        src = user.image != '' ? {uri: user.image} : gsrc;
       }
 
       return (

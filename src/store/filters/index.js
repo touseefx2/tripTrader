@@ -81,10 +81,17 @@ class filters {
   };
 
   @action clearAllFilters = () => {
-    this.settripType([]);
-    this.settripLocation([]);
-    this.setactivity([]);
-    this.setspecies([]);
+    this.settripType([
+      {name: 'fishing', isSel: false},
+      {name: 'hunting', isSel: false},
+      {name: 'stay', isSel: false},
+      {name: 'newly added', isSel: false},
+      {name: 'closest distance', isSel: false},
+    ]);
+    // this.settripType([]);
+    // this.settripLocation([]);
+    // this.setactivity([]);
+    // this.setspecies([]);
     this.clearFilters();
   };
 }

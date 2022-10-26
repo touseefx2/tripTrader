@@ -42,8 +42,8 @@ function VerifyCode(props) {
   const mobileReg = /^[0][3]\d{9}$/;
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
   const cnicReg = /\d{5}\d{8}\d/;
-  let chk = props.route.params.chk || '';
-  let value = props.route.params.value || '';
+  let chk = props.route.params.chk || ''; //isemail or isphone
+  let value = props.route.params.value || ''; //email/phone
 
   const loader = store.User.regLoader;
 
@@ -52,7 +52,6 @@ function VerifyCode(props) {
   const codeInputRef2 = useRef(null);
 
   const prevCodeRef = useRef();
-
   const [confirmResult, setConfirmResult] = useState(
     props.route.params.res || null,
   );
@@ -63,10 +62,6 @@ function VerifyCode(props) {
   const [isFinish, setFinish] = useState(false);
 
   const [errorMessage, seterrorMessage] = useState('');
-
-  const [isEmailField, setisEmailField] = useState(
-    chk == 'email' ? true : false,
-  );
 
   const goBack = () => {
     props.navigation.goBack();
@@ -118,9 +113,9 @@ function VerifyCode(props) {
     Keyboard.dismiss();
   };
 
-  const goToResetPassword = () => {
-    setisVerifyCode(true);
-    props.navigation.navigate('ResetPassword', {screen});
+  const goToResetPassword = v => {
+    // setisVerifyCode(true);
+    props.navigation.navigate('ResetPassword', {screen, value: v, chk: chk});
   };
 
   async function verfyCode(c) {
@@ -159,33 +154,23 @@ function VerifyCode(props) {
   const SubmitCode = () => {
     clearAllField();
     Keyboard.dismiss();
-
     if (code.length < 6) {
       setisEmptyCode(true);
       return;
     }
-
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.setregLoader(true);
-
         if (chk == 'email') {
-          setTimeout(() => {
-            store.User.setregLoader(false);
+          let body = {
+            email: value,
+            pin: code,
+          };
 
-            if (code != confirmResult) {
-              setisVerifyCode(false);
-              return;
-            } else {
-              goToResetPassword();
-              return;
-            }
-          }, 1200);
+          store.User.attemptToVerifyCode(body, goToResetPassword);
         } else {
           verfyCode(code);
         }
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -219,41 +204,41 @@ function VerifyCode(props) {
     });
   }
 
-  const SendCode = () => {
-    clearAllField();
-    Keyboard.dismiss();
+  // const SendCode = () => {
+  //   clearAllField();
+  //   Keyboard.dismiss();
 
-    if (isEmailField) {
-      NetInfo.fetch().then(state => {
-        if (state.isConnected) {
-          let body = {};
-          if (isEmailField) {
-            body = {
-              email: value,
-            };
-          } else {
-            body = {
-              phone: value,
-            };
-          }
-          store.User.forgotPassword(
-            body,
-            chk,
-            value,
-            goToResetPassword,
-            setErrMessage,
-            'c',
-            showResentToast,
-          );
-        } else {
-          // seterrorMessage('Please connect internet');
-          Alert.alert('', 'Please connect internet');
-        }
-      });
-    } else {
-      SendOtpCode();
-    }
-  };
+  //   if (chk=="email") {
+  //     NetInfo.fetch().then(state => {
+  //       if (state.isConnected) {
+  //         let body = {};
+  //         if (chk=="email") {
+  //           body = {
+  //             email: value,
+  //           };
+  //         } else {
+  //           body = {
+  //             phone: value,
+  //           };
+  //         }
+  //         store.User.forgotPassword(
+  //           body,
+  //           chk,
+  //           value,
+  //           goToResetPassword,
+  //           setErrMessage,
+  //           'c',
+  //           showResentToast,
+  //         );
+  //       } else {
+  //         // seterrorMessage('Please connect internet');
+  //         Alert.alert('', 'Please connect internet');
+  //       }
+  //     });
+  //   } else {
+  //     SendOtpCode();
+  //   }
+  // };
 
   const onFinishCheckingCode = cd => {
     setcode(cd);
@@ -296,10 +281,6 @@ function VerifyCode(props) {
   };
 
   const renderSection2 = () => {
-    const changeField = () => {
-      setisEmailField(!isEmailField);
-    };
-
     const renderButton = () => {
       return (
         <>
@@ -341,7 +322,7 @@ function VerifyCode(props) {
 
     const renderTimer = () => {
       const resend = () => {
-        SendCode();
+        // SendCode();
       };
 
       return (
@@ -419,7 +400,7 @@ function VerifyCode(props) {
         {renderButton()}
 
         <View style={styles.Field3}>
-          <TouchableOpacity activeOpacity={0.7} onPress={changeField}>
+          <TouchableOpacity disabled activeOpacity={0.7}>
             {renderTimer()}
           </TouchableOpacity>
         </View>

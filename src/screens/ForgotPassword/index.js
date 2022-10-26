@@ -82,41 +82,24 @@ function ForgotPassword(props) {
     seterrorMessage(c);
   };
 
-  const gotoVerifyCode = (c, v, res) => {
+  const gotoVerifyCode = (c, v) => {
     props.navigation.navigate('VerifyCode', {
       chk: c,
       value: v,
-      res: res,
       screen,
     });
   };
 
-  async function SendOtpCode() {
+  async function SendOtpCode(p) {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         store.User.setregLoader(true);
         auth()
-          .signInWithPhoneNumber(phone)
+          .signInWithPhoneNumber(p)
           .then(res => {
             console.log('opt code send true: ');
             store.User.setregLoader(false);
-            let body = {};
-            let chk = '';
-            let value = '';
-            if (isEmailField) {
-              body = {
-                email: email,
-              };
-              chk = 'email';
-              value = email;
-            } else {
-              body = {
-                phone: phone,
-              };
-              chk = 'phone';
-              value = phone;
-            }
-            gotoVerifyCode(chk, value, res);
+            gotoVerifyCode(chk, value);
           })
           .catch(error => {
             console.log('signInWithPhoneNumber  error : ', error);
@@ -139,57 +122,37 @@ function ForgotPassword(props) {
     clearAllField();
     Keyboard.dismiss();
 
-    if (isEmailField) {
-      if (email == '') {
-        setEmptyemail(true);
-        return;
-      }
-
-      if (emailReg.test(email) === false) {
-        setinvalidemail(true);
-        return;
-      }
-
-      NetInfo.fetch().then(state => {
-        if (state.isConnected) {
-          let body = {};
-          let chk = '';
-          let value = '';
-          if (isEmailField) {
-            body = {
-              email: email,
-            };
-            chk = 'email';
-            value = email;
-          } else {
-            body = {
-              phone: phone,
-            };
-            chk = 'phone';
-            value = phone;
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        if (isEmailField) {
+          if (email == '') {
+            setEmptyemail(true);
+            return;
           }
-          store.User.forgotPassword(
-            body,
-            chk,
-            value,
-            gotoVerifyCode,
-            setErrMessage,
-            '',
-            () => {},
-          );
-        } else {
-          // seterrorMessage('Please connect internet');
-          Alert.alert('', 'Please connect internet');
-        }
-      });
-    } else {
-      if (isVerifyPhone == false || isVerifyPhone == 'a') {
-        setinvalidphone(true);
-        return;
-      }
 
-      SendOtpCode();
-    }
+          if (emailReg.test(email) === false) {
+            setinvalidemail(true);
+            return;
+          }
+
+          let body = {
+            email: email,
+          };
+
+          store.User.forgotPassword(body, gotoVerifyCode, setErrMessage);
+        } else {
+          if (isVerifyPhone == false || isVerifyPhone == 'a') {
+            setinvalidphone(true);
+            return;
+          }
+
+          store.User.isPhoneExist(phone, SendOtpCode, setErrMessage);
+        }
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
   };
 
   const renderHeader = () => {
