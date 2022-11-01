@@ -285,55 +285,25 @@ function NewTrips(props) {
       let index = editTrip.index;
 
       let title = d.title || '';
-      let trade = d.activity || '';
-      let retrn = d.returnActivity || '';
-      let l =
-        d.location && d.location != '' ? {name: d.location, coords: []} : {};
-      let loc = l;
+      let trade = d.offer || '';
+      let retrn = d.return || '';
+      let loc = !isObjectEmpty(d.loc) ? d.loc : {};
       let stts = d.status || '';
-      let acceptOtherTrades = d.acceptTradeOffers;
+      let acceptTradeOffers = d.acceptTradeOffers;
       let durNo = d.duration.value;
       let durTitle = d.duration.title;
       let ind = durtn.findIndex(x => x.title === durTitle);
-      let sd = d.availableFrom;
-      let ed = d.availableTo;
-      let photos = d.photos || [];
-
-      let isSetUn =
-        d.unAvailableDays && !isObjectEmpty(d.unAvailableDays)
-          ? d.unAvailableDays
-          : false;
-      let objct = {...isSetUn};
-
-      if (isSetUn && !isObjectEmpty(isSetUn)) {
-        delete Object.assign(objct, {
-          days_of_week: objct.daysOfWeek,
-        })['daysOfWeek'];
-        delete Object.assign(objct, {
-          unavailable_days_of_week: objct.unavailableDaysOfWeek,
-        })['unavailableDaysOfWeek'];
-        delete Object.assign(objct, {
-          exclude_specific_dates: objct.excludeSpecificDates,
-        })['excludeSpecificDates'];
-        delete Object.assign(objct, {
-          all_unavailable_dates: objct.allUnavailableDates,
-        })['allUnavailableDates'];
-        delete Object.assign(objct, {wtxt: objct.dayWeekText})['dayWeekText'];
-        delete Object.assign(objct, {esd_text: objct.excludeDateText})[
-          'excludeDateText'
-        ];
-        let ra = {...objct.repeatEvery};
-        delete Object.assign(ra, {num: ra.value})['value'];
-        delete objct.repeatEvery;
-        objct.repeat_every = ra;
-      }
+      let sd = d.availablity.startDate;
+      let ed = d.availablity.endDate;
+      let photos = d.photos;
+      let unavailable = !isObjectEmpty(d.unavailable) ? d.unavailable : false;
 
       settitle(title);
       settrader(trade);
       setReturn(retrn);
       setlocation(loc);
       setstatus(stts);
-      setacceptOther(acceptOtherTrades);
+      setacceptOther(acceptTradeOffers);
       setdurNum(durNo);
       setdur(durtn[ind]);
       setPhotos(photos);
@@ -392,7 +362,7 @@ function NewTrips(props) {
       setmarkedDates(mdd);
       setselDates(mdd);
       // }
-      setisSetUnavailable(objct);
+      setisSetUnavailable(unavailable);
       // } else {
       //   setisSelDate1('');
       //   setisSelDate2('');
@@ -513,7 +483,7 @@ function NewTrips(props) {
 
   const siERpOn = d => {
     let md = {};
-    md[moment(d).format('YYYY-MM-DD')] = {
+    md[d] = {
       customStyles: cs,
       marked: false,
       selected: true,
@@ -649,17 +619,16 @@ function NewTrips(props) {
           });
         }
         setdow(dw2);
-        setrdurNum(d.repeat_every.num);
+        setrdurNum(d.repeat_every.value);
         let tt = d.repeat_every.title;
         let index = rdurtn.findIndex(x => x.title === tt);
         setrdur(rdurtn[index]);
         siERpOn(d.repeat_every.endRepeatOn);
         let dt = d.exclude_specific_dates;
-
         let md = {};
         if (dt.length > 0) {
           dt.map((e, i, a) => {
-            md[moment(e).format('YYYY-MM-DD')] = {
+            md[e] = {
               customStyles: cs,
               marked: false,
               selected: true,
@@ -829,7 +798,6 @@ function NewTrips(props) {
 
   const setIsTripCreatSuc = v => {
     setisTripCreate(v);
-    store.User.setphotosrfrsh(true);
   };
 
   const CreateTrip = () => {
@@ -837,30 +805,29 @@ function NewTrips(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        let isSetUn = isSetUnavailable != false ? isSetUnavailable : {};
-        let objct = {...isSetUn};
-        if (isSetUn && !isObjectEmpty(isSetUn)) {
-          delete Object.assign(objct, {
-            daysOfWeek: objct.days_of_week,
-          })['days_of_week'];
-          delete Object.assign(objct, {
-            unavailableDaysOfWeek: objct.unavailable_days_of_week,
-          })['unavailable_days_of_week'];
-          delete Object.assign(objct, {
-            excludeSpecificDates: objct.exclude_specific_dates,
-          })['exclude_specific_dates'];
-          delete Object.assign(objct, {
-            allUnavailableDates: objct.all_unavailable_dates,
-          })['all_unavailable_dates'];
-          delete Object.assign(objct, {dayWeekText: objct.wtxt})['wtxt'];
-          delete Object.assign(objct, {excludeDateText: objct.esd_text})[
-            'esd_text'
-          ];
-          let ra = {...objct.repeat_every};
-          delete Object.assign(ra, {value: ra.num})['num'];
-          delete objct.repeat_every;
-          objct.repeatEvery = ra;
-        }
+        // const obj = {
+        //   _id: (Math.random() * 10).toFixed(0),
+        //   title: title,
+        //   user: store.User.user._id,
+        //   offer: trade,
+        //   return: Return,
+        //   loc: {
+        //     name: 'Miami, Florida',
+        //     coords: [],
+        //   },
+        //   status: status,
+        //   acceptOtherTrades: acceptOther,
+        //   duration: {
+        //     number: durNum,
+        //     title: dur.title,
+        //   },
+        //   availablity: {
+        //     startDate: isSelDate1,
+        //     endDate: isSelDate2,
+        //   },
+        //   photos: photos,
+        //   unavailable: isSetUnavailable != false ? isSetUnavailable : {},
+        // };
 
         const obj = {
           hostId: store.User.user._id,
@@ -876,17 +843,16 @@ function NewTrips(props) {
           availableTo: isSelDate2,
           status: status,
           photos: photos,
-          unAvailableDays: objct,
-          location: location.name,
-          // species: '',
+          unAvailableDays: isSetUnavailable != false ? isSetUnavailable : {},
+          location: {
+            name: 'Miami, Florida',
+            longitude: 124,
+            latitude: 568,
+          },
+          species: '',
         };
 
-        this.setctripLoader(true);
-        if (photos.length <= 0) {
-          store.User.attemptToCreateTrip(obj, setIsTripCreatSuc);
-        } else {
-          store.User.attemptToCreateTripUploadImage(obj, setIsTripCreatSuc);
-        }
+        store.User.attemptToCreateTrip(obj, setIsTripCreatSuc);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -899,81 +865,32 @@ function NewTrips(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        let pht = [...photos];
-        let p = [];
-        let p2 = [];
-        if (pht.length > 0) {
-          pht.map((e, i, a) => {
-            if (e.uri) {
-              p2.push(e);
-            } else {
-              p.push(e);
-            }
-          });
-        }
-
-       
-        let isSetUn = isSetUnavailable != false ? isSetUnavailable : {};
-        let objct = {...isSetUn};
-        if (isSetUn && !isObjectEmpty(isSetUn)) {
-          delete Object.assign(objct, {
-            daysOfWeek: objct.days_of_week,
-          })['days_of_week'];
-          delete Object.assign(objct, {
-            unavailableDaysOfWeek: objct.unavailable_days_of_week,
-          })['unavailable_days_of_week'];
-          delete Object.assign(objct, {
-            excludeSpecificDates: objct.exclude_specific_dates,
-          })['exclude_specific_dates'];
-          delete Object.assign(objct, {
-            allUnavailableDates: objct.all_unavailable_dates,
-          })['all_unavailable_dates'];
-          delete Object.assign(objct, {dayWeekText: objct.wtxt})['wtxt'];
-          delete Object.assign(objct, {excludeDateText: objct.esd_text})[
-            'esd_text'
-          ];
-          let ra = {...objct.repeat_every};
-          delete Object.assign(ra, {value: ra.num})['num'];
-          delete objct.repeat_every;
-          objct.repeatEvery = ra;
-        }
         const obj = {
-          hostId: store.User.user._id,
+          _id: (Math.random() * 10).toFixed(0),
           title: title,
-          activity: trade,
-          returnActivity: Return,
+          user: store.User.user._id,
+          offer: trade,
+          return: Return,
+          loc: {
+            name: 'Miami, Florida',
+            coords: [],
+          },
+          status: status,
           acceptTradeOffers: acceptOther,
           duration: {
-            value: durNum,
+            number: durNum,
             title: dur.title,
           },
-          availableFrom: isSelDate1,
-          availableTo: isSelDate2,
-          status: status,
-          photos: p,
-          unAvailableDays: objct,
-          location: location.name,
-          // species: '',
+          availablity: {
+            startDate: isSelDate1,
+            endDate: isSelDate2,
+          },
+          photos: photos,
+          unavailable: isSetUnavailable != false ? isSetUnavailable : {},
         };
-
-        store.User.setctripLoader(true);
-
-        if (p2.length > 0) {
-          store.User.attemptToUpdateTripUploadImage(
-            obj,
-            p2,
-            editTrip.data._id,
-            editTrip.index,
-            setIsTripCreatSuc,
-          );
-        } else {
-          store.User.attemptToUpdateTrip(
-            obj,
-            editTrip.data._id,
-            editTrip.index,
-            setIsTripCreatSuc,
-          );
-        }
+        let index = editTrip.index;
+        console.warn('update trip obj : ', obj);
+        store.User.attemptToUpdateTrip(obj, index, setIsTripCreatSuc);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -1002,7 +919,7 @@ function NewTrips(props) {
             coords: [],
           },
           status: 'suspended',
-          acceptOtherTrades: acceptOther,
+          acceptTradeOffers: acceptOther,
           duration: {
             number: durNum,
             title: dur.title,
@@ -1040,7 +957,7 @@ function NewTrips(props) {
             coords: [],
           },
           status: 'activate',
-          acceptOtherTrades: acceptOther,
+          acceptTradeOffers: acceptOther,
           duration: {
             number: durNum,
             title: dur.title,
@@ -1768,16 +1685,16 @@ function NewTrips(props) {
         days_of_week: dw, //main
         repeat_every: {
           //main
-          num: rdurNum,
+          value: rdurNum,
           title: rdur.title.toLowerCase(),
           endRepeatOn: endRepOn,
         },
-        wtxt: wtxt,
-        esd_text: tt,
 
         unavailable_days_of_week: unw, //main
         exclude_specific_dates: exsd, //main
         all_unavailable_dates: ad, //main
+        excludeDateText: tt,
+        dayWeekText: wtxt,
       };
       setisShowUnavliableModal(false);
 
@@ -2990,8 +2907,8 @@ function NewTrips(props) {
     let t1 = '';
     let t2 = '';
     if (isSetUnavailable) {
-      t1 = isSetUnavailable.wtxt;
-      t2 = isSetUnavailable.esd_text;
+      t1 = isSetUnavailable.dayWeekText;
+      t2 = isSetUnavailable.excludeDateText;
 
       if (t1 != '' && t2 != '') {
         unavailableText = t1 + ', ' + t2;
@@ -3630,8 +3547,8 @@ function NewTrips(props) {
       let t1 = '';
       let t2 = '';
       if (isSetUnavailable) {
-        t1 = isSetUnavailable.wtxt;
-        t2 = isSetUnavailable.esd_text;
+        t1 = isSetUnavailable.dayWeekText;
+        t2 = isSetUnavailable.excludeDateText;
 
         if (t1 != '' && t2 != '') {
           unavailable = t1 + ', ' + t2;
@@ -4763,3 +4680,38 @@ function NewTrips(props) {
     </View>
   );
 }
+
+const body = {
+  acceptTradeOffers: true,
+  activity: 'hh',
+  availableFrom: '2022-10-31',
+  availableTo: '2022-11-30',
+  duration: {title: 'weeks', value: 1},
+  hostId: '635d73bdc23b0518e97d8398',
+  location: 'Miami, Florida',
+  photos: [],
+  returnActivity: 'uf',
+  status: 'active',
+  title: 'Hunting Trip',
+  unAvailableDays: {
+    all_unavailable_dates: [
+      '2022-11-12',
+      '2022-11-14',
+      '2022-11-15',
+      '2022-11-16',
+      '2022-11-19',
+      '2022-11-27',
+    ],
+    dayWeekText: 'Sat (weekly)',
+    days_of_week: ['Sat'],
+    excludeDateText: 'Nov 14-16, Nov 27',
+    exclude_specific_dates: [
+      '2022-11-14',
+      '2022-11-15',
+      '2022-11-16',
+      '2022-11-27',
+    ],
+    repeat_every: {endRepeatOn: '2022-11-25', title: 'weeks', value: 1},
+    unavailable_days_of_week: ['2022-11-12', '2022-11-19'],
+  },
+};

@@ -54,8 +54,7 @@ function Inbox(props) {
         userName: 'Fransisco Fred',
         message: 'Hey! I had a question about trade...',
         createdAt: 'Just now',
-        photo:
-          'https://www.adobe.com/express/create/media_127540366421d3d5bfcaf8202527ca7d37741fd5d.jpeg?width=400&format=jpeg&optimize=medium',
+        photo: '',
 
         isRead: false,
       },

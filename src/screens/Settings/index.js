@@ -49,20 +49,27 @@ function Settings(props) {
   let isNotification = store.User.isNotification;
 
   let phn = '';
+  let phnCntr = '';
+
   if (user != 'guest' && user) {
-    phn = user.phone;
+    phn = user.phone && user.phone !== null ? '+' + user.phone : '';
+    phnCntr =
+      user.phoneCountryCode && user.phoneCountryCode !== null
+        ? user.phoneCountryCode
+        : '';
   }
+
   const [phone, setPhone] = useState(phn);
-  const [cntry, setcntry] = useState('');
+  const [cntry, setcntry] = useState(phnCntr);
   const [pwc, setpwc] = useState('');
   useEffect(() => {
-    if (phone != '') {
+    if (phone != '' && cntry != '') {
       setTimeout(() => {
         let Countries = utils.Countries;
         for (let index = 0; index < Countries.length; index++) {
           const e = Countries[index];
           let result = phone.includes(e.dialCode);
-          if (result) {
+          if (result && cntry == e.code) {
             setcntry(e.code);
             setpwc(phone.slice(e.dialCode.length));
             break;
@@ -72,7 +79,8 @@ function Settings(props) {
     } else {
       setpwc('');
     }
-  }, [phone]);
+  }, [phone, cntry]);
+
   useEffect(() => {
     store.User.setphn(phone);
     store.User.setcntr(cntry);
@@ -81,7 +89,12 @@ function Settings(props) {
 
   useEffect(() => {
     if (user && user !== 'guest') {
-      setPhone(user.phone);
+      setPhone(user.phone && user.phone !== null ? '+' + user.phone : '');
+      setcntry(
+        user.phoneCountryCode && user.phoneCountryCode !== null
+          ? user.phoneCountryCode
+          : '',
+      );
     }
   }, [user]);
 
@@ -99,7 +112,9 @@ function Settings(props) {
     }
     if (c == 'notifications') {
     }
-
+    if (c == 'Manage Subscription') {
+      props.navigation.navigate('ManageSubscription');
+    }
     if (c == 'contact us') {
     }
     if (c == 'news') {
@@ -117,6 +132,7 @@ function Settings(props) {
     let editprofileIcon = require('../../assets/images/settings/editprofile/img.png');
     let cpIcon = require('../../assets/images/settings/cp/img.png');
     let notificationsIcon = require('../../assets/images/settings/notifications/img.png');
+    let subIcon = require('../../assets/images/settings/subscription/img.png');
     let contactusIcon = require('../../assets/images/settings/contactus/img.png');
     let newsIcon = require('../../assets/images/settings/news/img.png');
     let privacyIcon = require('../../assets/images/settings/privacy/img.png');
@@ -219,6 +235,33 @@ function Settings(props) {
               size="small"
               onToggle={isOn => store.User.setisNotification(isOn)}
             />
+          </View>
+        </TouchableOpacity>
+      );
+    };
+
+    const renderManageSubscription = () => {
+      let title = 'Manage Subscription';
+      return (
+        <TouchableOpacity
+          activeOpacity={ao}
+          onPress={() => {
+            onClick(title);
+          }}
+          style={styles.mainContainer}>
+          <View style={styles.sec1Container}>
+            <View style={styles.iconConatiner}>
+              <Image source={subIcon} style={styles.icon} />
+            </View>
+          </View>
+
+          <View style={styles.sec2Container}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={styles.sec2Title}>
+              {title}
+            </Text>
           </View>
         </TouchableOpacity>
       );
@@ -340,6 +383,7 @@ function Settings(props) {
               {renderEditProfile()}
               {renderCp()}
               {renderNotifications()}
+              {renderManageSubscription()}
               {renderContactus()}
               {renderNews()}
               {renderPrivacy()}

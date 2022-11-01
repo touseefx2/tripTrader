@@ -36,7 +36,7 @@ import auth from '@react-native-firebase/auth';
 
 export default observer(VerifyCode);
 function VerifyCode(props) {
-  let resendTime = 60; //second
+  let resendTime = 10; //second
   let screen = props.route.params.screen || '';
 
   const mobileReg = /^[0][3]\d{9}$/;
@@ -77,7 +77,7 @@ function VerifyCode(props) {
           store.User.setregLoader(false);
           auth().currentUser?.delete();
           auth().signOut();
-          goToResetPassword();
+          goToResetPassword(value);
         }, 1000);
       }
     });
@@ -105,7 +105,7 @@ function VerifyCode(props) {
   };
 
   const showResentToast = c => {
-    toast?.current?.show('Resnt Pin Success', 1200);
+    toast?.current?.show('Resend Pin Success', 1200);
     setFinish(false);
     setcode('');
     codeInputRef2?.current?.clear();
@@ -123,6 +123,7 @@ function VerifyCode(props) {
       Keyboard.dismiss();
       store.User.setregLoader(true);
       await confirmResult.confirm(c);
+      setisVerifyCode(true);
     } catch (error) {
       console.log('Verifyication Code  error: ', error);
       store.User.setregLoader(false);
@@ -151,6 +152,10 @@ function VerifyCode(props) {
     }
   }
 
+  const SETisVerifycode = c => {
+    setisVerifyCode(c);
+  };
+
   const SubmitCode = () => {
     clearAllField();
     Keyboard.dismiss();
@@ -166,7 +171,11 @@ function VerifyCode(props) {
             pin: code,
           };
 
-          store.User.attemptToVerifyCode(body, goToResetPassword);
+          store.User.attemptToVerifyCode(
+            body,
+            goToResetPassword,
+            SETisVerifycode,
+          );
         } else {
           verfyCode(code);
         }
@@ -204,41 +213,27 @@ function VerifyCode(props) {
     });
   }
 
-  // const SendCode = () => {
-  //   clearAllField();
-  //   Keyboard.dismiss();
+  const reSendCode = () => {
+    clearAllField();
+    Keyboard.dismiss();
 
-  //   if (chk=="email") {
-  //     NetInfo.fetch().then(state => {
-  //       if (state.isConnected) {
-  //         let body = {};
-  //         if (chk=="email") {
-  //           body = {
-  //             email: value,
-  //           };
-  //         } else {
-  //           body = {
-  //             phone: value,
-  //           };
-  //         }
-  //         store.User.forgotPassword(
-  //           body,
-  //           chk,
-  //           value,
-  //           goToResetPassword,
-  //           setErrMessage,
-  //           'c',
-  //           showResentToast,
-  //         );
-  //       } else {
-  //         // seterrorMessage('Please connect internet');
-  //         Alert.alert('', 'Please connect internet');
-  //       }
-  //     });
-  //   } else {
-  //     SendOtpCode();
-  //   }
-  // };
+    if (chk == 'email') {
+      NetInfo.fetch().then(state => {
+        if (state.isConnected) {
+          let body = {
+            email: value,
+          };
+
+          store.User.forgotPassword2(body, showResentToast);
+        } else {
+          // seterrorMessage('Please connect internet');
+          Alert.alert('', 'Please connect internet');
+        }
+      });
+    } else {
+      SendOtpCode();
+    }
+  };
 
   const onFinishCheckingCode = cd => {
     setcode(cd);
@@ -322,7 +317,7 @@ function VerifyCode(props) {
 
     const renderTimer = () => {
       const resend = () => {
-        // SendCode();
+        reSendCode();
       };
 
       return (

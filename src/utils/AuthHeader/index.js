@@ -29,7 +29,7 @@ function AuthHeader(props) {
   let screen = props.screen || '';
 
   const goBack = () => {
-    if (screen == 'signup') {
+    if (screen == 'signup' || screen == 'plan') {
       props.goBack();
       return;
     }

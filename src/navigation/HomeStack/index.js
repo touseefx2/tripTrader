@@ -412,6 +412,17 @@ let SettingsStack = () => {
           });
         }}
       />
+
+      <Stack.Screen
+        name="ManageSubscription"
+        component={ManageSubscriptionStack}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+      />
     </Stack.Navigator>
   );
 };
@@ -428,6 +439,24 @@ let ChangePasswordStack = () => {
       <Stack.Screen name="ForgotPassword" component={screens.ForgotPassword} />
       <Stack.Screen name="VerifyCode" component={screens.VerifyCode} />
       <Stack.Screen name="ResetPassword" component={screens.ResetPassword} />
+      <Stack.Screen name="Notifications" component={screens.Notifications} />
+    </Stack.Navigator>
+  );
+};
+
+let ManageSubscriptionStack = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="ManageSubscriptionn"
+      screenOptions={{
+        animationEnabled: false,
+        headerShown: false,
+      }}>
+      <Stack.Screen
+        name="ManageSubscriptionn"
+        component={screens.ManageSubscription}
+      />
+      <Stack.Screen name="Plan" component={screens.Plan} />
       <Stack.Screen name="Notifications" component={screens.Notifications} />
     </Stack.Navigator>
   );

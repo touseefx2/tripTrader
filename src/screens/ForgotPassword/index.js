@@ -82,10 +82,11 @@ function ForgotPassword(props) {
     seterrorMessage(c);
   };
 
-  const gotoVerifyCode = (c, v) => {
+  const gotoVerifyCode = (c, v, res) => {
     props.navigation.navigate('VerifyCode', {
       chk: c,
       value: v,
+      res: res,
       screen,
     });
   };
@@ -93,13 +94,13 @@ function ForgotPassword(props) {
   async function SendOtpCode(p) {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.setregLoader(true);
+        // store.User.setregLoader(true);
         auth()
           .signInWithPhoneNumber(p)
           .then(res => {
             console.log('opt code send true: ');
             store.User.setregLoader(false);
-            gotoVerifyCode(chk, value);
+            gotoVerifyCode('phone', p, res);
           })
           .catch(error => {
             console.log('signInWithPhoneNumber  error : ', error);
@@ -212,6 +213,13 @@ function ForgotPassword(props) {
 
     const changeField = () => {
       setisEmailField(!isEmailField);
+      setphone('');
+      setinvalidphone(false);
+      setisVerifyPhone('a');
+      setemail('');
+      setEmptyemail(false);
+      setinvalidemail(false);
+      seterrorMessage('');
     };
 
     const goToSignup = () => {
@@ -310,6 +318,11 @@ function ForgotPassword(props) {
                   },
                 ]}>
                 <IntlPhoneInput
+                  clearPhone={() => {
+                    setphone('');
+                    setinvalidphone(false);
+                    setisVerifyPhone('a');
+                  }}
                   onChangeText={p => {
                     setPhoneNumber(p);
                   }}

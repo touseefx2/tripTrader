@@ -59,8 +59,8 @@ allprojects {
             }
         }
         google()
-        jcenter()
-      
+        // jcenter()
+      mavenCentral()
         maven { url 'https://www.jitpack.io' }
     }
 }

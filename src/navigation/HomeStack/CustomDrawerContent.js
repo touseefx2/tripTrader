@@ -422,7 +422,7 @@ function CustomDrawerContent(props) {
     );
   };
 
-  console.log('user : ', user);
+  // console.log('user : ', user);
 
   const renderBottom = () => {
     const renderProfile = () => {
@@ -435,7 +435,7 @@ function CustomDrawerContent(props) {
         src = gsrc;
       }
       if (user != 'guest' && user) {
-        src = user.image != '' ? {uri: user.image} : gsrc;
+        src = user.image && user.image != '' ? {uri: user.image} : gsrc;
       }
 
       return (

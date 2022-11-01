@@ -70,69 +70,63 @@ function Reviews(props) {
     getDbData();
   }, []);
 
-  const getDbData = c => {
+  const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        const dt = [
-          {
-            _id: 21,
-            user: {
-              _id: 2,
-              first_name: 'mike',
-              last_name: 'monuse',
-              // photo:"",
-              photo:
-                'https://www.adobe.com/express/create/media_127540366421d3d5bfcaf8202527ca7d37741fd5d.jpeg?width=400&format=jpeg&optimize=medium',
-              avg_rating: 3.8,
-              total_reviews: 190,
-            },
-            comment:
-              'John Thompson was a great host! I had an amazing time and killed a great duck.',
-            created_at: new Date(),
-          },
-          {
-            _id: 22,
-            user: {
-              _id: 3,
-              first_name: 'tom',
-              last_name: 'jerry',
-              photo: '',
-              avg_rating: 4.5,
-              total_reviews: 45,
-              isVerified: true,
-            },
-            comment: 'John Thompson was a great host! I had an amazing time.',
-            created_at: new Date(),
-            reply: {
-              user: store.User.user,
-              comment:
-                'Thank you, Jerry! I had a blast and hope to trade with you again soon. Highly recommend others to trade with you.',
-              created_at: new Date(),
-            },
-          },
-          {
-            _id: 23,
-            user: {
-              _id: 4,
-              first_name: 'Mano',
-              last_name: 'Twis',
-              // photo:"",
-              photo:
-                'https://t3.ftcdn.net/jpg/03/67/46/48/360_F_367464887_f0w1JrL8PddfuH3P2jSPlIGjKU2BI0rn.jpg',
-              avg_rating: 2.0,
-              total_reviews: 10,
-            },
-            comment:
-              'John Thompson Thank you so much for your careful planning, attention to detail, and flexible offerings when the tropical system blew through and changed our plans! We had a blast exploring Miami, and eating so much great food.\nDinner reservations the first night we arrived were perfect- after a long day of traveling, we enjoyed a delicious meal overlooking the water',
-            created_at: new Date(),
-          },
-        ];
-        store.User.attemptToGetReviews(
-          user._id,
-          setGetDataOnce,
-          setrefeshing,
-          dt,
-        );
+        // const dt = [
+        //   {
+        //     _id: 21,
+        //     user: {
+        //       _id: 2,
+        //       first_name: 'mike',
+        //       last_name: 'monuse',
+        //       // photo:"",
+        //       photo: '',
+        //       avg_rating: 3.8,
+        //       total_reviews: 190,
+        //     },
+        //     comment:
+        //       'John Thompson was a great host! I had an amazing time and killed a great duck.',
+        //     created_at: new Date(),
+        //   },
+        //   {
+        //     _id: 22,
+        //     user: {
+        //       _id: 3,
+        //       first_name: 'tom',
+        //       last_name: 'jerry',
+        //       photo: '',
+        //       avg_rating: 4.5,
+        //       total_reviews: 45,
+        //       isVerified: true,
+        //     },
+        //     comment: 'John Thompson was a great host! I had an amazing time.',
+        //     created_at: new Date(),
+        //     reply: {
+        //       user: store.User.user,
+        //       comment:
+        //         'Thank you, Jerry! I had a blast and hope to trade with you again soon. Highly recommend others to trade with you.',
+        //       created_at: new Date(),
+        //     },
+        //   },
+        //   {
+        //     _id: 23,
+        //     user: {
+        //       _id: 4,
+        //       first_name: 'Mano',
+        //       last_name: 'Twis',
+        //       // photo:"",
+        //       photo:
+        //         'https://t3.ftcdn.net/jpg/03/67/46/48/360_F_367464887_f0w1JrL8PddfuH3P2jSPlIGjKU2BI0rn.jpg',
+        //       avg_rating: 2.0,
+        //       total_reviews: 10,
+        //     },
+        //     comment:
+        //       'John Thompson Thank you so much for your careful planning, attention to detail, and flexible offerings when the tropical system blew through and changed our plans! We had a blast exploring Miami, and eating so much great food.\nDinner reservations the first night we arrived were perfect- after a long day of traveling, we enjoyed a delicious meal overlooking the water',
+        //     created_at: new Date(),
+        //   },
+        // ];
+        store.User.attemptToGetReviews(user._id, setGetDataOnce, setrefeshing);
       } else {
         setrefeshing(false);
       }
@@ -249,29 +243,56 @@ function Reviews(props) {
   };
 
   const renderShowData = ({item, index}) => {
-    let photo = item.user.photo;
-    let isuVeirfy = item.user.isVerified || false;
-    let userName = item.user.first_name + ' ' + item.user.last_name;
-    let avgRating = item.user.avg_rating;
-    let totalReviews = item.user.total_reviews;
-    let postDate = item.created_at;
-    let userComment = item.comment;
-    let reply = item.reply ? item.reply : '';
-    let dispute = item.dispute ? item.dispute : false;
-    let disputeDate = dispute ? dispute.created_at : '';
+    let id = user._id;
+    let role = '';
+    if (id == item.hostId._id) {
+      role = 'host';
+    } else {
+      role = 'guest';
+    }
 
+    let usr = role == 'guest' ? item.hostId : item.guestId;
+
+    //reviewer user
+    let photo = usr.image;
+    let isuVeirfy = usr.identityStatus == 'notVerified' ? false : true;
+    let userName = usr.firstName + ' ' + usr.lastName;
+    let avgRating = 3.5;
+    let totalReviews = 20;
+    let userComment = '';
+    let postDate = '';
+    let msgs = item.messages || [];
+    let reply = '';
+    if (msgs.length > 0) {
+      msgs.map((e, i, a) => {
+        if (e.role !== role) {
+          postDate = e.createdAt;
+          userComment = e.message;
+        } else if (e.role == role) {
+          reply = e;
+        }
+      });
+    }
+
+    let rusr = user;
+    //host
     let ruserPhoto = '';
     let ruserName = '';
     let ruserComment = '';
     let rpostDate = '';
     let isrVeirfy = false;
     if (reply != '') {
-      ruserPhoto = reply.user.photo;
-      isrVeirfy = reply.user.isVerified || false;
-      ruserName = reply.user.first_name + ' ' + reply.user.last_name;
-      ruserComment = reply.comment;
-      rpostDate = reply.created_at;
+      ruserPhoto = rusr.image || '';
+      isrVeirfy = rusr.dentityStatus || false;
+      ruserName = rusr.firstName + ' ' + rusr.lastName;
+      ruserComment = reply.message;
+      rpostDate = reply.createdAt;
     }
+
+    let dispute =
+      item.disputeMessages && item.disputeMessages.length > 0 ? true : false;
+    let disputeDate = '';
+    // let disputeDate = dispute ? dispute.created_at : '';
 
     const formatdisputeDate = date => {
       var dd = moment(date).format('MMM DD');
@@ -552,7 +573,7 @@ function Reviews(props) {
             fontFamily: theme.fonts.fontMedium,
           }}>
           {c == 'empty'
-            ? 'No trip reviews received yet.'
+            ? 'No reviews received yet.'
             : 'Please connect internet.'}
         </Text>
       </View>
@@ -587,7 +608,6 @@ function Reviews(props) {
     );
   };
 
-  // console.warn("mloader : ",mloader)
   const renderModal = () => {
     if (modalChk == 'reply' || modalChk == 'edit') {
       const renderHeader = () => {

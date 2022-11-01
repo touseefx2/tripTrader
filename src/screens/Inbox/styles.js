@@ -517,7 +517,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   mProfileImgContainer: {
-    // borderWidth: 2,
+    borderWidth: 1,
     borderColor: theme.color.fieldBorder,
     width: 48,
     height: 48,

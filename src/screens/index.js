@@ -9,7 +9,7 @@
 // import Checkout from './Checkout';
 // import CheckoutEmpty from './CheckoutEmpty';
 // import ResturantDetails from './ResturantDetails/index';
-// import OrderLocation from './OrderLocation';
+import Plan from './Plan';
 // import OTP from './OTP';
 
 // import Favourite from './Favourite';
@@ -21,7 +21,7 @@
 
 // import Notification_Detail from "./Notification_Detail/index";
 // import RegisterProfile from "./RegisterProfile/index";
-// import Car from "./Car/index";
+import ManageSubscription from './ManageSubscription/index';
 import ShowFollowers from './ShowFollowers/index';
 
 import Splash from './Splash';
@@ -79,4 +79,6 @@ export default screens = {
   ChangePassword,
   ShowFollowers,
   UserProfile,
+  ManageSubscription,
+  Plan,
 };

@@ -122,10 +122,19 @@ function ResetPassword(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        let body = {
-          newPassword: np,
-          email: value,
-        };
+        let body = {};
+        if (chk == 'email') {
+          body = {
+            newPassword: np,
+            email: value,
+          };
+        } else {
+          body = {
+            newPassword: np,
+            phone: value.substring(1),
+          };
+        }
+
         store.User.updatePasword(body, setErrMessage, showToast);
       } else {
         // seterrorMessage('Please connect internet');

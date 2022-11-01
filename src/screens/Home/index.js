@@ -144,9 +144,9 @@ const data = [
       first_name: 'mike',
       last_name: 'monuse',
       userName: 'mmouse',
-      // photo:"",
+
       photo:
-        'https://www.adobe.com/express/create/media_127540366421d3d5bfcaf8202527ca7d37741fd5d.jpeg?width=400&format=jpeg&optimize=medium',
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbyQRxBY8uSBj1VaS26kR0_7Uk6BJ-YNz4XQ&usqp=CAU',
       avg_rating: 3.8,
       total_reviews: 190,
       isVerified: true,
@@ -522,30 +522,19 @@ function Home(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        // const obj = {
-        //   _id: (Math.random() * 10).toFixed(0),
-        //   title: title,
-        //   user: store.User.user._id,
-        //   offer: trade,
-        //   return: Return,
-        //   loc: {
-        //     name: 'Miami, Florida',
-        //     coords: [],
-        //   },
-        //   status: status,
-        //   acceptOtherTrades: acceptOther,
-        //   duration: {
-        //     number: durNum,
-        //     title: dur.title,
-        //   },
-        //   availablity: {
-        //     startDate: isSelDate1,
-        //     endDate: isSelDate2,
-        //   },
-        //   photos: photos,
-        //   unavailable: isSetUnavailable != false ? isSetUnavailable : {},
-        // };
-        // console.warn('create trip obj : ', obj);
+        const obj = {
+          userId1: '633c227b0bad660d05d2ad9e',
+          userId2: '6332d1669487c34ac7f215c2',
+          messages: [
+            {
+              sendBy: '63315abc036410a784177f8f',
+              isRead: false,
+              message: 'Hello John',
+              messageType: 'text',
+            },
+          ],
+        };
+
         store.User.attemptToMessageSend({}, setIsSendMessage);
       } else {
         // seterrorMessage('Please connect internet');
@@ -747,7 +736,7 @@ function Home(props) {
 
   const siERpOn = d => {
     let md = {};
-    md[d] = {
+    md[moment(d).format('YYYY-MM-DD')] = {
       customStyles: cs,
       marked: false,
       selected: true,
@@ -2636,7 +2625,7 @@ function Home(props) {
               let md = {};
               if (dt.length > 0) {
                 dt.map((e, i, a) => {
-                  md[e] = {
+                  md[moment(e).format('YYYY-MM-DD')] = {
                     customStyles: cs,
                     marked: false,
                     selected: true,

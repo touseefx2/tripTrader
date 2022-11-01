@@ -19,7 +19,7 @@ export const styles = StyleSheet.create({
   },
   container3: {
     flex: 1,
-    backgroundColor: theme.color.backgroundConatiner,
+    backgroundColor: theme.color.background,
   },
   headerConatainer: {
     backgroundColor: theme.color.backgroundGreen,
@@ -215,17 +215,17 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: theme.color.button1,
     height: 50,
-    // height: responsiveHeight(8),
+
     borderRadius: 10,
     alignSelf: 'center',
-    marginTop: 35,
+    marginTop: 50,
   },
   buttonTextBottom: {
     color: theme.color.buttonText,
     fontSize: 16,
     // fontSize: responsiveScreenFontSize(2.15),
     fontFamily: theme.fonts.fontBold,
-    textTransform: 'capitalize',
+    // textTransform: 'capitalize',
   },
 
   BottomButtonT: {
@@ -266,12 +266,11 @@ export const styles = StyleSheet.create({
     fontFamily: theme.fonts.fontNormal,
   },
 
-  Field: {marginTop: 15},
+  Field1: {marginTop: 25},
   FieldTitle1: {
-    color: theme.color.titleGreenForm,
-    fontSize: 12.5,
-    fontFamily: theme.fonts.fontBold,
-    textTransform: 'capitalize',
+    color: '#111111',
+    fontSize: 15,
+    fontFamily: theme.fonts.fontNormal,
   },
   FieldTitle11: {
     color: theme.color.titleGreenForm,
@@ -341,5 +340,15 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 10,
     alignItems: 'center', //for ios
     justifyContent: 'center', //for ios
+  },
+
+  Fieldp: {
+    marginTop: 25,
+    flexDirection: 'row',
+  },
+  FieldpTitle: {
+    color: '#767676',
+    fontSize: 14,
+    fontFamily: theme.fonts.fontNormal,
   },
 });

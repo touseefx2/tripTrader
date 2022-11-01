@@ -59,20 +59,29 @@ function MyProfile(props) {
 
   let userName = '';
   let phn = '';
+  let phnCntr = '';
   let followers = store.User.totalfollowers;
   let following = store.User.totalfollowing;
   let src = '';
   let srccnic = '';
+  let isCnicVerf = false;
 
   if (user == 'guest') {
     userName = 'guest';
   }
 
   if (user != 'guest' && user) {
-    userName = user.first_name + ' ' + user.last_name;
-    phn = user.phone;
-    src = user.photo != '' ? user.photo : '';
-    srccnic = user.cnic_front_image != '' ? user.cnic_front_image : '';
+    userName = user.firstName + ' ' + user.lastName;
+    phn = user.phone && user.phone !== null ? '+' + user.phone : '';
+    phnCntr =
+      user.phoneCountryCode && user.phoneCountryCode !== null
+        ? user.phoneCountryCode
+        : '';
+
+    src = user.image && user.image != '' ? user.image : '';
+    srccnic =
+      user.identityProof && user.identityProof != '' ? user.identityProof : '';
+    isCnicVerf = user.identityStatus == 'notVerified' ? false : true;
   }
 
   const [tab, setTab] = useState('reviews');
@@ -80,7 +89,8 @@ function MyProfile(props) {
   const [photo, setphoto] = useState(src);
 
   const [phone, setPhone] = useState(phn);
-  const [cntry, setcntry] = useState('');
+
+  const [cntry, setcntry] = useState(phnCntr);
   const [pwc, setpwc] = useState('');
 
   const [pvm, setpvm] = useState(false); //show fulll image modal
@@ -116,13 +126,13 @@ function MyProfile(props) {
   }, []);
 
   useEffect(() => {
-    if (phone != '') {
+    if (phone != '' && cntry != '') {
       setTimeout(() => {
         let Countries = utils.Countries;
         for (let index = 0; index < Countries.length; index++) {
           const e = Countries[index];
           let result = phone.includes(e.dialCode);
-          if (result) {
+          if (result && cntry == e.code) {
             setcntry(e.code);
             setpwc(phone.slice(e.dialCode.length));
             break;
@@ -132,7 +142,8 @@ function MyProfile(props) {
     } else {
       setpwc('');
     }
-  }, [phone]);
+  }, [phone, cntry]);
+
   useEffect(() => {
     store.User.setphn(phone);
     store.User.setcntr(cntry);
@@ -141,8 +152,13 @@ function MyProfile(props) {
 
   useEffect(() => {
     if (user && user !== 'guest') {
-      setPhone(user.phone);
-      setphoto(user.photo);
+      setPhone(user.phone && user.phone !== null ? '+' + user.phone : '');
+      setcntry(
+        user.phoneCountryCode && user.phoneCountryCode !== null
+          ? user.phoneCountryCode
+          : '',
+      );
+      setphoto(user.image && user.image != '' ? user.image : '');
     }
   }, [user]);
 

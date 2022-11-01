@@ -694,4 +694,11 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: theme.fonts.fontNormal,
   },
+
+  idCardChangeTextV: {
+    color: '#101B10',
+    fontSize: 14,
+    fontFamily: theme.fonts.fontBold,
+    marginLeft: 5,
+  },
 });

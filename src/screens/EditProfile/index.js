@@ -82,18 +82,22 @@ function EditProfile(props) {
   let dtob = new Date();
 
   if (user != 'guest' && user) {
-    userFName = user.first_name;
-    userLName = user.last_name;
+    userFName = user.firstName;
+    userLName = user.lastName;
     eml = user.email;
-    dtob = new Date(user.dob); //user.dob
+    dtob = new Date(user.birthDate); //user.dob
   }
   let src = '';
   if (user != 'guest' && user) {
-    src = user.photo != '' ? user.photo : '';
+    src = user.image && user.image != '' ? user.image : '';
   }
   let srccnic = '';
+  let isCnicVerf = false;
+
   if (user != 'guest' && user) {
-    srccnic = user.cnic_front_image != '' ? user.cnic_front_image : '';
+    srccnic =
+      user.identityProof && user.identityProof != '' ? user.identityProof : '';
+    isCnicVerf = user.identityStatus == 'notVerified' ? false : true;
   }
 
   const [fn, setfn] = useState(userFName);
@@ -114,6 +118,7 @@ function EditProfile(props) {
   const [Emptydob, setEmptydob] = useState(false);
 
   const [phone, setphone] = useState(phn);
+  const [phoneCountryCode, setphoneCountryCode] = useState(cntry);
   const [isVerifyPhone, setisVerifyPhone] = useState(phn != '' ? true : 'a');
   const [invalidphone, setinvalidphone] = useState(false);
 
@@ -183,24 +188,35 @@ function EditProfile(props) {
     }
 
     const body = {
-      first_name: fn,
-      last_name: ln,
-      dob: dob,
-      photo: photo,
-      cnic_front_image: cnicFrontImage,
+      firstName: fn,
+      lastName: ln,
+      birthDate: dob,
+      image: photo,
+      identityProof: cnicFrontImage,
       phone: phone,
+      phoneCountryCode:
+        phoneCountryCode == '' ? RNLocalize.getCountry() : phoneCountryCode,
     };
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        // store.User.attemptToUploadImageEP(body, imgArr, setErrMessage, goBack);
-        store.User.attemptToUploadImageEPS(
-          body,
-          photo.uri ? photo.uri : photo,
-          cnicFrontImage.uri ? cnicFrontImage.uri : cnicFrontImage,
-          setErrMessage,
-          suc,
-        );
+        store.User.setregLoader(true);
+        if (imgArr.length <= 0) {
+          store.User.attemptToEditupdateUser(
+            body,
+            setErrMessage,
+            user._id,
+            suc,
+          );
+        } else {
+          store.User.attemptToEditUploadImage(
+            body,
+            setErrMessage,
+            user._id,
+            imgArr,
+            suc,
+          );
+        }
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -511,9 +527,11 @@ function EditProfile(props) {
       setinvalidphone(false);
       setisVerifyPhone(p.isVerified);
       if (p.unmaskedPhoneNumber == '') {
-        setphone('');
         setisVerifyPhone('a');
+        setphone('');
+        setphoneCountryCode('');
       } else {
+        setphoneCountryCode(p.selectedCountry.code);
         setphone(p.dialCode + p.unmaskedPhoneNumber);
       }
     };
@@ -641,6 +659,10 @@ function EditProfile(props) {
               },
             ]}>
             <IntlPhoneInput
+              clearPhone={() => {
+                setphone('');
+                setphoneCountryCode('');
+              }}
               onChangeText={p => {
                 setPhoneNumber(p);
               }}
@@ -730,6 +752,25 @@ function EditProfile(props) {
               />
             )}
           </TouchableOpacity>
+
+          {isCnicVerf && (
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: 10,
+              }}>
+              <Image
+                style={{height: 26, width: 26, resizeMode: 'contain'}}
+                source={require('../../assets/images/identityVerify/img.png')}
+              />
+              <Text style={styles.idCardChangeTextV}>
+                Your ID has been verified!
+              </Text>
+            </View>
+          )}
+
+          {/* {!isCnicVerf&&( */}
           <View
             style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
             <TouchableOpacity
@@ -746,6 +787,7 @@ function EditProfile(props) {
                 : 'to change a new ID card.'}
             </Text>
           </View>
+          {/* )} */}
         </View>
       </View>
     );

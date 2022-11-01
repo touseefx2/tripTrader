@@ -16,6 +16,11 @@ class user {
     makeObservable(this);
   }
 
+  @persist('object') @observable plans = false;
+  @action setplans = obj => {
+    this.plans = obj;
+  };
+
   @persist('object') @observable isNotification = true;
 
   @action setisNotification = obj => {
@@ -45,6 +50,7 @@ class user {
   };
 
   @observable phn = '';
+
   @observable cntr = '';
   @observable pwc = '';
 
@@ -69,9 +75,10 @@ class user {
   @observable mLoader = false;
   @observable otherUserModalLoader = false;
 
-  @persist('object') @observable review = [];
+  @observable review = [];
   @persist('object') @observable trips = [];
   @persist('object') @observable photos = [];
+  @observable photosRefrsh = false;
 
   @observable reviewo = [];
   @observable tripso = [];
@@ -118,37 +125,160 @@ class user {
     this.photos = obj;
   };
 
-  @action attemptToGetReviews = (uid, setgetdata, setrfrsh, dt) => {
-    console.warn('getReviesData : ', 'true');
-    this.setreviewLoader(true);
-    setTimeout(() => {
-      this.setreviewLoader(false);
-      setgetdata(true);
-      setrfrsh(false);
-      this.setreview(dt);
-    }, 1000);
+  @action setphotosrfrsh = obj => {
+    this.photosRefrsh = obj;
   };
 
-  @action attemptToGetTrips = (uid, setgetdata, setrfrsh, dt) => {
-    console.warn('getTripsData : ', 'true');
+  @action attemptToGetReviews = (uid, setgetdata, setrfrsh) => {
+    console.warn('get all Revies : ', 'true');
+    this.setreviewLoader(true);
+
+    db.hitApi(db.apis.GET_ALL_REVIEWS + uid, 'get', {}, this.authToken)
+      ?.then(resp => {
+        this.setreviewLoader(false);
+        setrfrsh(false);
+        console.log(
+          `response GET_ALL_REVIEWS   ${db.apis.GET_ALL_REVIEWS + uid} : `,
+          resp.data,
+        );
+        let dt = resp.data.doc;
+        let ar = [];
+        if (dt.length > 0) {
+          let id = this.user._id;
+          dt.map((e, i, a) => {
+            let role = '';
+            if (id == e.hostId._id) {
+              role = 'host';
+            } else {
+              role = 'guest';
+            }
+            let msgs = e.messages || [];
+            if (msgs.length > 0) {
+              msgs.map((ee, i, a) => {
+                console.log('role :  ', ee.role);
+                if (ee.role !== role) {
+                  ar.push(e);
+                }
+              });
+            }
+          });
+        }
+
+        setgetdata(true);
+        this.setreview(ar);
+      })
+      .catch(err => {
+        this.setreviewLoader(false);
+        setrfrsh(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in GET_ALL_REVIEWS ${db.apis.GET_ALL_REVIEWS + uid} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        if (msg == 'No records found') {
+          setgetdata(true);
+          this.setreview([]);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  @action attemptToGetTrips = (uid, setgetdata, setrfrsh) => {
+    console.warn('GET_ALL_TRIP : ', 'true');
     this.settripLoader(true);
-    setTimeout(() => {
-      this.settripLoader(false);
-      setgetdata(true);
-      setrfrsh(false);
-      this.settrips(dt);
-    }, 1000);
+
+    db.hitApi(db.apis.GET_ALL_TRIP + uid, 'get', {}, this.authToken)
+      ?.then(resp => {
+        this.settripLoader(false);
+        setrfrsh(false);
+        console.log(
+          `response GET_ALL_TRIP   ${db.apis.GET_ALL_TRIP + uid} : `,
+          resp.data,
+        );
+        let dt = resp.data.data;
+        setgetdata(true);
+        this.settrips(dt);
+      })
+      .catch(err => {
+        this.settripLoader(false);
+        setrfrsh(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in GET_ALL_TRIP  ${db.apis.GET_ALL_TRIP + uid} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        if (msg == 'No records found') {
+          setgetdata(true);
+          this.settrips([]);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
   };
 
   @action attemptToGetPhotos = (uid, setgetdata, setrfrsh, dt) => {
     console.warn('getPhotosData : ', 'true');
     this.setphotosLoader(true);
-    setTimeout(() => {
-      this.setphotosLoader(false);
-      setgetdata(true);
-      setrfrsh(false);
-      this.setphotos(dt);
-    }, 1000);
+
+    db.hitApi(db.apis.GET_ALL_TRIP + uid, 'get', {}, this.authToken)
+      ?.then(resp => {
+        this.setphotosLoader(false);
+        setrfrsh(false);
+        console.log(
+          `response getPhotosData  ${db.apis.GET_ALL_TRIP + uid} : `,
+          resp.data,
+        );
+
+        let rp = resp.data.data;
+        let dt = [];
+
+        if (resp.data && rp.length > 0) {
+          rp.map((e, i, a) => {
+            if (e.photos && e.photos.length > 0) {
+              e.photos.map((ee, i, a) => {
+                dt.push(ee);
+              });
+            }
+          });
+        }
+
+        setgetdata(true);
+        this.setphotos(dt);
+      })
+      .catch(err => {
+        setrfrsh(false);
+        this.setphotosLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in getPhotosData ${db.apis.GET_ALL_TRIP + uid} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        if (msg == 'No records found') {
+          setgetdata(true);
+          this.setphotos([]);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
   };
 
   //
@@ -336,37 +466,181 @@ class user {
     this.homeModalLoder = obj;
   };
 
-  @action attemptToCreateTrip = (obj, suc) => {
-    console.warn('create trip  : ', 'true');
-    this.setctripLoader(true);
-    setTimeout(() => {
-      this.setctripLoader(false);
-      this.seteditTripObj({data: obj, index: 0});
-      //   let d=this.trips.slice();
-      //   d.push(obj)
-      // this.settrips(dt);
+  @action attemptToCreateTrip = (body, suc) => {
+    console.warn('create trip body : ', body);
 
-      this.addtrips(obj);
-
-      suc(true);
-    }, 1500);
+    db.hitApi(db.apis.CREATE_TRIP, 'post', body, this.authToken)
+      ?.then(resp => {
+        this.setctripLoader(false);
+        console.log(
+          `response create trip  ${db.apis.CREATE_TRIP} : `,
+          resp.data,
+        );
+        let rsp = resp.data.data;
+        this.seteditTripObj({data: rsp, index: 0});
+        this.addtrips(rsp);
+        suc(true);
+      })
+      .catch(err => {
+        this.setctripLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(`Error in create trip ${db.apis.CREATE_TRIP} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
   };
 
-  @action attemptToUpdateTrip = (obj, index, suc) => {
-    console.warn('update trip  : ', 'true');
-    this.setctripLoader(true);
-    setTimeout(() => {
-      this.setctripLoader(false);
-      this.seteditTripObj(obj);
-      //   let d=this.trips.slice();
-      //   d.push(obj)
-      // this.settrips(dt);
+  attemptToCreateTripUploadImage(bd, suc) {
+    console.warn('upload trips photo body : ', imgArr);
+    let body = {...bd};
+    let imgArr = body.photos;
+    let ua = [];
+    imgArr.map((e, i, a) => {
+      const data = new FormData();
+      const newFile = {
+        uri: e.uri,
+        type: e.type,
+        name: e.fileName,
+      };
+      data.append('files', newFile);
+      fetch(db.apis.BASE_URL + db.apis.IMAGE_UPLOAD, {
+        method: 'post',
+        body: data,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+        .then(response => response.json())
+        .then(responseData => {
+          console.warn('upload photo success : ');
+          let rsp = responseData.data[0].imgrUrl;
+          ua.push(rsp);
+          if (ua.length == a.length) {
+            delete body.photos;
+            body.photos = ua;
+            this.attemptToCreateTrip(body, suc);
+            return;
+          }
+        })
+        .catch(err => {
+          this.setctripLoader(false);
 
-      this.updatetrips(obj, index);
+          let msg = err.response.data.message || err.response.status || err;
+          console.log(
+            `Error in upload trips photo ${db.apis.IMAGE_UPLOAD} : `,
+            msg,
+          );
+          if (msg == 503 || msg == 500) {
+            Alert.alert('', 'Server not response');
+            // store.General.setisServerError(true);
+            return;
+          }
+          // seterror(msg.toString())
+          Alert.alert('', msg.toString());
+        });
+    });
+  }
 
-      suc(true);
-    }, 1500);
+  @action attemptToUpdateTrip = (body, tid, index, suc) => {
+    console.warn('update trip body  : ', body);
+
+    db.hitApi(db.apis.UPDATE_TRIP + tid, 'put', body, this.authToken)
+      ?.then(resp => {
+        this.setctripLoader(false);
+        console.log(
+          `response UPDATE_TRIP  ${db.apis.UPDATE_TRIP} : `,
+          resp.data,
+        );
+        let rsp = resp.data.data;
+        this.seteditTripObj(rsp);
+        this.updatetrips(rsp, index);
+
+        suc(true);
+      })
+      .catch(err => {
+        this.setctripLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(`Error in UPDATE_TRIP ${db.apis.UPDATE_TRIP} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
   };
+
+  @action async attemptToUpdateTripUploadImage(bd, p2, tid, index, suc) {
+    let imgArr = [...p2];
+    let ua = [];
+
+    imgArr.map((e, i, a) => {
+      const data = new FormData();
+      const newFile = {
+        uri: e.uri,
+        type: e.type,
+        name: e.fileName,
+      };
+      data.append('files', newFile);
+      fetch(db.apis.BASE_URL + db.apis.IMAGE_UPLOAD, {
+        method: 'post',
+        body: data,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+        .then(response => response.json())
+        .then(responseData => {
+          console.warn('upload update trips photo success : ');
+          let rsp = responseData.data[0].imgrUrl;
+          ua.push(rsp);
+
+          if (ua.length == a.length) {
+            let body = {...bd};
+            const pt = body.photos;
+
+            let f = [];
+            if (pt.length > 0) {
+              pt.map((e, i, a) => {
+                f.push(e);
+              });
+            }
+            if (ua.length > 0) {
+              ua.map((e, i, a) => {
+                f.push(e);
+              });
+            }
+
+            delete body.photos;
+            body.photos = f;
+            this.attemptToUpdateTrip(body, tid, index, suc);
+            return;
+          }
+        })
+        .catch(err => {
+          this.setctripLoader(false);
+
+          let msg = err.response.data.message || err.response.status || err;
+          console.log(
+            `Error in upload update trips photo ${db.apis.IMAGE_UPLOAD} : `,
+            msg,
+          );
+          if (msg == 503 || msg == 500) {
+            Alert.alert('', 'Server not response');
+            // store.General.setisServerError(true);
+            return;
+          }
+          // seterror(msg.toString())
+          Alert.alert('', msg.toString());
+        });
+    });
+  }
 
   @observable cart = {totalbill: 0, totalitems: 0, data: []};
   @observable isAddModal = false;
@@ -874,24 +1148,6 @@ class user {
       });
   }
 
-  // @action.bound
-  // attempToPlaceOrder(Order, suc) {
-  //   this.setLoader(true);
-  //   db.hitApi(db.apis.PLACE_ORDER, 'post', Order, null)
-  //     ?.then(resp => {
-  //       this.setLoader(false)
-  //       console.log(`response  ${db.apis.PLACE_ORDER} : `, resp.data);
-  //       suc(resp.data);
-  //     })
-  //     .catch(err => {
-  //       console.log(
-  //         `Error in ${db.apis.PLACE_ORDER} : `,
-  //         err.response.data.message,
-  //       );
-  //       this.setLoader(false);
-  //     });
-  // }
-
   @action.bound
   LoginUser(body, svp, seterror) {
     console.warn('Login user body : ', body);
@@ -909,10 +1165,11 @@ class user {
         this.setsp(svp);
 
         if (svp) {
-          this.setpswd(body.pswd);
+          this.setpswd(body.password);
         } else {
           this.setpswd('');
         }
+        this.attemptToGetPlan();
       })
       .catch(err => {
         this.setregLoader(false);
@@ -938,7 +1195,8 @@ class user {
         console.log(`response create ${db.apis.REGISTER_USER} : `, resp.data);
         let token = resp.data.token;
         let reslt = resp.data.data;
-        db.hitApi(db.apis.GET_All_Plan, 'get', body, null)
+
+        db.hitApi(db.apis.GET_All_Plan, 'get', {}, null)
           ?.then(resp => {
             this.setregLoader(false);
             console.log(
@@ -988,6 +1246,53 @@ class user {
         this.setregLoader(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(`Error in create ${db.apis.REGISTER_USER} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  }
+
+  @action.bound
+  attemptToGetPlan() {
+    console.log(`get all plan`);
+    db.hitApi(db.apis.GET_All_Plan, 'get', {}, null)
+      ?.then(resp => {
+        this.setregLoader(false);
+        console.log(
+          `response get all plan  ${db.apis.GET_All_Plan} : `,
+          resp.data,
+        );
+        let rsp = resp.data.data;
+        let plan = {annual_discount: 0, data: []};
+        let dt = [];
+        let features = [
+          'Create trips and get offers',
+          'Make trade offers',
+          'Send and receive messages',
+          'Bookmark trips',
+          'Advanced trip search',
+        ];
+        if (rsp.length > 0) {
+          rsp.map((e, i, a) => {
+            if (e.type == 'annual') {
+              plan.annual_discount = e.discount;
+            }
+            let o = {...e};
+            o.features = features;
+            dt.push(o);
+          });
+        }
+        plan.data = dt;
+        this.setplans(plan);
+      })
+      .catch(err => {
+        this.setregLoader(false);
+        let msg = err.response.data.message || err.response.status;
+        console.log(`Error in get all plan ${db.apis.GET_All_Plan} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
           // store.General.setisServerError(true);
@@ -1156,7 +1461,7 @@ class user {
         );
         let rsp = resp.data.data;
 
-        suc(rsp.subscription);
+        suc(rsp);
       })
       .catch(err => {
         this.setregLoader(false);
@@ -1213,7 +1518,7 @@ class user {
       ?.then(resp => {
         this.setregLoader(false);
         console.log(`Forgot Pswd res ${db.apis.FORGOT_PSWD} : `, resp.data);
-        goto('email', body.email);
+        goto('email', body.email, null);
       })
       .catch(err => {
         this.setregLoader(false);
@@ -1230,20 +1535,20 @@ class user {
   }
 
   @action.bound
-  isPhoneExist(phone, suc, seterror) {
-    console.warn('isPhoneExist  body : ', phone);
+  forgotPassword2(body, suc) {
+    console.warn('Forgot Pswd  body : ', body);
     this.setregLoader(true);
 
-    db.hitApi(db.apis.IS_PHONE_EXIST, 'get', {}, null)
+    db.hitApi(db.apis.FORGOT_PSWD, 'put', body, null)
       ?.then(resp => {
         this.setregLoader(false);
-        console.log(`isPhoneExist res ${db.apis.IS_PHONE_EXIST} : `, resp.data);
-        // suc(phone);
+        console.log(`Forgot Pswd res ${db.apis.FORGOT_PSWD} : `, resp.data);
+        suc(null);
       })
       .catch(err => {
         this.setregLoader(false);
         let msg = err.response.data.message || err.response.status || err;
-        console.log(`Error in isPhoneExist ${db.apis.IS_PHONE_EXIST} : `, msg);
+        console.log(`Error in update user ${db.apis.UPDATE_USER} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
           // store.General.setisServerError(true);
@@ -1255,7 +1560,39 @@ class user {
   }
 
   @action.bound
-  attemptToVerifyCode(body, suc) {
+  isPhoneExist(p, suc, seterror) {
+    let phone = p.substring(1);
+    console.warn('isPhoneExist  body : ', phone);
+    this.setregLoader(true);
+
+    db.hitApi(db.apis.IS_PHONE_EXIST + phone, 'get', {}, null)
+      ?.then(resp => {
+        // this.setregLoader(false);
+        console.log(
+          `isPhoneExist res :  ${db.apis.IS_PHONE_EXIST}${phone} : `,
+          resp.data,
+        );
+        suc(p);
+      })
+      .catch(err => {
+        this.setregLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in isPhoneExist ${db.apis.IS_PHONE_EXIST}${phone} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  }
+
+  @action.bound
+  attemptToVerifyCode(body, suc, suc2) {
     console.warn('attemptToVerifyCode  body : ', body);
     this.setregLoader(true);
 
@@ -1267,14 +1604,22 @@ class user {
           resp.data,
         );
         suc(body.email);
+        suc2(true);
       })
       .catch(err => {
         this.setregLoader(false);
         let msg = err.response.data.message || err.response.status || err;
-        console.log(`Error in update user ${db.apis.UPDATE_USER} : `, msg);
+        console.log(
+          `Error in attemptToVerifyCode ${db.apis.VERIFY_PIN} : `,
+          msg,
+        );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
           // store.General.setisServerError(true);
+          return;
+        }
+        if (msg == 'Pin Code is incorrect.') {
+          suc2(false);
           return;
         }
         // seterror(msg.toString())
@@ -1321,6 +1666,7 @@ class user {
     this.setphn('');
     this.setcntr('');
     this.setpwc('');
+    this.setplans(false);
     this.clearcurrentUser();
     this.clearOtherUser();
   };
@@ -1348,6 +1694,105 @@ class user {
     // this.settotalfollowers(0);
     // this.settotalfollowing(0);
   };
+
+  // attemptToUploadImageEPS(body, p, c, seterror, suc) {
+  //   this.setregLoader(true);
+
+  //   setTimeout(() => {
+  //     let myObject = {...this.user, ...body};
+  //     myObject.photo = p;
+  //     myObject.cnic_front_image = c;
+  //     this.setUser(myObject);
+  //     this.setregLoader(false);
+  //     suc();
+  //   }, 1000);
+  // }
+
+  attemptToEditupdateUser(body, setErrMessage, uid, suc) {
+    // let body = {...this.user, ...body};
+    console.warn('Edit Update user   body : ', body);
+
+    db.hitApi(db.apis.UPDATE_USER + uid, 'put', body, this.authToken)
+      ?.then(resp => {
+        this.setregLoader(false);
+        console.log(
+          `response Edit Update user  ${db.apis.UPDATE_USER + uid} : `,
+          resp.data,
+        );
+
+        let rsp = resp.data.data;
+        this.setUser(rsp);
+        suc();
+      })
+      .catch(err => {
+        this.setregLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in Edit Update user  ${db.apis.UPDATE_USER} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  }
+
+  attemptToEditUploadImage(bd, setErrMessage, uid, imgArr, suc) {
+    console.warn('upload photo body : ', imgArr);
+
+    let body = {...bd};
+
+    imgArr.map((e, i, a) => {
+      const data = new FormData();
+      const newFile = {
+        uri: e.uri,
+        type: e.type,
+        name: e.fileName,
+      };
+      data.append('files', newFile);
+      fetch(db.apis.BASE_URL + db.apis.IMAGE_UPLOAD, {
+        method: 'post',
+        body: data,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+        .then(response => response.json())
+        .then(responseData => {
+          console.warn('upload photo success : ');
+          let rsp = responseData.data[0].imgrUrl;
+          if (e.chk == 'Profile') {
+            body.image = rsp;
+          }
+
+          if (e.chk == 'CnicF') {
+            body.identityProof = rsp;
+          }
+
+          if (i == a.length - 1) {
+            this.attemptToEditupdateUser(body, setErrMessage, uid, suc);
+            return;
+          }
+        })
+        .catch(err => {
+          this.setregLoader(false);
+          // console.log(`Error in upload image ${db.apis.IMAGE_UPLOAD} : `, err);
+          let msg = err.response.data.message || err.response.status || err;
+          console.log(`Error in upload image ${db.apis.IMAGE_UPLOAD} : `, msg);
+          if (msg == 503 || msg == 500) {
+            Alert.alert('', 'Server not response');
+            // store.General.setisServerError(true);
+            return;
+          }
+          // seterror(msg.toString())
+          Alert.alert('', msg.toString());
+        });
+    });
+  }
 
   @action.bound
   ChangePassword(cp, np, rp, suc) {
@@ -1501,19 +1946,6 @@ class user {
     //     //     seterror(msg.toString())
     //     //     // Alert.alert('', msg.toString());
     //   });
-  }
-
-  attemptToUploadImageEPS(body, p, c, seterror, suc) {
-    this.setregLoader(true);
-
-    setTimeout(() => {
-      let myObject = {...this.user, ...body};
-      myObject.photo = p;
-      myObject.cnic_front_image = c;
-      this.setUser(myObject);
-      this.setregLoader(false);
-      suc();
-    }, 1000);
   }
 
   // attemptToUploadImageEP(body, imgArr, seterror, suc) {

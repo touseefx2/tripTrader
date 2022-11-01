@@ -29,6 +29,11 @@ const GET_All_Plan = 'api/plan?status=active';
 const VERIFY_PIN = 'api/user/password/verifyOtp';
 const UPD_PSWD = 'api/user/password/reset';
 const IS_PHONE_EXIST = 'api/user/verifyPhoneNumber?phone=';
+const SEND_FIRST_MESSAGE = 'api/chat/sendFirstMessage';
+const CREATE_TRIP = 'api/trip';
+const UPDATE_TRIP = 'api/trip/';
+const GET_ALL_TRIP = 'api/trip?hostId=';
+const GET_ALL_REVIEWS = 'api/user/reviews/';
 
 export default apis = {
   BASE_URL,
@@ -57,6 +62,11 @@ export default apis = {
   VERIFY_PIN,
   UPD_PSWD,
   IS_PHONE_EXIST,
+  SEND_FIRST_MESSAGE,
+  CREATE_TRIP,
+  UPDATE_TRIP,
+  GET_ALL_TRIP,
+  GET_ALL_REVIEWS,
 };
 
 // const login = 'user/loginCaptain';

@@ -51,37 +51,28 @@ function Photos(props) {
     setgetDataOnce(C);
   };
 
-  const [refreshing, setRefreshing] = React.useState(false);
-  const setrefeshing = c => {
-    setRefreshing(c);
+  const refreshing = store.User.photosRefrsh;
+  const setRefreshing = c => {
+    store.User.setphotosrfrsh(c);
   };
+
   const onRefresh = React.useCallback(() => {
     console.warn('onrefresh cal');
     setRefreshing(true);
-    getDbData();
   }, []);
+
+  useEffect(() => {
+    if (refreshing) {
+      getDbData();
+    }
+  }, [refreshing]);
 
   const getDbData = c => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        const dt = [
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0OqjKG4QLGg-hvzwhf76mCB1shxkUchZN9Q&usqp=CAU',
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbyQRxBY8uSBj1VaS26kR0_7Uk6BJ-YNz4XQ&usqp=CAU',
-          'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTV8fHRyYXZlbGxpbmd8ZW58MHx8MHx8&w=1000&q=80',
-          'https://www.pixelstalk.net/wp-content/uploads/images6/4K-Travel-Wallpaper-HD-Free-download.jpg',
-          'https://images.pexels.com/photos/1371360/pexels-photo-1371360.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-          'https://wallpaperaccess.com/full/1534474.jpg',
-          'https://images.wallpapersden.com/image/download/trip-night_a21tZmmUmZqaraWkpJRmbmdlrWZlbWU.jpg',
-          'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfHw%3D&w=1000&q=80',
-        ];
-        store.User.attemptToGetPhotos(
-          user._id,
-          setGetDataOnce,
-          setrefeshing,
-          dt,
-        );
+        store.User.attemptToGetPhotos(user._id, setGetDataOnce, setRefreshing);
       } else {
-        setrefeshing(false);
+        setRefreshing(false);
       }
     });
   };

@@ -40,6 +40,7 @@ import {
 import {request, PERMISSIONS, check} from 'react-native-permissions';
 import DatePicker from 'react-native-date-picker';
 import IntentLauncher, {IntentConstant} from 'react-native-intent-launcher';
+import * as RNLocalize from 'react-native-localize';
 
 export default observer(Signup);
 function Signup(props) {
@@ -124,7 +125,10 @@ function Signup(props) {
   const [plan, setPlan] = useState(false);
   const [sPlan, setsPlan] = useState('free'); //selected Plan
 
-  const [plans, setplans] = useState(false);
+  const plans = store.User.plans;
+  const setplans = c => {
+    store.User.setplans(c);
+  };
 
   const [monthly, setmonthly] = useState(0);
   const [annualy, setannualy] = useState(0);
@@ -485,7 +489,11 @@ function Signup(props) {
       termsAccepted: isTerms,
       password: pswd,
       phone: '',
+      phoneCountryCode: RNLocalize.getCountry(),
+      image: '',
+      identityProof: '',
       registrationCode: store.User.notificationToken,
+      subscriptionStatus: 'freemium',
     };
 
     // const user = {
@@ -600,20 +608,22 @@ function Signup(props) {
       }
       let subscription = !isPromoApply
         ? {
-            type: plan.type,
+            title: plan.type,
             charges: plan.charges,
             discount: plan.discount,
             startDate: new Date(),
             endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
             amtPaid: tv,
+            status: 'active',
           }
         : {
-            type: plan.type,
+            title: plan.type,
             charges: plan.charges,
             discount: plan.discount,
             startDate: new Date(),
             endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
             amtPaid: tv,
+            status: 'active',
             promoCode: isPromoApply.code,
             promoCodeDiscount: isPromoApply.discount,
             promoCodeDiscountAmt: pda,
@@ -700,7 +710,7 @@ function Signup(props) {
 
   const subPlanSuc = p => {
     setisPhoto1Upload(4);
-    setsPlan(p);
+    setsPlan(p.subscription);
     clearCard();
   };
 
