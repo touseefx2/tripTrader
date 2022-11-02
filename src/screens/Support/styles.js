@@ -5,10 +5,21 @@ import {
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
 
+let iconContainerColor = theme.color.button2;
+let textColor = '#30563A';
+
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: theme.color.backgroundGreen,
+  },
+  container2: {
+    flex: 1,
     backgroundColor: theme.color.background,
+  },
+  container3: {
+    flex: 1,
+    backgroundColor: theme.color.backgroundConatiner,
   },
   headerConatainer: {
     backgroundColor: theme.color.backgroundGreen,
@@ -116,5 +127,246 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: theme.fonts.fontBold,
     color: theme.color.backgroundGreenText,
+    top: -2,
+  },
+
+  mainContainer: {
+    width: '100%',
+    padding: 7,
+    borderRadius: 5,
+    backgroundColor: theme.color.background,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+
+    elevation: 6,
+    marginBottom: 15,
+  },
+  sec1Container: {
+    width: '15%',
+  },
+  iconConatiner: {
+    width: 40,
+    height: 40,
+    borderRadius: 40 / 2,
+    backgroundColor: iconContainerColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  icon: {
+    width: '44%',
+    height: '44%',
+    resizeMode: 'contain',
+  },
+  sec2Container: {
+    width: '83%',
+  },
+  sec2Title: {
+    fontSize: 16,
+    color: textColor,
+    fontFamily: theme.fonts.fontBold,
+    lineHeight: 22.8,
+    textTransform: 'capitalize',
+  },
+  section2: {},
+  section2Title1: {
+    color: theme.color.titleGreenForm,
+    fontSize: 20,
+    fontFamily: theme.fonts.fontBold,
+    alignSelf: 'center',
+    textTransform: 'capitalize',
+  },
+  section2Title2: {
+    color: theme.color.buttonText,
+    fontSize: 16,
+    fontFamily: theme.fonts.fontNormal,
+    marginTop: 10,
+    alignSelf: 'center',
+  },
+  section3: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    paddingTop: 10,
+    // backgroundColor: 'red',
+  },
+
+  logo: {
+    width: 54.93,
+    height: 50.56,
+    resizeMode: 'contain',
+  },
+  title1: {
+    fontSize: 16,
+    fontFamily: theme.fonts.titleFont,
+    color: theme.color.buttonText,
+    textTransform: 'uppercase',
+    lineHeight: 20.9,
+  },
+  BottomButton: {
+    paddingHorizontal: 22,
+    paddingVertical: 8,
+
+    backgroundColor: theme.color.button1,
+
+    borderRadius: 8,
+  },
+  buttonTextBottom: {
+    color: theme.color.buttonText,
+    fontSize: 15,
+    // fontSize: responsiveScreenFontSize(2.15),
+    fontFamily: theme.fonts.fontBold,
+  },
+  BottomButton2: {
+    paddingHorizontal: 28,
+    paddingVertical: 8,
+    backgroundColor: theme.color.background,
+    borderWidth: 1,
+    borderColor: theme.color.fieldBorder,
+    borderRadius: 8,
+    marginLeft: 10,
+  },
+  buttonTextBottom2: {
+    color: theme.color.button2Text,
+    fontSize: 15,
+    // fontSize: responsiveScreenFontSize(2.15),
+    fontFamily: theme.fonts.fontBold,
+  },
+
+  BottomButtonT: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20,
+    justifyContent: 'center',
+  },
+  buttonTextBottomTtitle1: {
+    color: theme.color.buttonText,
+    fontSize: 14,
+    fontFamily: theme.fonts.fontNormal,
+    opacity: 0.7,
+  },
+  buttonTextBottomTtitle2: {
+    color: theme.color.buttonText,
+    fontSize: 14,
+    fontFamily: theme.fonts.fontBold,
+    marginLeft: 5,
+    textDecorationLine: 'underline',
+  },
+
+  errorMessageContainer: {},
+  errorMessageText: {
+    color: theme.color.fieldBordeError,
+    fontSize: 13,
+    fontFamily: theme.fonts.fontMedium,
+    alignSelf: 'center',
+  },
+
+  errorMessageFieldContainer: {
+    marginTop: 2,
+  },
+  errorMessageFieldText: {
+    color: theme.color.fieldBordeError,
+    fontSize: 11,
+    fontFamily: theme.fonts.fontNormal,
+  },
+
+  Field: {marginTop: 15},
+  FieldTitle1: {
+    color: theme.color.titleGreenForm,
+    fontSize: 13,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
+  },
+  FieldTitle11: {
+    color: theme.color.titleGreenForm,
+    fontSize: 14,
+    fontFamily: theme.fonts.fontBold,
+
+    textDecorationLine: 'underline',
+    alignSelf: 'center',
+    textDecorationColor: theme.color.titleGreenForm,
+  },
+  FieldInput: {
+    width: '100%',
+    borderWidth: 1,
+    height: 48,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    backgroundColor: theme.color.background,
+  },
+  Field2: {marginTop: 20, flexDirection: 'row', alignItems: 'center'},
+  Field2Title: {
+    color: theme.color.titleGreen,
+    fontSize: 13.5,
+    fontFamily: theme.fonts.fontMedium,
+    textTransform: 'capitalize',
+    marginLeft: 10,
+  },
+  Field3: {marginTop: 20, alignItems: 'center', justifyContent: 'center'},
+  Field3Title1: {
+    color: theme.color.titleGreen,
+    fontSize: 13.5,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
+    textDecorationLine: 'underline',
+  },
+
+  Field31: {
+    marginTop: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  Field31Title1: {
+    color: theme.color.titleGreen,
+    fontSize: 13.5,
+    fontFamily: theme.fonts.fontNormal,
+  },
+
+  Field31Title2: {
+    color: theme.color.titleGreen,
+    fontSize: 13,
+    fontFamily: theme.fonts.fontBold,
+  },
+  section2LogoTitle: {
+    marginTop: 20,
+    color: theme.color.title,
+    fontSize: 14,
+    fontFamily: theme.fonts.fontNormal,
+    alignSelf: 'center',
+  },
+
+  phoneInputContainer: {
+    width: '100%',
+    marginTop: 5,
+
+    borderRadius: 8,
+    borderWidth: 0.5,
+    borderColor: theme.color.fieldBorder,
+    paddingHorizontal: 10,
+    alignItems: 'center', //for ios
+    justifyContent: 'center', //for ios
+  },
+
+  dropDownConatiner: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: theme.color.fieldBorder,
+    borderRadius: 8,
+    height: 48,
+    paddingHorizontal: 10,
+    backgroundColor: theme.color.background,
+  },
+  dropDownText: {
+    color: '#111111',
+    fontSize: 14,
+    fontFamily: theme.fonts.fontNormal,
+    textTransform: 'capitalize',
   },
 });

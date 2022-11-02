@@ -83,7 +83,7 @@ export default HomeStack = () => {
 
       <Drawer.Screen
         name="Support"
-        component={screens.Support}
+        component={SupportStack}
         options={icon.Supporticon}
       />
 
@@ -423,6 +423,21 @@ let SettingsStack = () => {
           });
         }}
       />
+    </Stack.Navigator>
+  );
+};
+
+let SupportStack = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="Supportt"
+      screenOptions={{
+        animationEnabled: false,
+        headerShown: false,
+      }}>
+      <Stack.Screen name="Supportt" component={screens.Support} />
+
+      <Stack.Screen name="Notifications" component={screens.Notifications} />
     </Stack.Navigator>
   );
 };

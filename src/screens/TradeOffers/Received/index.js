@@ -389,7 +389,7 @@ function Received(props) {
       let length = data.length || 0;
       return (
         <View style={styles.resultContainer}>
-          <Text style={styles.resultText}>You sent {length} offer</Text>
+          <Text style={styles.resultText}>You received {length} offer</Text>
         </View>
       );
     };

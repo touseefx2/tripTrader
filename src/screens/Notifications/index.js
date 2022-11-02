@@ -58,7 +58,7 @@ function Notifications(props) {
     const dt = [
       {
         title: 'Trip Confirmed',
-        subTitle: 'Congrats! You have a new trade confirmation',
+        subTitle: `Congrats! You have a new Confirmed Trip!`,
         createdAt: 'Just now',
         isRead: false,
       },

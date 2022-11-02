@@ -122,7 +122,7 @@ const Supporticon = {
   drawerLabel: 'Support',
   // headerShown: false,
   // swipeEnabled: true,
-  // unmountOnBlur: true,
+  unmountOnBlur: true,
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}
@@ -148,7 +148,7 @@ const PrivacyPolicyicon = {
   drawerLabel: 'Privacy Policy',
   // headerShown: false,
   // swipeEnabled: true,
-  // unmountOnBlur: true,
+  unmountOnBlur: true,
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}

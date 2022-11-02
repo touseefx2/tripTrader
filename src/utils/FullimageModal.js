@@ -35,12 +35,13 @@ function FullimageModal(props) {
   const flatListRef = React.useRef();
   let data = props.data || [];
   const show = props.show;
-
   let scrollEnable = data.length > 1 ? true : false;
-
   const scrollX = React.useRef(new Animated.Value(0)).current;
   const imageW = width * 0.7;
   const imageH = imageW * 1.54;
+
+  let pd = props.pd || '';
+  let pdc = props.pdc || '';
 
   const [si, setsi] = useState(props.si || 0);
 
@@ -164,93 +165,114 @@ function FullimageModal(props) {
         );
       };
 
-      return (
-        <View style={styles.ImageContainer}>
-          <>
-            {data.map((val, ind) => {
-              const inputRange = [
-                (ind - 1) * width,
-                ind * width,
-                (ind + 1) * width,
-              ];
-              const opacity = scrollX.interpolate({
-                inputRange,
-                outputRange: [0, 1, 0],
-              });
-              return (
-                <Animated.Image
-                  key={ind}
-                  source={{uri: val.uri ? val.uri : val}}
-                  style={[styles.Image, {opacity}]}
-                  // style={[StyleSheet.absoluteFillObject, {opacity}]}
-                  blurRadius={0}
-                />
-              );
-            })}
-          </>
-
-          <>
-            <Animated.FlatList
-              data={data}
-              keyExtractor={(_, index) => index.toString()}
-              onScroll={Animated.event(
-                [{nativeEvent: {contentOffset: {x: scrollX}}}],
-                {useNativeDriver: false},
-              )}
-              ref={flatListRef}
-              scrollEnabled={scrollEnable}
-              horizontal
-              pagingEnabled
-              initialScrollIndex={si}
-              onViewableItemsChanged={onViewRef2.current}
-              viewabilityConfig={viewConfigRef2.current}
-              pinchGestureEnabled={true}
-              onScrollToIndexFailed={info => {
-                const wait = new Promise(resolve => setTimeout(resolve, 500));
-                wait.then(() => {
-                  slider.current?.scrollToIndex({
-                    index: info.index,
-                    animated: true,
-                  });
-                });
-              }}
-              showsHorizontalScrollIndicator={false}
-              renderItem={({item, index}) => {
-                return (
-                  <View style={styles.previewImagemainContainer}>
-                    <View style={styles.previewImageContainerStyle}>
-                      {/* <TouchableOpacity onPress={() => {
-                                setSelectedIndex(index)
-                                setImageViewer(!imageViewer)
-                            }} >
-                                <Icon onPress={() => setImageViewer(!imageViewer)} name="close" size={34} color={closeIconColor} />
-                            </TouchableOpacity> */}
-
-                      <Image
-                        source={{
-                          uri: item.img
-                            ? item.iamge
-                            : item.uri
-                            ? item.uri
-                            : item,
-                        }}
-                        style={styles.previewImageStyle}
-                      />
-                    </View>
-                  </View>
-                );
-              }}
-            />
-          </>
-          {data.length > 1 && (
+      if (data.length > 1) {
+        return (
+          <View style={styles.ImageContainer}>
             <>
-              {renderLeft()}
-              {renderRight()}
+              {data.map((val, ind) => {
+                const inputRange = [
+                  (ind - 1) * width,
+                  ind * width,
+                  (ind + 1) * width,
+                ];
+                const opacity = scrollX.interpolate({
+                  inputRange,
+                  outputRange: [0, 1, 0],
+                });
+                return (
+                  <Animated.Image
+                    key={ind}
+                    source={{uri: val.uri ? val.uri : val}}
+                    style={[styles.Image, {opacity}]}
+                    // style={[StyleSheet.absoluteFillObject, {opacity}]}
+                    blurRadius={0}
+                  />
+                );
+              })}
+            </>
+
+            <>
+              <Animated.FlatList
+                data={data}
+                keyExtractor={(_, index) => index.toString()}
+                onScroll={Animated.event(
+                  [{nativeEvent: {contentOffset: {x: scrollX}}}],
+                  {useNativeDriver: false},
+                )}
+                ref={flatListRef}
+                scrollEnabled={scrollEnable}
+                horizontal
+                pagingEnabled
+                initialScrollIndex={si}
+                onViewableItemsChanged={onViewRef2.current}
+                viewabilityConfig={viewConfigRef2.current}
+                pinchGestureEnabled={true}
+                onScrollToIndexFailed={info => {
+                  const wait = new Promise(resolve => setTimeout(resolve, 500));
+                  wait.then(() => {
+                    slider.current?.scrollToIndex({
+                      index: info.index,
+                      animated: true,
+                    });
+                  });
+                }}
+                showsHorizontalScrollIndicator={false}
+                renderItem={({item, index}) => {
+                  return (
+                    <View style={styles.previewImagemainContainer}>
+                      <View style={styles.previewImageContainerStyle}>
+                        {/* <TouchableOpacity onPress={() => {
+                                  setSelectedIndex(index)
+                                  setImageViewer(!imageViewer)
+                              }} >
+                                  <Icon onPress={() => setImageViewer(!imageViewer)} name="close" size={34} color={closeIconColor} />
+                              </TouchableOpacity> */}
+
+                        <Image
+                          source={{
+                            uri: item.img
+                              ? item.iamge
+                              : item.uri
+                              ? item.uri
+                              : item,
+                          }}
+                          style={styles.previewImageStyle}
+                        />
+                      </View>
+                    </View>
+                  );
+                }}
+              />
+            </>
+
+            <>
+              {/* {renderLeft()}
+                {renderRight()} */}
               {renderIndicatior()}
             </>
-          )}
-        </View>
-      );
+          </View>
+        );
+      } else {
+        let d = '';
+        if (pdc == '') {
+          d = {uri: pd.uri ? pd.uri : pd};
+        } else if (pdc == 'ph') {
+          d = require('../assets/images/trip/img.jpeg');
+        }
+
+        return (
+          <View style={styles.ImageContainer}>
+            <>
+              <Image
+                source={d}
+                style={styles.previewImageStyle}
+                // style={[StyleSheet.absoluteFillObject, {opacity}]}
+                blurRadius={0}
+              />
+            </>
+          </View>
+        );
+      }
     };
 
     return (

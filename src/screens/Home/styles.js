@@ -241,10 +241,9 @@ export const styles = StyleSheet.create({
     height: 245,
   },
   tripImg: {
-    flex: 1,
-    // width: '100%',
-    // height: '100%',
-    // resizeMode: 'contain',
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   boxSection3: {
     marginTop: 12,

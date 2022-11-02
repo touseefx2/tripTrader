@@ -207,7 +207,17 @@ function Reviews(props) {
   const openModal = (obj, c) => {
     if (c == 'edit') {
       let d = obj.item;
-      setcomment(d.reply.comment);
+      let reply = '';
+      let msgs = d.messages || [];
+      if (msgs.length > 0) {
+        msgs.map((e, i, a) => {
+          if (e.role == 'host') {
+            reply = e.message;
+          }
+        });
+      }
+
+      setcomment(reply);
     }
 
     setmodalObj(obj);
@@ -243,16 +253,7 @@ function Reviews(props) {
   };
 
   const renderShowData = ({item, index}) => {
-    let id = user._id;
-    let role = '';
-    if (id == item.hostId._id) {
-      role = 'host';
-    } else {
-      role = 'guest';
-    }
-
-    let usr = role == 'guest' ? item.hostId : item.guestId;
-
+    let usr = item.guestId;
     //reviewer user
     let photo = usr.image;
     let isuVeirfy = usr.identityStatus == 'notVerified' ? false : true;
@@ -265,10 +266,10 @@ function Reviews(props) {
     let reply = '';
     if (msgs.length > 0) {
       msgs.map((e, i, a) => {
-        if (e.role !== role) {
+        if (e.role == 'guest') {
           postDate = e.createdAt;
           userComment = e.message;
-        } else if (e.role == role) {
+        } else if (e.role == 'host') {
           reply = e;
         }
       });
@@ -289,10 +290,9 @@ function Reviews(props) {
       rpostDate = reply.createdAt;
     }
 
-    let dispute =
-      item.disputeMessages && item.disputeMessages.length > 0 ? true : false;
-    let disputeDate = '';
-    // let disputeDate = dispute ? dispute.created_at : '';
+    let status = item.status;
+    let dispute = status == 'dispute' ? true : false;
+    let disputeDate = dispute ? item.disputeOpenDate : '';
 
     const formatdisputeDate = date => {
       var dd = moment(date).format('MMM DD');
@@ -826,8 +826,18 @@ function Reviews(props) {
 
       const renderSec2 = () => {
         let d = modalObj.item;
-        let userName = d.user.first_name + ' ' + d.user.last_name;
-        let userComment = d.comment;
+        let userName = d.guestId.firstName + ' ' + d.guestId.lastName;
+        let userComment = '';
+
+        let msgs = d.messages || [];
+
+        if (msgs.length > 0) {
+          msgs.map((e, i, a) => {
+            if (e.role == 'guest') {
+              userComment = e.message;
+            }
+          });
+        }
 
         return (
           <View style={styles.modalSec2Container}>
@@ -1039,7 +1049,7 @@ function Reviews(props) {
 
       const renderTitle = () => {
         let d = modalObj.item;
-        let userName = d.user.first_name + ' ' + d.user.last_name;
+        let userName = d.guestId.firstName + ' ' + d.guestId.lastName;
 
         return (
           <View

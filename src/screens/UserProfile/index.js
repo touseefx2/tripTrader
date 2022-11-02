@@ -1539,7 +1539,7 @@ function UserProfile(props) {
                 lineHeight: 20,
                 textAlign: 'center',
               }}>
-              Thank you. We’ll review your report and take any necessary action.
+              Thank You! We will review your comments and any necessary actions.
             </Text>
           </View>
         </View>

@@ -159,18 +159,18 @@ function NewTrips(props) {
       title: 'weeks',
       type: 'durType',
     },
-    {
-      _id: 2,
-      is_active: true,
-      title: 'months',
-      type: 'durType',
-    },
-    {
-      _id: 2,
-      is_active: true,
-      title: 'years',
-      type: 'durType',
-    },
+    // {
+    //   _id: 2,
+    //   is_active: true,
+    //   title: 'months',
+    //   type: 'durType',
+    // },
+    // {
+    //   _id: 2,
+    //   is_active: true,
+    //   title: 'years',
+    //   type: 'durType',
+    // },
   ];
 
   const rdurtn = [
@@ -303,7 +303,7 @@ function NewTrips(props) {
         d.unAvailableDays && !isObjectEmpty(d.unAvailableDays)
           ? d.unAvailableDays
           : false;
-      let objct = {...isSetUn};
+      let objct = isSetUn != false ? {...isSetUn} : false;
 
       if (isSetUn && !isObjectEmpty(isSetUn)) {
         delete Object.assign(objct, {
@@ -881,7 +881,7 @@ function NewTrips(props) {
           // species: '',
         };
 
-        this.setctripLoader(true);
+        store.User.setctripLoader(true);
         if (photos.length <= 0) {
           store.User.attemptToCreateTrip(obj, setIsTripCreatSuc);
         } else {
@@ -912,7 +912,6 @@ function NewTrips(props) {
           });
         }
 
-       
         let isSetUn = isSetUnavailable != false ? isSetUnavailable : {};
         let objct = {...isSetUn};
         if (isSetUn && !isObjectEmpty(isSetUn)) {
@@ -1123,7 +1122,7 @@ function NewTrips(props) {
     // console.log('drop down data : ', data);
     let abs = Platform.OS == 'ios' ? false : true;
     return (
-      <theme.DropDown
+      <utils.DropDown
         data={data}
         onSelectItem={d => {
           onclickSelect(d);
@@ -3013,7 +3012,7 @@ function NewTrips(props) {
               onChangeText={d => {
                 settrader(d);
               }}
-              placeholder="Example: Central NC Whitetail Hunting"
+              placeholder="Example: Central NC Whitetail Hunt"
               style={styles.input}
             />
           </View>
@@ -3027,7 +3026,7 @@ function NewTrips(props) {
               onChangeText={d => {
                 setReturn(d);
               }}
-              placeholder="Example: Florida Alligator Hunting"
+              placeholder="Example: Florida Alligator Hunt"
               style={styles.input}
             />
           </View>

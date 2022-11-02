@@ -33,6 +33,9 @@ export default function DropDown(props) {
 
   let Message = 'No record found';
 
+  const [modalHeight, setmodalHeight] = useState(0);
+  let maxModalHeight = 247;
+
   const [data, setData] = useState(props.data);
 
   const [search, setsearch] = useState('');
@@ -44,7 +47,14 @@ export default function DropDown(props) {
 
       let d = [];
       props.data.map((item, i, a) => {
-        let n = c == 'loc' || c == 'actvty' || c == 'spcs' ? item.name : '';
+        let n =
+          c == 'loc' || c == 'actvty' || c == 'spcs'
+            ? item.name
+            : c == 'topic'
+            ? item.title
+            : c == 'dur' || c == 'rdur'
+            ? item.title
+            : '';
         var Name = n.toLowerCase();
         let s = Name.substr(0, searchLength);
 
@@ -61,6 +71,12 @@ export default function DropDown(props) {
       setData(props.data);
     }
   }, [search]);
+
+  useEffect(() => {
+    return () => {
+      setmodalHeight(0);
+    };
+  }, []);
 
   const renderSearchBar = () => {
     return (
@@ -95,6 +111,7 @@ export default function DropDown(props) {
   const onClickItem = item => {
     props.onSelectItem(item);
     props.setVisible(false);
+    setmodalHeight(0);
   };
 
   // const renderBottom = () => {
@@ -112,7 +129,16 @@ export default function DropDown(props) {
   // };
 
   const renderItems = ({item, index}) => {
-    let title = item.name;
+    let title =
+      c == 'loc' || c == 'actvty' || c == 'spcs'
+        ? item.name
+        : c == 'topic'
+        ? item.title
+        : c == 'dur' || c == 'rdur'
+        ? item.title
+        : '';
+
+    let ts = props.style || {};
     return (
       <TouchableHighlight
         underlayColor={'#EEF6EF'}
@@ -126,27 +152,35 @@ export default function DropDown(props) {
               // borderBottomWidth: index < data.length - 1 ? 0.7 : 0
             },
           ]}>
-          <Text style={styles.Text}>{title}</Text>
+          <Text style={[styles.Text, ts]}>{title}</Text>
         </View>
       </TouchableHighlight>
     );
   };
 
-  const style =
-    data.length > 4
-      ? {
-          height: responsiveHeight(20),
-          marginTop: absolute ? 55 : 7,
-          position: absolute ? 'absolute' : 'relative',
-        }
-      : {
-          marginTop: absolute ? 55 : 7,
-          position: absolute ? 'absolute' : 'relative',
-        };
+  let cc = modalHeight >= maxModalHeight ? true : false;
+
+  const style = cc
+    ? {
+        height: 247,
+        marginTop: absolute ? 53 : 8,
+        position: absolute ? 'absolute' : 'relative',
+      }
+    : {
+        marginTop: absolute ? 53 : 8,
+        position: absolute ? 'absolute' : 'relative',
+      };
 
   return (
     <>
-      <SafeAreaView style={[styles.Container, style]}>
+      <SafeAreaView
+        onLayout={event => {
+          if (!cc) {
+            let {height} = event.nativeEvent.layout;
+            setmodalHeight(height);
+          }
+        }}
+        style={[styles.Container, style]}>
         <KeyboardAvoidingView enabled>
           {isSearchBar && renderSearchBar()}
           {data.length <= 0 && rendershowMessage()}

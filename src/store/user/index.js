@@ -130,7 +130,7 @@ class user {
   };
 
   @action attemptToGetReviews = (uid, setgetdata, setrfrsh) => {
-    console.warn('get all Revies : ', 'true');
+    console.warn('get all Reviews : ', 'true');
     this.setreviewLoader(true);
 
     db.hitApi(db.apis.GET_ALL_REVIEWS + uid, 'get', {}, this.authToken)
@@ -144,19 +144,11 @@ class user {
         let dt = resp.data.doc;
         let ar = [];
         if (dt.length > 0) {
-          let id = this.user._id;
           dt.map((e, i, a) => {
-            let role = '';
-            if (id == e.hostId._id) {
-              role = 'host';
-            } else {
-              role = 'guest';
-            }
             let msgs = e.messages || [];
             if (msgs.length > 0) {
               msgs.map((ee, i, a) => {
-                console.log('role :  ', ee.role);
-                if (ee.role !== role) {
+                if (ee.role == 'guest') {
                   ar.push(e);
                 }
               });
@@ -351,49 +343,176 @@ class user {
   @action attemptToReplyComment = (obj, cmnt, suc) => {
     console.warn('reply comment  : ', 'true');
     this.setmLoader(true);
-    setTimeout(() => {
-      this.setmLoader(false);
-      let i = obj.i;
-      let reply = {
-        user: this.user,
-        comment: cmnt,
-        created_at: new Date(),
-      };
-      this.review[i].reply = reply;
-      suc();
-    }, 1000);
+
+    let i = obj.i;
+    let body = {
+      message: cmnt,
+      role: 'host',
+    };
+    let id = obj.item._id;
+
+    db.hitApi(db.apis.REPLY_REVIEW + id, 'put', body, this.authToken)
+      ?.then(resp => {
+        this.setmLoader(false);
+        console.log(
+          `response ReplyComment  ${db.apis.REPLY_REVIEW + id} : `,
+          resp.data,
+        );
+        let dt = resp.data.data;
+
+        this.review[i] = dt;
+        suc();
+      })
+      .catch(err => {
+        this.setmLoader(false);
+
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in ReplyComment ${db.apis.REPLY_REVIEW + id} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
   };
   @action attemptToEditComment = (obj, cmnt, suc) => {
     console.warn('edit comment  : ', 'true');
     this.setmLoader(true);
-    setTimeout(() => {
-      this.setmLoader(false);
-      let i = obj.i;
 
-      this.review[i].reply.comment = cmnt;
-      suc();
-    }, 1000);
+    let i = obj.i;
+    let d = obj.item;
+    let idd = d._id;
+    let id = '';
+    let msgs = d.messages || [];
+    if (msgs.length > 0) {
+      msgs.map((e, i, a) => {
+        if (e.role == 'host') {
+          id = e._id;
+        }
+      });
+    }
+    let body = {
+      message: cmnt,
+    };
+
+    db.hitApi(db.apis.EDIT_REVIEW + idd + '/' + id, 'put', body, this.authToken)
+      ?.then(resp => {
+        this.setmLoader(false);
+        console.log(
+          `response EditComment  ${db.apis.EDIT_REVIEW + id} : `,
+          resp.data,
+        );
+        let dt = resp.data.data;
+        this.review[i] = dt;
+        suc();
+      })
+      .catch(err => {
+        this.setmLoader(false);
+
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(`Error in EditComment ${db.apis.EDIT_REVIEW + id} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
   };
   @action attemptToDeleteComment = (obj, suc) => {
     console.warn('delete comment  : ', 'true');
     this.setmLoader(true);
-    setTimeout(() => {
-      this.setmLoader(false);
-      let i = obj.i;
 
-      delete this.review[i].reply;
-      suc();
-    }, 1000);
+    let i = obj.i;
+    let d = obj.item;
+    let idd = d._id;
+    let id = '';
+    let msgs = d.messages || [];
+    if (msgs.length > 0) {
+      msgs.map((e, i, a) => {
+        if (e.role == 'host') {
+          id = e._id;
+        }
+      });
+    }
+    db.hitApi(db.apis.DELETE_REVIEW + idd + '/' + id, 'put', {}, this.authToken)
+      ?.then(resp => {
+        this.setmLoader(false);
+        console.log(
+          `response DeleteComment  ${db.apis.DELETE_REVIEW + id} : `,
+          resp.data,
+        );
+        let dt = resp.data.data;
+        this.review[i] = dt;
+
+        suc();
+      })
+      .catch(err => {
+        this.setmLoader(false);
+
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in DeleteComment ${db.apis.DELETE_REVIEW + id} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
   };
   @action attemptToDisputeComment = (obj, suc) => {
     console.warn('delete comment  : ', 'true');
     this.setmLoader(true);
-    setTimeout(() => {
-      this.setmLoader(false);
-      let i = obj.i;
-      this.review[i].dispute = {created_at: new Date()};
-      suc();
-    }, 1000);
+
+    let i = obj.i;
+    let body = {
+      status: 'dispute',
+      disputeOpenDate: new Date(),
+    };
+    let id = obj.item._id;
+
+    db.hitApi(db.apis.DISPUTE_REVIEW + id, 'put', body, this.authToken)
+      ?.then(resp => {
+        this.setmLoader(false);
+        console.log(
+          `response DisputeComment  ${db.apis.DISPUTE_REVIEW + id} : `,
+          resp.data,
+        );
+        let dt = resp.data.data;
+        this.review[i] = dt;
+
+        suc();
+      })
+      .catch(err => {
+        this.setmLoader(false);
+
+        let msg = err;
+        console.log(
+          `Error in DisputeComment ${db.apis.DISPUTE_REVIEW + id} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
   };
 
   @observable ctripsLoader = false;
@@ -496,9 +615,9 @@ class user {
   };
 
   attemptToCreateTripUploadImage(bd, suc) {
-    console.warn('upload trips photo body : ', imgArr);
     let body = {...bd};
     let imgArr = body.photos;
+    console.warn('upload trips photo body : ', imgArr);
     let ua = [];
     imgArr.map((e, i, a) => {
       const data = new FormData();
@@ -1745,7 +1864,7 @@ class user {
     console.warn('upload photo body : ', imgArr);
 
     let body = {...bd};
-
+    let ii = 0;
     imgArr.map((e, i, a) => {
       const data = new FormData();
       const newFile = {
@@ -1772,8 +1891,8 @@ class user {
           if (e.chk == 'CnicF') {
             body.identityProof = rsp;
           }
-
-          if (i == a.length - 1) {
+          ii++;
+          if (ii == a.length) {
             this.attemptToEditupdateUser(body, setErrMessage, uid, suc);
             return;
           }
@@ -1792,6 +1911,39 @@ class user {
           Alert.alert('', msg.toString());
         });
     });
+  }
+
+  @action.bound
+  submitSupport(bd, suc) {
+    console.warn('submitSupport body : ', bd);
+    this.setregLoader(true);
+
+    setTimeout(() => {
+      this.setregLoader(false);
+      suc();
+    }, 1000);
+
+    // db.hitApi(db.apis.SUBMIT_SUPPORT + uid, 'put', bd, token)
+    //   ?.then(resp => {
+    //     this.setregLoader(false);
+    //     console.log(
+    //       `response submitSupport  ${db.apis.SUBMIT_SUPPORT  } : `,
+    //       resp.data,
+    //     );
+
+    //   })
+    //   .catch(err => {
+    //     this.setregLoader(false);
+    //     let msg = err.response.data.message || err.response.status || err;
+    //     console.log(`Error in submitSupport  ${db.apis.SUBMIT_SUPPORT} : `, msg);
+    //     if (msg == 503 || msg == 500) {
+    //       Alert.alert('', 'Server not response');
+    //       // store.General.setisServerError(true);
+    //       return;
+    //     }
+    //     // seterror(msg.toString())
+    //     Alert.alert('', msg.toString());
+    //   });
   }
 
   @action.bound

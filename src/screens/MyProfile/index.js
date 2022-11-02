@@ -93,8 +93,12 @@ function MyProfile(props) {
   const [cntry, setcntry] = useState(phnCntr);
   const [pwc, setpwc] = useState('');
 
-  const [pvm, setpvm] = useState(false); //show fulll image modal
-  const [pv, setpv] = useState(''); //photo view
+  // const [pvm, setpvm] = useState(false); //show fulll image modal
+  // const [pv, setpv] = useState(''); //photo view
+
+  const [pvm, setpvm] = useState(false);
+  const [pd, setpd] = useState([]);
+  const [pdc, setpdc] = useState('');
 
   const [profileImageLoader, setprofileImageLoader] = useState(false);
   const [showFullprofileImageLoader, setshowFullprofileImageLoader] =
@@ -226,13 +230,15 @@ function MyProfile(props) {
 
   const changePhoto = c => {
     if (c == 'photoView') {
-      setpv([photo.uri ? photo.uri : photo]);
+      setpd([photo.uri ? photo.uri : photo]);
       setpvm(true);
+      setpdc('');
       return;
     }
     if (c == 'photoViewC') {
-      setpv([cphoto.uri]);
+      setpd([cphoto.uri]);
       setpvm(true);
+      setpdc('');
       return;
     }
 
@@ -265,10 +271,12 @@ function MyProfile(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToUploadImage2(
-          imgArr,
+        store.User.setregLoader(true);
+        store.User.attemptToEditUploadImage(
+          {},
           setErrMessage,
-          setPhoto,
+          user._id,
+          imgArr,
           closePhotoModal,
         );
       } else {
@@ -599,10 +607,14 @@ function MyProfile(props) {
 
       {pvm && (
         <utils.FullimageModal
-          data={pv}
+          data={[]}
           si={0}
           show={pvm}
-          closModal={() => setpvm(!pvm)}
+          closModal={() => {
+            setpvm(!pvm);
+            setpd('');
+            setpdc('');
+          }}
         />
       )}
     </View>

@@ -164,8 +164,7 @@ export const styles = StyleSheet.create({
     top: 5,
   },
   mtextContainer: {
-    width: '80%',
-    // backgroundColor: 'red',
+    width: '76%',
   },
   textContainertitle: {
     color: theme.color.titleGreen,
@@ -491,6 +490,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    // backgroundColor: 'red',
   },
   modalinfoConatiner2: {
     width: '100%',

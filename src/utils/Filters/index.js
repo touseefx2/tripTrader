@@ -435,7 +435,7 @@ function Filters(props) {
         let abs = Platform.OS == 'ios' ? false : true;
         return (
           <utils.DropDown
-            search={true}
+            // search={true}
             data={data}
             onSelectItem={d => {
               onclickSelect(d);
@@ -561,7 +561,6 @@ function Filters(props) {
               {isDropDownSpecies && renderShowDropDown('spcs')}
             </View>
           </View>
-          <Sep />
         </>
       );
     };
@@ -593,7 +592,7 @@ function Filters(props) {
               marginTop: 10,
             }}>
             <StarRating
-              starSize={30}
+              starSize={27}
               disabled={false}
               maxStars={5}
               rating={host}

@@ -1012,66 +1012,16 @@ function Sent(props) {
       };
 
       const renderInfo = () => {
-        let userName = item.user.first_name + ' ' + item.user.last_name;
-        let photo = item.user.photo || '';
-
-        const renderProfile = () => {
-          return (
-            <View style={styles.mProfileImgContainer}>
-              <ProgressiveFastImage
-                style={styles.mProfileImg}
-                source={
-                  photo != ''
-                    ? {uri: photo}
-                    : require('../../../assets/images/drawer/guest/img.png')
-                }
-                loadingImageStyle={styles.mimageLoader}
-                loadingSource={require('../../../assets/images/imgLoad/img.jpeg')}
-                blurRadius={5}
-              />
-              {/* {isVeirfy && (
-                <Image
-                  style={styles.miconVerify}
-                  source={require('../../assets/images/verified/img.png')}
-                />
-              )} */}
-            </View>
-          );
-        };
-
-        const renderText = () => {
-          return (
-            <View style={styles.mtextContainer}>
-              <Text
-                style={{
-                  color: theme.color.subTitleLight,
-                  fontSize: 12,
-                  fontFamily: theme.fonts.fontBold,
-                  textTransform: 'capitalize',
-                }}>
-                Member
-              </Text>
-
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  color: '#081A24',
-                  fontSize: 15,
-                  fontFamily: theme.fonts.fontBold,
-                  lineHeight: 23,
-                  textTransform: 'capitalize',
-                }}>
-                {userName}
-              </Text>
-            </View>
-          );
-        };
-
         return (
-          <View style={styles.modalinfoConatiner}>
-            {renderProfile()}
-            {renderText()}
+          <View style={{width: '100%', marginTop: 12}}>
+            <Text
+              style={{
+                fontSize: 17,
+                color: theme.color.title,
+                fontFamily: theme.fonts.fontNormal,
+              }}>
+              Are you sure you would like to cancel your offer?
+            </Text>
           </View>
         );
       };
@@ -1257,8 +1207,8 @@ function Sent(props) {
                 {!c && (
                   <>
                     {renderHeader()}
-                    {/* {renderInfo()}
-                    {renderField()} */}
+                    {renderInfo()}
+                    {/*    {renderField()} */}
                     {renderBottom()}
                   </>
                 )}

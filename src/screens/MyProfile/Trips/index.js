@@ -159,6 +159,7 @@ function Trips(props) {
     let status = item.status || '';
     let c = status == 'suspended' ? true : false;
     let tc = theme.color.boxTitle;
+
     return (
       <Pressable
         disabled

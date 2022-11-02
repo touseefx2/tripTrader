@@ -125,100 +125,90 @@ let dtd = {
 
 const data = [
   {
-    _id: 31,
+    __v: 0,
+    _id: '635f6da37837c98dc8634a00',
+    acceptTradeOffers: false,
+    activity: 'Central N.C. Whitetail Hunting In The Back Country',
+    availableFrom: '2022-10-31T00:00:00.000Z',
+    availableTo: '2022-11-30T00:00:00.000Z',
+    createdAt: '2022-10-31T06:39:31.456Z',
+    duration: {title: 'days', value: 3},
+    hostId: {
+      __v: 0,
+      _id: '6360a4e7bd5bdff557ceedbc',
+      birthDate: '2022-11-01T04:47:25.621Z',
+      createdAt: '2022-11-01T04:47:35.491Z',
+      email: 'a@a.com',
+      firstName: 'Nasreen',
+      followers: [],
+      identityProof: '',
+      identityStatus: 'notVerified',
+      image:
+        'https://t3.ftcdn.net/jpg/03/67/46/48/360_F_367464887_f0w1JrL8PddfuH3P2jSPlIGjKU2BI0rn.jpg',
+      lastName: 'Malik',
+      notificationEnabled: true,
+      password: '$2b$10$nB.L3Ou127.6vRMuYrsbV.tduFP4KzIsmiPzoOjhuHAfUnohXy70K',
+      phone: null,
+      phoneCountryCode: 'PK',
+      registrationCode:
+        'fv67ZhVBTGqOwG7myKxhGo:APA91bEbJWA-Vn8t1oxOTextNoS5QHW0ybeKTX189eae0dggF-QrVLZ7MJkqiI4AXL_5BgJeZfx1GQxROsFPEGtB4IbAih38AtBWCEuo8yDI0ncb6bFy1DolpmNUYiTZx4z2DwHKHszR',
+      savedTrips: [],
+      status: 'active',
+      subscription: {
+        amtPaid: 14.99,
+        charges: 1.25,
+        discount: 20,
+        endDate: '2023-11-01T05:00:12.375Z',
+        startDate: '2022-11-01T05:00:12.375Z',
+        status: 'active',
+        title: 'annual',
+      },
+      subscriptionStatus: 'paid',
+      termsAccepted: true,
+      updatedAt: '2022-11-01T05:00:13.408Z',
+    },
+    isFeatured: true,
+    location: 'Miami, Florida',
+    photos: [
+      // 'https://www.pixelstalk.net/wp-content/uploads/images6/4K-Travel-Wallpaper-HD-Free-download.jpg',
+      'https://images.pexels.com/photos/1371360/pexels-photo-1371360.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+      'https://wallpaperaccess.com/full/1534474.jpg',
+    ],
+    returnActivity: 'Alligator or Osceola Turkey',
+    status: 'active',
+    suspensionReason: 'test',
     title: 'Hunting Trip',
-    acceptOtherTrades: true,
-
-    loc: {coords: [], name: 'Miami, Florida'},
-    offer: 'Central N.C. Whitetail Hunting In The Back Country',
-    photos: [
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0OqjKG4QLGg-hvzwhf76mCB1shxkUchZN9Q&usqp=CAU',
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbyQRxBY8uSBj1VaS26kR0_7Uk6BJ-YNz4XQ&usqp=CAU',
-      'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTV8fHRyYXZlbGxpbmd8ZW58MHx8MHx8&w=1000&q=80',
-    ],
-    return: 'Alligator or Osceola Turkey',
-    status: 'activate',
-
-    user: {
-      _id: 2,
-      first_name: 'mike',
-      last_name: 'monuse',
-      userName: 'mmouse',
-
-      photo:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbyQRxBY8uSBj1VaS26kR0_7Uk6BJ-YNz4XQ&usqp=CAU',
-      avg_rating: 3.8,
-      total_reviews: 190,
-      isVerified: true,
-    },
-    availablity: {endDate: '2022-12-05', startDate: '2022-10-24'},
-    duration: {number: '3', title: 'days'},
-    unavailable: {
-      all_unavailable_dates: [
-        '2022-10-25',
-        '2022-10-26',
-        '2022-10-28',
-        '2022-11-02',
-        '2022-11-04',
+    unAvailableDays: {
+      allUnavailableDates: [
+        '2022-11-11T00:00:00.000Z',
+        '2022-11-13T00:00:00.000Z',
+        '2022-11-14T00:00:00.000Z',
+        '2022-11-15T00:00:00.000Z',
+        '2022-11-18T00:00:00.000Z',
+        '2022-11-25T00:00:00.000Z',
+        '2022-11-28T00:00:00.000Z',
       ],
-      days_of_week: ['Fri'],
-      esd_text: 'Oct 25-26, Nov 2',
-      exclude_specific_dates: ['2022-10-25', '2022-10-26', '2022-11-02'],
-      repeat_every: {endRepeatOn: '2022-11-05', num: 1, title: 'Weeks'},
-      unavailable_days_of_week: ['2022-10-28', '2022-11-04'],
-      wtxt: 'Fri (weekly)',
-    },
-  },
-  {
-    _id: 32,
-    title: 'Fishing Trip',
-    acceptOtherTrades: true,
-
-    loc: {coords: [], name: 'Dylan, Nc'},
-    offer: 'North Idaho Black Bear Spot and Stalk',
-    photos: [
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0OqjKG4QLGg-hvzwhf76mCB1shxkUchZN9Q&usqp=CAU',
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbyQRxBY8uSBj1VaS26kR0_7Uk6BJ-YNz4XQ&usqp=CAU',
-      'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTV8fHRyYXZlbGxpbmd8ZW58MHx8MHx8&w=1000&q=80',
-    ],
-    return: 'Open to Offers',
-    status: 'activate',
-    user: {
-      _id: 7,
-      first_name: 'James',
-      last_name: 'Bond',
-      userName: 'jbonds',
-      // photo:"",
-      photo:
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfHw%3D&w=1000&q=80',
-
-      avg_rating: 3.5,
-      total_reviews: 100,
-      isVerified: false,
-    },
-    availablity: {endDate: '2022-12-01', startDate: '2022-11-01'},
-    duration: {number: '1', title: 'days'},
-    unavailable: {
-      all_unavailable_dates: [
-        '2022-11-03',
-        '2022-11-10',
-        '2022-11-17',
-        '2022-11-21',
-        '2022-11-24',
-        '2022-11-25',
+      dayWeekText: 'Fri (weekly)',
+      daysOfWeek: ['Fri'],
+      excludeDateText: 'Nov 13-15, Nov 28',
+      excludeSpecificDates: [
+        '2022-11-13T00:00:00.000Z',
+        '2022-11-14T00:00:00.000Z',
+        '2022-11-15T00:00:00.000Z',
+        '2022-11-28T00:00:00.000Z',
       ],
-      days_of_week: ['Thu'],
-      esd_text: 'Nov 21, Nov 25',
-      exclude_specific_dates: ['2022-11-21', '2022-11-25'],
-      repeat_every: {endRepeatOn: '2022-12-01', num: 1, title: 'Weeks'},
-      unavailable_days_of_week: [
-        '2022-11-03',
-        '2022-11-10',
-        '2022-11-17',
-        '2022-11-24',
+      repeatEvery: {
+        endRepeatOn: '2022-11-28T00:00:00.000Z',
+        title: 'weeks',
+        value: 1,
+      },
+      unavailableDaysOfWeek: [
+        '2022-11-11T00:00:00.000Z',
+        '2022-11-18T00:00:00.000Z',
+        '2022-11-25T00:00:00.000Z',
       ],
-      wtxt: 'Thu (weekly)',
     },
+    updatedAt: '2022-11-02T09:19:28.848Z',
   },
 ];
 
@@ -246,18 +236,18 @@ const durtn = [
     title: 'weeks',
     type: 'durType',
   },
-  {
-    _id: 2,
-    is_active: true,
-    title: 'months',
-    type: 'durType',
-  },
-  {
-    _id: 2,
-    is_active: true,
-    title: 'years',
-    type: 'durType',
-  },
+  // {
+  //   _id: 2,
+  //   is_active: true,
+  //   title: 'months',
+  //   type: 'durType',
+  // },
+  // {
+  //   _id: 2,
+  //   is_active: true,
+  //   title: 'years',
+  //   type: 'durType',
+  // },
 ];
 
 const rdurtn = [
@@ -385,6 +375,10 @@ function Home(props) {
 
   const [isShowSearch, setisShowSearch] = useState(false);
   const [isShowFilters, setisShowFilters] = useState(false);
+
+  const [pvm, setpvm] = useState(false);
+  const [pd, setpd] = useState([]);
+  const [pdc, setpdc] = useState('');
 
   const closeAllDropDown = () => {
     setisDropDownTrip(false);
@@ -575,7 +569,73 @@ function Home(props) {
   };
 
   const onClickMakeOffer = (dt, ind) => {
-    openModal({item: dt, i: ind}, 'offer');
+    let d = dt;
+    let title = d.title || '';
+    let trade = d.activity || '';
+    let retrn = d.returnActivity || '';
+    let l =
+      d.location && d.location != '' ? {name: d.location, coords: []} : {};
+    let loc = l;
+    let stts = d.status || '';
+    let acceptOtherTrades = d.acceptTradeOffers;
+    let durNo = d.duration.value;
+    let durTitle = d.duration.title;
+    let photos = d.photos || [];
+    let sd = d.availableFrom;
+    let ed = d.availableTo;
+
+    let isSetUn =
+      d.unAvailableDays && !isObjectEmpty(d.unAvailableDays)
+        ? d.unAvailableDays
+        : false;
+    let objct = isSetUn != false ? {...isSetUn} : false;
+
+    if (isSetUn && !isObjectEmpty(isSetUn)) {
+      delete Object.assign(objct, {
+        days_of_week: objct.daysOfWeek,
+      })['daysOfWeek'];
+      delete Object.assign(objct, {
+        unavailable_days_of_week: objct.unavailableDaysOfWeek,
+      })['unavailableDaysOfWeek'];
+      delete Object.assign(objct, {
+        exclude_specific_dates: objct.excludeSpecificDates,
+      })['excludeSpecificDates'];
+      delete Object.assign(objct, {
+        all_unavailable_dates: objct.allUnavailableDates,
+      })['allUnavailableDates'];
+      delete Object.assign(objct, {wtxt: objct.dayWeekText})['dayWeekText'];
+      delete Object.assign(objct, {esd_text: objct.excludeDateText})[
+        'excludeDateText'
+      ];
+      let ra = {...objct.repeatEvery};
+      delete Object.assign(ra, {num: ra.value})['value'];
+      delete objct.repeatEvery;
+      objct.repeat_every = ra;
+    }
+
+    const obj = {
+      __v: dt._v,
+      _id: dt._id,
+      title: title,
+      user: dt.hostId,
+      offer: trade,
+      return: retrn,
+      loc: loc,
+      status: stts,
+      acceptOtherTrades: acceptOtherTrades,
+      duration: {
+        number: durNo,
+        title: durTitle,
+      },
+      availablity: {
+        startDate: sd,
+        endDate: ed,
+      },
+      photos: photos,
+      unavailable: objct,
+    };
+
+    openModal({item: obj, i: ind}, 'offer');
   };
   const onClickMessage = (dt, ind) => {
     openModal({item: dt, i: ind}, 'message');
@@ -818,27 +878,42 @@ function Home(props) {
   };
 
   const ItemView = ({item, index}) => {
+    let usr = item.hostId;
     //user
-    let photo = item.user.photo;
-    let userName = item.user.first_name + ' ' + item.user.last_name;
-    let avgRating = item.user.avg_rating;
-    let totalReviews = item.user.total_reviews;
-    let isVeirfy = item.user.isVerified || false;
+    let photo = usr.image || '';
+    let userName = usr.firstName + ' ' + usr.lastName;
+    let avgRating = 3.7;
+    let totalReviews = 50;
+    let isVeirfy = usr.identityStatus == 'notVerified' ? false : true;
 
     //trip
     let status = item.status || '';
-    let tripPhotos = item.photos || [];
+    let tripPhotos = item.photos ? item.photos : [];
     let title = item.title || '';
-    let duration = item.duration.number;
+    let duration = item.duration.value;
     let dt = item.duration.title || '';
     const durTitle = dt.charAt(0).toUpperCase() + dt.slice(1);
     let t =
       duration <= 1 ? durTitle.substring(0, durTitle.length - 1) : durTitle;
     duration = duration + ' ' + t;
-    let offer = item.offer || '';
-    let locName = item.loc ? item.loc.name : '';
-    let trade = item.return || '';
-    let availability = item.availability || '';
+    let offer = item.activity || '';
+    let locName = item.location || '';
+    let trade = item.returnActivity || '';
+    let sd = item.availableFrom;
+    let sdy = parseInt(new Date(sd).getFullYear());
+    let ed = item.availableTo;
+    let edy = parseInt(new Date(ed).getFullYear());
+    let favlbl = '';
+
+    if (sdy == edy) {
+      favlbl =
+        moment(sd).format('MMM DD') + ' - ' + moment(ed).format('MMM DD, YYYY');
+    } else {
+      favlbl =
+        moment(sd).format('MMM DD, YYYY') +
+        ' - ' +
+        moment(ed).format('MMM DD, YYYY');
+    }
 
     const renderSec1 = () => {
       const renderProfile = () => {
@@ -872,7 +947,21 @@ function Home(props) {
               onPress={() => {
                 store.User.clearOtherUser();
                 store.User.setfscreen('home');
-                store.User.setvUser(item.user);
+                const dd = {
+                  user: {
+                    _id: 2,
+                    first_name: 'mike',
+                    last_name: 'monuse',
+                    userName: 'mmouse',
+                    // photo:"",
+                    photo:
+                      'https://www.adobe.com/express/create/media_127540366421d3d5bfcaf8202527ca7d37741fd5d.jpeg?width=400&format=jpeg&optimize=medium',
+                    avg_rating: 3.8,
+                    total_reviews: 190,
+                    isVerified: true,
+                  },
+                };
+                store.User.setvUser(dd.user);
                 props.navigation.navigate('UserProfile');
               }}
               style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}>
@@ -930,11 +1019,18 @@ function Home(props) {
 
     const renderSec2 = () => {
       const renderTripImages = () => {
-        let src = tripPhotos.length > 0 ? tripPhotos : '';
+        let chk =
+          tripPhotos.length <= 0
+            ? '0'
+            : tripPhotos.length == 1
+            ? '1'
+            : tripPhotos.length > 1
+            ? '2'
+            : '0';
 
         return (
           <>
-            {src != '' && (
+            {chk == '2' && (
               <>
                 <View style={styles.tripImageConatiner}>
                   <ImageSlider
@@ -948,20 +1044,28 @@ function Home(props) {
               </>
             )}
 
-            {src == '' && (
+            {(chk == '0' || chk == '1') && (
               <>
                 <Pressable
-                  disabled
                   style={({pressed}) => [
                     {opacity: pressed ? 0.95 : 1.0},
                     [styles.tripImageConatiner],
-                  ]}>
+                  ]}
+                  onPress={() => {
+                    setpvm(true);
+                    setpd(chk == '1' ? {uri: tripPhotos[0]} : '');
+                    setpdc(chk == '1' ? '' : 'ph');
+                  }}>
                   <ProgressiveFastImage
                     style={styles.tripImg}
-                    source={require('../../assets/images/imgLoad/img.jpeg')}
+                    source={
+                      chk == '1'
+                        ? {uri: tripPhotos[0]}
+                        : require('../../assets/images/trip/img.jpeg')
+                    }
                     loadingImageStyle={styles.imageLoader}
                     loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
-                    blurRadius={10}
+                    blurRadius={5}
                   />
                 </Pressable>
               </>
@@ -976,7 +1080,7 @@ function Home(props) {
     const renderSec3 = () => {
       return (
         <View style={styles.boxSection3}>
-          <Text numberOfLines={2} ellipsizeMode="tail" style={styles.sec3T1}>
+          <Text style={styles.sec3T1}>
             {duration} {offer}
           </Text>
           <View style={styles.sec3T2Container}>
@@ -994,12 +1098,14 @@ function Home(props) {
             </View>
           </View>
           <View style={{marginTop: 10}}>
+            <Text style={styles.sec3T31}>In Return For</Text>
+            <Text style={styles.sec3T32}>{trade}</Text>
+          </View>
+          <View style={{marginTop: 10}}>
             <Text numberOfLines={1} ellipsizeMode="tail" style={styles.sec3T31}>
-              In Return For
+              Availability
             </Text>
-            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.sec3T32}>
-              {trade}
-            </Text>
+            <Text style={styles.sec3T32}>{favlbl}</Text>
           </View>
         </View>
       );
@@ -1308,15 +1414,15 @@ function Home(props) {
       };
 
       const renderInfo = () => {
-        let userName = item.user.first_name + ' ' + item.user.last_name;
-        let isVeirfy = item.user.isVerified || false;
+        let userName = item.user.firstName + ' ' + item.user.lastName;
+        let isVeirfy = item.user.identityStatus == 'notVerified' ? false : true;
         let duration = item.duration.number;
         let t =
           duration <= 1
             ? item.duration.title.substring(0, item.duration.title.length - 1)
             : item.duration.title;
         duration = duration + ' ' + t;
-        let photo = item.user.photo || '';
+        let photo = item.user.image ? item.user.image : '';
         let offer = item.offer || '';
 
         const renderProfile = () => {
@@ -3810,7 +3916,6 @@ function Home(props) {
                 style={styles.mTextInpt}
                 placeholder="Type your message here"
                 multiline={true}
-                numberOfLines={10}
               />
             </View>
           </View>
@@ -3898,7 +4003,7 @@ function Home(props) {
       };
 
       let item = modalObj.item;
-      let duration = item.duration.number;
+      let duration = item.duration.value;
       let dt = item.duration.title || '';
       const durTitle = dt.charAt(0).toUpperCase() + dt.slice(1);
       let t =
@@ -3906,7 +4011,7 @@ function Home(props) {
           ? durTitle.substring(0, durTitle.length - 1)
           : durTitle;
       duration = duration + ' ' + t;
-      let offer = item.offer || '';
+      let offer = item.activity || '';
       let src = require('../../assets/images/tripSaveDone/img.png');
       return (
         <Modal
@@ -4004,7 +4109,7 @@ function Home(props) {
     let md = {};
     if (unavailable_days.length > 0) {
       unavailable_days.map((e, i, a) => {
-        md[e] = {
+        md[moment(e).format('YYYY-MM-DD')] = {
           marked: false,
           selected: true,
           customStyles: cssf,
@@ -4149,6 +4254,17 @@ function Home(props) {
           }
 
           if (ar.length > 0) {
+            ar.map((e, i, a) => {
+              markedDates[e] = {
+                customStyles: cs,
+                marked: false,
+                selected: true,
+                selectedColor: theme.color.button1,
+                disabled: false,
+                disableTouchEvent: false,
+              };
+            });
+
             let mindd = ar[0];
             let mxxd = ar[ar.length - 1];
             setminDatee(mindd);
@@ -5322,7 +5438,20 @@ function Home(props) {
             setisVisible={c => setisShowFilters(c)}
           />
         )}
-
+        {pvm && (
+          <utils.FullimageModal
+            data={[]}
+            si={0}
+            show={pvm}
+            pd={pd}
+            pdc={pdc}
+            closModal={() => {
+              setpvm(!pvm);
+              setpd('');
+              setpdc('');
+            }}
+          />
+        )}
         <Toast ref={toast} position="bottom" />
       </View>
     </>

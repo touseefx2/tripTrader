@@ -10,8 +10,20 @@ export const styles = StyleSheet.create({
     alignSelf: 'center',
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
     backgroundColor: 'white',
     zIndex: 100,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.18,
+    shadowRadius: 1.0,
+
+    elevation: 1,
+    marginBottom: 10,
   },
   searchBarContainer: {
     width: '100%',
