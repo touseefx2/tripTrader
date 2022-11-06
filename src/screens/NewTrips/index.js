@@ -37,6 +37,7 @@ import {
 } from 'react-native-responsive-dimensions';
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
+import IntentLauncher from 'react-native-intent-launcher';
 
 import {ScrollView} from 'react-native-gesture-handler';
 import {Calendar} from 'react-native-calendars';
@@ -299,13 +300,16 @@ function NewTrips(props) {
       let ed = d.availableTo;
       let photos = d.photos || [];
 
-      let isSetUn =
-        d.unAvailableDays && !isObjectEmpty(d.unAvailableDays)
-          ? d.unAvailableDays
-          : false;
-      let objct = isSetUn != false ? {...isSetUn} : false;
+      let objct = {...d.unAvailableDays};
 
-      if (isSetUn && !isObjectEmpty(isSetUn)) {
+      if (!isObjectEmpty(objct)) {
+        let ar = objct.allUnavailableDates || [];
+        if (ar.length <= 0) {
+          objct = false;
+        }
+      }
+
+      if (objct != false) {
         delete Object.assign(objct, {
           days_of_week: objct.daysOfWeek,
         })['daysOfWeek'];
@@ -838,8 +842,9 @@ function NewTrips(props) {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         let isSetUn = isSetUnavailable != false ? isSetUnavailable : {};
-        let objct = {...isSetUn};
-        if (isSetUn && !isObjectEmpty(isSetUn)) {
+        let objct = isSetUn != false ? {...isSetUn} : false;
+
+        if (objct !== false && !isObjectEmpty(objct)) {
           delete Object.assign(objct, {
             daysOfWeek: objct.days_of_week,
           })['days_of_week'];
@@ -861,7 +866,6 @@ function NewTrips(props) {
           delete objct.repeat_every;
           objct.repeatEvery = ra;
         }
-
         const obj = {
           hostId: store.User.user._id,
           title: title,
@@ -880,6 +884,9 @@ function NewTrips(props) {
           location: location.name,
           // species: '',
         };
+        if (objct == false) {
+          delete obj.unAvailableDays;
+        }
 
         store.User.setctripLoader(true);
         if (photos.length <= 0) {
@@ -980,7 +987,7 @@ function NewTrips(props) {
     });
   };
 
-  const goToProfile = c => {
+  const goToProfile = () => {
     closeModalg();
     props.navigation.navigate('MyProfile');
   };
@@ -991,31 +998,16 @@ function NewTrips(props) {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         const obj = {
-          _id: (Math.random() * 10).toFixed(0),
-          title: title,
-          user: store.User.user._id,
-          offer: trade,
-          return: Return,
-          loc: {
-            name: 'Miami, Florida',
-            coords: [],
-          },
           status: 'suspended',
-          acceptOtherTrades: acceptOther,
-          duration: {
-            number: durNum,
-            title: dur.title,
-          },
-          availablity: {
-            startDate: isSelDate1,
-            endDate: isSelDate2,
-          },
-          photos: photos,
-          unavailable: isSetUnavailable != false ? isSetUnavailable : {},
         };
-        let index = editTrip.index;
+        store.User.setctripLoader(true);
         console.warn('update trip obj : ', obj);
-        store.User.attemptToUpdateTrip(obj, index, goToProfile);
+        store.User.attemptToUpdateTrip(
+          obj,
+          editTrip.data._id,
+          editTrip.index,
+          goToProfile,
+        );
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -1029,31 +1021,16 @@ function NewTrips(props) {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         const obj = {
-          _id: (Math.random() * 10).toFixed(0),
-          title: title,
-          user: store.User.user._id,
-          offer: trade,
-          return: Return,
-          loc: {
-            name: 'Miami, Florida',
-            coords: [],
-          },
-          status: 'activate',
-          acceptOtherTrades: acceptOther,
-          duration: {
-            number: durNum,
-            title: dur.title,
-          },
-          availablity: {
-            startDate: isSelDate1,
-            endDate: isSelDate2,
-          },
-          photos: photos,
-          unavailable: isSetUnavailable != false ? isSetUnavailable : {},
+          status: 'active',
         };
-        let index = editTrip.index;
+        store.User.setctripLoader(true);
         console.warn('update trip obj : ', obj);
-        store.User.attemptToUpdateTrip(obj, index, goToProfile);
+        store.User.attemptToUpdateTrip(
+          obj,
+          editTrip.data._id,
+          editTrip.index,
+          goToProfile,
+        );
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -1065,39 +1042,55 @@ function NewTrips(props) {
     Keyboard.dismiss();
 
     NetInfo.fetch().then(state => {
-      // if (state.isConnected) {
-      //   // const obj = {
-      //   //   _id: (Math.random() * 10).toFixed(0),
-      //   //   title: title,
-      //   //   user: store.User.user._id,
-      //   //   offer: trade,
-      //   //   return: Return,
-      //   //   loc: {
-      //   //     name: 'Miami, Florida',
-      //   //     coords: [],
-      //   //   },
-      //   //   status: 'activate',
-      //   //   acceptOtherTrades: acceptOther,
-      //   //   duration: {
-      //   //     number: durNum,
-      //   //     title: dur.title,
-      //   //   },
-      //   //   availablity: {
-      //   //     startDate: isSelDate1,
-      //   //     endDate: isSelDate2,
-      //   //   },
-      //   //   photos: photos,
-      //   //   unavailable: isSetUnavailable != false ? isSetUnavailable : {},
-      //   // };
-      //   let index = editTrip.index;
-      //   // console.warn('update trip obj : ', obj);
-      //   store.Trips.attemptToDeleteTrip({}, index, goToProfile);
-      // } else {
-      //   // seterrorMessage('Please connect internet');
-      //   Alert.alert('', 'Please connect internet');
-      // }
-      closeModalg();
+      if (state.isConnected) {
+        store.User.setctripLoader(true);
+
+        store.User.attemptToDeleteTrip(
+          {},
+          editTrip.data._id,
+          editTrip.index,
+          goToProfile,
+        );
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
     });
+
+    // NetInfo.fetch().then(state => {
+    //   // if (state.isConnected) {
+    //   //   // const obj = {
+    //   //   //   _id: (Math.random() * 10).toFixed(0),
+    //   //   //   title: title,
+    //   //   //   user: store.User.user._id,
+    //   //   //   offer: trade,
+    //   //   //   return: Return,
+    //   //   //   loc: {
+    //   //   //     name: 'Miami, Florida',
+    //   //   //     coords: [],
+    //   //   //   },
+    //   //   //   status: 'activate',
+    //   //   //   acceptOtherTrades: acceptOther,
+    //   //   //   duration: {
+    //   //   //     number: durNum,
+    //   //   //     title: dur.title,
+    //   //   //   },
+    //   //   //   availablity: {
+    //   //   //     startDate: isSelDate1,
+    //   //   //     endDate: isSelDate2,
+    //   //   //   },
+    //   //   //   photos: photos,
+    //   //   //   unavailable: isSetUnavailable != false ? isSetUnavailable : {},
+    //   //   // };
+    //   //   let index = editTrip.index;
+    //   //   // console.warn('update trip obj : ', obj);
+    // store.Trips.attemptToDeleteTrip({}, index, goToProfile);
+    //   // } else {
+    //   //   // seterrorMessage('Please connect internet');
+    //   //   Alert.alert('', 'Please connect internet');
+    //   // }
+    //   closeModalg();
+    // });
   };
 
   const renderDropDown = c => {
@@ -2645,13 +2638,15 @@ function NewTrips(props) {
           setDT(dt);
 
           if (permissionIos != 'granted' || permissionIos2 != 'granted') {
-            if (c == 'camera') {
-              setisShowGalleryPrmsn(false);
-              setisShowCameraPrmsn(true);
-            } else {
-              setisShowCameraPrmsn(false);
-              setisShowGalleryPrmsn(true);
-            }
+            setisShowPrmsn(true);
+            setprmsnChk(c);
+            // if (c == 'camera') {
+            //   setisShowGalleryPrmsn(false);
+            //   setisShowCameraPrmsn(true);
+            // } else {
+            //   setisShowCameraPrmsn(false);
+            //   setisShowGalleryPrmsn(true);
+            // }
           } else {
             onclickImage(dt);
           }

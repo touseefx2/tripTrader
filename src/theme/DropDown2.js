@@ -46,7 +46,7 @@ export default function DropDown(props) {
 
       let d = [];
       props.data.map((item, i, a) => {
-        let n = c == 'trip' ? item.offer : '';
+        let n = c == 'trip' ? item.activity : '';
         var Name = n.toLowerCase();
         let s = Name.substr(0, searchLength);
 
@@ -114,7 +114,7 @@ export default function DropDown(props) {
   };
 
   const renderItems = ({item, index}) => {
-    let title = item.offer;
+    let title = item.activity || '';
     return (
       <TouchableHighlight
         underlayColor={'#EEF6EF'}

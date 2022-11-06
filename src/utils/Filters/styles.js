@@ -98,4 +98,13 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: theme.fonts.fontMedium,
   },
+
+  Field2: {flexDirection: 'row', alignItems: 'center'},
+  Field2Title: {
+    color: theme.color.title,
+    fontSize: 14,
+    fontFamily: theme.fonts.fontMedium,
+
+    marginLeft: 10,
+  },
 });

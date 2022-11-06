@@ -56,7 +56,17 @@ const hitApi = (
             reject(error);
           });
       });
-
+    case 'delete':
+      return new Promise((resolve, reject) => {
+        occ
+          .delete(endPoint, params)
+          .then(response => {
+            resolve(response);
+          })
+          .catch(error => {
+            reject(error);
+          });
+      });
     default:
       break;
   }
@@ -64,4 +74,4 @@ const hitApi = (
 
 export default hitApi;
 
-export type CALL_METHOD = 'post' | 'get' | 'put';
+export type CALL_METHOD = 'post' | 'get' | 'put' | 'delete';

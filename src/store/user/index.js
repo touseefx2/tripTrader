@@ -76,6 +76,20 @@ class user {
   @observable otherUserModalLoader = false;
 
   @observable review = [];
+
+  @persist('object') @observable Hometrips = [];
+  @action setHomeTrips = obj => {
+    this.Hometrips = obj;
+  };
+  @observable HomeLoader = false;
+  @action setHomeLoader = obj => {
+    this.HomeLoader = obj;
+  };
+  @observable homeRefrsh = false;
+  @action sethomeRefrsh = obj => {
+    this.homeRefrsh = obj;
+  };
+
   @persist('object') @observable trips = [];
   @persist('object') @observable photos = [];
   @observable photosRefrsh = false;
@@ -266,6 +280,53 @@ class user {
         if (msg == 'No records found') {
           setgetdata(true);
           this.setphotos([]);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  @action attemptToGetHomeTrips = (setgetdata, setrfrsh) => {
+    console.warn('Get AllHomeTrip : ', 'true');
+    this.setHomeLoader(true);
+
+    db.hitApi(db.apis.GET_ALL_HOME_TRIPS, 'get', {}, this.authToken)
+      ?.then(resp => {
+        this.setHomeLoader(false);
+        setrfrsh(false);
+        console.log(
+          `response Get AllHomeTrip   ${db.apis.GET_ALL_HOME_TRIPS} : `,
+          resp.data,
+        );
+        let dt = resp.data.data;
+        let ar = [];
+        if (dt.length > 0) {
+          dt.map((e, i, a) => {
+            if (e.hostId._id != this.user._id) {
+              ar.push(e);
+            }
+          });
+        }
+        this.setHomeTrips(ar);
+        setgetdata(true);
+      })
+      .catch(err => {
+        this.setHomeLoader(false);
+        setrfrsh(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        if (msg == 'No records found') {
+          setgetdata(true);
+          this.setHomeTrips([]);
           return;
         }
         // seterror(msg.toString())
@@ -685,6 +746,43 @@ class user {
         this.setctripLoader(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(`Error in UPDATE_TRIP ${db.apis.UPDATE_TRIP} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  // @action attemptToDeleteTrip = (item, ind, suc) => {
+  //   console.warn('delete  save trip  : ', 'true');
+  //   this.setdLoader(true);
+  //   setTimeout(() => {
+  //     this.setdLoader(false);
+  // /    this.deletesetsaveTrips(ind, suc);
+  //   }, 1000);
+  // };
+
+  @action attemptToDeleteTrip = (body, tid, index, suc) => {
+    console.warn('delete trip body  : ', body);
+
+    db.hitApi(db.apis.DELETE_TRIP + tid, 'delete', body, this.authToken)
+      ?.then(resp => {
+        this.setctripLoader(false);
+        console.log(
+          `response delete trip  ${db.apis.DELETE_TRIP} : `,
+          resp.data,
+        );
+
+        this.deletetrips(index);
+        suc(true);
+      })
+      .catch(err => {
+        this.setctripLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(`Error in delete trip ${db.apis.DELETE_TRIP} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
           // store.General.setisServerError(true);
@@ -1266,6 +1364,13 @@ class user {
         console.log(`Error in ${db.apis.SUBSCRIBE_TOPIC} : `, msg);
       });
   }
+  @action.bound
+  allGetGeneralField() {
+    this.attemptToGetPlan();
+    this.attemptToGetState();
+    this.attemptToGetActivity();
+    this.attemptToGetSpecies();
+  }
 
   @action.bound
   LoginUser(body, svp, seterror) {
@@ -1282,13 +1387,12 @@ class user {
         this.addUser(token, rsp, '');
         this.setemail(body.email);
         this.setsp(svp);
-
         if (svp) {
           this.setpswd(body.password);
         } else {
           this.setpswd('');
         }
-        this.attemptToGetPlan();
+        this.allGetGeneralField();
       })
       .catch(err => {
         this.setregLoader(false);
@@ -1911,6 +2015,90 @@ class user {
           Alert.alert('', msg.toString());
         });
     });
+  }
+
+  @action.bound
+  attemptToGetState() {
+    console.log(`get state`);
+    db.hitApi(db.apis.GET_STATE, 'get', {}, null)
+      ?.then(resp => {
+        console.log(`response get state ${db.apis.GET_STATE} : `, resp.data);
+        let rsp = resp.data.data;
+        store.Filters.settripLocation(rsp);
+      })
+      .catch(err => {
+        let msg = err.response.data.message || err.response.status;
+        console.log(`Error in get all plan ${db.apis.GET_STATE} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        if (msg == 'No records found') {
+          store.Filters.settripLocation([]);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  }
+
+  @action.bound
+  attemptToGetActivity() {
+    console.log(`get activity`);
+    db.hitApi(db.apis.GET_ACTIVITY, 'get', {}, null)
+      ?.then(resp => {
+        console.log(
+          `response get activity ${db.apis.GET_ACTIVITY} : `,
+          resp.data,
+        );
+        let rsp = resp.data.data;
+        store.Filters.setactivity(rsp);
+      })
+      .catch(err => {
+        let msg = err.response.data.message || err.response.status;
+        console.log(`Error in get  activity ${db.apis.GET_ACTIVITY} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        if (msg == 'No records found') {
+          store.Filters.setactivity([]);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  }
+
+  @action.bound
+  attemptToGetSpecies() {
+    console.log(`get Species`);
+    db.hitApi(db.apis.GET_SPECIES, 'get', {}, null)
+      ?.then(resp => {
+        console.log(
+          `response get Species ${db.apis.GET_SPECIES} : `,
+          resp.data,
+        );
+        let rsp = resp.data.data;
+        store.Filters.setspecies(rsp);
+      })
+      .catch(err => {
+        let msg = err.response.data.message || err.response.status;
+        console.log(`Error in get  Species ${db.apis.GET_SPECIES} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        if (msg == 'No records found') {
+          store.Filters.setspecies([]);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
   }
 
   @action.bound

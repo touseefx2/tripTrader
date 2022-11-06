@@ -39,7 +39,7 @@ import {
 } from 'react-native-credit-card-input';
 import {request, PERMISSIONS, check} from 'react-native-permissions';
 import DatePicker from 'react-native-date-picker';
-import IntentLauncher, {IntentConstant} from 'react-native-intent-launcher';
+import IntentLauncher from 'react-native-intent-launcher';
 import * as RNLocalize from 'react-native-localize';
 
 export default observer(Signup);
@@ -494,6 +494,7 @@ function Signup(props) {
       identityProof: '',
       registrationCode: store.User.notificationToken,
       subscriptionStatus: 'freemium',
+      role: 'user',
     };
 
     // const user = {
@@ -1870,7 +1871,7 @@ function Signup(props) {
 
               {/* {errorMessage !== '' && renderShowError()} */}
               {!isCnicFrontUplaod && renderShowError2('Profile')}
-              <Text style={styles.section2LogoTitle}>
+              <Text style={[styles.section2LogoTitle]}>
                 {cnicFrontImage == ''
                   ? 'Trip Trader is committed to community trust and security. Providing a valid government-issued ID to confirm your identity helps us keep the community safe and creates trust between you and other traders.'
                   : 'Make sure you are only submitting a valid government issued  ID and that your picture and all information is clearly visible.'}

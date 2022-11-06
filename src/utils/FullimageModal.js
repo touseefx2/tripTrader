@@ -165,7 +165,7 @@ function FullimageModal(props) {
         );
       };
 
-      if (data.length > 1) {
+      if (data.length > 0 && pdc == '') {
         return (
           <View style={styles.ImageContainer}>
             <>
@@ -248,13 +248,13 @@ function FullimageModal(props) {
             <>
               {/* {renderLeft()}
                 {renderRight()} */}
-              {renderIndicatior()}
+              {data.length > 1 && renderIndicatior()}
             </>
           </View>
         );
       } else {
         let d = '';
-        if (pdc == '') {
+        if (pdc == 'tp') {
           d = {uri: pd.uri ? pd.uri : pd};
         } else if (pdc == 'ph') {
           d = require('../assets/images/trip/img.jpeg');

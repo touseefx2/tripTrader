@@ -32,7 +32,8 @@ import Toast from 'react-native-easy-toast';
 
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {ActivityIndicator} from 'react-native-paper';
-
+import IntentLauncher from 'react-native-intent-launcher';
+import {request, PERMISSIONS, check} from 'react-native-permissions';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import {Image as ImageCompressor} from 'react-native-compressor';
 
@@ -84,6 +85,11 @@ function MyProfile(props) {
     isCnicVerf = user.identityStatus == 'notVerified' ? false : true;
   }
 
+  const [isShowPrmsn, setisShowPrmsn] = useState(false);
+  const [prmsnChk, setprmsnChk] = useState('storage');
+  const [isAddPhotoModal, setisAddPhotoModal] = useState(false);
+  const [DT, setDT] = useState(false);
+
   const [tab, setTab] = useState('reviews');
 
   const [photo, setphoto] = useState(src);
@@ -93,12 +99,8 @@ function MyProfile(props) {
   const [cntry, setcntry] = useState(phnCntr);
   const [pwc, setpwc] = useState('');
 
-  // const [pvm, setpvm] = useState(false); //show fulll image modal
-  // const [pv, setpv] = useState(''); //photo view
-
-  const [pvm, setpvm] = useState(false);
-  const [pd, setpd] = useState([]);
-  const [pdc, setpdc] = useState('');
+  const [pvm, setpvm] = useState(false); //show fulll image modal
+  const [pv, setpv] = useState(''); //photo view
 
   const [profileImageLoader, setprofileImageLoader] = useState(false);
   const [showFullprofileImageLoader, setshowFullprofileImageLoader] =
@@ -180,6 +182,8 @@ function MyProfile(props) {
   };
 
   const MultipleImage = async button => {
+    setisShowPrmsn(false);
+    setisAddPhotoModal(false);
     let apiLevel = store.General.apiLevel;
     try {
       let options = {
@@ -207,7 +211,7 @@ function MyProfile(props) {
               fileName: fileName,
             };
             console.log('Compress image  : ', imageObject);
-            if (button == 'photoChange') {
+            if (button == 'Profile') {
               setisSHowChangePhoto(true);
               setcphoto(imageObject);
 
@@ -228,21 +232,21 @@ function MyProfile(props) {
     }
   };
 
-  const changePhoto = c => {
+  const onclickImage = c => {
     if (c == 'photoView') {
-      setpd([photo.uri ? photo.uri : photo]);
+      setpv([photo.uri ? photo.uri : photo]);
       setpvm(true);
-      setpdc('');
+
       return;
     }
     if (c == 'photoViewC') {
-      setpd([cphoto.uri]);
-      setpvm(true);
-      setpdc('');
+      setpv([photo.uri ? photo.uri : photo]);
+      setpvm([cphoto.uri ? cphoto.uri : cphoto]);
+
       return;
     }
 
-    if (c == 'photoChange') {
+    if (c == 'Profile') {
       MultipleImage(c);
       return;
     }
@@ -295,7 +299,7 @@ function MyProfile(props) {
       return (
         <TouchableOpacity
           disabled={photo == '' ? true : false}
-          onPress={() => changePhoto('photoView')}
+          onPress={() => onclickImage('photoView')}
           activeOpacity={0.9}
           style={styles.profileImageContainer}>
           <Image
@@ -315,7 +319,10 @@ function MyProfile(props) {
           {user && user !== 'guest' && (
             <TouchableOpacity
               style={styles.changeImgContainer}
-              onPress={() => changePhoto('photoChange')}
+              onPress={() => {
+                setisAddPhotoModal(true);
+                setDT('Profile');
+              }}
               activeOpacity={0.7}>
               <Image
                 style={styles.changeImg}
@@ -582,6 +589,360 @@ function MyProfile(props) {
     );
   };
 
+  const renderAddPhotoModal = () => {
+    const reqPermission = async () => {
+      if (Platform.OS == 'android') {
+        try {
+          const reqPer = await PermissionsAndroid.request(
+            PERMISSIONS.ANDROID.CAMERA,
+          );
+
+          if (reqPer == 'never_ask_again') {
+            let title = 'Camera Permission Blocked';
+            let text = 'Please allow grant permission to acces camera';
+
+            Alert.alert(title, text, [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              {
+                text: 'Open Settings',
+                onPress: () => {
+                  IntentLauncher.startActivity({
+                    action: 'android.settings.APPLICATION_DETAILS_SETTINGS',
+                    data: 'package:' + store.General.package,
+                  });
+                },
+              },
+            ]);
+
+            return;
+          }
+
+          if (reqPer == 'granted') {
+            const reqPer2 = await PermissionsAndroid.request(
+              PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+            );
+
+            if (reqPer2 == 'never_ask_again') {
+              let title = 'Storage Permission Blocked';
+              let text =
+                'Please allow grant permission to acces photos in storage';
+
+              Alert.alert(title, text, [
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Open Settings',
+                  onPress: () => {
+                    IntentLauncher.startActivity({
+                      action: 'android.settings.APPLICATION_DETAILS_SETTINGS',
+                      data: 'package:' + store.General.package,
+                    });
+                  },
+                },
+              ]);
+              return;
+            }
+
+            if (reqPer2 == 'granted') {
+              onclickImage(DT);
+            }
+          }
+        } catch (error) {
+          console.log('req permsiion error : ', error);
+        }
+      }
+
+      if (Platform.OS == 'ios') {
+        const pc = await check(PERMISSIONS.IOS.CAMERA);
+        const pp = await check(PERMISSIONS.IOS.PHOTO_LIBRARY);
+
+        if (pc == 'blocked' || pp == 'blocked') {
+          let title =
+            pc == 'blocked'
+              ? 'Camera Permission Blocked'
+              : 'Photo Permission Blocked';
+          let text =
+            pc == 'blocked'
+              ? 'Please allow grant permission to acces camera'
+              : 'Please allow grant permission to acces all photos';
+          Alert.alert(title, text, [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {
+              text: 'Open Settings',
+              onPress: () => {
+                Linking.openURL('app-settings:');
+              },
+            },
+          ]);
+          return;
+        }
+
+        if (pp == 'limited') {
+          let title = 'Photo Permission Limited';
+          let text = 'Please allow grant permission to select all photos';
+          Alert.alert(title, text, [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {
+              text: 'Open Settings',
+              onPress: () => {
+                Linking.openURL('app-settings:');
+                //react-native-permissions // openSettings('App-Prefs:root=Photos');
+              },
+            },
+          ]);
+          return;
+        }
+
+        try {
+          const reqPer = await request(PERMISSIONS.IOS.CAMERA);
+          if (reqPer == 'granted') {
+            const reqPer2 = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
+            if (reqPer2 == 'granted') {
+              onclickImage(DT);
+            }
+          }
+        } catch (error) {
+          console.log('req permsiion error : ', error);
+        }
+      }
+    };
+
+    const checkPermsn = async c => {
+      if (Platform.OS == 'android') {
+        const permissionAndroid = await check(PERMISSIONS.ANDROID.CAMERA);
+        const permissionAndroid2 = await check(
+          PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+        );
+
+        if (permissionAndroid != 'granted' || permissionAndroid2 != 'granted') {
+          setisShowPrmsn(true);
+          setprmsnChk(c);
+        } else {
+          onclickImage(DT);
+        }
+      }
+
+      if (Platform.OS == 'ios') {
+        try {
+          const permissionIos = await check(PERMISSIONS.IOS.CAMERA);
+          const permissionIos2 = await check(PERMISSIONS.IOS.PHOTO_LIBRARY);
+
+          if (permissionIos != 'granted' || permissionIos2 != 'granted') {
+            setisShowPrmsn(true);
+            setprmsnChk(c);
+          } else {
+            onclickImage(DT);
+          }
+        } catch (error) {
+          console.warn('Permsiion error : ', error);
+        }
+      }
+    };
+
+    const closeAddPhotoModal = () => {
+      if (!isShowPrmsn) {
+        setisAddPhotoModal(false);
+      } else {
+        setisShowPrmsn(false);
+      }
+    };
+
+    const renderCross = () => {
+      return (
+        <Pressable
+          style={({pressed}) => [
+            {opacity: pressed ? 0.7 : 1.0},
+            {position: 'absolute', top: 15, right: 15},
+          ]}
+          onPress={closeAddPhotoModal}>
+          <utils.vectorIcon.Ionicons
+            name="ios-close-outline"
+            color={theme.color.title}
+            size={32}
+          />
+        </Pressable>
+      );
+    };
+
+    const renderButtonPermission = () => {
+      return (
+        <View
+          style={{
+            marginTop: 10,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <TouchableOpacity
+            onPress={reqPermission}
+            activeOpacity={0.7}
+            style={styles.BottomButtonP}>
+            <Text style={styles.buttonPTextBottom}>Yes</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              setisShowPrmsn(false);
+            }}
+            activeOpacity={0.7}
+            style={styles.BottomButtonP}>
+            <Text style={styles.buttonPTextBottom}>No</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    };
+
+    function Sep() {
+      return <View style={{height: 25}} />;
+    }
+
+    return (
+      <MModal
+        visible={isAddPhotoModal}
+        transparent
+        onRequestClose={closeAddPhotoModal}>
+        <SafeAreaView style={styles.modalContainerp}>
+          <View style={[styles.modalContainer2p, {margin: 20}]}>
+            <View
+              style={[
+                styles.modalp,
+                {
+                  paddingVertical: 25,
+                  paddingHorizontal: 20,
+                  borderRadius: 15,
+                },
+              ]}>
+              {!isShowPrmsn && (
+                <>
+                  <View
+                    style={{alignItems: 'center', justifyContent: 'center'}}>
+                    <Text style={styles.section2Title1}>add profile photo</Text>
+
+                    <Image
+                      source={require('../../assets/images/addphoto/img.png')}
+                      style={styles.section2Logo}
+                    />
+
+                    <Text
+                      style={[styles.section2LogoTitle, {textAlign: 'center'}]}>
+                      Upload a photo to help the community recognize and promote
+                      your account.
+                    </Text>
+
+                    <View style={styles.uploadIndication}>
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => {
+                          checkPermsn('gallery');
+                        }}>
+                        <Image
+                          source={require('../../assets/images/uploadphoto/img.png')}
+                          style={styles.uploadIndicationLogo}
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => {
+                          checkPermsn('camera');
+                        }}>
+                        <Image
+                          source={require('../../assets/images/takephoto/img.png')}
+                          style={styles.uploadIndicationLogo}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  <TouchableOpacity
+                    onPress={closeAddPhotoModal}
+                    activeOpacity={0.7}
+                    style={{
+                      marginTop: 40,
+                      width: '100%',
+                      height: 48,
+                      backgroundColor: theme.color.button2,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      alignSelf: 'center',
+                    }}>
+                    <Text
+                      style={[
+                        styles.buttonTextBottom,
+                        {
+                          color: '#B93B3B',
+                          fontFamily: theme.fonts.fontMedium,
+                        },
+                      ]}>
+                      Cancel
+                    </Text>
+                  </TouchableOpacity>
+                </>
+              )}
+              {isShowPrmsn && (
+                <>
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <Text style={styles.section2Title1}>
+                      {prmsnChk == 'camera'
+                        ? 'Camera Access'
+                        : 'Storage Access'}
+                    </Text>
+
+                    <Image
+                      source={
+                        prmsnChk == 'camera'
+                          ? require('../../assets/images/ca/img.png')
+                          : require('../../assets/images/ca/img.png')
+                      }
+                      style={styles.section2Logo}
+                    />
+
+                    <View style={{width: '80%', alignSelf: 'center'}}>
+                      <Text
+                        style={[
+                          styles.section2LogoTitle,
+                          {
+                            textAlign: 'center',
+                          },
+                        ]}>
+                        {prmsnChk == 'camera'
+                          ? 'Trip Trader wants permission to access your camera.'
+                          : 'Trip Trader wants permission to access your storage.'}
+                      </Text>
+                    </View>
+
+                    <Text style={styles.section2LogoTitlee}>Grant access?</Text>
+                  </View>
+
+                  {renderButtonPermission()}
+                </>
+              )}
+              {/* {renderCross()} */}
+            </View>
+          </View>
+        </SafeAreaView>
+      </MModal>
+    );
+  };
+
   return (
     <View style={styles.container}>
       {/* {tagLine != '' && <utils.TagLine tagLine={tagLine} />} */}
@@ -607,16 +968,16 @@ function MyProfile(props) {
 
       {pvm && (
         <utils.FullimageModal
-          data={[]}
+          data={pv}
           si={0}
           show={pvm}
           closModal={() => {
             setpvm(!pvm);
-            setpd('');
-            setpdc('');
+            setpv('');
           }}
         />
       )}
+      {isAddPhotoModal && renderAddPhotoModal()}
     </View>
   );
 }

@@ -10,36 +10,23 @@ class filters {
   //general
 
   @observable tripType = [
-    {name: 'fishing', isSel: false},
-    {name: 'hunting', isSel: false},
-    {name: 'stay', isSel: false},
-    {name: 'newly added', isSel: false},
-    {name: 'closest distance', isSel: false},
+    {name: 'Most Recent', isSel: false},
+    {name: 'Most Recent', isSel: false},
+    {name: 'Hunting', isSel: false},
+    {name: 'Fishing', isSel: false},
   ];
   @action settripType = obj => {
     this.tripType = obj;
   };
-  @observable tripLocation = [
-    {name: 'islamabad', corrd: []},
-    {name: 'rawalpindi', corrd: []},
-    {name: 'multan', corrd: []},
-  ];
+  @observable tripLocation = [];
   @action settripLocation = obj => {
     this.tripLocation = obj;
   };
-  @observable activity = [
-    {name: 'islamabad', corrd: []},
-    {name: 'rawalpindi', corrd: []},
-    {name: 'multan', corrd: []},
-  ];
+  @observable activity = [];
   @action setactivity = obj => {
     this.activity = obj;
   };
-  @observable species = [
-    {name: 'islamabad', corrd: []},
-    {name: 'rawalpindi', corrd: []},
-    {name: 'multan', corrd: []},
-  ];
+  @observable species = [];
   @action setspecies = obj => {
     this.species = obj;
   };
@@ -65,6 +52,10 @@ class filters {
   @action setshostRating = obj => {
     this.shostRating = obj;
   };
+  @observable svu = false;
+  @action setsvu = obj => {
+    this.svu = obj;
+  };
 
   @observable isFilter = false;
   @action setisFilter = obj => {
@@ -77,21 +68,21 @@ class filters {
     this.setsactivity(false);
     this.setsspecies(false);
     this.setshostRating(0);
+    this.setsvu(false);
     this.setisFilter(false);
   };
 
   @action clearAllFilters = () => {
     this.settripType([
-      {name: 'fishing', isSel: false},
-      {name: 'hunting', isSel: false},
-      {name: 'stay', isSel: false},
-      {name: 'newly added', isSel: false},
-      {name: 'closest distance', isSel: false},
+      {name: 'Most Recent', isSel: false},
+      {name: 'Most Recent', isSel: false},
+      {name: 'Hunting', isSel: false},
+      {name: 'Fishing', isSel: false},
     ]);
-    // this.settripType([]);
-    // this.settripLocation([]);
-    // this.setactivity([]);
-    // this.setspecies([]);
+
+    this.settripLocation([]);
+    this.setactivity([]);
+    this.setspecies([]);
     this.clearFilters();
   };
 }

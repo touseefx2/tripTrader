@@ -468,7 +468,7 @@ function Home(props) {
       minDatee == ''
     ) {
       let item = modalObj.item;
-      let sd = moment(item.availablity.startDate).format('YYYY-MM-DD');
+      let sd = item.availablity.startDate;
       let cd = moment().format('YYYY-MM-DD');
 
       if (sd <= cd) {
@@ -836,14 +836,22 @@ function Home(props) {
   }, [isSelDate1, isSelDate2, isSetUnavailable]);
 
   useEffect(() => {
-    if (step == 3 && !isShowUnavliableModal) {
+    if (step == 2 && isCustom && !isShowUnavliableModal) {
       if (isSelDate1 != '' && isSelDate2 != '' && trade != '' && durNum != '') {
         setisButtonDisable(false);
       } else {
         setisButtonDisable(true);
       }
     }
-  }, [isSelDate1, isSelDate2, trade, durNum, step, isShowUnavliableModal]);
+  }, [
+    isSelDate1,
+    isSelDate2,
+    trade,
+    durNum,
+    step,
+    isCustom,
+    isShowUnavliableModal,
+  ]);
 
   useEffect(() => {
     if (isSelDate1 != '' && isSelDate2 != '') {
@@ -1392,9 +1400,8 @@ function Home(props) {
   const closeModalAll = () => {
     clearModal1();
     clearModal2();
-
+    clearModal2C();
     clearModal3();
-    clearModal4();
     setmodalHeight(0);
     setisShowUnavliableModal(false);
     setisDisableToday2(false);
@@ -1420,11 +1427,6 @@ function Home(props) {
         clearModal3();
       }
 
-      return;
-    }
-
-    if (step == 4) {
-      clearModal4();
       return;
     }
   };
@@ -1474,20 +1476,11 @@ function Home(props) {
   const clearModal3 = () => {
     if (!mloader) {
       setstep(2);
+      setisCustom(false);
       closeAllDropDown();
       setmodalHeight(0);
-      setisShowUnavliableModal(false);
-      setisDisableToday2(false);
-      setnote('');
-      clearFields('all', '');
-    }
-  };
 
-  const clearModal4 = () => {
-    if (!mloader) {
-      setstep(3);
-      closeAllDropDown();
-      setmodalHeight(0);
+      clearFields('all', '');
     }
   };
 
@@ -1950,7 +1943,6 @@ function Home(props) {
           if (d == 'customOffer') {
             setstep(3);
             closeAllDropDown();
-            settrip(false);
             return;
           }
           if (c == 'trip') {
@@ -2149,104 +2141,96 @@ function Home(props) {
             let durNo = d.duration.value;
             let durTitle = d.duration.title;
             let ind = durtn.findIndex(x => x.title === durTitle);
-            // let sd = d.availableFrom;
-            // let ed = d.availableTo;
+            let sd = d.availableFrom;
+            let ed = d.availableTo;
 
             settrader(trade);
             setlocation(loc);
             setdurNum(durNo);
             setdur(durtn[ind]);
 
-            // setisSelDate1(sd);
-            // setisSelDate2(ed);
-            // setisSelDate(true);
-            setisSelDate1('');
-            setisSelDate2('');
-            setisSelDate(false);
+            setisSelDate1(sd);
+            setisSelDate2(ed);
+            setisSelDate(true);
 
-            setminDate(new Date());
-            // setminDate(sd);
-            // if (sd >= moment().format('YYYY-MM-DD')) {
-            //   setmindd(undefined);
-            // } else {
-            //   setmindd(sd);
-            // }
-            // var daylist = getDaysArray(new Date(sd), new Date(ed));
-            // let mdd = {};
-            // if (daylist.length > 0) {
-            //   daylist.map((e, i, a) => {
-            //     let d = moment(e).format('YYYY-MM-DD');
-            //     if (i == 0) {
-            //       mdd[d] = {
-            //         customStyles: cs,
-            //         marked: false,
-            //         selected: true,
-            //         selectedColor: theme.color.button1,
-            //         disabled: false,
-            //         disableTouchEvent: false,
-            //       };
-            //     }
-            //     if (i > 0 && i < a.length - 1) {
-            //       mdd[d] = {
-            //         customStyles: cs,
-            //         marked: false,
-            //         selected: true,
-            //         selectedColor: theme.color.button1,
-            //         disabled: true,
-            //         disableTouchEvent: true,
-            //       };
-            //     }
-            //     if (i == a.length - 1) {
-            //       mdd[d] = {
-            //         customStyles: cs,
-            //         marked: false,
-            //         selected: true,
-            //         selectedColor: theme.color.button1,
-            //         disabled: false,
-            //         disableTouchEvent: false,
-            //       };
-            //     }
-            //   });
-            // }
-            // setmarkedDates(mdd);
-            // setselDates(mdd);
+            setminDate(sd);
+            if (sd >= moment().format('YYYY-MM-DD')) {
+              setmindd(undefined);
+            } else {
+              setmindd(sd);
+            }
+            var daylist = getDaysArray(new Date(sd), new Date(ed));
+            let mdd = {};
+            if (daylist.length > 0) {
+              daylist.map((e, i, a) => {
+                let d = moment(e).format('YYYY-MM-DD');
+                if (i == 0) {
+                  mdd[d] = {
+                    customStyles: cs,
+                    marked: false,
+                    selected: true,
+                    selectedColor: theme.color.button1,
+                    disabled: false,
+                    disableTouchEvent: false,
+                  };
+                }
+                if (i > 0 && i < a.length - 1) {
+                  mdd[d] = {
+                    customStyles: cs,
+                    marked: false,
+                    selected: true,
+                    selectedColor: theme.color.button1,
+                    disabled: true,
+                    disableTouchEvent: true,
+                  };
+                }
+                if (i == a.length - 1) {
+                  mdd[d] = {
+                    customStyles: cs,
+                    marked: false,
+                    selected: true,
+                    selectedColor: theme.color.button1,
+                    disabled: false,
+                    disableTouchEvent: false,
+                  };
+                }
+              });
+            }
+            setmarkedDates(mdd);
+            setselDates(mdd);
 
-            setmarkedDates({});
-            setselDates({});
-
-            // let objct = {...d.unAvailableDays};
-            // if (!isObjectEmpty(objct)) {
-            //   let ar = objct.allUnavailableDates || [];
-            //   if (ar.length <= 0) {
-            //     objct = false;
-            //   }
-            // }
-            // if (objct != false) {
-            //   delete Object.assign(objct, {
-            //     days_of_week: objct.daysOfWeek,
-            //   })['daysOfWeek'];
-            //   delete Object.assign(objct, {
-            //     unavailable_days_of_week: objct.unavailableDaysOfWeek,
-            //   })['unavailableDaysOfWeek'];
-            //   delete Object.assign(objct, {
-            //     exclude_specific_dates: objct.excludeSpecificDates,
-            //   })['excludeSpecificDates'];
-            //   delete Object.assign(objct, {
-            //     all_unavailable_dates: objct.allUnavailableDates,
-            //   })['allUnavailableDates'];
-            //   delete Object.assign(objct, {wtxt: objct.dayWeekText})[
-            //     'dayWeekText'
-            //   ];
-            //   delete Object.assign(objct, {esd_text: objct.excludeDateText})[
-            //     'excludeDateText'
-            //   ];
-            //   let ra = {...objct.repeatEvery};
-            //   delete Object.assign(ra, {num: ra.value})['value'];
-            //   delete objct.repeatEvery;
-            //   objct.repeat_every = ra;
-            // }
-
-            setisSetUnavailable(false);
+            let objct = {...d.unAvailableDays};
+            if (!isObjectEmpty(objct)) {
+              let ar = objct.allUnavailableDates || [];
+              if (ar.length <= 0) {
+                objct = false;
+              }
+            }
+            if (objct != false) {
+              delete Object.assign(objct, {
+                days_of_week: objct.daysOfWeek,
+              })['daysOfWeek'];
+              delete Object.assign(objct, {
+                unavailable_days_of_week: objct.unavailableDaysOfWeek,
+              })['unavailableDaysOfWeek'];
+              delete Object.assign(objct, {
+                exclude_specific_dates: objct.excludeSpecificDates,
+              })['excludeSpecificDates'];
+              delete Object.assign(objct, {
+                all_unavailable_dates: objct.allUnavailableDates,
+              })['allUnavailableDates'];
+              delete Object.assign(objct, {wtxt: objct.dayWeekText})[
+                'dayWeekText'
+              ];
+              delete Object.assign(objct, {esd_text: objct.excludeDateText})[
+                'excludeDateText'
+              ];
+              let ra = {...objct.repeatEvery};
+              delete Object.assign(ra, {num: ra.value})['value'];
+              delete objct.repeatEvery;
+              objct.repeat_every = ra;
+            }
+            setisSetUnavailable(objct);
 
             setstep(3);
           };
@@ -2840,7 +2824,7 @@ function Home(props) {
                   color: theme.color.subTitleLight,
                   paddingLeft: 10,
                 }}>
-                Step {step} of 4
+                Step {step} of 3
               </Text>
             </View>
 
@@ -3524,7 +3508,7 @@ function Home(props) {
                   color: theme.color.subTitleLight,
                   paddingLeft: 10,
                 }}>
-                Step {step} of 4
+                Step {step} of 3
               </Text>
             </View>
 
@@ -3826,7 +3810,11 @@ function Home(props) {
         const renderButton1 = () => {
           return (
             <Pressable
-              onPress={closeModal}
+              onPress={() => {
+                setstep(2);
+                setisCustom(true);
+                setisShowUnavliableModal(false);
+              }}
               style={({pressed}) => [
                 {
                   opacity: pressed ? 0.9 : 1.0,
@@ -3922,7 +3910,7 @@ function Home(props) {
                   color: theme.color.subTitleLight,
                   paddingLeft: 10,
                 }}>
-                Step {step} of 4
+                Step {step} of 3
               </Text>
             </View>
 
@@ -4315,34 +4303,24 @@ function Home(props) {
         setmaxDatee('');
       }
     };
-
     const ApplyCalModal = () => {
-      let mdd = {...markedDatess};
-      let mds = [];
-      let fm = {};
-
-      if (!isObjectEmpty(mdd)) {
-        mds = Object.keys(mdd);
-        mds.sort();
-      }
-      if (mds.length > 0) {
-        mds.map((e, i, a) => {
-          fm[e] = {
-            customStyles: cs,
-            marked: false,
-            selected: true,
-            selectedColor: theme.color.button1,
-            disabled: false,
-            disableTouchEvent: false,
-          };
-        });
-      }
-
-      setmarkedDatess(fm);
-      setselDatess(fm);
+      setmarkedDatess(markedDatess);
+      setselDatess(markedDatess);
       setshowCal1(false);
-      const size = Object.keys(fm).length;
-      const dt = Object.keys(fm);
+      const size = Object.keys(markedDatess).length;
+      const dt = Object.keys(markedDatess);
+
+      // let totaldays = 0;
+      // let t = durationTitle;
+      // if (t == 'days') {
+      //   totaldays = duration;
+      // } else if (t == 'weeks') {
+      //   totaldays = duration * 7;
+      // } else if (t == 'months') {
+      //   totaldays = duration * 30;
+      // } else if (t == 'years') {
+      //   totaldays = duration * 365;
+      // }
 
       if (size > 0) {
         // if (size == totaldays) {

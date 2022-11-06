@@ -54,6 +54,7 @@ function Filters(props) {
   const [actvty, setactvty] = useState(false);
   const [spcs, setspcs] = useState(false);
   const [host, sethost] = useState(0);
+  const [vu, setvu] = useState(false);
 
   //general
   const tripLoc = store.Filters.tripLocation;
@@ -82,31 +83,37 @@ function Filters(props) {
   const setshostRating = c => {
     store.Filters.setshostRating(c);
   };
+  let svu = store.Filters.svu;
+  const setsvu = c => {
+    store.Filters.setsvu(c);
+  };
 
   //selct trip khud hi chnage hta ja ra
   useEffect(() => {
     if (isApplyFilter && isModalVisible) {
-      const stt = [...stripType];
-      let ST = [];
-      if (stt.length > 0) {
-        stt.map((e, i, a) => {
-          ST.push(e);
-        });
-      }
+      const stt = stripType != false ? [...stripType] : false;
+      if (stt != false) {
+        let ST = [];
+        if (stt.length > 0) {
+          stt.map((e, i, a) => {
+            ST.push(e);
+          });
+        }
 
-      const dt = [...trptype];
+        const dt = [...trptype];
 
-      if (dt.length > 0) {
-        dt.map((e, i, a) => {
-          if (ST.length > 0) {
-            let index = ST.findIndex(d => d === e.name);
-            if (index > -1) {
-              dt[i].isSel = true;
-            } else {
-              dt[i].isSel = false;
+        if (dt.length > 0) {
+          dt.map((e, i, a) => {
+            if (ST.length > 0) {
+              let index = ST.findIndex(d => d === e.name);
+              if (index > -1) {
+                dt[i].isSel = true;
+              } else {
+                dt[i].isSel = false;
+              }
             }
-          }
-        });
+          });
+        }
       }
 
       if (stripLoc) {
@@ -131,9 +138,8 @@ function Filters(props) {
         }
       }
 
-      if (shostRating > 0) {
-        sethost(shostRating);
-      }
+      sethost(shostRating);
+      setvu(svu);
     }
   }, [isApplyFilter, isModalVisible]);
 
@@ -206,8 +212,13 @@ function Filters(props) {
 
     if (host > 0) {
       chk = true;
-      setshostRating(host);
     }
+    setshostRating(host);
+
+    if (vu) {
+      chk = true;
+    }
+    setsvu(vu);
 
     if (chk) {
       store.Filters.setisFilter(true);
@@ -222,6 +233,7 @@ function Filters(props) {
     closeAllDropDown();
     clearAllDrowdopField();
     sethost(0);
+    setvu(false);
     const dt = [...trptype];
     if (dt.length > 0) {
       dt.map((e, i, a) => {
@@ -236,6 +248,7 @@ function Filters(props) {
     closeAllDropDown();
     clearAllDrowdopField();
     sethost(0);
+    setvu(false);
     const dt = [...trptype];
     if (dt.length > 0) {
       dt.map((e, i, a) => {
@@ -328,6 +341,35 @@ function Filters(props) {
       );
     };
 
+    const renderVerifedchk = () => {
+      return (
+        <View style={styles.Field2}>
+          <TouchableOpacity
+            style={{
+              width: 23,
+              height: 23,
+              borderRadius: 4,
+              backgroundColor: !vu ? 'white' : theme.color.button1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 1,
+              borderColor: theme.color.fieldBorder,
+            }}
+            activeOpacity={0.5}
+            onPress={() => setvu(!vu)}>
+            {vu && (
+              <utils.vectorIcon.FontAwesome5
+                name={'check'}
+                color={theme.color.buttonText}
+                size={11}
+              />
+            )}
+          </TouchableOpacity>
+          <Text style={styles.Field2Title}>Show verified users only</Text>
+        </View>
+      );
+    };
+
     const renderTripTypes = () => {
       const ListHeader = () => {
         return (
@@ -339,7 +381,7 @@ function Filters(props) {
                   color: '#101B10',
                   fontFamily: theme.fonts.fontBold,
                 }}>
-                Trip Type
+                Popular Filters
               </Text>
             </View>
           </View>
@@ -630,6 +672,8 @@ function Filters(props) {
         {renderHeder()}
         <Sep />
         <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}}>
+          {renderVerifedchk()}
+          <Sep />
           {trptype.length > 0 && renderTripTypes()}
           <Sep />
           {renderDropDownFields()}

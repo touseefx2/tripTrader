@@ -100,7 +100,7 @@ export const styles = StyleSheet.create({
     opacity: 0.4,
   },
   emptyListStyle: {
-    marginTop: '50%',
+    marginTop: '80%',
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
@@ -108,6 +108,16 @@ export const styles = StyleSheet.create({
     color: theme.color.title,
     fontFamily: theme.fonts.fontMedium,
     opacity: 0.4,
+  },
+  emptyListIndicator: {
+    marginTop: '80%',
+
+    alignSelf: 'center',
+  },
+  emptyListIndicatora: {
+    top: '50%',
+    position: 'absolute',
+    alignSelf: 'center',
   },
 
   boxContainer: {
@@ -155,6 +165,12 @@ export const styles = StyleSheet.create({
     width: '100%',
     resizeMode: 'contain',
     borderRadius: 40 / 2,
+  },
+
+  imageLoader2: {
+    height: '100%',
+    width: '100%',
+    resizeMode: 'contain',
   },
 
   textContainer: {
@@ -239,6 +255,10 @@ export const styles = StyleSheet.create({
   tripImageConatiner: {
     width: '100%',
     height: 245,
+
+    borderTopWidth: 0.8,
+    borderBottomWidth: 0.8,
+    borderColor: theme.color.fieldBorder,
   },
   tripImg: {
     width: '100%',

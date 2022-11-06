@@ -342,17 +342,6 @@ function Photos(props) {
         )}
       </ScrollView>
       {!getDataOnce && loader && renderLoader()}
-      {/* {pvm && (
-        <utils.FullimageModal
-          data={data}
-          si={si}
-          show={pvm}
-          pv={pv}
-          setshow={c => setpvm(c)}
-          setpv={c => setpv(c)}
-          
-        />
-      )} */}
 
       {pvm && (
         <utils.FullimageModal

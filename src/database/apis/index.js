@@ -1,7 +1,7 @@
 //online link  ec2
 // const BASE_URL = 'http://ec2-13-126-235-46.ap-south-1.compute.amazonaws.com/';
 //local link
-const BASE_URL = 'http://10.7.148.104:3001/';
+const BASE_URL = 'http://192.168.100.5:3001/';
 
 //apis
 const GET_CITIES_AREAS = 'api/area/getAllAreas';
@@ -32,6 +32,7 @@ const IS_PHONE_EXIST = 'api/user/verifyPhoneNumber?phone=';
 const SEND_FIRST_MESSAGE = 'api/chat/sendFirstMessage';
 const CREATE_TRIP = 'api/trip';
 const UPDATE_TRIP = 'api/trip/';
+const DELETE_TRIP = 'api/trip/';
 const GET_ALL_TRIP = 'api/trip?hostId=';
 const GET_ALL_REVIEWS = 'api/user/reviews/';
 const REPLY_REVIEW = 'api/review/replyToReview/';
@@ -39,6 +40,11 @@ const EDIT_REVIEW = 'api/review/updateAReview/';
 const DELETE_REVIEW = 'api/review/deleteAReview/';
 const DISPUTE_REVIEW = 'api/review/';
 const SUBMIT_SUPPORT = '';
+const GET_ALL_HOME_TRIPS = 'api/trip?status=active';
+
+const GET_STATE = 'api/state?status=active';
+const GET_SPECIES = 'api/species?status=active';
+const GET_ACTIVITY = 'api/activity?status=active';
 
 export default apis = {
   BASE_URL,
@@ -77,6 +83,12 @@ export default apis = {
   DELETE_REVIEW,
   DISPUTE_REVIEW,
   SUBMIT_SUPPORT,
+  DELETE_TRIP,
+  GET_ALL_HOME_TRIPS,
+
+  GET_STATE,
+  GET_SPECIES,
+  GET_ACTIVITY,
 };
 
 // const login = 'user/loginCaptain';

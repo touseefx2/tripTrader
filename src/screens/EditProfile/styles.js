@@ -283,6 +283,7 @@ export const styles = StyleSheet.create({
     width: 70,
     height: 70,
     marginTop: 10,
+    resizeMode: 'contain',
   },
   section2LogoTitle: {
     marginTop: 20,
@@ -392,19 +393,19 @@ export const styles = StyleSheet.create({
     alignSelf: 'center',
   },
 
-  section2Logo: {
-    width: 70,
-    height: 70,
-    marginTop: 10,
-  },
-  section2LogoTitle: {
-    marginTop: 20,
-    color: theme.color.subTitle,
-    fontSize: 14,
-    fontFamily: theme.fonts.fontNormal,
-    alignSelf: 'center',
-    textAlign: 'center',
-  },
+  // section2Logo: {
+  //   width: 70,
+  //   height: 70,
+  //   marginTop: 10,
+  // },
+  // section2LogoTitle: {
+  //   marginTop: 20,
+  //   color: theme.color.subTitle,
+  //   fontSize: 14,
+  //   fontFamily: theme.fonts.fontNormal,
+  //   alignSelf: 'center',
+  //   textAlign: 'center',
+  // },
   section2bottomTitle: {
     marginTop: 20,
     color: theme.color.subTitle,
@@ -700,5 +701,62 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: theme.fonts.fontBold,
     marginLeft: 5,
+  },
+
+  modalContainerp: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+  },
+  modalContainer2p: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 15,
+  },
+  modalp: {
+    width: '100%',
+
+    padding: 15,
+    alignSelf: 'center',
+    backgroundColor: theme.color.background,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+  },
+
+  section2LogoTitlee: {
+    marginTop: 20,
+    color: theme.color.subTitleAuth,
+    fontSize: 15,
+    fontFamily: theme.fonts.fontBold,
+  },
+
+  BottomButtonP: {
+    width: '45%',
+    height: 55,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.color.button2,
+
+    // height: responsiveHeight(8),
+    borderRadius: 8,
+    alignSelf: 'center',
+
+    marginTop: 25,
+  },
+  buttonPTextBottom: {
+    color: '#30563A',
+    fontSize: 16,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
   },
 });
