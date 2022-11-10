@@ -61,7 +61,7 @@ export const styles = StyleSheet.create({
   },
   SerchBarContainer: {
     width: '100%',
-    height: 48,
+    height: 46,
     borderRadius: 100,
     flexDirection: 'row',
     alignItems: 'center',
@@ -77,12 +77,13 @@ export const styles = StyleSheet.create({
     shadowRadius: 1.41,
     elevation: 2,
     borderWidth: 1,
-    borderColor: theme.color.fieldBorder,
+    borderColor: '#D8E1DB',
   },
   SerchBarInput: {
     width: '100%',
     height: '100%',
     fontFamily: theme.fonts.fontNormal,
+    top: 3,
   },
   Baricon: {
     width: 18,
@@ -100,7 +101,7 @@ export const styles = StyleSheet.create({
     opacity: 0.4,
   },
   emptyListStyle: {
-    marginTop: '80%',
+    marginTop: '50%',
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
@@ -108,16 +109,6 @@ export const styles = StyleSheet.create({
     color: theme.color.title,
     fontFamily: theme.fonts.fontMedium,
     opacity: 0.4,
-  },
-  emptyListIndicator: {
-    marginTop: '80%',
-
-    alignSelf: 'center',
-  },
-  emptyListIndicatora: {
-    top: '50%',
-    position: 'absolute',
-    alignSelf: 'center',
   },
 
   boxContainer: {
@@ -167,19 +158,14 @@ export const styles = StyleSheet.create({
     borderRadius: 40 / 2,
   },
 
-  imageLoader2: {
-    height: '100%',
-    width: '100%',
-    resizeMode: 'contain',
-  },
-
   textContainer: {
     width: '68%',
     // backgroundColor: 'red',
     top: 5,
   },
   mtextContainer: {
-    width: '77%',
+    width: '76%',
+    top: 10,
     // backgroundColor: 'red',
   },
   textContainertitle: {
@@ -193,16 +179,23 @@ export const styles = StyleSheet.create({
     color: theme.color.title,
     fontSize: 15,
     fontFamily: theme.fonts.fontBold,
+
+    lineHeight: 23,
   },
   textContainertitle2: {
     color: theme.color.boxTitle,
     fontSize: 11,
     fontFamily: theme.fonts.fontMedium,
+
+    lineHeight: 18,
   },
   textContainertitle3: {
-    color: theme.color.subTitle,
+    color: theme.color.title,
     fontSize: 11,
     fontFamily: theme.fonts.fontNormal,
+
+    lineHeight: 18,
+    opacity: 0.6,
   },
   textContainerRatetitle1: {
     color: theme.color.title,
@@ -247,15 +240,12 @@ export const styles = StyleSheet.create({
   tripImageConatiner: {
     width: '100%',
     height: 245,
-
-    borderTopWidth: 0.8,
-    borderBottomWidth: 0.8,
-    borderColor: theme.color.fieldBorder,
   },
   tripImg: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
+    flex: 1,
+    // width: '100%',
+    // height: '100%',
+    // resizeMode: 'contain',
   },
   boxSection3: {
     marginTop: 12,
@@ -267,7 +257,6 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: theme.fonts.fontBold,
     lineHeight: 21.8,
-    textTransform: 'capitalize',
   },
   sec3T2Container: {
     flexDirection: 'row',
@@ -285,7 +274,6 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: theme.fonts.fontBold,
     lineHeight: 17.6,
-    textTransform: 'capitalize',
   },
   sec3T31: {
     color: theme.color.title,
@@ -411,18 +399,11 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
   },
   modalBottomContainer: {
-    paddingTop: 10,
+    paddingTop: 15,
     paddingBottom: 15,
     paddingHorizontal: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
   },
-  modalBottomContainer2: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
+  modalBottomContainer2: {},
 
   modalBottomContainerrr: {
     marginTop: 20,
@@ -503,14 +484,24 @@ export const styles = StyleSheet.create({
   },
   modalinfoConatiner: {
     width: '100%',
-    marginTop: 10,
-    padding: 10,
-    borderRadius: 8,
-    borderColor: theme.color.fieldBorder,
-    borderWidth: 1,
+    // marginTop: 10,
+    paddingVertical: 0,
+    borderRadius: 10,
+    // borderColor: theme.color.fieldBorder,
+    // borderWidth: 1,
     flexDirection: 'row',
 
     justifyContent: 'space-between',
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.84,
+
+    // elevation: 5,
+    // backgroundColor: theme.color.background,
   },
   modalinfoConatiner2: {
     width: '100%',
@@ -524,11 +515,11 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   mProfileImgContainer: {
-    width: 55,
-    height: 55,
-    borderRadius: 55 / 2,
-    borderWidth: 2,
-    borderColor: theme.color.background,
+    width: 47,
+    height: 47,
+    borderRadius: 47 / 2,
+    borderWidth: 1,
+    borderColor: theme.color.fieldBorder,
     // alignItems: 'center',
     // justifyContent: 'center',
   },
@@ -536,13 +527,14 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
-    borderRadius: 55 / 2,
+    borderRadius: 47 / 2,
   },
 
   mimageLoader: {
     height: '100%',
     width: '100%',
-    borderRadius: 55 / 2,
+    resizeMode: 'contain',
+    borderRadius: 47 / 2,
   },
   miconVerify: {
     width: 24,
@@ -651,26 +643,6 @@ export const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
 
-  textArea2: {
-    width: '100%',
-    height: 90,
-    backgroundColor: theme.color.background,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: theme.color.fieldBorder,
-    // shadowColor: '#000',
-    // shadowOffset: {width: 0, height: 2},
-    // shadowOpacity: 0.1,
-    // shadowRadius: 8,
-    // elevation: 2,
-    marginBottom: 10,
-  },
-  mTextInpt2: {
-    height: '100%',
-    paddingHorizontal: 13,
-    textAlignVertical: 'top',
-  },
-
   dropDownMainConatiner: {
     width: '100%',
     marginTop: 15,
@@ -686,8 +658,8 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.color.fieldBorder,
     borderRadius: 8,
-    height: 42,
-    paddingHorizontal: 7,
+    height: 45,
+    paddingHorizontal: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -698,40 +670,29 @@ export const styles = StyleSheet.create({
     fontFamily: theme.fonts.fontNormal,
     lineHeight: 18.6,
   },
-  dropDownIcon: {
-    height: 19,
-    width: 19,
-    resizeMode: 'contain',
-  },
-  dropDownText2: {
-    color: '#111111',
-    fontSize: 13,
-    fontFamily: theme.fonts.fontNormal,
-  },
 
   //make offer modal
   fieldContainer: {
     width: '100%',
-    marginTop: 10,
+    marginTop: 12,
   },
 
   fieldText: {
     color: theme.color.titleGreenForm,
     fontFamily: theme.fonts.fontBold,
-    fontSize: 13.5,
+    fontSize: 14,
   },
   inputConatiner: {
     width: '100%',
     borderWidth: 1,
     borderColor: theme.color.fieldBorder,
     borderRadius: 8,
-    height: 42,
+    height: 45,
     paddingHorizontal: 7,
   },
   input: {
     width: '100%',
     height: '100%',
-    fontSize: 13,
   },
   bottomText: {
     color: theme.color.button1,
@@ -812,6 +773,7 @@ export const styles = StyleSheet.create({
     color: theme.color.title,
     fontFamily: theme.fonts.fontMedium,
     textTransform: 'capitalize',
+    lineHeight: 19,
   },
 
   rmodalBottomContainer: {
@@ -825,5 +787,21 @@ export const styles = StyleSheet.create({
   rmodalBottomContainer2: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+
+  field: {
+    marginTop: 12,
+    width: '100%',
+  },
+  filedTitle: {
+    fontSize: 12,
+    color: theme.color.subTitleLight,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'uppercase',
+  },
+  filedTitle2: {
+    fontSize: 13,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontMedium,
   },
 });

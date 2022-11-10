@@ -1,7 +1,7 @@
 //online link  ec2
 // const BASE_URL = 'http://ec2-13-126-235-46.ap-south-1.compute.amazonaws.com/';
 //local link
-const BASE_URL = 'http://192.168.100.5:3001/';
+const BASE_URL = 'http://192.168.0.105:3001/';
 
 //apis
 const GET_CITIES_AREAS = 'api/area/getAllAreas';
@@ -44,7 +44,18 @@ const GET_ALL_HOME_TRIPS = 'api/trip?status=active';
 
 const GET_STATE = 'api/state?status=active';
 const GET_SPECIES = 'api/species?status=active';
-const GET_ACTIVITY = 'api/activity?status=active';
+const GET_ACTIVITY = 'api/type?status=active';
+
+const GET_FOLLOWERS = 'api/user/followers/';
+const GET_FOLLOWING = 'api/user/following/';
+const GET_BLOCK_USER = 'api/user/blockedUsers/';
+
+const BLOCK_USER = 'api/user/blockAUser/';
+const UNBLOCK_USER = 'api/user/unBlockAUser/';
+
+const OFFER_SEND = 'api/offer';
+
+const SAVE_TRIP = 'api/user/';
 
 export default apis = {
   BASE_URL,
@@ -89,6 +100,17 @@ export default apis = {
   GET_STATE,
   GET_SPECIES,
   GET_ACTIVITY,
+
+  GET_FOLLOWERS,
+  GET_FOLLOWING,
+  GET_BLOCK_USER,
+
+  BLOCK_USER,
+  UNBLOCK_USER,
+
+  OFFER_SEND,
+
+  SAVE_TRIP,
 };
 
 // const login = 'user/loginCaptain';

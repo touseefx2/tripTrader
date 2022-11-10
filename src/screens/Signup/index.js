@@ -495,6 +495,7 @@ function Signup(props) {
       registrationCode: store.User.notificationToken,
       subscriptionStatus: 'freemium',
       role: 'user',
+      status: 'active',
     };
 
     // const user = {

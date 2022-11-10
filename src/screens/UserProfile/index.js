@@ -55,25 +55,19 @@ function UserProfile(props) {
   let headerTitle = 'Profile';
 
   let internet = store.General.isInternet;
-  let user = store.User.vuser;
+  let user = store.Userv.user;
   let loader = store.User.regLoader;
-
-  let loc = store.User.location;
-  let cart = store.User.cart;
-  let totalItems = cart.data.length > 0 ? cart.totalitems : 0;
-  let tagLine = '';
 
   let userName = '';
   let phn = '';
-  let followers = store.User.totalfollowers;
-  let following = store.User.totalfollowing;
+  let followers = store.Userv.totalfollowers;
+  let following = store.Userv.totalfollowing;
   let src = '';
   let srccnic = '';
 
   if (user) {
-    userName = user.first_name + ' ' + user.last_name;
-
-    src = user.photo != '' ? user.photo : '';
+    userName = user.firstName + ' ' + user.lastName;
+    src = user.image ? user.image : '';
   }
 
   const [photo, setphoto] = useState(src);
@@ -103,7 +97,7 @@ function UserProfile(props) {
   const [isSendReport, setisSendReport] = useState(false);
 
   const [sendObj, setsendObj] = useState('');
-  let mloader = store.User.otherUserModalLoader;
+  let mloader = store.Userv.otherUserModalLoader;
 
   const [message, setMessage] = useState('');
   const closeModal = () => {
@@ -215,13 +209,9 @@ function UserProfile(props) {
   });
 
   useEffect(() => {
-    store.User.settotalfollowers(10);
-    store.User.settotalfollowing(5);
-
     store.User.setOtherProfileProps(props);
-
     return () => {
-      store.User.clearOtherUser();
+      // store.Userv.clearUser();
     };
   }, []);
 
@@ -833,9 +823,6 @@ function UserProfile(props) {
 
       const renderField = () => {
         let item = modalObj.item;
-        let photo = item.photo || '';
-        let isVeirfy = item.isVerified || false;
-        let userName = item.first_name + ' ' + item.last_name;
 
         const renderProfile = () => {
           return (
@@ -1016,14 +1003,7 @@ function UserProfile(props) {
       };
 
       const renderCenter = () => {
-        let fn = user.first_name;
-        let ln = user.last_name;
-        let sendOfferUsername = fn + ' ' + ln;
-        let un = user.userName || 'uname';
-        let src =
-          user.photo && user.photo != ''
-            ? {uri: user.photo}
-            : require('../../assets/images/drawer/guest/img.png');
+        let un = user.userName ? user.userName : 'uname';
 
         return (
           <View
@@ -1036,7 +1016,11 @@ function UserProfile(props) {
             <View style={styles.mProfileImgContainerss}>
               <ProgressiveFastImage
                 style={styles.mProfileImgss}
-                source={src}
+                source={
+                  photo != ''
+                    ? {uri: photo}
+                    : require('../../assets/images/drawer/guest/img.png')
+                }
                 loadingImageStyle={styles.mimageLoader}
                 loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
                 blurRadius={5}
@@ -1054,7 +1038,7 @@ function UserProfile(props) {
                 textTransform: 'capitalize',
                 lineHeight: 20,
               }}>
-              {sendOfferUsername}
+              {userName}
             </Text>
             <Text
               numberOfLines={1}
@@ -1310,10 +1294,10 @@ function UserProfile(props) {
       setisSendMessage(false);
     };
 
-    let fn = sendObj.first_name;
-    let ln = sendObj.last_name;
+    let fn = sendObj.firstName;
+    let ln = sendObj.lastName;
     let sendOfferUsername = fn + ' ' + ln;
-    let un = sendObj.userName;
+    let un = sendObj.userName ? sendObj.userName : 'username';
     let src = require('../../assets/images/msgSentDone/img.png');
     return (
       <MModal
@@ -1477,13 +1461,13 @@ function UserProfile(props) {
       setisSendReport(false);
     };
     const renderCenter = () => {
-      let fn = sendObj.first_name;
-      let ln = sendObj.last_name;
+      let fn = sendObj.firstName;
+      let ln = sendObj.lastName;
       let sendOfferUsername = fn + ' ' + ln;
       let un = sendObj.userName || 'uname';
       let src =
-        sendObj.photo && sendObj.photo != ''
-          ? {uri: sendObj.photo}
+        sendObj.image && sendObj.image != ''
+          ? {uri: sendObj.image}
           : require('../../assets/images/drawer/guest/img.png');
 
       return (
@@ -1539,7 +1523,8 @@ function UserProfile(props) {
                 lineHeight: 20,
                 textAlign: 'center',
               }}>
-              Thank You! We will review your comments and any necessary actions.
+              Thank You! We will review your comments and take any necessary
+              actions.
             </Text>
           </View>
         </View>

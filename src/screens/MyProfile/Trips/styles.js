@@ -823,6 +823,7 @@ export const styles = StyleSheet.create({
     color: theme.color.title,
     fontFamily: theme.fonts.fontMedium,
     lineHeight: 18.6,
+    textTransform: 'capitalize',
   },
   fieldContainer: {
     marginTop: 12,

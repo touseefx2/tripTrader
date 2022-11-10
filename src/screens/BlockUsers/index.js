@@ -36,15 +36,14 @@ import {ImageSlider} from 'react-native-image-slider-banner';
 import {Calendar} from 'react-native-calendars';
 import moment, {duration} from 'moment/moment';
 
-export default observer(ShowFollowers);
+export default observer(BlockUsers);
 
-function ShowFollowers(props) {
+function BlockUsers(props) {
   let maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
-
-  let chk = props.route.params.chk || '';
-  // let data = chk == 'followers' ? store.User.followers : store.User.following;
-  let headerTitle = props.route.params.user || '';
+  const toast = useRef(null);
+  const toastduration = 700;
+  let headerTitle = 'Blocked Users';
 
   let fscreen = store.User.fscreen || '';
   let db = false;
@@ -54,10 +53,10 @@ function ShowFollowers(props) {
 
   let internet = store.General.isInternet;
   let user = store.User.user;
-  const data = chk == 'followers' ? store.User.followers : store.User.following;
+  const data = store.User.blockUsers;
   let mloader = store.User.fl;
-  let total =
-    chk == 'followers' ? store.User.totalfollowers : store.User.totalfollowing;
+  let loader = store.User.bl;
+  let total = store.User.totalblockUsers;
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
@@ -75,18 +74,11 @@ function ShowFollowers(props) {
   const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        if (chk == 'followers')
-          store.User.attemptToGetFollowers(
-            user._id,
-            setGetDataOnce,
-            setrefeshing,
-          );
-        else
-          store.User.attemptToGetFollowing(
-            user._id,
-            setGetDataOnce,
-            setrefeshing,
-          );
+        store.User.attemptToGetBloackUsers(
+          user._id,
+          setGetDataOnce,
+          setrefeshing,
+        );
       } else {
         setrefeshing(false);
       }
@@ -98,6 +90,21 @@ function ShowFollowers(props) {
     }
     return () => {};
   }, [getDataOnce, internet]);
+
+  const sucUnblock = () => {
+    toast?.current?.show('User unblock', toastduration);
+  };
+
+  const unblokUser = (uid, i) => {
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.User.attemptToUnblockUser(uid, i, sucUnblock);
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
 
   const ItemSeparatorView = () => {
     return (
@@ -126,7 +133,7 @@ function ShowFollowers(props) {
               opacity: 0.4,
             }}
             onPress={() => getItem(item)}>
-            {chk == 'followers' ? 'No Follower Found' : 'No Followeing Found'}
+            No user found
           </Text>
         )}
 
@@ -181,48 +188,14 @@ function ShowFollowers(props) {
       return (
         <View style={styles.mtextContainer}>
           <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
             style={{
-              color: '#3C6B49',
-              fontSize: 15,
-              fontFamily: theme.fonts.fontBold,
-              lineHeight: 23,
+              color: theme.color.title,
+              fontSize: 14,
+              fontFamily: theme.fonts.fontNormal,
               textTransform: 'capitalize',
             }}>
             {userName}
           </Text>
-
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <Image
-              source={src}
-              style={{
-                width: 20,
-                height: 20,
-                resizeMode: 'contain',
-              }}
-            />
-            <View style={{width: '94%'}}>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  color: theme.color.subTitleLight,
-                  fontSize: 13,
-                  top: 2,
-                  fontFamily: theme.fonts.fontMedium,
-                  textTransform: 'capitalize',
-                  lineHeight: 25,
-                }}>
-                {location}
-              </Text>
-            </View>
-          </View>
         </View>
       );
     };
@@ -230,26 +203,52 @@ function ShowFollowers(props) {
     return (
       <View
         style={[styles.modalinfoConatiner, {marginTop: index == 0 ? 15 : 0}]}>
-        {renderProfile()}
-        {renderText()}
+        <View
+          style={{
+            width: '78%',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          {renderProfile()}
+          {renderText()}
+        </View>
+
+        <Pressable
+          onPress={() => unblokUser(usrr._id, index)}
+          style={({pressed}) => [
+            {
+              opacity: pressed ? 0.7 : 1.0,
+              width: '20%',
+              alignItems: 'flex-end',
+            },
+          ]}>
+          <Text
+            style={{
+              top: 10,
+              color: '#3C6B49',
+              fontSize: 14,
+              fontFamily: theme.fonts.fontBold,
+              textTransform: 'capitalize',
+            }}>
+            Unblock
+          </Text>
+        </Pressable>
       </View>
     );
   };
 
   const ListHeader = () => {
-    let t = chk == 'followers' ? 'Followers' : 'Following';
     let num = total;
+    let t = `You have ${num} ${num > 1 ? 'users' : 'user'} blocked`;
     return (
       <View style={{width: '100%'}}>
         <Text
           style={{
-            color: '#101B10',
-            fontSize: 16,
-            fontFamily: theme.fonts.fontBold,
-
-            textTransform: 'capitalize',
+            color: theme.color.subTitle,
+            fontSize: 13,
+            fontFamily: theme.fonts.fontNormal,
           }}>
-          {t} ({num})
+          {t}
         </Text>
       </View>
     );
@@ -274,7 +273,7 @@ function ShowFollowers(props) {
           bell={true}
           props={props}
           headerTitle={headerTitle}
-          screen={'followers'}
+          screen={headerTitle}
         />
         {!internet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
@@ -292,7 +291,7 @@ function ShowFollowers(props) {
               keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
-              // ListHeaderComponent={data.length > 0 ? ListHeader : null}
+              ListHeaderComponent={data.length > 0 ? ListHeader : null}
               // ListFooterComponent={data.length > 0 ? ListFooter : null}
             />
             {data.length > 0 && !getDataOnce && mloader && (
@@ -311,10 +310,12 @@ function ShowFollowers(props) {
           <utils.Footer
             doubleBack={db}
             nav={props.navigation}
-            screen={'Followers'}
+            screen={headerTitle}
             focusScreen={store.General.focusScreen}
           />
         </SafeAreaView>
+        <utils.Loader load={loader} />
+        <Toast ref={toast} position="bottom" />
       </View>
     </>
   );

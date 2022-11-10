@@ -38,7 +38,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     paddingVertical: 15,
     borderColor: bordercolor,
-    paddingHorizontal: 15,
+    // paddingHorizontal: 15,
   },
   rowContainer2: {
     width: '100%',

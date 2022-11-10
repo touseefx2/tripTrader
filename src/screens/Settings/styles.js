@@ -214,4 +214,19 @@ export const styles = StyleSheet.create({
     marginLeft: 12,
     top: 2,
   },
+
+  iconConatiner2: {
+    width: 40,
+    height: 40,
+    borderRadius: 40 / 2,
+    backgroundColor: iconContainerColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  icon2: {
+    width: '65%',
+    height: '65%',
+    left: 3,
+    top: 2,
+  },
 });

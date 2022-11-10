@@ -48,7 +48,11 @@ export default function DropDown(props) {
       let d = [];
       props.data.map((item, i, a) => {
         let n =
-          c == 'loc' || c == 'actvty' || c == 'spcs'
+          c == 'loc' ||
+          c == 'actvty' ||
+          c == 'spcs' ||
+          c == 'tt' ||
+          c == 'state'
             ? item.name
             : c == 'topic'
             ? item.title
@@ -130,7 +134,9 @@ export default function DropDown(props) {
 
   const renderItems = ({item, index}) => {
     let title =
-      c == 'loc' || c == 'actvty' || c == 'spcs'
+      c == 'loc' || c == 'actvty' || c == 'spcs' || c == 'state'
+        ? item.name
+        : c == 'tt'
         ? item.name
         : c == 'topic'
         ? item.title
@@ -152,7 +158,10 @@ export default function DropDown(props) {
               // borderBottomWidth: index < data.length - 1 ? 0.7 : 0
             },
           ]}>
-          <Text style={[styles.Text, ts]}>{title}</Text>
+          <Text style={[styles.Text, ts]}>
+            {title}
+            {c == 'tt' && ' Trip'}
+          </Text>
         </View>
       </TouchableHighlight>
     );
@@ -185,15 +194,18 @@ export default function DropDown(props) {
           {isSearchBar && renderSearchBar()}
           {data.length <= 0 && rendershowMessage()}
           {data.length > 0 && (
-            <FlatList
-              // contentContainerStyle={{paddingVertical: 5}}
-              initialNumToRender={24}
-              maxToRenderPerBatch={10}
-              data={data}
-              nestedScrollEnabled
-              renderItem={renderItems}
-              keyExtractor={(item, index) => item.title}
-            />
+            <View style={{paddingHorizontal: 15}}>
+              <FlatList
+                showsVerticalScrollIndicator={false}
+                // contentContainerStyle={{paddingVertical: 5}}
+                initialNumToRender={24}
+                maxToRenderPerBatch={10}
+                data={data}
+                nestedScrollEnabled
+                renderItem={renderItems}
+                keyExtractor={(item, index) => item.title}
+              />
+            </View>
           )}
         </KeyboardAvoidingView>
       </SafeAreaView>

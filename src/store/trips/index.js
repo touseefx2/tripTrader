@@ -1,6 +1,10 @@
 import {observable, makeObservable, action} from 'mobx';
 import {AppState} from 'react-native';
 import {persist} from 'mobx-persist';
+import db from '../../database/index';
+import {Alert} from 'react-native';
+import store from '../index';
+import NetInfo from '@react-native-community/netinfo';
 
 class trips {
   constructor() {
@@ -32,7 +36,8 @@ class trips {
   };
   @action addsaveTrips = obj => {
     let c = this.saveTrips.slice();
-    c.unshift(obj);
+    // c.unshift(obj);
+    c.push(obj);
     this.setsaveTrips(c);
   };
   @action attemptToDeleteTrip = (item, ind, suc) => {
@@ -43,29 +48,106 @@ class trips {
       this.deletesetsaveTrips(ind, suc);
     }, 1000);
   };
+
   @action attemptToSaveTrip = (obj, i, suc) => {
-    console.warn('save trip : ', 'true');
-    let c = true;
-    this.setstLoader(true);
-
-    setTimeout(() => {
-      this.setstLoader(false);
-      let dt = this.saveTrips.slice();
-      if (dt.length > 0) {
-        let ind = dt.findIndex(x => x._id === obj._id);
-        if (ind > -1) {
-          c = false;
-        } else {
-          this.addsaveTrips(obj);
-        }
+    let dt = this.saveTrips.slice();
+    if (dt.length > 0) {
+      let ind = dt.findIndex(x => x._id === obj._id);
+      if (ind > -1) {
+        suc({}, i, false);
+        return;
       } else {
-        let ar = [];
-        ar.push(obj);
-        this.setsaveTrips(ar);
+        this.SaveTrip(obj, i, suc);
+        return;
       }
+    } else {
+      this.SaveTrip(obj, i, suc);
+      return;
+    }
+  };
 
-      suc(obj, i, c);
-    }, 700);
+  @action SaveTrip = (obj, i, suc) => {
+    let dt = [...this.saveTrips];
+    let body = {
+      savedTrips: dt,
+    };
+    body.savedTrips.push(obj._id);
+    console.warn('Save Trip Body : ', body);
+    this.setstLoader(true);
+    let uid = store.User.user._id;
+    let token = store.User.authToken;
+    db.hitApi(db.apis.SAVE_TRIP + uid, 'put', body, token)
+      ?.then(resp => {
+        this.setstLoader(false);
+        console.log(`response Save Trip   ${db.apis.SAVE_TRIP} : `, resp.data);
+        let rsp = resp.data.data.savedTrips || [];
+        // let dt = this.saveTrips.slice();
+        // // if (dt.length > 0) {
+        // //   this.addsaveTrips(obj);
+        // // } else {
+        // //   let ar = [];
+        // //   ar.push(obj);
+        // //   this.setsaveTrips(ar);
+        // // }
+        this.setsaveTrips(rsp);
+        suc(obj, i, true);
+        return;
+      })
+      .catch(err => {
+        this.setstLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(`Error in Save Trip ${db.apis.SAVE_TRIP} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  @action unSaveTrip = (obj, i, suc) => {
+    let dt = [...this.saveTrips];
+    if (dt.length > 0) {
+      let ind = dt.findIndex(x => x._id === obj._id);
+      if (ind > -1) {
+        dt.splice(ind, 1);
+      }
+    }
+    let body = {
+      savedTrips: dt,
+    };
+
+    console.warn('unSave Trip Body : ', body);
+    this.setdLoader(true);
+    let uid = store.User.user._id;
+    let token = store.User.authToken;
+    db.hitApi(db.apis.SAVE_TRIP + uid, 'put', body, token)
+      ?.then(resp => {
+        this.setdLoader(false);
+        console.log(
+          `response unSave Trip   ${db.apis.SAVE_TRIP} : `,
+          resp.data,
+        );
+        let rsp = resp.data.data.savedTrips || [];
+
+        this.setsaveTrips(rsp);
+        suc();
+        return;
+      })
+      .catch(err => {
+        this.setdLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(`Error in unSave Trip ${db.apis.SAVE_TRIP} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
   };
 
   @observable confirmTrips = [];

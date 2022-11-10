@@ -12,15 +12,13 @@ import {
   TextInput,
   Pressable,
   Dimensions,
-  Modal,
+  Modal as MModal,
   KeyboardAvoidingView,
   BackHandler,
   Keyboard,
   Alert,
+  FlatList,
 } from 'react-native';
-// import Geolocation from 'react-native-geolocation-service';
-import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
-// import Geocoder from 'react-native-geocoding';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
@@ -30,6 +28,7 @@ import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import {Image as ImageCompressor} from 'react-native-compressor';
 import {request, PERMISSIONS, check} from 'react-native-permissions';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
+import Modal from 'react-native-modal';
 
 import {
   responsiveHeight,
@@ -51,7 +50,12 @@ function isObjectEmpty(value) {
 }
 
 export default observer(NewTrips);
+
+let actSrc = require('../../assets/images/filters/activity/img.png');
+let spcSrc = require('../../assets/images/filters/species/img.png');
+
 function NewTrips(props) {
+  let activeOpacity = 0.8;
   let css2f = {
     container: {
       backgroundColor: 'transparent',
@@ -209,12 +213,27 @@ function NewTrips(props) {
   let maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
 
-  const [location, setlocation] = useState({
-    name: 'Miami, Florida',
-    coords: [],
-  });
+  const [location, setlocation] = useState(false);
+  const [title, settitle] = useState('');
 
-  const [title, settitle] = useState('Hunting Trip');
+  const trptypeData = [...store.Filters.activity];
+  const [tripType, settripType] = useState('');
+  const [isDropDownTT, setisDropDownTT] = useState(false);
+
+  const stateData = [...store.Filters.tripLocation];
+  const [city, setcity] = useState('');
+  const [State, setState] = useState('');
+  const [isDropDownState, setisDropDownState] = useState(false);
+
+  const spcsDt = [...store.Filters.species];
+  const [spcsData, setspcsData] = useState([]);
+  const [species, setspecies] = useState('');
+  const [isDropDownSpcs, setisDropDownSpcs] = useState(false);
+
+  // const [actvtyList, setactvtyList] = useState([]);
+  // const [actvtyListS, setactvtyListS] = useState([]);
+  // const [isModalVisible, setModalVisible] = useState(false);
+
   const [status, setstatus] = useState('active');
   const [isDropDownDur, setisDropDownDur] = useState(false);
   const [dur, setdur] = useState(durtn[0]); //time solts
@@ -262,7 +281,6 @@ function NewTrips(props) {
   const [isButtonDisable, setisButtonDisable] = useState(false);
   const [isReviewTrip, setisReviewTrip] = useState(false);
   const [isTripCreate, setisTripCreate] = useState(false);
-
   const [modalChk, setmodalChk] = useState(false);
   const [isModal, setisModal] = useState(false);
   const closeModalg = () => {
@@ -281,34 +299,81 @@ function NewTrips(props) {
   }, []);
 
   useEffect(() => {
+    if (tripType != '') {
+      setspcsData([]);
+      let aa = [];
+      if (spcsDt.length > 0) {
+        spcsDt.map((e, i, a) => {
+          if (e.type) {
+            if (e.type.name == tripType.name) {
+              aa.push(e);
+            }
+          }
+        });
+      }
+
+      setspcsData(aa);
+    }
+  }, [tripType]);
+
+  // useEffect(() => {
+  //   let ar = [...store.Filters.activity];
+
+  //   let aa = [];
+  //   if (ar.length > 0) {
+  //     ar.map((e, i, a) => {
+  //       const obj = {name: e.name, added: false};
+  //       aa.push(obj);
+  //     });
+  //   }
+
+  //   setactvtyList(aa);
+  // }, [store.Filters.activity]);
+
+  function findItm(v, data, c) {
+    let obj = c == 'n' ? {name: v} : {title: v};
+
+    if (data.length > 0) {
+      let fi =
+        c == 'n'
+          ? data.findIndex(x => x.name === v)
+          : data.findIndex(x => x.title === v);
+      if (fi > -1) {
+        obj = data[fi];
+      }
+    }
+
+    return obj;
+  }
+  useEffect(() => {
     if (isEdit == true) {
       let d = editTrip.data;
       let index = editTrip.index;
 
-      let title = d.title || '';
-      let trade = d.activity || '';
-      let retrn = d.returnActivity || '';
-      let l =
-        d.location && d.location != '' ? {name: d.location, coords: []} : {};
-      let loc = l;
-      let stts = d.status || '';
-      let acceptOtherTrades = d.acceptTradeOffers;
-      let durNo = d.duration.value;
-      let durTitle = d.duration.title;
-      let ind = durtn.findIndex(x => x.title === durTitle);
+      let tt = findItm(d.tradeType || '', trptypeData, 'n');
+      let loc = d.location ? d.location : {};
+      if (!isObjectEmpty(loc)) {
+        setcity(loc.city);
+        setState(findItm(loc.state || '', stateData, 'n'));
+      } else {
+        setcity('');
+        setState('');
+        setlocation(false);
+      }
+      let spcs = findItm(d.species || '', spcsDt, 'n');
       let sd = d.availableFrom;
       let ed = d.availableTo;
-      let photos = d.photos || [];
-
+      let acceptOtherTrades = d.acceptTradeOffers;
+      let durNo = d.duration.value;
+      let durt = findItm(d.duration.title || '', durtn, 't');
       let objct = {...d.unAvailableDays};
-
       if (!isObjectEmpty(objct)) {
         let ar = objct.allUnavailableDates || [];
-        if (ar.length <= 0) {
+        let ar2 = objct.daysOfWeek || [];
+        if (ar.length <= 0 && ar2.length <= 0) {
           objct = false;
         }
       }
-
       if (objct != false) {
         delete Object.assign(objct, {
           days_of_week: objct.daysOfWeek,
@@ -331,31 +396,11 @@ function NewTrips(props) {
         delete objct.repeatEvery;
         objct.repeat_every = ra;
       }
-
-      settitle(title);
-      settrader(trade);
-      setReturn(retrn);
-      setlocation(loc);
-      setstatus(stts);
-      setacceptOther(acceptOtherTrades);
-      setdurNum(durNo);
-      setdur(durtn[ind]);
-      setPhotos(photos);
-      // if (stts != 'suspended') {
-      setisSelDate1(sd);
-      setisSelDate2(ed);
-      setisSelDate(true);
-
-      setmind(sd);
       if (sd >= moment().format('YYYY-MM-DD')) {
         setmindd(undefined);
       } else {
         setmindd(sd);
       }
-      // if (mindd < tdd) {
-      //   setmarkedDates({});
-      //   setselDates({});
-      // } else {
       var daylist = getDaysArray(new Date(sd), new Date(ed));
       let mdd = {};
       if (daylist.length > 0) {
@@ -393,20 +438,50 @@ function NewTrips(props) {
           }
         });
       }
+
+      settitle(d.title || '');
+      settripType(tt);
+      setlocation(loc);
+      setspecies(spcs);
+      setReturn(d.returnActivity);
+      setacceptOther(acceptOtherTrades);
+      setdurNum(durNo);
+      setdur(durt);
+      setPhotos(d.photos || []);
+      setisSelDate1(sd);
+      setisSelDate2(ed);
+      setisSelDate(true);
+      setmind(sd);
       setmarkedDates(mdd);
       setselDates(mdd);
-      // }
       setisSetUnavailable(objct);
-      // } else {
-      //   setisSelDate1('');
-      //   setisSelDate2('');
-      //   setisSelDate(false);
-      //   setmarkedDates({});
-      //   setselDates({});
-      //   setisSetUnavailable(false);
-      // }
+      setstatus(d.status);
     }
   }, [isEdit]);
+
+  useEffect(() => {
+    if (city != '' && State != '') {
+      setlocation({city: city, state: State.name});
+    } else {
+      setlocation(false);
+    }
+  }, [city, State]);
+
+  useEffect(() => {
+    if (
+      isSelDate1 != '' &&
+      isSelDate2 != '' &&
+      Return != '' &&
+      durNum != '' &&
+      tripType != '' &&
+      species != '' &&
+      location != false
+    ) {
+      setisButtonDisable(false);
+    } else {
+      setisButtonDisable(true);
+    }
+  }, [tripType, location, species, isSelDate1, isSelDate2, Return, durNum]);
 
   useEffect(() => {
     if (isSelDate1 != '' && isSelDate2 != '') {
@@ -497,15 +572,20 @@ function NewTrips(props) {
       setdeleteModal(false);
       setdeletePObj(false);
       setisButtonDisable(false);
-      setlocation({
-        name: 'Miami, Florida',
-        coords: [],
-      });
-      setstatus('activate');
-      settitle('Hunting Trip');
+
+      setstatus('active');
+      settripType('');
       setmind(undefined);
       setmindd(undefined);
       setmaxd(undefined);
+      setlocation(false);
+      settripType('');
+      setcity('');
+      setState('');
+      setspecies('');
+      settitle('');
+      // setactvtyList([]);
+      // setactvtyListS([]);
       if (c2 != 'nill') {
         store.User.seteditTrip(false);
         store.User.seteditTripObj(false);
@@ -595,20 +675,6 @@ function NewTrips(props) {
       setunavlblmarkedDates({});
     }
   }, [dow, endRepOn, rdurNum]);
-
-  useEffect(() => {
-    if (
-      isSelDate1 != '' &&
-      isSelDate2 != '' &&
-      trade != '' &&
-      Return != '' &&
-      durNum != ''
-    ) {
-      setisButtonDisable(false);
-    } else {
-      setisButtonDisable(true);
-    }
-  }, [isSelDate1, isSelDate2, trade, Return, durNum]);
 
   useEffect(() => {
     if (maxd != undefined && mind != undefined) {
@@ -813,6 +879,9 @@ function NewTrips(props) {
   const closeAllDropDown = () => {
     setisDropDownDur(false);
     setisDropDownrDur(false);
+    setisDropDownTT(false);
+    setisDropDownState(false);
+    setisDropDownSpcs(false);
   };
 
   const photoClick = i => {
@@ -841,9 +910,9 @@ function NewTrips(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
+        let title = dt + ' ' + species.name;
         let isSetUn = isSetUnavailable != false ? isSetUnavailable : {};
         let objct = isSetUn != false ? {...isSetUn} : false;
-
         if (objct !== false && !isObjectEmpty(objct)) {
           delete Object.assign(objct, {
             daysOfWeek: objct.days_of_week,
@@ -866,11 +935,20 @@ function NewTrips(props) {
           delete objct.repeat_every;
           objct.repeatEvery = ra;
         }
+
+        let dt = '';
+        let dtitle = dur.title;
+        if (durNum <= 1) {
+          dtitle = dur.title.substring(0, dur.title.length - 1);
+        }
+        dt = durNum + ' ' + dtitle;
+
         const obj = {
           hostId: store.User.user._id,
-          title: title,
-          activity: trade,
+          tradeType: tripType.name,
+          species: species.name,
           returnActivity: Return,
+          title: title,
           acceptTradeOffers: acceptOther,
           duration: {
             value: durNum,
@@ -881,8 +959,7 @@ function NewTrips(props) {
           status: status,
           photos: photos,
           unAvailableDays: objct,
-          location: location.name,
-          // species: '',
+          location: location == false ? {} : location,
         };
         if (objct == false) {
           delete obj.unAvailableDays;
@@ -906,6 +983,14 @@ function NewTrips(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
+        let dt = '';
+        let dtitle = dur.title;
+        if (durNum <= 1) {
+          dtitle = dur.title.substring(0, dur.title.length - 1);
+        }
+        dt = durNum + ' ' + dtitle;
+        let title = dt + ' ' + species.name;
+
         let pht = [...photos];
         let p = [];
         let p2 = [];
@@ -918,10 +1003,9 @@ function NewTrips(props) {
             }
           });
         }
-
         let isSetUn = isSetUnavailable != false ? isSetUnavailable : {};
-        let objct = {...isSetUn};
-        if (isSetUn && !isObjectEmpty(isSetUn)) {
+        let objct = isSetUn != false ? {...isSetUn} : false;
+        if (objct && !isObjectEmpty(objct)) {
           delete Object.assign(objct, {
             daysOfWeek: objct.days_of_week,
           })['days_of_week'];
@@ -943,11 +1027,13 @@ function NewTrips(props) {
           delete objct.repeat_every;
           objct.repeatEvery = ra;
         }
+
         const obj = {
           hostId: store.User.user._id,
-          title: title,
-          activity: trade,
+          tradeType: tripType.name,
+          species: species.name,
           returnActivity: Return,
+          title: title,
           acceptTradeOffers: acceptOther,
           duration: {
             value: durNum,
@@ -956,14 +1042,15 @@ function NewTrips(props) {
           availableFrom: isSelDate1,
           availableTo: isSelDate2,
           status: status,
-          photos: p,
+          photos: photos,
           unAvailableDays: objct,
-          location: location.name,
-          // species: '',
+          location: location == false ? {} : location,
         };
+        if (objct == false) {
+          delete obj.unAvailableDays;
+        }
 
         store.User.setctripLoader(true);
-
         if (p2.length > 0) {
           store.User.attemptToUpdateTripUploadImage(
             obj,
@@ -1527,7 +1614,7 @@ function NewTrips(props) {
       textDayHeaderFontFamily: theme.fonts.fontMedium,
     };
     return (
-      <Modal visible={showCalender} transparent onRequestClose={closeCalModal}>
+      <MModal visible={showCalender} transparent onRequestClose={closeCalModal}>
         <SafeAreaView
           style={[
             {
@@ -1599,7 +1686,7 @@ function NewTrips(props) {
             {renderBottom()}
           </View>
         </SafeAreaView>
-      </Modal>
+      </MModal>
     );
   };
 
@@ -1756,24 +1843,27 @@ function NewTrips(props) {
         });
       }
 
-      const obj = {
-        days_of_week: dw, //main
-        repeat_every: {
-          //main
-          num: rdurNum,
-          title: rdur.title.toLowerCase(),
-          endRepeatOn: endRepOn,
-        },
-        wtxt: wtxt,
-        esd_text: tt,
+      let obj = false;
+      if (dw.length > 0 || ad.length > 0) {
+        obj = {
+          days_of_week: dw, //main
+          repeat_every: {
+            //main
+            num: rdurNum,
+            title: rdur.title.toLowerCase(),
+            endRepeatOn: endRepOn,
+          },
+          wtxt: wtxt,
+          esd_text: tt,
 
-        unavailable_days_of_week: unw, //main
-        exclude_specific_dates: exsd, //main
-        all_unavailable_dates: ad, //main
-      };
-      setisShowUnavliableModal(false);
+          unavailable_days_of_week: unw, //main
+          exclude_specific_dates: exsd, //main
+          all_unavailable_dates: ad, //main
+        };
+      }
 
       setisSetUnavailable(obj);
+      setisShowUnavliableModal(false);
     };
 
     const renderHeader = () => {
@@ -2177,7 +2267,7 @@ function NewTrips(props) {
     };
 
     return (
-      <Modal
+      <MModal
         visible={isShowUnavliableModal}
         transparent
         onRequestClose={closeModal}>
@@ -2220,7 +2310,7 @@ function NewTrips(props) {
             </View>
           </View>
         </SafeAreaView>
-      </Modal>
+      </MModal>
     );
   };
 
@@ -2397,7 +2487,7 @@ function NewTrips(props) {
     let todaymark = isDisableToday2 ? dtd : td;
 
     return (
-      <Modal
+      <MModal
         visible={isShowUnavliabledaysCal}
         transparent
         onRequestClose={closeCalModal}>
@@ -2478,7 +2568,7 @@ function NewTrips(props) {
             {renderBottom()}
           </View>
         </SafeAreaView>
-      </Modal>
+      </MModal>
     );
   };
 
@@ -2803,7 +2893,7 @@ function NewTrips(props) {
     }
 
     return (
-      <Modal
+      <MModal
         visible={isAddPhotoModal}
         transparent
         onRequestClose={closeAddPhotoModal}>
@@ -2873,7 +2963,7 @@ function NewTrips(props) {
             </View>
           </View>
         </SafeAreaView>
-      </Modal>
+      </MModal>
     );
   };
 
@@ -2955,7 +3045,7 @@ function NewTrips(props) {
     };
 
     return (
-      <Modal
+      <MModal
         visible={deleteModal}
         transparent
         onRequestClose={closeDeleteModal}>
@@ -2967,7 +3057,58 @@ function NewTrips(props) {
             {renderBottom()}
           </View>
         </View>
-      </Modal>
+      </MModal>
+    );
+  };
+
+  const renderShowDropDown = c => {
+    let data = [];
+
+    if (c == 'tt') {
+      data = trptypeData;
+    }
+    if (c == 'state') {
+      data = stateData;
+    }
+    if (c == 'spcs') {
+      data = spcsData;
+    }
+
+    const onclickSelect = d => {
+      if (c == 'tt') {
+        settripType(d);
+        if (tripType !== '') {
+          if (tripType.name !== d.name) {
+            setspecies('');
+          }
+        }
+
+        return;
+      }
+      if (c == 'state') {
+        setState(d);
+        return;
+      }
+      if (c == 'spcs') {
+        setspecies(d);
+        return;
+      }
+    };
+
+    let abs = Platform.OS == 'ios' ? false : true;
+    return (
+      <utils.DropDown
+        // search={true}
+        data={data}
+        onSelectItem={d => {
+          onclickSelect(d);
+        }}
+        setVisible={d => {
+          closeAllDropDown();
+        }}
+        c={c}
+        // absolute={abs}
+      />
     );
   };
 
@@ -3000,16 +3141,134 @@ function NewTrips(props) {
     return (
       <View style={styles.Sec}>
         <View style={styles.fieldContainer}>
-          <Text style={styles.fieldText}>I want to trade...</Text>
-          <View style={styles.inputConatiner}>
-            <TextInput
-              value={trade}
-              onChangeText={d => {
-                settrader(d);
+          <Text style={styles.fieldText}>I want to trade a...</Text>
+          {/* trip type */}
+          <View style={{width: '100%'}}>
+            <TouchableOpacity
+              onPress={() => {
+                closeAllDropDown();
+                setisDropDownTT(!isDropDownTT);
               }}
-              placeholder="Example: Central NC Whitetail Hunt"
-              style={styles.input}
-            />
+              activeOpacity={activeOpacity}
+              style={[styles.dropDowninputConatiner]}>
+              <Image style={styles.dropDownIcon} source={actSrc} />
+
+              <View style={{width: '82%'}}>
+                <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  style={[
+                    styles.dropDownText2,
+                    {
+                      opacity: tripType == '' ? 0.4 : 1,
+                      textTransform: tripType == '' ? 'none' : 'capitalize',
+                    },
+                  ]}>
+                  {tripType == '' ? 'Select Activity' : tripType.name + ' Trip'}
+                </Text>
+              </View>
+              <utils.vectorIcon.Fontisto
+                name="angle-down"
+                color={'#14181F'}
+                size={11}
+              />
+            </TouchableOpacity>
+            {isDropDownTT && renderShowDropDown('tt')}
+          </View>
+        </View>
+
+        <View style={[styles.fieldContainer, {marginTop: 17}]}>
+          <Text style={styles.fieldText}>Located in...</Text>
+
+          <View
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            <View style={[styles.inputConatiner, {width: '58%'}]}>
+              <TextInput
+                value={city}
+                onChangeText={d => {
+                  setcity(d);
+                }}
+                placeholder="Example: Southeastern"
+                style={styles.input}
+              />
+            </View>
+            {/* location */}
+            <View style={{width: '40%'}}>
+              <TouchableOpacity
+                onPress={() => {
+                  closeAllDropDown();
+                  setisDropDownState(!isDropDownState);
+                }}
+                activeOpacity={activeOpacity}
+                style={[styles.dropDowninputConatiner]}>
+                <View style={{width: '82%'}}>
+                  <Text
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                    style={[
+                      styles.dropDownText2,
+                      {
+                        opacity: State == '' ? 0.4 : 1,
+                        textTransform: State == '' ? 'none' : 'capitalize',
+                      },
+                    ]}>
+                    {State == '' ? 'State' : State.name}
+                  </Text>
+                </View>
+                <utils.vectorIcon.Fontisto
+                  name="angle-down"
+                  color={'#14181F'}
+                  size={11}
+                />
+              </TouchableOpacity>
+              {isDropDownState && renderShowDropDown('state')}
+            </View>
+          </View>
+        </View>
+
+        <View style={[styles.fieldContainer, {marginTop: 17}]}>
+          <Text style={styles.fieldText}>Please enter the species</Text>
+
+          {/* species */}
+          <View style={{width: '100%'}}>
+            <TouchableOpacity
+              disabled={tripType == '' ? true : false}
+              onPress={() => {
+                closeAllDropDown();
+                setisDropDownSpcs(!isDropDownSpcs);
+              }}
+              activeOpacity={activeOpacity}
+              style={[
+                styles.dropDowninputConatiner,
+                {opacity: tripType == '' ? 0.5 : 1},
+              ]}>
+              <Image style={styles.dropDownIcon} source={spcSrc} />
+              <View style={{width: '83%'}}>
+                <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  style={[
+                    styles.dropDownText2,
+                    {
+                      opacity: species == '' ? 0.4 : 1,
+                      textTransform: species == '' ? 'none' : 'capitalize',
+                    },
+                  ]}>
+                  {species == '' ? 'Select species' : species.name}
+                </Text>
+              </View>
+              <utils.vectorIcon.Fontisto
+                style={{opacity: tripType == '' ? 0.5 : 1}}
+                name="angle-down"
+                color={'#14181F'}
+                size={11}
+              />
+            </TouchableOpacity>
+            {isDropDownSpcs && renderShowDropDown('spcs')}
           </View>
         </View>
 
@@ -3055,6 +3314,50 @@ function NewTrips(props) {
           </TouchableOpacity>
           <Text style={styles.Field2Title}>Accept other trade offers</Text>
         </View>
+
+        {/* activites select */}
+        {/* <View style={[styles.fieldContainer, {marginTop: 17}]}>
+          <Text style={styles.fieldText}>Activities</Text>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={[
+              styles.inputConatiner,
+              {
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              },
+            ]}
+            onPress={() => {
+              setModalVisible(true);
+              Keyboard.dismiss();
+              closeAllDropDown();
+            }}>
+            <Image style={styles.dropDownIcon} source={actSrc} />
+            <View style={{width: '80%'}}>
+              <Text
+                style={[
+                  styles.BodyTitle,
+                  {
+                    color:
+                      actvtyListS.length > 1
+                        ? theme.color.title
+                        : theme.color.subTitleLight,
+                  },
+                ]}>
+                {actvtyListS.length > 1
+                  ? actvtyListS.length + ' activites selected'
+                  : 'Select activites'}
+              </Text>
+            </View>
+
+            <utils.vectorIcon.MaterialIcons
+              name="keyboard-arrow-right"
+              size={22}
+              color={theme.color.subTitle}
+            />
+          </TouchableOpacity>
+        </View> */}
 
         <View style={[styles.fieldContainer, {marginTop: 17}]}>
           <Text style={styles.fieldText}>Trip Duration</Text>
@@ -3613,8 +3916,11 @@ function NewTrips(props) {
     };
 
     const renderFields = () => {
-      let offer = trade;
-      let locationName = location.name ? location.name : '';
+      let offer = species.name || '';
+      let locationName =
+        location == false
+          ? 'Florida, Miami'
+          : location.city + ', ' + location.state;
       let duration = durNum + ' ' + dur.title;
       let availablity =
         moment(isSelDate1).format('MMM DD') +
@@ -3878,7 +4184,7 @@ function NewTrips(props) {
     };
 
     return (
-      <Modal
+      <MModal
         visible={isReviewTrip}
         transparent
         onRequestClose={closeReviewModal}>
@@ -3917,7 +4223,7 @@ function NewTrips(props) {
             </View>
           </View>
         </SafeAreaView>
-      </Modal>
+      </MModal>
     );
   };
 
@@ -3993,16 +4299,6 @@ function NewTrips(props) {
       };
 
       const renderField = () => {
-        let duration = durNum;
-        let dt = dur.title;
-        const durTitle = dt.charAt(0).toUpperCase() + dt.slice(1);
-        let t =
-          parseInt(duration) <= 1
-            ? durTitle.substring(0, durTitle.length - 1)
-            : durTitle;
-        duration = duration + ' ' + t;
-        let offer = trade || '';
-
         return (
           <>
             <View
@@ -4011,16 +4307,8 @@ function NewTrips(props) {
                 alignSelf: 'center',
                 marginTop: 25,
               }}>
-              <Text
-                numberOfLines={3}
-                ellipsizeMode="tail"
-                style={{
-                  fontSize: 15,
-                  color: theme.color.title,
-                  fontFamily: theme.fonts.fontBold,
-                  textAlign: 'center',
-                }}>
-                {`"${duration} ${offer}"`}
+              <Text numberOfLines={3} ellipsizeMode="tail" style={styles.samt}>
+                "{title}"
               </Text>
             </View>
           </>
@@ -4147,7 +4435,7 @@ function NewTrips(props) {
       };
 
       return (
-        <Modal visible={isModal} transparent onRequestClose={closeModalg}>
+        <MModal visible={isModal} transparent onRequestClose={closeModalg}>
           <SafeAreaView style={styles.modalContainerg}>
             <View style={styles.modalContainer22}>
               <View
@@ -4183,7 +4471,7 @@ function NewTrips(props) {
               </View>
             </View>
           </SafeAreaView>
-        </Modal>
+        </MModal>
       );
     }
 
@@ -4255,16 +4543,6 @@ function NewTrips(props) {
       };
 
       const renderField = () => {
-        let duration = durNum;
-        let dt = dur.title;
-        const durTitle = dt.charAt(0).toUpperCase() + dt.slice(1);
-        let t =
-          parseInt(duration) <= 1
-            ? durTitle.substring(0, durTitle.length - 1)
-            : durTitle;
-        duration = duration + ' ' + t;
-        let offer = trade || '';
-
         return (
           <>
             <View
@@ -4273,16 +4551,8 @@ function NewTrips(props) {
                 alignSelf: 'center',
                 marginTop: 25,
               }}>
-              <Text
-                numberOfLines={3}
-                ellipsizeMode="tail"
-                style={{
-                  fontSize: 15,
-                  color: theme.color.title,
-                  fontFamily: theme.fonts.fontBold,
-                  textAlign: 'center',
-                }}>
-                {`"${duration} ${offer}"`}
+              <Text numberOfLines={3} ellipsizeMode="tail" style={styles.samt}>
+                "{title}"
               </Text>
             </View>
           </>
@@ -4409,7 +4679,7 @@ function NewTrips(props) {
       };
 
       return (
-        <Modal visible={isModal} transparent onRequestClose={closeModalg}>
+        <MModal visible={isModal} transparent onRequestClose={closeModalg}>
           <SafeAreaView style={styles.modalContainerg}>
             <View style={styles.modalContainer22}>
               <View
@@ -4445,7 +4715,7 @@ function NewTrips(props) {
               </View>
             </View>
           </SafeAreaView>
-        </Modal>
+        </MModal>
       );
     }
 
@@ -4517,16 +4787,6 @@ function NewTrips(props) {
       };
 
       const renderField = () => {
-        let duration = durNum;
-        let dt = dur.title;
-        const durTitle = dt.charAt(0).toUpperCase() + dt.slice(1);
-        let t =
-          parseInt(duration) <= 1
-            ? durTitle.substring(0, durTitle.length - 1)
-            : durTitle;
-        duration = duration + ' ' + t;
-        let offer = trade || '';
-
         return (
           <>
             <View
@@ -4535,16 +4795,8 @@ function NewTrips(props) {
                 alignSelf: 'center',
                 marginTop: 25,
               }}>
-              <Text
-                numberOfLines={3}
-                ellipsizeMode="tail"
-                style={{
-                  fontSize: 15,
-                  color: theme.color.title,
-                  fontFamily: theme.fonts.fontBold,
-                  textAlign: 'center',
-                }}>
-                {`"${duration} ${offer}"`}
+              <Text numberOfLines={3} ellipsizeMode="tail" style={styles.samt}>
+                "{title}"
               </Text>
             </View>
           </>
@@ -4671,7 +4923,7 @@ function NewTrips(props) {
       };
 
       return (
-        <Modal visible={isModal} transparent onRequestClose={closeModalg}>
+        <MModal visible={isModal} transparent onRequestClose={closeModalg}>
           <SafeAreaView style={styles.modalContainerg}>
             <View style={styles.modalContainer22}>
               <View
@@ -4707,10 +4959,206 @@ function NewTrips(props) {
               </View>
             </View>
           </SafeAreaView>
-        </Modal>
+        </MModal>
       );
     }
   };
+
+  // const renderActivitesModal = () => {
+  //   const closeactvtyModal = () => {
+  //     setmodalHeight(0);
+  //     setModalVisible(false);
+
+  //     if (actvtyList.length > 0) {
+  //       let arr = [];
+  //       actvtyList.map((e, i, a) => {
+  //         let obj = {};
+  //         if (actvtyListS.length > 0) {
+  //           let ind = actvtyListS.some(item => e.name === item);
+  //           obj = {name: e.name, added: ind};
+  //           arr.push(obj);
+  //         } else {
+  //           obj = {name: e.name, added: false};
+  //           arr.push(obj);
+  //         }
+  //       });
+  //       setactvtyList(arr);
+  //     }
+  //   };
+
+  //   const renderFeatureModalHeader = () => {
+  //     return (
+  //       <View style={!c ? styles.Header : styles.Headere}>
+  //         <View>
+  //           <Text style={styles.HeaderText}>Select Activites</Text>
+  //         </View>
+
+  //         <TouchableOpacity
+  //           onPress={() => {
+  //             closeactvtyModal();
+  //           }}>
+  //           <utils.vectorIcon.Entypo
+  //             name={'cross'}
+  //             size={25}
+  //             color={theme.color.subTitleLight}
+  //           />
+  //         </TouchableOpacity>
+  //       </View>
+  //     );
+  //   };
+
+  //   const renderBottomFeatureButton = () => {
+  //     return (
+  //       <TouchableOpacity
+  //         activeOpacity={0.8}
+  //         onPress={() => {
+  //           if (actvtyList.length > 0) {
+  //             let arr = [];
+
+  //             actvtyList.map((e, i, a) => {
+  //               if (e.added) {
+  //                 arr.push(e.name);
+  //               }
+  //             });
+
+  //             setactvtyListS(arr);
+  //           }
+  //           setModalVisible(false);
+  //           setmodalHeight(0);
+  //         }}
+  //         style={!c ? styles.BottomButtona : styles.BottomButtonb}>
+  //         <Text style={styles.buttonTextBottom}>Done</Text>
+  //       </TouchableOpacity>
+  //     );
+  //   };
+
+  //   const Add = index => {
+  //     let temp = [...actvtyList];
+  //     temp[index].added = true;
+  //     setactvtyList(temp);
+  //   };
+  //   const Remove = index => {
+  //     let temp = [...actvtyList];
+  //     temp[index].added = false;
+  //     setactvtyList(temp);
+  //   };
+
+  //   let c = modalHeight >= maxModalHeight ? true : false;
+  //   let style = c
+  //     ? [styles.ModalBody, {height: maxModalHeight}]
+  //     : styles.ModalBody;
+
+  //   return (
+  //     <Modal
+  //       isVisible={isModalVisible}
+  //       backdropOpacity={0.6}
+  //       style={{
+  //         padding: 0,
+  //         margin: 0,
+  //         backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  //       }}
+  //       animationIn="fadeInLeft"
+  //       animationOut="fadeOutRight"
+  //       animationInTiming={600}
+  //       animationOutTiming={600}
+  //       onRequestClose={() => {
+  //         setmodalHeight(0);
+  //         setModalVisible(false);
+  //       }}
+  //       backdropTransitionInTiming={600}
+  //       backdropTransitionOutTiming={600}
+  //       onBackdropPress={() => {
+  //         closeactvtyModal();
+  //       }}>
+  //       <View style={style}>
+  //         {!c && (
+  //           <>
+  //             {renderFeatureModalHeader()}
+  //             <View
+  //               onLayout={event => {
+  //                 if (!c) {
+  //                   let {height} = event.nativeEvent.layout;
+  //                   setmodalHeight(height);
+  //                 }
+  //               }}
+  //               style={styles.ModalView}>
+  //               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+  //                 <FlatList
+  //                   data={actvtyList}
+  //                   numColumns={3}
+  //                   renderItem={({item, index}) => (
+  //                     <TouchableOpacity
+  //                       activeOpacity={0.6}
+  //                       onPress={
+  //                         item.added ? () => Remove(index) : () => Add(index)
+  //                       }>
+  //                       <View
+  //                         style={
+  //                           item.added
+  //                             ? styles.AddedFeaturesView
+  //                             : styles.FeaturesView
+  //                         }>
+  //                         <Text
+  //                           style={
+  //                             item.added
+  //                               ? styles.AddedFeatures
+  //                               : styles.Features
+  //                           }>
+  //                           {item.name}
+  //                         </Text>
+  //                       </View>
+  //                     </TouchableOpacity>
+  //                   )}
+  //                   keyExtractor={(item, index) => index.toString()}
+  //                 />
+  //               </ScrollView>
+  //             </View>
+  //             {renderBottomFeatureButton()}
+  //           </>
+  //         )}
+
+  //         {c && (
+  //           <>
+  //             {renderFeatureModalHeader()}
+
+  //             <ScrollView
+  //               style={styles.ModalView}
+  //               horizontal
+  //               showsHorizontalScrollIndicator={false}>
+  //               <FlatList
+  //                 data={actvtyList}
+  //                 numColumns={3}
+  //                 renderItem={({item, index}) => (
+  //                   <TouchableOpacity
+  //                     activeOpacity={0.6}
+  //                     onPress={
+  //                       item.added ? () => Remove(index) : () => Add(index)
+  //                     }>
+  //                     <View
+  //                       style={
+  //                         item.added
+  //                           ? styles.AddedFeaturesView
+  //                           : styles.FeaturesView
+  //                       }>
+  //                       <Text
+  //                         style={
+  //                           item.added ? styles.AddedFeatures : styles.Features
+  //                         }>
+  //                         {item.name}
+  //                       </Text>
+  //                     </View>
+  //                   </TouchableOpacity>
+  //                 )}
+  //                 keyExtractor={(item, index) => index.toString()}
+  //               />
+  //             </ScrollView>
+  //             {renderBottomFeatureButton()}
+  //           </>
+  //         )}
+  //       </View>
+  //     </Modal>
+  //   );
+  // };
 
   return (
     <View style={styles.container}>
@@ -4738,6 +5186,7 @@ function NewTrips(props) {
           focusScreen={store.General.focusScreen}
         />
       </SafeAreaView>
+      {/* {isModalVisible && renderActivitesModal()} */}
       {isModal && renderModal()}
       {showCalender && renderCalender()}
       {isShowUnavliableModal && renderUNavlblModal()}

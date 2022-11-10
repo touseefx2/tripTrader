@@ -107,4 +107,9 @@ export const styles = StyleSheet.create({
 
     marginLeft: 10,
   },
+  ErrorMessage: {
+    color: 'red',
+    fontSize: 11,
+    fontFamily: theme.fonts.fontNormal,
+  },
 });

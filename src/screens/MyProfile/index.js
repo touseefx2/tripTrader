@@ -67,6 +67,8 @@ function MyProfile(props) {
   let srccnic = '';
   let isCnicVerf = false;
 
+  console.log('flwng : ', following);
+
   if (user == 'guest') {
     userName = 'guest';
   }
@@ -127,11 +129,6 @@ function MyProfile(props) {
   });
 
   useEffect(() => {
-    store.User.settotalfollowers(10);
-    store.User.settotalfollowing(5);
-  }, []);
-
-  useEffect(() => {
     if (phone != '' && cntry != '') {
       setTimeout(() => {
         let Countries = utils.Countries;
@@ -155,7 +152,7 @@ function MyProfile(props) {
     store.User.setcntr(cntry);
     store.User.setpwc(pwc);
   }, [phone, cntry, pwc]);
-
+  2;
   useEffect(() => {
     if (user && user !== 'guest') {
       setPhone(user.phone && user.phone !== null ? '+' + user.phone : '');

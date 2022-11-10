@@ -143,17 +143,8 @@ function Trips(props) {
   };
 
   const renderShowData = ({item, index}) => {
-    let title = item.title || '';
-    let duration = parseInt(item.duration.value) || '';
-    let dtitile = item.duration.title;
-    let dt = '';
-
-    if (duration <= 1) {
-      duration = 'Whole';
-      dtitile = dtitile.substring(0, dtitile.length - 1);
-    }
-    dt = duration + ' ' + dtitile;
-    let offer = item.activity || '';
+    let title = item.tradeType || '';
+    let offer = item.title || '';
     let trade = item.returnActivity || '';
     let availability = item.availableFrom || '';
     let status = item.status || '';
@@ -170,7 +161,7 @@ function Trips(props) {
         onPress={() => {}}>
         <Text
           style={[styles.title1, {color: !c ? tc : theme.color.subTitleLight}]}>
-          {title}
+          {title} Trip
           {c && (
             <Text style={styles.title11}>
               {'  '}({status})
@@ -192,16 +183,6 @@ function Trips(props) {
               styles.filedTitle2,
               {color: !c ? tc : theme.color.subTitleLight},
             ]}>
-            <Text
-              style={[
-                styles.filedTitle2,
-                {
-                  color: !c ? tc : theme.color.subTitleLight,
-                  textTransform: 'capitalize',
-                },
-              ]}>
-              {dt}
-            </Text>{' '}
             {offer}
           </Text>
         </View>

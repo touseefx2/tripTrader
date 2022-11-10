@@ -39,6 +39,17 @@ import {ScrollView} from 'react-native-gesture-handler';
 export default observer(Settings);
 
 function Settings(props) {
+  let ao = 0.8;
+  let editprofileIcon = require('../../assets/images/settings/editprofile/img.png');
+  let cpIcon = require('../../assets/images/settings/cp/img.png');
+  let notificationsIcon = require('../../assets/images/settings/notifications/img.png');
+  let blockUserIcon = require('../../assets/images/settings/blockuser/img.png');
+  let subIcon = require('../../assets/images/settings/subscription/img.png');
+  let contactusIcon = require('../../assets/images/settings/contactus/img.png');
+  let newsIcon = require('../../assets/images/settings/news/img.png');
+  let privacyIcon = require('../../assets/images/settings/privacy/img.png');
+  let logoutIcon = require('../../assets/images/settings/logout/img.png');
+
   const toast = useRef(null);
   const toastduration = 700;
   let headerTitle = 'Settings';
@@ -112,6 +123,9 @@ function Settings(props) {
     }
     if (c == 'notifications') {
     }
+    if (c == 'Blocked Users') {
+      props.navigation.navigate('BlockUsers');
+    }
     if (c == 'Manage Subscription') {
       props.navigation.navigate('ManageSubscription');
     }
@@ -128,16 +142,6 @@ function Settings(props) {
   };
 
   const renderMain = () => {
-    let ao = 0.8;
-    let editprofileIcon = require('../../assets/images/settings/editprofile/img.png');
-    let cpIcon = require('../../assets/images/settings/cp/img.png');
-    let notificationsIcon = require('../../assets/images/settings/notifications/img.png');
-    let subIcon = require('../../assets/images/settings/subscription/img.png');
-    let contactusIcon = require('../../assets/images/settings/contactus/img.png');
-    let newsIcon = require('../../assets/images/settings/news/img.png');
-    let privacyIcon = require('../../assets/images/settings/privacy/img.png');
-    let logoutIcon = require('../../assets/images/settings/logout/img.png');
-
     const renderEditProfile = () => {
       let title = 'edit profile';
       return (
@@ -235,6 +239,33 @@ function Settings(props) {
               size="small"
               onToggle={isOn => store.User.setisNotification(isOn)}
             />
+          </View>
+        </TouchableOpacity>
+      );
+    };
+
+    const renderBlockUser = () => {
+      let title = 'Blocked Users';
+      return (
+        <TouchableOpacity
+          activeOpacity={ao}
+          onPress={() => {
+            onClick(title);
+          }}
+          style={styles.mainContainer}>
+          <View style={styles.sec1Container}>
+            <View style={styles.iconConatiner2}>
+              <Image source={blockUserIcon} style={styles.icon2} />
+            </View>
+          </View>
+
+          <View style={styles.sec2Container}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={styles.sec2Title}>
+              {title}
+            </Text>
           </View>
         </TouchableOpacity>
       );
@@ -383,6 +414,7 @@ function Settings(props) {
               {renderEditProfile()}
               {renderCp()}
               {renderNotifications()}
+              {renderBlockUser()}
               {renderManageSubscription()}
               {renderContactus()}
               {renderNews()}

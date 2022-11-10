@@ -49,8 +49,8 @@ import Support from './Support';
 import LatestNews from './LatestNews';
 import PrivacyPolicy from './PrivacyPolicy';
 import Settings from './Settings';
-
 import ChangePassword from './ChangePassword';
+import BlockUsers from './BlockUsers';
 
 export default screens = {
   Splash,
@@ -81,4 +81,5 @@ export default screens = {
   UserProfile,
   ManageSubscription,
   Plan,
+  BlockUsers,
 };

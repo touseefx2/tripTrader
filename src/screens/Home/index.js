@@ -45,6 +45,9 @@ function isObjectEmpty(value) {
 
 let seDayColor = theme.color.button1;
 let ocolor = '#569969';
+let activeOpacity = 0.8;
+let actSrc = require('../../assets/images/filters/activity/img.png');
+let spcSrc = require('../../assets/images/filters/species/img.png');
 
 let cssf = {
   container: {
@@ -287,7 +290,7 @@ var getDaysArray = function (start, end) {
 export default observer(Home);
 
 function Home(props) {
-  let maxModalHeight = theme.window.Height - 100;
+  let maxModalHeight = theme.window.Height - 70;
   const [modalHeight, setmodalHeight] = useState(0);
   const scrollRef = useRef(null);
 
@@ -321,6 +324,7 @@ function Home(props) {
   const [isSelDatee, setisSelDatee] = useState(false);
 
   const data = store.User.Hometrips;
+
   let homeLoader = store.User.HomeLoader;
 
   const [getDataOnce, setgetDataOnce] = useState(false);
@@ -348,11 +352,6 @@ function Home(props) {
   useEffect(() => {
     if (!getDataOnce && internet) {
       getDbData();
-      store.User.attemptToGetTrips(
-        user._id,
-        () => {},
-        () => {},
-      );
     }
     return () => {};
   }, [getDataOnce, internet]);
@@ -366,10 +365,6 @@ function Home(props) {
   //make offer
 
   const [isDisableToday2, setisDisableToday2] = useState(false);
-  const [location, setlocation] = useState({
-    name: 'Boise, ID',
-    coords: [],
-  });
 
   const [isDropDownDur, setisDropDownDur] = useState(false);
   const [dur, setdur] = useState(durtn[0]); //time solts
@@ -420,13 +415,48 @@ function Home(props) {
   const [pdc, setpdc] = useState('');
 
   const [note, setnote] = useState('');
-  const [title, settitle] = useState('Fishing Trip');
+  const [location, setlocation] = useState(false);
+
+  const trptypeData = [...store.Filters.activity];
+  const [tripType, settripType] = useState('');
+  const [isDropDownTT, setisDropDownTT] = useState(false);
+
+  const stateData = [...store.Filters.tripLocation];
+  const [city, setcity] = useState('');
+  const [State, setState] = useState('');
+  const [isDropDownState, setisDropDownState] = useState(false);
+
+  const spcsDt = [...store.Filters.species];
+  const [spcsData, setspcsData] = useState([]);
+  const [species, setspecies] = useState('');
+  const [isDropDownSpcs, setisDropDownSpcs] = useState(false);
 
   const closeAllDropDown = () => {
     setisDropDownTrip(false);
     setisDropDownDur(false);
     setisDropDownrDur(false);
+    setisDropDownTT(false);
+    setisDropDownState(false);
+    setisDropDownSpcs(false);
   };
+
+  useEffect(() => {
+    if (tripType != '') {
+      setspcsData([]);
+      let aa = [];
+      if (spcsDt.length > 0) {
+        spcsDt.map((e, i, a) => {
+          if (e.type) {
+            if (e.type.name == tripType.name) {
+              aa.push(e);
+            }
+          }
+        });
+      }
+
+      setspcsData(aa);
+    }
+  }, [tripType]);
 
   useEffect(() => {
     if (
@@ -455,6 +485,15 @@ function Home(props) {
       } else {
         setisSelDatee(false);
       }
+    }
+
+    if (
+      isObjectEmpty(markedDatess) &&
+      !isObjectEmpty(modalObj) &&
+      modalChk == 'offer' &&
+      step == 1
+    ) {
+      setisSelDatee(false);
     }
   }, [markedDatess, modalObj, modalChk, step]);
 
@@ -509,10 +548,9 @@ function Home(props) {
   const setIsSendObj = v => {
     setsendObj(modalObj.item.user);
     setisOfferSend(v);
-
     setTimeout(() => {
       closeModalAll();
-    }, 10);
+    }, 5);
   };
 
   const ConfirmSend = () => {
@@ -525,25 +563,12 @@ function Home(props) {
         let preferDate = [];
         let oferBy = user._id;
         let hostTrip = {};
+
         //home user
         let oferTo = modalObj.item.user._id;
         let offeredTrip = {};
 
-        let esd = [];
-        //for sort and set format
-        if (!isObjectEmpty(selDatess)) {
-          Object.keys(selDatess).forEach(function (key, index) {
-            esd.push(key);
-          });
-        }
-        if (esd.length > 0) {
-          esd.sort(function (a, b) {
-            return Number(new Date(a)) - Number(new Date(b));
-          });
-          esd.map((e, i, a) => {
-            preferDate.push(moment(e).format('MMM DD, YYYY'));
-          });
-        }
+        // ofer by objects
         let isSetUn = isSetUnavailable != false ? isSetUnavailable : {};
         let objct = isSetUn != false ? {...isSetUn} : false;
         if (objct !== false && !isObjectEmpty(objct)) {
@@ -568,9 +593,33 @@ function Home(props) {
           delete objct.repeat_every;
           objct.repeatEvery = ra;
         }
+        let esd = [];
+        //for sort and set format
+        if (!isObjectEmpty(selDatess)) {
+          Object.keys(selDatess).forEach(function (key, index) {
+            esd.push(key);
+          });
+        }
+        if (esd.length > 0) {
+          esd.sort(function (a, b) {
+            return Number(new Date(a)) - Number(new Date(b));
+          });
+          esd.map((e, i, a) => {
+            preferDate.push(moment(e).format('MMM DD, YYYY'));
+          });
+        }
+        let dt = '';
+        let dtitle = dur.title;
+        if (durNum <= 1) {
+          dtitle = dur.title.substring(0, dur.title.length - 1);
+        }
+        dt = durNum + ' ' + dtitle;
+        let title = dt + ' ' + species.name;
         hostTrip = {
           title: title,
-          activity: trade,
+          tradeType: tripType.name,
+          location: location == false ? {} : location,
+          species: species.name,
           duration: {
             value: durNum,
             title: dur.title,
@@ -578,13 +627,12 @@ function Home(props) {
           availableFrom: isSelDate1,
           availableTo: isSelDate2,
           unAvailableDays: objct,
-          location: location.name,
         };
         if (objct == false) {
           delete hostTrip.unAvailableDays;
         }
 
-        //-----//
+        // ofer To objects
         let d = modalObj.item;
         let objct2 = d.unavailable != false ? {...d.unavailable} : false;
         if (objct2 !== false && !isObjectEmpty(objct2)) {
@@ -611,18 +659,19 @@ function Home(props) {
         }
         offeredTrip = {
           tripId: d._id,
+          tradeType: d.tradeType,
+          species: d.species,
           title: d.title,
-          activity: d.offer,
-          returnActivity: d.return,
+          // returnActivity: d.return,
           duration: {
             value: d.duration.number,
             title: d.duration.title,
           },
           availableFrom: d.availablity.startDate,
           availableTo: d.availablity.endDate,
-          photos: d.photos,
+          // photos: d.photos,
           unAvailableDays: objct2,
-          location: d.loc.name,
+          location: d.loc,
         };
         if (objct2 == false) {
           delete offeredTrip.unAvailableDays;
@@ -635,11 +684,13 @@ function Home(props) {
           hostTrip: hostTrip,
           offeredTo: oferTo,
           offeredTrip: offeredTrip,
+          status: 'pending',
         };
 
-        console.log('fo : ', fo);
-
-        // store.User.attemptToOfferSend({}, setIsSendObj);
+        // console.log('hostTrip unavlbl : ', hostTrip.unAvailableDays);
+        // console.log('offeredTrip unavlbl : ', offeredTrip.unAvailableDays);
+        console.log('Send Offer Body : ', fo);
+        store.User.attemptToOfferSend(fo, setIsSendObj);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -706,31 +757,26 @@ function Home(props) {
 
   const onClickMakeOffer = (dt, ind) => {
     let d = dt;
-    let title = d.title || '';
-    let trade = d.activity || '';
-    let retrn = d.returnActivity || '';
-    let l =
-      d.location && d.location != '' ? {name: d.location, coords: []} : {};
-    let loc = l;
-    let stts = d.status || '';
+
+    let loc = d.location ? d.location : {};
     let acceptOtherTrades = d.acceptTradeOffers;
-    let durNo = d.duration.value;
-    let durTitle = d.duration.title;
+    let dr = {
+      number: d.duration.value,
+      title: d.duration.title,
+    };
+    let av = {
+      startDate: d.availableFrom,
+      endDate: d.availableTo,
+    };
     let photos = d.photos || [];
-    let sd = d.availableFrom;
-    let ed = d.availableTo;
-
     let objct = {...d.unAvailableDays};
-
-    // console.log('d1  : ', objct);
-
     if (!isObjectEmpty(objct)) {
       let ar = objct.allUnavailableDates || [];
-      if (ar.length <= 0) {
+      let ar2 = objct.daysOfWeek || [];
+      if (ar.length <= 0 && ar2.length <= 0) {
         objct = false;
       }
     }
-
     if (objct != false) {
       delete Object.assign(objct, {
         days_of_week: objct.daysOfWeek,
@@ -754,26 +800,19 @@ function Home(props) {
       objct.repeat_every = ra;
     }
 
-    // console.log('d2  : ', objct);
-
     const obj = {
-      __v: dt._v,
+      __v: dt.__v,
       _id: dt._id,
-      title: title,
       user: dt.hostId,
-      offer: trade,
-      return: retrn,
+      tradeType: d.tradeType,
       loc: loc,
-      status: stts,
+      species: d.species || '',
+      title: d.title || '',
+      return: d.returnActivity || '',
+      status: d.status,
       acceptOtherTrades: acceptOtherTrades,
-      duration: {
-        number: durNo,
-        title: durTitle,
-      },
-      availablity: {
-        startDate: sd,
-        endDate: ed,
-      },
+      duration: dr,
+      availablity: av,
       photos: photos,
       unavailable: objct,
     };
@@ -837,13 +876,29 @@ function Home(props) {
 
   useEffect(() => {
     if (step == 3 && !isShowUnavliableModal) {
-      if (isSelDate1 != '' && isSelDate2 != '' && trade != '' && durNum != '') {
+      if (
+        isSelDate1 != '' &&
+        isSelDate2 != '' &&
+        durNum != '' &&
+        tripType != '' &&
+        species != '' &&
+        location != false
+      ) {
         setisButtonDisable(false);
       } else {
         setisButtonDisable(true);
       }
     }
-  }, [isSelDate1, isSelDate2, trade, durNum, step, isShowUnavliableModal]);
+  }, [
+    isSelDate1,
+    isSelDate2,
+    durNum,
+    step,
+    isShowUnavliableModal,
+    tripType,
+    species,
+    location,
+  ]);
 
   useEffect(() => {
     if (isSelDate1 != '' && isSelDate2 != '') {
@@ -929,6 +984,14 @@ function Home(props) {
     }
   }, [maxd, mind]);
 
+  useEffect(() => {
+    if (city != '' && State != '') {
+      setlocation({city: city, state: State.name});
+    } else {
+      setlocation(false);
+    }
+  }, [city, State]);
+
   const siERpOn = d => {
     let md = {};
     md[moment(d).format('YYYY-MM-DD')] = {
@@ -942,43 +1005,6 @@ function Home(props) {
     setendRepOn(d);
     setendRepOnM(md);
     setendRepOnS(md);
-  };
-
-  const clearFields = (c, c2) => {
-    setmarkedDates({});
-    setisSelDate(false);
-    setselDates({});
-    setisSelDate1('');
-    setisSelDate2('');
-    setmind(undefined);
-    setmindd(undefined);
-    setmaxd(undefined);
-    setendRepOn('');
-    setendRepOnM({});
-    setendRepOnS({});
-    setisSetUnavailable(false);
-    setdow(dw);
-    setrdurNum(1);
-    setisDisableToday2(false);
-    setunavlblmarkedDates({});
-    setunavlblSLCTmarkedDates({});
-    setselunmarkedSLCTDates({});
-    if (c == 'all') {
-      settrader('');
-      setdurNum(1);
-      setrdurNum(1);
-      setdur(durtn[0]);
-      setrdur(rdurtn[0]);
-      setisSetUnavailable(false);
-      setisButtonDisable(false);
-      setlocation({
-        name: 'Boise, ID',
-        coords: [],
-      });
-      setmind(undefined);
-      setmindd(undefined);
-      setmaxd(undefined);
-    }
   };
 
   const renderStatusBar = () => {
@@ -1008,7 +1034,18 @@ function Home(props) {
       // Flat List Item
       <>
         {!homeLoader && getDataOnce && (
-          <Text style={styles.emptyListStyle} onPress={() => getItem(item)}>
+          <Text
+            style={{
+              marginTop: '80%',
+              alignItems: 'center',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              fontSize: 13,
+              color: theme.color.title,
+              fontFamily: theme.fonts.fontMedium,
+              opacity: 0.4,
+            }}
+            onPress={() => getItem(item)}>
             No Trips Found
           </Text>
         )}
@@ -1017,7 +1054,11 @@ function Home(props) {
           <ActivityIndicator
             size={30}
             color={theme.color.button1}
-            style={styles.emptyListIndicator}
+            style={{
+              marginTop: '80%',
+
+              alignSelf: 'center',
+            }}
           />
         )}
       </>
@@ -1031,20 +1072,13 @@ function Home(props) {
     let userName = usr.firstName + ' ' + usr.lastName;
     let avgRating = 3.7;
     let totalReviews = 50;
-    let isVeirfy = usr.identityStatus == 'notVerified' ? false : true;
+    let isVeirfy = usr.identityStatus == 'verified' ? true : false;
 
     //trip
     let status = item.status || '';
     let tripPhotos = item.photos ? item.photos : [];
-    let title = item.title || '';
-    let duration = item.duration.value;
-    let dt = item.duration.title || '';
-    const durTitle = dt.charAt(0).toUpperCase() + dt.slice(1);
-    let t =
-      duration <= 1 ? durTitle.substring(0, durTitle.length - 1) : durTitle;
-    duration = duration + ' ' + t;
-    let offer = item.activity || '';
-    let locName = item.location || '';
+    let titlee = item.title || '';
+    let locName = item.location.city + ', ' + item.location.state;
     let trade = item.returnActivity || '';
     let sd = item.availableFrom;
     let sdy = parseInt(new Date(sd).getFullYear());
@@ -1092,23 +1126,10 @@ function Home(props) {
           <View style={styles.textContainer}>
             <Pressable
               onPress={() => {
-                store.User.clearOtherUser();
-                store.User.setfscreen('home');
-                const dd = {
-                  user: {
-                    _id: 2,
-                    first_name: 'mike',
-                    last_name: 'monuse',
-                    userName: 'mmouse',
-                    // photo:"",
-                    photo:
-                      'https://www.adobe.com/express/create/media_127540366421d3d5bfcaf8202527ca7d37741fd5d.jpeg?width=400&format=jpeg&optimize=medium',
-                    avg_rating: 3.8,
-                    total_reviews: 190,
-                    isVerified: true,
-                  },
-                };
-                store.User.setvUser(dd.user);
+                store.Userv.clearUser();
+                store.Userv.setfscreen('home');
+
+                store.Userv.setUser(usr);
                 props.navigation.navigate('UserProfile');
               }}
               style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}>
@@ -1227,9 +1248,7 @@ function Home(props) {
     const renderSec3 = () => {
       return (
         <View style={styles.boxSection3}>
-          <Text style={styles.sec3T1}>
-            {duration} {offer}
-          </Text>
+          <Text style={styles.sec3T1}>{titlee}</Text>
           <View style={styles.sec3T2Container}>
             <Image
               style={styles.sec3Icon}
@@ -1442,6 +1461,47 @@ function Home(props) {
     setmodalObj(false);
   };
 
+  const clearFields = (c, c2) => {
+    setmarkedDates({});
+    setisSelDate(false);
+    setselDates({});
+    setisSelDate1('');
+    setisSelDate2('');
+    setmind(undefined);
+    setmindd(undefined);
+    setmaxd(undefined);
+    setendRepOn('');
+    setendRepOnM({});
+    setendRepOnS({});
+    setisSetUnavailable(false);
+    setdow(dw);
+    setrdurNum(1);
+    setisDisableToday2(false);
+    setunavlblmarkedDates({});
+    setunavlblSLCTmarkedDates({});
+    setselunmarkedSLCTDates({});
+    if (c == 'all') {
+      settrader('');
+      setdurNum(1);
+      setrdurNum(1);
+      setdur(durtn[0]);
+      setrdur(rdurtn[0]);
+      setisSetUnavailable(false);
+      setisButtonDisable(false);
+
+      setmind(undefined);
+      setmindd(undefined);
+      setmaxd(undefined);
+      settripType('');
+      setspecies('');
+      setcity('');
+      setState('');
+      setlocation(false);
+
+      setnote('');
+    }
+  };
+
   const clearModal1 = () => {
     if (!mloader) {
       setisModal(false);
@@ -1478,7 +1538,6 @@ function Home(props) {
       setmodalHeight(0);
       setisShowUnavliableModal(false);
       setisDisableToday2(false);
-      setnote('');
       clearFields('all', '');
     }
   };
@@ -1490,6 +1549,22 @@ function Home(props) {
       setmodalHeight(0);
     }
   };
+
+  function findItm(v, data, c) {
+    let obj = c == 'n' ? {name: v} : {title: v};
+
+    if (data.length > 0) {
+      let fi =
+        c == 'n'
+          ? data.findIndex(x => x.name === v)
+          : data.findIndex(x => x.title === v);
+      if (fi > -1) {
+        obj = data[fi];
+      }
+    }
+
+    return obj;
+  }
 
   const renderModal = () => {
     let c = modalHeight >= maxModalHeight ? true : false;
@@ -1560,16 +1635,16 @@ function Home(props) {
       };
 
       const renderInfo = () => {
+        let photo = item.user.image ? item.user.image : '';
         let userName = item.user.firstName + ' ' + item.user.lastName;
-        let isVeirfy = item.user.identityStatus == 'notVerified' ? false : true;
+        let isVeirfy = item.user.identityStatus == 'verified' ? true : false;
         let duration = item.duration.number;
         let t =
           duration <= 1
             ? item.duration.title.substring(0, item.duration.title.length - 1)
             : item.duration.title;
         duration = duration + ' ' + t;
-        let photo = item.user.image ? item.user.image : '';
-        let offer = item.offer || '';
+        let spcs = item.species || '';
 
         const renderProfile = () => {
           return (
@@ -1599,23 +1674,18 @@ function Home(props) {
           return (
             <View style={styles.mtextContainer}>
               <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={styles.mtextContainertitle}>
-                {offer}
+                style={[
+                  styles.mtextContainertitle,
+                  {textTransform: 'capitalize'},
+                ]}>
+                {spcs}
               </Text>
 
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={styles.textContainertitle2}>
+              <Text style={styles.textContainertitle2}>
                 Duration: {duration}
               </Text>
 
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={styles.textContainertitle3}>
+              <Text style={styles.textContainertitle3}>
                 Hosted by{' '}
                 <Text
                   style={[
@@ -1646,67 +1716,6 @@ function Home(props) {
             esd.push(key);
           });
 
-          // let arset = []; //for sort and set format
-          // if (esd.length > 0) {
-          //   esd.sort(function (a, b) {
-          //     return Number(new Date(a)) - Number(new Date(b));
-          //   });
-          //   esd.map((e, i, a) => {
-          //     arset.push(moment(e).format('MMM DD'));
-          //   });
-          // }
-          // let arr = []; //for amse sequece date separate
-          // if (arset.length > 0) {
-          //   let arset2 = arset.slice();
-
-          //   arset.map((e, i, a) => {
-          //     let d = [];
-          //     let chkd = e;
-          //     let chki = i;
-
-          //     d.push({d: chkd});
-          //     delete arset[chki];
-
-          //     let id = 0;
-          //     for (let index = ++chki; index < arset2.length; index++) {
-          //       const ee = arset2[index];
-          //       if (chkd.slice(0, 3) == ee.slice(0, 3)) {
-          //         let n1 = chkd.slice(4, 6);
-          //         let n2 = ee.slice(4, 6);
-          //         id++;
-          //         if (Number(n1) + id == Number(n2)) {
-          //           d.push({d: ee});
-          //           delete arset[index];
-          //         } else {
-          //           break;
-          //         }
-          //       }
-          //     }
-
-          //     arr.push(d);
-          //   });
-          // }
-
-          // if (arr.length > 0) {
-          //   arr.map((e, i, a) => {
-          //     let aa = e;
-          //     if (aa.length > 1) {
-          //       tt =
-          //         tt +
-          //         moment(aa[0].d).format('MMM D') +
-          //         '-' +
-          //         moment(aa[aa.length - 1].d)
-          //           .format('MMM D')
-          //           .slice(4, 6) +
-          //         ', ';
-          //     } else {
-          //       tt = tt + moment(aa[0].d).format('MMM D') + ', ';
-          //     }
-          //   });
-          // }
-          // tt = tt.replace(/, *$/, '');
-          // t = tt;
-
           let arset = []; //for sort and set format
           if (esd.length > 0) {
             // esd.sort(function (a, b) {
@@ -1718,11 +1727,11 @@ function Home(props) {
           }
           if (arset.length > 0) {
             let fd = arset[0];
-            let sd = '';
             if (arset.length > 1) {
-              sd = arset[arset.length - 1];
+              let sd = arset[arset.length - 1];
+              t = fd + ' - ' + sd;
             }
-            t = fd + ' - ' + sd;
+            t = fd;
           }
         } else {
           let duration = parseInt(item.duration.number);
@@ -1785,6 +1794,7 @@ function Home(props) {
 
         const renderButton2 = () => {
           const Continue = () => {
+            setmodalHeight(0);
             setstep(2);
           };
 
@@ -2078,13 +2088,13 @@ function Home(props) {
                     style={[
                       styles.dropDownText,
                       {
-                        color: trip.activity
+                        color: trip
                           ? theme.color.title
                           : theme.color.subTitleLight,
                       },
                     ]}>
-                    {trip.activity
-                      ? trip.activity
+                    {trip
+                      ? trip.species
                       : 'Select a trip or create custom offer...'}
                   </Text>
                 </View>
@@ -2137,117 +2147,32 @@ function Home(props) {
           const Continue = () => {
             let d = trip;
 
-            let trade = d.activity || '';
-            let l =
-              d.location && d.location != ''
-                ? {name: d.location, coords: []}
-                : {};
-            let loc = l;
-
-            let stts = d.status || '';
-
+            let tt = findItm(d.tradeType || '', trptypeData, 'n');
+            let loc = d.location ? d.location : {};
+            let spcs = findItm(d.species || '', spcsDt, 'n');
+            if (!isObjectEmpty(loc)) {
+              setcity(loc.city);
+              setState(findItm(loc.state || '', stateData, 'n'));
+            } else {
+              setcity('');
+              setState('');
+              setlocation(false);
+            }
             let durNo = d.duration.value;
-            let durTitle = d.duration.title;
-            let ind = durtn.findIndex(x => x.title === durTitle);
-            // let sd = d.availableFrom;
-            // let ed = d.availableTo;
+            let durt = findItm(d.duration.title || '', durtn, 't');
 
-            settrader(trade);
+            settripType(tt);
             setlocation(loc);
+            setspecies(spcs);
             setdurNum(durNo);
-            setdur(durtn[ind]);
-
-            // setisSelDate1(sd);
-            // setisSelDate2(ed);
-            // setisSelDate(true);
+            setdur(durt);
             setisSelDate1('');
             setisSelDate2('');
             setisSelDate(false);
-
             setminDate(new Date());
-            // setminDate(sd);
-            // if (sd >= moment().format('YYYY-MM-DD')) {
-            //   setmindd(undefined);
-            // } else {
-            //   setmindd(sd);
-            // }
-            // var daylist = getDaysArray(new Date(sd), new Date(ed));
-            // let mdd = {};
-            // if (daylist.length > 0) {
-            //   daylist.map((e, i, a) => {
-            //     let d = moment(e).format('YYYY-MM-DD');
-            //     if (i == 0) {
-            //       mdd[d] = {
-            //         customStyles: cs,
-            //         marked: false,
-            //         selected: true,
-            //         selectedColor: theme.color.button1,
-            //         disabled: false,
-            //         disableTouchEvent: false,
-            //       };
-            //     }
-            //     if (i > 0 && i < a.length - 1) {
-            //       mdd[d] = {
-            //         customStyles: cs,
-            //         marked: false,
-            //         selected: true,
-            //         selectedColor: theme.color.button1,
-            //         disabled: true,
-            //         disableTouchEvent: true,
-            //       };
-            //     }
-            //     if (i == a.length - 1) {
-            //       mdd[d] = {
-            //         customStyles: cs,
-            //         marked: false,
-            //         selected: true,
-            //         selectedColor: theme.color.button1,
-            //         disabled: false,
-            //         disableTouchEvent: false,
-            //       };
-            //     }
-            //   });
-            // }
-            // setmarkedDates(mdd);
-            // setselDates(mdd);
-
             setmarkedDates({});
             setselDates({});
-
-            // let objct = {...d.unAvailableDays};
-            // if (!isObjectEmpty(objct)) {
-            //   let ar = objct.allUnavailableDates || [];
-            //   if (ar.length <= 0) {
-            //     objct = false;
-            //   }
-            // }
-            // if (objct != false) {
-            //   delete Object.assign(objct, {
-            //     days_of_week: objct.daysOfWeek,
-            //   })['daysOfWeek'];
-            //   delete Object.assign(objct, {
-            //     unavailable_days_of_week: objct.unavailableDaysOfWeek,
-            //   })['unavailableDaysOfWeek'];
-            //   delete Object.assign(objct, {
-            //     exclude_specific_dates: objct.excludeSpecificDates,
-            //   })['excludeSpecificDates'];
-            //   delete Object.assign(objct, {
-            //     all_unavailable_dates: objct.allUnavailableDates,
-            //   })['allUnavailableDates'];
-            //   delete Object.assign(objct, {wtxt: objct.dayWeekText})[
-            //     'dayWeekText'
-            //   ];
-            //   delete Object.assign(objct, {esd_text: objct.excludeDateText})[
-            //     'excludeDateText'
-            //   ];
-            //   let ra = {...objct.repeatEvery};
-            //   delete Object.assign(ra, {num: ra.value})['value'];
-            //   delete objct.repeatEvery;
-            //   objct.repeat_every = ra;
-            // }
-
             setisSetUnavailable(false);
-
             setstep(3);
           };
 
@@ -2262,7 +2187,7 @@ function Home(props) {
               ]}>
               <Text
                 style={[styles.ButtonText, {color: theme.color.buttonText}]}>
-                Next
+                Continue
               </Text>
             </Pressable>
           );
@@ -2471,6 +2396,56 @@ function Home(props) {
         );
       };
 
+      const renderShowDropDown = c => {
+        let data = [];
+
+        if (c == 'tt') {
+          data = trptypeData;
+        }
+        if (c == 'state') {
+          data = stateData;
+        }
+        if (c == 'spcs') {
+          data = spcsData;
+        }
+
+        const onclickSelect = d => {
+          if (c == 'tt') {
+            settripType(d);
+            if (tripType !== '') {
+              if (tripType.name !== d.name) {
+                setspecies('');
+              }
+            }
+            return;
+          }
+          if (c == 'state') {
+            setState(d);
+            return;
+          }
+          if (c == 'spcs') {
+            setspecies(d);
+            return;
+          }
+        };
+
+        let abs = Platform.OS == 'ios' ? false : true;
+        return (
+          <utils.DropDown
+            // search={true}
+            data={data}
+            onSelectItem={d => {
+              onclickSelect(d);
+            }}
+            setVisible={d => {
+              closeAllDropDown();
+            }}
+            c={c}
+            // absolute={abs}
+          />
+        );
+      };
+
       const renderField = () => {
         const onClickCal = () => {
           setshowCalender(!showCalender);
@@ -2534,6 +2509,7 @@ function Home(props) {
               setunavlblSLCTmarkedDates({});
             }
 
+            setmodalHeight(0);
             setisShowUnavliableModal(true);
           } else {
             Alert.alert('', 'Please select Trip Availability first');
@@ -2569,25 +2545,142 @@ function Home(props) {
           <>
             <View style={styles.fieldContainer}>
               <Text style={styles.fieldText}>You’re offering...</Text>
-              <View style={styles.inputConatiner}>
-                <TextInput
-                  value={trade}
-                  onChangeText={d => {
-                    settrader(d);
+              {/* activity */}
+              <View style={{width: '100%'}}>
+                <TouchableOpacity
+                  onPress={() => {
+                    closeAllDropDown();
+                    setisDropDownTT(!isDropDownTT);
                   }}
-                  placeholder="Example: Florida Alligator Hunt"
-                  style={styles.input}
-                />
+                  activeOpacity={activeOpacity}
+                  style={[styles.dropDowninputConatiner]}>
+                  <Image style={styles.dropDownIcon} source={actSrc} />
+
+                  <View style={{width: '82%'}}>
+                    <Text
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                      style={[
+                        styles.dropDownText2,
+                        {
+                          opacity: tripType == '' ? 0.4 : 1,
+                          textTransform: tripType == '' ? 'none' : 'capitalize',
+                        },
+                      ]}>
+                      {tripType == ''
+                        ? 'Select Activity'
+                        : tripType.name + ' Trip'}
+                    </Text>
+                  </View>
+                  <utils.vectorIcon.Fontisto
+                    name="angle-down"
+                    color={'#14181F'}
+                    size={11}
+                  />
+                </TouchableOpacity>
+                {isDropDownTT && renderShowDropDown('tt')}
+              </View>
+            </View>
+
+            <View style={styles.fieldContainer}>
+              <Text style={styles.fieldText}>Located in...</Text>
+              {/* location */}
+              <View
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <View style={[styles.inputConatiner, {width: '58%'}]}>
+                  <TextInput
+                    value={city}
+                    onChangeText={d => {
+                      setcity(d);
+                    }}
+                    placeholder="Example: Southeastern"
+                    style={styles.input}
+                  />
+                </View>
+                {/* location */}
+                <View style={{width: '40%'}}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      closeAllDropDown();
+                      setisDropDownState(!isDropDownState);
+                    }}
+                    activeOpacity={activeOpacity}
+                    style={[styles.dropDowninputConatiner]}>
+                    <View style={{width: '82%'}}>
+                      <Text
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                        style={[
+                          styles.dropDownText2,
+                          {
+                            opacity: State == '' ? 0.4 : 1,
+                            textTransform: State == '' ? 'none' : 'capitalize',
+                          },
+                        ]}>
+                        {State == '' ? 'State' : State.name}
+                      </Text>
+                    </View>
+                    <utils.vectorIcon.Fontisto
+                      name="angle-down"
+                      color={'#14181F'}
+                      size={11}
+                    />
+                  </TouchableOpacity>
+                  {isDropDownState && renderShowDropDown('state')}
+                </View>
+              </View>
+            </View>
+
+            <View style={styles.fieldContainer}>
+              <Text style={styles.fieldText}>Please enter the species</Text>
+              {/* species */}
+              <View style={{width: '100%'}}>
+                <TouchableOpacity
+                  disabled={tripType == '' ? true : false}
+                  onPress={() => {
+                    closeAllDropDown();
+                    setisDropDownSpcs(!isDropDownSpcs);
+                  }}
+                  activeOpacity={activeOpacity}
+                  style={[
+                    styles.dropDowninputConatiner,
+                    {opacity: tripType == '' ? 0.5 : 1},
+                  ]}>
+                  <Image style={styles.dropDownIcon} source={spcSrc} />
+                  <View style={{width: '83%'}}>
+                    <Text
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                      style={[
+                        styles.dropDownText2,
+                        {
+                          opacity: species == '' ? 0.4 : 1,
+                          textTransform: species == '' ? 'none' : 'capitalize',
+                        },
+                      ]}>
+                      {species == ''
+                        ? 'Select species'
+                        : species.name + ' k lkn lkjlkj'}
+                    </Text>
+                  </View>
+                  <utils.vectorIcon.Fontisto
+                    style={{opacity: tripType == '' ? 0.5 : 1}}
+                    name="angle-down"
+                    color={'#14181F'}
+                    size={11}
+                  />
+                </TouchableOpacity>
+                {isDropDownSpcs && renderShowDropDown('spcs')}
               </View>
             </View>
 
             <View style={[styles.fieldContainer]}>
               <Text style={styles.fieldText}>Trip Duration</Text>
-              <View
-                style={[
-                  styles.fieldContainer,
-                  {marginTop: 5, flexDirection: 'row'},
-                ]}>
+              <View style={[styles.fieldContainer, {flexDirection: 'row'}]}>
                 <View style={[styles.inputConatiner, {width: '23%'}]}>
                   <TextInput
                     keyboardType="number-pad"
@@ -2708,7 +2801,7 @@ function Home(props) {
             </View>
 
             {!isSetUnavailable && (
-              <View style={[styles.fieldContainer, {marginTop: 17}]}>
+              <View style={[styles.fieldContainer, {marginTop: 10}]}>
                 <TouchableOpacity
                   activeOpacity={0.8}
                   onPress={onClickUnavailableDays}>
@@ -2721,7 +2814,6 @@ function Home(props) {
               <View style={styles.fieldContainer}>
                 <View
                   style={{
-                    marginTop: 17,
                     flexDirection: 'row',
                     alignItems: 'center',
                   }}>
@@ -2730,7 +2822,7 @@ function Home(props) {
                     activeOpacity={0.8}
                     style={{marginLeft: 15}}
                     onPress={onClickUnavailableDays}>
-                    <Text style={[styles.bottomText, {fontSize: 14}]}>
+                    <Text style={[styles.bottomText, {fontSize: 13.5}]}>
                       Edit
                     </Text>
                   </TouchableOpacity>
@@ -2747,6 +2839,21 @@ function Home(props) {
                 </View>
               </View>
             )}
+
+            <View style={styles.fieldContainer}>
+              <Text style={styles.fieldText}>Offer Note</Text>
+              <View style={styles.textArea2}>
+                <TextInput
+                  value={note}
+                  onChangeText={c => {
+                    setnote(c);
+                  }}
+                  style={styles.mTextInpt2}
+                  placeholder="(optional)"
+                  multiline={true}
+                />
+              </View>
+            </View>
           </>
         );
       };
@@ -2783,6 +2890,7 @@ function Home(props) {
 
         const renderButton2 = () => {
           const Continue = () => {
+            setmodalHeight(0);
             setstep(4);
           };
 
@@ -3045,24 +3153,27 @@ function Home(props) {
           });
         }
 
-        const obj = {
-          days_of_week: dw, //main
-          repeat_every: {
-            //main
-            num: rdurNum,
-            title: rdur.title,
-            endRepeatOn: endRepOn,
-          },
-          wtxt: wtxt,
-          esd_text: tt,
+        let obj = false;
+        if (dw.length > 0 || ad.length > 0) {
+          obj = {
+            days_of_week: dw, //main
+            repeat_every: {
+              //main
+              num: rdurNum,
+              title: rdur.title,
+              endRepeatOn: endRepOn,
+            },
+            wtxt: wtxt,
+            esd_text: tt,
 
-          unavailable_days_of_week: unw, //main
-          exclude_specific_dates: exsd, //main
-          all_unavailable_dates: ad, //main
-        };
-        setisShowUnavliableModal(false);
+            unavailable_days_of_week: unw, //main
+            exclude_specific_dates: exsd, //main
+            all_unavailable_dates: ad, //main
+          };
+        }
 
         setisSetUnavailable(obj);
+        setisShowUnavliableModal(false);
       };
 
       const onClickrCal = c => {
@@ -3659,7 +3770,7 @@ function Home(props) {
             : item.duration.title;
         duration = duration + ' ' + t;
         let photo = item.user.image || '';
-        let offer = item.offer || '';
+        let species = item.species || '';
 
         const renderProfile = () => {
           return (
@@ -3691,8 +3802,11 @@ function Home(props) {
               <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
-                style={styles.mtextContainertitle}>
-                {offer}
+                style={[
+                  styles.mtextContainertitle,
+                  {textTransform: 'capitalize'},
+                ]}>
+                {species}
               </Text>
 
               <Text
@@ -3739,8 +3853,8 @@ function Home(props) {
       };
 
       const renderField = () => {
-        let offer = trade;
-        let locationName = location.name ? location.name : '';
+        let spcs = species.name;
+        let locationName = location.city + ', ' + location.state;
         let duration = durNum + ' ' + dur.title;
         let availablity =
           moment(isSelDate1).format('MMM DD') +
@@ -3768,10 +3882,8 @@ function Home(props) {
             <View style={[styles.rField, {width: '85%'}]}>
               <Text style={styles.rTitle}>YOUR OFFERING</Text>
               <Text
-                // numberOfLines={2}
-                // ellipsizeMode="tail"
                 style={[styles.rTitle2, {color: theme.color.titleGreenForm}]}>
-                {offer}
+                {spcs}
               </Text>
             </View>
 
@@ -3788,10 +3900,7 @@ function Home(props) {
 
               <View style={[styles.rField, {width: '49%'}]}>
                 <Text style={styles.rTitle}>TRIP DURATION</Text>
-                <Text
-                  // numberOfLines={2}
-                  // ellipsizeMode="tail"
-                  style={[styles.rTitle2, {textTransform: 'none'}]}>
+                <Text style={[styles.rTitle2, {textTransform: 'none'}]}>
                   {duration}
                 </Text>
               </View>
@@ -3800,24 +3909,32 @@ function Home(props) {
             <View style={styles.rField2}>
               <View style={[styles.rField, {width: '49%'}]}>
                 <Text style={styles.rTitle}>TRIP Availability</Text>
-                <Text
-                  // numberOfLines={2}
-                  // ellipsizeMode="tail"
-                  style={styles.rTitle2}>
-                  {availablity}
-                </Text>
+                <Text style={styles.rTitle2}>{availablity}</Text>
               </View>
 
               <View style={[styles.rField, {width: '49%'}]}>
                 <Text style={styles.rTitle}>UNAVAILABLE DAYS</Text>
-                <Text
-                  // numberOfLines={4}
-                  // ellipsizeMode="tail"
-                  style={[styles.rTitle2, {textTransform: 'none'}]}>
+                <Text style={[styles.rTitle2, {textTransform: 'none'}]}>
                   {unavailable == '' ? 'Null' : unavailable}
                 </Text>
               </View>
             </View>
+
+            {note != '' && (
+              <View style={[styles.rField, {width: '85%', marginTop: 20}]}>
+                <Text style={styles.rTitle}>OFFER NOTE</Text>
+                <Text
+                  style={[
+                    styles.rTitle2,
+                    {
+                      textTransform: 'none',
+                      fontSize: 12,
+                    },
+                  ]}>
+                  {note}
+                </Text>
+              </View>
+            )}
           </View>
         );
       };
@@ -4024,9 +4141,10 @@ function Home(props) {
 
       const renderField = () => {
         let item = modalObj.item;
-        let photo = item.user.photo || '';
-        let isVeirfy = item.user.isVerified || false;
-        let userName = item.user.first_name + ' ' + item.user.last_name;
+        let usr = item.hostId;
+        let photo = usr.image ? usr.image : '';
+        let isVeirfy = usr.identityStatus == 'verified' ? true : false;
+        let userName = usr.firstName + ' ' + usr.lastName;
 
         const renderProfile = () => {
           return (
@@ -4171,15 +4289,8 @@ function Home(props) {
       };
 
       let item = modalObj.item;
-      let duration = item.duration.value;
-      let dt = item.duration.title || '';
-      const durTitle = dt.charAt(0).toUpperCase() + dt.slice(1);
-      let t =
-        parseInt(duration) <= 1
-          ? durTitle.substring(0, durTitle.length - 1)
-          : durTitle;
-      duration = duration + ' ' + t;
-      let offer = item.activity || '';
+
+      let title = item.title || '';
       let src = require('../../assets/images/tripSaveDone/img.png');
       return (
         <Modal
@@ -4247,7 +4358,7 @@ function Home(props) {
                     lineHeight: 22,
                     textAlign: 'center',
                   }}>
-                  {`"${duration} ${offer}"`}
+                  {`"${title}"`}
                 </Text>
               </View>
 
@@ -5360,8 +5471,8 @@ function Home(props) {
       setisOfferSend(false);
     };
 
-    let fn = sendObj.first_name;
-    let ln = sendObj.last_name;
+    let fn = sendObj.firstName;
+    let ln = sendObj.lastName;
     let sendOfferUsername = fn + ' ' + ln;
 
     let src = require('../../assets/images/offerSentDone/img.png');
@@ -5500,10 +5611,10 @@ function Home(props) {
       setisSendMessage(false);
     };
 
-    let fn = sendObj.first_name;
-    let ln = sendObj.last_name;
+    let fn = sendObj.firstName;
+    let ln = sendObj.lastName;
     let sendOfferUsername = fn + ' ' + ln;
-    let un = sendObj.userName;
+    let un = sendObj.userName ? sendObj.userName : 'username';
     let src = require('../../assets/images/msgSentDone/img.png');
     return (
       <Modal
@@ -5609,7 +5720,7 @@ function Home(props) {
               }}
               data={data}
               renderItem={ItemView}
-              // keyExtractor={(item, index) => index.toString()}
+              keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
               ListHeaderComponent={data.length > 0 ? ListHeader : null}
@@ -5619,7 +5730,11 @@ function Home(props) {
               <ActivityIndicator
                 size={30}
                 color={theme.color.button1}
-                style={styles.emptyListIndicatora}
+                style={{
+                  top: '50%',
+                  position: 'absolute',
+                  alignSelf: 'center',
+                }}
               />
             )}
           </View>
@@ -5631,7 +5746,6 @@ function Home(props) {
           />
         </SafeAreaView>
 
-        <utils.Loader load={stloader} />
         {renderStatusBar()}
         {isModal && !isOfferSend && !isSendMessage && renderModal()}
         {showCal1 && renderCalender1()}
@@ -5666,6 +5780,7 @@ function Home(props) {
           />
         )}
         <Toast ref={toast} position="bottom" />
+        <utils.Loader load={stloader} />
       </View>
     </>
   );

@@ -11,22 +11,23 @@ class filters {
 
   @observable tripType = [
     {name: 'Most Recent', isSel: false},
-    {name: 'Most Recent', isSel: false},
+    {name: 'Highest Rated', isSel: false},
     {name: 'Hunting', isSel: false},
     {name: 'Fishing', isSel: false},
   ];
   @action settripType = obj => {
     this.tripType = obj;
   };
-  @observable tripLocation = [];
+  @persist('object') @observable tripLocation = [];
   @action settripLocation = obj => {
     this.tripLocation = obj;
   };
-  @observable activity = [];
+  @persist('object') @observable activity = [];
   @action setactivity = obj => {
     this.activity = obj;
   };
-  @observable species = [];
+  @persist('object') @observable species = [];
+
   @action setspecies = obj => {
     this.species = obj;
   };
@@ -83,6 +84,7 @@ class filters {
     this.settripLocation([]);
     this.setactivity([]);
     this.setspecies([]);
+
     this.clearFilters();
   };
 }

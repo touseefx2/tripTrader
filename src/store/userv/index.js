@@ -5,17 +5,17 @@ import NetInfo from '@react-native-community/netinfo';
 import db from '../../database/index';
 import {Alert} from 'react-native';
 
-class user {
+class userv {
   constructor() {
     makeObservable(this);
   }
 
-  @persist('object') @observable plans = false;
+  @observable plans = false;
   @action setplans = obj => {
     this.plans = obj;
   };
 
-  @persist('object') @observable isNotification = true;
+  @observable isNotification = true;
 
   @action setisNotification = obj => {
     this.isNotification = obj;
@@ -24,14 +24,14 @@ class user {
   @observable vuser = false;
   @observable fscreen = '';
 
-  @persist('object') @observable user = false;
+  @observable user = false;
 
-  @persist('object') @observable followers = [];
-  @persist('object') @observable totalfollowers = 0;
-  @persist('object') @observable following = [];
-  @persist('object') @observable totalfollowing = 0;
-  @persist('object') @observable blockUsers = [];
-  @persist('object') @observable totalblockUsers = 0;
+  @observable followers = [];
+  @observable totalfollowers = 0;
+  @observable following = [];
+  @observable totalfollowing = 0;
+  @observable blockUsers = [];
+  @observable totalblockUsers = 0;
   @observable fl = false;
   @observable bl = false;
 
@@ -2191,16 +2191,6 @@ class user {
 
   @action.bound
   clearUser = () => {
-    this.addauthToken('');
-    this.setphn('');
-    this.setcntr('');
-    this.setpwc('');
-    this.setplans(false);
-    this.clearcurrentUser();
-    store.Userv.clearUser();
-  };
-
-  @action clearcurrentUser = () => {
     this.setUser(false);
     this.setphotos([]);
     this.setreview([]);
@@ -2209,6 +2199,7 @@ class user {
     this.setfollowing([]);
     this.settotalfollowers(0);
     this.settotalfollowing(0);
+    this.setfscreen('');
   };
 
   // attemptToUploadImageEPS(body, p, c, seterror, suc) {
@@ -2732,4 +2723,4 @@ class user {
   }
 }
 
-export const User = new user();
+export const Userv = new userv();

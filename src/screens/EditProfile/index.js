@@ -100,7 +100,7 @@ function EditProfile(props) {
   if (user != 'guest' && user) {
     srccnic =
       user.identityProof && user.identityProof != '' ? user.identityProof : '';
-    isCnicVerf = user.identityStatus == 'notVerified' ? false : true;
+    isCnicVerf = user.identityStatus == 'verified' ? true : false;
   }
 
   const [fn, setfn] = useState(userFName);

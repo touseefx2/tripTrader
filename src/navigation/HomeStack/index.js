@@ -403,6 +403,17 @@ let SettingsStack = () => {
       />
 
       <Stack.Screen
+        name="BlockUsers"
+        component={screens.BlockUsers}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+      />
+
+      <Stack.Screen
         name="ChangePassword"
         component={ChangePasswordStack}
         options={props => {
