@@ -51,26 +51,21 @@ function Photos(props) {
     setgetDataOnce(C);
   };
 
-  const refreshing = store.User.photosRefrsh;
-  const setRefreshing = c => {
-    store.User.setphotosrfrsh(c);
+  const [refreshing, setRefreshing] = React.useState(false);
+  const setrefeshing = c => {
+    setRefreshing(c);
   };
 
   const onRefresh = React.useCallback(() => {
     console.warn('onrefresh cal');
     setRefreshing(true);
+    getDbData();
   }, []);
-
-  useEffect(() => {
-    if (refreshing) {
-      getDbData();
-    }
-  }, [refreshing]);
 
   const getDbData = c => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToGetPhotos(user._id, setGetDataOnce, setRefreshing);
+        store.User.attemptToGetPhotos(user._id, setGetDataOnce, setrefeshing);
       } else {
         setRefreshing(false);
       }
@@ -164,7 +159,8 @@ function Photos(props) {
   };
 
   const renderShowData = ({item, index}) => {
-    let photo = item;
+    let tid = item.tid;
+    let photo = item.uri ? item.uri : '';
 
     const renderPhotoCross = () => {
       return (
@@ -173,7 +169,7 @@ function Photos(props) {
             {opacity: pressed ? 0.7 : 1.0},
             styles.crossContainer,
           ]}
-          onPress={() => openDeleteModal({uri: item, i: index})}>
+          onPress={() => openDeleteModal({uri: photo, tid: tid, i: index})}>
           <Image
             source={require('../../../assets/images/cross/img.png')}
             style={{width: 9, height: 9, resizeMode: 'contain'}}

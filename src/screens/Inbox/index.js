@@ -41,6 +41,10 @@ export default observer(Inbox);
 
 function Inbox(props) {
   let guest = require('../../assets/images/drawer/guest/img.png');
+  const swipRef = useRef(null);
+  const closeSwipe = () => {
+    swipRef?.current?.safeCloseOpenRow();
+  };
 
   let maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
@@ -87,7 +91,7 @@ function Inbox(props) {
     Keyboard.dismiss();
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToDeleteChat(chatId, user._id);
+        store.User.attemptToDeleteChat(chatId, user._id, closeSwipe);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -243,7 +247,11 @@ function Inbox(props) {
     console.log('ics ', ics);
 
     if (ics == 'greater') {
-      t = moment(ud).format('MMM DD');
+      if (udcy) {
+        t = moment(ud).format('MMM DD');
+      } else {
+        t = moment(ud).format('MMM DD, YYYY');
+      }
     } else {
       let min = diff_minutes(ed, sd);
       console.log('minutes: ', min);
@@ -273,7 +281,8 @@ function Inbox(props) {
     let photo = u.image && u.image != '' ? {uri: u.image} : guest;
     let title = u.firstName + ' ' + u.lastName;
     let subtitle = '';
-    let create = CheckDate(item.updatedAt); //'2022-11-11T07:03:58.919+00:00'
+    let create = CheckDate(item.updatedAt);
+    // let create = CheckDate('2022-11-11T07:03:58.919+00:00');
     // let isread = item.isRead ||  false;
     let isread = false;
 
@@ -309,7 +318,7 @@ function Inbox(props) {
       return (
         <View style={[styles.mtextContainer]}>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <View style={{width: '74%'}}>
+            <View style={{width: '69%'}}>
               <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
@@ -325,7 +334,7 @@ function Inbox(props) {
             </View>
             <View
               style={{
-                width: '24%',
+                width: '29%',
 
                 alignItems: 'flex-end',
               }}>
@@ -431,6 +440,7 @@ function Inbox(props) {
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <SwipeListView
+              ref={swipRef}
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
               }

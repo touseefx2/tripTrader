@@ -727,6 +727,7 @@ function Home(props) {
           user._id,
           usr._id,
           obj,
+          message,
           setIsSendMessage,
         );
       } else {
@@ -1743,8 +1744,9 @@ function Home(props) {
             if (arset.length > 1) {
               let sd = arset[arset.length - 1];
               t = fd + ' - ' + sd;
+            } else if (arset.length <= 1) {
+              t = fd;
             }
-            t = fd;
           }
         } else {
           let duration = parseInt(item.duration.number);

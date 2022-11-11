@@ -29,7 +29,7 @@ class user {
     this.dlc = obj;
   };
 
-  attemptToDeleteChat(cid, uid) {
+  attemptToDeleteChat(cid, uid, suc) {
     console.warn('DeleteChat  true : ');
     this.setdlc(true);
     let params = cid + '/' + uid;
@@ -40,6 +40,7 @@ class user {
           `response DeleteChat  ${db.apis.BLOCK_USER}${params} : `,
           resp.data,
         );
+        suc();
         this.attemptToGetInboxes(
           uid,
           () => {},
@@ -407,7 +408,8 @@ class user {
     this.trips = obj;
   };
   @action addtrips = obj => {
-    this.trips.unshift(obj);
+    // this.trips.unshift(obj);
+    this.trips.push(obj);
   };
   @action updatetrips = (obj, ind) => {
     this.trips[ind] = obj;
@@ -537,7 +539,7 @@ class user {
           rp.map((e, i, a) => {
             if (e.photos && e.photos.length > 0) {
               e.photos.map((ee, i, a) => {
-                dt.push(ee);
+                dt.push({uri: ee, tid: e._id});
               });
             }
           });
@@ -545,6 +547,11 @@ class user {
 
         setgetdata(true);
         this.setphotos(dt);
+        this.attemptToGetTrips(
+          this.user._id,
+          () => {},
+          () => {},
+        );
       })
       .catch(err => {
         setrfrsh(false);
@@ -681,13 +688,46 @@ class user {
   //modal actions
   @action attemptToDeletePhotos = (obj, suc) => {
     console.warn('deletePhoto  : ', 'true');
-    this.setmLoader(true);
-    setTimeout(() => {
-      this.setmLoader(false);
-      delete this.photos.splice(obj.i, 1);
 
-      suc();
-    }, 1000);
+    this.setmLoader(true);
+    let i = obj.i;
+    let body = {
+      photo: obj.uri,
+    };
+    let tid = obj.tid;
+
+    db.hitApi(db.apis.DELETE_TRIP_PHOTO + tid, 'put', body, this.authToken)
+      ?.then(resp => {
+        this.setmLoader(false);
+        console.log(
+          `response deletePhoto  ${db.apis.DELETE_TRIP_PHOTO + tid} : `,
+          resp.data,
+        );
+        delete this.photos.splice(i, 1);
+        suc();
+        this.attemptToGetTrips(
+          this.user._id,
+          () => {},
+          () => {},
+        );
+      })
+      .catch(err => {
+        this.setmLoader(false);
+
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in deletePhoto ${db.apis.DELETE_TRIP_PHOTO + tid} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
   };
   @action attemptToReplyComment = (obj, cmnt, suc) => {
     console.warn('reply comment  : ', 'true');
@@ -891,19 +931,25 @@ class user {
       });
   };
 
-  @action attemptToCheckFirstMessage = (suid, ruid, obj, suc) => {
+  @action attemptToCheckFirstMessage = (suid, ruid, obj, msg, suc) => {
     console.warn('check First Message');
     this.sethomeModalLoder(true);
     let params = suid + '/' + ruid;
     db.hitApi(db.apis.CHECK_FIRST_MESSAGE + params, 'get', {}, this.authToken)
       ?.then(resp => {
-        this.sethomeModalLoder(false);
         console.log(
           `responsecheck First Message ${db.apis.CHECK_FIRST_MESSAGE}${params} : `,
           resp.data,
         );
         let rsp = resp.data.data || [];
         if (rsp.length > 0) {
+          let dt = rsp[0];
+          let body = {
+            message: msg,
+            sendBy: suid,
+            type: 'text',
+          };
+          this.SendSecodMessage(body, dt._id, suc);
         }
       })
       .catch(err => {
@@ -941,6 +987,33 @@ class user {
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in SendFirstMessage ${db.apis.SEND_FIRST_MESSAGE} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  @action SendSecodMessage = (body, cid, suc) => {
+    db.hitApi(db.apis.SEND_SECOND_MESSAGE + cid, 'put', body, this.authToken)
+      ?.then(resp => {
+        this.sethomeModalLoder(false);
+        console.log(
+          `response SEND_SECOND_MESSAGE  ${db.apis.SEND_SECOND_MESSAGE} : `,
+          resp.data,
+        );
+        suc(true);
+      })
+      .catch(err => {
+        this.sethomeModalLoder(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in SEND_SECOND_MESSAGE ${db.apis.SEND_SECOND_MESSAGE} : `,
           msg,
         );
         if (msg == 503 || msg == 500) {
@@ -1014,6 +1087,11 @@ class user {
         this.seteditTripObj({data: rsp, index: 0});
         this.addtrips(rsp);
         suc(true);
+        this.attemptToGetPhotos(
+          this.user._id,
+          () => {},
+          () => {},
+        );
       })
       .catch(err => {
         this.setctripLoader(false);
@@ -1093,8 +1171,12 @@ class user {
         let rsp = resp.data.data;
         this.seteditTripObj(rsp);
         this.updatetrips(rsp, index);
-
         suc(true);
+        this.attemptToGetPhotos(
+          this.user._id,
+          () => {},
+          () => {},
+        );
       })
       .catch(err => {
         this.setctripLoader(false);
@@ -1132,6 +1214,11 @@ class user {
 
         this.deletetrips(index);
         suc(true);
+        this.attemptToGetPhotos(
+          this.user._id,
+          () => {},
+          () => {},
+        );
       })
       .catch(err => {
         this.setctripLoader(false);
@@ -1168,7 +1255,10 @@ class user {
       })
         .then(response => response.json())
         .then(responseData => {
-          console.warn('upload update trips photo success : ');
+          console.warn(
+            'upload update trips photo success : ',
+            responseData.data[0].imgrUrl,
+          );
           let rsp = responseData.data[0].imgrUrl;
           ua.push(rsp);
 

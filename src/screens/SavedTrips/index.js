@@ -409,7 +409,11 @@ function SavedTrips(props) {
   //end
 
   const setIsSendMessage = v => {
-     store.User.attemptToGetInboxes(user._id, ()=>{}, ()=>{});
+    store.User.attemptToGetInboxes(
+      user._id,
+      () => {},
+      () => {},
+    );
     setsendObj(modalObj.item.hostId);
     setisSendMessage(v);
     setTimeout(() => {
@@ -594,6 +598,7 @@ function SavedTrips(props) {
           user._id,
           usr._id,
           obj,
+          message,
           setIsSendMessage,
         );
       } else {
@@ -1599,8 +1604,9 @@ function SavedTrips(props) {
             if (arset.length > 1) {
               let sd = arset[arset.length - 1];
               t = fd + ' - ' + sd;
+            } else if (arset.length <= 1) {
+              t = fd;
             }
-            t = fd;
           }
         } else {
           let duration = parseInt(item.duration.number);

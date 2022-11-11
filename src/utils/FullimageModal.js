@@ -230,11 +230,7 @@ function FullimageModal(props) {
 
                         <Image
                           source={{
-                            uri: item.img
-                              ? item.iamge
-                              : item.uri
-                              ? item.uri
-                              : item,
+                            uri: item.uri ? item.uri : item,
                           }}
                           style={styles.previewImageStyle}
                         />

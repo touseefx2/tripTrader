@@ -1,7 +1,7 @@
 //online link  ec2
 // const BASE_URL = 'http://ec2-13-126-235-46.ap-south-1.compute.amazonaws.com/';
 //local link
-const BASE_URL = 'http://192.168.0.105:3001/';
+const BASE_URL = 'http://192.168.100.5:3001/';
 
 //apis
 const GET_CITIES_AREAS = 'api/area/getAllAreas';
@@ -61,11 +61,14 @@ const SAVE_TRIP = 'api/user/';
 
 const CHECK_FIRST_MESSAGE = 'api/chat/checkifconversationexists/';
 const SEND_FIRST_MESSAGE = 'api/chat/sendFirstMessage';
+const SEND_SECOND_MESSAGE = 'api/chat/replyToChat/';
 const SEND_REPORT_USER = 'api/report';
 
 const GET_INBOXES_BY_UID = 'api/chat/myAllChats?userId=';
 
 const DELETE_CHAT = 'api/chat/deleteAChat/';
+
+const DELETE_TRIP_PHOTO = 'api/trip/deleteImage/';
 
 export default apis = {
   BASE_URL,
@@ -125,9 +128,11 @@ export default apis = {
   SAVE_TRIP,
   CHECK_FIRST_MESSAGE,
   SEND_FIRST_MESSAGE,
+  SEND_SECOND_MESSAGE,
   SEND_REPORT_USER,
   GET_INBOXES_BY_UID,
   DELETE_CHAT,
+  DELETE_TRIP_PHOTO,
 };
 
 // const login = 'user/loginCaptain';

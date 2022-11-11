@@ -761,24 +761,25 @@ class userv {
       });
   };
 
-  @action attemptToCheckFirstMessage = (suid, ruid, obj, suc) => {
+  @action attemptToCheckFirstMessage = (suid, ruid, obj, msg, suc) => {
     console.warn('check First Message');
     this.sethomeModalLoder(true);
     let params = suid + '/' + ruid;
-    db.hitApi(
-      db.apis.CHECK_FIRST_MESSAGE + params,
-      'get',
-      {},
-      store.User.authToken,
-    )
+    db.hitApi(db.apis.CHECK_FIRST_MESSAGE + params, 'get', {}, this.authToken)
       ?.then(resp => {
-        this.sethomeModalLoder(false);
         console.log(
           `responsecheck First Message ${db.apis.CHECK_FIRST_MESSAGE}${params} : `,
           resp.data,
         );
         let rsp = resp.data.data || [];
         if (rsp.length > 0) {
+          let dt = rsp[0];
+          let body = {
+            message: msg,
+            sendBy: suid,
+            type: 'text',
+          };
+          this.SendSecodMessage(body, dt._id, suc);
         }
       })
       .catch(err => {
@@ -816,6 +817,33 @@ class userv {
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in SendFirstMessage ${db.apis.SEND_FIRST_MESSAGE} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  @action SendSecodMessage = (body, cid, suc) => {
+    db.hitApi(db.apis.SEND_SECOND_MESSAGE + cid, 'put', body, this.authToken)
+      ?.then(resp => {
+        this.sethomeModalLoder(false);
+        console.log(
+          `response SEND_SECOND_MESSAGE  ${db.apis.SEND_SECOND_MESSAGE} : `,
+          resp.data,
+        );
+        suc(true);
+      })
+      .catch(err => {
+        this.sethomeModalLoder(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in SEND_SECOND_MESSAGE ${db.apis.SEND_SECOND_MESSAGE} : `,
           msg,
         );
         if (msg == 503 || msg == 500) {

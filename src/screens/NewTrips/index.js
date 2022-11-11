@@ -902,7 +902,6 @@ function NewTrips(props) {
 
   const setIsTripCreatSuc = v => {
     setisTripCreate(v);
-    store.User.setphotosrfrsh(true);
   };
 
   const CreateTrip = () => {
@@ -1042,7 +1041,7 @@ function NewTrips(props) {
           availableFrom: isSelDate1,
           availableTo: isSelDate2,
           status: status,
-          photos: photos,
+          photos: p,
           unAvailableDays: objct,
           location: location == false ? {} : location,
         };
@@ -1131,7 +1130,6 @@ function NewTrips(props) {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         store.User.setctripLoader(true);
-
         store.User.attemptToDeleteTrip(
           {},
           editTrip.data._id,

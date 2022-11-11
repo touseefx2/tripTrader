@@ -179,6 +179,7 @@ function UserProfile(props) {
           store.User.user._id,
           usr._id,
           obj,
+          message,
           setIsSendMessage,
         );
       } else {
