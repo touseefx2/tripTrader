@@ -1,5 +1,5 @@
-import { PlatformPressable } from '@react-navigation/elements';
-import { Link, useTheme } from '@react-navigation/native';
+import {PlatformPressable} from '@react-navigation/elements';
+import {Link, useTheme} from '@react-navigation/native';
 import Color from 'color';
 import * as React from 'react';
 import {
@@ -14,14 +14,13 @@ import {
 import theme from '../../../../../src/theme';
 
 type Props = {
-
   user?: string;
   /**
    * The label text of the item.
    */
   label:
     | string
-    | ((props: { focused: boolean; color: string }) => React.ReactNode);
+    | ((props: {focused: boolean; color: string}) => React.ReactNode);
   /**
    * Icon to display for the `DrawerItem`.
    */
@@ -126,8 +125,7 @@ const LinkPressable = ({
         // can't use {...rest} for these 3 props
         onLongPress={onLongPress ?? undefined}
         onPressIn={onPressIn ?? undefined}
-        onPressOut={onPressOut ?? undefined}
-      >
+        onPressOut={onPressOut ?? undefined}>
         {children}
       </Link>
     );
@@ -136,8 +134,7 @@ const LinkPressable = ({
       <PlatformPressable
         {...rest}
         accessibilityRole={accessibilityRole}
-        onPress={onPress}
-      >
+        onPress={onPress}>
         <View style={style}>{children}</View>
       </PlatformPressable>
     );
@@ -148,7 +145,7 @@ const LinkPressable = ({
  * A component used to show an action item with an icon and a label in a navigation drawer.
  */
 export default function DrawerItem(props: Props) {
-  const { colors } = useTheme();
+  const {colors} = useTheme();
 
   const {
     icon,
@@ -169,86 +166,99 @@ export default function DrawerItem(props: Props) {
     ...rest
   } = props;
 
-  const { borderRadius = 8 } = StyleSheet.flatten(style || {});
+  const {borderRadius = 8} = StyleSheet.flatten(style || {});
   const color = focused ? activeTintColor : inactiveTintColor;
   const backgroundColor = focused
     ? activeBackgroundColor
     : inactiveBackgroundColor;
 
-  const iconNode = icon ? icon({ size: 24, focused, color }) : null;
- console.log("user : ",user)
- if((user=="guest" && (label=="Trade Offers" || label=="Confirmed Trips" || label=="Saved Trips" )) || (user!=="guest"  && label=="My Profile") || (label=="Notifications") ){
-  return (
-   null
-  );
- }  else  {
-  return(
-  <View
-  collapsable={false}
-  {...rest}
-  style={[styles.container, { borderRadius, backgroundColor,marginTop:( label=="Create Trip" ||  label=="Latest News")?15:0 }, style]}
->
-  <LinkPressable
-    onPress={onPress}
-    style={[styles.wrapper, { borderRadius }]}
-    accessibilityRole="button"
-    accessibilityState={{ selected: focused }}
-    pressColor={pressColor}
-    pressOpacity={pressOpacity}
-    to={to}
-  >
-    <React.Fragment>
-      {iconNode}
+  const iconNode = icon ? icon({size: 24, focused, color}) : null;
+  //  console.log("user : ",user)
+  if (
+    (user == 'guest' &&
+      (label == 'Trade Offers' ||
+        label == 'Confirmed Trips' ||
+        label == 'Saved Trips')) ||
+    (user !== 'guest' && label == 'My Profile') ||
+    label == 'Notifications' ||
+    label == 'Edit Profile'
+  ) {
+    return null;
+  } else {
+    return (
       <View
+        collapsable={false}
+        {...rest}
         style={[
-          styles.label,
-          { marginLeft: iconNode ? 20 : 0, marginVertical: 5 },
-        ]}
-      >
-        {typeof label === 'string' ? (
-          <Text
-            numberOfLines={1}
-            allowFontScaling={allowFontScaling}
-            style={[
-              {
-                color,
-                 
-                fontFamily:theme.fonts.fontNormal
-              },
-              labelStyle,
-            ]}
-          >
-            {label}
-          </Text>
-        ) : (
-          label({ color, focused })
-        )}
+          styles.container,
+          {
+            borderRadius,
+            backgroundColor,
+            marginTop:
+              label == 'New Trip ...' ||
+              label == 'Support' ||
+              label == 'Settings'
+                ? 17
+                : 0,
+          },
+          style,
+        ]}>
+        <LinkPressable
+          onPress={onPress}
+          style={[styles.wrapper, {borderRadius}]}
+          accessibilityRole="button"
+          accessibilityState={{selected: focused}}
+          pressColor={pressColor}
+          pressOpacity={pressOpacity}
+          to={to}>
+          <React.Fragment>
+            {iconNode}
+            <View
+              style={[
+                styles.label,
+                {marginLeft: iconNode ? 20 : 0, marginVertical: 5},
+              ]}>
+              {typeof label === 'string' ? (
+                <Text
+                  numberOfLines={1}
+                  allowFontScaling={allowFontScaling}
+                  style={[
+                    {
+                      color,
+
+                      fontFamily: theme.fonts.fontNormal,
+                    },
+                    labelStyle,
+                  ]}>
+                  {label}
+                </Text>
+              ) : (
+                label({color, focused})
+              )}
+            </View>
+          </React.Fragment>
+        </LinkPressable>
       </View>
-    </React.Fragment>
-  </LinkPressable>
-</View>
-  )
- }
-  
+    );
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: 15,
     marginVertical: 0,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   wrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal:12,
-    paddingVertical:6,
-    borderRadius:8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
   },
   label: {
     marginRight: 32,
     flex: 1,
-  
   },
   button: {
     display: 'flex',

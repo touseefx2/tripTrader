@@ -25,9 +25,7 @@ import {observer} from 'mobx-react';
 import store from '../../store/index';
 import utils from '../../utils/index';
 import theme from '../../theme';
-// import DynamicTabView from 'react-native-dynamic-tab-view';
-// import ImageSlider from 'react-native-image-slider';
-// import FastImage from 'react-native-fast-image';
+
 import {
   responsiveHeight,
   responsiveWidth,

@@ -11,8 +11,8 @@ import {
   I18nManager,
   Platform,
 } from 'react-native';
-import TabBarItem, {Props as TabBarItemProps} from './TabBarItem';
-import TabBarIndicator, {Props as IndicatorProps} from './TabBarIndicator';
+import TabBarItem, { Props as TabBarItemProps } from './TabBarItem';
+import TabBarIndicator, { Props as IndicatorProps } from './TabBarIndicator';
 import type {
   Route,
   Scene,
@@ -39,18 +39,18 @@ export type Props<T extends Route> = SceneRendererProps & {
     scene: Scene<T> & {
       focused: boolean;
       color: string;
-    },
+    }
   ) => React.ReactNode;
   renderIcon?: (
     scene: Scene<T> & {
       focused: boolean;
       color: string;
-    },
+    }
   ) => React.ReactNode;
   renderBadge?: (scene: Scene<T>) => React.ReactNode;
   renderIndicator: (props: IndicatorProps<T>) => React.ReactNode;
   renderTabBarItem?: (
-    props: TabBarItemProps<T> & {key: string},
+    props: TabBarItemProps<T> & { key: string }
   ) => React.ReactElement;
   onTabPress?: (scene: Scene<T> & Event) => void;
   onTabLongPress?: (scene: Scene<T>) => void;
@@ -64,7 +64,7 @@ export type Props<T extends Route> = SceneRendererProps & {
 
 type State = {
   layout: Layout;
-  tabWidths: {[key: string]: number};
+  tabWidths: { [key: string]: number };
 };
 
 export default class TabBar<T extends Route> extends React.Component<
@@ -72,29 +72,29 @@ export default class TabBar<T extends Route> extends React.Component<
   State
 > {
   static defaultProps = {
-    getLabelText: ({route}: Scene<Route>) => route.title,
-    getAccessible: ({route}: Scene<Route>) =>
+    getLabelText: ({ route }: Scene<Route>) => route.title,
+    getAccessible: ({ route }: Scene<Route>) =>
       typeof route.accessible !== 'undefined' ? route.accessible : true,
-    getAccessibilityLabel: ({route}: Scene<Route>) =>
+    getAccessibilityLabel: ({ route }: Scene<Route>) =>
       typeof route.accessibilityLabel === 'string'
         ? route.accessibilityLabel
         : typeof route.title === 'string'
         ? route.title
         : undefined,
-    getTestID: ({route}: Scene<Route>) => route.testID,
+    getTestID: ({ route }: Scene<Route>) => route.testID,
     renderIndicator: (props: IndicatorProps<Route>) => (
       <TabBarIndicator {...props} />
     ),
   };
 
   state: State = {
-    layout: {width: 0, height: 0},
+    layout: { width: 0, height: 0 },
     tabWidths: {},
   };
 
   componentDidUpdate(prevProps: Props<T>, prevState: State) {
-    const {navigationState} = this.props;
-    const {layout, tabWidths} = this.state;
+    const { navigationState } = this.props;
+    const { layout, tabWidths } = this.state;
 
     if (
       prevProps.navigationState.routes.length !==
@@ -108,7 +108,7 @@ export default class TabBar<T extends Route> extends React.Component<
         !(
           layout.width &&
           navigationState.routes.every(
-            r => typeof tabWidths[r.key] === 'number',
+            (r) => typeof tabWidths[r.key] === 'number'
           )
         )
       ) {
@@ -122,7 +122,7 @@ export default class TabBar<T extends Route> extends React.Component<
 
   // to store the layout.width of each tab
   // when all onLayout's are fired, this would be set in state
-  private measuredTabWidths: {[key: string]: number} = {};
+  private measuredTabWidths: { [key: string]: number } = {};
 
   private scrollAmount = new Animated.Value(0);
 
@@ -139,8 +139,8 @@ export default class TabBar<T extends Route> extends React.Component<
     layout: Layout,
     routes: Route[],
     scrollEnabled: boolean | undefined,
-    tabWidths: {[key: string]: number},
-    flattenedWidth: string | number | undefined,
+    tabWidths: { [key: string]: number },
+    flattenedWidth: string | number | undefined
   ) => {
     if (flattenedWidth === 'auto') {
       return tabWidths[routes[index].key] || 0;
@@ -169,9 +169,9 @@ export default class TabBar<T extends Route> extends React.Component<
     tabBarWidth - layoutWidth;
 
   private getTabBarWidth = (props: Props<T>, state: State) => {
-    const {layout, tabWidths} = state;
-    const {scrollEnabled, tabStyle} = props;
-    const {routes} = props.navigationState;
+    const { layout, tabWidths } = state;
+    const { scrollEnabled, tabStyle } = props;
+    const { routes } = props.navigationState;
 
     return routes.reduce<number>(
       (acc, _, i) =>
@@ -182,18 +182,18 @@ export default class TabBar<T extends Route> extends React.Component<
           routes,
           scrollEnabled,
           tabWidths,
-          this.getFlattenedTabWidth(tabStyle),
+          this.getFlattenedTabWidth(tabStyle)
         ),
-      0,
+      0
     );
   };
 
   private normalizeScrollValue = (
     props: Props<T>,
     state: State,
-    value: number,
+    value: number
   ) => {
-    const {layout} = state;
+    const { layout } = state;
     const tabBarWidth = this.getTabBarWidth(props, state);
     const maxDistance = this.getMaxScrollDistance(tabBarWidth, layout.width);
     const scrollValue = Math.max(Math.min(value, maxDistance), 0);
@@ -208,11 +208,11 @@ export default class TabBar<T extends Route> extends React.Component<
   };
 
   private getScrollAmount = (props: Props<T>, state: State, index: number) => {
-    const {layout, tabWidths} = state;
-    const {scrollEnabled, tabStyle} = props;
-    const {routes} = props.navigationState;
+    const { layout, tabWidths } = state;
+    const { scrollEnabled, tabStyle } = props;
+    const { routes } = props.navigationState;
 
-    const centerDistance = Array.from({length: index + 1}).reduce<number>(
+    const centerDistance = Array.from({ length: index + 1 }).reduce<number>(
       (total, _, i) => {
         const tabWidth = this.getComputedTabWidth(
           i,
@@ -220,14 +220,14 @@ export default class TabBar<T extends Route> extends React.Component<
           routes,
           scrollEnabled,
           tabWidths,
-          this.getFlattenedTabWidth(tabStyle),
+          this.getFlattenedTabWidth(tabStyle)
         );
 
         // To get the current index centered we adjust scroll amount by width of indexes
         // 0 through (i - 1) and add half the width of current index i
         return total + (index === i ? tabWidth / 2 : tabWidth);
       },
-      0,
+      0
     );
 
     const scrollAmount = centerDistance - layout.width / 2;
@@ -245,7 +245,7 @@ export default class TabBar<T extends Route> extends React.Component<
   };
 
   private handleLayout = (e: LayoutChangeEvent) => {
-    const {height, width} = e.nativeEvent.layout;
+    const { height, width } = e.nativeEvent.layout;
 
     if (
       this.state.layout.width === width &&
@@ -264,13 +264,13 @@ export default class TabBar<T extends Route> extends React.Component<
 
   private getTranslateX = (
     scrollAmount: Animated.Value,
-    maxScrollDistance: number,
+    maxScrollDistance: number
   ) =>
     Animated.multiply(
       Platform.OS === 'android' && I18nManager.isRTL
         ? Animated.add(maxScrollDistance, Animated.multiply(scrollAmount, -1))
         : scrollAmount,
-      I18nManager.isRTL ? 1 : -1,
+      I18nManager.isRTL ? 1 : -1
     );
 
   render() {
@@ -301,33 +301,35 @@ export default class TabBar<T extends Route> extends React.Component<
       style,
       indicatorContainerStyle,
     } = this.props;
-    const {layout, tabWidths} = this.state;
-    const {routes} = navigationState;
+    const { layout, tabWidths } = this.state;
+    const { routes } = navigationState;
 
     const isWidthDynamic = this.getFlattenedTabWidth(tabStyle) === 'auto';
     const tabBarWidth = this.getTabBarWidth(this.props, this.state);
     const tabBarWidthPercent = `${routes.length * 40}%`;
     const translateX = this.getTranslateX(
       this.scrollAmount,
-      this.getMaxScrollDistance(tabBarWidth, layout.width),
+      this.getMaxScrollDistance(tabBarWidth, layout.width)
     );
 
     return (
       <Animated.View
         onLayout={this.handleLayout}
-        style={[styles.tabBar, style]}>
+        style={[styles.tabBar, style]}
+      >
         <Animated.View
           pointerEvents="none"
           style={[
             styles.indicatorContainer,
-            scrollEnabled ? {transform: [{translateX}] as any} : null,
+            scrollEnabled ? { transform: [{ translateX }] as any } : null,
             tabBarWidth
-              ? {width: tabBarWidth}
+              ? { width: tabBarWidth }
               : scrollEnabled
-              ? {width: tabBarWidthPercent}
+              ? { width: tabBarWidthPercent }
               : null,
             indicatorContainerStyle,
-          ]}>
+          ]}
+        >
           {this.props.renderIndicator({
             position,
             layout,
@@ -342,7 +344,7 @@ export default class TabBar<T extends Route> extends React.Component<
                 routes,
                 scrollEnabled,
                 tabWidths,
-                this.getFlattenedTabWidth(tabStyle),
+                this.getFlattenedTabWidth(tabStyle)
               ),
           })}
         </Animated.View>
@@ -361,7 +363,7 @@ export default class TabBar<T extends Route> extends React.Component<
             contentContainerStyle={[
               styles.tabContent,
               scrollEnabled
-                ? {width: tabBarWidth || tabBarWidthPercent}
+                ? { width: tabBarWidth || tabBarWidthPercent }
                 : styles.container,
               contentContainerStyle,
             ]}
@@ -370,15 +372,16 @@ export default class TabBar<T extends Route> extends React.Component<
               [
                 {
                   nativeEvent: {
-                    contentOffset: {x: this.scrollAmount},
+                    contentOffset: { x: this.scrollAmount },
                   },
                 },
               ],
-              {useNativeDriver: true},
+              { useNativeDriver: true }
             )}
-            ref={this.scrollViewRef}>
+            ref={this.scrollViewRef}
+          >
             {routes.map((route: T) => {
-              const props: TabBarItemProps<T> & {key: string} = {
+              const props: TabBarItemProps<T> & { key: string } = {
                 key: route.key,
                 position: position,
                 route: route,
@@ -395,7 +398,7 @@ export default class TabBar<T extends Route> extends React.Component<
                 pressColor: pressColor,
                 pressOpacity: pressOpacity,
                 onLayout: isWidthDynamic
-                  ? e => {
+                  ? (e) => {
                       this.measuredTabWidths[route.key] =
                         e.nativeEvent.layout.width;
 
@@ -403,12 +406,12 @@ export default class TabBar<T extends Route> extends React.Component<
                       // We avoid doing separate setState for each layout since it triggers multiple renders and slows down app
                       if (
                         routes.every(
-                          r =>
-                            typeof this.measuredTabWidths[r.key] === 'number',
+                          (r) =>
+                            typeof this.measuredTabWidths[r.key] === 'number'
                         )
                       ) {
                         this.setState({
-                          tabWidths: {...this.measuredTabWidths},
+                          tabWidths: { ...this.measuredTabWidths },
                         });
                       }
                     }
@@ -430,7 +433,7 @@ export default class TabBar<T extends Route> extends React.Component<
 
                   this.props.jumpTo(route.key);
                 },
-                onLongPress: () => onTabLongPress?.({route}),
+                onLongPress: () => onTabLongPress?.({ route }),
                 labelStyle: labelStyle,
                 style: tabStyle,
               };
@@ -451,20 +454,27 @@ export default class TabBar<T extends Route> extends React.Component<
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    
   },
   scroll: {
-    overflow: Platform.select({default: 'scroll', web: undefined}),
+    overflow: Platform.select({ default: 'scroll', web: undefined }),
   },
   tabBar: {
-    backgroundColor: theme.color.background,
-    // backgroundColor:"red",
+    backgroundColor:theme.color.background,
+    width:"99%",
+    alignSelf:"center",
     borderRadius: 10,
-    marginHorizontal: 1,
+ 
     padding: 4,
-    shadowColor: '#000000',
-    shadowOffset: {width: 0, height: 0.5}, // change this for more shadow
-    shadowOpacity: 0.3,
-    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    
+    elevation: 3,
     zIndex: 1,
   },
   tabContent: {

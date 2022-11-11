@@ -7,14 +7,14 @@ import {
 } from '@react-navigation/native';
 import * as React from 'react';
 
-import type { DrawerDescriptorMap, DrawerNavigationHelpers } from '../types';
+import type {DrawerDescriptorMap, DrawerNavigationHelpers} from '../types';
 import DrawerItem from './DrawerItem';
 
 type Props = {
   state: DrawerNavigationState<ParamListBase>;
   navigation: DrawerNavigationHelpers;
   descriptors: DrawerDescriptorMap;
-  user:"";
+  user: '';
 };
 
 /**
@@ -24,7 +24,7 @@ export default function DrawerItemList({
   state,
   navigation,
   descriptors,
-  user
+  user,
 }: Props) {
   const buildLink = useLinkBuilder();
 
@@ -53,7 +53,7 @@ export default function DrawerItemList({
         navigation.dispatch({
           ...(focused
             ? DrawerActions.closeDrawer()
-            : CommonActions.navigate({ name: route.name, merge: true })),
+            : CommonActions.navigate({name: route.name, merge: true})),
           target: state.key,
         });
       }
@@ -79,7 +79,7 @@ export default function DrawerItemList({
             : route.name
         }
         icon={drawerIcon}
-         user={user}
+        user={user}
         focused={focused}
         activeTintColor={drawerActiveTintColor}
         inactiveTintColor={drawerInactiveTintColor}
@@ -89,7 +89,6 @@ export default function DrawerItemList({
         labelStyle={drawerLabelStyle}
         style={drawerItemStyle}
         to={buildLink(route.name, route.params)}
-      
         onPress={onPress}
       />
     );

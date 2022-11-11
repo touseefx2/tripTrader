@@ -258,7 +258,6 @@ function Inbox(props) {
   }
 
   const ItemView = ({item, index}) => {
-    console.log('item : ', item._id);
     let msgs = item.messages;
     let isendmymsg = false;
 
