@@ -56,7 +56,7 @@ function UserProfile(props) {
 
   let internet = store.General.isInternet;
   let user = store.Userv.user;
-  let loader = store.User.regLoader;
+  let loader = store.Userv.gl;
 
   let userName = '';
   let phn = '';
@@ -76,8 +76,6 @@ function UserProfile(props) {
   const [pv, setpv] = useState(''); //photo view
 
   const [profileImageLoader, setprofileImageLoader] = useState(false);
-  const [showFullprofileImageLoader, setshowFullprofileImageLoader] =
-    useState(false);
 
   const [isSHowChangePhoto, setisSHowChangePhoto] = useState(false);
   const [cphoto, setcphoto] = useState(false);
@@ -97,7 +95,7 @@ function UserProfile(props) {
   const [isSendReport, setisSendReport] = useState(false);
 
   const [sendObj, setsendObj] = useState('');
-  let mloader = store.Userv.otherUserModalLoader;
+  let mloader = store.Userv.homeModalLoder;
 
   const [message, setMessage] = useState('');
   const closeModal = () => {
@@ -109,85 +107,146 @@ function UserProfile(props) {
     setisSendReport(false);
   };
 
+  const [getDataOnce, setgetDataOnce] = useState(false);
+  const setGetDataOnce = C => {
+    setgetDataOnce(C);
+  };
+  const getDbData = () => {
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.Userv.attemptToGetHome(setGetDataOnce);
+      }
+    });
+  };
+  useEffect(() => {
+    if (!getDataOnce && internet) {
+      getDbData();
+    }
+    return () => {};
+  }, [getDataOnce, internet]);
+
+  useEffect(() => {
+    if (store.User.user) {
+      let blk = false;
+      let flw = false;
+      let dtt = store.User.user.followers || [];
+      if (dtt.length > 0) {
+        let fi = dtt.findIndex(x => x.userId == user._id);
+
+        if (fi > -1) {
+          if (dtt[fi].block == true) {
+            blk = true;
+          }
+          if (dtt[fi].following == true) {
+            flw = true;
+          }
+        }
+      }
+      setisBlock(blk);
+      setisFollow(flw);
+    }
+  }, [store.User.user]);
+
   const setIsSendMessage = v => {
+    store.User.attemptToGetInboxes(
+      store.User.user._id,
+      () => {},
+      () => {},
+    );
     setsendObj(modalObj.item);
     closeModal();
     setisSendMessage(v);
   };
   const sendMessage = () => {
     Keyboard.dismiss();
-
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        // const obj = {
-        //   _id: (Math.random() * 10).toFixed(0),
-        //   title: title,
-        //   user: store.User.user._id,
-        //   offer: trade,
-        //   return: Return,
-        //   loc: {
-        //     name: 'Miami, Florida',
-        //     coords: [],
-        //   },
-        //   status: status,
-        //   acceptOtherTrades: acceptOther,
-        //   duration: {
-        //     number: durNum,
-        //     title: dur.title,
-        //   },
-        //   availablity: {
-        //     startDate: isSelDate1,
-        //     endDate: isSelDate2,
-        //   },
-        //   photos: photos,
-        //   unavailable: isSetUnavailable != false ? isSetUnavailable : {},
-        // };
-        // console.warn('create trip obj : ', obj);
-        store.User.attemptToOtherUserMessageSend({}, setIsSendMessage);
+        let usr = modalObj.item;
+        const obj = {
+          userId1: store.User.user._id,
+          userId2: usr._id,
+          messages: [
+            {
+              sendBy: store.User.user._id,
+              isRead: false,
+              message: message,
+              messageType: 'text',
+            },
+          ],
+        };
+
+        store.Userv.attemptToCheckFirstMessage(
+          store.User.user._id,
+          usr._id,
+          obj,
+          setIsSendMessage,
+        );
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
   };
-
   const setIsSendRport = v => {
     setsendObj(modalObj.item);
     closeModal();
-
     setisSendReport(v);
   };
-
   const sendReport = () => {
     Keyboard.dismiss();
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        // const obj = {
-        //   _id: (Math.random() * 10).toFixed(0),
-        //   title: title,
-        //   user: store.User.user._id,
-        //   offer: trade,
-        //   return: Return,
-        //   loc: {
-        //     name: 'Miami, Florida',
-        //     coords: [],
-        //   },
-        //   status: status,
-        //   acceptOtherTrades: acceptOther,
-        //   duration: {
-        //     number: durNum,
-        //     title: dur.title,
-        //   },
-        //   availablity: {
-        //     startDate: isSelDate1,
-        //     endDate: isSelDate2,
-        //   },
-        //   photos: photos,
-        //   unavailable: isSetUnavailable != false ? isSetUnavailable : {},
-        // };
-        // console.warn('create trip obj : ', obj);
-        store.User.attemptToOtherUserMessageSend({}, setIsSendRport);
+        let bd = {
+          reason: message,
+          reportby: store.User.user._id,
+          userId: user._id,
+        };
+        store.Userv.SendReportUser(bd, setIsSendRport);
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
+  const unFollowUser = () => {
+    Keyboard.dismiss();
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.Userv.unFollowUser();
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
+  const FollowUser = () => {
+    Keyboard.dismiss();
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.Userv.FollowUser();
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
+  const BlockUser = () => {
+    Keyboard.dismiss();
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.Userv.BlockUser(closeBottomSheet);
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
+  const UnBlockUser = () => {
+    Keyboard.dismiss();
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.Userv.UnBlockUser(closeBottomSheet);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -297,9 +356,9 @@ function UserProfile(props) {
       setmodalChk('message');
       setisModal(true);
     }
-    if (chk == 'block') {
-      setisBlock(!isBlock);
-    }
+    // if (chk == 'block') {
+    //   setisBlock(!isBlock);
+    // }
     if (chk == 'report') {
       closeBottomSheet();
       setmodalObj({item: user, i: 0});
@@ -345,7 +404,11 @@ function UserProfile(props) {
   };
 
   const ShowFollowersScreen = c => {
-    props.navigation.navigate('ShowFollowers', {chk: c, user: userName});
+    props.navigation.navigate('ShowFollowers', {
+      chk: c,
+      user: userName,
+      cc: 'other',
+    });
   };
 
   const renderProfileSection = () => {
@@ -430,11 +493,12 @@ function UserProfile(props) {
               </Pressable>
 
               <Pressable
+                disabled={loader}
                 style={({pressed}) => [
                   {opacity: pressed ? 0.8 : 1.0},
                   [styles.profileTitle2Conatinerm],
                 ]}
-                onPress={() => setisFollow(!isFollow)}>
+                onPress={!isFollow ? FollowUser : unFollowUser}>
                 <Text style={styles.profileTitle2ConatinerTitle2m}>
                   {isFollow ? 'Unfollow' : 'Follow'}
                 </Text>
@@ -734,9 +798,8 @@ function UserProfile(props) {
               </Pressable>
               <Sep />
               <Pressable
-                onPress={() => {
-                  onClickBottomItem('block');
-                }}
+                disabled={loader}
+                onPress={!isBlock ? BlockUser : UnBlockUser}
                 style={({pressed}) => [
                   {opacity: pressed ? touchOpacity : 1.0},
                   itemConStyle,
@@ -1658,6 +1721,7 @@ function UserProfile(props) {
           closModal={() => setpvm(!pvm)}
         />
       )}
+      <utils.Loader load={loader} />
     </View>
   );
 }

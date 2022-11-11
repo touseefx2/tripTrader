@@ -78,6 +78,7 @@
     "react-native-shadow": "^1.2.2",
     "react-native-star-rating": "^1.1.0",
     "react-native-svg": "^13.2.0",
+    "react-native-swipe-list-view": "^3.2.9",
     "react-native-tab-view": "^3.1.1",
     "react-native-ui-xg": "^0.0.6",
     "react-native-vector-icons": "^9.2.0",

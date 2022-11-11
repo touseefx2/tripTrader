@@ -43,7 +43,7 @@ function ShowFollowers(props) {
   const [modalHeight, setmodalHeight] = useState(0);
 
   let chk = props.route.params.chk || '';
-  // let data = chk == 'followers' ? store.User.followers : store.User.following;
+  let cc = props.route.params.cc || '';
   let headerTitle = props.route.params.user || '';
 
   let fscreen = store.User.fscreen || '';
@@ -53,11 +53,26 @@ function ShowFollowers(props) {
   }
 
   let internet = store.General.isInternet;
-  let user = store.User.user;
-  const data = chk == 'followers' ? store.User.followers : store.User.following;
+  let user = cc == 'my' ? store.User.user : store.Userv.user;
+  let data = [];
+  if (cc == 'my') {
+    data = chk == 'followers' ? store.User.followers : store.User.following;
+  } else {
+    data = chk == 'followers' ? store.Userv.followers : store.Userv.following;
+  }
   let mloader = store.User.fl;
-  let total =
-    chk == 'followers' ? store.User.totalfollowers : store.User.totalfollowing;
+  let total = 0;
+  if (cc == 'my') {
+    total =
+      chk == 'followers'
+        ? store.User.totalfollowers
+        : store.User.totalfollowing;
+  } else {
+    total =
+      chk == 'followers'
+        ? store.Userv.totalfollowers
+        : store.Userv.totalfollowing;
+  }
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
@@ -75,18 +90,35 @@ function ShowFollowers(props) {
   const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        if (chk == 'followers')
-          store.User.attemptToGetFollowers(
-            user._id,
-            setGetDataOnce,
-            setrefeshing,
-          );
-        else
-          store.User.attemptToGetFollowing(
-            user._id,
-            setGetDataOnce,
-            setrefeshing,
-          );
+        if (chk == 'followers') {
+          if (cc == 'my') {
+            store.User.attemptToGetFollowers(
+              user._id,
+              setGetDataOnce,
+              setrefeshing,
+            );
+          } else {
+            store.Userv.attemptToGetFollowers(
+              user._id,
+              setGetDataOnce,
+              setrefeshing,
+            );
+          }
+        } else {
+          if (cc == 'my') {
+            store.User.attemptToGetFollowing(
+              user._id,
+              setGetDataOnce,
+              setrefeshing,
+            );
+          } else {
+            store.Userv.attemptToGetFollowing(
+              user._id,
+              setGetDataOnce,
+              setrefeshing,
+            );
+          }
+        }
       } else {
         setrefeshing(false);
       }

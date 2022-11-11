@@ -137,7 +137,7 @@ let HomeStack = () => {
         options={props => {
           let parent = props.navigation.getParent();
           parent.setOptions({
-            swipeEnabled: true,
+            swipeEnabled: false,
           });
         }}
       />
@@ -306,34 +306,34 @@ let UserProfileStack = () => {
       <Stack.Screen
         name="UserProfilee"
         component={screens.UserProfile}
-        options={props => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: true,
-          });
-        }}
+        // options={props => {
+        //   let parent = props.navigation.getParent();
+        //   parent.setOptions({
+        //     swipeEnabled: true,
+        //   });
+        // }}
       />
 
       <Stack.Screen
         name="ShowFollowers"
         component={screens.ShowFollowers}
-        options={props => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
+        // options={props => {
+        //   let parent = props.navigation.getParent();
+        //   parent.setOptions({
+        //     swipeEnabled: false,
+        //   });
+        // }}
       />
 
       <Stack.Screen
         name="Notifications"
         component={screens.Notifications}
-        options={props => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
+        // options={props => {
+        //   let parent = props.navigation.getParent();
+        //   parent.setOptions({
+        //     swipeEnabled: false,
+        //   });
+        // }}
       />
     </Stack.Navigator>
   );

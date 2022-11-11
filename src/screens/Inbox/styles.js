@@ -94,6 +94,7 @@ export const styles = StyleSheet.create({
   resultContainer: {
     marginTop: 10,
     marginLeft: 5,
+    marginBottom: 10,
   },
   resultText: {
     fontSize: 13,
@@ -107,9 +108,13 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
     fontSize: 13,
-    color: theme.color.title,
+    color: theme.color.subTitleLight,
     fontFamily: theme.fonts.fontMedium,
-    opacity: 0.4,
+  },
+  emptyListStylee: {
+    fontSize: 13,
+    color: theme.color.subTitleLight,
+    fontFamily: theme.fonts.fontMedium,
   },
 
   boxContainer: {
@@ -166,7 +171,7 @@ export const styles = StyleSheet.create({
   },
   mtextContainer: {
     width: '83%',
-    top: 3,
+
     // backgroundColor: 'red',
   },
   textContainertitle: {
@@ -487,7 +492,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     // marginTop: 10,
     paddingHorizontal: 15,
-    paddingVertical: 12,
+    paddingVertical: 15,
     // borderRadius: 10,
     // borderColor: theme.color.fieldBorder,
     // borderWidth: 1,
@@ -522,7 +527,6 @@ export const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 48 / 2,
-    top: 5,
 
     // alignItems: 'center',
     // justifyContent: 'center',
@@ -820,5 +824,11 @@ export const styles = StyleSheet.create({
     fontSize: 13,
     color: theme.color.title,
     fontFamily: theme.fonts.fontMedium,
+  },
+  modalinfoConatinerdelete: {
+    width: '100%',
+    alignItems: 'flex-end',
+    height: '100%',
+    justifyContent: 'center',
   },
 });

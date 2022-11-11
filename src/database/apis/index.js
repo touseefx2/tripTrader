@@ -29,7 +29,7 @@ const GET_All_Plan = 'api/plan?status=active';
 const VERIFY_PIN = 'api/user/password/verifyOtp';
 const UPD_PSWD = 'api/user/password/reset';
 const IS_PHONE_EXIST = 'api/user/verifyPhoneNumber?phone=';
-const SEND_FIRST_MESSAGE = 'api/chat/sendFirstMessage';
+
 const CREATE_TRIP = 'api/trip';
 const UPDATE_TRIP = 'api/trip/';
 const DELETE_TRIP = 'api/trip/';
@@ -52,10 +52,20 @@ const GET_BLOCK_USER = 'api/user/blockedUsers/';
 
 const BLOCK_USER = 'api/user/blockAUser/';
 const UNBLOCK_USER = 'api/user/unBlockAUser/';
+const FOLLOW_USER = 'api/user/followAUser/';
+const UNFOLLOW_USER = 'api/user/unFollowAUser/';
 
 const OFFER_SEND = 'api/offer';
 
 const SAVE_TRIP = 'api/user/';
+
+const CHECK_FIRST_MESSAGE = 'api/chat/checkifconversationexists/';
+const SEND_FIRST_MESSAGE = 'api/chat/sendFirstMessage';
+const SEND_REPORT_USER = 'api/report';
+
+const GET_INBOXES_BY_UID = 'api/chat/myAllChats?userId=';
+
+const DELETE_CHAT = 'api/chat/deleteAChat/';
 
 export default apis = {
   BASE_URL,
@@ -84,7 +94,7 @@ export default apis = {
   VERIFY_PIN,
   UPD_PSWD,
   IS_PHONE_EXIST,
-  SEND_FIRST_MESSAGE,
+
   CREATE_TRIP,
   UPDATE_TRIP,
   GET_ALL_TRIP,
@@ -105,12 +115,19 @@ export default apis = {
   GET_FOLLOWING,
   GET_BLOCK_USER,
 
+  FOLLOW_USER,
+  UNFOLLOW_USER,
   BLOCK_USER,
   UNBLOCK_USER,
 
   OFFER_SEND,
 
   SAVE_TRIP,
+  CHECK_FIRST_MESSAGE,
+  SEND_FIRST_MESSAGE,
+  SEND_REPORT_USER,
+  GET_INBOXES_BY_UID,
+  DELETE_CHAT,
 };
 
 // const login = 'user/loginCaptain';

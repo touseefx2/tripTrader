@@ -76,7 +76,6 @@ function Notifications(props) {
       },
       {
         title: 'Password Changed',
-
         subTitle: 'Your password was successfully changed',
         createdAt: 'Mar 27',
         isRead: true,
@@ -84,7 +83,6 @@ function Notifications(props) {
       {
         title: 'Mike Manuse followed you',
         user: 'Mike Manuse',
-
         topic: 'userFollow',
         photo:
           'https://www.adobe.com/express/create/media_127540366421d3d5bfcaf8202527ca7d37741fd5d.jpeg?width=400&format=jpeg&optimize=medium',

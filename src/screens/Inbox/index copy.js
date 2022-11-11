@@ -49,8 +49,47 @@ function Inbox(props) {
   let internet = store.General.isInternet;
   let user = store.User.user;
   let mloader = store.User.ibl;
-  let loader = store.User.dlc;
   const data = store.User.inbox;
+
+  // const [data, setdata] = useState([]);
+  // useEffect(() => {
+  //   const dt = [
+  //     {
+  //       userName: 'Fransisco Fred',
+  //       message: 'Hey! I had a question about trade...',
+  //       createdAt: 'Just now',
+  //       photo: '',
+
+  //       isRead: false,
+  //     },
+  //     {
+  //       userName: 'Mike Manuse',
+  //       message: 'Hey, do you want to trade a turkey hunt?',
+  //       createdAt: 'Mar 25',
+  //       isRead: true,
+  //       photo:
+  //         'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-10.jpg',
+  //     },
+  //     {
+  //       userName: 'Jack Maw',
+  //       message: 'Hey! I had a question about your trade...',
+  //       createdAt: 'Mar 7',
+  //       isRead: true,
+  //       photo:
+  //         'https://cdn140.picsart.com/76886237758523202417.png?type=webp&to=min&r=-1x-1',
+  //     },
+  //     {
+  //       userName: 'Dylan Brown',
+  //       message: 'Hello, good morning :)',
+  //       createdAt: 'Feb 13',
+  //       isRead: true,
+  //     },
+  //   ];
+
+  //   setdata(dt);
+
+  //   return () => {};
+  // }, []);
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
@@ -83,18 +122,6 @@ function Inbox(props) {
 
   const onclickSearchBar = () => {};
 
-  const deleteChat = chatId => {
-    Keyboard.dismiss();
-    NetInfo.fetch().then(state => {
-      if (state.isConnected) {
-        store.User.attemptToDeleteChat(chatId, user._id);
-      } else {
-        // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
-      }
-    });
-  };
-
   const ItemSeparatorView = () => {
     return (
       <View
@@ -110,35 +137,9 @@ function Inbox(props) {
   const EmptyListMessage = ({item}) => {
     return (
       // Flat List Item
-      <>
-        {!mloader && getDataOnce && (
-          <Text
-            style={{
-              marginTop: '80%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              alignSelf: 'center',
-              fontSize: 13,
-              color: theme.color.subTitleLight,
-              fontFamily: theme.fonts.fontMedium,
-            }}
-            onPress={() => getItem(item)}>
-            No Chats Found
-          </Text>
-        )}
-
-        {mloader && !getDataOnce && (
-          <ActivityIndicator
-            size={30}
-            color={theme.color.button1}
-            style={{
-              marginTop: '80%',
-
-              alignSelf: 'center',
-            }}
-          />
-        )}
-      </>
+      <Text style={styles.emptyListStyle} onPress={() => getItem(item)}>
+        No Data Found
+      </Text>
     );
   };
 
@@ -247,11 +248,11 @@ function Inbox(props) {
     } else {
       let min = diff_minutes(ed, sd);
       console.log('minutes: ', min);
-      // if (min >= 0 && min <= 2) {
-      // t = 'Just now';
-      // } else if (min > 2) {
-      t = moment(ud).format('hh:mm a');
-      // }
+      if (min >= 0 && min <= 2) {
+        t = 'Just now';
+      } else if (min > 2) {
+        t = moment(ud).format('hh:mm a');
+      }
     }
 
     return t;
@@ -280,8 +281,9 @@ function Inbox(props) {
 
     if (msgs.length > 0) {
       let d = msgs[msgs.length > 1 ? msgs.length - 1 : 0];
-      subtitle = d.message;
-
+      subtitle =
+        d.message +
+        'asknas aksnaskasaskjasabs bskabs akjs akjshas kljbs asna kjsa skjabsjkas';
       isendmymsg = d.sendBy._id == uid ? true : false;
       if (!isendmymsg) {
         isread = d.isRead;
@@ -373,6 +375,7 @@ function Inbox(props) {
           [
             styles.modalinfoConatiner,
             {
+              marginTop: index == 0 ? 10 : 0,
               borderBottomWidth: index == data.length - 1 ? 0.7 : 0,
               borderBottomColor: theme.color.fieldBorder,
               backgroundColor: isread ? theme.color.background : '#EAF1E3',
@@ -381,33 +384,6 @@ function Inbox(props) {
         ]}>
         {renderProfile()}
         {renderText()}
-      </Pressable>
-    );
-  };
-  const ItemViewdelete = ({item, index}) => {
-    return (
-      <Pressable
-        onPress={() => {
-          deleteChat(item._id);
-        }}
-        style={({pressed}) => [
-          {opacity: pressed ? 0.7 : 1.0},
-          [[styles.modalinfoConatinerdelete]],
-        ]}>
-        <View
-          style={{
-            width: 75,
-            height: '100%',
-            // backgroundColor: 'red',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <utils.vectorIcon.MaterialIcons
-            name="delete-sweep"
-            color={'red'}
-            size={35}
-          />
-        </View>
       </Pressable>
     );
   };
@@ -431,7 +407,7 @@ function Inbox(props) {
         {!internet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
-            <SwipeListView
+            <FlatList
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
               }
@@ -439,34 +415,14 @@ function Inbox(props) {
                 paddingTop: 12,
                 paddingBottom: 40,
               }}
-              ListEmptyComponent={EmptyListMessage}
-              ListHeaderComponent={data.length > 0 ? ListHeader : null}
-              keyExtractor={(item, index) => index.toString()}
-              ListFooterComponent={data.length > 0 ? ListFooter : null}
               data={data}
-              ItemSeparatorComponent={ItemSeparatorView}
               renderItem={ItemView}
-              renderHiddenItem={ItemViewdelete}
-              leftOpenValue={75}
-              rightOpenValue={-75}
-              disableRightSwipe
+              keyExtractor={(item, index) => index.toString()}
+              ListEmptyComponent={EmptyListMessage}
+              ItemSeparatorComponent={ItemSeparatorView}
+              ListHeaderComponent={data.length > 0 ? ListHeader : null}
+              ListFooterComponent={data.length > 0 ? ListFooter : null}
             />
-            {/* <FlatList
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
-              contentContainerStyle={{
-                paddingTop: 12,
-                paddingBottom: 40,
-              }}
-              data={data}
-              renderItem={ItemView}
-              keyExtractor={(item, index) => index.toString()}
-              ListEmptyComponent={EmptyListMessage}
-              ItemSeparatorComponent={ItemSeparatorView}
-              ListHeaderComponent={data.length > 0 ? ListHeader : null}
-              ListFooterComponent={data.length > 0 ? ListFooter : null}
-            /> */}
             {data.length > 0 && !getDataOnce && mloader && (
               <ActivityIndicator
                 size={30}
@@ -485,8 +441,6 @@ function Inbox(props) {
             screen={headerTitle}
             focusScreen={store.General.focusScreen}
           />
-
-          <utils.Loader load={loader} />
         </SafeAreaView>
       </View>
     </>

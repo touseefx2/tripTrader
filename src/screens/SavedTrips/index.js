@@ -409,7 +409,8 @@ function SavedTrips(props) {
   //end
 
   const setIsSendMessage = v => {
-    setsendObj(modalObj.item.user);
+     store.User.attemptToGetInboxes(user._id, ()=>{}, ()=>{});
+    setsendObj(modalObj.item.hostId);
     setisSendMessage(v);
     setTimeout(() => {
       closeMessageModal();
@@ -417,7 +418,7 @@ function SavedTrips(props) {
   };
 
   const setIsSendObj = v => {
-    setsendObj(modalObj.item.user);
+    setsendObj(modalObj.item.hostId);
     setisOfferSend(v);
     setTimeout(() => {
       closeModalAll();
@@ -574,20 +575,27 @@ function SavedTrips(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
+        let item = modalObj.item;
+        let usr = item.hostId;
         const obj = {
-          userId1: '633c227b0bad660d05d2ad9e',
-          userId2: '6332d1669487c34ac7f215c2',
+          userId1: user._id,
+          userId2: usr._id,
           messages: [
             {
-              sendBy: '63315abc036410a784177f8f',
+              sendBy: user._id,
               isRead: false,
-              message: 'Hello John',
+              message: message,
               messageType: 'text',
             },
           ],
         };
 
-        store.User.attemptToMessageSend({}, setIsSendMessage);
+        store.User.attemptToCheckFirstMessage(
+          user._id,
+          usr._id,
+          obj,
+          setIsSendMessage,
+        );
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');

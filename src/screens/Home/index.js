@@ -538,7 +538,12 @@ function Home(props) {
   }, []);
 
   const setIsSendMessage = v => {
-    setsendObj(modalObj.item.user);
+    store.User.attemptToGetInboxes(
+      user._id,
+      () => {},
+      () => {},
+    );
+    setsendObj(modalObj.item.hostId);
     setisSendMessage(v);
     setTimeout(() => {
       closeMessageModal();
@@ -546,7 +551,7 @@ function Home(props) {
   };
 
   const setIsSendObj = v => {
-    setsendObj(modalObj.item.user);
+    setsendObj(modalObj.item.hostId);
     setisOfferSend(v);
     setTimeout(() => {
       closeModalAll();
@@ -703,20 +708,27 @@ function Home(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
+        let item = modalObj.item;
+        let usr = item.hostId;
         const obj = {
-          userId1: '633c227b0bad660d05d2ad9e',
-          userId2: '6332d1669487c34ac7f215c2',
+          userId1: user._id,
+          userId2: usr._id,
           messages: [
             {
-              sendBy: '63315abc036410a784177f8f',
+              sendBy: user._id,
               isRead: false,
-              message: 'Hello John',
+              message: message,
               messageType: 'text',
             },
           ],
         };
 
-        store.User.attemptToMessageSend({}, setIsSendMessage);
+        store.User.attemptToCheckFirstMessage(
+          user._id,
+          usr._id,
+          obj,
+          setIsSendMessage,
+        );
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -1069,6 +1081,7 @@ function Home(props) {
     let usr = item.hostId;
     //user
     let photo = usr.image || '';
+
     let userName = usr.firstName + ' ' + usr.lastName;
     let avgRating = 3.7;
     let totalReviews = 50;
@@ -1128,8 +1141,8 @@ function Home(props) {
               onPress={() => {
                 store.Userv.clearUser();
                 store.Userv.setfscreen('home');
-
                 store.Userv.setUser(usr);
+                store.Userv.addauthToken(store.User.authToken);
                 props.navigation.navigate('UserProfile');
               }}
               style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}>
@@ -4379,8 +4392,6 @@ function Home(props) {
     let unavailable_days = item.unavailable.all_unavailable_dates || [];
     let mdt = moment(item.availablity.startDate).format('YYYY-MM-DD');
     let cdt = moment(new Date()).format('YYYY-MM-DD');
-
-    // console.log('mdt :  ', mdt, ' cdt : ', cdt, ' chk : ', mdt < cdt);
 
     let mind = '';
 

@@ -288,7 +288,11 @@ function MyProfile(props) {
   };
 
   const ShowFollowersScreen = c => {
-    props.navigation.navigate('ShowFollowers', {chk: c, user: userName});
+    props.navigation.navigate('ShowFollowers', {
+      chk: c,
+      user: userName,
+      cc: 'my',
+    });
   };
 
   const renderProfileSection = () => {

@@ -21,6 +21,11 @@ class userv {
     this.isNotification = obj;
   };
 
+  @observable gl = false;
+  @action setgl = obj => {
+    this.gl = obj;
+  };
+
   @observable vuser = false;
   @observable fscreen = '';
 
@@ -481,57 +486,10 @@ class userv {
       });
   };
 
-  @action attemptToGetHomeTrips = (setgetdata, setrfrsh) => {
-    console.warn('Get AllHomeTrip : ', 'true');
-    this.setHomeLoader(true);
+  @action attemptToGetHome = setgetdata => {
+    console.warn('Get AllGenralData : ', 'true');
 
-    db.hitApi(db.apis.GET_ALL_HOME_TRIPS, 'get', {}, this.authToken)
-      ?.then(resp => {
-        this.setHomeLoader(false);
-        setrfrsh(false);
-        console.log(
-          `response Get AllHomeTrip   ${db.apis.GET_ALL_HOME_TRIPS} : `,
-          resp.data,
-        );
-        let dt = resp.data.data;
-        let ar = [];
-        if (dt.length > 0) {
-          dt.map((e, i, a) => {
-            if (e.hostId._id != this.user._id) {
-              ar.push(e);
-            }
-          });
-        }
-        this.setHomeTrips(ar);
-        setgetdata(true);
-
-        this.allGetGeneralData();
-        this.allGetGeneralUserData(this.user._id);
-      })
-      .catch(err => {
-        this.setHomeLoader(false);
-        setrfrsh(false);
-        let msg = err.response.data.message || err.response.status || err;
-        console.log(
-          `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS} : `,
-          msg,
-        );
-        if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
-          return;
-        }
-        if (msg == 'No records found') {
-          setgetdata(true);
-          this.setHomeTrips([]);
-
-          this.allGetGeneralData();
-          this.allGetGeneralUserData(this.user._id);
-          return;
-        }
-        // seterror(msg.toString())
-        Alert.alert('', msg.toString());
-      });
+    this.allGetGeneralUserData(this.user._id, setgetdata);
   };
 
   //
@@ -803,13 +761,260 @@ class userv {
       });
   };
 
-  @action attemptToMessageSend = (obj, suc) => {
-    console.warn('message send  : ', 'true');
+  @action attemptToCheckFirstMessage = (suid, ruid, obj, suc) => {
+    console.warn('check First Message');
     this.sethomeModalLoder(true);
-    setTimeout(() => {
-      this.sethomeModalLoder(false);
-      suc(true);
-    }, 1000);
+    let params = suid + '/' + ruid;
+    db.hitApi(
+      db.apis.CHECK_FIRST_MESSAGE + params,
+      'get',
+      {},
+      store.User.authToken,
+    )
+      ?.then(resp => {
+        this.sethomeModalLoder(false);
+        console.log(
+          `responsecheck First Message ${db.apis.CHECK_FIRST_MESSAGE}${params} : `,
+          resp.data,
+        );
+        let rsp = resp.data.data || [];
+        if (rsp.length > 0) {
+        }
+      })
+      .catch(err => {
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in check First Message ${db.apis.CHECK_FIRST_MESSAGE}${params} : `,
+          msg,
+        );
+        if (msg == 'No records found') {
+          this.SendFirstMessage(obj, suc);
+          return;
+        }
+        this.sethomeModalLoder(false);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  @action SendFirstMessage = (body, suc) => {
+    db.hitApi(db.apis.SEND_FIRST_MESSAGE, 'post', body, this.authToken)
+      ?.then(resp => {
+        this.sethomeModalLoder(false);
+        console.log(
+          `response SendFirstMessage  ${db.apis.SEND_FIRST_MESSAGE} : `,
+          resp.data,
+        );
+        suc(true);
+      })
+      .catch(err => {
+        this.sethomeModalLoder(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in SendFirstMessage ${db.apis.SEND_FIRST_MESSAGE} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  @action SendReportUser = (body, suc) => {
+    this.sethomeModalLoder(true);
+    console.log('SendReportUser body : ', body);
+    db.hitApi(db.apis.SEND_REPORT_USER, 'post', body, this.authToken)
+      ?.then(resp => {
+        this.sethomeModalLoder(false);
+        console.log(
+          `response SendReportUser  ${db.apis.SEND_REPORT_USER} : `,
+          resp.data,
+        );
+        suc(true);
+      })
+      .catch(err => {
+        this.sethomeModalLoder(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in SendReportUser ${db.apis.SEND_REPORT_USER} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  @action myUserGetGeneral = c => {
+    let uid = store.User.user._id;
+    store.User.getUserById1(uid, this.authToken, '');
+    store.User.attemptToGetFollowers(
+      uid,
+      () => {},
+      () => {},
+    );
+    store.User.attemptToGetFollowing(
+      uid,
+      () => {},
+      () => {},
+    );
+    if (c == 'b') {
+      store.User.attemptToGetBloackUsers(
+        uid,
+        () => {},
+        () => {},
+      );
+    }
+  };
+
+  @action unFollowUser = () => {
+    this.setgl(true);
+    let uid1 = store.User.user._id;
+    let uid2 = this.user._id;
+    let params = uid1 + '/' + uid2;
+    db.hitApi(db.apis.UNFOLLOW_USER + params, 'put', {}, this.authToken)
+      ?.then(resp => {
+        console.log(
+          `response UNFOLLOW_USER,  ${db.apis.UNFOLLOW_USER}${params} : `,
+          resp.data,
+        );
+        setTimeout(() => {
+          this.setgl(false);
+        }, 1000);
+        this.attemptToGetHome(() => {});
+        this.myUserGetGeneral('');
+      })
+      .catch(err => {
+        this.setgl(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in UNFOLLOW_USER, ${db.apis.UNFOLLOW_USER}${params} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  @action FollowUser = () => {
+    this.setgl(true);
+    let uid1 = store.User.user._id;
+    let uid2 = this.user._id;
+    let params = uid1 + '/' + uid2;
+    db.hitApi(db.apis.FOLLOW_USER + params, 'put', {}, this.authToken)
+      ?.then(resp => {
+        console.log(
+          `response FOLLOW_USER,  ${db.apis.FOLLOW_USER}${params} : `,
+          resp.data,
+        );
+        setTimeout(() => {
+          this.setgl(false);
+        }, 1000);
+        this.attemptToGetHome(() => {});
+        this.myUserGetGeneral('');
+      })
+      .catch(err => {
+        this.setgl(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in FOLLOW_USER, ${db.apis.FOLLOW_USER}${params} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  @action BlockUser = suc => {
+    this.setgl(true);
+    let uid1 = store.User.user._id;
+    let uid2 = this.user._id;
+    let params = uid1 + '/' + uid2;
+    db.hitApi(db.apis.BLOCK_USER + params, 'put', {}, this.authToken)
+      ?.then(resp => {
+        console.log(
+          `response  BlockUser,  ${db.apis.BLOCK_USER}${params} : `,
+          resp.data,
+        );
+        setTimeout(() => {
+          this.setgl(false);
+        }, 1000);
+        this.attemptToGetHome(() => {});
+        this.myUserGetGeneral('b');
+        suc();
+      })
+      .catch(err => {
+        this.setgl(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in  BlockUser, ${db.apis.BLOCK_USER}${params} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  @action UnBlockUser = suc => {
+    this.setgl(true);
+    let uid1 = store.User.user._id;
+    let uid2 = this.user._id;
+    let params = uid1 + '/' + uid2;
+    db.hitApi(db.apis.UNBLOCK_USER + params, 'put', {}, this.authToken)
+      ?.then(resp => {
+        console.log(
+          `response  unBlockUser,  ${db.apis.UNBLOCK_USER}${params} : `,
+          resp.data,
+        );
+        setTimeout(() => {
+          this.setgl(false);
+        }, 1000);
+        this.attemptToGetHome(() => {});
+        this.myUserGetGeneral('b');
+        suc();
+      })
+      .catch(err => {
+        this.setgl(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in  unBlockUser, ${db.apis.UNBLOCK_USER}${params} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
   };
 
   @action attemptToOtherUserMessageSend = (obj, suc) => {
@@ -1100,7 +1305,7 @@ class userv {
 
   @observable online = false;
   @observable notificationToken = '';
-  @persist @observable authToken = '';
+  @observable authToken = '';
 
   @observable isGetAllDatainSplash = false;
   @observable total = 0; //total uploaded image length
@@ -1585,28 +1790,14 @@ class userv {
     this.attemptToGetSpecies();
   }
 
-  allGetGeneralUserData(uid) {
-    this.attemptToGetFollowers(
-      uid,
-      () => {},
-      () => {},
-    );
+  allGetGeneralUserData(uid, sgd) {
+    this.attemptToGetFollowers(uid, sgd, () => {});
     this.attemptToGetFollowing(
       uid,
       () => {},
       () => {},
     );
-    this.attemptToGetBloackUsers(
-      uid,
-      () => {},
-      () => {},
-    );
-    this.attemptToGetTrips(
-      uid,
-      () => {},
-      () => {},
-    );
-    this.getUserById1(uid, this.authToken, '');
+    // this.getUserById1(uid, this.authToken, '');
   }
 
   @action.bound
@@ -2200,6 +2391,7 @@ class userv {
     this.settotalfollowers(0);
     this.settotalfollowing(0);
     this.setfscreen('');
+    this.addauthToken('');
   };
 
   // attemptToUploadImageEPS(body, p, c, seterror, suc) {

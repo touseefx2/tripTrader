@@ -24,6 +24,45 @@ class user {
   @observable vuser = false;
   @observable fscreen = '';
 
+  @observable dlc = false; //feletechat loader
+  @action setdlc = obj => {
+    this.dlc = obj;
+  };
+
+  attemptToDeleteChat(cid, uid) {
+    console.warn('DeleteChat  true : ');
+    this.setdlc(true);
+    let params = cid + '/' + uid;
+    db.hitApi(db.apis.DELETE_CHAT + params, 'put', {}, this.authToken)
+      ?.then(resp => {
+        this.setdlc(false);
+        console.log(
+          `response DeleteChat  ${db.apis.BLOCK_USER}${params} : `,
+          resp.data,
+        );
+        this.attemptToGetInboxes(
+          uid,
+          () => {},
+          () => {},
+        );
+      })
+      .catch(err => {
+        this.setdlc(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in DeleteChat  ${db.apis.BLOCK_USER}${params}  : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  }
+
   @persist('object') @observable user = false;
 
   @persist('object') @observable followers = [];
@@ -32,8 +71,10 @@ class user {
   @persist('object') @observable totalfollowing = 0;
   @persist('object') @observable blockUsers = [];
   @persist('object') @observable totalblockUsers = 0;
+  @persist('object') @observable inbox = 0;
   @observable fl = false;
   @observable bl = false;
+  @observable ibl = false;
 
   @action setfollowers = obj => {
     this.followers = obj;
@@ -56,11 +97,17 @@ class user {
   @action settotalblockUsers = obj => {
     this.totalblockUsers = obj;
   };
+  @action setinbox = obj => {
+    this.inbox = obj;
+  };
   @action setfl = obj => {
     this.fl = obj;
   };
   @action setbl = obj => {
     this.bl = obj;
+  };
+  @action setibl = obj => {
+    this.ibl = obj;
   };
 
   @action attemptToGetFollowers = (uid, setgetdata, setrfrsh) => {
@@ -195,6 +242,8 @@ class user {
         );
         // let rsp = resp.data.data;
         this.removeblockUsers(ind);
+        this.getUserById1(this.user._id, this.authToken, '');
+
         suc();
       })
       .catch(err => {
@@ -242,6 +291,45 @@ class user {
         Alert.alert('', msg.toString());
       });
   }
+
+  @action attemptToGetInboxes = (uid, setgetdata, setrfrsh) => {
+    console.warn('GET Inboxes : ', 'true');
+    this.setibl(true);
+
+    db.hitApi(db.apis.GET_INBOXES_BY_UID + uid, 'get', {}, this.authToken)
+      ?.then(resp => {
+        this.setibl(false);
+        setrfrsh(false);
+        console.log(
+          `response GET Inboxes ${db.apis.GET_INBOXES_BY_UID + uid} : `,
+          resp.data,
+        );
+        let dt = resp.data.data || [];
+        setgetdata(true);
+        this.setinbox(dt);
+      })
+      .catch(err => {
+        this.setibl(false);
+        setrfrsh(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in GET Inboxes ${db.apis.GET_INBOXES_BY_UID + uid} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        if (msg == 'No records found') {
+          this.setinbox([]);
+          setgetdata(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
 
   @observable phn = '';
 
@@ -803,13 +891,66 @@ class user {
       });
   };
 
-  @action attemptToMessageSend = (obj, suc) => {
-    console.warn('message send  : ', 'true');
+  @action attemptToCheckFirstMessage = (suid, ruid, obj, suc) => {
+    console.warn('check First Message');
     this.sethomeModalLoder(true);
-    setTimeout(() => {
-      this.sethomeModalLoder(false);
-      suc(true);
-    }, 1000);
+    let params = suid + '/' + ruid;
+    db.hitApi(db.apis.CHECK_FIRST_MESSAGE + params, 'get', {}, this.authToken)
+      ?.then(resp => {
+        this.sethomeModalLoder(false);
+        console.log(
+          `responsecheck First Message ${db.apis.CHECK_FIRST_MESSAGE}${params} : `,
+          resp.data,
+        );
+        let rsp = resp.data.data || [];
+        if (rsp.length > 0) {
+        }
+      })
+      .catch(err => {
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in check First Message ${db.apis.CHECK_FIRST_MESSAGE}${params} : `,
+          msg,
+        );
+        if (msg == 'No records found') {
+          this.SendFirstMessage(obj, suc);
+          return;
+        }
+        this.sethomeModalLoder(false);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  @action SendFirstMessage = (body, suc) => {
+    db.hitApi(db.apis.SEND_FIRST_MESSAGE, 'post', body, this.authToken)
+      ?.then(resp => {
+        this.sethomeModalLoder(false);
+        console.log(
+          `response SendFirstMessage  ${db.apis.SEND_FIRST_MESSAGE} : `,
+          resp.data,
+        );
+        suc(true);
+      })
+      .catch(err => {
+        this.sethomeModalLoder(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in SendFirstMessage ${db.apis.SEND_FIRST_MESSAGE} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
   };
 
   @action attemptToOtherUserMessageSend = (obj, suc) => {
@@ -1607,6 +1748,11 @@ class user {
       () => {},
     );
     this.getUserById1(uid, this.authToken, '');
+    this.attemptToGetInboxes(
+      uid,
+      () => {},
+      () => {},
+    );
   }
 
   @action.bound
@@ -2205,10 +2351,12 @@ class user {
     this.setphotos([]);
     this.setreview([]);
     this.settrips([]);
+    this.setHomeTrips([]);
     this.setfollowers([]);
     this.setfollowing([]);
     this.settotalfollowers(0);
     this.settotalfollowing(0);
+    this.setinbox([]);
   };
 
   // attemptToUploadImageEPS(body, p, c, seterror, suc) {
