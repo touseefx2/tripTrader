@@ -565,24 +565,11 @@ export const styles = StyleSheet.create({
     resizeMode: 'contain',
     borderRadius: 48 / 2,
   },
-  ProfileImgContainer2: {
-    width: 43,
-    height: 43,
-    borderRadius: 43 / 2,
-    borderWidth: 1,
-    borderColor: theme.color.photoBorderColor,
-    // alignItems: 'center',
-    // justifyContent: 'center',
-  },
-  ProfileImg2: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'contain',
-    borderRadius: 43 / 2,
-  },
   imageLoader: {
     height: '100%',
     width: '100%',
+    resizeMode: 'contain',
+    borderRadius: 48 / 2,
   },
 
   textContainer: {
@@ -667,9 +654,8 @@ export const styles = StyleSheet.create({
     top: 15,
     marginBottom: 15,
   },
-
   repBoxTitile1: {
-    color: theme.color.subTitle,
+    color: theme.color.title,
     fontSize: 12,
     fontFamily: theme.fonts.fontMedium,
   },
@@ -864,5 +850,63 @@ export const styles = StyleSheet.create({
     resizeMode: 'contain',
     bottom: -6,
     right: -7,
+  },
+
+  modalFieldConatiner: {
+    width: '100%',
+    marginTop: 10,
+  },
+
+  mfT1: {
+    fontSize: 12,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
+  },
+  mfT1msg: {
+    fontSize: 12,
+    color: theme.color.subTitle,
+    fontFamily: theme.fonts.fontNormal,
+    textTransform: 'capitalize',
+  },
+  mfT1trp: {
+    fontSize: 12,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'capitalize',
+  },
+  mfT1trptitle: {
+    fontSize: 13,
+    color: theme.color.subTitle,
+    fontFamily: theme.fonts.fontNormal,
+    textTransform: 'capitalize',
+    marginTop: 3,
+  },
+
+  mfT1trptitleee: {
+    fontSize: 13,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontNormal,
+  },
+
+  textArea: {
+    width: '100%',
+    height: 130,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 5,
+    marginTop: 5,
+    borderWidth: 1,
+    borderColor: theme.color.fieldBorder,
+    // shadowColor: '#000',
+    // shadowOffset: {width: 0, height: 2},
+    // shadowOpacity: 0.1,
+    // shadowRadius: 8,
+    // elevation: 2,
+    marginBottom: 5,
+  },
+  mTextInpt: {
+    height: '100%',
+    paddingHorizontal: 15,
+    textAlignVertical: 'top',
   },
 });

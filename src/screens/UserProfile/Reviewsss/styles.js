@@ -565,11 +565,24 @@ export const styles = StyleSheet.create({
     resizeMode: 'contain',
     borderRadius: 48 / 2,
   },
+  ProfileImgContainer2: {
+    width: 43,
+    height: 43,
+    borderRadius: 43 / 2,
+    borderWidth: 1,
+    borderColor: theme.color.photoBorderColor,
+    // alignItems: 'center',
+    // justifyContent: 'center',
+  },
+  ProfileImg2: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+    borderRadius: 43 / 2,
+  },
   imageLoader: {
     height: '100%',
     width: '100%',
-    resizeMode: 'contain',
-    borderRadius: 48 / 2,
   },
 
   textContainer: {
@@ -654,10 +667,11 @@ export const styles = StyleSheet.create({
     top: 15,
     marginBottom: 15,
   },
+
   repBoxTitile1: {
     color: theme.color.subTitle,
     fontSize: 12,
-    fontFamily: theme.fonts.fontNormal,
+    fontFamily: theme.fonts.fontMedium,
   },
   repBoxTitile2: {
     color: theme.color.title,

@@ -10,7 +10,7 @@
 // import CheckoutEmpty from './CheckoutEmpty';
 // import ResturantDetails from './ResturantDetails/index';
 import Plan from './Plan';
-// import OTP from './OTP';
+import Chat from './Chat';
 
 // import Favourite from './Favourite';
 // import Orders from './Orders';
@@ -82,4 +82,5 @@ export default screens = {
   ManageSubscription,
   Plan,
   BlockUsers,
+  Chat,
 };

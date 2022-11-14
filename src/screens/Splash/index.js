@@ -53,6 +53,9 @@ function Splash(props) {
     await hydrate('Trips', store.Trips);
     await hydrate('Search', store.Search);
     await hydrate('Filters', store.Filters);
+    await hydrate('Offers', store.Offers);
+    await hydrate('Notifications', store.Notifications);
+
     // await hydrate('Resturants', store.Resturants);
   };
 

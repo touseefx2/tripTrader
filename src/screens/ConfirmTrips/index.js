@@ -19,6 +19,7 @@ import {
   ScrollView,
   Keyboard,
   Modal,
+  RefreshControl,
 } from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
 // import ImageSlider from 'react-native-image-slider';
@@ -52,97 +53,60 @@ function ConfirmTrips(props) {
   let internet = store.General.isInternet;
   let user = store.User.user;
 
-  let data = store.Trips.confirmTrips;
-
   const [modalObj, setmodalObj] = useState(false);
   const [modalChk, setmodalChk] = useState(false);
   const [isModal, setisModal] = useState(false);
   const [isSendMessage, setisSendMessage] = useState(false);
   const [sendObj, setsendObj] = useState('');
 
-  let mloader = store.Trips.confirmTripsSendMessageLoader;
-
   const [message, setMessage] = useState('');
   const closeMessageModal = () => {
-    setisModal(false);
-    setmodalChk(false);
-    setmodalObj(false);
-    setMessage('');
+    if (!mmmloader) {
+      setisModal(false);
+      setmodalChk(false);
+      setmodalObj(false);
+      setMessage('');
+    }
   };
 
-  useEffect(() => {
-    const dt = [
-      {
-        user: {
-          userName: 'John Thompson',
-          first_name: 'Jhon',
-          last_name: 'Thompson',
-          createdAt: 'Confirmed 2 hrs ago',
-          photo:
-            'https://www.adobe.com/express/create/media_127540366421d3d5bfcaf8202527ca7d37741fd5d.jpeg?width=400&format=jpeg&optimize=medium',
-        },
-        offering: {
-          offer: 'Whitetail Hunting in Central NC',
-          duration: '3 days',
-          availablity: 'Jul 22-25, 2022',
-          location: {
-            coords: [],
-            name: 'Dylan, NC',
-          },
-        },
-        fortrade: {
-          offer: 'Osceola Turkey Hunting',
-          duration: '3 days',
-          availablity: 'Oct 8-11, 2022',
-          location: {
-            coords: [],
-            name: 'Boise, ID',
-          },
-        },
-        offerNote: '',
-      },
-      {
-        user: {
-          first_name: 'Mike',
-          last_name: 'Monuse',
-          userName: 'Mike Monuse',
-          createdAt: 'Confirmed Jun 12, 2022',
-          photo:
-            'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-10.jpg',
-        },
+  let data = store.Offers.cnfrmOffers;
+  let mloader = store.Offers.Loader3;
+  let mmloader = store.Offers.mLoader;
+  let mmmloader = store.User.homeModalLoder; //msg loader
 
-        offering: {
-          offer: 'Whole Day Blue Catfish Jugging',
-          duration: '1 day',
-          availablity: 'Oct 8, 2022',
-          location: {
-            coords: [],
-            name: 'Lafayette, LA',
-          },
-        },
-        fortrade: {
-          offer: 'Osceola Turkey Hunting',
-          duration: '3 days',
-          availablity: 'Oct 17-20, 2022',
-          location: {
-            coords: [],
-            name: 'Boise, ID',
-          },
-        },
-        offerNote:
-          'I have a bad knee and will need to stay on flat terrain most of the time. Is this something that could be accomodated?',
-      },
-    ];
-
-    store.Trips.setconfirmTrips(dt);
-
-    return () => {};
+  const [getDataOnce, setgetDataOnce] = useState(false);
+  const setGetDataOnce = C => {
+    setgetDataOnce(C);
+  };
+  const [refreshing, setRefreshing] = React.useState(false);
+  const setrefeshing = c => {
+    setRefreshing(c);
+  };
+  const onRefresh = React.useCallback(() => {
+    console.warn('onrefresh cal');
+    setRefreshing(true);
+    getDbData();
   }, []);
+  const getDbData = () => {
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.Offers.attemptToGetConfirmOffers(setGetDataOnce, setrefeshing);
+      } else {
+        setrefeshing(false);
+      }
+    });
+  };
+  useEffect(() => {
+    if (!getDataOnce && internet) {
+      getDbData();
+    }
+    return () => {};
+  }, [getDataOnce, internet]);
 
   const onclickSearchBar = () => {};
 
   const setIsSendMessage = v => {
-    setsendObj(modalObj.item.user);
+    setsendObj(modalObj.item.offeredBy);
     closeMessageModal();
     setisSendMessage(v);
   };
@@ -152,31 +116,27 @@ function ConfirmTrips(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        // const obj = {
-        //   _id: (Math.random() * 10).toFixed(0),
-        //   title: title,
-        //   user: store.User.user._id,
-        //   offer: trade,
-        //   return: Return,
-        //   loc: {
-        //     name: 'Miami, Florida',
-        //     coords: [],
-        //   },
-        //   status: status,
-        //   acceptOtherTrades: acceptOther,
-        //   duration: {
-        //     number: durNum,
-        //     title: dur.title,
-        //   },
-        //   availablity: {
-        //     startDate: isSelDate1,
-        //     endDate: isSelDate2,
-        //   },
-        //   photos: photos,
-        //   unavailable: isSetUnavailable != false ? isSetUnavailable : {},
-        // };
-        // console.warn('create trip obj : ', obj);
-        store.Trips.attemptToMessageSend({}, setIsSendMessage);
+        let item = modalObj.item;
+        let usr = item.offeredBy;
+        const obj = {
+          userId1: user._id,
+          userId2: usr._id,
+          messages: [
+            {
+              sendBy: user._id,
+              isRead: false,
+              message: message,
+              messageType: 'text',
+            },
+          ],
+        };
+        store.User.attemptToCheckFirstMessage(
+          user._id,
+          usr._id,
+          obj,
+          message,
+          setIsSendMessage,
+        );
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -197,9 +157,35 @@ function ConfirmTrips(props) {
   const EmptyListMessage = ({item}) => {
     return (
       // Flat List Item
-      <Text style={styles.emptyListStyle} onPress={() => getItem(item)}>
-        No Data Found
-      </Text>
+      <>
+        {!mloader && getDataOnce && (
+          <Text
+            style={{
+              marginTop: '80%',
+              alignItems: 'center',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              fontSize: 13,
+              color: theme.color.subTitleLight,
+              fontFamily: theme.fonts.fontMedium,
+            }}
+            onPress={() => getItem(item)}>
+            No confirm offer found
+          </Text>
+        )}
+
+        {mloader && !getDataOnce && (
+          <ActivityIndicator
+            size={30}
+            color={theme.color.button1}
+            style={{
+              marginTop: '80%',
+
+              alignSelf: 'center',
+            }}
+          />
+        )}
+      </>
     );
   };
 
@@ -268,26 +254,175 @@ function ConfirmTrips(props) {
     );
   };
 
+  function FormatAvlblDate(s1, s2) {
+    let avlbl = '';
+
+    let sd = s1;
+    let sdy = parseInt(new Date(sd).getFullYear());
+    let ed = s2;
+    let edy = parseInt(new Date(ed).getFullYear());
+    if (sdy == edy) {
+      avlbl =
+        moment(sd).format('MMM DD') + ' - ' + moment(ed).format('MMM DD, YYYY');
+    } else {
+      avlbl =
+        moment(sd).format('MMM DD, YYYY') +
+        ' - ' +
+        moment(ed).format('MMM DD, YYYY');
+    }
+
+    return avlbl;
+  }
+
+  function FormatPrfrDate(pd) {
+    let t = '';
+    let arset = [];
+    if (pd.length > 0) {
+      pd.map((e, i, a) => {
+        arset.push(moment(e).format('MMM DD, YYYY'));
+      });
+    }
+    if (arset.length > 0) {
+      let fd = arset[0];
+      if (arset.length > 1) {
+        let sd = arset[arset.length - 1];
+
+        let sdy = parseInt(new Date(fd).getFullYear());
+
+        let edy = parseInt(new Date(sd).getFullYear());
+
+        if (sdy == edy) {
+          t =
+            moment(fd).format('MMM DD') +
+            ' - ' +
+            moment(sd).format('MMM DD, YYYY');
+        } else {
+          t = fd + ' - ' + sd;
+        }
+      } else if (arset.length <= 1) {
+        t = fd;
+      }
+    }
+
+    return t;
+  }
+
+  function compare(d, dd) {
+    let d1 = moment(d).format('YYYY-MM-DD');
+    let d2 = moment(dd).format('YYYY-MM-DD');
+    if (d2 > d1) {
+      return 'greater';
+    } else if (d2 < d1) {
+      return 'smaller';
+    } else {
+      return 'equal';
+    }
+  }
+
+  function diff_minutes(dt2, dt1) {
+    var diff = (dt2.getTime() - dt1.getTime()) / 1000;
+    diff /= 60;
+    return Math.abs(Math.round(diff));
+  }
+
+  function CheckDate(d) {
+    let t = '';
+    let ud = new Date(d); //update date
+    let cd = new Date(); //current date
+
+    let udcy = false; //is update date  current year
+    let udy = parseInt(ud.getFullYear());
+    let cdy = parseInt(cd.getFullYear());
+    if (udy == cdy) {
+      udcy = true;
+    }
+    // && min < 1440 // 1 daya minure
+    let sd = ud; //start date
+    let ed = cd; //end date
+    let ics = compare(sd, ed); //is check date
+    // console.log('updated date : ', moment(ud).format('YYYY-MM-DD hh:mm:ss a'));
+    // console.log('currentdate : ', moment(cd).format('YYYY-MM-DD hh:mm:ss a'));
+
+    if (ics == 'greater') {
+      var start = moment(moment(ed).format('YYYY-MM-DD'), 'YYYY-MM-DD');
+      var end = moment(moment(sd).format('YYYY-MM-DD'), 'YYYY-MM-DD');
+      let days = start.diff(end, 'days');
+
+      if (days > 3) {
+        if (udcy) {
+          t = moment(ud).format('MMM DD');
+        } else {
+          t = moment(ud).format('MMM DD, YYYY');
+        }
+      } else {
+        if (days == 1 || days == 0) {
+          t = '1 day ago';
+        }
+
+        if (days == 2) {
+          t = '2 days ago';
+        }
+
+        if (days == 3) {
+          t = '3 days ago';
+        }
+      }
+    } else {
+      let min = diff_minutes(ed, sd);
+      // console.log('minutes: ', min);
+      if (min >= 0 && min <= 1) {
+        t = 'Just now';
+      } else {
+        if (min > 1 && min < 60) {
+          t = min + ' mins ago';
+        } else if (min >= 60) {
+          const hours = Math.floor(min / 60);
+
+          const h = hours.toFixed(0);
+          let tt = h <= 1 ? ' hour' : ' hours';
+          t = h + tt + ' ago';
+
+          // t = moment(ud).format('hh:mm a');
+        }
+      }
+    }
+
+    return t;
+  }
+
   const ItemView = ({item, index}) => {
-    let user = item.user;
-    let ofer = item.offering;
-    let trade = item.fortrade;
-    let offernote = item.offerNote || '';
+    let user = item.offeredBy;
+    let ofer = item.hostTrip;
+    let trade = item.offeredTrip;
+    let offernote = item.note || '';
+    let create = CheckDate(item.updatedAt);
 
-    let photo = '';
-    let userName = user.userName || '';
-    let create = user.createdAt || '';
-    photo = user.photo && user.photo != '' ? {uri: user.photo} : guest;
+    let photo = user.image ? {uri: user.image} : guest;
+    let userName = user.firstName + ' ' + user.lastName;
 
-    let title = ofer.offer;
-    let dur = ofer.duration;
-    let avlbl = ofer.availablity;
-    let loc = ofer.location.name ? ofer.location.name : '';
+    //offer by (host trip)
+    let title = ofer.species;
+    let dur = ofer.duration.value;
+    let t =
+      dur <= 1
+        ? ofer.duration.title.substring(0, ofer.duration.title.length - 1)
+        : ofer.duration.title;
+    dur = dur + ' ' + t;
+    let tripDates = item.tripDates;
+    let avlbl = FormatPrfrDate(tripDates);
+    let loc = ofer.location.city + ', ' + ofer.location.state;
 
-    let titlet = trade.offer;
-    let durt = trade.duration;
-    let avlblt = trade.availablity;
-    let loct = trade.location.name ? trade.location.name : '';
+    //ofer to (offer trip)
+    let titlet = trade.species;
+    let durt = trade.duration.value;
+    let tt =
+      durt <= 1
+        ? trade.duration.title.substring(0, trade.duration.title.length - 1)
+        : trade.duration.title;
+    durt = durt + ' ' + tt;
+    let preferdates = item.preferredDates;
+    let avlblt = FormatPrfrDate(preferdates);
+    let loct = trade.location.city + ', ' + trade.location.state;
 
     const renderProfile = () => {
       return (
@@ -483,10 +618,7 @@ function ConfirmTrips(props) {
           {offernote != '' && (
             <View style={{width: '100%', marginTop: 20}}>
               <Text style={titleS}>OFFER NOTE</Text>
-              <Text style={offertitleS}>
-                I have a bad knee and will need to stay on flat terrain most of
-                the time. Is this something that could be accomodated?
-              </Text>
+              <Text style={offertitleS}>{offernote}</Text>
             </View>
           )}
         </View>
@@ -534,10 +666,11 @@ function ConfirmTrips(props) {
 
           <Pressable
             onPress={() => {
-              store.User.clearOtherUser();
-              store.User.setfscreen('confirmedtrips');
-              store.User.setvUser(item.user);
-
+              let u = item.offeredBy;
+              store.Userv.clearUser();
+              store.Userv.setfscreen('confirmedtrips');
+              store.Userv.setUser(u);
+              store.Userv.addauthToken(store.User.authToken);
               props.navigation.navigate('UserProfile');
             }}
             style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc]}>
@@ -574,18 +707,6 @@ function ConfirmTrips(props) {
         {renderFields()}
         {renderBottom()}
       </Pressable>
-    );
-  };
-
-  const ListFooter = () => {
-    return (
-      <>
-        <View>
-          <View style={styles.listFooter}>
-            <Text style={styles.listFooterT}>End of messages</Text>
-          </View>
-        </View>
-      </>
     );
   };
 
@@ -661,10 +782,10 @@ function ConfirmTrips(props) {
       setisSendMessage(false);
     };
 
-    let fn = sendObj.first_name;
-    let ln = sendObj.last_name;
+    let fn = sendObj.firstName;
+    let ln = sendObj.lastName;
     let sendOfferUsername = fn + ' ' + ln;
-    let un = sendObj.userName;
+    let un = sendObj.userName || 'user';
     let src = require('../../assets/images/msgSentDone/img.png');
     return (
       <Modal
@@ -761,7 +882,7 @@ function ConfirmTrips(props) {
         const renderCross = () => {
           return (
             <Pressable
-              disabled={mloader}
+              disabled={mmmloader}
               style={({pressed}) => [
                 {opacity: pressed ? 0.7 : 1.0},
                 styles.modalCross,
@@ -789,11 +910,10 @@ function ConfirmTrips(props) {
       };
 
       const renderField = () => {
-        let item = modalObj.item;
-        let photo = item.user.photo || '';
-        let isVeirfy = item.user.isVerified || false;
-        let userName = item.user.first_name + ' ' + item.user.last_name;
-
+        let item = modalObj.item.offeredBy;
+        let photo = item.image ? item.image : '';
+        let isVeirfy = item.identityStatus == 'verified' ? true : false;
+        let userName = item.firstName + ' ' + item.lastName;
         const renderProfile = () => {
           return (
             <View style={styles.mProfileImgContainerm}>
@@ -862,13 +982,13 @@ function ConfirmTrips(props) {
           return (
             <Pressable
               onPress={sendMessage}
-              disabled={mloader == true ? true : message == '' ? true : false}
+              disabled={mmmloader == true ? true : message == '' ? true : false}
               style={({pressed}) => [
                 {opacity: pressed ? 0.9 : message == '' ? 0.5 : 1},
                 styles.ButtonContainer,
                 {backgroundColor: theme.color.button1, width: '100%'},
               ]}>
-              {!mloader && (
+              {!mmmloader && (
                 <Text
                   style={[
                     styles.ButtonText,
@@ -877,7 +997,7 @@ function ConfirmTrips(props) {
                   Send Message
                 </Text>
               )}
-              {mloader && (
+              {mmmloader && (
                 <ActivityIndicator size={20} color={theme.color.buttonText} />
               )}
             </Pressable>
@@ -913,19 +1033,35 @@ function ConfirmTrips(props) {
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <FlatList
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+              style={{marginTop: 5}}
               contentContainerStyle={{
                 paddingTop: 12,
                 paddingBottom: 40,
                 paddingHorizontal: 15,
               }}
+              showsVerticalScrollIndicator={false}
               data={data}
               renderItem={ItemView}
               keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
-              ListHeaderComponent={ListHeader}
-              // ListFooterComponent={ListFooter}
+              ListHeaderComponent={data.length > 0 ? ListHeader : null}
             />
+
+            {data.length > 0 && !getDataOnce && mloader && (
+              <ActivityIndicator
+                size={30}
+                color={theme.color.button1}
+                style={{
+                  top: '50%',
+                  position: 'absolute',
+                  alignSelf: 'center',
+                }}
+              />
+            )}
           </View>
 
           <utils.Footer

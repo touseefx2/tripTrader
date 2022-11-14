@@ -174,6 +174,16 @@ let InboxStack = () => {
         }}
       />
       <Stack.Screen
+        name="Chat"
+        component={screens.Chat}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+      />
+      <Stack.Screen
         name="Notifications"
         component={screens.Notifications}
         options={props => {

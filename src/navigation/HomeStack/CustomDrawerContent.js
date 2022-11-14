@@ -618,7 +618,7 @@ const styles = StyleSheet.create({
     borderRadius: 60 / 2,
   },
 
-  ProfileTextContainer: {width: '63%'},
+  ProfileTextContainer: {width: '70%'},
   profileTitle1: {
     fontSize: 14,
     color: theme.color.backgroundGreenText,

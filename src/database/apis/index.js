@@ -38,9 +38,11 @@ const GET_ALL_REVIEWS = 'api/user/reviews/';
 const REPLY_REVIEW = 'api/review/replyToReview/';
 const EDIT_REVIEW = 'api/review/updateAReview/';
 const DELETE_REVIEW = 'api/review/deleteAReview/';
+const DELETE_MY_REVIEW = 'api/review/';
 const DISPUTE_REVIEW = 'api/review/';
 const SUBMIT_SUPPORT = '';
-const GET_ALL_HOME_TRIPS = 'api/trip?status=active';
+const GET_ALL_HOME_TRIPS = 'api/trip/search?blockedUsers=';
+const GET_ALL_HOME_TRIPS_GUEST = 'api/trip?status=active';
 
 const GET_STATE = 'api/state?status=active';
 const GET_SPECIES = 'api/species?status=active';
@@ -69,6 +71,21 @@ const GET_INBOXES_BY_UID = 'api/chat/myAllChats?userId=';
 const DELETE_CHAT = 'api/chat/deleteAChat/';
 
 const DELETE_TRIP_PHOTO = 'api/trip/deleteImage/';
+
+const CHECK_REVIEW = 'api/review/checkIfAlreadyReviewed/';
+const LEAVE_REVIEW = 'api/review';
+const UPDATE_LEAVE_REVIEW = 'api/review/updateAReview/';
+
+const GET_LATEST_TRIP = 'api/review/getLatestTrip/v2/';
+
+const GET_NOTIFICATIONS = 'api/notification?userId=';
+
+const GET_SENT_OFFERS = 'api/offer?offeredBy=';
+const GET_RECEIVED_OFFERS = 'api/offer?offeredTo=';
+
+const CANCEL_OFFER = 'api/offer/declineTrip/';
+const CONFIRM_OFFERS = 'api/offer/confirmTrip/';
+const GET_CONFIRM_OFFERS = 'api/offer?offeredTo=';
 
 export default apis = {
   BASE_URL,
@@ -105,11 +122,12 @@ export default apis = {
   REPLY_REVIEW,
   EDIT_REVIEW,
   DELETE_REVIEW,
+  DELETE_MY_REVIEW,
   DISPUTE_REVIEW,
   SUBMIT_SUPPORT,
   DELETE_TRIP,
+  GET_ALL_HOME_TRIPS_GUEST,
   GET_ALL_HOME_TRIPS,
-
   GET_STATE,
   GET_SPECIES,
   GET_ACTIVITY,
@@ -133,6 +151,19 @@ export default apis = {
   GET_INBOXES_BY_UID,
   DELETE_CHAT,
   DELETE_TRIP_PHOTO,
+
+  CHECK_REVIEW,
+  LEAVE_REVIEW,
+  UPDATE_LEAVE_REVIEW,
+  GET_LATEST_TRIP,
+
+  GET_NOTIFICATIONS,
+
+  GET_SENT_OFFERS,
+  GET_RECEIVED_OFFERS,
+  GET_CONFIRM_OFFERS,
+  CANCEL_OFFER,
+  CONFIRM_OFFERS,
 };
 
 // const login = 'user/loginCaptain';

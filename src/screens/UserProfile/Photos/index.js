@@ -34,11 +34,11 @@ export default observer(Photos);
 function Photos(props) {
   let headerTitle = 'Photos';
   let internet = store.General.isInternet;
-  let user = store.User.vuser;
-  let data = store.User.photoso;
+  let user = store.Userv.user;
+  let data = store.Userv.photos;
   const totalData = data.length;
-  let loader = store.User.photosLoadero;
-  let mloader = store.User.mLoadero;
+  let loader = store.Userv.photosLoader;
+  let mloader = store.Userv.mLoader;
 
   const [pvm, setpvm] = useState(false);
   const [si, setsi] = useState('');
@@ -55,6 +55,7 @@ function Photos(props) {
   const setrefeshing = c => {
     setRefreshing(c);
   };
+
   const onRefresh = React.useCallback(() => {
     console.warn('onrefresh cal');
     setRefreshing(true);
@@ -64,24 +65,9 @@ function Photos(props) {
   const getDbData = c => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        const dt = [
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0OqjKG4QLGg-hvzwhf76mCB1shxkUchZN9Q&usqp=CAU',
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbyQRxBY8uSBj1VaS26kR0_7Uk6BJ-YNz4XQ&usqp=CAU',
-          'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTV8fHRyYXZlbGxpbmd8ZW58MHx8MHx8&w=1000&q=80',
-          'https://www.pixelstalk.net/wp-content/uploads/images6/4K-Travel-Wallpaper-HD-Free-download.jpg',
-          'https://images.pexels.com/photos/1371360/pexels-photo-1371360.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-          'https://wallpaperaccess.com/full/1534474.jpg',
-          'https://images.wallpapersden.com/image/download/trip-night_a21tZmmUmZqaraWkpJRmbmdlrWZlbWU.jpg',
-          'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfHw%3D&w=1000&q=80',
-        ];
-        store.User.attemptToGetPhotoso(
-          user._id,
-          setGetDataOnce,
-          setrefeshing,
-          dt,
-        );
+        store.Userv.attemptToGetPhotos(user._id, setGetDataOnce, setrefeshing);
       } else {
-        setrefeshing(false);
+        setRefreshing(false);
       }
     });
   };
@@ -96,7 +82,7 @@ function Photos(props) {
   const deletePhoto = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToDeletePhotos(deletePObj, closeDeleteModal);
+        store.Userv.attemptToDeletePhotos(deletePObj, closeDeleteModal);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -173,7 +159,8 @@ function Photos(props) {
   };
 
   const renderShowData = ({item, index}) => {
-    let photo = item;
+    let tid = item.tid;
+    let photo = item.uri ? item.uri : '';
 
     const renderPhotoCross = () => {
       return (
@@ -182,7 +169,7 @@ function Photos(props) {
             {opacity: pressed ? 0.7 : 1.0},
             styles.crossContainer,
           ]}
-          onPress={() => openDeleteModal({uri: item, i: index})}>
+          onPress={() => openDeleteModal({uri: photo, tid: tid, i: index})}>
           <Image
             source={require('../../../assets/images/cross/img.png')}
             style={{width: 9, height: 9, resizeMode: 'contain'}}
@@ -286,7 +273,7 @@ function Photos(props) {
               {backgroundColor: theme.color.button2},
             ]}
             onPress={closeDeleteModal}>
-            <Text style={[styles.ButtonText, {color: theme.color.subTitle}]}>
+            <Text style={[styles.ButtonText, {color: '#30563A'}]}>
               No, keep it
             </Text>
           </Pressable>
@@ -330,11 +317,11 @@ function Photos(props) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
         {getDataOnce && data.length <= 0 && !loader && renderMessage('empty')}
-        {!getDataOnce &&
+        {/* {!getDataOnce &&
           !internet &&
           !loader &&
           data.length <= 0 &&
-          renderMessage('internet')}
+          renderMessage('internet')} */}
 
         {data.length >= 0 && (
           <FlatList
@@ -351,17 +338,6 @@ function Photos(props) {
         )}
       </ScrollView>
       {!getDataOnce && loader && renderLoader()}
-      {/* {pvm && (
-        <utils.FullimageModal
-          data={data}
-          si={si}
-          show={pvm}
-          pv={pv}
-          setshow={c => setpvm(c)}
-          setpv={c => setpv(c)}
-          
-        />
-      )} */}
 
       {pvm && (
         <utils.FullimageModal

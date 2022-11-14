@@ -39,11 +39,11 @@ function Reviews(props) {
 
   let headerTitle = 'Reviews';
   let internet = store.General.isInternet;
-  let user = store.User.user;
-  let data = store.User.review;
+  let user = store.User.vuser;
+  let data = store.User.reviewo;
   const totalData = data.length;
-  let loader = store.User.reviewLoader;
-  let mloader = store.User.mLoader;
+  let loader = store.User.reviewLoadero;
+  let mloader = store.User.mLoadero;
 
   const [modalObj, setmodalObj] = useState(false);
   const [modalChk, setmodalChk] = useState(false);
@@ -70,63 +70,69 @@ function Reviews(props) {
     getDbData();
   }, []);
 
-  const getDbData = () => {
+  const getDbData = c => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        // const dt = [
-        //   {
-        //     _id: 21,
-        //     user: {
-        //       _id: 2,
-        //       first_name: 'mike',
-        //       last_name: 'monuse',
-        //       // photo:"",
-        //       photo: '',
-        //       avg_rating: 3.8,
-        //       total_reviews: 190,
-        //     },
-        //     comment:
-        //       'John Thompson was a great host! I had an amazing time and killed a great duck.',
-        //     created_at: new Date(),
-        //   },
-        //   {
-        //     _id: 22,
-        //     user: {
-        //       _id: 3,
-        //       first_name: 'tom',
-        //       last_name: 'jerry',
-        //       photo: '',
-        //       avg_rating: 4.5,
-        //       total_reviews: 45,
-        //       isVerified: true,
-        //     },
-        //     comment: 'John Thompson was a great host! I had an amazing time.',
-        //     created_at: new Date(),
-        //     reply: {
-        //       user: store.User.user,
-        //       comment:
-        //         'Thank you, Jerry! I had a blast and hope to trade with you again soon. Highly recommend others to trade with you.',
-        //       created_at: new Date(),
-        //     },
-        //   },
-        //   {
-        //     _id: 23,
-        //     user: {
-        //       _id: 4,
-        //       first_name: 'Mano',
-        //       last_name: 'Twis',
-        //       // photo:"",
-        //       photo:
-        //         'https://t3.ftcdn.net/jpg/03/67/46/48/360_F_367464887_f0w1JrL8PddfuH3P2jSPlIGjKU2BI0rn.jpg',
-        //       avg_rating: 2.0,
-        //       total_reviews: 10,
-        //     },
-        //     comment:
-        //       'John Thompson Thank you so much for your careful planning, attention to detail, and flexible offerings when the tropical system blew through and changed our plans! We had a blast exploring Miami, and eating so much great food.\nDinner reservations the first night we arrived were perfect- after a long day of traveling, we enjoyed a delicious meal overlooking the water',
-        //     created_at: new Date(),
-        //   },
-        // ];
-        store.User.attemptToGetReviews(user._id, setGetDataOnce, setrefeshing);
+        const dt = [
+          // {
+          //   _id: 21,
+          //   user: {
+          //     _id: 2,
+          //     first_name: 'mike',
+          //     last_name: 'monuse',
+          //     // photo:"",
+          //     photo:
+          //       'https://www.adobe.com/express/create/media_127540366421d3d5bfcaf8202527ca7d37741fd5d.jpeg?width=400&format=jpeg&optimize=medium',
+          //     avg_rating: 3.8,
+          //     total_reviews: 190,
+          //   },
+          //   comment:
+          //     'John Thompson was a great host! I had an amazing time and killed a great duck.',
+          //   created_at: new Date(),
+          // },
+          {
+            _id: 22,
+            user: {
+              _id: 3,
+              first_name: 'tom',
+              last_name: 'jerry',
+              photo: '',
+              avg_rating: 4.5,
+              total_reviews: 45,
+              isVerified: true,
+            },
+            comment: 'John Thompson was a great host! I had an amazing time.',
+            created_at: new Date(),
+            reply: {
+              user: store.User.vuser,
+              comment:
+                'Thank you, Jerry! I had a blast and hope to trade with you again soon. Highly recommend others to trade with you.',
+              created_at: new Date(),
+            },
+          },
+          // {
+          //   _id: 23,
+          //   user: {
+          //     _id: 4,
+          //     first_name: 'Mano',
+          //     last_name: 'Twis',
+          //     // photo:"",
+          //     photo:
+          //       'https://t3.ftcdn.net/jpg/03/67/46/48/360_F_367464887_f0w1JrL8PddfuH3P2jSPlIGjKU2BI0rn.jpg',
+          //     avg_rating: 2.0,
+          //     total_reviews: 10,
+          //   },
+          //   comment:
+          //     'John Thompson Thank you so much for your careful planning, attention to detail, and flexible offerings when the tropical system blew through and changed our plans! We had a blast exploring Miami, and eating so much great food.\nDinner reservations the first night we arrived were perfect- after a long day of traveling, we enjoyed a delicious meal overlooking the water',
+          //   created_at: new Date(),
+          // },
+        ];
+        store.User.attemptToGetReviewso(
+          user._id,
+          setGetDataOnce,
+          setrefeshing,
+          dt,
+        );
       } else {
         setrefeshing(false);
       }
@@ -207,17 +213,7 @@ function Reviews(props) {
   const openModal = (obj, c) => {
     if (c == 'edit') {
       let d = obj.item;
-      let reply = '';
-      let msgs = d.messages || [];
-      if (msgs.length > 0) {
-        msgs.map((e, i, a) => {
-          if (e.role == 'host') {
-            reply = e.message;
-          }
-        });
-      }
-
-      setcomment(reply);
+      setcomment(d.reply.comment);
     }
 
     setmodalObj(obj);
@@ -253,60 +249,32 @@ function Reviews(props) {
   };
 
   const renderShowData = ({item, index}) => {
-    let usr = item.guestId;
-    //reviewer user
-    let photo = usr.image || '';
-    let isuVeirfy = usr.identityStatus == 'verified' ? true : false;
-    let userName = usr.firstName + ' ' + usr.lastName;
-    let avgRating = usr.rating || 0;
-    let totalReviews = usr.reviews || 0;
-    let userComment = '';
-    let postDate = '';
-    let msgs = item.messages || [];
-    let reply = '';
-    if (msgs.length > 0) {
-      msgs.map((e, i, a) => {
-        if (e.role == 'guest') {
-          postDate = e.updatedAt;
-          userComment = e.message;
-        } else if (e.role == 'host') {
-          reply = e;
-        }
-      });
-    }
+    let photo = item.user.photo;
+    let isuVeirfy = item.user.isVerified || false;
+    let userName = item.user.first_name + ' ' + item.user.last_name;
+    let avgRating = item.user.avg_rating;
+    let totalReviews = item.user.total_reviews;
+    let postDate = item.created_at;
+    let userComment = item.comment;
+    let reply = item.reply ? item.reply : '';
+    let dispute = item.dispute ? item.dispute : false;
+    let disputeDate = dispute ? dispute.created_at : '';
 
-    let rusr = user;
-    //host
     let ruserPhoto = '';
     let ruserName = '';
     let ruserComment = '';
     let rpostDate = '';
     let isrVeirfy = false;
     if (reply != '') {
-      ruserPhoto = rusr.image || '';
-      isrVeirfy = rusr.dentityStatus || false;
-      ruserName = rusr.firstName + ' ' + rusr.lastName;
-      ruserComment = reply.message;
-      rpostDate = reply.updatedAt;
+      ruserPhoto = reply.user.photo;
+      isrVeirfy = reply.user.isVerified || false;
+      ruserName = reply.user.first_name + ' ' + reply.user.last_name;
+      ruserComment = reply.comment;
+      rpostDate = reply.created_at;
     }
 
-    let status = item.status;
-    let dispute = status == 'dispute' ? true : false;
-    let disputeDate = dispute ? item.disputeOpenDate : '';
-
     const formatdisputeDate = date => {
-      let udcy = false; //is update date  current year
-      let udy = parseInt(new Date(date).getFullYear());
-      let cdy = parseInt(new Date().getFullYear());
-      if (udy == cdy) {
-        udcy = true;
-      }
-      var dd = '';
-      if (udcy) {
-        dd = moment(date).format('MMM DD');
-      } else {
-        dd = moment(date).format('MMM DD, YYYY');
-      }
+      var dd = moment(date).format('MMM DD');
       return dd;
     };
 
@@ -359,7 +327,7 @@ function Reviews(props) {
               />
               <Text style={styles.textContainerRatetitle1}>
                 {' '}
-                {avgRating > 0 ? avgRating.toFixed(1) : avgRating}
+                {avgRating.toFixed(1)}
                 {'  '}
               </Text>
               <Text style={styles.textContainerRatetitle2}>
@@ -463,14 +431,14 @@ function Reviews(props) {
             {renderDate()}
           </View>
           <View style={styles.boxSection2}>{renderComment()}</View>
-          {!dispute && (
+          {/* {!dispute && (
             <>
               {reply == '' && renderShowReplyButton()}
               {reply != '' && renderShowDipsutebutton()}
             </>
-          )}
+          )} */}
 
-          {dispute && renderShowDsipute()}
+          {/* {dispute && renderShowDsipute()} */}
         </View>
       );
     };
@@ -520,7 +488,7 @@ function Reviews(props) {
                 style={({pressed}) => [
                   {opacity: pressed ? 0.7 : 1.0},
                   styles.smallButtonContainer,
-                  {backgroundColor: theme.color.button2},
+                  {backgroundColor: 'transparent'},
                 ]}
                 onPress={() => DeleteComment({item: item, i: index})}>
                 <Text style={[styles.sb2Text, {color: '#B93B3B'}]}>delete</Text>
@@ -539,11 +507,33 @@ function Reviews(props) {
 
         return (
           <View style={styles.repBoxContainer}>
-            <Text style={styles.repBoxTitile1}>
-              You replied on {formatDate(rpostDate)}:
-            </Text>
-            <Text style={styles.repBoxTitile2}>{ruserComment}</Text>
-            {renderShowActionButton()}
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <View style={styles.ProfileImgContainer2}>
+                <ProgressiveFastImage
+                  style={styles.ProfileImg2}
+                  source={
+                    ruserPhoto != ''
+                      ? {uri: ruserPhoto}
+                      : require('../../../assets/images/drawer/guest/img.png')
+                  }
+                  loadingImageStyle={styles.imageLoader}
+                  loadingSource={require('../../../assets/images/imgLoad/img.jpeg')}
+                  blurRadius={5}
+                />
+              </View>
+              <View style={{width: '82%', marginTop: 5}}>
+                <Text style={[styles.repBoxTitile2, {marginTop: 0}]}>
+                  {ruserComment}
+                </Text>
+              </View>
+            </View>
+
+            {/* <Text style={styles.repBoxTitile1}>
+              You replied on {formatDate(postDate)}
+            </Text> */}
+            {/* <Text style={styles.repBoxTitile2}>{ruserComment}</Text> */}
+            {/* {renderShowActionButton()} */}
           </View>
         );
       };
@@ -584,7 +574,7 @@ function Reviews(props) {
             fontFamily: theme.fonts.fontMedium,
           }}>
           {c == 'empty'
-            ? 'No reviews received yet.'
+            ? 'No trip reviews received yet.'
             : 'Please connect internet.'}
         </Text>
       </View>
@@ -619,6 +609,7 @@ function Reviews(props) {
     );
   };
 
+  // console.warn("mloader : ",mloader)
   const renderModal = () => {
     if (modalChk == 'reply' || modalChk == 'edit') {
       const renderHeader = () => {
@@ -690,7 +681,6 @@ function Reviews(props) {
                 value={comment}
                 onChangeText={t => setcomment(t)}
                 textAlignVertical="top"
-                placeholder="What do you want to say?"
                 style={styles.modalInput}
                 maxLength={maxCommentLength}
               />
@@ -837,18 +827,8 @@ function Reviews(props) {
 
       const renderSec2 = () => {
         let d = modalObj.item;
-        let userName = d.guestId.firstName + ' ' + d.guestId.lastName;
-        let userComment = '';
-
-        let msgs = d.messages || [];
-
-        if (msgs.length > 0) {
-          msgs.map((e, i, a) => {
-            if (e.role == 'guest') {
-              userComment = e.message;
-            }
-          });
-        }
+        let userName = d.user.first_name + ' ' + d.user.last_name;
+        let userComment = d.comment;
 
         return (
           <View style={styles.modalSec2Container}>
@@ -1060,7 +1040,7 @@ function Reviews(props) {
 
       const renderTitle = () => {
         let d = modalObj.item;
-        let userName = d.guestId.firstName + ' ' + d.guestId.lastName;
+        let userName = d.user.first_name + ' ' + d.user.last_name;
 
         return (
           <View
@@ -1156,11 +1136,11 @@ function Reviews(props) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
         {getDataOnce && data.length <= 0 && !loader && renderMessage('empty')}
-        {/* {!getDataOnce &&
+        {!getDataOnce &&
           !internet &&
           !loader &&
           data.length <= 0 &&
-          renderMessage('internet')} */}
+          renderMessage('internet')}
 
         {data.length >= 0 && (
           <FlatList

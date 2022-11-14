@@ -342,6 +342,17 @@ class userv {
     this.photosRefrsh = obj;
   };
 
+  @observable isAnyTrade = {
+    title: '3 Day Central N.C. Whitetail Hunting',
+  };
+  @observable isOneReview = false;
+  @action setisAnyTrade = obj => {
+    this.misAnyTrade = obj;
+  };
+  @action setisOneReview = obj => {
+    this.isOneReview = obj;
+  };
+
   @action attemptToGetReviews = (uid, setgetdata, setrfrsh) => {
     console.warn('get all Reviews : ', 'true');
     this.setreviewLoader(true);
@@ -358,19 +369,20 @@ class userv {
         let ar = [];
         if (dt.length > 0) {
           dt.map((e, i, a) => {
-            let msgs = e.messages || [];
-            if (msgs.length > 0) {
-              msgs.map((ee, i, a) => {
-                if (ee.role == 'guest') {
-                  ar.push(e);
-                }
-              });
+            if (e.guestId._id != store.User.user._id) {
+              let msgs = e.messages || [];
+              if (msgs.length > 0) {
+                msgs.map((ee, i, a) => {
+                  if (ee.role == 'guest') {
+                    ar.push(e);
+                  }
+                });
+              }
             }
           });
         }
 
-        setgetdata(true);
-        this.setreview(ar);
+        this.attemptToCheckReview(ar, setgetdata);
       })
       .catch(err => {
         this.setreviewLoader(false);
@@ -386,10 +398,86 @@ class userv {
           return;
         }
         if (msg == 'No records found') {
-          setgetdata(true);
-          this.setreview([]);
+          this.attemptToCheckReview([], setgetdata);
           return;
         }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  @action attemptToCheckReview = (data, setgetdata) => {
+    console.warn('CheckReview : ', 'true');
+
+    let params = this.user._id + '/' + store.User.user._id;
+    db.hitApi(db.apis.CHECK_REVIEW + params, 'get', {}, this.authToken)
+      ?.then(resp => {
+        console.log(
+          `response CheckReview   ${db.apis.GET_ALL_REVIEWS + params} : `,
+          resp.data,
+        );
+        let msg = resp.data.message || '';
+
+        if (msg == 'No review found') {
+          this.setisOneReview(false);
+          this.setreview(data);
+        } else {
+          this.setisOneReview(true);
+          let d = resp.data.data[0];
+          let dt = data;
+          dt.unshift(d);
+          this.setreview(dt);
+        }
+        setgetdata(true);
+      })
+      .catch(err => {
+        // setgetdata(true);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in CheckReview ${db.apis.GET_ALL_REVIEWS + params} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  @action attemptToGetLatestTrip = (uid, suc) => {
+    console.warn('GetLatestTrip : ', 'true');
+
+    let params = this.user._id + '/' + store.User.user._id;
+    db.hitApi(db.apis.GET_LATEST_TRIP + params, 'get', {}, this.authToken)
+      ?.then(resp => {
+        console.log(
+          `response GetLatestTrip   ${db.apis.GET_LATEST_TRIP + params} : `,
+          resp.data,
+        );
+        let dt = resp.data.data || '';
+
+        //  this.setisAnyTrade(dt)
+      })
+      .catch(err => {
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in GetLatestTrip ${db.apis.GET_LATEST_TRIP + params} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        if (msg == 'No records found') {
+          his.setisAnyTrade(false);
+          return;
+        }
+
         // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
@@ -454,7 +542,7 @@ class userv {
           rp.map((e, i, a) => {
             if (e.photos && e.photos.length > 0) {
               e.photos.map((ee, i, a) => {
-                dt.push(ee);
+                dt.push({uri: ee, tid: e._id});
               });
             }
           });
@@ -462,6 +550,11 @@ class userv {
 
         setgetdata(true);
         this.setphotos(dt);
+        this.attemptToGetTrips(
+          this.user._id,
+          () => {},
+          () => {},
+        );
       })
       .catch(err => {
         setrfrsh(false);
@@ -578,7 +671,6 @@ class userv {
           resp.data,
         );
         let dt = resp.data.data;
-
         this.review[i] = dt;
         suc();
       })
@@ -729,6 +821,115 @@ class userv {
           return;
         }
 
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  @action attemptToPostReview = (body, suc, suc2) => {
+    console.warn('Leave review body : ', body);
+    this.setmLoader(true);
+    db.hitApi(db.apis.LEAVE_REVIEW, 'post', body, this.authToken)
+      ?.then(resp => {
+        this.setmLoader(false);
+        console.log(
+          `response Leave review  ${db.apis.LEAVE_REVIEW} : `,
+          resp.data,
+        );
+        // let dt = resp.data.data;
+        // this.review.unshift(dt);
+        suc();
+        suc2();
+        this.attemptToCheckReview(this.review, () => {});
+      })
+      .catch(err => {
+        this.setmLoader(false);
+
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(`Error in Leave review ${db.apis.LEAVE_REVIEW} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  @action attemptToEditReview = (obj, suc, suc2) => {
+    let body = {
+      message: obj.message,
+      guestRating: obj.rate,
+    };
+    console.log('Edit review body : ', body);
+    this.setmLoader(true);
+    let params = obj._id + '/' + obj.mid;
+    db.hitApi(db.apis.UPDATE_LEAVE_REVIEW + params, 'put', body, this.authToken)
+      ?.then(resp => {
+        this.setmLoader(false);
+        console.log(
+          `response Edit review  ${db.apis.UPDATE_LEAVE_REVIEW}${params} : `,
+          resp.data,
+        );
+        let dt = resp.data.data;
+        let dd = [...this.review];
+        dd[obj.i] = dt;
+        this.setreview(dd);
+        suc();
+        suc2();
+      })
+      .catch(err => {
+        this.setmLoader(false);
+
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in Edit review ${db.apis.UPDATE_LEAVE_REVIEW}${params} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  @action attemptToDeleteReview = (obj, suc) => {
+    console.log('Delete review true ');
+    this.setmLoader(true);
+    let params = obj._id;
+    db.hitApi(db.apis.DELETE_MY_REVIEW + params, 'delete', {}, this.authToken)
+      ?.then(resp => {
+        this.setmLoader(false);
+        console.log(
+          `response Delete review  ${db.apis.DELETE_MY_REVIEW}${params} : `,
+          resp.data,
+        );
+
+        let dd = [...this.review];
+        dd.splice(obj.i, 1);
+        this.setreview(dd);
+        suc();
+        this.attemptToCheckReview(dd, () => {});
+      })
+      .catch(err => {
+        this.setmLoader(false);
+
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in Delete review ${db.apis.DELETE_MY_REVIEW}${params} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
         // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
@@ -903,6 +1104,7 @@ class userv {
         uid,
         () => {},
         () => {},
+        'home',
       );
     }
   };
@@ -2420,6 +2622,8 @@ class userv {
     this.settotalfollowing(0);
     this.setfscreen('');
     this.addauthToken('');
+    this.setisAnyTrade(false);
+    this.setisOneReview(false);
   };
 
   // attemptToUploadImageEPS(body, p, c, seterror, suc) {

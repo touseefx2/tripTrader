@@ -255,9 +255,9 @@ function Inbox(props) {
     } else {
       let min = diff_minutes(ed, sd);
       console.log('minutes: ', min);
-      // if (min >= 0 && min <= 2) {
+      // if (min >= 0 && min <= 1) {
       // t = 'Just now';
-      // } else if (min > 2) {
+      // } else if (min > 1) {
       t = moment(ud).format('hh:mm a');
       // }
     }
@@ -375,9 +375,11 @@ function Inbox(props) {
 
     return (
       <Pressable
-        onPress={() => {}}
+        onPress={() => {
+          props.navigation.navigate('Chat', {obj: item, title: title});
+        }}
         style={({pressed}) => [
-          {opacity: pressed ? 0.8 : 1.0},
+          {opacity: pressed ? 1 : 1.0},
           [
             styles.modalinfoConatiner,
             {

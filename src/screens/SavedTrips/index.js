@@ -422,7 +422,7 @@ function SavedTrips(props) {
   };
 
   const setIsSendObj = v => {
-    setsendObj(modalObj.item.hostId);
+    setsendObj(modalObj.item.user);
     setisOfferSend(v);
     setTimeout(() => {
       closeModalAll();
@@ -932,8 +932,8 @@ function SavedTrips(props) {
     //user
     let photo = usr.image || '';
     let userName = usr.firstName + ' ' + usr.lastName;
-    let avgRating = 3.7;
-    let totalReviews = 50;
+    let avgRating = usr.rating || 0;
+    let totalReviews = usr.reviews || 0;
     let isVeirfy = usr.identityStatus == 'verified' ? true : false;
 
     //trip
@@ -1024,7 +1024,7 @@ function SavedTrips(props) {
               />
               <Text style={styles.textContainerRatetitle1}>
                 {' '}
-                {avgRating.toFixed(1)}
+                {avgRating > 0 ? avgRating.toFixed(1) : avgRating}
                 {'  '}
               </Text>
               <Text style={styles.textContainerRatetitle2}>

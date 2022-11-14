@@ -19,6 +19,7 @@ import {
   ScrollView,
   Keyboard,
   Modal,
+  RefreshControl,
 } from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
 import {styles} from './styles';
@@ -42,9 +43,6 @@ function isObjectEmpty(value) {
     JSON.stringify(value) === '{}'
   );
 }
-
-let seDayColor = theme.color.button1;
-let ocolor = '#569969';
 
 let cssf = {
   container: {
@@ -128,8 +126,6 @@ function Received(props) {
   let maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
 
-  let headerTitle = 'Confirmed Trips';
-
   let guest = require('../../../assets/images/drawer/guest/img.png');
   let trnfericon = require('../../../assets/images/transfer/img.png');
   let durtnicon = require('../../../assets/images/confirmTrip/duration/img.png');
@@ -139,98 +135,61 @@ function Received(props) {
   let internet = store.General.isInternet;
   let user = store.User.user;
 
-  const [step, setstep] = useState(1);
-
-  const [markedDatess, setmarkedDatess] = useState({});
-  const [selDatess, setselDatess] = useState({});
-  const [isSelDatee, setisSelDatee] = useState(false);
-
-  let data = store.Trips.receiveOffers;
-
   const [modalObj, setmodalObj] = useState(false);
   const [modalChk, setmodalChk] = useState(false);
   const [isModal, setisModal] = useState(false);
-  const [isSendMessage, setisSendMessage] = useState(false);
-  const [sendObj, setsendObj] = useState('');
 
   const [isOfferSend, setisOfferSend] = useState(false);
 
-  const [showCal1, setshowCal1] = useState(false);
+  const [isSendMessage, setisSendMessage] = useState(false);
+  const [sendObj, setsendObj] = useState('');
 
+  const [message, setMessage] = useState('');
+
+  const [step, setstep] = useState(1);
+  const [showCal1, setshowCal1] = useState(false);
   const [minDatee, setminDatee] = useState('');
   const [maxDatee, setmaxDatee] = useState('');
   const [isDisableToday, setisDisableToday] = useState(false);
   const [monthh, setmonthh] = useState(new Date());
 
-  let mloader = store.Trips.confirmTripsSendMessageLoader;
+  const [markedDatess, setmarkedDatess] = useState({});
+  const [selDatess, setselDatess] = useState({});
+  const [isSelDatee, setisSelDatee] = useState(false);
 
-  const [message, setMessage] = useState('');
-  const closeMessageModal = () => {
-    setisModal(false);
-    setmodalChk(false);
-    setmodalObj(false);
-    setMessage('');
+  let data = store.Offers.rcvOffers;
+  let mloader = store.Offers.Loader2; //main loader
+  let mmloader = store.Offers.mLoader; //decline loader
+  let mmmloader = store.User.homeModalLoder; //msg loader
+
+  const [getDataOnce, setgetDataOnce] = useState(false);
+  const setGetDataOnce = C => {
+    setgetDataOnce(C);
   };
-
-  useEffect(() => {
-    const dt = [
-      {
-        user: {
-          userName: 'Mike Monuse',
-          first_name: 'Mike',
-          last_name: ' Monuse',
-          avg_rating: 3.8,
-          total_reviews: 190,
-          photo:
-            'https://cdn140.picsart.com/76886237758523202417.png?type=webp&to=min&r=-1x-1',
-        },
-        offering: {
-          offer: 'Whitetail Hunting in Central NC',
-
-          durt: '3 day',
-          avt: 'Jul 22-25, 2022',
-          location: {
-            coords: [],
-            name: 'Dylan, NC',
-          },
-          availablity: {endDate: '2022-12-05', startDate: '2022-10-24'},
-          duration: {number: '3', title: 'days'},
-          unavailable: {
-            all_unavailable_dates: [
-              '2022-10-25',
-              '2022-10-26',
-              '2022-10-28',
-              '2022-11-02',
-              '2022-11-04',
-            ],
-            days_of_week: ['Fri'],
-            esd_text: 'Oct 25-26, Nov 2',
-            exclude_specific_dates: ['2022-10-25', '2022-10-26', '2022-11-02'],
-            repeat_every: {endRepeatOn: '2022-11-05', num: 1, title: 'Weeks'},
-            unavailable_days_of_week: ['2022-10-28', '2022-11-04'],
-            wtxt: 'Fri (weekly)',
-          },
-        },
-        fortrade: {
-          offer: 'Osceola Turkey Hunting',
-          duration: {number: '3', title: 'days'},
-          durt: '3 days',
-          avt: 'Oct 8-11, 2022',
-          location: {
-            coords: [],
-            name: 'Boise, ID',
-          },
-        },
-        offerNote:
-          'I have a bad knee and will need to stay on flat terrain most of the time. Is this something that could be accomodated?',
-        createdAt: '1 hour ago',
-      },
-    ];
-
-    store.Trips.setreceiveOffers(dt);
-
-    return () => {};
+  const [refreshing, setRefreshing] = React.useState(false);
+  const setrefeshing = c => {
+    setRefreshing(c);
+  };
+  const onRefresh = React.useCallback(() => {
+    console.warn('onrefresh cal');
+    setRefreshing(true);
+    getDbData();
   }, []);
+  const getDbData = () => {
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.Offers.attemptToGetReceiveOffers(setGetDataOnce, setrefeshing);
+      } else {
+        setrefeshing(false);
+      }
+    });
+  };
+  useEffect(() => {
+    if (!getDataOnce && internet) {
+      getDbData();
+    }
+    return () => {};
+  }, [getDataOnce, internet]);
 
   useEffect(() => {
     if (
@@ -240,10 +199,11 @@ function Received(props) {
       step == 1
     ) {
       const size = Object.keys(markedDatess).length;
-      let item = modalObj.item;
+
+      let item = modalObj.item.hostTrip;
       let totaldays = 0;
-      let t = item.offering.duration.title;
-      let duration = parseInt(item.offering.duration.number);
+      let t = item.duration.title;
+      let duration = parseInt(item.duration.value);
 
       if (t == 'days') {
         totaldays = duration;
@@ -260,6 +220,15 @@ function Received(props) {
         setisSelDatee(false);
       }
     }
+
+    if (
+      isObjectEmpty(markedDatess) &&
+      !isObjectEmpty(modalObj) &&
+      modalChk == 'offer' &&
+      step == 1
+    ) {
+      setisSelDatee(false);
+    }
   }, [markedDatess, modalObj, modalChk, step]);
 
   //for diable totday day color in step1 calender in make offer
@@ -271,8 +240,8 @@ function Received(props) {
       isModal &&
       minDatee == ''
     ) {
-      let item = modalObj.item;
-      let sd = item.offering.availablity.startDate;
+      let item = modalObj.item.hostTrip;
+      let sd = moment(item.availableFrom).format('YYYY-MM-DD');
       let cd = moment().format('YYYY-MM-DD');
 
       if (sd <= cd) {
@@ -293,15 +262,81 @@ function Received(props) {
     }
   }, [minDatee]);
   //end
-  console.log('minde : ', minDatee);
-  console.log('isdtdy : ', isDisableToday);
-  console.log('isSeldate : ', isSelDatee);
 
-  const onclickSearchBar = () => {};
+  const closeOtherModal = () => {
+    if (!mmloader) {
+      setisModal(false);
+      setmodalObj(false);
+      setmodalChk(false);
+      setmodalHeight(0);
+    }
+  };
+
+  const closeOtherModal2 = () => {
+    if (!mmmloader) {
+      setisModal(false);
+      setmodalObj(false);
+      setmodalChk(false);
+      setmodalHeight(0);
+      setMessage('');
+    }
+  };
+
+  const cancelOffer = () => {
+    Keyboard.dismiss();
+
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.Offers.attemptToDeclineOffer(modalObj, closeOtherModal);
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
+
+  const confirmOffer = () => {
+    Keyboard.dismiss();
+
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        let preferDate = [];
+        let esd = [];
+        //for sort and set format
+        if (!isObjectEmpty(selDatess)) {
+          Object.keys(selDatess).forEach(function (key, index) {
+            esd.push(key);
+          });
+        }
+        if (esd.length > 0) {
+          esd.sort(function (a, b) {
+            return Number(new Date(a)) - Number(new Date(b));
+          });
+          esd.map((e, i, a) => {
+            preferDate.push(moment(e).format('MMM DD, YYYY'));
+          });
+        }
+
+        let body = {
+          tripDates: preferDate,
+        };
+        store.Offers.attemptToConfirmOffer(modalObj, body, setIsAcceptOffer);
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
+
+  const setIsAcceptOffer = v => {
+    setsendObj(modalObj.item.offeredBy);
+    setisOfferSend(true);
+    closeModalAll();
+  };
 
   const setIsSendMessage = v => {
-    setsendObj(modalObj.item.user);
-    closeMessageModal();
+    setsendObj(modalObj.item.offeredBy);
+    closeOtherModal2();
     setisSendMessage(v);
   };
 
@@ -310,59 +345,72 @@ function Received(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        // const obj = {
-        //   _id: (Math.random() * 10).toFixed(0),
-        //   title: title,
-        //   user: store.User.user._id,
-        //   offer: trade,
-        //   return: Return,
-        //   loc: {
-        //     name: 'Miami, Florida',
-        //     coords: [],
-        //   },
-        //   status: status,
-        //   acceptOtherTrades: acceptOther,
-        //   duration: {
-        //     number: durNum,
-        //     title: dur.title,
-        //   },
-        //   availablity: {
-        //     startDate: isSelDate1,
-        //     endDate: isSelDate2,
-        //   },
-        //   photos: photos,
-        //   unavailable: isSetUnavailable != false ? isSetUnavailable : {},
-        // };
-        // console.warn('create trip obj : ', obj);
-        store.Trips.attemptToMessageSend({}, setIsSendMessage);
-      } else {
-        // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
-      }
-    });
-  };
-
-  const setIsSendObj = v => {
-    closeModalAll();
-    setsendObj(modalObj.item.user);
-    setisOfferSend(v);
-  };
-
-  const ConfirmSend = () => {
-    Keyboard.dismiss();
-
-    NetInfo.fetch().then(state => {
-      if (state.isConnected) {
         let item = modalObj.item;
-        let ind = item.i;
-
-        // console.warn('confirm offer  obj : ', obj);
-        store.Trips.attemptToAcceptOffer({}, setIsSendObj);
+        let usr = item.offeredBy;
+        const obj = {
+          userId1: user._id,
+          userId2: usr._id,
+          messages: [
+            {
+              sendBy: user._id,
+              isRead: false,
+              message: message,
+              messageType: 'text',
+            },
+          ],
+        };
+        store.User.attemptToCheckFirstMessage(
+          user._id,
+          usr._id,
+          obj,
+          message,
+          setIsSendMessage,
+        );
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
+  };
+
+  const closeModal = () => {
+    if (step == 1) {
+      closeModalAll();
+      return;
+    }
+    if (step == 2) {
+      if (!mmloader) {
+        setstep(1);
+        setmodalHeight(0);
+      }
+      return;
+    }
+  };
+
+  const closeModalAll = () => {
+    if (!mmloader) {
+      setisModal(false);
+      setmodalChk(false);
+      setmodalObj(false);
+      setMessage('');
+      setshowCal1(false);
+      setselDatess({});
+      setmarkedDatess({});
+      setisSelDatee(false);
+      setstep(1);
+      setminDatee('');
+      setmaxDatee('');
+      setisDisableToday(false);
+      setmonthh(new Date());
+      setmodalHeight(0);
+      setstep(1);
+    }
+  };
+
+  const onclickSearchBar = () => {};
+
+  const onClickCal = () => {
+    setshowCal1(!showCal1);
   };
 
   const ItemSeparatorView = () => {
@@ -378,18 +426,46 @@ function Received(props) {
   const EmptyListMessage = ({item}) => {
     return (
       // Flat List Item
-      <Text style={styles.emptyListStyle} onPress={() => getItem(item)}>
-        No Data Found
-      </Text>
+      <>
+        {!mloader && getDataOnce && (
+          <Text
+            style={{
+              marginTop: '80%',
+              alignItems: 'center',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              fontSize: 13,
+              color: theme.color.subTitleLight,
+              fontFamily: theme.fonts.fontMedium,
+            }}
+            onPress={() => getItem(item)}>
+            No new received offers.
+          </Text>
+        )}
+
+        {mloader && !getDataOnce && (
+          <ActivityIndicator
+            size={30}
+            color={theme.color.button1}
+            style={{
+              marginTop: '80%',
+
+              alignSelf: 'center',
+            }}
+          />
+        )}
+      </>
     );
   };
 
   const ListHeader = () => {
     const renderResult = () => {
-      let length = data.length || 0;
+      let length = data.length;
       return (
         <View style={styles.resultContainer}>
-          <Text style={styles.resultText}>You received {length} offer</Text>
+          <Text style={styles.resultText}>
+            You received {length} {length <= 1 ? 'offer' : 'offers'}
+          </Text>
         </View>
       );
     };
@@ -448,27 +524,177 @@ function Received(props) {
     );
   };
 
+  function FormatAvlblDate(s1, s2) {
+    let avlbl = '';
+
+    let sd = s1;
+    let sdy = parseInt(new Date(sd).getFullYear());
+    let ed = s2;
+    let edy = parseInt(new Date(ed).getFullYear());
+    if (sdy == edy) {
+      avlbl =
+        moment(sd).format('MMM DD') + ' - ' + moment(ed).format('MMM DD, YYYY');
+    } else {
+      avlbl =
+        moment(sd).format('MMM DD, YYYY') +
+        ' - ' +
+        moment(ed).format('MMM DD, YYYY');
+    }
+
+    return avlbl;
+  }
+
+  function FormatPrfrDate(pd) {
+    let t = '';
+    let arset = [];
+    if (pd.length > 0) {
+      pd.map((e, i, a) => {
+        arset.push(moment(e).format('MMM DD, YYYY'));
+      });
+    }
+    if (arset.length > 0) {
+      let fd = arset[0];
+      if (arset.length > 1) {
+        let sd = arset[arset.length - 1];
+
+        let sdy = parseInt(new Date(fd).getFullYear());
+
+        let edy = parseInt(new Date(sd).getFullYear());
+
+        if (sdy == edy) {
+          t =
+            moment(fd).format('MMM DD') +
+            ' - ' +
+            moment(sd).format('MMM DD, YYYY');
+        } else {
+          t = fd + ' - ' + sd;
+        }
+      } else if (arset.length <= 1) {
+        t = fd;
+      }
+    }
+
+    return t;
+  }
+
+  function compare(d, dd) {
+    let d1 = moment(d).format('YYYY-MM-DD');
+    let d2 = moment(dd).format('YYYY-MM-DD');
+    if (d2 > d1) {
+      return 'greater';
+    } else if (d2 < d1) {
+      return 'smaller';
+    } else {
+      return 'equal';
+    }
+  }
+
+  function diff_minutes(dt2, dt1) {
+    var diff = (dt2.getTime() - dt1.getTime()) / 1000;
+    diff /= 60;
+    return Math.abs(Math.round(diff));
+  }
+
+  function CheckDate(d) {
+    let t = '';
+    let ud = new Date(d); //update date
+    let cd = new Date(); //current date
+
+    let udcy = false; //is update date  current year
+    let udy = parseInt(ud.getFullYear());
+    let cdy = parseInt(cd.getFullYear());
+    if (udy == cdy) {
+      udcy = true;
+    }
+    // && min < 1440 // 1 daya minure
+    let sd = ud; //start date
+    let ed = cd; //end date
+    let ics = compare(sd, ed); //is check date
+    // console.log('updated date : ', moment(ud).format('YYYY-MM-DD hh:mm:ss a'));
+    // console.log('currentdate : ', moment(cd).format('YYYY-MM-DD hh:mm:ss a'));
+
+    if (ics == 'greater') {
+      var start = moment(moment(ed).format('YYYY-MM-DD'), 'YYYY-MM-DD');
+      var end = moment(moment(sd).format('YYYY-MM-DD'), 'YYYY-MM-DD');
+      let days = start.diff(end, 'days');
+
+      if (days > 3) {
+        if (udcy) {
+          t = moment(ud).format('MMM DD');
+        } else {
+          t = moment(ud).format('MMM DD, YYYY');
+        }
+      } else {
+        if (days == 1 || days == 0) {
+          t = '1 day ago';
+        }
+
+        if (days == 2) {
+          t = '2 days ago';
+        }
+
+        if (days == 3) {
+          t = '3 days ago';
+        }
+      }
+    } else {
+      let min = diff_minutes(ed, sd);
+      // console.log('minutes: ', min);
+      if (min >= 0 && min <= 1) {
+        t = 'Just now';
+      } else {
+        if (min > 1 && min < 60) {
+          t = min + ' mins ago';
+        } else if (min >= 60) {
+          const hours = Math.floor(min / 60);
+
+          const h = hours.toFixed(0);
+          let tt = h <= 1 ? ' hour' : ' hours';
+          t = h + tt + ' ago';
+
+          // t = moment(ud).format('hh:mm a');
+        }
+      }
+    }
+
+    return t;
+  }
+
   const ItemView = ({item, index}) => {
-    let user = item.user;
-    let ofer = item.offering;
-    let trade = item.fortrade;
-    let offernote = item.offerNote || '';
-    let create = item.createdAt || '';
+    let user = item.offeredBy;
+    let ofer = item.hostTrip;
+    let trade = item.offeredTrip;
+    let offernote = item.note || '';
+    let create = CheckDate(item.createdAt);
 
-    let photo = user.photo && user.photo != '' ? {uri: user.photo} : guest;
-    let userName = user.userName || '';
-    let avgRating = parseInt(user.avg_rating);
-    let totalReviews = parseInt(user.total_reviews);
+    //user info
+    let photo = user.image && user.image != '' ? {uri: user.image} : guest;
+    let userName = user.firstName + ' ' + user.lastName || '';
+    let avgRating = user.rating || 0;
+    let totalReviews = user.reviews || 0;
 
-    let title = ofer.offer;
-    let dur = ofer.durt;
-    let avlbl = ofer.avt;
-    let loc = ofer.location.name ? ofer.location.name : '';
+    //offer by (host trip)
+    let title = ofer.species;
+    let dur = ofer.duration.value;
+    let t =
+      dur <= 1
+        ? ofer.duration.title.substring(0, ofer.duration.title.length - 1)
+        : ofer.duration.title;
+    dur = dur + ' ' + t;
+    let avlbl = FormatAvlblDate(ofer.availableFrom, ofer.availableTo);
+    let loc = ofer.location.city + ', ' + ofer.location.state;
 
-    let titlet = trade.offer;
-    let durt = trade.durt;
-    let avlblt = trade.avt;
-    let loct = trade.location.name ? trade.location.name : '';
+    //ofer to (offer trip)
+    let titlet = trade.species;
+    let durt = trade.duration.value;
+    let tt =
+      durt <= 1
+        ? trade.duration.title.substring(0, trade.duration.title.length - 1)
+        : trade.duration.title;
+    durt = durt + ' ' + tt;
+    let preferdates = item.preferredDates;
+    let avlblt = FormatPrfrDate(preferdates);
+    let loct = trade.location.city + ', ' + trade.location.state;
 
     const renderProfile = () => {
       return (
@@ -537,7 +763,7 @@ function Received(props) {
             />
             <Text style={styles.textContainerRatetitle1}>
               {' '}
-              {avgRating.toFixed(1)}
+              {avgRating > 0 ? avgRating.toFixed(1) : avgRating}
               {'  '}
             </Text>
             <Text style={styles.textContainerRatetitle2}>
@@ -561,7 +787,6 @@ function Received(props) {
         fontSize: 13,
         fontFamily: theme.fonts.fontMedium,
         lineHeight: 19,
-        marginTop: 2,
       };
 
       let iconS = {
@@ -584,7 +809,7 @@ function Received(props) {
       };
 
       return (
-        <View style={{width: '97%', marginTop: 20, alignSelf: 'center'}}>
+        <View style={{width: '96%', marginTop: 20, alignSelf: 'center'}}>
           <View
             style={{
               width: '100%',
@@ -592,7 +817,7 @@ function Received(props) {
               justifyContent: 'space-between',
             }}>
             <View style={{width: '40%'}}>
-              <Text style={titleS}>Offering</Text>
+              <Text style={titleS}>OFFERED</Text>
               <Text style={titleM}>{title}</Text>
 
               <View style={{marginTop: 20}}>
@@ -689,10 +914,7 @@ function Received(props) {
           {offernote != '' && (
             <View style={{width: '100%', marginTop: 20}}>
               <Text style={titleS}>OFFER NOTE</Text>
-              <Text style={offertitleS}>
-                I have a bad knee and will need to stay on flat terrain most of
-                the time. Is this something that could be accomodated?
-              </Text>
+              <Text style={offertitleS}>{offernote}</Text>
             </View>
           )}
         </View>
@@ -743,7 +965,11 @@ function Received(props) {
             justifyContent: 'space-between',
           }}>
           <Pressable
-            onPress={() => {}}
+            onPress={() => {
+              setmodalObj({item: item, i: index});
+              setmodalChk('cancelOffer');
+              setisModal(true);
+            }}
             style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc1]}>
             <Text numberOfLines={1} ellipsizeMode="tail" style={btS1}>
               Decline
@@ -794,6 +1020,7 @@ function Received(props) {
             onPress={() => {
               setmodalObj({item: item, i: index});
               setmodalChk('offer');
+              setstep(1);
               setisModal(true);
             }}
             style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc]}>
@@ -833,240 +1060,14 @@ function Received(props) {
     );
   };
 
-  const ListFooter = () => {
-    return (
-      <>
-        <View>
-          <View style={styles.listFooter}>
-            <Text style={styles.listFooterT}>End of messages</Text>
-          </View>
-        </View>
-      </>
-    );
-  };
-
-  const renderMessageSendModal = () => {
-    const renderButton1 = () => {
-      return (
-        <>
-          <TouchableOpacity
-            onPress={closeModal}
-            activeOpacity={0.7}
-            style={{
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: theme.color.button1,
-              height: 50,
-              borderRadius: 10,
-              alignSelf: 'center',
-
-              marginTop: 40,
-            }}>
-            <Text
-              style={{
-                color: theme.color.buttonText,
-                fontSize: 16,
-                fontFamily: theme.fonts.fontBold,
-
-                textTransform: 'capitalize',
-              }}>
-              Done
-            </Text>
-          </TouchableOpacity>
-        </>
-      );
-    };
-
-    const renderButton2 = () => {
-      return (
-        <>
-          <TouchableOpacity
-            onPress={() => {
-              closeModal();
-              props.navigation.navigate('Inbox');
-            }}
-            activeOpacity={0.7}
-            style={{
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: theme.color.button2,
-              height: 50,
-              borderRadius: 10,
-              alignSelf: 'center',
-              // borderWidth: 1,
-              // borderColor: theme.color.fieldBorder,
-              marginTop: 12,
-            }}>
-            <Text
-              style={{
-                color: '#30563A',
-                textTransform: 'none',
-                fontFamily: theme.fonts.fontBold,
-                fontSize: 14,
-              }}>
-              Go to Inbox
-            </Text>
-          </TouchableOpacity>
-        </>
-      );
-    };
-
-    const closeModal = () => {
-      setisSendMessage(false);
-    };
-
-    let fn = sendObj.first_name;
-    let ln = sendObj.last_name;
-    let sendOfferUsername = fn + ' ' + ln;
-    let un = sendObj.userName;
-    let src = require('../../../assets/images/msgSentDone/img.png');
-    return (
-      <Modal
-        animationType="slide"
-        visible={isSendMessage}
-        transparent
-        onRequestClose={closeModal}>
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            padding: 15,
-          }}>
-          <View
-            style={{
-              backgroundColor: theme.color.background,
-              borderRadius: 15,
-              marginBottom: 15,
-              padding: 18,
-              width: '100%',
-            }}>
-            <View
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-              }}>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  fontFamily: theme.fonts.fontBold,
-                  fontSize: 19,
-                  color: '#101B10',
-                  lineHeight: 29,
-                }}>
-                Message Sent
-              </Text>
-            </View>
-
-            <View
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginTop: 40,
-                width: '100%',
-              }}>
-              <Image
-                style={{width: 90, height: 90, resizeMode: 'contain'}}
-                source={src}
-              />
-
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  marginTop: 15,
-                  fontFamily: theme.fonts.fontBold,
-                  fontSize: 15,
-                  color: '#101B10',
-                  textTransform: 'capitalize',
-                  lineHeight: 20,
-                }}>
-                {sendOfferUsername}
-              </Text>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  fontFamily: theme.fonts.fontNormal,
-                  fontSize: 13,
-                  color: theme.color.subTitleLight,
-                  lineHeight: 20,
-                }}>
-                @{un}
-              </Text>
-            </View>
-
-            {renderButton1()}
-            {renderButton2()}
-          </View>
-        </View>
-      </Modal>
-    );
-  };
-
-  const onClickCal = () => {
-    setshowCal1(!showCal1);
-  };
-
-  const closeModalAll = () => {
-    if (!mloader) {
-      clearModal1();
-      clearModal2();
-      setmodalHeight(0);
-      setstep(1);
-    }
-  };
-
-  const closeModal = () => {
-    if (step == 1) {
-      clearModal1();
-
-      return;
-    }
-    if (step == 2) {
-      clearModal2();
-      return;
-    }
-  };
-
-  const clearModal1 = () => {
-    if (!mloader) {
-      setisModal(false);
-      setmodalChk(false);
-      setmodalObj(false);
-      setMessage('');
-      setshowCal1(false);
-      setselDatess({});
-      setmarkedDatess({});
-      setisSelDatee(false);
-      setstep(1);
-
-      setminDatee('');
-      setmaxDatee('');
-      setisDisableToday(false);
-      setmonthh(new Date());
-      setmodalHeight(0);
-    }
-  };
-
-  const clearModal2 = () => {
-    if (!mloader) {
-      setstep(1);
-      setmodalHeight(0);
-    }
-  };
-
   const renderModal = () => {
     let c = modalHeight >= maxModalHeight ? true : false;
     let style = c ? [styles.modal, {height: maxModalHeight}] : styles.modal2;
 
     if (modalChk == 'offer' && step == 1) {
       let item = modalObj.item;
+      let user = item.offeredBy;
+      let ofer = item.hostTrip;
 
       const renderHeader = () => {
         let text = 'Choose Trip Date';
@@ -1074,7 +1075,7 @@ function Received(props) {
         const renderCross = () => {
           return (
             <Pressable
-              disabled={mloader}
+              disabled={mmloader}
               style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
               onPress={closeModalAll}>
               <utils.vectorIcon.Ionicons
@@ -1120,30 +1121,28 @@ function Received(props) {
       };
 
       const renderInfo = () => {
-        let userName = item.user.first_name + ' ' + item.user.last_name;
-        let duration = item.offering.duration.number;
+        let photo = user.image ? user.image : '';
+        let userName = user.firstName + ' ' + user.lastName;
+        let isVeirfy = user.identityStatus == 'verified' ? true : false;
+        let duration = ofer.duration.value;
         let t =
           duration <= 1
-            ? item.offering.duration.title.substring(
-                0,
-                item.offering.duration.title.length - 1,
-              )
-            : item.offering.duration.title;
+            ? ofer.duration.title.substring(0, ofer.duration.title.length - 1)
+            : ofer.duration.title;
         duration = duration + ' ' + t;
-        let photo = item.user.photo || '';
-        let offer = item.offering.offer || '';
+        let spcs = ofer.species || '';
 
         const renderProfile = () => {
           return (
-            <View style={styles.mmProfileImgContainer}>
+            <View style={styles.mProfileImgContainern}>
               <ProgressiveFastImage
-                style={styles.mmProfileImg}
+                style={styles.mProfileImgn}
                 source={
                   photo != ''
                     ? {uri: photo}
                     : require('../../../assets/images/drawer/guest/img.png')
                 }
-                loadingImageStyle={styles.mmimageLoader}
+                loadingImageStyle={styles.mimageLoadern}
                 loadingSource={require('../../../assets/images/imgLoad/img.jpeg')}
                 blurRadius={5}
               />
@@ -1159,25 +1158,20 @@ function Received(props) {
 
         const renderText = () => {
           return (
-            <View style={styles.mmtextContainer}>
+            <View style={styles.mtextContainern}>
               <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={styles.mtextContainertitle}>
-                {offer}
+                style={[
+                  styles.mtextContainertitle,
+                  {textTransform: 'capitalize'},
+                ]}>
+                {spcs}
               </Text>
 
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={styles.textContainertitle2}>
+              <Text style={styles.textContainertitle2}>
                 Duration: {duration}
               </Text>
 
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={styles.textContainertitle3}>
+              <Text style={styles.textContainertitle3}>
                 Hosted by{' '}
                 <Text
                   style={[
@@ -1192,18 +1186,7 @@ function Received(props) {
         };
 
         return (
-          <View
-            style={{
-              width: '100%',
-              marginTop: 10,
-              padding: 10,
-              borderRadius: 8,
-              borderColor: theme.color.fieldBorder,
-              borderWidth: 1,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
+          <View style={styles.modalinfoConatinern}>
             {renderProfile()}
             {renderText()}
           </View>
@@ -1218,92 +1201,38 @@ function Received(props) {
           Object.keys(myObject).forEach(function (key, index) {
             esd.push(key);
           });
-          // let arset = []; //for sort and set format
-          // if (esd.length > 0) {
-          //   esd.sort(function (a, b) {
-          //     return Number(new Date(a)) - Number(new Date(b));
-          //   });
-          //   esd.map((e, i, a) => {
-          //     arset.push(moment(e).format('MMM DD'));
-          //   });
-          // }
-          // let arr = []; //for amse sequece date separate
-          // if (arset.length > 0) {
-          //   let arset2 = arset.slice();
-          //   arset.map((e, i, a) => {
-          //     let d = [];
-          //     let chkd = e;
-          //     let chki = i;
-          //     d.push({d: chkd});
-          //     delete arset[chki];
-          //     let id = 0;
-          //     for (let index = ++chki; index < arset2.length; index++) {
-          //       const ee = arset2[index];
-          //       if (chkd.slice(0, 3) == ee.slice(0, 3)) {
-          //         let n1 = chkd.slice(4, 6);
-          //         let n2 = ee.slice(4, 6);
-          //         id++;
-          //         if (Number(n1) + id == Number(n2)) {
-          //           d.push({d: ee});
-          //           delete arset[index];
-          //         } else {
-          //           break;
-          //         }
-          //       }
-          //     }
-          //     arr.push(d);
-          //   });
-          // }
-          // if (arr.length > 0) {
-          //   arr.map((e, i, a) => {
-          //     let aa = e;
-          //     if (aa.length > 1) {
-          //       tt =
-          //         tt +
-          //         moment(aa[0].d).format('MMM D') +
-          //         '-' +
-          //         moment(aa[aa.length - 1].d)
-          //           .format('MMM D')
-          //           .slice(4, 6) +
-          //         ', ';
-          //     } else {
-          //       tt = tt + moment(aa[0].d).format('MMM D') + ', ';
-          //     }
-          //   });
-          // }
-          // tt = tt.replace(/, *$/, '');
-          // t = tt;
+
           let arset = []; //for sort and set format
           if (esd.length > 0) {
-            esd.sort(function (a, b) {
-              return Number(new Date(a)) - Number(new Date(b));
-            });
+            // esd.sort(function (a, b) {
+            //   return Number(new Date(a)) - Number(new Date(b));
+            // });
             esd.map((e, i, a) => {
-              arset.push(moment(e).format('MMM DD, YYYYY'));
+              arset.push(moment(e).format('MMM DD, YYYY'));
             });
           }
           if (arset.length > 0) {
             let fd = arset[0];
-            let sd = '';
             if (arset.length > 1) {
-              sd = arset[arset.length - 1];
+              let sd = arset[arset.length - 1];
+              t = fd + ' - ' + sd;
+            } else if (arset.length <= 1) {
+              t = fd;
             }
-            t = fd + ' - ' + sd;
           }
         } else {
-          let duration = parseInt(item.offering.duration.number);
+          let duration = parseInt(ofer.duration.value);
           t =
             duration <= 1
-              ? 'Choose a trip date...'
+              ? 'Choose a trip date'
               : 'Choose a trip date or date range';
         }
 
         return (
-          <View style={styles.modalFieldConatiner}>
+          <View style={[styles.modalFieldConatiner, {marginTop: 20}]}>
             <Text style={[styles.mfT1, {textTransform: 'none'}]}>
               Choose your preferred trip date
             </Text>
-
             <Pressable
               onPress={onClickCal}
               style={({pressed}) => [
@@ -1317,7 +1246,7 @@ function Received(props) {
                   styles.mfT2,
                   {opacity: isObjectEmpty(selDatess) ? 0.4 : 1},
                 ]}>
-                {t == '' ? 'Choose a trip date...' : t}
+                {t == '' ? 'Choose a trip date' : t}
               </Text>
               <View style={{width: '13%', alignItems: 'flex-end'}}>
                 <Image
@@ -1331,6 +1260,8 @@ function Received(props) {
       };
 
       const renderBottom = () => {
+        let chk = isObjectEmpty(selDatess) ? true : false;
+
         const renderButton1 = () => {
           return (
             <Pressable
@@ -1338,8 +1269,8 @@ function Received(props) {
               style={({pressed}) => [
                 {
                   opacity: pressed ? 0.9 : 1.0,
-                  paddingHorizontal: 15,
-                  paddingVertical: 8,
+                  paddingHorizontal: 8,
+                  paddingVertical: 10,
                   borderRadius: 8,
                   borderWidth: 1,
                   borderColor: theme.color.fieldBorder,
@@ -1350,7 +1281,7 @@ function Received(props) {
               ]}>
               <Text
                 style={{
-                  fontSize: 12.5,
+                  fontSize: 11,
                   fontFamily: theme.fonts.fontBold,
                   color: '#30563A',
                 }}>
@@ -1361,23 +1292,31 @@ function Received(props) {
         };
 
         const renderButton2 = () => {
-          let c = !isObjectEmpty(selDatess) ? false : true;
-
-          const Continue = () => {
-            setstep(2);
-          };
-
           return (
             <Pressable
-              disabled={c}
-              onPress={Continue}
+              disabled={chk}
+              onPress={() => {
+                setstep(2);
+                setmodalChk('offer');
+                setmodalHeight(0);
+              }}
               style={({pressed}) => [
-                {opacity: pressed ? 0.8 : c ? 0.5 : 1.0},
+                {opacity: pressed ? 0.8 : chk ? 0.5 : 1.0},
                 styles.ButtonContainer,
-                {backgroundColor: theme.color.button1},
+                {
+                  backgroundColor: theme.color.button1,
+                  paddingHorizontal: !mmloader ? 8 : 15,
+                },
               ]}>
               <Text
-                style={[styles.ButtonText, {color: theme.color.buttonText}]}>
+                style={[
+                  styles.ButtonText,
+                  {
+                    color: theme.color.buttonText,
+                    fontSize: 11,
+                    textTransform: 'none',
+                  },
+                ]}>
                 Review Trade
               </Text>
             </Pressable>
@@ -1403,7 +1342,7 @@ function Received(props) {
                     width: '100%',
                   }
                 : {
-                    marginTop: 30,
+                    marginTop: 35,
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -1434,8 +1373,8 @@ function Received(props) {
               <View
                 style={
                   c
-                    ? styles.mmodalBottomContainer
-                    : styles.mmodalBottomContainer2
+                    ? [styles.modalBottomContainern, {paddingTop: 15}]
+                    : styles.modalBottomContainer2n
                 }>
                 {renderButton1()}
                 {renderButton2()}
@@ -1474,9 +1413,9 @@ function Received(props) {
                 {!c && (
                   <>
                     {renderHeader()}
-
                     {renderInfo()}
                     {renderField()}
+
                     {renderBottom()}
                   </>
                 )}
@@ -1487,17 +1426,15 @@ function Received(props) {
       );
     }
 
-    //review trip
+    //review
     if (modalChk == 'offer' && step == 2) {
-      let item = modalObj.item;
-
       const renderHeader = () => {
         let text = 'Review Trade';
 
         const renderCross = () => {
           return (
             <Pressable
-              disabled={mloader}
+              disabled={mmloader}
               style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
               onPress={closeModalAll}>
               <utils.vectorIcon.Ionicons
@@ -1543,30 +1480,53 @@ function Received(props) {
       };
 
       const renderFields = () => {
-        let user = item.user;
-        let ofer = item.offering;
-        let trade = item.fortrade;
-        let offernote = item.offerNote || '';
-        let create = item.createdAt || '';
+        let item = modalObj.item;
+        let user = item.offeredBy;
+        let photo = user.image ? {uri: user.image} : guest;
+        let ofer = item.hostTrip;
 
-        let photo = user.photo && user.photo != '' ? {uri: user.photo} : guest;
+        let user2 = item.offeredTo;
+        let photo2 = user2.image ? {uri: user2.image} : guest;
+        let trade = item.offeredTrip;
 
-        let photo2 = {
-          uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfHw%3D&w=1000&q=80',
-        };
-        let userName = user.userName || '';
-        let avgRating = parseInt(user.avg_rating);
-        let totalReviews = parseInt(user.total_reviews);
+        //offer by (host trip)
+        let title = ofer.species;
+        let dur = ofer.duration.value;
+        let t =
+          dur <= 1
+            ? ofer.duration.title.substring(0, ofer.duration.title.length - 1)
+            : ofer.duration.title;
+        dur = dur + ' ' + t;
+        let preferDate = [];
+        let esd = [];
+        //for sort and set format
+        if (!isObjectEmpty(selDatess)) {
+          Object.keys(selDatess).forEach(function (key, index) {
+            esd.push(key);
+          });
+        }
+        if (esd.length > 0) {
+          esd.sort(function (a, b) {
+            return Number(new Date(a)) - Number(new Date(b));
+          });
+          esd.map((e, i, a) => {
+            preferDate.push(moment(e).format('MMM DD, YYYY'));
+          });
+        }
+        let avlbl = FormatPrfrDate(preferDate);
+        let loc = ofer.location.city + ', ' + ofer.location.state;
 
-        let title = ofer.offer;
-        let dur = ofer.durt;
-        let avlbl = ofer.avt;
-        let loc = ofer.location.name ? ofer.location.name : '';
-
-        let titlet = trade.offer;
-        let durt = trade.durt;
-        let avlblt = trade.avt;
-        let loct = trade.location.name ? trade.location.name : '';
+        //ofer to (offer trip)
+        let titlet = trade.species;
+        let durt = trade.duration.value;
+        let tt =
+          durt <= 1
+            ? trade.duration.title.substring(0, trade.duration.title.length - 1)
+            : trade.duration.title;
+        durt = durt + ' ' + tt;
+        let preferdates = item.preferredDates;
+        let avlblt = FormatPrfrDate(preferdates);
+        let loct = trade.location.city + ', ' + trade.location.state;
 
         let titleS = {
           color: theme.color.subTitleLight,
@@ -1615,7 +1575,7 @@ function Received(props) {
                   <ProgressiveFastImage
                     style={styles.mProfileImgr}
                     source={photo}
-                    loadingImageStyle={styles.mimageLoader}
+                    loadingImageStyle={styles.mimageLoaderr}
                     loadingSource={require('../../../assets/images/imgLoad/img.jpeg')}
                     blurRadius={5}
                   />
@@ -1751,12 +1711,11 @@ function Received(props) {
         const renderButton1 = () => {
           return (
             <Pressable
-              disabled={mloader}
-              onPress={closeModalAll}
+              onPress={closeModal}
               style={({pressed}) => [
                 {
                   opacity: pressed ? 0.9 : 1.0,
-                  paddingHorizontal: 10,
+                  paddingHorizontal: 8,
                   paddingVertical: 10,
                   borderRadius: 8,
                   borderWidth: 1,
@@ -1768,7 +1727,7 @@ function Received(props) {
               ]}>
               <Text
                 style={{
-                  fontSize: 12,
+                  fontSize: 11,
                   fontFamily: theme.fonts.fontBold,
                   color: '#30563A',
                 }}>
@@ -1781,30 +1740,30 @@ function Received(props) {
         const renderButton2 = () => {
           return (
             <Pressable
-              disabled={mloader}
-              onPress={ConfirmSend}
+              disabled={mmloader}
+              onPress={confirmOffer}
               style={({pressed}) => [
                 {opacity: pressed ? 0.8 : 1.0},
                 styles.ButtonContainer,
                 {
                   backgroundColor: theme.color.button1,
-                  paddingHorizontal: !mloader ? 10 : 15,
+                  paddingHorizontal: !mmloader ? 8 : 15,
                 },
               ]}>
-              {!mloader && (
+              {!mmloader && (
                 <Text
                   style={[
                     styles.ButtonText,
                     {
                       color: theme.color.buttonText,
-                      fontSize: 12,
+                      fontSize: 11,
                       textTransform: 'none',
                     },
                   ]}>
                   Confirm and Accept
                 </Text>
               )}
-              {mloader && (
+              {mmloader && (
                 <ActivityIndicator size={18} color={theme.color.buttonText} />
               )}
             </Pressable>
@@ -1861,8 +1820,8 @@ function Received(props) {
               <View
                 style={
                   c
-                    ? [styles.mmodalBottomContainer, {paddingTop: 15}]
-                    : styles.mmodalBottomContainer2
+                    ? [styles.modalBottomContainern, {paddingTop: 15}]
+                    : styles.modalBottomContainer2n
                 }>
                 {renderButton1()}
                 {renderButton2()}
@@ -1875,7 +1834,7 @@ function Received(props) {
       return (
         <Modal visible={isModal} transparent onRequestClose={closeModal}>
           <SafeAreaView style={styles.modalContainer}>
-            <View style={[styles.modalContainer2, {margin: 12}]}>
+            <View style={styles.modalContainer2}>
               <View
                 onLayout={event => {
                   if (!c) {
@@ -1890,9 +1849,8 @@ function Received(props) {
                     <ScrollView
                       contentContainerStyle={{paddingHorizontal: 15}}
                       showsVerticalScrollIndicator={false}
-                      style={{flex: 1}}>
-                      {renderFields()}
-                    </ScrollView>
+                      style={{flex: 1}}></ScrollView>
+                    {renderFields()}
                     {renderBottom()}
                   </>
                 )}
@@ -1911,6 +1869,226 @@ function Received(props) {
       );
     }
 
+    //cancel offer
+    if (modalChk == 'cancelOffer') {
+      const renderHeader = () => {
+        let text = 'Decline Offer?';
+
+        const renderCross = () => {
+          return (
+            <Pressable
+              disabled={mmloader}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.7 : 1.0},
+                [
+                  !c
+                    ? {
+                        position: 'absolute',
+                        bottom: 0,
+                        right: 0,
+                      }
+                    : {
+                        position: 'absolute',
+                        bottom: 7,
+                        right: 15,
+                      },
+                ],
+              ]}
+              onPress={closeOtherModal}>
+              <utils.vectorIcon.Ionicons
+                name="ios-close-outline"
+                color={theme.color.title}
+                size={32}
+              />
+            </Pressable>
+          );
+        };
+
+        const renderTitle = () => {
+          return <Text style={styles.modalTitle}>{text}</Text>;
+        };
+
+        return (
+          <View
+            style={
+              c
+                ? {
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    paddingHorizontal: 15,
+                    paddingTop: 15,
+                    paddingBottom: 7,
+                    shadowColor: '#000000',
+                    shadowOffset: {width: 0, height: 1}, // change this for more shadow
+                    shadowOpacity: 0.1,
+                    elevation: 1,
+                    backgroundColor: theme.color.background,
+                    borderTopLeftRadius: 10,
+                    borderTopRightRadius: 10,
+                  }
+                : {
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }
+            }>
+            {renderTitle()}
+            {renderCross()}
+          </View>
+        );
+      };
+
+      const renderInfo = () => {
+        return (
+          <View style={{width: '100%', marginTop: 12}}>
+            <Text
+              style={{
+                fontSize: 17,
+                color: theme.color.title,
+                fontFamily: theme.fonts.fontNormal,
+              }}>
+              Are you sure you would like to decline offer?
+            </Text>
+          </View>
+        );
+      };
+
+      const renderBottom = () => {
+        const renderButton1 = () => {
+          return (
+            <>
+              <TouchableOpacity
+                disabled={mmloader}
+                onPress={cancelOffer}
+                activeOpacity={0.7}
+                style={{
+                  width: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#B93B3B',
+                  height: 50,
+                  borderRadius: 10,
+                  alignSelf: 'center',
+                }}>
+                {!mmloader && (
+                  <Text
+                    style={{
+                      color: theme.color.buttonText,
+                      fontSize: 16,
+                      fontFamily: theme.fonts.fontBold,
+                      textTransform: 'none',
+                    }}>
+                    Yes, decline offer
+                  </Text>
+                )}
+                {mmloader && (
+                  <ActivityIndicator size={20} color={theme.color.buttonText} />
+                )}
+              </TouchableOpacity>
+            </>
+          );
+        };
+
+        const renderButton2 = () => {
+          return (
+            <>
+              <TouchableOpacity
+                disabled={mmloader}
+                onPress={closeOtherModal}
+                activeOpacity={0.7}
+                style={{
+                  width: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: theme.color.button2,
+                  height: 50,
+                  borderRadius: 10,
+                  alignSelf: 'center',
+                  // borderWidth: 1,
+                  // borderColor: theme.color.fieldBorder,
+                  marginTop: 12,
+                }}>
+                <Text
+                  style={{
+                    color: '#30563A',
+                    textTransform: 'none',
+                    fontFamily: theme.fonts.fontBold,
+                    fontSize: 16,
+                  }}>
+                  No, keep it
+                </Text>
+              </TouchableOpacity>
+            </>
+          );
+        };
+
+        return (
+          <View
+            style={
+              c
+                ? {
+                    backgroundColor: theme.color.background,
+                    shadowColor: '#000000',
+                    shadowOffset: {width: 0, height: -1}, // change this for more shadow
+                    shadowOpacity: 0.1,
+                    elevation: 5,
+                    borderBottomLeftRadius: 10,
+                    borderBottomRightRadius: 10,
+                    marginTop: 5,
+                  }
+                : {marginTop: 40}
+            }>
+            <View
+              style={
+                c ? styles.modalBottomContainer : styles.modalBottomContainer2
+              }>
+              {renderButton1()}
+              {renderButton2()}
+            </View>
+          </View>
+        );
+      };
+
+      return (
+        <Modal visible={isModal} transparent onRequestClose={closeOtherModal}>
+          <SafeAreaView style={styles.modalContainer}>
+            <View style={styles.modalContainer2}>
+              <View
+                onLayout={event => {
+                  if (!c) {
+                    let {height} = event.nativeEvent.layout;
+                    setmodalHeight(height);
+                  }
+                }}
+                style={style}>
+                {c && (
+                  <>
+                    {renderHeader()}
+                    <ScrollView
+                      contentContainerStyle={{paddingHorizontal: 15}}
+                      showsVerticalScrollIndicator={false}
+                      style={{flex: 1}}>
+                      {renderInfo()}
+                      {/* {renderField()} */}
+                    </ScrollView>
+                    {renderBottom()}
+                  </>
+                )}
+
+                {!c && (
+                  <>
+                    {renderHeader()}
+                    {renderInfo()}
+                    {/*    {renderField()} */}
+                    {renderBottom()}
+                  </>
+                )}
+              </View>
+            </View>
+          </SafeAreaView>
+        </Modal>
+      );
+    }
+
     //message
     if (modalChk == 'message') {
       const renderHeader = () => {
@@ -1919,12 +2097,12 @@ function Received(props) {
         const renderCross = () => {
           return (
             <Pressable
-              disabled={mloader}
+              disabled={mmmloader}
               style={({pressed}) => [
                 {opacity: pressed ? 0.7 : 1.0},
                 styles.modalCross,
               ]}
-              onPress={closeMessageModal}>
+              onPress={closeOtherModal2}>
               <utils.vectorIcon.Ionicons
                 name="ios-close-outline"
                 color={theme.color.title}
@@ -1947,10 +2125,10 @@ function Received(props) {
       };
 
       const renderField = () => {
-        let item = modalObj.item;
-        let photo = item.user.photo || '';
-        let isVeirfy = item.user.isVerified || false;
-        let userName = item.user.first_name + ' ' + item.user.last_name;
+        let item = modalObj.item.offeredBy;
+        let photo = item.image ? item.image : '';
+        let isVeirfy = item.identityStatus == 'verified' ? true : false;
+        let userName = item.firstName + ' ' + item.lastName;
 
         const renderProfile = () => {
           return (
@@ -2020,13 +2198,13 @@ function Received(props) {
           return (
             <Pressable
               onPress={sendMessage}
-              disabled={mloader == true ? true : message == '' ? true : false}
+              disabled={mmmloader == true ? true : message == '' ? true : false}
               style={({pressed}) => [
                 {opacity: pressed ? 0.9 : message == '' ? 0.5 : 1},
                 styles.ButtonContainer,
                 {backgroundColor: theme.color.button1, width: '100%'},
               ]}>
-              {!mloader && (
+              {!mmmloader && (
                 <Text
                   style={[
                     styles.ButtonText,
@@ -2035,7 +2213,7 @@ function Received(props) {
                   Send Message
                 </Text>
               )}
-              {mloader && (
+              {mmmloader && (
                 <ActivityIndicator size={20} color={theme.color.buttonText} />
               )}
             </Pressable>
@@ -2048,7 +2226,7 @@ function Received(props) {
       };
 
       return (
-        <Modal visible={isModal} transparent onRequestClose={closeMessageModal}>
+        <Modal visible={isModal} transparent onRequestClose={closeOtherModal2}>
           <SafeAreaView style={styles.modalContainer}>
             <View style={styles.modalContainer2}>
               <View style={styles.modal2}>
@@ -2064,23 +2242,27 @@ function Received(props) {
   };
 
   const renderCalender1 = () => {
-    let item = modalObj.item;
-    let duration = item.offering.duration.number;
-    let durationTitle = item.offering.duration.title;
-    let unavailable_days = item.offering.unavailable.all_unavailable_dates;
-    let mdt = item.offering.availablity.startDate;
-    let cdt = moment().format('YYYY-MM-DD');
+    let item = modalObj.item.hostTrip;
+
+    let duration = item.duration.value;
+    let durationTitle = item.duration.title;
+    let unavailable_days = item.unAvailableDays.allUnavailableDates || [];
+    let mdt = moment(item.availableFrom).format('YYYY-MM-DD');
+    let cdt = moment(new Date()).format('YYYY-MM-DD');
+
     let mind = '';
+
     if (mdt < cdt) {
       mind = moment(cdt).format('YYYY-MM-DD');
     } else {
       mind = moment(mdt).format('YYYY-MM-DD');
     }
-    let mxd = item.offering.availablity.endDate;
+    let mxd = moment(item.availableTo).format('YYYY-MM-DD');
     let md = {};
+
     if (unavailable_days.length > 0) {
       unavailable_days.map((e, i, a) => {
-        md[e] = {
+        md[moment(e).format('YYYY-MM-DD')] = {
           marked: false,
           selected: true,
           customStyles: cssf,
@@ -2096,6 +2278,7 @@ function Received(props) {
       setshowCal1(false);
       const size = Object.keys(selDatess).length;
       const dt = Object.keys(selDatess);
+
       if (size > 0) {
         if (size < 2 && size > 0) {
           //for duration ==1
@@ -2111,12 +2294,35 @@ function Received(props) {
         setmaxDatee('');
       }
     };
+
     const ApplyCalModal = () => {
-      setmarkedDatess(markedDatess);
-      setselDatess(markedDatess);
+      let mdd = {...markedDatess};
+      let mds = [];
+      let fm = {};
+
+      if (!isObjectEmpty(mdd)) {
+        mds = Object.keys(mdd);
+        mds.sort();
+      }
+      if (mds.length > 0) {
+        mds.map((e, i, a) => {
+          fm[e] = {
+            customStyles: cs,
+            marked: false,
+            selected: true,
+            selectedColor: theme.color.button1,
+            disabled: false,
+            disableTouchEvent: false,
+          };
+        });
+      }
+
+      setmarkedDatess(fm);
+      setselDatess(fm);
       setshowCal1(false);
-      const size = Object.keys(markedDatess).length;
-      const dt = Object.keys(markedDatess);
+      const size = Object.keys(fm).length;
+      const dt = Object.keys(fm);
+
       if (size > 0) {
         // if (size == totaldays) {
         if (size < 2 && size > 0) {
@@ -2141,6 +2347,8 @@ function Received(props) {
     };
 
     const getSelectedDayEvents = date => {
+      console.log('date : ', date);
+
       let cs = {
         container: {
           backgroundColor: theme.color.button1,
@@ -2151,8 +2359,10 @@ function Received(props) {
           top: 2,
         },
       };
+
       let totaldays = 0;
       let t = durationTitle;
+
       if (t == 'days') {
         totaldays = duration;
         td = duration;
@@ -2166,60 +2376,92 @@ function Received(props) {
         totaldays = duration * 365;
         td = duration * 365;
       }
+
       if (isObjectEmpty(markedDatess)) {
         let markedDates = {};
-        markedDates[date] = {
-          customStyles: cs,
-          marked: false,
-          selected: true,
-          selectedColor: theme.color.button1,
-          disabled: false,
-          disableTouchEvent: false,
-        };
-        setmarkedDatess(markedDates);
-        if (totaldays <= 1) {
+        if (parseInt(totaldays) <= 1) {
+          markedDates[date] = {
+            customStyles: cs,
+            marked: false,
+            selected: true,
+            selectedColor: theme.color.button1,
+            disabled: false,
+            disableTouchEvent: false,
+          };
           setminDatee(date);
           setmaxDatee(date);
           // setisDisableToday(true);
         } else {
           let mindate = mind;
           let maxdate = mxd;
-          let ua = unavailable_days.slice();
-          let sdu = date;
+          let ua = [];
+          let u = unavailable_days.slice() || [];
+          u.map((e, i, a) => {
+            ua.push(moment(e).format('YYYY-MM-DD'));
+          });
           let ar = [];
-          ar.push(sdu);
-          for (let index = 1; index < totaldays; index++) {
-            sdu = moment(moment(new Date(sdu)).add(1, 'day')).format(
-              'YYYY-MM-DD',
-            );
-            if (sdu > maxdate) {
-              break;
+          let sdu = date;
+          if (ua.length > 0) {
+            ar.push(sdu);
+            for (let index = 0; index < totaldays; index++) {
+              if (sdu > maxdate) {
+                break;
+              }
+              let ind = 0;
+              if (ua.length > 0) {
+                ind = ua.findIndex(x => x === sdu);
+              }
+              if (ind < 0) {
+                ar.push(sdu);
+              } else {
+                totaldays++;
+              }
+
+              sdu = moment(moment(new Date(sdu)).add(1, 'day')).format(
+                'YYYY-MM-DD',
+              );
             }
-            let ind = 0;
-            if (ua.length > 0) {
-              ind = ua.findIndex(x => x === sdu);
-            }
-            if (ind < 0) {
+          } else {
+            for (let index = 0; index < totaldays; index++) {
+              if (sdu > maxdate) {
+                break;
+              }
+
               ar.push(sdu);
-            } else {
-              totaldays++;
+              sdu = moment(moment(new Date(sdu)).add(1, 'day')).format(
+                'YYYY-MM-DD',
+              );
             }
           }
           if (ar.length > 0) {
+            ar.map((e, i, a) => {
+              console.log('e : ', e);
+              markedDates[e] = {
+                customStyles: cs,
+                marked: false,
+                selected: true,
+                selectedColor: theme.color.button1,
+                disabled: false,
+                disableTouchEvent: false,
+              };
+            });
+
             let mindd = ar[0];
             let mxxd = ar[ar.length - 1];
             setminDatee(mindd);
             setmaxDatee(mxxd);
             // setisDisableToday(true);
           }
-          return;
         }
+        setmarkedDatess(markedDates);
       } else {
         let md = {...markedDatess};
         let o = md[date];
+
         if (o !== undefined) {
           console.warn('The key exists.');
           delete md[date];
+
           setmarkedDatess(md);
           const size = Object.keys(md).length;
           if (size < totaldays) {
@@ -2232,9 +2474,11 @@ function Received(props) {
               // }
             }
           }
+
           return;
         } else {
           console.warn('The key does not exist.');
+
           let md = {...markedDatess};
           md[date] = {
             marked: false,
@@ -2252,15 +2496,12 @@ function Received(props) {
 
     const renderBottom = () => {
       let c = isSelDatee ? false : true;
-      let item = modalObj.item;
-      let duration = item.offering.duration.number;
+
+      let duration = item.duration.value;
       let t =
         duration < 1
-          ? item.offering.duration.title.substring(
-              0,
-              item.offering.duration.title.length - 1,
-            )
-          : item.offering.duration.title;
+          ? item.duration.title.substring(0, item.duration.title.length - 1)
+          : item.duration.title;
       duration = duration + ' ' + t;
       return (
         <View
@@ -2424,6 +2665,171 @@ function Received(props) {
     );
   };
 
+  const renderMessageSendModal = () => {
+    const renderButton1 = () => {
+      return (
+        <>
+          <TouchableOpacity
+            onPress={closeModal}
+            activeOpacity={0.7}
+            style={{
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: theme.color.button1,
+              height: 50,
+              borderRadius: 10,
+              alignSelf: 'center',
+
+              marginTop: 40,
+            }}>
+            <Text
+              style={{
+                color: theme.color.buttonText,
+                fontSize: 16,
+                fontFamily: theme.fonts.fontBold,
+
+                textTransform: 'capitalize',
+              }}>
+              Done
+            </Text>
+          </TouchableOpacity>
+        </>
+      );
+    };
+
+    const renderButton2 = () => {
+      return (
+        <>
+          <TouchableOpacity
+            onPress={() => {
+              closeModal();
+              let p = store.User.offersProfileProps;
+              p.navigation.navigate('Inbox');
+            }}
+            activeOpacity={0.7}
+            style={{
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: theme.color.button2,
+              height: 50,
+              borderRadius: 10,
+              alignSelf: 'center',
+              // borderWidth: 1,
+              // borderColor: theme.color.fieldBorder,
+              marginTop: 12,
+            }}>
+            <Text
+              style={{
+                color: '#30563A',
+                textTransform: 'none',
+                fontFamily: theme.fonts.fontBold,
+                fontSize: 14,
+              }}>
+              Go to Inbox
+            </Text>
+          </TouchableOpacity>
+        </>
+      );
+    };
+
+    const closeModal = () => {
+      setisSendMessage(false);
+    };
+
+    let fn = sendObj.firstName;
+    let ln = sendObj.lastName;
+    let sendOfferUsername = fn + ' ' + ln;
+    let un = sendObj.userName || 'user';
+    let src = require('../../../assets/images/msgSentDone/img.png');
+    return (
+      <Modal
+        animationType="slide"
+        visible={isSendMessage}
+        transparent
+        onRequestClose={closeModal}>
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            padding: 15,
+          }}>
+          <View
+            style={{
+              backgroundColor: theme.color.background,
+              borderRadius: 15,
+              marginBottom: 15,
+              padding: 18,
+              width: '100%',
+            }}>
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+              }}>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{
+                  fontFamily: theme.fonts.fontBold,
+                  fontSize: 19,
+                  color: '#101B10',
+                  lineHeight: 29,
+                }}>
+                Message Sent
+              </Text>
+            </View>
+
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: 40,
+                width: '100%',
+              }}>
+              <Image
+                style={{width: 90, height: 90, resizeMode: 'contain'}}
+                source={src}
+              />
+
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{
+                  marginTop: 15,
+                  fontFamily: theme.fonts.fontBold,
+                  fontSize: 15,
+                  color: '#101B10',
+                  textTransform: 'capitalize',
+                  lineHeight: 20,
+                }}>
+                {sendOfferUsername}
+              </Text>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{
+                  fontFamily: theme.fonts.fontNormal,
+                  fontSize: 13,
+                  color: theme.color.subTitleLight,
+                  lineHeight: 20,
+                }}>
+                @{un}
+              </Text>
+            </View>
+
+            {renderButton1()}
+            {renderButton2()}
+          </View>
+        </View>
+      </Modal>
+    );
+  };
+
   const renderShowOfferSendModal = () => {
     const renderButton1 = () => {
       return (
@@ -2463,10 +2869,8 @@ function Received(props) {
           <TouchableOpacity
             onPress={() => {
               closeModal();
-              let mp = store.User.offersProfileProps;
-              if (mp) {
-                mp.navigation.navigate('ConfirmedTrips');
-              }
+              let p = store.User.offersProfileProps;
+              p.navigation.navigate('ConfirmTrips');
             }}
             activeOpacity={0.7}
             style={{
@@ -2477,7 +2881,6 @@ function Received(props) {
               height: 50,
               borderRadius: 10,
               alignSelf: 'center',
-
               // borderWidth: 1,
               // borderColor: theme.color.fieldBorder,
               marginTop: 12,
@@ -2498,10 +2901,11 @@ function Received(props) {
 
     const closeModal = () => {
       setisOfferSend(false);
+      setsendObj(false);
     };
 
-    let fn = sendObj.first_name;
-    let ln = sendObj.last_name;
+    let fn = sendObj.firstName;
+    let ln = sendObj.lastName;
     let sendOfferUsername = fn + ' ' + ln;
 
     let src = require('../../../assets/images/offerSentDone/img.png');
@@ -2576,6 +2980,9 @@ function Received(props) {
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <FlatList
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
               style={{marginTop: 5}}
               contentContainerStyle={{
                 paddingTop: 5,
@@ -2588,9 +2995,20 @@ function Received(props) {
               keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
-              ListHeaderComponent={ListHeader}
-              // ListFooterComponent={ListFooter}
+              ListHeaderComponent={data.length > 0 ? ListHeader : null}
+              // ListFooterComponent={data.length > 0 ? ListFooter : null}
             />
+            {data.length > 0 && !getDataOnce && mloader && (
+              <ActivityIndicator
+                size={30}
+                color={theme.color.button1}
+                style={{
+                  top: '50%',
+                  position: 'absolute',
+                  alignSelf: 'center',
+                }}
+              />
+            )}
           </View>
 
           {/* <utils.Footer
@@ -2598,10 +3016,11 @@ function Received(props) {
             screen={headerTitle}
             focusScreen={store.General.focusScreen}
           /> */}
+
+          {isModal && renderModal()}
           {showCal1 && renderCalender1()}
-          {isModal && !isSendMessage && renderModal()}
-          {isOfferSend && renderShowOfferSendModal()}
           {isSendMessage && renderMessageSendModal()}
+          {isOfferSend && renderShowOfferSendModal()}
         </SafeAreaView>
       </View>
     </>

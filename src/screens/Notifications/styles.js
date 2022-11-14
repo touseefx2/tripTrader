@@ -149,14 +149,12 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
-    borderRadius: 40 / 2,
   },
 
   imageLoader: {
     height: '100%',
     width: '100%',
     resizeMode: 'contain',
-    borderRadius: 40 / 2,
   },
 
   textContainer: {
@@ -516,27 +514,20 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   mProfileImgContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: 36 / 2,
-    top: 5,
-    // borderWidth: 2,
-    // borderColor: theme.color.fieldBorder,
-    // alignItems: 'center',
-    // justifyContent: 'center',
+    width: 27,
+    height: 27,
+
+    top: 3,
   },
   mProfileImg: {
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
-    borderRadius: 36 / 2,
   },
 
   mimageLoader: {
     height: '100%',
     width: '100%',
-    // resizeMode: 'contain',
-    // borderRadius: 38 / 2,
   },
 
   mProfileImgContainer2: {

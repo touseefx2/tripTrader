@@ -190,7 +190,7 @@ class user {
         Alert.alert('', msg.toString());
       });
   };
-  @action attemptToGetBloackUsers = (uid, setgetdata, setrfrsh) => {
+  @action attemptToGetBloackUsers = (uid, setgetdata, setrfrsh, c) => {
     console.warn('GET BloackUsers : ', 'true');
     this.setfl(true);
 
@@ -204,6 +204,16 @@ class user {
         );
         let dt = resp.data.blocked || [];
         setgetdata(true);
+
+        if (c == 'home') {
+          this.attemptToGetHomeTripsSearch(
+            () => {},
+            () => {},
+            dt,
+            '',
+          );
+        }
+
         this.setblockUsers(dt);
         this.settotalblockUsers(dt.length);
       })
@@ -244,6 +254,15 @@ class user {
         // let rsp = resp.data.data;
         this.removeblockUsers(ind);
         this.getUserById1(this.user._id, this.authToken, '');
+
+        let dt = [...this.blockUsers];
+        dt.splice(ind, 1);
+        this.attemptToGetHomeTripsSearch(
+          () => {},
+          () => {},
+          dt,
+          '',
+        );
 
         suc();
       })
@@ -576,11 +595,69 @@ class user {
       });
   };
 
+  @action attemptToGetHomeTripsSearch = (setgetdata, setrfrsh, bu, c) => {
+    console.warn('Get AllHomeTrip : ', 'true');
+    this.setHomeLoader(true);
+
+    let b = this.user._id;
+    if (bu.length > 0) {
+      bu.map((e, i, a) => {
+        b = b + ',' + e.userId._id;
+      });
+    }
+    console.log('blockUsers : ', b);
+
+    db.hitApi(db.apis.GET_ALL_HOME_TRIPS + b, 'get', {}, this.authToken)
+      ?.then(resp => {
+        this.setHomeLoader(false);
+        setrfrsh(false);
+        console.log(
+          `response Get AllHomeTrip   ${db.apis.GET_ALL_HOME_TRIPS}${b} : `,
+          resp.data,
+        );
+        let dt = resp.data.data;
+
+        this.setHomeTrips(dt);
+        setgetdata(true);
+
+        if (c == 'all') {
+          this.allGetGeneralData();
+          this.allGetGeneralUserData(this.user._id);
+        }
+      })
+      .catch(err => {
+        this.setHomeLoader(false);
+        setrfrsh(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS}${b}: `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        if (msg == 'No records found') {
+          setgetdata(true);
+          this.setHomeTrips([]);
+
+          if (c == 'all') {
+            this.allGetGeneralData();
+            this.allGetGeneralUserData(this.user._id);
+          }
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
   @action attemptToGetHomeTrips = (setgetdata, setrfrsh) => {
     console.warn('Get AllHomeTrip : ', 'true');
     this.setHomeLoader(true);
 
-    db.hitApi(db.apis.GET_ALL_HOME_TRIPS, 'get', {}, this.authToken)
+    db.hitApi(db.apis.GET_ALL_HOME_TRIPS_GUEST, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setHomeLoader(false);
         setrfrsh(false);
@@ -599,9 +676,7 @@ class user {
         }
         this.setHomeTrips(ar);
         setgetdata(true);
-
         this.allGetGeneralData();
-        this.allGetGeneralUserData(this.user._id);
       })
       .catch(err => {
         this.setHomeLoader(false);
@@ -621,7 +696,53 @@ class user {
           this.setHomeTrips([]);
 
           this.allGetGeneralData();
-          this.allGetGeneralUserData(this.user._id);
+
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  @action attemptToGetHomeTripsGuest = (setgetdata, setrfrsh) => {
+    console.warn('Get AllHomeTrip : ', 'true');
+    this.setHomeLoader(true);
+
+    db.hitApi(db.apis.GET_ALL_HOME_TRIPS_GUEST, 'get', {}, this.authToken)
+      ?.then(resp => {
+        this.setHomeLoader(false);
+        setrfrsh(false);
+        console.log(
+          `response Get AllHomeTrip   ${db.apis.GET_ALL_HOME_TRIPS} : `,
+          resp.data,
+        );
+        let dt = resp.data.data;
+
+        this.setHomeTrips(dt);
+        setgetdata(true);
+
+        this.allGetGeneralData();
+        store.Notifications.attemptToGetNotificationsGuest();
+      })
+      .catch(err => {
+        this.setHomeLoader(false);
+        setrfrsh(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        if (msg == 'No records found') {
+          setgetdata(true);
+          this.setHomeTrips([]);
+
+          this.allGetGeneralData();
+
           return;
         }
         // seterror(msg.toString())
@@ -915,6 +1036,10 @@ class user {
       ?.then(resp => {
         this.sethomeModalLoder(false);
         console.log(`response OfferSend  ${db.apis.OFFER_SEND} : `, resp.data);
+        store.Offers.attemptToGetSentOffers(
+          () => {},
+          () => {},
+        );
         suc(true);
       })
       .catch(err => {
@@ -981,6 +1106,11 @@ class user {
           resp.data,
         );
         suc(true);
+        this.attemptToGetInboxes(
+          this.user._id,
+          () => {},
+          () => {},
+        );
       })
       .catch(err => {
         this.sethomeModalLoder(false);
@@ -1008,6 +1138,11 @@ class user {
           resp.data,
         );
         suc(true);
+        this.attemptToGetInboxes(
+          this.user._id,
+          () => {},
+          () => {},
+        );
       })
       .catch(err => {
         this.sethomeModalLoder(false);
@@ -1843,6 +1978,23 @@ class user {
       () => {},
       () => {},
     );
+    store.Offers.attemptToGetSentOffers(
+      () => {},
+      () => {},
+    );
+    store.Offers.attemptToGetReceiveOffers(
+      () => {},
+      () => {},
+    );
+    store.Offers.attemptToGetConfirmOffers(
+      () => {},
+      () => {},
+    );
+    store.Notifications.attemptToGetNotifications(
+      uid,
+      () => {},
+      () => {},
+    );
   }
 
   @action.bound
@@ -2422,6 +2574,9 @@ class user {
     this.clearUser();
     store.Trips.clearTrips();
     store.Filters.clearAllFilters();
+    store.Search.clearSearches();
+    store.Notifications.clearNotifications();
+    store.Offers.clearOffers();
     this.setisNotification(true);
   }
 

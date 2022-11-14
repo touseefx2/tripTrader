@@ -8,6 +8,8 @@ import {Promos} from './promos/index';
 import {Resturants} from './resturants';
 import {Search} from './search';
 import {Filters} from './filters';
+import {Notifications} from './notifications';
+import {Offers} from './offers';
 
 // import notificationmanager from "./notificationmanager";
 
@@ -28,6 +30,8 @@ export default {
   Trips,
   Search,
   Filters,
+  Notifications,
+  Offers,
   // userStore,
   // carStore,
   // tripStore,

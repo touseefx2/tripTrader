@@ -30,20 +30,26 @@ import theme from '../../../theme';
 import utils from '../../../utils/index';
 import moment from 'moment';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
+import StarRating from 'react-native-star-rating';
 
 export default observer(Reviews);
 
 function Reviews(props) {
+  let maxReview = 500;
   let maxModalHeight = theme.window.Height - 100;
+
+  const scrollRef = useRef(null);
+
   const [modalHeight, setmodalHeight] = useState(0);
 
   let headerTitle = 'Reviews';
   let internet = store.General.isInternet;
-  let user = store.User.vuser;
-  let data = store.User.reviewo;
+  let user = store.Userv.user;
+  let data = store.Userv.review;
+
   const totalData = data.length;
-  let loader = store.User.reviewLoadero;
-  let mloader = store.User.mLoadero;
+  let loader = store.Userv.reviewLoader;
+  let mloader = store.Userv.mLoader;
 
   const [modalObj, setmodalObj] = useState(false);
   const [modalChk, setmodalChk] = useState(false);
@@ -54,6 +60,19 @@ function Reviews(props) {
 
   let maxCommentLength = 250;
   const [comment, setcomment] = useState('');
+
+  //delete review modal
+  const [isdModal, setisdModal] = useState(false);
+  const [isdObj, setisdObj] = useState(false);
+
+  const [isrModal, setisrModal] = useState(false);
+  const [isrObj, setisrObj] = useState(false);
+  const isAnyTrade = store.Userv.isAnyTrade;
+  const isOneReview = store.Userv.isOneReview;
+  //leave review
+  const [rate, setrate] = useState(0);
+  const [message, setMessage] = useState('');
+  const [isSendReview, setisSendReview] = useState(false);
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
@@ -70,69 +89,11 @@ function Reviews(props) {
     getDbData();
   }, []);
 
-  const getDbData = c => {
+  const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        const dt = [
-          // {
-          //   _id: 21,
-          //   user: {
-          //     _id: 2,
-          //     first_name: 'mike',
-          //     last_name: 'monuse',
-          //     // photo:"",
-          //     photo:
-          //       'https://www.adobe.com/express/create/media_127540366421d3d5bfcaf8202527ca7d37741fd5d.jpeg?width=400&format=jpeg&optimize=medium',
-          //     avg_rating: 3.8,
-          //     total_reviews: 190,
-          //   },
-          //   comment:
-          //     'John Thompson was a great host! I had an amazing time and killed a great duck.',
-          //   created_at: new Date(),
-          // },
-          {
-            _id: 22,
-            user: {
-              _id: 3,
-              first_name: 'tom',
-              last_name: 'jerry',
-              photo: '',
-              avg_rating: 4.5,
-              total_reviews: 45,
-              isVerified: true,
-            },
-            comment: 'John Thompson was a great host! I had an amazing time.',
-            created_at: new Date(),
-            reply: {
-              user: store.User.vuser,
-              comment:
-                'Thank you, Jerry! I had a blast and hope to trade with you again soon. Highly recommend others to trade with you.',
-              created_at: new Date(),
-            },
-          },
-          // {
-          //   _id: 23,
-          //   user: {
-          //     _id: 4,
-          //     first_name: 'Mano',
-          //     last_name: 'Twis',
-          //     // photo:"",
-          //     photo:
-          //       'https://t3.ftcdn.net/jpg/03/67/46/48/360_F_367464887_f0w1JrL8PddfuH3P2jSPlIGjKU2BI0rn.jpg',
-          //     avg_rating: 2.0,
-          //     total_reviews: 10,
-          //   },
-          //   comment:
-          //     'John Thompson Thank you so much for your careful planning, attention to detail, and flexible offerings when the tropical system blew through and changed our plans! We had a blast exploring Miami, and eating so much great food.\nDinner reservations the first night we arrived were perfect- after a long day of traveling, we enjoyed a delicious meal overlooking the water',
-          //   created_at: new Date(),
-          // },
-        ];
-        store.User.attemptToGetReviewso(
-          user._id,
-          setGetDataOnce,
-          setrefeshing,
-          dt,
-        );
+        store.Userv.attemptToGetReviews(user._id, setGetDataOnce, setrefeshing);
+        // store.Userv.attemptToGetLatestTrip();
       } else {
         setrefeshing(false);
       }
@@ -143,28 +104,16 @@ function Reviews(props) {
     if (!getDataOnce && internet) {
       getDbData();
     }
+
     return () => {};
   }, [getDataOnce, internet]);
-
-  const Reply = obj => {
-    openModal(obj, 'reply');
-  };
-  const Dispute = obj => {
-    openModal(obj, 'dispute');
-  };
-  const EditComment = obj => {
-    openModal(obj, 'edit');
-  };
-  const DeleteComment = obj => {
-    openModal(obj, 'delete');
-  };
 
   const postReply = () => {
     Keyboard.dismiss();
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToReplyComment(modalObj, comment, closeModal);
+        store.Userv.attemptToReplyComment(modalObj, comment, closeModal);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -176,7 +125,7 @@ function Reviews(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToDisputeComment(modalObj, closeModal);
+        store.Userv.attemptToDisputeComment(modalObj, closeModal);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -188,7 +137,7 @@ function Reviews(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToEditComment(modalObj, comment, closeModal);
+        store.Userv.attemptToEditComment(modalObj, comment, closeModal);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -202,7 +151,104 @@ function Reviews(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToDeleteComment(modalObj, closeModal);
+        store.Userv.attemptToDeleteComment(modalObj, closeModal);
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
+
+  const openDeleteModal = c => {
+    setisdModal(true);
+    setisdObj(c);
+  };
+
+  const closeDeleteModal = () => {
+    if (!mloader) {
+      setisdModal(false);
+      setisdObj(false);
+    }
+  };
+
+  const openReviewModal = c => {
+    if (c) {
+      setisrObj(c);
+      setrate(c.rate);
+      setMessage(c.message);
+    }
+    setisrModal(true);
+  };
+  const closeReviewModal = () => {
+    if (!mloader) {
+      setisrModal(false);
+      setmodalHeight(0);
+      setMessage('');
+      setrate(0);
+      setisrObj(false);
+    }
+  };
+  const closeSendReviewModal = c => {
+    setmodalHeight(0);
+    setisSendReview(false);
+    if (c == 'goto') {
+      scrollRef?.current?.scrollToOffset({animated: true, offset: 0});
+    }
+  };
+
+  const postReview = () => {
+    Keyboard.dismiss();
+
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        let body = {
+          hostId: user._id,
+          guestId: store.User.user._id,
+          tripDetails: {
+            title: isAnyTrade?.title || '',
+          },
+          guestRating: rate,
+          status: 'active',
+          messages: [
+            {
+              role: 'guest',
+              message: message,
+            },
+          ],
+        };
+        store.Userv.attemptToPostReview(body, closeReviewModal, () =>
+          setisSendReview(true),
+        );
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
+
+  const EditReview = () => {
+    Keyboard.dismiss();
+
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        isrObj.message = message;
+        isrObj.rate = rate;
+        store.Userv.attemptToEditReview(isrObj, closeReviewModal, () =>
+          setisSendReview(true),
+        );
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
+
+  const DeleteReview = () => {
+    Keyboard.dismiss();
+
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.Userv.attemptToDeleteReview(isdObj, closeDeleteModal);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -213,7 +259,17 @@ function Reviews(props) {
   const openModal = (obj, c) => {
     if (c == 'edit') {
       let d = obj.item;
-      setcomment(d.reply.comment);
+      let reply = '';
+      let msgs = d.messages || [];
+      if (msgs.length > 0) {
+        msgs.map((e, i, a) => {
+          if (e.role == 'host') {
+            reply = e.message;
+          }
+        });
+      }
+
+      setcomment(reply);
     }
 
     setmodalObj(obj);
@@ -224,6 +280,7 @@ function Reviews(props) {
   const closeModal = () => {
     if (!mloader) {
       setisModal(false);
+
       setmodalChk(false);
       setmodalObj(false);
       setcomment('');
@@ -235,43 +292,96 @@ function Reviews(props) {
 
   const renderShowRes = () => {
     return (
-      <View style={{marginVertical: 5}}>
-        <Text
-          style={{
-            fontSize: 13,
-            color: theme.color.subTitleLight,
-            fontFamily: theme.fonts.fontMedium,
-          }}>
-          Showing {data.length} of {totalData}
-        </Text>
+      <View
+        style={{
+          marginTop: 10,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          width: '97%',
+          alignSelf: 'center',
+        }}>
+        <View style={{width: '63%'}}>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={{
+              fontSize: 12,
+              color: theme.color.subTitle,
+              fontFamily: theme.fonts.fontNormal,
+            }}>
+            Showing {data.length} of {totalData}
+          </Text>
+        </View>
+
+        {!isOneReview && isAnyTrade != false && getDataOnce && (
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => openReviewModal(false)}>
+            <Text
+              style={{
+                fontSize: 13,
+                color: '#3C6B49',
+                fontFamily: theme.fonts.fontBold,
+              }}>
+              Leave a review
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
   };
 
   const renderShowData = ({item, index}) => {
-    let photo = item.user.photo;
-    let isuVeirfy = item.user.isVerified || false;
-    let userName = item.user.first_name + ' ' + item.user.last_name;
-    let avgRating = item.user.avg_rating;
-    let totalReviews = item.user.total_reviews;
-    let postDate = item.created_at;
-    let userComment = item.comment;
-    let reply = item.reply ? item.reply : '';
-    let dispute = item.dispute ? item.dispute : false;
-    let disputeDate = dispute ? dispute.created_at : '';
+    let isCurrentUserGuest = false;
 
+    let usr = item.guestId;
+    if (store.User.user._id == usr._id) {
+      isCurrentUserGuest = true;
+    }
+
+    let rate = item.guestRating || 0;
+
+    //reviewer user
+    let photo = usr.image || '';
+    let isuVeirfy = usr.identityStatus == 'notVerified' ? false : true;
+    let userName = usr.firstName + ' ' + usr.lastName;
+    let avgRating = usr.rating || 0;
+    let totalReviews = usr.reviews || 0;
+    let userCommentid = '';
+    let userComment = '';
+    let postDate = '';
+    let msgs = item.messages || [];
+    let reply = '';
+    if (msgs.length > 0) {
+      msgs.map((e, i, a) => {
+        if (e.role == 'guest') {
+          postDate = e.updatedAt;
+          userComment = e.message;
+          userCommentid = e._id;
+        } else if (e.role == 'host') {
+          reply = e;
+        }
+      });
+    }
+
+    let rusr = user;
+    //host
     let ruserPhoto = '';
     let ruserName = '';
     let ruserComment = '';
     let rpostDate = '';
     let isrVeirfy = false;
     if (reply != '') {
-      ruserPhoto = reply.user.photo;
-      isrVeirfy = reply.user.isVerified || false;
-      ruserName = reply.user.first_name + ' ' + reply.user.last_name;
-      ruserComment = reply.comment;
-      rpostDate = reply.created_at;
+      ruserPhoto = rusr.image || '';
+      isrVeirfy = rusr.dentityStatus || false;
+      ruserName = rusr.firstName + ' ' + rusr.lastName;
+      ruserComment = reply.message;
+      rpostDate = reply.updatedAt;
     }
+
+    let status = item.status;
+    let dispute = status == 'dispute' ? true : false;
+    let disputeDate = dispute ? item.disputeOpenDate : '';
 
     const formatdisputeDate = date => {
       var dd = moment(date).format('MMM DD');
@@ -327,7 +437,7 @@ function Reviews(props) {
               />
               <Text style={styles.textContainerRatetitle1}>
                 {' '}
-                {avgRating.toFixed(1)}
+                {avgRating > 0 ? avgRating.toFixed(1) : avgRating}
                 {'  '}
               </Text>
               <Text style={styles.textContainerRatetitle2}>
@@ -352,31 +462,24 @@ function Reviews(props) {
         return <Text style={styles.boxSection2title}>{userComment}</Text>;
       };
 
-      const renderShowDsipute = () => {
-        return (
-          <View style={styles.boxSection3}>
-            <utils.vectorIcon.AntDesign
-              name="warning"
-              color={'#B93B3B'}
-              size={14}
-            />
-            <Text style={styles.disputeTitle}>
-              You disputed this review on {formatdisputeDate(disputeDate)}
-            </Text>
-          </View>
-        );
-      };
-
-      const renderShowReplyButton = () => {
+      const renderShowButton = () => {
         const renderReplyButton = () => {
           return (
             <Pressable
-              onPress={() => Reply({item: item, i: index})}
+              onPress={() =>
+                openReviewModal({
+                  _id: item._id,
+                  i: index,
+                  rate: rate,
+                  message: userComment,
+                  mid: userCommentid,
+                })
+              }
               style={({pressed}) => [
                 {opacity: pressed ? 0.7 : 1.0},
                 styles.smallButtonContainer,
               ]}>
-              <Text style={styles.sb1Text}>Reply</Text>
+              <Text style={styles.sb1Text}>Edit Review</Text>
             </Pressable>
           );
         };
@@ -384,14 +487,21 @@ function Reviews(props) {
         const renderDisputeButton = () => {
           return (
             <Pressable
+              onPress={() =>
+                openDeleteModal({
+                  _id: item._id,
+                  i: index,
+                  mid: userCommentid,
+                })
+              }
               style={({pressed}) => [
                 {opacity: pressed ? 0.7 : 1.0},
-
                 styles.smallButtonContainer,
                 {backgroundColor: theme.color.disableSmallButton},
-              ]}
-              onPress={() => Dispute({item: item, i: index})}>
-              <Text style={styles.sb2Text}>dispute</Text>
+              ]}>
+              <Text style={[styles.sb2Text, {color: '#B93B3B'}]}>
+                Delete Review
+              </Text>
             </Pressable>
           );
         };
@@ -405,24 +515,6 @@ function Reviews(props) {
         );
       };
 
-      const renderShowDipsutebutton = () => {
-        const renderDisputeButton = () => {
-          return (
-            <Pressable
-              onPress={() => Dispute({item: item, i: index})}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.7 : 1.0},
-                styles.smallButtonContainer,
-                {backgroundColor: theme.color.disableSmallButton},
-              ]}>
-              <Text style={styles.sb2Text}>dispute review</Text>
-            </Pressable>
-          );
-        };
-
-        return <View style={styles.boxSection3}>{renderDisputeButton()}</View>;
-      };
-
       return (
         <View style={styles.boxContainer}>
           <View style={styles.boxSection1}>
@@ -431,14 +523,7 @@ function Reviews(props) {
             {renderDate()}
           </View>
           <View style={styles.boxSection2}>{renderComment()}</View>
-          {/* {!dispute && (
-            <>
-              {reply == '' && renderShowReplyButton()}
-              {reply != '' && renderShowDipsutebutton()}
-            </>
-          )} */}
-
-          {/* {dispute && renderShowDsipute()} */}
+          {isCurrentUserGuest && renderShowButton()}
         </View>
       );
     };
@@ -468,72 +553,25 @@ function Reviews(props) {
       };
 
       const renderReplyBox = () => {
-        const renderShowActionButton = () => {
-          const renderEditButton = () => {
-            return (
-              <Pressable
-                style={({pressed}) => [
-                  {opacity: pressed ? 0.7 : 1.0},
-                  styles.smallButtonContainer,
-                ]}
-                onPress={() => EditComment({item: item, i: index})}>
-                <Text style={styles.sb1Text}>edit</Text>
-              </Pressable>
-            );
-          };
-
-          const renderDeleteButton = () => {
-            return (
-              <Pressable
-                style={({pressed}) => [
-                  {opacity: pressed ? 0.7 : 1.0},
-                  styles.smallButtonContainer,
-                  {backgroundColor: 'transparent'},
-                ]}
-                onPress={() => DeleteComment({item: item, i: index})}>
-                <Text style={[styles.sb2Text, {color: '#B93B3B'}]}>delete</Text>
-              </Pressable>
-            );
-          };
-
-          return (
-            <View style={styles.repBoxButtonConainer}>
-              {renderEditButton()}
-              <View style={{width: 12}} />
-              {renderDeleteButton()}
-            </View>
-          );
-        };
+        let n = user.firstName + ' ' + user.lastName + ' ';
 
         return (
           <View style={styles.repBoxContainer}>
-            <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <View style={styles.ProfileImgContainer2}>
-                <ProgressiveFastImage
-                  style={styles.ProfileImg2}
-                  source={
-                    ruserPhoto != ''
-                      ? {uri: ruserPhoto}
-                      : require('../../../assets/images/drawer/guest/img.png')
-                  }
-                  loadingImageStyle={styles.imageLoader}
-                  loadingSource={require('../../../assets/images/imgLoad/img.jpeg')}
-                  blurRadius={5}
-                />
-              </View>
-              <View style={{width: '82%', marginTop: 5}}>
-                <Text style={[styles.repBoxTitile2, {marginTop: 0}]}>
-                  {ruserComment}
-                </Text>
-              </View>
-            </View>
-
-            {/* <Text style={styles.repBoxTitile1}>
-              You replied on {formatDate(postDate)}
-            </Text> */}
-            {/* <Text style={styles.repBoxTitile2}>{ruserComment}</Text> */}
-            {/* {renderShowActionButton()} */}
+            <Text
+              style={[
+                styles.repBoxTitile1,
+                {textTransform: 'capitalize', fontFamily: theme.fonts.fontBold},
+              ]}>
+              {n}
+              <Text
+                style={[
+                  styles.repBoxTitile1,
+                  {textTransform: 'none', fontFamily: theme.fonts.fontNormal},
+                ]}>
+                replied:{/* on {formatDate(rpostDate)} */}
+              </Text>
+            </Text>
+            <Text style={styles.repBoxTitile2}>{ruserComment}</Text>
           </View>
         );
       };
@@ -552,7 +590,7 @@ function Reviews(props) {
       <>
         <View style={{marginBottom: 15, marginTop: index == 0 ? 12 : 0}}>
           {renderShowCommentBox()}
-          {reply != '' && !dispute && renderShowReplyBox()}
+          {reply != '' && renderShowReplyBox()}
         </View>
       </>
     );
@@ -562,21 +600,56 @@ function Reviews(props) {
     return (
       <View
         style={{
-          marginTop: '45%',
-          alignItems: 'center',
-          justifyContent: 'center',
-          alignSelf: 'center',
+          marginTop: '25%',
+          width: '100%',
         }}>
         <Text
           style={{
-            fontSize: 14,
-            color: theme.color.subTitleLight,
-            fontFamily: theme.fonts.fontMedium,
+            fontSize: 13,
+            color: theme.color.title,
+            fontFamily: theme.fonts.fontBold,
+            textAlign: 'center',
           }}>
-          {c == 'empty'
-            ? 'No trip reviews received yet.'
-            : 'Please connect internet.'}
+          No trip reviews received yet.
         </Text>
+        {isAnyTrade != false && !isOneReview && getDataOnce && (
+          <View style={{width: '100%', marginTop: 10}}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{
+                fontSize: 13,
+                color: theme.color.title,
+                fontFamily: theme.fonts.fontNormal,
+                textAlign: 'center',
+                lineHeight: 21,
+              }}>
+              Looks like you recently traded with {user.firstName}.
+            </Text>
+            <Text
+              style={{
+                fontSize: 13,
+                color: theme.color.title,
+                fontFamily: theme.fonts.fontNormal,
+                textAlign: 'center',
+                lineHeight: 21,
+              }}>
+              Would you like to{' '}
+              <Text
+                onPress={() => openReviewModal(false)}
+                style={{
+                  fontSize: 13,
+                  color: '#3C6B49',
+                  fontFamily: theme.fonts.fontBold,
+                  textAlign: 'center',
+                  lineHeight: 21,
+                  textDecorationLine: 'underline',
+                }}>
+                leave a review?
+              </Text>
+            </Text>
+          </View>
+        )}
       </View>
     );
   };
@@ -609,7 +682,6 @@ function Reviews(props) {
     );
   };
 
-  // console.warn("mloader : ",mloader)
   const renderModal = () => {
     if (modalChk == 'reply' || modalChk == 'edit') {
       const renderHeader = () => {
@@ -681,6 +753,7 @@ function Reviews(props) {
                 value={comment}
                 onChangeText={t => setcomment(t)}
                 textAlignVertical="top"
+                placeholder="What do you want to say?"
                 style={styles.modalInput}
                 maxLength={maxCommentLength}
               />
@@ -827,8 +900,18 @@ function Reviews(props) {
 
       const renderSec2 = () => {
         let d = modalObj.item;
-        let userName = d.user.first_name + ' ' + d.user.last_name;
-        let userComment = d.comment;
+        let userName = d.guestId.firstName + ' ' + d.guestId.lastName;
+        let userComment = '';
+
+        let msgs = d.messages || [];
+
+        if (msgs.length > 0) {
+          msgs.map((e, i, a) => {
+            if (e.role == 'guest') {
+              userComment = e.message;
+            }
+          });
+        }
 
         return (
           <View style={styles.modalSec2Container}>
@@ -1040,7 +1123,7 @@ function Reviews(props) {
 
       const renderTitle = () => {
         let d = modalObj.item;
-        let userName = d.user.first_name + ' ' + d.user.last_name;
+        let userName = d.guestId.firstName + ' ' + d.guestId.lastName;
 
         return (
           <View
@@ -1125,9 +1208,596 @@ function Reviews(props) {
     }
   };
 
+  const renderLeaveReviewModal = () => {
+    let c = modalHeight >= maxModalHeight ? true : false;
+    let style = c ? [styles.modal2, {height: maxModalHeight}] : styles.modal;
+
+    const renderHeader = () => {
+      let text = 'Leave a review';
+
+      const renderCross = () => {
+        return (
+          <Pressable
+            disabled={mloader}
+            style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
+            onPress={closeReviewModal}>
+            <utils.vectorIcon.Ionicons
+              name="ios-close-outline"
+              color={theme.color.title}
+              size={32}
+            />
+          </Pressable>
+        );
+      };
+
+      const renderTitle = () => {
+        return <Text style={styles.modalTitle}>{text}</Text>;
+      };
+
+      return (
+        <View
+          style={
+            c
+              ? {
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  paddingHorizontal: 15,
+                  paddingTop: 15,
+                  paddingBottom: 7,
+                  shadowColor: '#000000',
+                  shadowOffset: {width: 0, height: 1}, // change this for more shadow
+                  shadowOpacity: 0.1,
+                  elevation: 1,
+                  backgroundColor: theme.color.background,
+                  borderTopLeftRadius: 10,
+                  borderTopRightRadius: 10,
+                }
+              : {
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }
+          }>
+          <View style={{width: '80%'}}>{renderTitle()}</View>
+          {renderCross()}
+        </View>
+      );
+    };
+
+    const renderSec1 = () => {
+      return (
+        <>
+          <View>
+            <View
+              style={[
+                styles.modalFieldConatiner,
+                {flexDirection: 'row', alignItems: 'center'},
+              ]}>
+              <Text style={styles.mfT1trp}>Trip Description</Text>
+              <Image
+                style={{
+                  width: 17,
+                  height: 17,
+                  resizeMode: 'contain',
+                  marginLeft: 4,
+                  top: -2,
+                }}
+                source={require('../../../assets/images/info/img.png')}
+              />
+            </View>
+            <Text style={styles.mfT1trptitle}>{isAnyTrade.title}</Text>
+          </View>
+
+          <View style={styles.modalFieldConatiner}>
+            <Text style={[styles.mfT1, {textTransform: 'none'}]}>
+              Rate your overall experience
+            </Text>
+            <View
+              style={{
+                width: '43%',
+                marginTop: 5,
+              }}>
+              <StarRating
+                starSize={23}
+                disabled={false}
+                maxStars={5}
+                rating={rate}
+                selectedStar={rating => setrate(rating)}
+                emptyStarColor={'#CCCCCC'}
+                fullStarColor={'#FCBC17'}
+                emptyStar={'star'}
+                fullStar={'star'}
+                iconSet={'FontAwesome'}
+              />
+            </View>
+          </View>
+
+          <View style={styles.modalFieldConatiner}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <Text style={styles.mfT1}>Message</Text>
+              <Text style={styles.mfT1msg}>
+                {message.length} / {maxReview}
+              </Text>
+            </View>
+
+            <View style={styles.textArea}>
+              <TextInput
+                maxLength={maxReview}
+                value={message}
+                onChangeText={c => {
+                  setMessage(c);
+                }}
+                style={styles.mTextInpt}
+                placeholder="Tell others about your trip..."
+                multiline={true}
+                numberOfLines={10}
+              />
+            </View>
+          </View>
+        </>
+      );
+    };
+
+    const renderBottom = () => {
+      const renderButton1 = () => {
+        return (
+          <Pressable
+            onPress={!isrObj ? postReview : EditReview}
+            disabled={mloader == true ? true : message == '' ? true : false}
+            style={({pressed}) => [
+              {opacity: pressed ? 0.9 : message == '' ? 0.5 : 1},
+              [styles.ButtonContainer],
+            ]}>
+            {mloader && (
+              <ActivityIndicator size={20} color={theme.color.buttonText} />
+            )}
+            {!mloader && <Text style={[styles.ButtonText]}>Submit Review</Text>}
+          </Pressable>
+        );
+      };
+
+      const renderButton2 = () => {
+        return (
+          <Pressable
+            disabled={mloader}
+            style={({pressed}) => [
+              {opacity: pressed ? 0.7 : 1.0},
+              styles.ButtonContainer,
+              {backgroundColor: theme.color.button2, marginLeft: 15},
+            ]}
+            onPress={closeReviewModal}>
+            <Text style={[styles.ButtonText, {color: '#30563A'}]}>cancel</Text>
+          </Pressable>
+        );
+      };
+
+      let sty = c
+        ? [
+            styles.modalBottomContainer,
+            {
+              borderBottomLeftRadius: 15,
+              borderBottomRightRadius: 15,
+              marginTop: 5,
+              paddingTop: 10,
+              paddingBottom: 15,
+              paddingHorizontal: 15,
+              backgroundColor: theme.color.background,
+              shadowColor: '#000000',
+              shadowOffset: {width: 0, height: -1}, // change this for more shadow
+              shadowOpacity: 0.1,
+              elevation: 22,
+            },
+          ]
+        : [styles.modalBottomContainer];
+
+      return (
+        <View style={sty}>
+          {renderButton1()}
+          {renderButton2()}
+        </View>
+      );
+    };
+
+    return (
+      <Modal visible={isrModal} transparent onRequestClose={closeReviewModal}>
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalContainer2}>
+            <View
+              onLayout={event => {
+                if (!c) {
+                  let {height} = event.nativeEvent.layout;
+                  setmodalHeight(height);
+                }
+              }}
+              style={style}>
+              {c && (
+                <>
+                  {renderHeader()}
+                  <ScrollView
+                    contentContainerStyle={{paddingHorizontal: 15}}
+                    showsVerticalScrollIndicator={false}
+                    style={{flex: 1}}>
+                    {renderSec1()}
+                  </ScrollView>
+                  {renderBottom()}
+                </>
+              )}
+
+              {!c && (
+                <>
+                  {renderHeader()}
+                  {renderSec1()}
+
+                  {renderBottom()}
+                </>
+              )}
+            </View>
+          </View>
+        </SafeAreaView>
+      </Modal>
+    );
+  };
+
+  const renderSendReviewModal = () => {
+    let c = modalHeight >= maxModalHeight ? true : false;
+    let style = c ? [styles.modal2, {height: maxModalHeight}] : styles.modal;
+
+    const renderHeader = () => {
+      let text = 'Review submitted!';
+
+      const renderCross = () => {
+        return (
+          <Pressable
+            style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
+            onPress={() => closeSendReviewModal('')}>
+            <utils.vectorIcon.Ionicons
+              name="ios-close-outline"
+              color={theme.color.title}
+              size={32}
+            />
+          </Pressable>
+        );
+      };
+
+      const renderTitle = () => {
+        return <Text style={styles.modalTitle}>{text}</Text>;
+      };
+
+      return (
+        <View
+          style={
+            c
+              ? {
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  paddingHorizontal: 15,
+                  paddingTop: 15,
+                  paddingBottom: 7,
+                  shadowColor: '#000000',
+                  shadowOffset: {width: 0, height: 1}, // change this for more shadow
+                  shadowOpacity: 0.1,
+                  elevation: 1,
+                  backgroundColor: theme.color.background,
+                  borderTopLeftRadius: 10,
+                  borderTopRightRadius: 10,
+                }
+              : {
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }
+          }>
+          <View style={{width: '80%'}}>{renderTitle()}</View>
+          {/* {renderCross()} */}
+        </View>
+      );
+    };
+
+    const renderSec1 = () => {
+      let t =
+        'Thanks for your feedback!  We appreciate you taking time to share your experiences with the Trip Trader community.';
+      return (
+        <>
+          <View style={[styles.modalFieldConatiner, {marginTop: 20}]}>
+            <Text style={styles.mfT1trptitleee}>{t}</Text>
+          </View>
+        </>
+      );
+    };
+
+    const renderBottom = () => {
+      const renderButton1 = () => {
+        return (
+          <Pressable
+            onPress={() => closeSendReviewModal('')}
+            style={({pressed}) => [
+              {opacity: pressed ? 0.8 : 1},
+              [styles.ButtonContainer],
+            ]}>
+            <Text style={[styles.ButtonText]}>Done</Text>
+          </Pressable>
+        );
+      };
+
+      const renderButton2 = () => {
+        return (
+          <Pressable
+            style={({pressed}) => [
+              {opacity: pressed ? 0.8 : 1.0},
+              styles.ButtonContainer,
+              {backgroundColor: theme.color.button2, marginLeft: 15},
+            ]}
+            onPress={() => closeSendReviewModal('goto')}>
+            <Text style={[styles.ButtonText, {color: '#30563A'}]}>
+              Go to my review
+            </Text>
+          </Pressable>
+        );
+      };
+
+      let sty = c
+        ? [
+            styles.modalBottomContainer,
+            {
+              borderBottomLeftRadius: 15,
+              borderBottomRightRadius: 15,
+              marginTop: 5,
+              paddingTop: 10,
+              paddingBottom: 15,
+              paddingHorizontal: 15,
+              backgroundColor: theme.color.background,
+              shadowColor: '#000000',
+              shadowOffset: {width: 0, height: -1}, // change this for more shadow
+              shadowOpacity: 0.1,
+              elevation: 22,
+            },
+          ]
+        : [styles.modalBottomContainer];
+
+      return (
+        <View style={sty}>
+          {renderButton1()}
+          {renderButton2()}
+        </View>
+      );
+    };
+
+    return (
+      <Modal
+        visible={isSendReview}
+        transparent
+        onRequestClose={() => closeSendReviewModal('')}>
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalContainer2}>
+            <View
+              onLayout={event => {
+                if (!c) {
+                  let {height} = event.nativeEvent.layout;
+                  setmodalHeight(height);
+                }
+              }}
+              style={style}>
+              {c && (
+                <>
+                  {renderHeader()}
+                  <ScrollView
+                    contentContainerStyle={{paddingHorizontal: 15}}
+                    showsVerticalScrollIndicator={false}
+                    style={{flex: 1}}>
+                    {renderSec1()}
+                  </ScrollView>
+                  {renderBottom()}
+                </>
+              )}
+
+              {!c && (
+                <>
+                  {renderHeader()}
+                  {renderSec1()}
+
+                  {renderBottom()}
+                </>
+              )}
+            </View>
+          </View>
+        </SafeAreaView>
+      </Modal>
+    );
+  };
+
+  const renderDeleteReviewModal = () => {
+    let c = modalHeight >= maxModalHeight ? true : false;
+    let style = c ? [styles.modal2, {height: maxModalHeight}] : styles.modal;
+
+    const renderHeader = () => {
+      let text = 'Delete Review';
+
+      const renderCross = () => {
+        return (
+          <Pressable
+            disabled={mloader}
+            style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
+            onPress={closeDeleteModal}>
+            <utils.vectorIcon.Ionicons
+              name="ios-close-outline"
+              color={theme.color.title}
+              size={32}
+            />
+          </Pressable>
+        );
+      };
+
+      const renderTitle = () => {
+        return <Text style={styles.modalTitle}>{text}</Text>;
+      };
+
+      return (
+        <View
+          style={
+            c
+              ? {
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  paddingHorizontal: 15,
+                  paddingTop: 15,
+                  paddingBottom: 7,
+                  shadowColor: '#000000',
+                  shadowOffset: {width: 0, height: 1}, // change this for more shadow
+                  shadowOpacity: 0.1,
+                  elevation: 1,
+                  backgroundColor: theme.color.background,
+                  borderTopLeftRadius: 10,
+                  borderTopRightRadius: 10,
+                }
+              : {
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }
+          }>
+          <View style={{width: '80%'}}>{renderTitle()}</View>
+          {renderCross()}
+        </View>
+      );
+    };
+
+    const renderSec1 = () => {
+      let t = 'Are you sure you want to delete your review for ';
+      let name = user.firstName + ' ' + user.lastName;
+      return (
+        <>
+          <View style={[styles.modalFieldConatiner, {marginTop: 20}]}>
+            <Text style={styles.mfT1trptitleee}>
+              {t}
+              <Text
+                style={[
+                  styles.mfT1trptitleee,
+                  {fontFamily: theme.fonts.fontBold},
+                ]}>
+                {name}
+              </Text>
+              ?
+            </Text>
+          </View>
+        </>
+      );
+    };
+
+    const renderBottom = () => {
+      const renderButton1 = () => {
+        return (
+          <Pressable
+            disabled={mloader}
+            onPress={DeleteReview}
+            style={({pressed}) => [
+              {opacity: pressed ? 0.8 : 1},
+              [styles.ButtonContainer, {backgroundColor: '#B93B3B'}],
+            ]}>
+            {mloader && (
+              <ActivityIndicator size={20} color={theme.color.buttonText} />
+            )}
+            {!mloader && (
+              <Text style={[styles.ButtonText, {textTransform: 'none'}]}>
+                Yes, delete it
+              </Text>
+            )}
+          </Pressable>
+        );
+      };
+
+      const renderButton2 = () => {
+        return (
+          <Pressable
+            disabled={mloader}
+            style={({pressed}) => [
+              {opacity: pressed ? 0.8 : 1.0},
+              styles.ButtonContainer,
+              {backgroundColor: theme.color.button2, marginLeft: 15},
+            ]}
+            onPress={closeDeleteModal}>
+            <Text
+              style={[
+                styles.ButtonText,
+                {color: '#30563A', textTransform: 'none'},
+              ]}>
+              No, keep it
+            </Text>
+          </Pressable>
+        );
+      };
+
+      let sty = c
+        ? [
+            styles.modalBottomContainer,
+            {
+              borderBottomLeftRadius: 15,
+              borderBottomRightRadius: 15,
+              marginTop: 5,
+              paddingTop: 10,
+              paddingBottom: 15,
+              paddingHorizontal: 15,
+              backgroundColor: theme.color.background,
+              shadowColor: '#000000',
+              shadowOffset: {width: 0, height: -1}, // change this for more shadow
+              shadowOpacity: 0.1,
+              elevation: 22,
+            },
+          ]
+        : [styles.modalBottomContainer];
+
+      return (
+        <View style={sty}>
+          {renderButton1()}
+          {renderButton2()}
+        </View>
+      );
+    };
+
+    return (
+      <Modal visible={isdModal} transparent onRequestClose={closeDeleteModal}>
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalContainer2}>
+            <View
+              onLayout={event => {
+                if (!c) {
+                  let {height} = event.nativeEvent.layout;
+                  setmodalHeight(height);
+                }
+              }}
+              style={style}>
+              {c && (
+                <>
+                  {renderHeader()}
+                  <ScrollView
+                    contentContainerStyle={{paddingHorizontal: 15}}
+                    showsVerticalScrollIndicator={false}
+                    style={{flex: 1}}>
+                    {renderSec1()}
+                  </ScrollView>
+                  {renderBottom()}
+                </>
+              )}
+
+              {!c && (
+                <>
+                  {renderHeader()}
+                  {renderSec1()}
+
+                  {renderBottom()}
+                </>
+              )}
+            </View>
+          </View>
+        </SafeAreaView>
+      </Modal>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* {data.length > 0 && renderShowRes()} */}
+      {data.length > 0 && renderShowRes()}
       <ScrollView
         style={{marginTop: 3}}
         nestedScrollEnabled
@@ -1136,14 +1806,10 @@ function Reviews(props) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
         {getDataOnce && data.length <= 0 && !loader && renderMessage('empty')}
-        {!getDataOnce &&
-          !internet &&
-          !loader &&
-          data.length <= 0 &&
-          renderMessage('internet')}
 
         {data.length >= 0 && (
           <FlatList
+            ref={scrollRef}
             showsVerticalScrollIndicator={false}
             initialNumToRender={18}
             maxToRenderPerBatch={6}
@@ -1156,6 +1822,9 @@ function Reviews(props) {
       </ScrollView>
       {!getDataOnce && loader && renderLoader()}
       {isModal && renderModal()}
+      {isrModal && renderLeaveReviewModal()}
+      {isSendReview && renderSendReviewModal()}
+      {isdModal && renderDeleteReviewModal()}
     </SafeAreaView>
   );
 }

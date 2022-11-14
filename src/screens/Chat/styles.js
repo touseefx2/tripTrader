@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import theme from '../../../theme/index';
+import theme from '../../theme/index';
 import {
   responsiveHeight,
   responsiveWidth,
@@ -31,6 +31,7 @@ export const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.6,
     shadowRadius: 1,
+    marginTop: Platform.OS == 'ios' ? aph : 0,
   },
   locContainer: {
     width: '70%',
@@ -54,16 +55,17 @@ export const styles = StyleSheet.create({
   },
 
   headerTitle: {
-    fontSize: 18,
+    // fontSize: 18,
+    fontSize: 20,
     fontFamily: theme.fonts.fontBold,
     color: theme.color.backgroundGreenText,
-    top: -2,
+    textTransform: 'capitalize',
+    lineHeight: 30,
   },
   SerchBarContainer: {
     width: '100%',
     height: 46,
     borderRadius: 100,
-
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -165,8 +167,8 @@ export const styles = StyleSheet.create({
     top: 5,
   },
   mtextContainer: {
-    width: '81%',
-    top: 3,
+    width: '76%',
+    top: 10,
     // backgroundColor: 'red',
   },
   textContainertitle: {
@@ -200,14 +202,14 @@ export const styles = StyleSheet.create({
   },
   textContainerRatetitle1: {
     color: theme.color.title,
-    fontSize: 12,
+    fontSize: 13,
     fontFamily: theme.fonts.fontBold,
     textTransform: 'capitalize',
     top: -2,
   },
   textContainerRatetitle2: {
     color: theme.color.subTitleLight,
-    fontSize: 12,
+    fontSize: 13,
     fontFamily: theme.fonts.fontMedium,
     textDecorationLine: 'underline',
     top: -2,
@@ -485,27 +487,24 @@ export const styles = StyleSheet.create({
   },
   modalinfoConatiner: {
     width: '100%',
-    borderRadius: 10,
-
     // marginTop: 10,
+    paddingVertical: 0,
+    borderRadius: 10,
+    // borderColor: theme.color.fieldBorder,
+    // borderWidth: 1,
+    flexDirection: 'row',
 
-    paddingVertical: 15,
-    paddingHorizontal: 10,
+    justifyContent: 'space-between',
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.84,
 
-    // borderRadius: 10,
-
-    // alignItems: 'center',
-
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-
-    elevation: 5,
-    backgroundColor: theme.color.background,
+    // elevation: 5,
+    // backgroundColor: theme.color.background,
   },
   modalinfoConatiner2: {
     width: '100%',
@@ -519,13 +518,11 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   mProfileImgContainer: {
-    // borderWidth: 2,
+    width: 47,
+    height: 47,
+    borderRadius: 47 / 2,
+    borderWidth: 1,
     borderColor: theme.color.fieldBorder,
-    width: 48,
-    height: 48,
-    borderRadius: 48 / 2,
-    top: 5,
-
     // alignItems: 'center',
     // justifyContent: 'center',
   },
@@ -533,28 +530,15 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
-    borderRadius: 48 / 2,
+    borderRadius: 47 / 2,
   },
 
   mimageLoader: {
     height: '100%',
     width: '100%',
-    // resizeMode: 'contain',
-    borderRadius: 48 / 2,
-  },
-
-  mProfileImgContainer2: {
-    width: 28,
-    height: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  mProfileImg2: {
-    width: '100%',
-    height: '100%',
     resizeMode: 'contain',
+    borderRadius: 47 / 2,
   },
-
   miconVerify: {
     width: 24,
     height: 24,
@@ -822,79 +806,5 @@ export const styles = StyleSheet.create({
     fontSize: 13,
     color: theme.color.title,
     fontFamily: theme.fonts.fontMedium,
-  },
-
-  modalinfoConatinern: {
-    width: '100%',
-    marginTop: 10,
-    padding: 10,
-    borderRadius: 8,
-    borderColor: theme.color.fieldBorder,
-    borderWidth: 1,
-    flexDirection: 'row',
-
-    justifyContent: 'space-between',
-  },
-  mProfileImgContainern: {
-    width: 55,
-    height: 55,
-    borderRadius: 55 / 2,
-    borderWidth: 2,
-    borderColor: theme.color.background,
-    // alignItems: 'center',
-    // justifyContent: 'center',
-  },
-  mProfileImgn: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'contain',
-    borderRadius: 55 / 2,
-  },
-  mimageLoadern: {
-    height: '100%',
-    width: '100%',
-    borderRadius: 55 / 2,
-  },
-  mtextContainern: {
-    width: '77%',
-    // backgroundColor: 'red',
-  },
-
-  modalBottomContainern: {
-    paddingTop: 10,
-    paddingBottom: 15,
-    paddingHorizontal: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  modalBottomContainer2n: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-
-  mProfileImgContainerr: {
-    // borderWidth: 2,
-    borderColor: theme.color.fieldBorder,
-    width: 50,
-    height: 50,
-    borderRadius: 50 / 2,
-    marginBottom: 10,
-    left: 5,
-    // alignItems: 'center',
-    // justifyContent: 'center',
-  },
-  mProfileImgr: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'contain',
-    borderRadius: 50 / 2,
-  },
-  mimageLoaderr: {
-    height: '100%',
-    width: '100%',
-    // resizeMode: 'contain',
-    borderRadius: 50 / 2,
   },
 });

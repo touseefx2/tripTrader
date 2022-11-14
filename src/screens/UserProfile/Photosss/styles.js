@@ -1,4 +1,4 @@
-import {Platform, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import theme from '../../../theme/index';
 import {
   responsiveHeight,
@@ -16,14 +16,14 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 15,
     elevation: 5,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.6,
     shadowRadius: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    alignItems: 'center',
   },
   locContainer: {
     width: '70%',
@@ -551,11 +551,13 @@ export const styles = StyleSheet.create({
     width: '100%',
   },
   ProfileImgContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 48 / 2,
-    borderWidth: 1,
+    width: '32%',
+    height: 115,
+    borderRadius: 10,
+    borderWidth: 2,
     borderColor: theme.color.photoBorderColor,
+    marginBottom: 15,
+    marginRight: '2%',
     // alignItems: 'center',
     // justifyContent: 'center',
   },
@@ -563,13 +565,12 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
-    borderRadius: 48 / 2,
+    borderRadius: 10,
   },
   imageLoader: {
-    height: '100%',
     width: '100%',
-    resizeMode: 'contain',
-    borderRadius: 48 / 2,
+    height: '100%',
+    borderRadius: 10,
   },
 
   textContainer: {
@@ -585,7 +586,7 @@ export const styles = StyleSheet.create({
     lineHeight: 20,
   },
   textContainerRatetitle1: {
-    color: theme.color.boxTitle,
+    color: theme.color.title,
     fontSize: 13,
     fontFamily: theme.fonts.fontBold,
     textTransform: 'capitalize',
@@ -606,7 +607,7 @@ export const styles = StyleSheet.create({
     top: 5,
   },
   dateContainerTitle: {
-    color: '#717171',
+    color: theme.color.subTitle,
     fontSize: 12,
     fontFamily: theme.fonts.fontMedium,
     textTransform: 'capitalize',
@@ -617,9 +618,9 @@ export const styles = StyleSheet.create({
     width: '100%',
   },
   boxSection2title: {
-    color: '#313131',
+    color: theme.color.title,
     fontSize: 12,
-    fontFamily: theme.fonts.fontMedium,
+    fontFamily: theme.fonts.fontNormal,
   },
   boxSection3: {
     marginTop: 15,
@@ -657,7 +658,7 @@ export const styles = StyleSheet.create({
   repBoxTitile1: {
     color: theme.color.subTitle,
     fontSize: 12,
-    fontFamily: theme.fonts.fontNormal,
+    fontFamily: theme.fonts.fontMedium,
   },
   repBoxTitile2: {
     color: theme.color.title,
@@ -694,24 +695,17 @@ export const styles = StyleSheet.create({
     textTransform: 'capitalize',
   },
 
-  modalContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalContainer2: {
-    flex: 1,
+  crossContainer: {
+    width: 22,
+    height: 22,
+    borderRadius: 22 / 2,
+
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 20,
-  },
-  modal2: {
-    height: '85%',
-    padding: 0,
-    width: '98%',
-    alignSelf: 'center',
-
+    position: 'absolute',
     backgroundColor: theme.color.background,
-    borderRadius: 15,
+    right: 3,
+    top: 3,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -722,9 +716,18 @@ export const styles = StyleSheet.create({
 
     elevation: 3,
   },
+
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
   modal: {
-    width: '98%',
+    width: '90%',
     alignSelf: 'center',
+
     padding: 15,
     backgroundColor: theme.color.background,
     borderRadius: 15,
@@ -738,11 +741,17 @@ export const styles = StyleSheet.create({
 
     elevation: 3,
   },
-  modalCross: {},
+  modalCross: {
+    position: 'absolute',
+    top: 15,
+    right: 15,
+  },
   modalTitle: {
     fontSize: 19,
     color: theme.color.title,
     fontFamily: theme.fonts.fontBold,
+    alignSelf: 'center',
+    textTransform: 'capitalize',
   },
   modalImgContainer: {
     width: '100%',
@@ -765,90 +774,25 @@ export const styles = StyleSheet.create({
   },
   modalBottomContainer: {
     marginTop: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
   },
-
+  modalBottomTitle: {
+    fontSize: 12,
+    color: theme.color.subTitle,
+    fontFamily: theme.fonts.fontNormal,
+    alignSelf: 'center',
+  },
   ButtonContainer: {
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    width: '100%',
+    height: 50,
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: theme.color.button1,
+    backgroundColor: '#B93B3B',
     marginTop: 10,
   },
   ButtonText: {
-    fontSize: 12.5,
+    fontSize: 15,
     color: theme.color.buttonText,
     fontFamily: theme.fonts.fontBold,
-    textTransform: 'capitalize',
-  },
-
-  modalFieldTitle: {
-    fontSize: 13.5,
-    color: theme.color.title,
-    fontFamily: theme.fonts.fontBold,
-    textTransform: 'capitalize',
-  },
-  modalInput: {
-    width: '100%',
-    height: 170,
-    padding: 10,
-    borderColor: theme.color.subTitleLight,
-    borderWidth: 0.6,
-    color: theme.color.title,
-    fontSize: 13,
-    borderRadius: 8,
-  },
-  modalSec1Title: {
-    fontSize: 12,
-    color: theme.color.title,
-    fontFamily: theme.fonts.fontBold,
-    lineHeight: 18,
-  },
-  modalSec2Container: {
-    marginTop: 15,
-    width: '100%',
-    height: 120,
-    borderWidth: 0.6,
-    borderRadius: 5,
-    borderColor: theme.color.subTitleLight,
-    paddingHorizontal: 7,
-    paddingVertical: 5,
-  },
-  modalSec2Title: {
-    fontSize: 11,
-    color: '#111111',
-    fontFamily: theme.fonts.fontBold,
-    textTransform: 'capitalize',
-    opacity: 0.8,
-  },
-  modalSec2Title2: {
-    fontSize: 11,
-    color: '#111111',
-    opacity: 0.8,
-    fontFamily: theme.fonts.fontNormal,
-  },
-
-  modalDeleteTitle: {
-    fontSize: 13,
-    color: theme.color.title,
-    fontFamily: theme.fonts.fontNormal,
-  },
-  disputeTitle: {
-    fontSize: 12,
-    color: '#B93B3B',
-    fontFamily: theme.fonts.fontMedium,
-    marginLeft: 5,
-    top: 2,
-  },
-  iconVerify: {
-    width: 22,
-    height: 22,
-    position: 'absolute',
-    resizeMode: 'contain',
-    bottom: -6,
-    right: -7,
   },
 });

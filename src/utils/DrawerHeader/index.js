@@ -28,6 +28,8 @@ function DrawerHeader(props) {
   let prop = props.props;
   let headerTitle = props.headerTitle || '';
 
+  let countRead = store.Notifications.unread;
+
   const render1 = () => {
     const onClick = () => {
       prop.navigation.openDrawer();
@@ -77,17 +79,19 @@ function DrawerHeader(props) {
             resizeMode: 'contain',
           }}
         />
-        <View
-          style={{
-            width: 8,
-            height: 8,
-            borderRadius: 8 / 2,
-            position: 'absolute',
-            right: 3,
-            top: 3,
-            backgroundColor: theme.color.ntfctnClr,
-          }}
-        />
+        {countRead > 0 && (
+          <View
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 8 / 2,
+              position: 'absolute',
+              right: 3,
+              top: 3,
+              backgroundColor: theme.color.ntfctnClr,
+            }}
+          />
+        )}
       </TouchableOpacity>
     );
   };

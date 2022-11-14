@@ -293,7 +293,7 @@ function Home(props) {
   let maxModalHeight = theme.window.Height - 70;
   const [modalHeight, setmodalHeight] = useState(0);
   const scrollRef = useRef(null);
-
+  const blckUser = store.User.blockUsers;
   const toast = useRef(null);
   const toastduration = 700;
   let headerTitle = 'Home';
@@ -311,14 +311,11 @@ function Home(props) {
   const [message, setMessage] = useState('');
 
   const [step, setstep] = useState(1);
-
   const [showCal1, setshowCal1] = useState(false);
-
   const [minDatee, setminDatee] = useState('');
   const [maxDatee, setmaxDatee] = useState('');
   const [isDisableToday, setisDisableToday] = useState(false);
   const [monthh, setmonthh] = useState(new Date());
-
   const [markedDatess, setmarkedDatess] = useState({});
   const [selDatess, setselDatess] = useState({});
   const [isSelDatee, setisSelDatee] = useState(false);
@@ -339,11 +336,21 @@ function Home(props) {
     console.warn('onrefresh cal');
     setRefreshing(true);
     getDbData();
-  }, []);
+  }, [blckUser]);
   const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToGetHomeTrips(setGetDataOnce, setrefeshing);
+        if (user == 'guest') {
+          store.User.attemptToGetHomeTripsGuest(setGetDataOnce, setrefeshing);
+        } else {
+          store.User.attemptToGetHomeTripsSearch(
+            setGetDataOnce,
+            setrefeshing,
+            blckUser,
+            'all',
+          );
+          // store.User.attemptToGetHomeTrips(setGetDataOnce, setrefeshing);
+        }
       } else {
         setrefeshing(false);
       }
@@ -551,7 +558,7 @@ function Home(props) {
   };
 
   const setIsSendObj = v => {
-    setsendObj(modalObj.item.hostId);
+    setsendObj(modalObj.item.user);
     setisOfferSend(v);
     setTimeout(() => {
       closeModalAll();
@@ -1084,8 +1091,8 @@ function Home(props) {
     let photo = usr.image || '';
 
     let userName = usr.firstName + ' ' + usr.lastName;
-    let avgRating = 3.7;
-    let totalReviews = 50;
+    let avgRating = usr.rating || 0;
+    let totalReviews = usr.reviews || 0;
     let isVeirfy = usr.identityStatus == 'verified' ? true : false;
 
     //trip
@@ -1163,7 +1170,7 @@ function Home(props) {
               />
               <Text style={styles.textContainerRatetitle1}>
                 {' '}
-                {avgRating.toFixed(1)}
+                {avgRating > 0 ? avgRating.toFixed(1) : avgRating}
                 {'  '}
               </Text>
               <Text style={styles.textContainerRatetitle2}>
@@ -2677,9 +2684,7 @@ function Home(props) {
                           textTransform: species == '' ? 'none' : 'capitalize',
                         },
                       ]}>
-                      {species == ''
-                        ? 'Select species'
-                        : species.name + ' k lkn lkjlkj'}
+                      {species == '' ? 'Select species' : species.name}
                     </Text>
                   </View>
                   <utils.vectorIcon.Fontisto

@@ -19,6 +19,7 @@ import {
   ScrollView,
   Keyboard,
   Modal,
+  RefreshControl,
 } from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
 // import ImageSlider from 'react-native-image-slider';
@@ -52,80 +53,47 @@ function Notifications(props) {
     db = true;
   }
 
-  const [data, setdata] = useState([]);
+  const data = store.Notifications.notifications;
+  const mloader = store.Notifications.Loader;
 
-  useEffect(() => {
-    const dt = [
-      {
-        title: 'Trip Confirmed',
-        subTitle: `Congrats! You have a new Confirmed Trip!`,
-        createdAt: 'Just now',
-        isRead: false,
-      },
-      {
-        title: 'Trip Created',
-        subTitle: '3 Day Central N.C. in return for Florida Alligator Hunting',
-        createdAt: '3 days ago',
-        isRead: true,
-      },
-      {
-        title: 'Profile Updated',
-        subTitle: 'Your location was successfully updated',
-        createdAt: 'Mar 27',
-        isRead: true,
-      },
-      {
-        title: 'Password Changed',
-        subTitle: 'Your password was successfully changed',
-        createdAt: 'Mar 27',
-        isRead: true,
-      },
-      {
-        title: 'Mike Manuse followed you',
-        user: 'Mike Manuse',
-        topic: 'userFollow',
-        photo:
-          'https://www.adobe.com/express/create/media_127540366421d3d5bfcaf8202527ca7d37741fd5d.jpeg?width=400&format=jpeg&optimize=medium',
-        subTitle: '',
-        photo: '',
-        createdAt: 'Just now',
-        isRead: true,
-      },
-      {
-        title: 'Blake Edwards followed you',
-        user: 'Blake Edwards',
-        topic: 'userFollow',
-        subTitle: '',
-        photo: '',
-        photo:
-          'https://expertphotography.b-cdn.net/wp-content/uploads/2020/08/social-media-profile-photos-10.jpg',
-        createdAt: 'Just now',
-        isRead: true,
-      },
-    ];
-
-    const dt2 = [
-      {
-        title: 'Get full access for free',
-        subTitle:
-          'As a member, you’ll unlock all features and benefits for the best experience.',
-        createdAt: '3 mins ago',
-        topic: 'fullaccess',
-        isRead: false,
-      },
-      {
-        title: 'Welcome to Trip Trader!',
-        subTitle:
-          'We’re excited you’re here. Feel free to browse the community as a guest before signing up.',
-        createdAt: '10 mins ago',
-        isRead: true,
-      },
-    ];
-
-    setdata(user == 'guest' ? dt2 : dt);
-
-    return () => {};
+  const [getDataOnce, setgetDataOnce] = useState(
+    user !== 'guest' ? false : true,
+  );
+  const setGetDataOnce = C => {
+    setgetDataOnce(C);
+  };
+  const [refreshing, setRefreshing] = React.useState(false);
+  const setrefeshing = c => {
+    setRefreshing(c);
+  };
+  const onRefresh = React.useCallback(() => {
+    if (user !== 'guest') {
+      console.warn('onrefresh cal');
+      setRefreshing(true);
+      getDbData();
+    }
   }, []);
+  const getDbData = () => {
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.Notifications.attemptToGetNotifications(
+          user._id,
+          setGetDataOnce,
+          setrefeshing,
+        );
+      } else {
+        setrefeshing(false);
+      }
+    });
+  };
+  useEffect(() => {
+    if (!getDataOnce && internet) {
+      if (user !== 'guest') {
+        getDbData();
+      }
+    }
+    return () => {};
+  }, [getDataOnce, internet]);
 
   const JoinNow = () => {
     store.General.setgoto('joinnow');
@@ -149,13 +117,50 @@ function Notifications(props) {
   const EmptyListMessage = ({item}) => {
     return (
       // Flat List Item
-      <Text style={styles.emptyListStyle} onPress={() => getItem(item)}>
-        No Data Found
-      </Text>
+      <>
+        {!mloader && getDataOnce && (
+          <Text
+            style={{
+              marginTop: '80%',
+              alignItems: 'center',
+              justifyContent: 'center',
+              alignSelf: 'center',
+              fontSize: 13,
+              color: theme.color.subTitleLight,
+              fontFamily: theme.fonts.fontMedium,
+            }}
+            onPress={() => getItem(item)}>
+            No notifications Found
+          </Text>
+        )}
+
+        {mloader && !getDataOnce && (
+          <ActivityIndicator
+            size={30}
+            color={theme.color.button1}
+            style={{
+              marginTop: '80%',
+
+              alignSelf: 'center',
+            }}
+          />
+        )}
+      </>
     );
   };
 
   const ListHeader = () => {
+    const renderResult = () => {
+      let length = data.length || 0;
+      return (
+        <View style={styles.resultContainer}>
+          <Text style={styles.resultText}>
+            {length} notifications, {store.Notifications.unread} unread
+          </Text>
+        </View>
+      );
+    };
+
     const renderSearch = () => {
       return (
         <TouchableOpacity disabled>
@@ -204,64 +209,137 @@ function Notifications(props) {
           {renderInput()}
           {renderFilter()}
         </Pressable>
+        {data.length > 0 && renderResult()}
       </View>
     );
   };
 
-  let tripConf = require('../../assets/images/notification/TripConfirmed/img.png');
-  let tripCrt = require('../../assets/images/notification/TripCreated/img.png');
-  let profileupd = require('../../assets/images/notification/ProfileUpdated/img.png');
-  let pswdchng = require('../../assets/images/notification/PasswordChanged/img.png');
-  let guest = require('../../assets/images/drawer/guest/img.png');
-  let ntfctn = require('../../assets/images/drawer/guest/img.png');
+  function compare(d, dd) {
+    let d1 = moment(d).format('YYYY-MM-DD');
+    let d2 = moment(dd).format('YYYY-MM-DD');
+    if (d2 > d1) {
+      return 'greater';
+    } else if (d2 < d1) {
+      return 'smaller';
+    } else {
+      return 'equal';
+    }
+  }
+
+  function diff_minutes(dt2, dt1) {
+    var diff = (dt2.getTime() - dt1.getTime()) / 1000;
+    diff /= 60;
+    return Math.abs(Math.round(diff));
+  }
+
+  function CheckDate(d) {
+    let t = '';
+    let ud = new Date(d); //update date
+    let cd = new Date(); //current date
+
+    let udcy = false; //is update date  current year
+    let udy = parseInt(ud.getFullYear());
+    let cdy = parseInt(cd.getFullYear());
+    if (udy == cdy) {
+      udcy = true;
+    }
+    // && min < 1440 // 1 daya minure
+    let sd = ud; //start date
+    let ed = cd; //end date
+    let ics = compare(sd, ed); //is check date
+    console.log('updated date : ', moment(ud).format('YYYY-MM-DD hh:mm:ss a'));
+    console.log('currentdate : ', moment(cd).format('YYYY-MM-DD hh:mm:ss a'));
+
+    if (ics == 'greater') {
+      var start = moment(moment(ed).format('YYYY-MM-DD'), 'YYYY-MM-DD');
+      var end = moment(moment(sd).format('YYYY-MM-DD'), 'YYYY-MM-DD');
+      let days = start.diff(end, 'days');
+
+      if (days > 3) {
+        if (udcy) {
+          t = moment(ud).format('MMM DD');
+        } else {
+          t = moment(ud).format('MMM DD, YYYY');
+        }
+      } else {
+        if (days == 1 || days == 0) {
+          t = '1 day ago';
+        }
+
+        if (days == 2) {
+          t = '2 days ago';
+        }
+
+        if (days == 3) {
+          t = '3 days ago';
+        }
+      }
+    } else {
+      let min = diff_minutes(ed, sd);
+      console.log('minutes: ', min);
+      if (min >= 0 && min <= 1) {
+        t = 'Just now';
+      } else {
+        if (min > 1 && min < 60) {
+          t = min + ' mins ago';
+        } else if (min >= 60) {
+          const hours = Math.floor(min / 60);
+
+          const h = hours.toFixed(0);
+          let tt = h <= 1 ? ' hour' : ' hours';
+          t = h + tt + ' ago';
+
+          // t = moment(ud).format('hh:mm a');
+        }
+      }
+    }
+
+    return t;
+  }
 
   const ItemView = ({item, index}) => {
-    let photo = '';
+    let photo = item.icon || '';
     let title = item.title || '';
-    let subtitle = item.subTitle || '';
-    let topic = item.topic || '';
-    let create = item.createdAt || '';
-    let user = '';
-    let userm = '';
+    let subtitle = item.message || '';
+    let create = CheckDate(item.createdAt);
     let isread = item.isRead || false;
+    let isFollow = false;
+    let uname = '';
+    let usrd = item.userId;
 
-    if (topic == 'userFollow') {
-      user = item.user;
-      userm = 'followed you';
-      photo = item.photo != '' ? {uri: item.photo} : guest;
-    } else {
-      photo =
-        title == 'Trip Confirmed'
-          ? tripConf
-          : title == 'Trip Created'
-          ? tripCrt
-          : title == 'Profile Updated'
-          ? profileupd
-          : title == 'Password Changed'
-          ? pswdchng
-          : ntfctn;
+    if (subtitle.includes('followed')) {
+      isFollow = true;
+      uname = 'Nasreen malik';
+      // usrd.firstName + ' ' + usrd.lastName;
     }
 
     const renderProfile = () => {
       return (
         <>
-          {topic == 'userFollow' && (
-            <View style={styles.mProfileImgContainer}>
-              <ProgressiveFastImage
-                style={styles.mProfileImg}
-                source={photo}
-                loadingImageStyle={styles.mimageLoader}
-                loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
-                blurRadius={5}
-              />
-            </View>
-          )}
+          <View style={styles.mProfileImgContainer}>
+            <ProgressiveFastImage
+              style={[
+                styles.mProfileImg,
 
-          {topic !== 'userFollow' && (
-            <View style={[styles.mProfileImgContainer2]}>
-              <Image style={styles.mProfileImg2} source={photo} />
-            </View>
-          )}
+                {
+                  borderRadius: isFollow ? 32 / 2 : 0,
+                  width: isFollow ? 32 : 27,
+                  height: isFollow ? 32 : 27,
+                },
+              ]}
+              source={
+                photo != ''
+                  ? {uri: photo}
+                  : require('../../assets/images/drawer/guest/img.png')
+              }
+              loadingImageStyle={[
+                styles.imageLoader,
+                {borderRadius: isFollow ? 32 / 2 : 0},
+              ]}
+              loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
+              blurRadius={5}
+            />
+          </View>
         </>
       );
     };
@@ -269,7 +347,7 @@ function Notifications(props) {
     const renderText = () => {
       return (
         <View style={[styles.mtextContainer]}>
-          {topic == 'userFollow' && (
+          {isFollow && (
             <Text
               style={{
                 color: '#3C6B49',
@@ -278,7 +356,7 @@ function Notifications(props) {
                 lineHeight: 22.4,
                 textTransform: 'capitalize',
               }}>
-              {user}{' '}
+              {uname}{' '}
               <Text
                 style={{
                   color: '#101B10',
@@ -287,12 +365,12 @@ function Notifications(props) {
                   lineHeight: 22.4,
                   textTransform: 'none',
                 }}>
-                {userm}
+                followed you
               </Text>
             </Text>
           )}
 
-          {topic != 'userFollow' && (
+          {!isFollow && (
             <Text
               style={{
                 color: '#101B10',
@@ -305,7 +383,7 @@ function Notifications(props) {
             </Text>
           )}
 
-          {subtitle != '' && (
+          {subtitle != '' && !isFollow && (
             <View style={{marginTop: 3}}>
               <Text
                 style={{
@@ -356,10 +434,17 @@ function Notifications(props) {
   };
 
   const ItemView2 = ({item, index}) => {
+    // let tripConf = require('../../assets/images/notification/TripConfirmed/img.png');
+    // let tripCrt = require('../../assets/images/notification/TripCreated/img.png');
+    let profileupd = require('../../assets/images/notification/ProfileUpdated/img.png');
+    let pswdchng = require('../../assets/images/notification/PasswordChanged/img.png');
+    // let guest = require('../../assets/images/drawer/guest/img.png');
+    let ntfctn = require('../../assets/images/drawer/guest/img.png');
+
     let title = item.title || '';
-    let subtitle = item.subTitle || '';
+    let subtitle = item.message || '';
     let topic = item.topic || '';
-    let create = item.createdAt || '';
+    let create = CheckDate(item.createdAt);
     let isread = item.isRead || false;
     let c = false;
 
@@ -462,17 +547,17 @@ function Notifications(props) {
     );
   };
 
-  const ListFooter = () => {
-    return (
-      <>
-        <View>
-          <View style={styles.listFooter}>
-            <Text style={styles.listFooterT}>End of results</Text>
-          </View>
-        </View>
-      </>
-    );
-  };
+  // const ListFooter = () => {
+  //   return (
+  //     <>
+  //       <View>
+  //         <View style={styles.listFooter}>
+  //           <Text style={styles.listFooterT}>End of results</Text>
+  //         </View>
+  //       </View>
+  //     </>
+  //   );
+  // };
 
   return (
     <>
@@ -486,18 +571,32 @@ function Notifications(props) {
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <FlatList
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
               contentContainerStyle={{
                 paddingTop: 12,
                 paddingBottom: 40,
               }}
               data={data}
               renderItem={user == 'guest' ? ItemView2 : ItemView}
-              // keyExtractor={(item, index) => index.toString()}
+              keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
-              ListHeaderComponent={ListHeader}
-              // ListFooterComponent={ListFooter}
+              ListHeaderComponent={data.length > 0 ? ListHeader : null}
+              // ListFooterComponent={data.length > 0 ? ListFooter : null}
             />
+            {data.length > 0 && !getDataOnce && mloader && (
+              <ActivityIndicator
+                size={30}
+                color={theme.color.button1}
+                style={{
+                  top: '50%',
+                  position: 'absolute',
+                  alignSelf: 'center',
+                }}
+              />
+            )}
           </View>
 
           <utils.Footer
