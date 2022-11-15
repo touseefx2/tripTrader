@@ -97,7 +97,13 @@ function Chat(props) {
 
   //chat sockets
   useEffect(() => {
-    socket.emit('joinRoom', {headerTitle, roomName: obj.roomName});
+    console.log();
+    let username = user.firstName + ' ' + user.lastName;
+    let rn = obj.roomName;
+    console.log('un : ', username);
+    console.log('room name : ', rn);
+
+    socket.emit('joinRoom', {username, roomName: rn});
     scrollToBottom();
   }, []);
 
@@ -386,17 +392,14 @@ function Chat(props) {
   };
 
   const SendMessage = () => {
-
-   let m= {
+    let userDetails = {
       userId: user._id,
       roomName: obj.roomName,
-      username: user.firstName+" "+user.lastName,
-      message:message,
-      
-    }
-
-    socket.emit('chat', m);
-     
+      username: user.firstName + ' ' + user.lastName,
+      message: message,
+    };
+    console.log('message : ', userDetails);
+    socket.emit('chat', {userDetails});
     setmessage('');
   };
 
