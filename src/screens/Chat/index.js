@@ -38,6 +38,7 @@ import {Calendar} from 'react-native-calendars';
 import moment, {duration} from 'moment/moment';
 import io from 'socket.io-client';
 import db from '../../database/index';
+import EmojiModal from 'react-native-emoji-modal';
 
 export default observer(Chat);
 
@@ -54,6 +55,8 @@ function Chat(props) {
   let headerTitle = props.route.params.title || '';
 
   const [message, setmessage] = useState('');
+  const [isEmoji, setisEmoji] = useState(false);
+
   const [Messages, setMessages] = useState(obj.messages);
 
   let internet = store.General.isInternet;
@@ -438,7 +441,7 @@ function Chat(props) {
 
     const render2 = () => {
       return (
-        <View style={{width: '76%'}}>
+        <View style={{width: '75%'}}>
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"
@@ -451,8 +454,18 @@ function Chat(props) {
 
     const render3 = () => {
       const onClick = () => {};
-      let src = require('../../assets/images/back/img.png');
-      return <View style={{width: 5}} />;
+      let src = require('../../assets/images/vertical/img.png');
+      return (
+        <TouchableOpacity activeOpacity={0.6} onPress={onClick}>
+          <Image
+            source={src}
+            style={{
+              width: 30,
+              height: 24,
+            }}
+          />
+        </TouchableOpacity>
+      );
     };
 
     return (
@@ -465,6 +478,9 @@ function Chat(props) {
   };
 
   const SendMessage = () => {
+    closeEmoji();
+    Keyboard.dismiss();
+
     let userDetails = {
       userId: user._id,
       roomName: obj.roomName,
@@ -475,40 +491,52 @@ function Chat(props) {
     setmessage('');
   };
 
-  const onclickFile = () => {};
+  const onclickFile = () => {
+    Keyboard.dismiss();
+    closeEmoji();
+  };
 
-  const onclickEmoji = () => {};
+  const closeEmoji = () => {
+    setisEmoji(false);
+  };
+
+  const onclickEmoji = () => {
+    Keyboard.dismiss();
+    setisEmoji(!isEmoji);
+  };
 
   const renderFooter = () => {
     const renderOthers = () => {
       return (
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            width: '98%',
-            alignSelf: 'center',
-          }}>
-          <TouchableOpacity
-            onPress={onclickFile}
-            style={{}}
-            activeOpacity={0.6}>
-            <Image
-              style={{width: 26, height: 26, resizeMode: 'contain'}}
-              source={require('../../assets/images/sentfilemessage/img.png')}
-            />
-          </TouchableOpacity>
+        <>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              width: '98%',
+              alignSelf: 'center',
+            }}>
+            <TouchableOpacity
+              onPress={onclickFile}
+              style={{}}
+              activeOpacity={0.6}>
+              <Image
+                style={{width: 26, height: 26, resizeMode: 'contain'}}
+                source={require('../../assets/images/sentfilemessage/img.png')}
+              />
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={onclickEmoji}
-            style={{marginLeft: 20}}
-            activeOpacity={0.6}>
-            <Image
-              style={{width: 27, height: 27, resizeMode: 'contain'}}
-              source={require('../../assets/images/emojimessage/img.png')}
-            />
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity
+              onPress={onclickEmoji}
+              style={{marginLeft: 20}}
+              activeOpacity={0.6}>
+              <Image
+                style={{width: 27, height: 27, resizeMode: 'contain'}}
+                source={require('../../assets/images/emojimessage/img.png')}
+              />
+            </TouchableOpacity>
+          </View>
+        </>
       );
     };
 
@@ -530,6 +558,7 @@ function Chat(props) {
               paddingHorizontal: 15,
             }}>
             <TextInput
+              onFocus={closeEmoji}
               placeholder="Type a message"
               value={message}
               style={{width: '100%', borderRadius: 100}}
@@ -575,7 +604,7 @@ function Chat(props) {
 
         {!internet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
-          <KeyboardAvoidingView style={styles.container3}>
+          <View style={styles.container3}>
             <FlatList
               ref={scrollRef}
               refreshControl={
@@ -604,7 +633,31 @@ function Chat(props) {
                 }}
               />
             )}
-          </KeyboardAvoidingView>
+          </View>
+
+          {isEmoji && (
+            <EmojiModal
+              onEmojiSelected={emoji => {
+                let m = message;
+                m = m + ' ' + emoji;
+                setmessage(m);
+              }}
+              onPressOutside={closeEmoji}
+              // modalStyle={{padding: 0}}
+              backgroundStyle={{backgroundColor: '#fcfcfc'}}
+              containerStyle={{
+                shadowColor: '#000',
+                shadowOffset: {
+                  width: 0,
+                  height: 1,
+                },
+                shadowOpacity: 0.2,
+                shadowRadius: 1.41,
+                elevation: 2,
+              }}
+            />
+          )}
+
           {renderFooter()}
         </SafeAreaView>
         <utils.Loader load={loader} />
