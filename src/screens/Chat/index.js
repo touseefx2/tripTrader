@@ -386,7 +386,17 @@ function Chat(props) {
   };
 
   const SendMessage = () => {
-    socket.emit('chat', message);
+
+   let m= {
+      userId: user._id,
+      roomName: obj.roomName,
+      username: user.firstName+" "+user.lastName,
+      message:message,
+      
+    }
+
+    socket.emit('chat', m);
+     
     setmessage('');
   };
 
