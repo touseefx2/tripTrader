@@ -352,6 +352,7 @@ function Received(props) {
           userId2: usr._id,
           sendBy: user._id,
           sendTo: usr._id,
+          senderName: user.firstName + ' ' + user.lastName,
           isRead: false,
           message: message,
           messageType: 'text',

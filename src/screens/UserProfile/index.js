@@ -167,10 +167,14 @@ function UserProfile(props) {
           userId2: usr._id,
           sendBy: store.User.user._id,
           sendTo: user._id,
+          senderName:
+            store.User.user.firstName + ' ' + store.User.user.lastName,
           isRead: false,
           message: message,
           messageType: 'text',
         };
+
+        console.log('body : ', obj);
 
         store.Userv.attemptToCheckFirstMessage(
           store.User.user._id,
