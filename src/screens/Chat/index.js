@@ -127,7 +127,7 @@ function Chat(props) {
     if (Messages.length > 0) {
       setTimeout(() => {
         scrollToBottom();
-      }, 500);
+      }, 1000);
     }
   }, [Messages]);
 

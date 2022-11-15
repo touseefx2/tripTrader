@@ -21,11 +21,13 @@ import utils from '../../utils/index';
 
 const getToken = async () => {
   let tok = await messaging().getToken();
+  console.log('token :::: ', tok);
   store.User.addnotificationToken(tok);
 };
 Platform.OS === 'android'
   ? PushNotification.configure({
       onRegister: function (token) {
+        console.log('token :::: ', token.token);
         store.User.addnotificationToken(token.token);
       },
     })
