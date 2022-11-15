@@ -435,8 +435,7 @@ function Received(props) {
               fontSize: 13,
               color: theme.color.subTitleLight,
               fontFamily: theme.fonts.fontMedium,
-            }}
-            onPress={() => getItem(item)}>
+            }}>
             No new received offers.
           </Text>
         )}

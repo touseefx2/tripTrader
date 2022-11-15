@@ -637,7 +637,8 @@ function Chat(props) {
             <EmojiModal
               onEmojiSelected={emoji => {
                 let m = message;
-                m = m + ' ' + emoji;
+                m = m + emoji;
+
                 setmessage(m);
               }}
               onPressOutside={closeEmoji}
