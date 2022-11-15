@@ -638,7 +638,6 @@ function Chat(props) {
               onEmojiSelected={emoji => {
                 let m = message;
                 m = m + emoji;
-
                 setmessage(m);
               }}
               onPressOutside={closeEmoji}

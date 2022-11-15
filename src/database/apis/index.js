@@ -78,7 +78,7 @@ const UPDATE_LEAVE_REVIEW = 'api/review/updateAReview/';
 
 const GET_LATEST_TRIP = 'api/review/getLatestTrip/v2/';
 
-const GET_NOTIFICATIONS = 'api/notification?userId=';
+const GET_NOTIFICATIONS = 'api/notification/count/app?userId=';
 
 const GET_SENT_OFFERS = 'api/offer?offeredBy=';
 const GET_RECEIVED_OFFERS = 'api/offer?offeredTo=';

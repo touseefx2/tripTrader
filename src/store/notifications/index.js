@@ -41,8 +41,8 @@ class notifications {
           resp.data,
         );
         let dt = resp.data.data || [];
-        let count = 0;
-        // let count = resp.data.count[0].count_notread || 0;
+
+        let count = resp.data.count[0].unread || 0;
 
         setgetdata(true);
         this.setnotifications(dt);
