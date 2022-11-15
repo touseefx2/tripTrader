@@ -182,7 +182,15 @@ class offers {
     let token = store.User.authToken;
     let i = obj.i;
     let tid = obj.item._id;
-    db.hitApi(db.apis.CANCEL_OFFER + tid, 'put', {}, token)
+    db.hitApi(
+      db.apis.CANCEL_OFFER + tid,
+      'put',
+      {
+        received: false,
+        sent: true,
+      },
+      token,
+    )
       ?.then(resp => {
         this.setmLoader(false);
         console.log(
@@ -222,7 +230,15 @@ class offers {
     let token = store.User.authToken;
     let i = obj.i;
     let tid = obj.item._id;
-    db.hitApi(db.apis.CANCEL_OFFER + tid, 'put', {}, token)
+    db.hitApi(
+      db.apis.CANCEL_OFFER + tid,
+      'put',
+      {
+        received: true,
+        sent: false,
+      },
+      token,
+    )
       ?.then(resp => {
         this.setmLoader(false);
         console.log(
