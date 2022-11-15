@@ -36,26 +36,22 @@ import FastImage from 'react-native-fast-image';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import {Calendar} from 'react-native-calendars';
 import moment, {duration} from 'moment/moment';
+import io from 'socket.io-client';
 
 export default observer(Chat);
 
 function Chat(props) {
+  // const socket = io( );
+
   let maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
-
-  const [message, setmessage] = useState('');
-
   const toast = useRef(null);
   const toastduration = 700;
-
   let obj = props.route.params.obj || false;
   let headerTitle = props.route.params.title || '';
 
-  let fscreen = store.User.fscreen || '';
-  let db = false;
-  if (fscreen == 'confirmedtrips' || fscreen == 'home') {
-    db = true;
-  }
+  const [message, setmessage] = useState('');
+  const [Messages, setMessages] = useState(obj.messages);
 
   let internet = store.General.isInternet;
   let user = store.User.user;
@@ -158,88 +154,130 @@ function Chat(props) {
     );
   };
 
-  let src = require('../../assets/images/locationPin/img.png');
-  const ItemView = ({item, index}) => {
-    let usrr = item.userId;
-    //user
-    let photo = usrr.image || '';
-    let userName = usrr.firstName + ' ' + usrr.lastName;
-    let location = usrr.location ? usrr.location : 'Pakistan';
+  function compare(d, dd) {
+    let d1 = moment(d).format('YYYY-MM-DD');
+    let d2 = moment(dd).format('YYYY-MM-DD');
+    if (d2 > d1) {
+      return 'greater';
+    } else if (d2 < d1) {
+      return 'smaller';
+    } else {
+      return 'equal';
+    }
+  }
 
-    const renderProfile = () => {
+  function diff_minutes(dt2, dt1) {
+    var diff = (dt2.getTime() - dt1.getTime()) / 1000;
+    diff /= 60;
+    return Math.abs(Math.round(diff));
+  }
+
+  function CheckDate(d) {
+    let t = '';
+    let ud = new Date(d); //update date
+    let cd = new Date(); //current date
+
+    let udcy = false; //is update date  current year
+    let udy = parseInt(ud.getFullYear());
+    let cdy = parseInt(cd.getFullYear());
+    if (udy == cdy) {
+      udcy = true;
+    }
+    // && min < 1440 // 1 daya minure
+    let sd = ud; //start date
+    let ed = cd; //end date
+    let ics = compare(sd, ed); //is check date
+    // console.log('updated date : ', moment(ud).format('YYYY-MM-DD hh:mm:ss a'));
+    // console.log('currentdate : ', moment(cd).format('YYYY-MM-DD hh:mm:ss a'));
+    // console.log('ics ', ics);
+
+    if (ics == 'greater') {
+      if (udcy) {
+        t = moment(ud).format('MMM DD, h:mm A');
+      } else {
+        t = moment(ud).format('MMM DD YYYY, h:mm a');
+      }
+    } else {
+      // let min = diff_minutes(ed, sd);
+      // console.log('minutes: ', min);
+      // if (min >= 0 && min <= 1) {
+      // t = 'Just now';
+      // } else if (min > 1) {
+      t = moment(ud).format('h:mm A');
+      // }
+    }
+
+    return t;
+  }
+
+  let dir = {
+    width: '100%',
+    alignItems: 'flex-end',
+  };
+
+  let mc = {
+    backgroundColor: '#F2F3F1',
+    borderTopLeftRadius: 12,
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
+    padding: 12,
+  };
+
+  let mc2 = {
+    backgroundColor: theme.color.button1,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 12,
+    padding: 12,
+  };
+
+  let mt = {
+    fontSize: 14,
+    color: theme.color.subTitleAuth,
+    fontFamily: theme.fonts.fontNormal,
+  };
+
+  let md = {
+    fontSize: 13,
+    color: theme.color.subTitleLight,
+    fontFamily: theme.fonts.fontNormal,
+    marginTop: 3,
+  };
+
+  const ItemView = ({item, index}) => {
+    let usr = item.sendBy._id;
+    let msg = item.message || '';
+    let date = CheckDate(item.updatedAt);
+    let isCu = false;
+    if (user._id == usr) {
+      isCu = true;
+    }
+
+    const renderMsg = () => {
       return (
-        <View style={styles.mProfileImgContainer}>
-          <ProgressiveFastImage
-            style={styles.mProfileImg}
-            source={
-              photo != ''
-                ? {uri: photo}
-                : require('../../assets/images/drawer/guest/img.png')
-            }
-            loadingImageStyle={styles.mimageLoader}
-            loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
-            blurRadius={5}
-          />
-          {/* {isVeirfy && (
-            <Image
-              style={styles.miconVerify}
-              source={require('../../assets/images/verified/img.png')}
-            />
-          )} */}
-        </View>
+        <Text
+          style={[
+            mt,
+            {color: isCu ? theme.color.subTitleAuth : theme.color.buttonText},
+          ]}>
+          {msg}
+        </Text>
       );
     };
 
-    const renderText = () => {
-      return (
-        <View style={styles.mtextContainer}>
-          <Text
-            style={{
-              color: theme.color.title,
-              fontSize: 14,
-              fontFamily: theme.fonts.fontNormal,
-              textTransform: 'capitalize',
-            }}>
-            {userName}
-          </Text>
-        </View>
-      );
+    const renderDate = () => {
+      return <Text style={md}>{date}</Text>;
     };
 
     return (
-      <View
-        style={[styles.modalinfoConatiner, {marginTop: index == 0 ? 15 : 0}]}>
-        <View
-          style={{
-            width: '78%',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}>
-          {renderProfile()}
-          {renderText()}
+      <>
+        <View style={[dir, {alignItems: isCu ? 'flex-end' : 'flex-start'}]}>
+          <View style={{maxWidth: '70%'}}>
+            <View style={isCu ? mc : mc2}>{msg != '' && renderMsg()}</View>
+            {renderDate()}
+          </View>
         </View>
-
-        <Pressable
-          onPress={() => unblokUser(usrr._id, index)}
-          style={({pressed}) => [
-            {
-              opacity: pressed ? 0.7 : 1.0,
-              width: '20%',
-              alignItems: 'flex-end',
-            },
-          ]}>
-          <Text
-            style={{
-              top: 10,
-              color: '#3C6B49',
-              fontSize: 14,
-              fontFamily: theme.fonts.fontBold,
-              textTransform: 'capitalize',
-            }}>
-            Unblock
-          </Text>
-        </Pressable>
-      </View>
+      </>
     );
   };
 
@@ -430,12 +468,12 @@ function Chat(props) {
                 paddingVertical: 15,
                 paddingHorizontal: 15,
               }}
-              data={data}
+              data={Messages}
               renderItem={ItemView}
               keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
-              ListHeaderComponent={data.length > 0 ? ListHeader : null}
+              // ListHeaderComponent={data.length > 0 ? ListHeader : null}
               // ListFooterComponent={data.length > 0 ? ListFooter : null}
             />
             {data.length > 0 && !getDataOnce && mloader && (

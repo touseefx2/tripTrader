@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
   },
   container3: {
     flex: 1,
-    backgroundColor: theme.color.backgroundConatiner,
+    backgroundColor: '#fcfcfc',
   },
   headerConatainer: {
     backgroundColor: theme.color.backgroundGreen,

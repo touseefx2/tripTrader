@@ -242,9 +242,9 @@ function Inbox(props) {
     let sd = ud; //start date
     let ed = cd; //end date
     let ics = compare(sd, ed); //is check date
-    console.log('updated date : ', moment(ud).format('YYYY-MM-DD hh:mm:ss a'));
-    console.log('currentdate : ', moment(cd).format('YYYY-MM-DD hh:mm:ss a'));
-    console.log('ics ', ics);
+    // console.log('updated date : ', moment(ud).format('YYYY-MM-DD hh:mm:ss a'));
+    // console.log('currentdate : ', moment(cd).format('YYYY-MM-DD hh:mm:ss a'));
+    // console.log('ics ', ics);
 
     if (ics == 'greater') {
       if (udcy) {
@@ -254,7 +254,7 @@ function Inbox(props) {
       }
     } else {
       let min = diff_minutes(ed, sd);
-      console.log('minutes: ', min);
+      // console.log('minutes: ', min);
       // if (min >= 0 && min <= 1) {
       // t = 'Just now';
       // } else if (min > 1) {
