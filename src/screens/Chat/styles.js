@@ -144,6 +144,7 @@ export const styles = StyleSheet.create({
     borderRadius: 40 / 2,
     borderWidth: 1,
     borderColor: theme.color.photoBorderColor,
+    marginBottom: 25,
     // alignItems: 'center',
     // justifyContent: 'center',
   },

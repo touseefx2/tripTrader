@@ -41,6 +41,7 @@ import db from '../../database/index';
 
 export default observer(Chat);
 
+let guest = require('../../assets/images/drawer/guest/img.png');
 const socket = io(db.apis.BASE_URL);
 
 function Chat(props) {
@@ -102,23 +103,33 @@ function Chat(props) {
     let rn = obj.roomName;
     console.log('un : ', username);
     console.log('room name : ', rn);
-
     socket.emit('joinRoom', {username, roomName: rn});
-    scrollToBottom();
   }, []);
 
   useEffect(() => {
     socket.on('message', data => {
       console.log('sock on  daata: ', data);
-      let temp = [...Messages];
-      temp.push({
-        userId: data.userId,
-        username: data.username,
-        text: data.message,
-      });
-      setMessages(temp);
+      // let temp = [...Messages];
+      // temp.push({
+      //   userId: data.userId,
+      //   username: data.username,
+      //   text: data.message,
+      // });
+      // setMessages(temp);
     });
   }, [socket]);
+
+  const scrollToBottom = () => {
+    scrollRef?.current?.scrollToEnd({animated: true});
+  };
+
+  useEffect(() => {
+    if (Messages.length > 0) {
+      setTimeout(() => {
+        scrollToBottom();
+      }, 500);
+    }
+  }, [Messages]);
 
   const sucUnblock = () => {
     toast?.current?.show('User unblock', toastduration);
@@ -271,10 +282,20 @@ function Chat(props) {
     marginTop: 3,
   };
 
+  let mx = {
+    maxWidth: '70%',
+  };
+
+  let mx2 = {
+    maxWidth: '70%',
+    flexDirection: 'row',
+  };
+
   const ItemView = ({item, index}) => {
     let usr = item.sendBy._id;
     let msg = item.message || '';
     let date = CheckDate(item.updatedAt);
+    let photo = item.sendBy.image ? {uri: item.sendBy.image} : guest;
     let isCu = false;
     if (user._id == usr) {
       isCu = true;
@@ -282,13 +303,35 @@ function Chat(props) {
 
     const renderMsg = () => {
       return (
-        <Text
-          style={[
-            mt,
-            {color: isCu ? theme.color.subTitleAuth : theme.color.buttonText},
-          ]}>
-          {msg}
-        </Text>
+        <>
+          <Text
+            style={[
+              mt,
+              {color: isCu ? theme.color.subTitleAuth : theme.color.buttonText},
+            ]}>
+            {msg}
+          </Text>
+        </>
+      );
+    };
+
+    const renderMsg2 = () => {
+      return (
+        <>
+          <View style={mc2}>
+            <Text
+              style={[
+                mt,
+                {
+                  color: isCu
+                    ? theme.color.subTitleAuth
+                    : theme.color.buttonText,
+                },
+              ]}>
+              {msg}
+            </Text>
+          </View>
+        </>
       );
     };
 
@@ -296,13 +339,49 @@ function Chat(props) {
       return <Text style={md}>{date}</Text>;
     };
 
+    const renderProfile = () => {
+      return (
+        <View style={styles.ProfileImgContainer}>
+          <ProgressiveFastImage
+            style={styles.ProfileImg}
+            source={photo}
+            loadingImageStyle={styles.imageLoader}
+            loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
+            blurRadius={5}
+          />
+        </View>
+      );
+    };
+
     return (
       <>
         <View style={[dir, {alignItems: isCu ? 'flex-end' : 'flex-start'}]}>
-          <View style={{maxWidth: '70%'}}>
-            <View style={isCu ? mc : mc2}>{msg != '' && renderMsg()}</View>
-            {renderDate()}
-          </View>
+          {isCu && (
+            <>
+              <View style={mx}>
+                <View style={mc}>{msg != '' && renderMsg()}</View>
+                {renderDate()}
+              </View>
+            </>
+          )}
+
+          {!isCu && (
+            <>
+              <View style={mx2}>
+                <View style={{justifyContent: 'flex-end'}}>
+                  {renderProfile()}
+                </View>
+
+                <View
+                  style={{
+                    marginLeft: 10,
+                  }}>
+                  {msg != '' && renderMsg2()}
+                  {renderDate()}
+                </View>
+              </View>
+            </>
+          )}
         </View>
       </>
     );
@@ -392,7 +471,6 @@ function Chat(props) {
       username: user.firstName + ' ' + user.lastName,
       message: message,
     };
-    console.log('message : ', userDetails);
     socket.emit('chat', {userDetails});
     setmessage('');
   };
@@ -482,15 +560,12 @@ function Chat(props) {
           borderTopWidth: 1,
           borderTopColor: theme.color.fieldBorder,
           padding: 20,
+          marginTop: 5,
         }}>
         {renderOthers()}
         {renderInputContainer()}
       </View>
     );
-  };
-
-  const scrollToBottom = () => {
-    // scrollRef?.current?.scrollIntoView({behavior: 'smooth'});
   };
 
   return (
