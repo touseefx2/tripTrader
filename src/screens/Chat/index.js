@@ -112,9 +112,10 @@ function Chat(props) {
   useEffect(() => {
     socket.on('message', data => {
       console.log('sock on  daata: ', data);
-      let temp = [...Messages];
+      let temp = Messages;
       temp.push(data);
-      setMessages(temp);
+      setMessages([...temp]);
+      scrollToBottom();
     });
   }, [socket]);
 

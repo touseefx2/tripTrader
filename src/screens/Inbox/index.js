@@ -395,6 +395,7 @@ function Inbox(props) {
     );
   };
   const ItemViewdelete = ({item, index}) => {
+    console.log('item : ', item);
     return (
       <Pressable
         onPress={() => {

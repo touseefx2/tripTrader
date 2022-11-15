@@ -30,14 +30,15 @@ class user {
   };
 
   attemptToDeleteChat(cid, uid, suc) {
-    console.warn('DeleteChat  true : ');
-    this.setdlc(true);
     let params = cid + '/' + uid;
+    console.warn('DeleteChat  true : ', params);
+    this.setdlc(true);
+
     db.hitApi(db.apis.DELETE_CHAT + params, 'put', {}, this.authToken)
       ?.then(resp => {
         this.setdlc(false);
         console.log(
-          `response DeleteChat  ${db.apis.BLOCK_USER}${params} : `,
+          `response DeleteChat  ${db.apis.DELETE_CHAT}${params} : `,
           resp.data,
         );
         suc();
@@ -51,7 +52,7 @@ class user {
         this.setdlc(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(
-          `Error in DeleteChat  ${db.apis.BLOCK_USER}${params}  : `,
+          `Error in DeleteChat  ${db.apis.DELETE_CHAT}${params}  : `,
           msg,
         );
         if (msg == 503 || msg == 500) {
@@ -1067,7 +1068,7 @@ class user {
           resp.data,
         );
         let rsp = resp.data.doc[0];
-        if (rsp ) {
+        if (rsp) {
           let dt = rsp;
           let body = {
             message: msg,
