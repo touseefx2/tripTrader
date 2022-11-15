@@ -47,6 +47,7 @@ function Chat(props) {
   let maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
   const toast = useRef(null);
+  const scrollRef = useRef(null);
   const toastduration = 700;
   let obj = props.route.params.obj || false;
   let headerTitle = props.route.params.title || '';
@@ -97,7 +98,27 @@ function Chat(props) {
   //chat sockets
   useEffect(() => {
     socket.emit('joinRoom', {headerTitle, roomName: obj.roomName});
+    scrollToBottom();
   }, []);
+
+  useEffect(() => {
+    socket.on('messages', data => {
+      //decypt
+      // const ans = to_Decrypt(data.text, data.username);
+      // dispatchProcess(false, ans, data.text);
+      // console.log(ans);
+
+      console.log('sock on : ', data);
+
+      // let temp = messages;
+      // temp.push({
+      //   userId: data.userId,
+      //   username: data.username,
+      //   text: data.message,
+      // });
+      // setMessages([...temp]);
+    });
+  }, [socket]);
 
   const sucUnblock = () => {
     toast?.current?.show('User unblock', toastduration);
@@ -364,7 +385,10 @@ function Chat(props) {
     );
   };
 
-  const SendMessage = () => {};
+  const SendMessage = () => {
+    socket.emit('chat', message);
+    setmessage('');
+  };
 
   const onclickFile = () => {};
 
@@ -458,6 +482,10 @@ function Chat(props) {
     );
   };
 
+  const scrollToBottom = () => {
+    scrollRef?.current?.scrollIntoView({behavior: 'smooth'});
+  };
+
   return (
     <>
       <View style={styles.container}>
@@ -467,6 +495,7 @@ function Chat(props) {
         <SafeAreaView style={styles.container2}>
           <KeyboardAvoidingView style={styles.container3}>
             <FlatList
+              ref={scrollRef}
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
               }
