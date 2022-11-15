@@ -102,6 +102,64 @@ function Notifications(props) {
 
   const onclickSearchBar = () => {};
 
+  const goBack = () => {
+    props.navigation.goBack();
+  };
+
+  const getFollowers = () => {
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.User.attemptToGetFollowers(
+          store.User.user._id,
+          () => {},
+          () => {},
+        );
+      }
+    });
+  };
+  const ReadNotification = nid => {
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.Notifications.attemptToReadNotifications(nid);
+      }
+    });
+  };
+
+  const onclickNotification = (c, nid) => {
+    Keyboard.dismiss();
+
+    if (c == 'Trip Confirmed') {
+      props.navigation.navigate('ConfirmedTrips');
+      goBack();
+      ReadNotification(nid);
+    }
+
+    if (c == 'Trip Created') {
+      props.navigation.navigate('MyProfile');
+      goBack();
+      ReadNotification(nid);
+    }
+
+    if (c == 'Profile Updated') {
+      props.navigation.navigate('MyProfile');
+      goBack();
+      ReadNotification(nid);
+    }
+
+    if (c == 'Password Changed') {
+      props.navigation.navigate('MyProfile');
+      goBack();
+      ReadNotification(nid);
+    }
+
+    if (c == 'profile') {
+      props.navigation.navigate('MyProfile');
+      goBack();
+      getFollowers();
+      ReadNotification(nid);
+    }
+  };
+
   const ItemSeparatorView = () => {
     return (
       <View
@@ -128,8 +186,7 @@ function Notifications(props) {
               fontSize: 13,
               color: theme.color.subTitleLight,
               fontFamily: theme.fonts.fontMedium,
-            }}
-            onPress={() => getItem(item)}>
+            }}>
             No notifications Found
           </Text>
         )}
@@ -417,19 +474,26 @@ function Notifications(props) {
     };
 
     return (
-      <View
-        style={[
-          styles.modalinfoConatiner,
-          {
-            marginTop: index == 0 ? 15 : 0,
-            borderBottomWidth: index == data.length - 1 ? 0.7 : 0,
-            borderBottomColor: theme.color.fieldBorder,
-            backgroundColor: isread ? theme.color.background : '#EAF1E3',
-          },
+      <Pressable
+        disabled={isread}
+        onPress={() =>
+          onclickNotification(isFollow ? 'profile' : title, item._id)
+        }
+        style={({pressed}) => [
+          {opacity: pressed ? 0.7 : 1.0},
+          [
+            styles.modalinfoConatiner,
+            {
+              marginTop: index == 0 ? 15 : 0,
+              borderBottomWidth: index == data.length - 1 ? 0.7 : 0,
+              borderBottomColor: theme.color.fieldBorder,
+              backgroundColor: isread ? theme.color.background : '#EAF1E3',
+            },
+          ],
         ]}>
         {renderProfile()}
         {renderText()}
-      </View>
+      </Pressable>
     );
   };
 
@@ -546,18 +610,6 @@ function Notifications(props) {
       </View>
     );
   };
-
-  // const ListFooter = () => {
-  //   return (
-  //     <>
-  //       <View>
-  //         <View style={styles.listFooter}>
-  //           <Text style={styles.listFooterT}>End of results</Text>
-  //         </View>
-  //       </View>
-  //     </>
-  //   );
-  // };
 
   return (
     <>

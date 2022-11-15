@@ -1,7 +1,7 @@
 //online link  ec2
 // const BASE_URL = 'http://ec2-13-126-235-46.ap-south-1.compute.amazonaws.com/';
 //local link
-const BASE_URL = 'http://10.7.148.77:3001/';
+const BASE_URL = 'http://192.168.100.15:3001/';
 
 //apis
 const GET_CITIES_AREAS = 'api/area/getAllAreas';
@@ -79,6 +79,7 @@ const UPDATE_LEAVE_REVIEW = 'api/review/updateAReview/';
 const GET_LATEST_TRIP = 'api/review/getLatestTrip/v2/';
 
 const GET_NOTIFICATIONS = 'api/notification/count/app?userId=';
+const READ_NOTIFICATIONS = 'api/notification/';
 
 const GET_SENT_OFFERS = 'api/offer?offeredBy=';
 const GET_RECEIVED_OFFERS = 'api/offer?offeredTo=';
@@ -158,6 +159,7 @@ export default apis = {
   GET_LATEST_TRIP,
 
   GET_NOTIFICATIONS,
+  READ_NOTIFICATIONS,
 
   GET_SENT_OFFERS,
   GET_RECEIVED_OFFERS,

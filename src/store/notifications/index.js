@@ -73,6 +73,42 @@ class notifications {
       });
   };
 
+  @action attemptToReadNotifications = nid => {
+    console.warn('Read Notification true: ');
+    this.setLoader(true);
+    let token = store.User.authToken;
+    db.hitApi(db.apis.READ_NOTIFICATIONS + nid, 'put', {isRead: true}, token)
+      ?.then(resp => {
+        console.log(
+          `response Read Notification   ${db.apis.READ_NOTIFICATIONS} : `,
+          resp.data,
+        );
+
+        let count = this.unread;
+        if (count >= 1) {
+          count--;
+          this.setunRead(count);
+        }
+
+        return;
+      })
+      .catch(err => {
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in Read Notification ${db.apis.READ_NOTIFICATIONS} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
   @action attemptToGetNotificationsGuest = () => {
     console.warn('GetNotifications Guest true: ');
     this.setLoader(true);
