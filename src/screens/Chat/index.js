@@ -641,7 +641,7 @@ function Chat(props) {
                 setmessage(m);
               }}
               onPressOutside={closeEmoji}
-              // modalStyle={{padding: 0}}
+              modalStyle={{padding: 10}}
               backgroundStyle={{backgroundColor: '#fcfcfc'}}
               containerStyle={{
                 shadowColor: '#000',
