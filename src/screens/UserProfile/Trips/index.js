@@ -205,35 +205,6 @@ function Trips(props) {
           </Text>
         </View>
 
-        {/* <View style={styles.field}>
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={styles.filedTitle}>
-            TRIP AVAILABILITY
-          </Text>
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={[
-              styles.filedTitle2,
-              {color: !c ? tc : theme.color.subTitleLight},
-            ]}>
-            {formatDate(availability)}
-          </Text>
-        </View>
-
-        <View style={styles.field}>
-          <Pressable
-            style={({pressed}) => [
-              {opacity: pressed ? 0.9 : 1.0},
-              styles.buttonContainer2,
-            ]}
-            onPress={() => {}}>
-            <Text style={styles.buttonText2}>Edit Trip</Text>
-          </Pressable>
-        </View> */}
-
         <View style={styles.fieldContainer}>
           <View style={{width: '50%'}}>
             <Text
@@ -252,7 +223,7 @@ function Trips(props) {
               {formatDate(availability)}
             </Text>
           </View>
-          <Pressable
+          {/* <Pressable
             style={({pressed}) => [
               {opacity: pressed ? 0.8 : 1.0},
               styles.buttonContainer,
@@ -261,7 +232,7 @@ function Trips(props) {
               // gotoEditTrip(item, index);
             }}>
             <Text style={styles.buttonText}>Make Offer</Text>
-          </Pressable>
+          </Pressable> */}
         </View>
       </Pressable>
     );

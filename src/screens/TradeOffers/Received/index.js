@@ -350,14 +350,11 @@ function Received(props) {
         const obj = {
           userId1: user._id,
           userId2: usr._id,
-          messages: [
-            {
-              sendBy: user._id,
-              isRead: false,
-              message: message,
-              messageType: 'text',
-            },
-          ],
+          sendBy: user._id,
+          sendTo: usr._id,
+          isRead: false,
+          message: message,
+          messageType: 'text',
         };
         store.User.attemptToCheckFirstMessage(
           user._id,

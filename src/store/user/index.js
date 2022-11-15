@@ -278,7 +278,7 @@ class user {
           // store.General.setisServerError(true);
           return;
         }
-        // seterror(msg.toString())
+        // seterror(msg.toString())image/pjpeg;base64,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
         Alert.alert('', msg.toString());
       });
   }
@@ -322,7 +322,7 @@ class user {
         setrfrsh(false);
         console.log(
           `response GET Inboxes ${db.apis.GET_INBOXES_BY_UID + uid} : `,
-          resp.data,
+          resp.data.data[0],
         );
         let dt = resp.data.data || [];
         setgetdata(true);
@@ -1063,18 +1063,20 @@ class user {
     db.hitApi(db.apis.CHECK_FIRST_MESSAGE + params, 'get', {}, this.authToken)
       ?.then(resp => {
         console.log(
-          `responsecheck First Message ${db.apis.CHECK_FIRST_MESSAGE}${params} : `,
+          `responsecheck Check First Message ${db.apis.CHECK_FIRST_MESSAGE}${params} : `,
           resp.data,
         );
-        let rsp = resp.data.data || [];
-        if (rsp.length > 0) {
-          let dt = rsp[0];
+        let rsp = resp.data.doc[0];
+        if (rsp ) {
+          let dt = rsp;
           let body = {
             message: msg,
             sendBy: suid,
             type: 'text',
+            chatRoomId: dt.roomName,
           };
-          this.SendSecodMessage(body, dt._id, suc);
+          // dt._id
+          this.SendSecodMessage(body, dt.roomName, suc);
         }
       })
       .catch(err => {

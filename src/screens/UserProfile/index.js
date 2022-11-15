@@ -165,14 +165,11 @@ function UserProfile(props) {
         const obj = {
           userId1: store.User.user._id,
           userId2: usr._id,
-          messages: [
-            {
-              sendBy: store.User.user._id,
-              isRead: false,
-              message: message,
-              messageType: 'text',
-            },
-          ],
+          sendBy: store.User.user._id,
+          sendTo: user._id,
+          isRead: false,
+          message: message,
+          messageType: 'text',
         };
 
         store.Userv.attemptToCheckFirstMessage(

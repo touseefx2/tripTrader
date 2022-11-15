@@ -112,13 +112,9 @@ function Chat(props) {
   useEffect(() => {
     socket.on('message', data => {
       console.log('sock on  daata: ', data);
-      // let temp = [...Messages];
-      // temp.push({
-      //   userId: data.userId,
-      //   username: data.username,
-      //   text: data.message,
-      // });
-      // setMessages(temp);
+      let temp = [...Messages];
+      temp.push(data);
+      setMessages(temp);
     });
   }, [socket]);
 
@@ -487,6 +483,7 @@ function Chat(props) {
       username: user.firstName + ' ' + user.lastName,
       message: message,
     };
+    console.log('ud : ', userDetails);
     socket.emit('chat', {userDetails});
     setmessage('');
   };

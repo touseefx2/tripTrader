@@ -972,15 +972,17 @@ class userv {
           `responsecheck First Message ${db.apis.CHECK_FIRST_MESSAGE}${params} : `,
           resp.data,
         );
-        let rsp = resp.data.data || [];
-        if (rsp.length > 0) {
-          let dt = rsp[0];
+        let rsp = resp.data.doc[0] || [];
+        if (rsp) {
+          let dt = rsp;
           let body = {
             message: msg,
             sendBy: suid,
             type: 'text',
+            chatRoomId: dt.roomName,
           };
-          this.SendSecodMessage(body, dt._id, suc);
+          // dt._id
+          this.SendSecodMessage(body, dt.roomName, suc);
         }
       })
       .catch(err => {
