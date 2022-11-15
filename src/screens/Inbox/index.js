@@ -87,11 +87,11 @@ function Inbox(props) {
 
   const onclickSearchBar = () => {};
 
-  const deleteChat = chatId => {
+  const deleteChat = (chatId, i) => {
     Keyboard.dismiss();
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToDeleteChat(chatId, user._id, closeSwipe);
+        store.User.attemptToDeleteChat(chatId, i, user._id, closeSwipe);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -375,6 +375,7 @@ function Inbox(props) {
 
     return (
       <Pressable
+        disabled={mloader}
         onPress={() => {
           props.navigation.navigate('Chat', {obj: item, title: title});
         }}
@@ -395,11 +396,11 @@ function Inbox(props) {
     );
   };
   const ItemViewdelete = ({item, index}) => {
-    console.log('item : ', item);
     return (
       <Pressable
+        disabled={mloader}
         onPress={() => {
-          deleteChat(item._id);
+          deleteChat(item._id, index);
         }}
         style={({pressed}) => [
           {opacity: pressed ? 0.7 : 1.0},
@@ -499,6 +500,7 @@ function Inbox(props) {
           />
 
           <utils.Loader load={loader} />
+          {store.Notifications.isShowNotifcation && <utils.ShowNotifications />}
         </SafeAreaView>
       </View>
     </>

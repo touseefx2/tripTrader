@@ -4,6 +4,8 @@ import InternetMessage from './InternetMessage';
 import Footer from './Footer';
 import Loader from './Loader';
 import Loader2 from './Loader2';
+import ShowNotifications from './ShowNotifications';
+
 // import FoodVariationModal from './FoodVariationModal';
 // import FoodDeleteModal from './FoodDeleteModal';
 // import FoodVariationDetailModal from './FoodVariationDetailModal';
@@ -50,6 +52,7 @@ const utils = {
   Search,
   Filters,
   DropDown,
+  ShowNotifications,
 };
 
 export default utils;

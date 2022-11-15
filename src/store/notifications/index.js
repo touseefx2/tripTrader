@@ -11,6 +11,15 @@ class notifications {
     makeObservable(this);
   }
 
+  @observable isShowNotifcation = false;
+  @action setisShowNotifcation = obj => {
+    this.isShowNotifcation = obj;
+  };
+  @observable NotifcationTitle = '';
+  @action setNotifcationTitle = obj => {
+    this.NotifcationTitle = obj;
+  };
+
   @observable Loader = false;
   @action setLoader = obj => {
     this.Loader = obj;
@@ -139,6 +148,11 @@ class notifications {
   @action clearNotifications = () => {
     this.setnotifications([]);
     this.setunRead(0);
+  };
+
+  @action clearShowNotifications = () => {
+    this.setisShowNotifcation(false);
+    this.setNotifcationTitle('');
   };
 }
 export const Notifications = new notifications();

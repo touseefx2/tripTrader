@@ -128,6 +128,7 @@ function TradeOffers(props) {
               focusScreen={store.General.focusScreen}
             />
           )}
+          {store.Notifications.isShowNotifcation && <utils.ShowNotifications />}
         </View>
       </SafeAreaView>
     </View>

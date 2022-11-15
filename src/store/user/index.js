@@ -29,7 +29,7 @@ class user {
     this.dlc = obj;
   };
 
-  attemptToDeleteChat(cid, uid, suc) {
+  attemptToDeleteChat(cid, i, uid, suc) {
     let params = cid + '/' + uid;
     console.warn('DeleteChat  true : ', params);
     this.setdlc(true);
@@ -42,11 +42,15 @@ class user {
           resp.data,
         );
         suc();
-        this.attemptToGetInboxes(
-          uid,
-          () => {},
-          () => {},
-        );
+        let dd = [...this.inbox];
+        dd.splice(i, 1);
+        this.setinbox(dd);
+
+        // this.attemptToGetInboxes(
+        //   uid,
+        //   () => {},
+        //   () => {},
+        // );
       })
       .catch(err => {
         this.setdlc(false);

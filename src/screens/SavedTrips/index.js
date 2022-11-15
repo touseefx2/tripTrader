@@ -5935,7 +5935,7 @@ function SavedTrips(props) {
             }}
           />
         )}
-
+        {store.Notifications.isShowNotifcation && <utils.ShowNotifications />}
         <Toast ref={toast} position="bottom" />
       </View>
     </>

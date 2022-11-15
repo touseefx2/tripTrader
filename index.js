@@ -36,55 +36,73 @@ PushNotification.createChannel(
   created => console.log(`createChannel notification returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
 );
 
-messaging().onMessage(async notification => {
-  console.warn('remot message front end  : ', notification);
+const callData = topic => {
+  if (topic == 'newMessage') {
+    store.User.attemptToGetInboxes(
+      store.User.user._id,
+      () => {},
+      () => {},
+    );
+  }
+  if (topic == 'offerRecived') {
+    store.Offers.attemptToGetReceiveOffers(
+      () => {},
+      () => {},
+    );
+  }
+  if (topic == 'offerDecline') {
+    store.Offers.attemptToGetSentOffers(
+      () => {},
+      () => {},
+    );
+  }
+  if (topic == 'offerCancel') {
+    store.Offers.attemptToGetReceiveOffers(
+      () => {},
+      () => {},
+    );
+  }
+  if (topic == 'offerConfirm') {
+    store.Offers.attemptToGetSentOffers(
+      () => {},
+      () => {},
+    );
+    store.Offers.attemptToGetConfirmOffers(
+      () => {},
+      () => {},
+    );
+  }
+};
 
-  // let data = notification.data ? notification.data : null;
-  // let topic = data?.topic || '';
+messaging().onMessage(async remoteMessage => {
+  console.warn('remot message frontEnd  : ', remoteMessage);
+  let title = remoteMessage.notification?.title || '';
+  let message = remoteMessage.notification?.body || '';
+  let data = remoteMessage.data ? remoteMessage.data : '';
+  let topic = data.topic;
+  callData(topic);
 
-  // let title = notification.notification.title || '';
-  // let msg = notification.notification.body || '';
+  if (store.Notifications.isShowNotifcation) {
+    store.Notifications.clearShowNotifications();
+  }
 
-  // if (topic !== 'settings updated') {
-  //   PushNotification.localNotification({
-  //     channelId: 'fdc2',
-  //     message: msg,
-  //     title: title,
-  //     // bigPictureUrl: remoteMessage.notification.android.imageUrl,
-  //     // smallIcon: remoteMessage.notification.android.imageUrl,
-  //   });
+  // PushNotification.localNotification({
+  //   message: message,
+  //   title: title,
+  // });
 
-  //   if (store.User.user) {
-  //     store.Orders.getOrderById();
-  //   }
-  // } else {
-  //   store.Food.getSliderImagesOnly();
-  // }
-
-  // if (topic == 'promo') {
-  //   store.Promos.getPromoById();
-  // }
+  store.Notifications.setisShowNotifcation(true);
+  store.Notifications.setNotifcationTitle(message);
 });
 
-messaging().setBackgroundMessageHandler(async notification => {
-  console.warn('background ntfctn msg : ', notification);
-  // let data = notification.data ? notification.data : null;
-  // let topic = data?.topic || '';
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.warn('remot message background  : ', remoteMessage);
 
-  // let title = notification.notification.title || '';
-  // let msg = notification.notification.body || '';
-
-  // if (topic !== 'settings updated') {
-  //   if (store.User.user) {
-  //     store.Orders.getOrderById();
-  //   }
-  // } else {
-  //   store.Food.getSliderImagesOnly();
-  // }
-
-  // if (topic == 'promo') {
-  //   store.Promos.getPromoById();
-  // }
+  let title = remoteMessage.notification?.title || '';
+  let message = remoteMessage.notification?.body || '';
+  let data = remoteMessage.data ? remoteMessage.data : '';
+  let topic = data.topic;
+  callData(topic);
 });
 
 function MainApp() {
