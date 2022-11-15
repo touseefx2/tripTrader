@@ -389,9 +389,14 @@ function ConfirmTrips(props) {
   }
 
   const ItemView = ({item, index}) => {
-    let user = item.offeredBy;
-    let ofer = item.hostTrip;
-    let trade = item.offeredTrip;
+    let isMyTrip = false;
+    if (user._id == item.offeredTo._id) {
+      isMyTrip = true;
+    }
+
+    let user = isMyTrip ? item.offeredBy : item.offeredTo;
+    let ofer = isMyTrip ? item.hostTrip : item.offeredTrip;
+    let trade = isMyTrip ? item.offeredTrip : item.hostTrip;
     let offernote = item.note || '';
     let create = CheckDate(item.updatedAt);
 
@@ -406,7 +411,7 @@ function ConfirmTrips(props) {
         ? ofer.duration.title.substring(0, ofer.duration.title.length - 1)
         : ofer.duration.title;
     dur = dur + ' ' + t;
-    let tripDates = item.tripDates;
+    let tripDates = isMyTrip ? item.tripDates : item.preferredDates;
     let avlbl = FormatPrfrDate(tripDates);
     let loc = ofer.location.city + ', ' + ofer.location.state;
 
@@ -418,7 +423,7 @@ function ConfirmTrips(props) {
         ? trade.duration.title.substring(0, trade.duration.title.length - 1)
         : trade.duration.title;
     durt = durt + ' ' + tt;
-    let preferdates = item.preferredDates;
+    let preferdates = isMyTrip ? item.preferredDates : item.tripDates;
     let avlblt = FormatPrfrDate(preferdates);
     let loct = trade.location.city + ', ' + trade.location.state;
 
