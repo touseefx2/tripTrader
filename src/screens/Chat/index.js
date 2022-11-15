@@ -483,7 +483,7 @@ function Chat(props) {
   };
 
   const scrollToBottom = () => {
-    scrollRef?.current?.scrollIntoView({behavior: 'smooth'});
+    // scrollRef?.current?.scrollIntoView({behavior: 'smooth'});
   };
 
   return (
