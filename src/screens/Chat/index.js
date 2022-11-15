@@ -37,12 +37,13 @@ import {ImageSlider} from 'react-native-image-slider-banner';
 import {Calendar} from 'react-native-calendars';
 import moment, {duration} from 'moment/moment';
 import io from 'socket.io-client';
+import db from '../../database/index';
 
 export default observer(Chat);
 
-function Chat(props) {
-  // const socket = io( );
+const socket = io(db.apis.BASE_URL);
 
+function Chat(props) {
   let maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
   const toast = useRef(null);
@@ -92,6 +93,11 @@ function Chat(props) {
     }
     return () => {};
   }, [getDataOnce, internet]);
+
+  //chat sockets
+  useEffect(() => {
+    socket.emit('joinRoom', {headerTitle, roomName: obj.roomName});
+  }, []);
 
   const sucUnblock = () => {
     toast?.current?.show('User unblock', toastduration);
