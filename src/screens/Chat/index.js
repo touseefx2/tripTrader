@@ -125,11 +125,9 @@ function Chat(props) {
     }
   }, [getDataOnce]);
 
-  console.log('data length before socket on msg : ', data.length);
-
   useEffect(() => {
     socket.on('message', d => {
-      console.log('sock on in chat data ', d.message);
+      console.log('socket on  reciver message in chat data ', d.message);
       let temp = ndata.current;
       console.log('temp befor :  ', temp.length);
       temp.push(d);
@@ -137,16 +135,6 @@ function Chat(props) {
       setdata([...temp]);
       scrollToBottom();
       return;
-
-      // setTimeout(() => {
-      // console.log('data length after socket on msg : ', data.length);
-      // console.log('tmmppp b ,', ndata.length);
-      // let temp = [...ndata.current];
-      // temp.push(d);
-      // console.log('tmmppp a ,', temp.length);
-      // setData([...temp]);
-      // scrollToBottom();
-      // }, 100);
     });
   }, [socket]);
 
