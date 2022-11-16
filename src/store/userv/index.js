@@ -447,9 +447,9 @@ class userv {
   };
 
   @action attemptToGetLatestTrip = () => {
-    console.log('GetLatestTrip : ', 'true');
+    let array = store.Offers.cnfrmOffers || [];
+    console.log('GetLatestTrip : ', array.length);
 
-    let array = store.Trips.confirmTrips || [];
     if (array.length > 0) {
       for (let index = 0; index < array.length; index++) {
         const e = array[index];
