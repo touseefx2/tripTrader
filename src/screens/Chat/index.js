@@ -103,22 +103,25 @@ function Chat(props) {
     setTimeout(() => {
       scrollToBottom();
     }, 1000);
-    let username = user.firstName + ' ' + user.lastName;
-    let rn = obj.roomName;
-    socket.emit('joinRoom', {username, roomName: rn});
   }, []);
 
   useEffect(() => {
     if (internet) {
-      socket.on('message', data => {
-        console.log('sock on data ', data.message);
-        let temp = Messages;
-        temp.push(data);
-        setMessages([...temp]);
-        scrollToBottom();
-      });
+      let username = user.firstName + ' ' + user.lastName;
+      let rn = obj.roomName;
+      socket.emit('joinRoom', {username, roomName: rn});
     }
-  }, [socket, internet]);
+  }, [internet]);
+
+  useEffect(() => {
+    socket.on('message', data => {
+      console.log('sock on data ', data.message);
+      let temp = Messages;
+      temp.push(data);
+      setMessages([...temp]);
+      scrollToBottom();
+    });
+  }, [socket]);
 
   const scrollToBottom = () => {
     scrollRef?.current?.scrollToEnd({animated: true});
