@@ -338,7 +338,7 @@ class user {
           `response GET Inboxes ${db.apis.GET_INBOXES_BY_UID + uid} : `,
           resp.data,
         );
-        let dt = resp.data.doc || [];
+        let dt = resp.data.data || [];
         setgetdata(true);
         this.setinbox(dt);
       })
