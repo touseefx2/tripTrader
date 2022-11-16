@@ -345,7 +345,7 @@ class userv {
   @observable isAnyTrade = false;
   @observable isOneReview = false;
   @action setisAnyTrade = obj => {
-    this.misAnyTrade = obj;
+    this.isAnyTrade = obj;
   };
   @action setisOneReview = obj => {
     this.isOneReview = obj;
@@ -451,13 +451,14 @@ class userv {
     console.log('GetLatestTrip : ', array.length);
 
     if (array.length > 0) {
+      let u1 = store.User.user._id;
+      let u2 = store.Userv.user._id;
+
       for (let index = 0; index < array.length; index++) {
         const e = array[index];
+
         let isu1 = false;
         let isu2 = false;
-
-        let u1 = store.User.user._id;
-        let u2 = store.Userv.user._id;
 
         if (e.offeredBy._id == u1) {
           isu1 = true;
@@ -470,6 +471,9 @@ class userv {
         } else if (e.offeredTo._id == u2) {
           isu2 = true;
         }
+
+        console.log('u1 : ', isu1);
+        console.log('u2 : ', isu2);
 
         if (isu1 && isu2) {
           this.setisAnyTrade(e);
