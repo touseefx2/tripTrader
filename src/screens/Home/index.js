@@ -324,34 +324,26 @@ function Home(props) {
 
   const data = store.User.Hometrips;
 
-  let homeLoader = store.User.HomeLoader;
-
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
     setgetDataOnce(C);
   };
-  const [refreshing, setRefreshing] = React.useState(false);
-  const setrefeshing = c => {
-    setRefreshing(c);
-  };
+  const refreshing = store.User.HomeLoader;
   const onRefresh = React.useCallback(() => {
     console.warn('onrefresh cal');
-    setRefreshing(true);
     getDbData();
   }, [blckUser]);
   const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         if (user == 'guest') {
-          store.User.attemptToGetHomeTripsGuest(setGetDataOnce, setrefeshing);
+          store.User.attemptToGetHomeTripsGuest(setGetDataOnce);
         } else {
           store.User.attemptToGetHomeTripsSearch(
             setGetDataOnce,
-            setrefeshing,
             blckUser,
             'all',
           );
-          // store.User.attemptToGetHomeTrips(setGetDataOnce, setrefeshing);
         }
       } else {
         setrefeshing(false);
@@ -360,7 +352,7 @@ function Home(props) {
   };
   useEffect(() => {
     if (!getDataOnce && internet) {
-      getDbData();
+      onRefresh();
     }
     return () => {};
   }, [getDataOnce, internet]);
@@ -368,8 +360,6 @@ function Home(props) {
   const tripdata = store.User.trips;
   const [isDropDownTrip, setisDropDownTrip] = useState(false);
   const [trip, settrip] = useState(false);
-
-  const [isCustom, setisCustom] = useState(false);
 
   //make offer
 
@@ -406,9 +396,6 @@ function Home(props) {
   const [unavlblSLCTmarkedDates, setunavlblSLCTmarkedDates] = useState({});
   const [selunmarkeSLCTdDates, setselunmarkedSLCTDates] = useState({});
   const [isSetUnavailable, setisSetUnavailable] = useState(false);
-  const [isShowPrmsn, setisShowPrmsn] = useState(false);
-  const [prmsnChk, setprmsnChk] = useState('');
-  const [DT, setDT] = useState(false);
 
   const [isButtonDisable, setisButtonDisable] = useState(false);
 
@@ -458,11 +445,7 @@ function Home(props) {
   useEffect(() => {
     socket.on('message', d => {
       console.log('socket on Home call and refresh  inboxes ');
-      store.User.attemptToGetInboxes(
-        store.User.user._id,
-        () => {},
-        () => {},
-      );
+      store.User.attemptToGetInboxes(store.User.user._id, () => {});
     });
   }, [socket]);
 
@@ -1065,7 +1048,7 @@ function Home(props) {
     return (
       // Flat List Item
       <>
-        {!homeLoader && getDataOnce && (
+        {!refreshing && getDataOnce && (
           <Text
             style={{
               marginTop: '80%',
@@ -1080,18 +1063,6 @@ function Home(props) {
             onPress={() => getItem(item)}>
             No Trips Found
           </Text>
-        )}
-
-        {homeLoader && !getDataOnce && (
-          <ActivityIndicator
-            size={30}
-            color={theme.color.button1}
-            style={{
-              marginTop: '80%',
-
-              alignSelf: 'center',
-            }}
-          />
         )}
       </>
     );
@@ -5756,17 +5727,6 @@ function Home(props) {
               ListHeaderComponent={data.length > 0 ? ListHeader : null}
               ListFooterComponent={data.length > 0 ? ListFooter : null}
             />
-            {data.length > 0 && !getDataOnce && homeLoader && (
-              <ActivityIndicator
-                size={30}
-                color={theme.color.button1}
-                style={{
-                  top: '50%',
-                  position: 'absolute',
-                  alignSelf: 'center',
-                }}
-              />
-            )}
           </View>
 
           <utils.Footer

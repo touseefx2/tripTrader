@@ -71,29 +71,21 @@ function Chat(props) {
     ndata.current = data;
   }); // nRef is updated after each render
 
-  let mloader = store.User.messagesLoader;
-
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
     setgetDataOnce(C);
   };
-  const [refreshing, setRefreshing] = React.useState(false);
-  const setrefeshing = c => {
-    setRefreshing(c);
-  };
+  const refreshing = store.User.messagesLoader;
   const onRefresh = React.useCallback(() => {
     console.warn('onrefresh cal');
-    setRefreshing(true);
+
     getDbData();
   }, []);
   const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToGetAllMessages(
-          obj.roomName,
-          setGetDataOnce,
-          setrefeshing,
-          c => setdata(c),
+        store.User.attemptToGetAllMessages(obj.roomName, setGetDataOnce, c =>
+          setdata(c),
         );
       } else {
         setrefeshing(false);
@@ -171,18 +163,6 @@ function Chat(props) {
             onPress={() => getItem(item)}>
             No user found
           </Text>
-        )} */}
-
-        {/* {mloader && !getDataOnce && (
-          <ActivityIndicator
-            size={30}
-            color={theme.color.button1}
-            style={{
-              marginTop: '80%',
-
-              alignSelf: 'center',
-            }}
-          />
         )} */}
       </>
     );
@@ -541,14 +521,7 @@ function Chat(props) {
     };
 
     const renderInputContainer = () => {
-      let disable =
-        message == ''
-          ? true
-          : mloader == true
-          ? true
-          : refreshing == true
-          ? true
-          : false;
+      let disable = message == '' ? true : refreshing == true ? true : false;
       return (
         <View
           style={{
@@ -653,18 +626,6 @@ function Chat(props) {
               }}
             />
           )}
-
-          {/* {data.length > 0 && !getDataOnce && mloader && (
-            <ActivityIndicator
-              size={30}
-              color={theme.color.button1}
-              style={{
-                top: '30%',
-                position: 'absolute',
-                alignSelf: 'center',
-              }}
-            />
-          )} */}
 
           {renderFooter()}
         </SafeAreaView>

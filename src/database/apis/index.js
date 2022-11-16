@@ -70,6 +70,7 @@ const GET_INBOXES_BY_UID = 'api/chat/myAllChats?userId=';
 
 // const GET_All_Meesages = 'api/chat/messages/';
 const GET_All_Meesages = 'api/chat/messages/';
+const READ_All_Meesages = 'api/chat/readMessages/';
 
 // const DELETE_CHAT = 'api/chat/deleteAChat/';
 const DELETE_CHAT = 'api/chat/deleteAChat/';
@@ -171,6 +172,7 @@ export default apis = {
   CANCEL_OFFER,
   CONFIRM_OFFERS,
   GET_All_Meesages,
+  READ_All_Meesages,
 };
 
 // const login = 'user/loginCaptain';

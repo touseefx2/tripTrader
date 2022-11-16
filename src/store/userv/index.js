@@ -1116,11 +1116,7 @@ class userv {
         let rn = resp.data.data.roomName;
         suc(true);
 
-        this.attemptToGetInboxes(
-          store.User.user._id,
-          () => {},
-          () => {},
-        );
+        this.attemptToGetInboxes(store.User.user._id, () => {});
       })
       .catch(err => {
         this.sethomeModalLoder(false);

@@ -326,14 +326,14 @@ class user {
       });
   }
 
-  @action attemptToGetInboxes = (uid, setgetdata, setrfrsh) => {
+  @action attemptToGetInboxes = (uid, setgetdata) => {
     console.warn('GET Inboxes : ', uid);
     this.setibl(true);
 
     db.hitApi(db.apis.GET_INBOXES_BY_UID + uid, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setibl(false);
-        setrfrsh(false);
+
         console.log(
           `response GET Inboxes ${db.apis.GET_INBOXES_BY_UID + uid} : `,
           resp.data,
@@ -367,7 +367,7 @@ class user {
       })
       .catch(err => {
         this.setibl(false);
-        setrfrsh(false);
+
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in GET Inboxes ${db.apis.GET_INBOXES_BY_UID + uid} : `,
@@ -388,23 +388,15 @@ class user {
       });
   };
 
-  @action attemptToGetAllMessages = (uid, setgetdata, setrfrsh, setData) => {
-    console.warn('GetAllMessages: ', 'true');
+  @action attemptToGetAllMessages = (uid, setgetdata, setData) => {
+    console.log('GetAllMessages: ', 'true');
     this.setmessagesLoader(true);
-
-    // setTimeout(() => {
-    //   setrfrsh(false);
-    //   setgetdata(true);
-    //   this.setmessagesLoader(false);
-    //   this.setmessages(null);
-    // }, 2000);
 
     let params = uid + '/' + this.user._id;
 
     db.hitApi(db.apis.GET_All_Meesages + params, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setmessagesLoader(false);
-        setrfrsh(false);
         console.log(
           `response GetAllMessages ${db.apis.GET_All_Meesages + params} : `,
           resp.data.data,
@@ -412,10 +404,11 @@ class user {
         let dt = resp.data.data || [];
         setgetdata(true);
         setData(dt);
+        this.attemptToReadAllMessages(params);
       })
       .catch(err => {
         this.setmessagesLoader(false);
-        setrfrsh(false);
+
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in GetAllMessages ${db.apis.GET_All_Meesages + params} : `,
@@ -433,6 +426,30 @@ class user {
         }
         // seterror(msg.toString())
         Alert.alert('', msg.toString());
+      });
+  };
+
+  @action attemptToReadAllMessages = params => {
+    console.log('ReadAllMessages: ', 'true');
+
+    db.hitApi(db.apis.READ_All_Meesages + params, 'get', {}, this.authToken)
+      ?.then(resp => {
+        console.log(
+          `response ReadAllMessages ${db.apis.READ_All_Meesages + params} : `,
+          resp.data,
+        );
+      })
+      .catch(err => {
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in ReadAllMessages ${db.apis.READ_All_Meesages + params} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
       });
   };
 
@@ -680,7 +697,7 @@ class user {
       });
   };
 
-  @action attemptToGetHomeTripsSearch = (setgetdata, setrfrsh, bu, c) => {
+  @action attemptToGetHomeTripsSearch = (setgetdata, bu, c) => {
     console.warn('Get AllHomeTrip : ', 'true');
     this.setHomeLoader(true);
 
@@ -695,7 +712,7 @@ class user {
     db.hitApi(db.apis.GET_ALL_HOME_TRIPS + b, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setHomeLoader(false);
-        setrfrsh(false);
+
         console.log(
           `response Get AllHomeTrip   ${db.apis.GET_ALL_HOME_TRIPS}${b} : `,
           resp.data,
@@ -712,7 +729,7 @@ class user {
       })
       .catch(err => {
         this.setHomeLoader(false);
-        setrfrsh(false);
+
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS}${b}: `,
@@ -789,14 +806,14 @@ class user {
       });
   };
 
-  @action attemptToGetHomeTripsGuest = (setgetdata, setrfrsh) => {
+  @action attemptToGetHomeTripsGuest = setgetdata => {
     console.warn('Get AllHomeTrip : ', 'true');
     this.setHomeLoader(true);
 
     db.hitApi(db.apis.GET_ALL_HOME_TRIPS_GUEST, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setHomeLoader(false);
-        setrfrsh(false);
+
         console.log(
           `response Get AllHomeTrip   ${db.apis.GET_ALL_HOME_TRIPS} : `,
           resp.data,
@@ -811,7 +828,7 @@ class user {
       })
       .catch(err => {
         this.setHomeLoader(false);
-        setrfrsh(false);
+
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS} : `,
@@ -1196,11 +1213,7 @@ class user {
         let rn = resp.data.data.roomName;
         suc(true);
 
-        this.attemptToGetInboxes(
-          store.User.user._id,
-          () => {},
-          () => {},
-        );
+        this.attemptToGetInboxes(store.User.user._id, () => {});
       })
       .catch(err => {
         this.sethomeModalLoder(false);
@@ -2052,11 +2065,7 @@ class user {
       () => {},
     );
     this.getUserById1(uid, this.authToken, '');
-    this.attemptToGetInboxes(
-      uid,
-      () => {},
-      () => {},
-    );
+    this.attemptToGetInboxes(uid, () => {});
     store.Offers.attemptToGetSentOffers(
       () => {},
       () => {},

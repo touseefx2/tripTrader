@@ -56,7 +56,7 @@ function Inbox(props) {
   let headerTitle = 'Inbox';
   let internet = store.General.isInternet;
   let user = store.User.user;
-  let mloader = store.User.ibl;
+
   let loader = store.User.dlc;
   const data = store.User.inbox;
 
@@ -64,21 +64,15 @@ function Inbox(props) {
   const setGetDataOnce = C => {
     setgetDataOnce(C);
   };
-  const [refreshing, setRefreshing] = React.useState(false);
-  const setrefeshing = c => {
-    setRefreshing(c);
-  };
+  const refreshing = store.User.ibl;
   const onRefresh = React.useCallback(() => {
     console.warn('onrefresh cal');
-    setRefreshing(true);
     getDbData();
   }, []);
   const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToGetInboxes(user._id, setGetDataOnce, setrefeshing);
-      } else {
-        setrefeshing(false);
+        store.User.attemptToGetInboxes(user._id, setGetDataOnce);
       }
     });
   };
@@ -93,7 +87,7 @@ function Inbox(props) {
 
   useEffect(() => {
     if (internet) {
-      getDbData();
+      onRefresh();
     }
     return () => {};
   }, [internet]);
@@ -128,7 +122,7 @@ function Inbox(props) {
     return (
       // Flat List Item
       <>
-        {!mloader && getDataOnce && (
+        {!refreshing && getDataOnce && (
           <Text
             style={{
               marginTop: '80%',
@@ -142,18 +136,6 @@ function Inbox(props) {
             onPress={() => getItem(item)}>
             No Chats Found
           </Text>
-        )}
-
-        {mloader && !getDataOnce && (
-          <ActivityIndicator
-            size={30}
-            color={theme.color.button1}
-            style={{
-              marginTop: '80%',
-
-              alignSelf: 'center',
-            }}
-          />
         )}
       </>
     );
@@ -385,7 +367,7 @@ function Inbox(props) {
 
     return (
       <Pressable
-        disabled={mloader}
+        disabled={refreshing}
         onPress={() => {
           store.User.setmessages([]);
           props.navigation.navigate('Chat', {
@@ -413,7 +395,7 @@ function Inbox(props) {
   const ItemViewdelete = ({item, index}) => {
     return (
       <Pressable
-        disabled={mloader}
+        disabled={refreshing}
         onPress={() => {
           deleteChat(item.roomName, index);
         }}
@@ -479,33 +461,6 @@ function Inbox(props) {
               rightOpenValue={-75}
               disableRightSwipe
             />
-            {/* <FlatList
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
-              contentContainerStyle={{
-                paddingTop: 12,
-                paddingBottom: 40,
-              }}
-              data={data}
-              renderItem={ItemView}
-              keyExtractor={(item, index) => index.toString()}
-              ListEmptyComponent={EmptyListMessage}
-              ItemSeparatorComponent={ItemSeparatorView}
-              ListHeaderComponent={data.length > 0 ? ListHeader : null}
-              ListFooterComponent={data.length > 0 ? ListFooter : null}
-            /> */}
-            {data.length > 0 && !getDataOnce && mloader && (
-              <ActivityIndicator
-                size={30}
-                color={theme.color.button1}
-                style={{
-                  top: '50%',
-                  position: 'absolute',
-                  alignSelf: 'center',
-                }}
-              />
-            )}
           </View>
 
           <utils.Footer
