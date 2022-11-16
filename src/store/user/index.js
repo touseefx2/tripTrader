@@ -376,12 +376,14 @@ class user {
     //   this.setmessages(null);
     // }, 2000);
 
-    db.hitApi(db.apis.GET_All_Meesages + uid, 'get', {}, this.authToken)
+    let params = uid + '/' + this.user._id;
+
+    db.hitApi(db.apis.GET_All_Meesages + params, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setmessagesLoader(false);
         setrfrsh(false);
         console.log(
-          `response GetAllMessages ${db.apis.GET_All_Meesages + uid} : `,
+          `response GetAllMessages ${db.apis.GET_All_Meesages + params} : `,
           resp.data.data[0],
         );
         let dt = resp.data.data || [];
@@ -393,7 +395,7 @@ class user {
         setrfrsh(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(
-          `Error in GetAllMessages ${db.apis.GET_All_Meesages + uid} : `,
+          `Error in GetAllMessages ${db.apis.GET_All_Meesages + params} : `,
           msg,
         );
         if (msg == 503 || msg == 500) {
