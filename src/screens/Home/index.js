@@ -452,11 +452,11 @@ function Home(props) {
   useEffect(() => {
     socket.on('message', d => {
       console.log('sock on Home call ');
-      store.User.attemptToGetInboxes(
-        store.User.user._id,
-        () => {},
-        () => {},
-      );
+      // store.User.attemptToGetInboxes(
+      //   store.User.user._id,
+      //   () => {},
+      //   () => {},
+      // );
     });
   }, [socket]);
 

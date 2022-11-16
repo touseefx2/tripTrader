@@ -271,7 +271,7 @@ function Inbox(props) {
   }
 
   const ItemView = ({item, index}) => {
-    // console.log('item : ', item);
+    //  console.log('item : ', item.lates);
     let isendmymsg = false;
 
     let uid = user._id;

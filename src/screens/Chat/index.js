@@ -63,8 +63,9 @@ function Chat(props) {
   let user = store.User.user;
 
   // const [data, setdata] = useState([]);
-  let data = store.User.messages || [];
   const ndata = useRef(data); // define mutable ref
+  const data = store.User.messages || [];
+
   useEffect(() => {
     ndata.current = data;
   }); // nRef is updated after each render
@@ -126,16 +127,26 @@ function Chat(props) {
     }
   }, [getDataOnce]);
 
+  console.log('data length before socket on msg : ', data.length);
+
   useEffect(() => {
     socket.on('message', d => {
-      console.log('sock on in caht data ', d.message);
-      // setTimeout(() => {
-      let temp = [...ndata.current];
-      // console.log('tmmppp b ,', temp.length);
+      console.log('sock on in chat data ', d.message);
+      let temp = ndata.current;
+      console.log('temp befor :  ', temp.length);
       temp.push(d);
-      // console.log('tmmppp a ,', temp.length);
+      console.log('temp after :  ', temp.length);
       setData([...temp]);
       scrollToBottom();
+
+      // setTimeout(() => {
+      // console.log('data length after socket on msg : ', data.length);
+      // console.log('tmmppp b ,', ndata.length);
+      // let temp = [...ndata.current];
+      // temp.push(d);
+      // console.log('tmmppp a ,', temp.length);
+      // setData([...temp]);
+      // scrollToBottom();
       // }, 100);
     });
   }, [socket]);
