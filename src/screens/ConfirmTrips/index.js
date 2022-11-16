@@ -116,8 +116,13 @@ function ConfirmTrips(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
+        let isMyTrip = false;
         let item = modalObj.item;
-        let usr = item.offeredBy;
+        if (store.User.user._id == item.offeredTo._id) {
+          isMyTrip = true;
+        }
+        let usr = isMyTrip ? item.offeredBy : item.offeredTo;
+
         const obj = {
           userId1: user._id,
           userId2: usr._id,
@@ -669,7 +674,7 @@ function ConfirmTrips(props) {
 
           <Pressable
             onPress={() => {
-              let u = item.offeredBy;
+              let u = user;
               store.Userv.clearUser();
               store.Userv.setfscreen('confirmedtrips');
               store.Userv.setUser(u);
@@ -913,7 +918,13 @@ function ConfirmTrips(props) {
       };
 
       const renderField = () => {
-        let item = modalObj.item.offeredBy;
+        let isMyTrip = false;
+        if (store.User.user._id == modalObj.item.offeredTo._id) {
+          isMyTrip = true;
+        }
+
+        let item = isMyTrip ? item.offeredBy : item.offeredTo;
+
         let photo = item.image ? item.image : '';
         let isVeirfy = item.identityStatus == 'verified' ? true : false;
         let userName = item.firstName + ' ' + item.lastName;

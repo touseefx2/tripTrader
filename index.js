@@ -48,7 +48,7 @@ const callData = (topic, rid) => {
     //   socket.emit('joinRoom', {username, roomName: rid});
     // }
   }
-  if (topic == 'offerRecived') {
+  if (topic == 'offerRecieved') {
     store.Offers.attemptToGetReceiveOffers(
       () => {},
       () => {},

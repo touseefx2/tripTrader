@@ -252,7 +252,7 @@ function Chat(props) {
   };
 
   let md = {
-    fontSize: 13,
+    fontSize: 12,
     color: theme.color.subTitleLight,
     fontFamily: theme.fonts.fontNormal,
     marginTop: 3,
@@ -270,6 +270,7 @@ function Chat(props) {
   const ItemView = ({item, index}) => {
     let usr = item.sendBy._id;
     let msg = item.message || '';
+    let isRead = item.isRead || false;
     let date = CheckDate(item.updatedAt);
     let photo = item.sendBy.image ? {uri: item.sendBy.image} : guest;
     let isCu = false;
@@ -312,6 +313,19 @@ function Chat(props) {
     };
 
     const renderDate = () => {
+      return (
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Text style={[md, {marginRight: 5}]}>{date}</Text>
+          <utils.vectorIcon.MaterialCommunityIcons
+            name={!isRead ? 'check' : 'check-all'}
+            color={!isRead ? theme.color.subTitleLight : theme.color.button1}
+            size={16}
+          />
+        </View>
+      );
+    };
+
+    const renderDate2 = () => {
       return <Text style={md}>{date}</Text>;
     };
 
@@ -353,7 +367,7 @@ function Chat(props) {
                     marginLeft: 10,
                   }}>
                   {msg != '' && renderMsg2()}
-                  {renderDate()}
+                  {renderDate2()}
                 </View>
               </View>
             </>
