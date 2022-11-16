@@ -338,7 +338,7 @@ class user {
           `response GET Inboxes ${db.apis.GET_INBOXES_BY_UID + uid} : `,
           resp.data,
         );
-        let dt = resp.data.data || [];
+        let dt = resp.data.doc || [];
         setgetdata(true);
         this.setinbox(dt);
       })
@@ -384,7 +384,7 @@ class user {
         setrfrsh(false);
         console.log(
           `response GetAllMessages ${db.apis.GET_All_Meesages + params} : `,
-          resp.data.data[0],
+          resp.data.data,
         );
         let dt = resp.data.data || [];
         setgetdata(true);
