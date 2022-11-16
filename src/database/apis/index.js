@@ -68,6 +68,8 @@ const SEND_REPORT_USER = 'api/report';
 
 const GET_INBOXES_BY_UID = 'api/chat/myAllChats?userId=';
 
+const GET_All_Meesages = 'api/chat/myAllChats?userId=';
+
 const DELETE_CHAT = 'api/chat/deleteAChat/';
 
 const DELETE_TRIP_PHOTO = 'api/trip/deleteImage/';
@@ -166,6 +168,7 @@ export default apis = {
   GET_CONFIRM_OFFERS,
   CANCEL_OFFER,
   CONFIRM_OFFERS,
+  GET_All_Meesages,
 };
 
 // const login = 'user/loginCaptain';

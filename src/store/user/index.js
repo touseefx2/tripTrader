@@ -116,6 +116,15 @@ class user {
     this.ibl = obj;
   };
 
+  @observable messages = null;
+  @observable messagesLoader = false;
+  @action setmessages = obj => {
+    this.messages = obj;
+  };
+  @action setmessagesLoader = obj => {
+    this.messagesLoader = obj;
+  };
+
   @action attemptToGetFollowers = (uid, setgetdata, setrfrsh) => {
     console.warn('GET Followers  : ', 'true');
     this.setfl(true);
@@ -354,6 +363,52 @@ class user {
         // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
+  };
+
+  @action attemptToGetAllMessages = (uid, setgetdata, setrfrsh) => {
+    console.warn('GetAllMessages: ', 'true');
+    this.setmessagesLoader(true);
+
+    setTimeout(() => {
+      setrfrsh(false);
+      setgetdata(true);
+      this.setmessagesLoader(false);
+      this.setmessages(null);
+    }, 2000);
+
+    // db.hitApi(db.apis.GET_All_Meesages + uid, 'get', {}, this.authToken)
+    //   ?.then(resp => {
+    //     this.setmessagesLoader(false)
+    //     setrfrsh(false);
+    //     console.log(
+    //       `response GetAllMessages ${db.apis.GET_All_Meesages + uid} : `,
+    //       resp.data.data[0],
+    //     );
+    //     let dt = resp.data.data || [];
+    //     setgetdata(true);
+    //     this.setmessages(dt)
+    //   })
+    //   .catch(err => {
+    //     this.setmessagesLoader(false)
+    //     setrfrsh(false);
+    //     let msg = err.response.data.message || err.response.status || err;
+    //     console.log(
+    //       `Error in GetAllMessages ${db.apis.GET_All_Meesages + uid} : `,
+    //       msg,
+    //     );
+    //     if (msg == 503 || msg == 500) {
+    //       Alert.alert('', 'Server not response');
+    //       // store.General.setisServerError(true);
+    //       return;
+    //     }
+    //     if (msg == 'No records found') {
+    //       this.setmessages([]);
+    //       setgetdata(true);
+    //       return;
+    //     }
+    //     // seterror(msg.toString())
+    //     Alert.alert('', msg.toString());
+    //   });
   };
 
   @observable phn = '';

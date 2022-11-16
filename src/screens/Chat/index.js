@@ -56,14 +56,14 @@ function Chat(props) {
   const [message, setmessage] = useState('');
   const [isEmoji, setisEmoji] = useState(false);
 
-  const [Messages, setMessages] = useState(obj.messages);
+  // let d=store.User.messages;
+  // const [Messages, setMessages] = useState(obj.messages);
 
   let internet = store.General.isInternet;
   let user = store.User.user;
-  const data = store.User.blockUsers;
-  let mloader = store.User.fl;
-  let loader = store.User.bl;
-  let total = store.User.totalblockUsers;
+  let data = store.User.messages !== null ? store.User.messages : obj.messages;
+
+  let mloader = store.User.messagesLoader;
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
@@ -81,7 +81,7 @@ function Chat(props) {
   const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToGetBloackUsers(
+        store.User.attemptToGetAllMessages(
           user._id,
           setGetDataOnce,
           setrefeshing,
@@ -91,12 +91,17 @@ function Chat(props) {
       }
     });
   };
+
   useEffect(() => {
-    if (!getDataOnce && internet) {
-      getDbData();
+    if (internet) {
+      onRefresh();
+
+      let username = user.firstName + ' ' + user.lastName;
+      let rn = obj.roomName;
+      socket.emit('joinRoom', {username, roomName: rn});
     }
     return () => {};
-  }, [getDataOnce, internet]);
+  }, [internet]);
 
   //chat sockets
   useEffect(() => {
@@ -106,40 +111,17 @@ function Chat(props) {
   }, []);
 
   useEffect(() => {
-    if (internet) {
-      let username = user.firstName + ' ' + user.lastName;
-      let rn = obj.roomName;
-      socket.emit('joinRoom', {username, roomName: rn});
-    }
-  }, [internet]);
-
-  useEffect(() => {
-    socket.on('message', data => {
-      console.log('sock on data ', data.message);
-      let temp = Messages;
-      temp.push(data);
-      setMessages([...temp]);
+    socket.on('message', d => {
+      console.log('sock on data ', d.message);
+      let temp = data;
+      temp.push(d);
+      store.User.setmessages([...temp]);
       scrollToBottom();
     });
   }, [socket]);
 
   const scrollToBottom = () => {
     scrollRef?.current?.scrollToEnd({animated: true});
-  };
-
-  const sucUnblock = () => {
-    toast?.current?.show('User unblock', toastduration);
-  };
-
-  const unblokUser = (uid, i) => {
-    NetInfo.fetch().then(state => {
-      if (state.isConnected) {
-        store.User.attemptToUnblockUser(uid, i, sucUnblock);
-      } else {
-        // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
-      }
-    });
   };
 
   const ItemSeparatorView = () => {
@@ -173,7 +155,7 @@ function Chat(props) {
           </Text>
         )} */}
 
-        {mloader && !getDataOnce && (
+        {/* {mloader && !getDataOnce && (
           <ActivityIndicator
             size={30}
             color={theme.color.button1}
@@ -183,7 +165,7 @@ function Chat(props) {
               alignSelf: 'center',
             }}
           />
-        )}
+        )} */}
       </>
     );
   };
@@ -540,7 +522,14 @@ function Chat(props) {
     };
 
     const renderInputContainer = () => {
-      let disable = message == '' ? true : false;
+      let disable =
+        message == ''
+          ? true
+          : mloader == true
+          ? true
+          : refreshing == true
+          ? true
+          : false;
       return (
         <View
           style={{
@@ -612,7 +601,7 @@ function Chat(props) {
                 paddingVertical: 15,
                 paddingHorizontal: 15,
               }}
-              data={Messages}
+              data={data}
               // initialScrollIndex={Messages.length > 0 ? Messages.length - 1 : 0}
               renderItem={ItemView}
               keyExtractor={(item, index) => index.toString()}
@@ -621,17 +610,6 @@ function Chat(props) {
               // ListHeaderComponent={data.length > 0 ? ListHeader : null}
               // ListFooterComponent={data.length > 0 ? ListFooter : null}
             />
-            {data.length > 0 && !getDataOnce && mloader && (
-              <ActivityIndicator
-                size={30}
-                color={theme.color.button1}
-                style={{
-                  top: '50%',
-                  position: 'absolute',
-                  alignSelf: 'center',
-                }}
-              />
-            )}
           </View>
 
           {isEmoji && (
@@ -657,9 +635,21 @@ function Chat(props) {
             />
           )}
 
+          {/* {data.length > 0 && !getDataOnce && mloader && (
+            <ActivityIndicator
+              size={30}
+              color={theme.color.button1}
+              style={{
+                top: '30%',
+                position: 'absolute',
+                alignSelf: 'center',
+              }}
+            />
+          )} */}
+
           {renderFooter()}
         </SafeAreaView>
-        <utils.Loader load={loader} />
+        {/* <utils.Loader load={loader} /> */}
         <Toast ref={toast} position="bottom" />
       </View>
     </>
