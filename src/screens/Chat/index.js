@@ -123,7 +123,7 @@ function Chat(props) {
     if (getDataOnce) {
       setTimeout(() => {
         scrollToBottom();
-      }, 100);
+      }, 1000);
     }
   }, [getDataOnce]);
 
@@ -138,6 +138,7 @@ function Chat(props) {
       console.log('temp after :  ', temp.length);
       setData([...temp]);
       scrollToBottom();
+      return;
 
       // setTimeout(() => {
       // console.log('data length after socket on msg : ', data.length);
