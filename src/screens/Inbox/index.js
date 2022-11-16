@@ -42,7 +42,7 @@ import {SwipeListView} from 'react-native-swipe-list-view';
 export default observer(Inbox);
 
 function Inbox(props) {
-  const socket = store.General.socket;
+  // const socket = store.General.socket;
 
   let guest = require('../../assets/images/drawer/guest/img.png');
   const swipRef = useRef(null);
@@ -383,7 +383,7 @@ function Inbox(props) {
           props.navigation.navigate('Chat', {
             obj: item,
             title: title,
-            socket: socket,
+            // socket: socket,
           });
         }}
         style={({pressed}) => [

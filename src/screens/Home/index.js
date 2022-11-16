@@ -35,6 +35,8 @@ import FastImage from 'react-native-fast-image';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import {Calendar} from 'react-native-calendars';
 import moment from 'moment/moment';
+import io from 'socket.io-client';
+import db from '../../database/index';
 
 function isObjectEmpty(value) {
   return (
@@ -450,8 +452,12 @@ function Home(props) {
   const socket = store.General.socket;
 
   useEffect(() => {
+    store.General.setSocket(io(db.apis.BASE_URL));
+  }, []);
+
+  useEffect(() => {
     socket.on('message', d => {
-      console.log('sock on Home call ');
+      console.log('socket on Home call ');
       // store.User.attemptToGetInboxes(
       //   store.User.user._id,
       //   () => {},

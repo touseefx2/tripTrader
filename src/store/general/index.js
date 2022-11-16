@@ -94,5 +94,9 @@ class general {
   @action setappState = obj => {
     this.appState = obj;
   };
+
+  @action setSocket = obj => {
+    this.socket = obj;
+  };
 }
 export const General = new general();

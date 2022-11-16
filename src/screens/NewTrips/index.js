@@ -909,7 +909,7 @@ function NewTrips(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        let title = dt + ' ' + species.name;
+        let title = '';
         let isSetUn = isSetUnavailable != false ? isSetUnavailable : {};
         let objct = isSetUn != false ? {...isSetUn} : false;
         if (objct !== false && !isObjectEmpty(objct)) {
@@ -941,6 +941,7 @@ function NewTrips(props) {
           dtitle = dur.title.substring(0, dur.title.length - 1);
         }
         dt = durNum + ' ' + dtitle;
+        title = dt + ' ' + species.name;
 
         const obj = {
           hostId: store.User.user._id,
@@ -964,13 +965,13 @@ function NewTrips(props) {
           delete obj.unAvailableDays;
         }
 
-        console.log('body : ', body);
-        // store.User.setctripLoader(true);
-        // if (photos.length <= 0) {
-        //   store.User.attemptToCreateTrip(obj, setIsTripCreatSuc);
-        // } else {
-        //   store.User.attemptToCreateTripUploadImage(obj, setIsTripCreatSuc);
-        // }
+        console.log('Add Trip Object : ', obj);
+        store.User.setctripLoader(true);
+        if (photos.length <= 0) {
+          store.User.attemptToCreateTrip(obj, setIsTripCreatSuc);
+        } else {
+          store.User.attemptToCreateTripUploadImage(obj, setIsTripCreatSuc);
+        }
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');

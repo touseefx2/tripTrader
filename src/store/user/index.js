@@ -1308,7 +1308,7 @@ class user {
   };
 
   @action attemptToCreateTrip = (body, suc) => {
-    console.warn('create trip body : ', body);
+    console.log('create trip body : ', body);
 
     db.hitApi(db.apis.CREATE_TRIP, 'post', body, this.authToken)
       ?.then(resp => {
@@ -1344,7 +1344,7 @@ class user {
   attemptToCreateTripUploadImage(bd, suc) {
     let body = {...bd};
     let imgArr = body.photos;
-    console.warn('upload trips photo body : ', imgArr);
+    console.log('upload trips photo body : ', imgArr);
     let ua = [];
     imgArr.map((e, i, a) => {
       const data = new FormData();
