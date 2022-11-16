@@ -131,9 +131,9 @@ function Chat(props) {
       console.log('sock on in caht data ', d.message);
       // setTimeout(() => {
       let temp = [...ndata.current];
-      console.log('tmmppp b ,', temp.length);
+      // console.log('tmmppp b ,', temp.length);
       temp.push(d);
-      console.log('tmmppp a ,', temp.length);
+      // console.log('tmmppp a ,', temp.length);
       setData([...temp]);
       scrollToBottom();
       // }, 100);
