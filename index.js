@@ -44,6 +44,10 @@ const callData = (topic, rid) => {
       () => {},
     );
     if (rid != '') {
+      console.log('join rommmmmmmmmm in ntfctn');
+      let username = store.User.user.firstName + ' ' + store.User.user.lastName;
+
+      socket.emit('joinRoom', {username, roomName: rid});
     }
   }
   if (topic == 'offerRecived') {
@@ -81,8 +85,8 @@ messaging().onMessage(async remoteMessage => {
   let title = remoteMessage.notification?.title || '';
   let message = remoteMessage.notification?.body || '';
   let data = remoteMessage.data ? remoteMessage.data : '';
-  let topic = data.topic;
-  let roomId = '';
+  let topic = data.topic || '';
+  let roomId = data.chatRoomId || '';
   callData(topic, roomId);
 
   if (store.Notifications.isShowNotifcation) {
