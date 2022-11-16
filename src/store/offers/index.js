@@ -137,8 +137,8 @@ class offers {
     this.setLoader3(true);
 
     let token = store.User.authToken;
-    let uid = store.User.user._id;
-    let params = `offeredBy=${uid}&offeredTo=${uid}&status=confirmed`;
+    let params = store.User.user._id;
+    // let params = `offeredBy=${uid}&offeredTo=${uid}&status=confirmed`;
     db.hitApi(db.apis.GET_CONFIRM_OFFERS + params, 'get', {}, token)
       ?.then(resp => {
         this.setLoader3(false);

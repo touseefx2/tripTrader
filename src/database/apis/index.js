@@ -88,7 +88,7 @@ const GET_RECEIVED_OFFERS = 'api/offer?offeredTo=';
 
 const CANCEL_OFFER = 'api/offer/declineTrip/';
 const CONFIRM_OFFERS = 'api/offer/confirmTrip/';
-const GET_CONFIRM_OFFERS = 'api/offer?';
+const GET_CONFIRM_OFFERS = 'api/offer/getConfirmedTrips/';
 
 export default apis = {
   BASE_URL,
