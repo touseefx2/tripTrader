@@ -272,7 +272,6 @@ function Inbox(props) {
 
   const ItemView = ({item, index}) => {
     console.log('item : ', item);
-    let msgs = item.messages;
     let isendmymsg = false;
 
     let uid = user._id;
@@ -288,14 +287,11 @@ function Inbox(props) {
     let title = u.firstName + ' ' + u.lastName;
     let subtitle = '';
     let create = CheckDate(item.updatedAt);
-    // let create = CheckDate('2022-11-11T07:03:58.919+00:00');
-    // let isread = item.isRead ||  false;
     let isread = false;
 
-    if (msgs.length > 0) {
-      let d = msgs[msgs.length > 1 ? msgs.length - 1 : 0];
+    if (item.latestMessage) {
+      let d = item.latestMessage;
       subtitle = d.message;
-
       isendmymsg = d.sendBy._id == uid ? true : false;
       if (!isendmymsg) {
         isread = d.isRead;
@@ -467,7 +463,7 @@ function Inbox(props) {
               ListHeaderComponent={data.length > 0 ? ListHeader : null}
               keyExtractor={(item, index) => index.toString()}
               ListFooterComponent={data.length > 0 ? ListFooter : null}
-              data={[]}
+              data={data}
               ItemSeparatorComponent={ItemSeparatorView}
               renderItem={ItemView}
               renderHiddenItem={ItemViewdelete}

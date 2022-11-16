@@ -365,7 +365,7 @@ class user {
       });
   };
 
-  @action attemptToGetAllMessages = (uid, setgetdata, setrfrsh) => {
+  @action attemptToGetAllMessages = (uid, setgetdata, setrfrsh, setData) => {
     console.warn('GetAllMessages: ', 'true');
     this.setmessagesLoader(true);
 
@@ -386,7 +386,7 @@ class user {
         );
         let dt = resp.data.data || [];
         setgetdata(true);
-        this.setmessages(dt);
+        setData(dt);
       })
       .catch(err => {
         this.setmessagesLoader(false);
@@ -402,7 +402,7 @@ class user {
           return;
         }
         if (msg == 'No records found') {
-          this.setmessages([]);
+          setData([]);
           setgetdata(true);
           return;
         }

@@ -59,7 +59,11 @@ function Chat(props) {
 
   let internet = store.General.isInternet;
   let user = store.User.user;
-  let data = store.User.messages !== null ? store.User.messages : obj.messages;
+
+  const [data, setdata] = useState([]);
+  const setData = c => {
+    setdata(c);
+  };
 
   let mloader = store.User.messagesLoader;
 
@@ -83,6 +87,7 @@ function Chat(props) {
           obj.roomName,
           setGetDataOnce,
           setrefeshing,
+          setData,
         );
       } else {
         setrefeshing(false);
@@ -115,15 +120,10 @@ function Chat(props) {
       console.log('sock on data ', d.message);
       let temp = data;
       temp.push(d);
-      store.User.setmessages([...temp]);
+      setdata([...temp]);
       scrollToBottom();
-      // store.User.attemptToGetInboxes(
-      //   user._id,
-      //   () => {},
-      //   () => {},
-      // );
     });
-  }, [socket]);
+  }, [socket, data]);
 
   const scrollToBottom = () => {
     scrollRef?.current?.scrollToEnd({animated: true});
