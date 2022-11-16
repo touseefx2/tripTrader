@@ -119,6 +119,11 @@ function Chat(props) {
       temp.push(d);
       store.User.setmessages([...temp]);
       scrollToBottom();
+      store.User.attemptToGetInboxes(
+        user._id,
+        () => {},
+        () => {},
+      );
     });
   }, [socket]);
 
