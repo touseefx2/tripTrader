@@ -57,9 +57,6 @@ function Chat(props) {
   const [message, setmessage] = useState('');
   const [isEmoji, setisEmoji] = useState(false);
 
-  // let d=store.User.messages;
-  // const [Messages, setMessages] = useState(obj.messages);
-
   let internet = store.General.isInternet;
   let user = store.User.user;
   let data = store.User.messages !== null ? store.User.messages : obj.messages;
@@ -120,11 +117,11 @@ function Chat(props) {
       temp.push(d);
       store.User.setmessages([...temp]);
       scrollToBottom();
-      store.User.attemptToGetInboxes(
-        user._id,
-        () => {},
-        () => {},
-      );
+      // store.User.attemptToGetInboxes(
+      //   user._id,
+      //   () => {},
+      //   () => {},
+      // );
     });
   }, [socket]);
 

@@ -53,11 +53,11 @@ const callData = (topic, rid) => {
       socket.on('message', d => {
         console.log('sock on data ', d.message);
 
-        // store.User.attemptToGetInboxes(
-        //   store.User. user._id,
-        //   () => {},
-        //   () => {},
-        // );
+        store.User.attemptToGetInboxes(
+          store.User.user._id,
+          () => {},
+          () => {},
+        );
       });
     }
   }
