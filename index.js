@@ -40,11 +40,11 @@ PushNotification.createChannel(
 
 const callData = (topic, rid) => {
   if (topic == 'newMessage') {
-    // store.User.attemptToGetInboxes(
-    //   store.User.user._id,
-    //   () => {},
-    //   () => {},
-    // );
+    store.User.attemptToGetInboxes(
+      store.User.user._id,
+      () => {},
+      () => {},
+    );
     if (rid != '') {
       const socket = store.General.socket;
       console.log('join roomin in RecieveNotification');
@@ -94,15 +94,13 @@ messaging().onMessage(async remoteMessage => {
   if (store.Notifications.isShowNotifcation) {
     store.Notifications.clearShowNotifications();
   }
-
+  store.Notifications.setisShowNotifcation(true);
+  store.Notifications.setNotifcationTitle(message);
+  store.Notifications.setNotifcationData(data);
   // PushNotification.localNotification({
   //   message: message,
   //   title: title,
   // });
-
-  store.Notifications.setisShowNotifcation(true);
-  store.Notifications.setNotifcationTitle(message);
-  store.Notifications.setNotifcationData(data);
 });
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
@@ -113,6 +111,7 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
   let data = remoteMessage.data ? remoteMessage.data : '';
   let topic = data.topic;
   let roomId = data.chatRoomId || '';
+
   callData(topic, roomId);
 });
 
