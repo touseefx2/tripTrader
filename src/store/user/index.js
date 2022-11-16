@@ -369,46 +369,46 @@ class user {
     console.warn('GetAllMessages: ', 'true');
     this.setmessagesLoader(true);
 
-    setTimeout(() => {
-      setrfrsh(false);
-      setgetdata(true);
-      this.setmessagesLoader(false);
-      this.setmessages(null);
-    }, 2000);
+    // setTimeout(() => {
+    //   setrfrsh(false);
+    //   setgetdata(true);
+    //   this.setmessagesLoader(false);
+    //   this.setmessages(null);
+    // }, 2000);
 
-    // db.hitApi(db.apis.GET_All_Meesages + uid, 'get', {}, this.authToken)
-    //   ?.then(resp => {
-    //     this.setmessagesLoader(false)
-    //     setrfrsh(false);
-    //     console.log(
-    //       `response GetAllMessages ${db.apis.GET_All_Meesages + uid} : `,
-    //       resp.data.data[0],
-    //     );
-    //     let dt = resp.data.data || [];
-    //     setgetdata(true);
-    //     this.setmessages(dt)
-    //   })
-    //   .catch(err => {
-    //     this.setmessagesLoader(false)
-    //     setrfrsh(false);
-    //     let msg = err.response.data.message || err.response.status || err;
-    //     console.log(
-    //       `Error in GetAllMessages ${db.apis.GET_All_Meesages + uid} : `,
-    //       msg,
-    //     );
-    //     if (msg == 503 || msg == 500) {
-    //       Alert.alert('', 'Server not response');
-    //       // store.General.setisServerError(true);
-    //       return;
-    //     }
-    //     if (msg == 'No records found') {
-    //       this.setmessages([]);
-    //       setgetdata(true);
-    //       return;
-    //     }
-    //     // seterror(msg.toString())
-    //     Alert.alert('', msg.toString());
-    //   });
+    db.hitApi(db.apis.GET_All_Meesages + uid, 'get', {}, this.authToken)
+      ?.then(resp => {
+        this.setmessagesLoader(false);
+        setrfrsh(false);
+        console.log(
+          `response GetAllMessages ${db.apis.GET_All_Meesages + uid} : `,
+          resp.data.data[0],
+        );
+        let dt = resp.data.data || [];
+        setgetdata(true);
+        this.setmessages(dt);
+      })
+      .catch(err => {
+        this.setmessagesLoader(false);
+        setrfrsh(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in GetAllMessages ${db.apis.GET_All_Meesages + uid} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        if (msg == 'No records found') {
+          this.setmessages([]);
+          setgetdata(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
   };
 
   @observable phn = '';
@@ -2634,6 +2634,7 @@ class user {
   @action.bound
   Logout() {
     this.clearUser();
+    this.setmessages(null);
     store.Trips.clearTrips();
     store.Filters.clearAllFilters();
     store.Search.clearSearches();

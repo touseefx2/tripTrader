@@ -82,7 +82,7 @@ function Chat(props) {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         store.User.attemptToGetAllMessages(
-          user._id,
+          obj.roomName,
           setGetDataOnce,
           setrefeshing,
         );
@@ -95,7 +95,6 @@ function Chat(props) {
   useEffect(() => {
     if (internet) {
       onRefresh();
-
       let username = user.firstName + ' ' + user.lastName;
       let rn = obj.roomName;
       socket.emit('joinRoom', {username, roomName: rn});
@@ -108,6 +107,9 @@ function Chat(props) {
     setTimeout(() => {
       scrollToBottom();
     }, 1000);
+    return () => {
+      store.User.setmessages(null);
+    };
   }, []);
 
   useEffect(() => {

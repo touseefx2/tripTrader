@@ -68,7 +68,7 @@ const SEND_REPORT_USER = 'api/report';
 
 const GET_INBOXES_BY_UID = 'api/chat/myAllChats?userId=';
 
-const GET_All_Meesages = 'api/chat/myAllChats?userId=';
+const GET_All_Meesages = 'api/chat/messages/';
 
 const DELETE_CHAT = 'api/chat/deleteAChat/';
 
