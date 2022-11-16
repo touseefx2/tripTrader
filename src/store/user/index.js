@@ -432,7 +432,7 @@ class user {
   @action attemptToReadAllMessages = params => {
     console.log('ReadAllMessages: ', 'true');
 
-    db.hitApi(db.apis.READ_All_Meesages + params, 'get', {}, this.authToken)
+    db.hitApi(db.apis.READ_All_Meesages + params, 'put', {}, this.authToken)
       ?.then(resp => {
         console.log(
           `response ReadAllMessages ${db.apis.READ_All_Meesages + params} : `,
