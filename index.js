@@ -50,15 +50,16 @@ const callData = (topic, rid) => {
       console.log('join rommmmmmmmmm in ntfctn');
       let username = store.User.user.firstName + ' ' + store.User.user.lastName;
       socket.emit('joinRoom', {username, roomName: rid});
-      socket.on('message', d => {
-        console.log('sock on data ', d.message);
 
-        store.User.attemptToGetInboxes(
-          store.User.user._id,
-          () => {},
-          () => {},
-        );
-      });
+      // socket.on('message', d => {
+      //   console.log('sock on data ', d.message);
+
+      //   store.User.attemptToGetInboxes(
+      //     store.User.user._id,
+      //     () => {},
+      //     () => {},
+      //   );
+      // });
     }
   }
   if (topic == 'offerRecived') {

@@ -447,6 +447,19 @@ function Home(props) {
     setisDropDownSpcs(false);
   };
 
+  const socket = store.General.socket;
+
+  useEffect(() => {
+    socket.on('message', d => {
+      console.log('sock on Hone call ');
+      store.User.attemptToGetInboxes(
+        store.User.user._id,
+        () => {},
+        () => {},
+      );
+    });
+  }, [socket]);
+
   useEffect(() => {
     if (tripType != '') {
       setspcsData([]);
@@ -550,14 +563,14 @@ function Home(props) {
       console.log('join rommmmmmmmmm in home first mesage');
       let username = store.User.user.firstName + ' ' + store.User.user.lastName;
       socket.emit('joinRoom', {username, roomName: rn});
-      socket.on('message', d => {
-        console.log('sock on data ', d.message);
-        store.User.attemptToGetInboxes(
-          store.User.user._id,
-          () => {},
-          () => {},
-        );
-      });
+      // socket.on('message', d => {
+      //   console.log('sock on data ', d.message);
+      //   store.User.attemptToGetInboxes(
+      //     store.User.user._id,
+      //     () => {},
+      //     () => {},
+      //   );
+      // });
     }
 
     store.User.attemptToGetInboxes(
