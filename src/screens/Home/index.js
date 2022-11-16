@@ -544,7 +544,22 @@ function Home(props) {
     }
   }, []);
 
-  const setIsSendMessage = v => {
+  const setIsSendMessage = (v, rn) => {
+    if (rn != '') {
+      const socket = store.General.socket;
+      console.log('join rommmmmmmmmm in home first mesage');
+      let username = store.User.user.firstName + ' ' + store.User.user.lastName;
+      socket.emit('joinRoom', {username, roomName: rn});
+      socket.on('message', d => {
+        console.log('sock on data ', d.message);
+        store.User.attemptToGetInboxes(
+          store.User.user._id,
+          () => {},
+          () => {},
+        );
+      });
+    }
+
     store.User.attemptToGetInboxes(
       user._id,
       () => {},

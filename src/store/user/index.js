@@ -1167,7 +1167,9 @@ class user {
           `response SendFirstMessage  ${db.apis.SEND_FIRST_MESSAGE} : `,
           resp.data,
         );
-        suc(true);
+
+        let rn = res.data.data.roomName;
+        suc(true, rn);
         this.attemptToGetInboxes(
           this.user._id,
           () => {},
