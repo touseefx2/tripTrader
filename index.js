@@ -40,11 +40,11 @@ PushNotification.createChannel(
 
 const callData = (topic, rid) => {
   if (topic == 'newMessage') {
-    store.User.attemptToGetInboxes(
-      store.User.user._id,
-      () => {},
-      () => {},
-    );
+    // store.User.attemptToGetInboxes(
+    //   store.User.user._id,
+    //   () => {},
+    //   () => {},
+    // );
     if (rid != '') {
       const socket = store.General.socket;
       console.log('join roomin in RecieveNotification');

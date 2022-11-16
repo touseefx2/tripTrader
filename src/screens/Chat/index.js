@@ -129,14 +129,16 @@ function Chat(props) {
   useEffect(() => {
     socket.on('message', d => {
       console.log('sock on in caht data ', d.message);
-      let temp = ndata.current;
+      // setTimeout(() => {
+      let temp = [...ndata.current];
       console.log('tmmppp b ,', temp.length);
       temp.push(d);
       console.log('tmmppp a ,', temp.length);
       setData([...temp]);
       scrollToBottom();
+      // }, 100);
     });
-  }, [socket, ndata]);
+  }, [socket]);
 
   const scrollToBottom = () => {
     scrollRef?.current?.scrollToEnd({animated: true});
