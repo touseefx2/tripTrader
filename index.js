@@ -8,7 +8,9 @@ import {Provider} from 'mobx-react';
 import store from './src/store/index';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
+
 configure({useProxies: 'never'});
+
 LogBox.ignoreAllLogs(true);
 
 requestUserPermission = async () => {
@@ -44,9 +46,9 @@ const callData = (topic, rid) => {
       () => {},
     );
     if (rid != '') {
+      const socket = store.General.socket;
       console.log('join rommmmmmmmmm in ntfctn');
       let username = store.User.user.firstName + ' ' + store.User.user.lastName;
-
       socket.emit('joinRoom', {username, roomName: rid});
     }
   }
@@ -110,7 +112,7 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
   let message = remoteMessage.notification?.body || '';
   let data = remoteMessage.data ? remoteMessage.data : '';
   let topic = data.topic;
-  let roomId = '';
+  let roomId = data.chatRoomId || '';
   callData(topic, roomId);
 });
 

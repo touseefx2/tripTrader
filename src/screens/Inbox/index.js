@@ -36,13 +36,13 @@ import {ImageSlider} from 'react-native-image-slider-banner';
 import {Calendar} from 'react-native-calendars';
 import moment, {duration} from 'moment/moment';
 import {SwipeListView} from 'react-native-swipe-list-view';
-import io from 'socket.io-client';
-import db from '../../database/index';
+// import io from 'socket.io-client';
+// import db from '../../database/index';
 
 export default observer(Inbox);
 
 function Inbox(props) {
-  const socket = io(db.apis.BASE_URL);
+  const socket = store.General.socket;
 
   let guest = require('../../assets/images/drawer/guest/img.png');
   const swipRef = useRef(null);

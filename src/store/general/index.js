@@ -1,11 +1,15 @@
 import {observable, makeObservable, action} from 'mobx';
 import {AppState} from 'react-native';
 import {persist} from 'mobx-persist';
+import io from 'socket.io-client';
+import db from '../../database/index';
 
 class general {
   constructor() {
     makeObservable(this);
   }
+
+  @observable socket = io(db.apis.BASE_URL);
 
   @observable AppName = 'Trip Trader';
   @observable isServerError = false;
