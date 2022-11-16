@@ -111,7 +111,7 @@ function Chat(props) {
   useEffect(() => {
     if (internet) {
       socket.on('message', data => {
-        console.log('sock on  daata: ', data);
+        console.log('sock on data ', data.message);
         let temp = Messages;
         temp.push(data);
         setMessages([...temp]);
@@ -470,16 +470,21 @@ function Chat(props) {
   const SendMessage = () => {
     closeEmoji();
     Keyboard.dismiss();
-
-    let userDetails = {
-      userId: user._id,
-      roomName: obj.roomName,
-      username: user.firstName + ' ' + user.lastName,
-      message: message,
-    };
-    console.log('ud : ', userDetails);
-    socket.emit('chat', {userDetails});
-    setmessage('');
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        let userDetails = {
+          userId: user._id,
+          roomName: obj.roomName,
+          username: user.firstName + ' ' + user.lastName,
+          message: message,
+        };
+        // console.log('ud : ', userDetails);
+        socket.emit('chat', {userDetails});
+        setmessage('');
+      } else {
+        Alert.alert('', 'Please connect internet');
+      }
+    });
   };
 
   const onclickFile = () => {
