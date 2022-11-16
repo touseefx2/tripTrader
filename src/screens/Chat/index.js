@@ -109,14 +109,16 @@ function Chat(props) {
   }, []);
 
   useEffect(() => {
-    socket.on('message', data => {
-      console.log('sock on  daata: ', data);
-      let temp = Messages;
-      temp.push(data);
-      setMessages([...temp]);
-      scrollToBottom();
-    });
-  }, [socket]);
+    if (internet) {
+      socket.on('message', data => {
+        console.log('sock on  daata: ', data);
+        let temp = Messages;
+        temp.push(data);
+        setMessages([...temp]);
+        scrollToBottom();
+      });
+    }
+  }, [socket, internet]);
 
   const scrollToBottom = () => {
     scrollRef?.current?.scrollToEnd({animated: true});
