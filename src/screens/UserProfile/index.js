@@ -148,11 +148,6 @@ function UserProfile(props) {
   }, [store.User.user]);
 
   const setIsSendMessage = v => {
-    store.User.attemptToGetInboxes(
-      store.User.user._id,
-      () => {},
-      () => {},
-    );
     setsendObj(modalObj.item);
     closeModal();
     setisSendMessage(v);

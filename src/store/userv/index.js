@@ -1116,12 +1116,6 @@ class userv {
         let rn = resp.data.data.roomName;
         suc(true);
 
-        // const socket = store.General.socket;
-        // console.log('join rommmmmmmmmm in First mesage');
-        // let username =
-        //   store.User.user.firstName + ' ' + store.User.user.lastName;
-        // socket.emit('joinRoom', {username, roomName: rn});
-
         this.attemptToGetInboxes(
           store.User.user._id,
           () => {},
@@ -1150,9 +1144,7 @@ class userv {
     let username = store.User.user.firstName + ' ' + store.User.user.lastName;
     let msg = body.message;
 
-    // const socket = store.General.socket;
-    // console.log('join rommmmmmmmmm in Second mesage');
-    // socket.emit('joinRoom', {username, roomName: cid});
+    const socket = store.General.socket;
 
     let userDetails = {
       userId: uid,
@@ -1161,46 +1153,11 @@ class userv {
       message: msg,
       type: 'text',
     };
-    // console.log('ud : ', userDetails);
+
     socket.emit('chat', {userDetails});
 
     this.sethomeModalLoder(false);
     suc(true);
-    // this.attemptToGetInboxes(
-    //   store.User.user._id,
-    //   () => {},
-    //   () => {},
-    // );
-
-    // db.hitApi(db.apis.SEND_SECOND_MESSAGE + cid, 'put', body, this.authToken)
-    //   ?.then(resp => {
-    //     this.sethomeModalLoder(false);
-    //     console.log(
-    //       `response SEND_SECOND_MESSAGE  ${db.apis.SEND_SECOND_MESSAGE} : `,
-    //       resp.data,
-    //     );
-    //     suc(true);
-    //     this.attemptToGetInboxes(
-    //       this.user._id,
-    //       () => {},
-    //       () => {},
-    //     );
-    //   })
-    //   .catch(err => {
-    //     this.sethomeModalLoder(false);
-    //     let msg = err.response.data.message || err.response.status || err;
-    //     console.log(
-    //       `Error in SEND_SECOND_MESSAGE ${db.apis.SEND_SECOND_MESSAGE} : `,
-    //       msg,
-    //     );
-    //     if (msg == 503 || msg == 500) {
-    //       Alert.alert('', 'Server not response');
-    //       // store.General.setisServerError(true);
-    //       return;
-    //     }
-    //     // seterror(msg.toString())
-    //     Alert.alert('', msg.toString());
-    //   });
   };
 
   @action SendReportUser = (body, suc) => {

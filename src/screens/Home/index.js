@@ -569,11 +569,6 @@ function Home(props) {
     setTimeout(() => {
       closeMessageModal();
     }, 10);
-    store.User.attemptToGetInboxes(
-      user._id,
-      () => {},
-      () => {},
-    );
   };
 
   const setIsSendObj = v => {

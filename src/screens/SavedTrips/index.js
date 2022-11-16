@@ -409,11 +409,6 @@ function SavedTrips(props) {
   //end
 
   const setIsSendMessage = v => {
-    store.User.attemptToGetInboxes(
-      user._id,
-      () => {},
-      () => {},
-    );
     setsendObj(modalObj.item.hostId);
     setisSendMessage(v);
     setTimeout(() => {
