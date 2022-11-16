@@ -36,10 +36,14 @@ import {ImageSlider} from 'react-native-image-slider-banner';
 import {Calendar} from 'react-native-calendars';
 import moment, {duration} from 'moment/moment';
 import {SwipeListView} from 'react-native-swipe-list-view';
+import io from 'socket.io-client';
+import db from '../../database/index';
 
 export default observer(Inbox);
 
 function Inbox(props) {
+  const socket = io(db.apis.BASE_URL);
+
   let guest = require('../../assets/images/drawer/guest/img.png');
   const swipRef = useRef(null);
   const closeSwipe = () => {
@@ -78,6 +82,7 @@ function Inbox(props) {
       }
     });
   };
+
   useEffect(() => {
     if (!getDataOnce && internet) {
       getDbData();
@@ -377,7 +382,11 @@ function Inbox(props) {
       <Pressable
         disabled={mloader}
         onPress={() => {
-          props.navigation.navigate('Chat', {obj: item, title: title});
+          props.navigation.navigate('Chat', {
+            obj: item,
+            title: title,
+            socket: socket,
+          });
         }}
         style={({pressed}) => [
           {opacity: pressed ? 1 : 1.0},

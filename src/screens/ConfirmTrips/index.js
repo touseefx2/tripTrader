@@ -390,7 +390,7 @@ function ConfirmTrips(props) {
 
   const ItemView = ({item, index}) => {
     let isMyTrip = false;
-    if (user._id == item.offeredTo._id) {
+    if (store.User.user._id == item.offeredTo._id) {
       isMyTrip = true;
     }
 

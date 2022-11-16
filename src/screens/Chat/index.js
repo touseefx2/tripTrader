@@ -36,16 +36,15 @@ import FastImage from 'react-native-fast-image';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import {Calendar} from 'react-native-calendars';
 import moment, {duration} from 'moment/moment';
-import io from 'socket.io-client';
-import db from '../../database/index';
 import EmojiModal from 'react-native-emoji-modal';
 
 export default observer(Chat);
 
 let guest = require('../../assets/images/drawer/guest/img.png');
-const socket = io(db.apis.BASE_URL);
 
 function Chat(props) {
+  const socket = props.route.params.socket;
+
   let maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
   const toast = useRef(null);
@@ -101,11 +100,11 @@ function Chat(props) {
 
   //chat sockets
   useEffect(() => {
-    console.log();
+    setTimeout(() => {
+      scrollToBottom();
+    }, 1000);
     let username = user.firstName + ' ' + user.lastName;
     let rn = obj.roomName;
-    console.log('un : ', username);
-    console.log('room name : ', rn);
     socket.emit('joinRoom', {username, roomName: rn});
   }, []);
 
@@ -122,14 +121,6 @@ function Chat(props) {
   const scrollToBottom = () => {
     scrollRef?.current?.scrollToEnd({animated: true});
   };
-
-  useEffect(() => {
-    if (Messages.length > 0) {
-      setTimeout(() => {
-        scrollToBottom();
-      }, 1000);
-    }
-  }, [Messages]);
 
   const sucUnblock = () => {
     toast?.current?.show('User unblock', toastduration);
@@ -587,7 +578,6 @@ function Chat(props) {
           borderTopWidth: 1,
           borderTopColor: theme.color.fieldBorder,
           padding: 20,
-          marginTop: 5,
         }}>
         {renderOthers()}
         {renderInputContainer()}
@@ -613,6 +603,7 @@ function Chat(props) {
                 paddingHorizontal: 15,
               }}
               data={Messages}
+              // initialScrollIndex={Messages.length > 0 ? Messages.length - 1 : 0}
               renderItem={ItemView}
               keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={EmptyListMessage}
