@@ -64,14 +64,11 @@ function Chat(props) {
 
   // const [data, setdata] = useState([]);
   const ndata = useRef(data); // define mutable ref
-  const data = store.User.messages || [];
+  const [data, setdata] = useState([]);
 
   useEffect(() => {
     ndata.current = data;
   }); // nRef is updated after each render
-  const setData = c => {
-    store.User.setmessages(c);
-  };
 
   let mloader = store.User.messagesLoader;
 
@@ -95,7 +92,7 @@ function Chat(props) {
           obj.roomName,
           setGetDataOnce,
           setrefeshing,
-          setData,
+          c => setdata(c),
         );
       } else {
         setrefeshing(false);
@@ -105,7 +102,7 @@ function Chat(props) {
 
   useEffect(() => {
     return () => {
-      setData([]);
+      // setData([]);
     };
   }, []);
 
@@ -136,7 +133,7 @@ function Chat(props) {
       console.log('temp befor :  ', temp.length);
       temp.push(d);
       console.log('temp after :  ', temp.length);
-      setData([...temp]);
+      setdata([...temp]);
       scrollToBottom();
       return;
 
