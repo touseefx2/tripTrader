@@ -1194,35 +1194,60 @@ class user {
   };
 
   @action SendSecodMessage = (body, cid, suc) => {
-    db.hitApi(db.apis.SEND_SECOND_MESSAGE + cid, 'put', body, this.authToken)
-      ?.then(resp => {
-        this.sethomeModalLoder(false);
-        console.log(
-          `response SEND_SECOND_MESSAGE  ${db.apis.SEND_SECOND_MESSAGE} : `,
-          resp.data,
-        );
-        suc(true);
-        this.attemptToGetInboxes(
-          this.user._id,
-          () => {},
-          () => {},
-        );
-      })
-      .catch(err => {
-        this.sethomeModalLoder(false);
-        let msg = err.response.data.message || err.response.status || err;
-        console.log(
-          `Error in SEND_SECOND_MESSAGE ${db.apis.SEND_SECOND_MESSAGE} : `,
-          msg,
-        );
-        if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
-          return;
-        }
-        // seterror(msg.toString())
-        Alert.alert('', msg.toString());
-      });
+    let uid = body.sendBy;
+    let username = store.User.user.firstName + ' ' + store.User.user.lastName;
+    let msg = body.message;
+
+    const socket = store.General.socket;
+
+    socket.emit('joinRoom', {username, roomName: cid});
+
+    let userDetails = {
+      userId: uid,
+      roomName: cid,
+      username: username,
+      message: msg,
+    };
+    // console.log('ud : ', userDetails);
+    socket.emit('chat', {userDetails});
+
+    this.sethomeModalLoder(false);
+    suc(true);
+    this.attemptToGetInboxes(
+      store.User.user._id,
+      () => {},
+      () => {},
+    );
+
+    // db.hitApi(db.apis.SEND_SECOND_MESSAGE + cid, 'put', body, this.authToken)
+    //   ?.then(resp => {
+    //     this.sethomeModalLoder(false);
+    //     console.log(
+    //       `response SEND_SECOND_MESSAGE  ${db.apis.SEND_SECOND_MESSAGE} : `,
+    //       resp.data,
+    //     );
+    //     suc(true);
+    //     this.attemptToGetInboxes(
+    //       this.user._id,
+    //       () => {},
+    //       () => {},
+    //     );
+    //   })
+    //   .catch(err => {
+    //     this.sethomeModalLoder(false);
+    //     let msg = err.response.data.message || err.response.status || err;
+    //     console.log(
+    //       `Error in SEND_SECOND_MESSAGE ${db.apis.SEND_SECOND_MESSAGE} : `,
+    //       msg,
+    //     );
+    //     if (msg == 503 || msg == 500) {
+    //       Alert.alert('', 'Server not response');
+    //       // store.General.setisServerError(true);
+    //       return;
+    //     }
+    //     // seterror(msg.toString())
+    //     Alert.alert('', msg.toString());
+    //   });
   };
 
   @action attemptToOtherUserMessageSend = (obj, suc) => {
