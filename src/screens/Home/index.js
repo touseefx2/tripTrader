@@ -5797,9 +5797,7 @@ function Home(props) {
         )}
         <Toast ref={toast} position="bottom" />
         <utils.Loader load={stloader} />
-        {store.Notifications.isShowNotifcation && (
-        <utils.ShowNotifications />
-        )}  
+        {store.Notifications.isShowNotifcation && <utils.ShowNotifications />}
       </View>
     </>
   );

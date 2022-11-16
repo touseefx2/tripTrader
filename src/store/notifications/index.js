@@ -11,6 +11,7 @@ class notifications {
     makeObservable(this);
   }
 
+  //show ntfctn
   @observable isShowNotifcation = false;
   @action setisShowNotifcation = obj => {
     this.isShowNotifcation = obj;
@@ -19,7 +20,12 @@ class notifications {
   @action setNotifcationTitle = obj => {
     this.NotifcationTitle = obj;
   };
+  @observable NotifcationData = false;
+  @action setNotifcationData = obj => {
+    this.NotifcationData = obj;
+  };
 
+  //panle ntctn
   @observable Loader = false;
   @action setLoader = obj => {
     this.Loader = obj;
@@ -29,7 +35,6 @@ class notifications {
   @action setnotifications = obj => {
     this.notifications = obj;
   };
-
   @persist('object') @observable unread = 0;
   @action.bound
   setunRead(val) {
@@ -150,9 +155,11 @@ class notifications {
     this.setunRead(0);
   };
 
+  //show ntctn clear
   @action clearShowNotifications = () => {
     this.setisShowNotifcation(false);
     this.setNotifcationTitle('');
+    this.setNotifcationData(false);
   };
 }
 export const Notifications = new notifications();

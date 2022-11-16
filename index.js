@@ -36,13 +36,15 @@ PushNotification.createChannel(
   created => console.log(`createChannel notification returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
 );
 
-const callData = topic => {
+const callData = (topic, rid) => {
   if (topic == 'newMessage') {
     store.User.attemptToGetInboxes(
       store.User.user._id,
       () => {},
       () => {},
     );
+    if (rid != '') {
+    }
   }
   if (topic == 'offerRecived') {
     store.Offers.attemptToGetReceiveOffers(
@@ -80,7 +82,8 @@ messaging().onMessage(async remoteMessage => {
   let message = remoteMessage.notification?.body || '';
   let data = remoteMessage.data ? remoteMessage.data : '';
   let topic = data.topic;
-  callData(topic);
+  let roomId = '';
+  callData(topic, roomId);
 
   if (store.Notifications.isShowNotifcation) {
     store.Notifications.clearShowNotifications();
@@ -93,6 +96,7 @@ messaging().onMessage(async remoteMessage => {
 
   store.Notifications.setisShowNotifcation(true);
   store.Notifications.setNotifcationTitle(message);
+  store.Notifications.setNotifcationData(data);
 });
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
@@ -102,7 +106,8 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
   let message = remoteMessage.notification?.body || '';
   let data = remoteMessage.data ? remoteMessage.data : '';
   let topic = data.topic;
-  callData(topic);
+  let roomId = '';
+  callData(topic, roomId);
 });
 
 function MainApp() {
