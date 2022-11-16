@@ -39,7 +39,7 @@ function Splash(props) {
   // hook
 
   useEffect(() => {
-    store.User.setmessages(null);
+    store.User.setmessages([]);
     hydrateStores();
     setTimeout(() => {
       store.General.setLoading(false);

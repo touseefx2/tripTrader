@@ -962,6 +962,105 @@ class userv {
       });
   };
 
+  //old
+
+  // @action attemptToCheckFirstMessage = (suid, ruid, obj, msg, suc) => {
+  //   console.warn('check First Message');
+  //   this.sethomeModalLoder(true);
+  //   let params = suid + '/' + ruid;
+  //   db.hitApi(db.apis.CHECK_FIRST_MESSAGE + params, 'get', {}, this.authToken)
+  //     ?.then(resp => {
+  //       console.log(
+  //         `responsecheck First Message ${db.apis.CHECK_FIRST_MESSAGE}${params} : `,
+  //         resp.data,
+  //       );
+  //       let rsp = resp.data.doc[0] || [];
+  //       if (rsp) {
+  //         let dt = rsp;
+  //         let body = {
+  //           message: msg,
+  //           sendBy: suid,
+  //           type: 'text',
+  //           chatRoomId: dt.roomName,
+  //         };
+  //         // dt._id
+  //         this.SendSecodMessage(body, dt.roomName, suc);
+  //       }
+  //     })
+  //     .catch(err => {
+  //       let msg = err.response.data.message || err.response.status || err;
+  //       console.log(
+  //         `Error in check First Message ${db.apis.CHECK_FIRST_MESSAGE}${params} : `,
+  //         msg,
+  //       );
+  //       if (msg == 'No records found') {
+  //         this.SendFirstMessage(obj, suc);
+  //         return;
+  //       }
+  //       this.sethomeModalLoder(false);
+  //       if (msg == 503 || msg == 500) {
+  //         Alert.alert('', 'Server not response');
+  //         // store.General.setisServerError(true);
+  //         return;
+  //       }
+  //       Alert.alert('', msg.toString());
+  //     });
+  // };
+
+  // @action SendFirstMessage = (body, suc) => {
+  //   db.hitApi(db.apis.SEND_FIRST_MESSAGE, 'post', body, this.authToken)
+  //     ?.then(resp => {
+  //       this.sethomeModalLoder(false);
+  //       console.log(
+  //         `response SendFirstMessage  ${db.apis.SEND_FIRST_MESSAGE} : `,
+  //         resp.data,
+  //       );
+  //       suc(true);
+  //     })
+  //     .catch(err => {
+  //       this.sethomeModalLoder(false);
+  //       let msg = err.response.data.message || err.response.status || err;
+  //       console.log(
+  //         `Error in SendFirstMessage ${db.apis.SEND_FIRST_MESSAGE} : `,
+  //         msg,
+  //       );
+  //       if (msg == 503 || msg == 500) {
+  //         Alert.alert('', 'Server not response');
+  //         // store.General.setisServerError(true);
+  //         return;
+  //       }
+  //       // seterror(msg.toString())
+  //       Alert.alert('', msg.toString());
+  //     });
+  // };
+
+  // @action SendSecodMessage = (body, cid, suc) => {
+  //   db.hitApi(db.apis.SEND_SECOND_MESSAGE + cid, 'put', body, this.authToken)
+  //     ?.then(resp => {
+  //       this.sethomeModalLoder(false);
+  //       console.log(
+  //         `response SEND_SECOND_MESSAGE  ${db.apis.SEND_SECOND_MESSAGE} : `,
+  //         resp.data,
+  //       );
+  //       suc(true);
+  //     })
+  //     .catch(err => {
+  //       this.sethomeModalLoder(false);
+  //       let msg = err.response.data.message || err.response.status || err;
+  //       console.log(
+  //         `Error in SEND_SECOND_MESSAGE ${db.apis.SEND_SECOND_MESSAGE} : `,
+  //         msg,
+  //       );
+  //       if (msg == 503 || msg == 500) {
+  //         Alert.alert('', 'Server not response');
+  //         // store.General.setisServerError(true);
+  //         return;
+  //       }
+  //       // seterror(msg.toString())
+  //       Alert.alert('', msg.toString());
+  //     });
+  // };
+
   @action attemptToCheckFirstMessage = (suid, ruid, obj, msg, suc) => {
     console.warn('check First Message');
     this.sethomeModalLoder(true);
@@ -969,10 +1068,10 @@ class userv {
     db.hitApi(db.apis.CHECK_FIRST_MESSAGE + params, 'get', {}, this.authToken)
       ?.then(resp => {
         console.log(
-          `responsecheck First Message ${db.apis.CHECK_FIRST_MESSAGE}${params} : `,
+          `responsecheck Check First Message ${db.apis.CHECK_FIRST_MESSAGE}${params} : `,
           resp.data,
         );
-        let rsp = resp.data.doc[0] || [];
+        let rsp = resp.data.doc[0];
         if (rsp) {
           let dt = rsp;
           let body = {
@@ -1013,7 +1112,21 @@ class userv {
           `response SendFirstMessage  ${db.apis.SEND_FIRST_MESSAGE} : `,
           resp.data,
         );
+
+        let rn = resp.data.data.roomName;
         suc(true);
+
+        const socket = store.General.socket;
+        console.log('join rommmmmmmmmm in First mesage');
+        let username =
+          store.User.user.firstName + ' ' + store.User.user.lastName;
+        socket.emit('joinRoom', {username, roomName: rn});
+
+        this.attemptToGetInboxes(
+          store.User.user._id,
+          () => {},
+          () => {},
+        );
       })
       .catch(err => {
         this.sethomeModalLoder(false);
@@ -1033,30 +1146,61 @@ class userv {
   };
 
   @action SendSecodMessage = (body, cid, suc) => {
-    db.hitApi(db.apis.SEND_SECOND_MESSAGE + cid, 'put', body, this.authToken)
-      ?.then(resp => {
-        this.sethomeModalLoder(false);
-        console.log(
-          `response SEND_SECOND_MESSAGE  ${db.apis.SEND_SECOND_MESSAGE} : `,
-          resp.data,
-        );
-        suc(true);
-      })
-      .catch(err => {
-        this.sethomeModalLoder(false);
-        let msg = err.response.data.message || err.response.status || err;
-        console.log(
-          `Error in SEND_SECOND_MESSAGE ${db.apis.SEND_SECOND_MESSAGE} : `,
-          msg,
-        );
-        if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
-          return;
-        }
-        // seterror(msg.toString())
-        Alert.alert('', msg.toString());
-      });
+    let uid = body.sendBy;
+    let username = store.User.user.firstName + ' ' + store.User.user.lastName;
+    let msg = body.message;
+
+    const socket = store.General.socket;
+    console.log('join rommmmmmmmmm in Second mesage');
+    socket.emit('joinRoom', {username, roomName: cid});
+
+    let userDetails = {
+      userId: uid,
+      roomName: cid,
+      username: username,
+      message: msg,
+      type: 'text',
+    };
+    // console.log('ud : ', userDetails);
+    socket.emit('chat', {userDetails});
+
+    this.sethomeModalLoder(false);
+    suc(true);
+    this.attemptToGetInboxes(
+      store.User.user._id,
+      () => {},
+      () => {},
+    );
+
+    // db.hitApi(db.apis.SEND_SECOND_MESSAGE + cid, 'put', body, this.authToken)
+    //   ?.then(resp => {
+    //     this.sethomeModalLoder(false);
+    //     console.log(
+    //       `response SEND_SECOND_MESSAGE  ${db.apis.SEND_SECOND_MESSAGE} : `,
+    //       resp.data,
+    //     );
+    //     suc(true);
+    //     this.attemptToGetInboxes(
+    //       this.user._id,
+    //       () => {},
+    //       () => {},
+    //     );
+    //   })
+    //   .catch(err => {
+    //     this.sethomeModalLoder(false);
+    //     let msg = err.response.data.message || err.response.status || err;
+    //     console.log(
+    //       `Error in SEND_SECOND_MESSAGE ${db.apis.SEND_SECOND_MESSAGE} : `,
+    //       msg,
+    //     );
+    //     if (msg == 503 || msg == 500) {
+    //       Alert.alert('', 'Server not response');
+    //       // store.General.setisServerError(true);
+    //       return;
+    //     }
+    //     // seterror(msg.toString())
+    //     Alert.alert('', msg.toString());
+    //   });
   };
 
   @action SendReportUser = (body, suc) => {

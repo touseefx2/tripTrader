@@ -379,7 +379,7 @@ function Inbox(props) {
       <Pressable
         disabled={mloader}
         onPress={() => {
-          store.User.setmessages(null);
+          store.User.setmessages([]);
           props.navigation.navigate('Chat', {
             obj: item,
             title: title,

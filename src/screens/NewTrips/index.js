@@ -964,12 +964,13 @@ function NewTrips(props) {
           delete obj.unAvailableDays;
         }
 
-        store.User.setctripLoader(true);
-        if (photos.length <= 0) {
-          store.User.attemptToCreateTrip(obj, setIsTripCreatSuc);
-        } else {
-          store.User.attemptToCreateTripUploadImage(obj, setIsTripCreatSuc);
-        }
+        console.log('body : ', body);
+        // store.User.setctripLoader(true);
+        // if (photos.length <= 0) {
+        //   store.User.attemptToCreateTrip(obj, setIsTripCreatSuc);
+        // } else {
+        //   store.User.attemptToCreateTripUploadImage(obj, setIsTripCreatSuc);
+        // }
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');

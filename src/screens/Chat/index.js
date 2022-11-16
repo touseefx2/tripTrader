@@ -44,7 +44,7 @@ let guest = require('../../assets/images/drawer/guest/img.png');
 
 function Chat(props) {
   // const socket = props.route.params.socket;
-  const socket = store.General.socket;
+  let socket = store.General.socket;
 
   let maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
@@ -60,9 +60,10 @@ function Chat(props) {
   let internet = store.General.isInternet;
   let user = store.User.user;
 
-  const [data, setdata] = useState([]);
+  // const [data, setdata] = useState([]);
+  let data = store.User.messages || [];
   const setData = c => {
-    setdata(c);
+    store.User.setmessages(c);
   };
 
   let mloader = store.User.messagesLoader;
@@ -96,6 +97,12 @@ function Chat(props) {
   };
 
   useEffect(() => {
+    return () => {
+      setData([]);
+    };
+  }, []);
+
+  useEffect(() => {
     if (internet) {
       onRefresh();
       let username = user.firstName + ' ' + user.lastName;
@@ -105,22 +112,21 @@ function Chat(props) {
     return () => {};
   }, [internet]);
 
-  //chat sockets
   useEffect(() => {
-    setTimeout(() => {
-      scrollToBottom();
-    }, 1000);
-    return () => {
-      store.User.setmessages(null);
-    };
-  }, []);
+    if (getDataOnce) {
+      setTimeout(() => {
+        scrollToBottom();
+      }, 100);
+    }
+  }, [getDataOnce]);
 
   useEffect(() => {
     socket.on('message', d => {
       console.log('sock on data ', d.message);
       let temp = data;
       temp.push(d);
-      setdata([...temp]);
+      setData([...temp]);
+
       scrollToBottom();
     });
   }, [socket, data]);
@@ -467,7 +473,7 @@ function Chat(props) {
           roomName: obj.roomName,
           username: user.firstName + ' ' + user.lastName,
           message: message,
-          type: '',
+          type: 'text',
         };
         // console.log('ud : ', userDetails);
         socket.emit('chat', {userDetails});

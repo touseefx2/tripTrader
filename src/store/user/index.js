@@ -116,7 +116,7 @@ class user {
     this.ibl = obj;
   };
 
-  @observable messages = null;
+  @observable messages = [];
   @observable messagesLoader = false;
   @action setmessages = obj => {
     this.messages = obj;
@@ -1178,7 +1178,7 @@ class user {
         socket.emit('joinRoom', {username, roomName: rn});
 
         this.attemptToGetInboxes(
-          this.user._id,
+          store.User.user._id,
           () => {},
           () => {},
         );
@@ -2669,7 +2669,7 @@ class user {
   @action.bound
   Logout() {
     this.clearUser();
-    this.setmessages(null);
+    this.setmessages([]);
     store.Trips.clearTrips();
     store.Filters.clearAllFilters();
     store.Search.clearSearches();
