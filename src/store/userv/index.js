@@ -342,9 +342,7 @@ class userv {
     this.photosRefrsh = obj;
   };
 
-  @observable isAnyTrade = {
-    title: '3 Day Central N.C. Whitetail Hunting',
-  };
+  @observable isAnyTrade = false;
   @observable isOneReview = false;
   @action setisAnyTrade = obj => {
     this.misAnyTrade = obj;
@@ -448,39 +446,68 @@ class userv {
       });
   };
 
-  @action attemptToGetLatestTrip = (uid, suc) => {
+  @action attemptToGetLatestTrip = () => {
     console.warn('GetLatestTrip : ', 'true');
 
-    let params = this.user._id + '/' + store.User.user._id;
-    db.hitApi(db.apis.GET_LATEST_TRIP + params, 'get', {}, this.authToken)
-      ?.then(resp => {
-        console.log(
-          `response GetLatestTrip   ${db.apis.GET_LATEST_TRIP + params} : `,
-          resp.data,
-        );
-        let dt = resp.data.data || '';
+    let array = store.Trips.confirmTrips || [];
+    if (array.length > 0) {
+      for (let index = 0; index < array.length; index++) {
+        const e = array[index];
+        let isu1 = false;
+        let isu2 = false;
 
-        //  this.setisAnyTrade(dt)
-      })
-      .catch(err => {
-        let msg = err.response.data.message || err.response.status || err;
-        console.log(
-          `Error in GetLatestTrip ${db.apis.GET_LATEST_TRIP + params} : `,
-          msg,
-        );
-        if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
-          return;
-        }
-        if (msg == 'No records found') {
-          his.setisAnyTrade(false);
-          return;
+        let u1 = store.User.user._id;
+        let u2 = store.Userv.user._id;
+
+        if (e.offeredBy._id == u1) {
+          isu1 = true;
+        } else if (e.offeredTo._id == u1) {
+          isu1 = true;
         }
 
-        // seterror(msg.toString())
-        Alert.alert('', msg.toString());
-      });
+        if (e.offeredBy._id == u2) {
+          isu2 = true;
+        } else if (e.offeredTo._id == u2) {
+          isu2 = true;
+        }
+
+        if (isu1 && isu2) {
+          this.setisAnyTrade(dt);
+          break;
+        }
+      }
+    }
+
+    // let params = this.user._id + '/' + store.User.user._id;
+    // db.hitApi(db.apis.GET_LATEST_TRIP + params, 'get', {}, this.authToken)
+    //   ?.then(resp => {
+    //     console.log(
+    //       `response GetLatestTrip   ${db.apis.GET_LATEST_TRIP + params} : `,
+    //       resp.data,
+    //     );
+    //     let dt = resp.data.data || '';
+
+    // this.setisAnyTrade(dt)
+    //   })
+    //   .catch(err => {
+    //     let msg = err.response.data.message || err.response.status || err;
+    //     console.log(
+    //       `Error in GetLatestTrip ${db.apis.GET_LATEST_TRIP + params} : `,
+    //       msg,
+    //     );
+    //     if (msg == 503 || msg == 500) {
+    //       Alert.alert('', 'Server not response');
+    //       // store.General.setisServerError(true);
+    //       return;
+    //     }
+    //     if (msg == 'No records found') {
+    //       his.setisAnyTrade(false);
+    //       return;
+    //     }
+
+    //     // seterror(msg.toString())
+    //     Alert.alert('', msg.toString());
+    //   });
   };
 
   @action attemptToGetTrips = (uid, setgetdata, setrfrsh) => {

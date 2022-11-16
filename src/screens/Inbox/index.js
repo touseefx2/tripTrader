@@ -144,9 +144,13 @@ function Inbox(props) {
   const ListHeader = () => {
     const renderResult = () => {
       let length = data.length || 0;
+      let unread = data.unreadCount ? data.unreadCount : 0;
+
       return (
         <View style={styles.resultContainer}>
-          <Text style={styles.resultText}>{length} messages, 1 unread</Text>
+          <Text style={styles.resultText}>
+            {length} messages, {unread} unread
+          </Text>
         </View>
       );
     };

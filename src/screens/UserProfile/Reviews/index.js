@@ -93,7 +93,7 @@ function Reviews(props) {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         store.Userv.attemptToGetReviews(user._id, setGetDataOnce, setrefeshing);
-        // store.Userv.attemptToGetLatestTrip();
+        store.Userv.attemptToGetLatestTrip();
       } else {
         setrefeshing(false);
       }

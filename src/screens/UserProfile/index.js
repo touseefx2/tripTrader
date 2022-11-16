@@ -267,7 +267,7 @@ function UserProfile(props) {
   useEffect(() => {
     store.User.setOtherProfileProps(props);
     return () => {
-      // store.Userv.clearUser();
+      store.Userv.clearUser();
     };
   }, []);
 

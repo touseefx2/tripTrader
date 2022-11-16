@@ -293,8 +293,8 @@ function NewTrips(props) {
 
   useEffect(() => {
     return () => {
-      // store.User.seteditTrip(false);
-      // store.User.seteditTripObj(false);
+      store.User.seteditTrip(false);
+      store.User.seteditTripObj(false);
     };
   }, []);
 
