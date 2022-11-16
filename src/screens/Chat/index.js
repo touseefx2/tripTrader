@@ -37,14 +37,16 @@ import {ImageSlider} from 'react-native-image-slider-banner';
 import {Calendar} from 'react-native-calendars';
 import moment, {duration} from 'moment/moment';
 import EmojiModal from 'react-native-emoji-modal';
+import io from 'socket.io-client';
+import db from '../../database/index';
 
 export default observer(Chat);
 
 let guest = require('../../assets/images/drawer/guest/img.png');
 
 function Chat(props) {
-  // const socket = props.route.params.socket;
-  let socket = store.General.socket;
+  // const socket = store.General.socket;
+  const socket = io(db.apis.BASE_URL);
 
   let maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
@@ -62,6 +64,10 @@ function Chat(props) {
 
   // const [data, setdata] = useState([]);
   let data = store.User.messages || [];
+  const ndata = useRef(data); // define mutable ref
+  useEffect(() => {
+    ndata.current = data;
+  }); // nRef is updated after each render
   const setData = c => {
     store.User.setmessages(c);
   };
@@ -122,14 +128,15 @@ function Chat(props) {
 
   useEffect(() => {
     socket.on('message', d => {
-      console.log('sock on data ', d.message);
-      let temp = data;
+      console.log('sock on in caht data ', d.message);
+      let temp = ndata.current;
+      console.log('tmmppp b ,', temp.length);
       temp.push(d);
+      console.log('tmmppp a ,', temp.length);
       setData([...temp]);
-
       scrollToBottom();
     });
-  }, [socket, data]);
+  }, [socket, ndata]);
 
   const scrollToBottom = () => {
     scrollRef?.current?.scrollToEnd({animated: true});
