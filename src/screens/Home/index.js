@@ -457,12 +457,12 @@ function Home(props) {
 
   useEffect(() => {
     socket.on('message', d => {
-      console.log('socket on Home call ');
-      // store.User.attemptToGetInboxes(
-      //   store.User.user._id,
-      //   () => {},
-      //   () => {},
-      // );
+      console.log('socket on Home call and refresh  inboxes ');
+      store.User.attemptToGetInboxes(
+        store.User.user._id,
+        () => {},
+        () => {},
+      );
     });
   }, [socket]);
 

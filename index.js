@@ -45,12 +45,12 @@ const callData = (topic, rid) => {
       () => {},
       () => {},
     );
-    if (rid != '') {
-      const socket = store.General.socket;
-      console.log('join roomin in RecieveNotification');
-      let username = store.User.user.firstName + ' ' + store.User.user.lastName;
-      socket.emit('joinRoom', {username, roomName: rid});
-    }
+    // if (rid != '') {
+    //   const socket = store.General.socket;
+    //   console.log('join roomin in RecieveNotification');
+    //   let username = store.User.user.firstName + ' ' + store.User.user.lastName;
+    //   socket.emit('joinRoom', {username, roomName: rid});
+    // }
   }
   if (topic == 'offerRecived') {
     store.Offers.attemptToGetReceiveOffers(
