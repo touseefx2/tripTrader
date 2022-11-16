@@ -352,7 +352,7 @@ class userv {
   };
 
   @action attemptToGetReviews = (uid, setgetdata, setrfrsh) => {
-    console.warn('get all Reviews : ', 'true');
+    console.log('get all Reviews : ', 'true');
     this.setreviewLoader(true);
 
     db.hitApi(db.apis.GET_ALL_REVIEWS + uid, 'get', {}, this.authToken)
@@ -447,7 +447,7 @@ class userv {
   };
 
   @action attemptToGetLatestTrip = () => {
-    console.warn('GetLatestTrip : ', 'true');
+    console.log('GetLatestTrip : ', 'true');
 
     let array = store.Trips.confirmTrips || [];
     if (array.length > 0) {
@@ -472,7 +472,7 @@ class userv {
         }
 
         if (isu1 && isu2) {
-          this.setisAnyTrade(dt);
+          this.setisAnyTrade(e);
           break;
         }
       }
