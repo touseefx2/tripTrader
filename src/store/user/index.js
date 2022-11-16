@@ -336,9 +336,9 @@ class user {
         setrfrsh(false);
         console.log(
           `response GET Inboxes ${db.apis.GET_INBOXES_BY_UID + uid} : `,
-          resp.data.data[0],
+          resp.data,
         );
-        let dt = resp.data.data || [];
+        let dt = resp.data.doc || [];
         setgetdata(true);
         this.setinbox(dt);
       })

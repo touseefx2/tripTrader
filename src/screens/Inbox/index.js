@@ -271,6 +271,7 @@ function Inbox(props) {
   }
 
   const ItemView = ({item, index}) => {
+    console.log('item : ', item);
     let msgs = item.messages;
     let isendmymsg = false;
 
@@ -466,7 +467,7 @@ function Inbox(props) {
               ListHeaderComponent={data.length > 0 ? ListHeader : null}
               keyExtractor={(item, index) => index.toString()}
               ListFooterComponent={data.length > 0 ? ListFooter : null}
-              data={data}
+              data={[]}
               ItemSeparatorComponent={ItemSeparatorView}
               renderItem={ItemView}
               renderHiddenItem={ItemViewdelete}
