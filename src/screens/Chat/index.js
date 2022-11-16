@@ -467,6 +467,7 @@ function Chat(props) {
           roomName: obj.roomName,
           username: user.firstName + ' ' + user.lastName,
           message: message,
+          type: '',
         };
         // console.log('ud : ', userDetails);
         socket.emit('chat', {userDetails});

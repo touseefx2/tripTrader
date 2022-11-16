@@ -126,7 +126,7 @@ function ConfirmTrips(props) {
           senderName: user.firstName + ' ' + user.lastName,
           isRead: false,
           message: message,
-          messageType: 'text',
+          type: 'text',
         };
         store.User.attemptToCheckFirstMessage(
           user._id,

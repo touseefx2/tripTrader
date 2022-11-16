@@ -1214,6 +1214,7 @@ class user {
       roomName: cid,
       username: username,
       message: msg,
+      type: 'text',
     };
     // console.log('ud : ', userDetails);
     socket.emit('chat', {userDetails});

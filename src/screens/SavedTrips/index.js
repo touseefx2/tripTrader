@@ -589,7 +589,7 @@ function SavedTrips(props) {
           senderName: user.firstName + ' ' + user.lastName,
           isRead: false,
           message: message,
-          messageType: 'text',
+          type: 'text',
         };
 
         store.User.attemptToCheckFirstMessage(

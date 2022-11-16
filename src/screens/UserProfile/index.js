@@ -171,7 +171,7 @@ function UserProfile(props) {
             store.User.user.firstName + ' ' + store.User.user.lastName,
           isRead: false,
           message: message,
-          messageType: 'text',
+          type: 'text',
         };
 
         console.log('body : ', obj);
