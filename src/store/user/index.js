@@ -1168,7 +1168,7 @@ class user {
           resp.data,
         );
 
-        let rn = res.data.data.roomName;
+        let rn = resp.data.data.roomName;
         suc(true, rn);
         this.attemptToGetInboxes(
           this.user._id,
