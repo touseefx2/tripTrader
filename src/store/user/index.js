@@ -1169,7 +1169,14 @@ class user {
         );
 
         let rn = resp.data.data.roomName;
-        suc(true, rn);
+        suc(true);
+
+        const socket = store.General.socket;
+        console.log('join rommmmmmmmmm in First mesage');
+        let username =
+          store.User.user.firstName + ' ' + store.User.user.lastName;
+        socket.emit('joinRoom', {username, roomName: rn});
+
         this.attemptToGetInboxes(
           this.user._id,
           () => {},
@@ -1199,7 +1206,7 @@ class user {
     let msg = body.message;
 
     const socket = store.General.socket;
-
+    console.log('join rommmmmmmmmm in Second mesage');
     socket.emit('joinRoom', {username, roomName: cid});
 
     let userDetails = {
