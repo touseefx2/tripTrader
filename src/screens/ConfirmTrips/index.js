@@ -106,7 +106,13 @@ function ConfirmTrips(props) {
   const onclickSearchBar = () => {};
 
   const setIsSendMessage = v => {
-    setsendObj(modalObj.item.offeredBy);
+    let isMyTrip = false;
+    let item = modalObj.item;
+    if (store.User.user._id == item.offeredTo._id) {
+      isMyTrip = true;
+    }
+    let usr = isMyTrip ? item.offeredBy : item.offeredTo;
+    setsendObj(usr);
     closeMessageModal();
     setisSendMessage(v);
   };
@@ -923,7 +929,7 @@ function ConfirmTrips(props) {
           isMyTrip = true;
         }
 
-        let item = isMyTrip ? item.offeredBy : item.offeredTo;
+        let item = isMyTrip ? modalObj.item.offeredBy : modalObj.item.offeredTo;
 
         let photo = item.image ? item.image : '';
         let isVeirfy = item.identityStatus == 'verified' ? true : false;
