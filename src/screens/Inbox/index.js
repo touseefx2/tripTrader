@@ -407,7 +407,7 @@ function Inbox(props) {
       <Pressable
         disabled={mloader}
         onPress={() => {
-          deleteChat(item._roomName, index);
+          deleteChat(item.roomName, index);
         }}
         style={({pressed}) => [
           {opacity: pressed ? 0.7 : 1.0},
