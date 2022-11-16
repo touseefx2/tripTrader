@@ -327,7 +327,7 @@ class user {
   }
 
   @action attemptToGetInboxes = (uid, setgetdata, setrfrsh) => {
-    console.warn('GET Inboxes : ', 'true');
+    console.warn('GET Inboxes : ', uid);
     this.setibl(true);
 
     db.hitApi(db.apis.GET_INBOXES_BY_UID + uid, 'get', {}, this.authToken)
@@ -339,8 +339,31 @@ class user {
           resp.data,
         );
         let dt = resp.data.doc || [];
+        let fa = [];
+
+        if (dt.length > 0) {
+          const socket = store.General.socket;
+          dt.map((e, i, a) => {
+            let c = false;
+            let m = e.latestMessage.deletedBy ? e.latestMessage.deletedBy : [];
+            if (m.length > 0) {
+              m.map((ee, i, a) => {
+                if (ee == store.User.user._id) {
+                  c = true;
+                }
+              });
+            }
+            if (!c) {
+              fa.push(e);
+            }
+            let username =
+              store.User.user.firstName + ' ' + store.User.user.lastName;
+            socket.emit('joinRoom', {username, roomName: e.roomName});
+          });
+        }
+
         setgetdata(true);
-        this.setinbox(dt);
+        this.setinbox(fa);
       })
       .catch(err => {
         this.setibl(false);

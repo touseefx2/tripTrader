@@ -83,12 +83,20 @@ function Inbox(props) {
     });
   };
 
+  // useEffect(() => {
+  //   if (!getDataOnce && internet) {
+  //     getDbData();
+  //   }
+
+  //   return () => {};
+  // }, [getDataOnce, internet]);
+
   useEffect(() => {
-    if (!getDataOnce && internet) {
+    if (internet) {
       getDbData();
     }
     return () => {};
-  }, [getDataOnce, internet]);
+  }, [internet]);
 
   const onclickSearchBar = () => {};
 
