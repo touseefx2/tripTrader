@@ -27,7 +27,7 @@ import DrawerHeader from './DrawerHeader';
 import navBarHeight from './navBarHeight';
 import DropDown from './DropDown';
 // import Validation from "./Validation";
-// import ToastAndroid from "./ToastAndroid";
+import ChatPhotoModal from './ChatPhotoModal';
 import Filters from './Filters';
 import StackHeader from './StackHeader';
 import Search from './Search';
@@ -53,6 +53,7 @@ const utils = {
   Filters,
   DropDown,
   ShowNotifications,
+  ChatPhotoModal,
 };
 
 export default utils;

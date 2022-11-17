@@ -34,10 +34,6 @@ import moment, {duration} from 'moment/moment';
 import EmojiModal from 'react-native-emoji-modal';
 import io from 'socket.io-client';
 import db from '../../database/index';
-import IntentLauncher from 'react-native-intent-launcher';
-import {request, PERMISSIONS, check} from 'react-native-permissions';
-import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
-import {Image as ImageCompressor} from 'react-native-compressor';
 
 export default observer(Chat);
 
@@ -61,14 +57,24 @@ function Chat(props) {
   };
   const [pmessage, setpmessage] = useState('');
   const [photo, setphoto] = useState([]);
-  const [isPhotoModalVisible, setisPhotoModalVisible] = useState(false);
   const ClosePhotoModal = () => {
-    setisPhotoModalVisible(false);
-    setpmessage('');
-    setphoto([]);
+    if (!isShowPrmsn) {
+      setisAddPhotoModal(false);
+      setpmessage('');
+      setphoto([]);
+    } else {
+      setisShowPrmsn(false);
+    }
   };
 
+  const [isShowPrmsn, setisShowPrmsn] = useState(false);
+  const [prmsnChk, setprmsnChk] = useState('storage');
+  const [isAddPhotoModal, setisAddPhotoModal] = useState(false);
+
   const [isEmoji, setisEmoji] = useState(false);
+
+  //for typing status
+  const [TypingStatus, setTypingStatus] = useState(false);
 
   let internet = store.General.isInternet;
   let user = store.User.user;
@@ -505,13 +511,13 @@ function Chat(props) {
           userId: user._id,
           roomName: obj.roomName,
           username: user.firstName + ' ' + user.lastName,
-          message: !isPhotoModalVisible ? message : pmessage,
+          message: !isAddPhotoModal ? message : pmessage,
           image: photo,
-          type: !isPhotoModalVisible ? 'text' : 'image',
+          type: !isAddPhotoModal ? 'text' : 'image',
         };
         // console.log('ud : ', userDetails);
         socket.emit('chat', {userDetails});
-        if (isPhotoModalVisible) {
+        if (isAddPhotoModal) {
           ClosePhotoModal();
         } else {
           ClearMessage();
@@ -525,6 +531,7 @@ function Chat(props) {
   const onclickFile = () => {
     Keyboard.dismiss();
     closeEmoji();
+    setisAddPhotoModal(true);
   };
 
   const closeEmoji = () => {
@@ -627,9 +634,43 @@ function Chat(props) {
     );
   };
 
+  //typing
+  // const handleTyping = () => {
+
+  //   socket.emit('typing', { text: `${loggedInUser} is typing`, roomName: "9b1deb4d", });
+
+  // }
+  // const handleTypingLeave = () => {
+
+  //   socket.emit('typingLeave', { text: "", roomName: "9b1deb4d", });
+
+  // }
+  // useEffect(() => {
+
+  //   socket.on('typingResponse', (data) => setTypingStatus(data.text));
+
+  // }, [socket]);
+  // useEffect(() => {
+
+  //   socket.on('typingLeaveResponse', (data) => setTypingStatus(""));
+
+  // }, [socket]);
+
   return (
     <>
       <View style={styles.container}>
+        {isAddPhotoModal && (
+          <utils.ChatPhotoModal
+            isAddPhotoModal={isAddPhotoModal}
+            isShowPrmsn={isShowPrmsn}
+            prmsnChk={prmsnChk}
+            setisAddPhotoModal={c => setisAddPhotoModal(c)}
+            setisSowPrmsn={c => setisShowPrmsn(c)}
+            setprmsnChk={c => setprmsnChk(c)}
+            ClosePhotoModal={() => ClosePhotoModal()}
+          />
+        )}
+
         {renderHeader()}
 
         {!internet && <utils.InternetMessage />}

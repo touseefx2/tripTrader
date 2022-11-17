@@ -17,9 +17,7 @@ import {
   TextInput,
   Keyboard,
 } from 'react-native';
-// import Geolocation from 'react-native-geolocation-service';
-import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
-// import Geocoder from 'react-native-geocoding';
+
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
