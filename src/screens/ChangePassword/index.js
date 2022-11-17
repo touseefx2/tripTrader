@@ -78,6 +78,12 @@ function ChangePassword(props) {
 
   const showToast = () => {
     toast?.current?.show('Password update successfully', 1000);
+    setcurrentp('');
+    setcp('');
+    setnp('');
+    setscurrentp(false);
+    setscp(false);
+    setsnp(false);
   };
 
   const setInvalidCurrentP = c => {
@@ -92,11 +98,6 @@ function ChangePassword(props) {
       setEmptycurrentp(true);
       return;
     }
-
-    // if (currentp.length < 8) {
-    //   setinvalidcurrentp(true);
-    //   return;
-    // }
 
     if (np == '') {
       setEmptynp(true);
@@ -121,14 +122,13 @@ function ChangePassword(props) {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         let body = {
-          cp: currentp,
-          password: np,
+          email: store.User.user.email,
+          curr_pass: currentp,
+          newPassword: np,
+          confirmPassword: cp,
         };
-        store.User.changePasword(
-          body,
-          setErrMessage,
-          setInvalidCurrentP,
-          showToast,
+        store.User.changePasword(body, showToast, () =>
+          setinvalidcurrentp(true),
         );
       } else {
         // seterrorMessage('Please connect internet');
@@ -205,7 +205,7 @@ function ChangePassword(props) {
         text = Emptycurrentp
           ? 'Please enter current password'
           : invalidcurrentp
-          ? 'Current password not correct'
+          ? 'Current Password is incorrect'
           : '';
       }
 

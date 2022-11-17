@@ -21,7 +21,7 @@ const SET_FAVRT_FOOD_LIST_BY_USER_ID = 'api/orders?customer=';
 const REMOVE_FAVRT_FOOD_LIST_BY_USER_ID = 'api/orders?customer=';
 const ADD_ADDRESS_BY_USER_ID = 'api/orders?customer=';
 const REMOVE_ADDRESS_BY_USER_ID = 'api/orders?customer=';
-const CHANGE_PASSWORD = 'api/users/changePassword/';
+const CHANGE_PASSWORD = 'api/user/changePassword/';
 const SUBSCRIBE_TOPIC = 'api/pushnotification/subscribeToTopic';
 const CHECK_PROMO = 'api/code?code=';
 const GET_All_PROMOS_BY_ID = 'api/promocode/getActiveCodes?city=';

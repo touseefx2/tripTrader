@@ -257,7 +257,6 @@ function Inbox(props) {
   }
 
   const ItemView = ({item, index}) => {
-    //  console.log('item : ', item.lates);
     let isendmymsg = false;
 
     let uid = user._id;
@@ -285,6 +284,9 @@ function Inbox(props) {
         isread = true;
       }
     }
+    console.log('isendmymsg : ', isendmymsg);
+    console.log('isread : ', isread);
+    console.log('item : ', item.latestMessage);
 
     const renderProfile = () => {
       return (

@@ -270,11 +270,15 @@ function MyProfile(props) {
     //   imgArr.push(cnicFrontImage);
     // }
 
+    let body = {
+      profileUpdateByUser: true,
+    };
+
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         store.User.setregLoader(true);
         store.User.attemptToEditUploadImage(
-          {},
+          body,
           setErrMessage,
           user._id,
           imgArr,

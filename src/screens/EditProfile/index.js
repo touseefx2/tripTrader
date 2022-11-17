@@ -202,6 +202,7 @@ function EditProfile(props) {
       phone: phone,
       phoneCountryCode:
         phoneCountryCode == '' ? RNLocalize.getCountry() : phoneCountryCode,
+      profileUpdateByUser: true,
     };
 
     NetInfo.fetch().then(state => {

@@ -54,7 +54,6 @@ function Notifications(props) {
   }
 
   const data = store.Notifications.notifications;
-  const mloader = store.Notifications.Loader;
 
   const [getDataOnce, setgetDataOnce] = useState(
     user !== 'guest' ? false : true,
@@ -62,25 +61,19 @@ function Notifications(props) {
   const setGetDataOnce = C => {
     setgetDataOnce(C);
   };
-  const [refreshing, setRefreshing] = React.useState(false);
-  const setrefeshing = c => {
-    setRefreshing(c);
-  };
+  const refreshing = store.Notifications.Loader;
+
   const onRefresh = React.useCallback(() => {
     if (user !== 'guest') {
       console.warn('onrefresh cal');
-      setRefreshing(true);
+
       getDbData();
     }
   }, []);
   const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.Notifications.attemptToGetNotifications(
-          user._id,
-          setGetDataOnce,
-          setrefeshing,
-        );
+        store.Notifications.attemptToGetNotifications(user._id, setGetDataOnce);
       } else {
         setrefeshing(false);
       }
@@ -89,7 +82,7 @@ function Notifications(props) {
   useEffect(() => {
     if (!getDataOnce && internet) {
       if (user !== 'guest') {
-        getDbData();
+        onRefresh();
       }
     }
     return () => {};
@@ -134,7 +127,7 @@ function Notifications(props) {
       ReadNotification(nid);
     }
 
-    if (c == 'Trip Created') {
+    if (c == 'New Trip Created') {
       props.navigation.navigate('MyProfile');
       goBack();
       ReadNotification(nid);
@@ -176,10 +169,10 @@ function Notifications(props) {
     return (
       // Flat List Item
       <>
-        {!mloader && getDataOnce && (
+        {!refreshing && getDataOnce && (
           <Text
             style={{
-              marginTop: '80%',
+              marginTop: '75%',
               alignItems: 'center',
               justifyContent: 'center',
               alignSelf: 'center',
@@ -187,20 +180,8 @@ function Notifications(props) {
               color: theme.color.subTitleLight,
               fontFamily: theme.fonts.fontMedium,
             }}>
-            No notifications Found
+            No any notifications
           </Text>
-        )}
-
-        {mloader && !getDataOnce && (
-          <ActivityIndicator
-            size={30}
-            color={theme.color.button1}
-            style={{
-              marginTop: '80%',
-
-              alignSelf: 'center',
-            }}
-          />
         )}
       </>
     );
@@ -475,7 +456,7 @@ function Notifications(props) {
 
     return (
       <Pressable
-        disabled={isread}
+        disabled={refreshing || isread}
         onPress={() =>
           onclickNotification(isFollow ? 'profile' : title, item._id)
         }
@@ -638,17 +619,6 @@ function Notifications(props) {
               ListHeaderComponent={data.length > 0 ? ListHeader : null}
               // ListFooterComponent={data.length > 0 ? ListFooter : null}
             />
-            {data.length > 0 && !getDataOnce && mloader && (
-              <ActivityIndicator
-                size={30}
-                color={theme.color.button1}
-                style={{
-                  top: '50%',
-                  position: 'absolute',
-                  alignSelf: 'center',
-                }}
-              />
-            )}
           </View>
 
           <utils.Footer

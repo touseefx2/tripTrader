@@ -461,7 +461,7 @@ function NewTrips(props) {
 
   useEffect(() => {
     if (city != '' && State != '') {
-      setlocation({city: city, state: State.name});
+      setlocation({city: titleCase(city), state: State.name});
     } else {
       setlocation(false);
     }
@@ -904,6 +904,18 @@ function NewTrips(props) {
     setisTripCreate(v);
   };
 
+  function titleCase(str) {
+    var splitStr = str.toLowerCase().split(' ');
+    for (var i = 0; i < splitStr.length; i++) {
+      // You do not need to check if i is larger than splitStr length, as your for does that for you
+      // Assign it back to the array
+      splitStr[i] =
+        splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+    }
+    // Directly return the joined string
+    return splitStr.join(' ');
+  }
+
   const CreateTrip = () => {
     Keyboard.dismiss();
 
@@ -940,14 +952,14 @@ function NewTrips(props) {
         if (durNum <= 1) {
           dtitle = dur.title.substring(0, dur.title.length - 1);
         }
-        dt = durNum + ' ' + dtitle;
+        dt = durNum + ' ' + titleCase(dtitle);
         title = dt + ' ' + species.name;
 
         const obj = {
           hostId: store.User.user._id,
           tradeType: tripType.name,
           species: species.name,
-          returnActivity: Return,
+          returnActivity: titleCase(Return),
           title: title,
           acceptTradeOffers: acceptOther,
           duration: {
@@ -989,7 +1001,7 @@ function NewTrips(props) {
         if (durNum <= 1) {
           dtitle = dur.title.substring(0, dur.title.length - 1);
         }
-        dt = durNum + ' ' + dtitle;
+        dt = durNum + ' ' + titleCase(dtitle);
         let title = dt + ' ' + species.name;
 
         let pht = [...photos];
@@ -1033,7 +1045,7 @@ function NewTrips(props) {
           hostId: store.User.user._id,
           tradeType: tripType.name,
           species: species.name,
-          returnActivity: Return,
+          returnActivity: titleCase(Return),
           title: title,
           acceptTradeOffers: acceptOther,
           duration: {

@@ -23,7 +23,6 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-// import ImageSlider from 'react-native-image-slider';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
@@ -31,14 +30,14 @@ import utils from '../../utils/index';
 import theme from '../../theme';
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
-import {ActivityIndicator} from 'react-native-paper';
-import FastImage from 'react-native-fast-image';
-import {ImageSlider} from 'react-native-image-slider-banner';
-import {Calendar} from 'react-native-calendars';
 import moment, {duration} from 'moment/moment';
 import EmojiModal from 'react-native-emoji-modal';
 import io from 'socket.io-client';
 import db from '../../database/index';
+import IntentLauncher from 'react-native-intent-launcher';
+import {request, PERMISSIONS, check} from 'react-native-permissions';
+import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
+import {Image as ImageCompressor} from 'react-native-compressor';
 
 export default observer(Chat);
 
@@ -57,6 +56,18 @@ function Chat(props) {
   let rid = props.route.params.rid || '';
 
   const [message, setmessage] = useState('');
+  const ClearMessage = () => {
+    setmessage('');
+  };
+  const [pmessage, setpmessage] = useState('');
+  const [photo, setphoto] = useState([]);
+  const [isPhotoModalVisible, setisPhotoModalVisible] = useState(false);
+  const ClosePhotoModal = () => {
+    setisPhotoModalVisible(false);
+    setpmessage('');
+    setphoto([]);
+  };
+
   const [isEmoji, setisEmoji] = useState(false);
 
   let internet = store.General.isInternet;
@@ -485,12 +496,17 @@ function Chat(props) {
           userId: user._id,
           roomName: obj.roomName,
           username: user.firstName + ' ' + user.lastName,
-          message: message,
-          type: 'text',
+          message: !isPhotoModalVisible ? message : pmessage,
+          image: photo,
+          type: !isPhotoModalVisible ? 'text' : 'image',
         };
         // console.log('ud : ', userDetails);
         socket.emit('chat', {userDetails});
-        setmessage('');
+        if (isPhotoModalVisible) {
+          ClosePhotoModal();
+        } else {
+          ClearMessage();
+        }
       } else {
         Alert.alert('', 'Please connect internet');
       }

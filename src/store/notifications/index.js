@@ -41,7 +41,7 @@ class notifications {
     this.unread = val;
   }
 
-  @action attemptToGetNotifications = (uid, setgetdata, setrfrsh) => {
+  @action attemptToGetNotifications = (uid, setgetdata) => {
     console.warn('GetNotifications true: ');
     this.setLoader(true);
 
@@ -49,7 +49,7 @@ class notifications {
     db.hitApi(db.apis.GET_NOTIFICATIONS + uid, 'get', {}, token)
       ?.then(resp => {
         this.setLoader(false);
-        setrfrsh(false);
+
         console.log(
           `response GetNotifications   ${db.apis.GET_NOTIFICATIONS} : `,
           resp.data,
@@ -63,7 +63,7 @@ class notifications {
       })
       .catch(err => {
         this.setLoader(false);
-        setrfrsh(false);
+
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in GetNotifications ${db.apis.GET_NOTIFICATIONS} : `,

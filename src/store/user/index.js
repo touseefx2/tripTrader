@@ -220,12 +220,7 @@ class user {
         setgetdata(true);
 
         if (c == 'home') {
-          this.attemptToGetHomeTripsSearch(
-            () => {},
-            () => {},
-            dt,
-            '',
-          );
+          this.attemptToGetHomeTripsSearch(() => {}, dt, '');
         }
 
         this.setblockUsers(dt);
@@ -1321,6 +1316,10 @@ class user {
           () => {},
           () => {},
         );
+        store.Notifications.attemptToGetNotifications(
+          store.User.user._id,
+          () => {},
+        );
       })
       .catch(err => {
         this.setctripLoader(false);
@@ -2080,11 +2079,7 @@ class user {
       () => {},
       () => {},
     );
-    store.Notifications.attemptToGetNotifications(
-      uid,
-      () => {},
-      () => {},
-    );
+    store.Notifications.attemptToGetNotifications(uid, () => {});
   }
 
   @action.bound
@@ -2726,6 +2721,10 @@ class user {
         let rsp = resp.data.data;
         this.setUser(rsp);
         suc();
+        store.Notifications.attemptToGetNotifications(
+          store.User.user._id,
+          () => {},
+        );
       })
       .catch(err => {
         this.setregLoader(false);
@@ -2783,7 +2782,7 @@ class user {
         })
         .catch(err => {
           this.setregLoader(false);
-          // console.log(`Error in upload image ${db.apis.IMAGE_UPLOAD} : `, err);
+
           let msg = err.response.data.message || err.response.status || err;
           console.log(`Error in upload image ${db.apis.IMAGE_UPLOAD} : `, msg);
           if (msg == 503 || msg == 500) {
@@ -3155,35 +3154,40 @@ class user {
   //   }
   // }
 
-  changePasword(body, seterror, incp, sucs) {
-    console.warn('Update Psswd user body : ', body);
+  changePasword(body, sucs, invldcp) {
+    console.log('CHANGE_PASSWORD user body : ', body);
     this.setregLoader(true);
 
-    setTimeout(() => {
-      this.setregLoader(false);
-      sucs();
-      // incp(true);
-      // Alert.alert('', msg.toString());
-      // seterror('asa as');
-    }, 1000);
-
-    // db.hitApi(db.apis.REGISTER_USER, 'post', body, null)
-    //   ?.then(resp => {
-    //     console.log(`response  ${db.apis.REGISTER_USER} : `, resp.data);
-    //     this.setregLoader(false);
-    //     this.addUser(resp.data.token, resp.data.data);
-    //   })
-    //   .catch(err => {
-    //     this.setregLoader(false);
-    //     let msg = err.response.data.message || err.response.status;
-    //     console.log(`Error in ${db.apis.REGISTER_USER} : `, msg);
-    //     if (msg == 503 || msg == 500) {
-    //       store.General.setisServerError(true);
-    //       return;
-    //     }
-    //     seterror(msg.toString())
-    //     // Alert.alert('', msg.toString());
-    //   });
+    db.hitApi(db.apis.CHANGE_PASSWORD, 'put', body, store.User.authToken)
+      ?.then(resp => {
+        console.log(
+          `response CHANGE_PASSWORD  ${db.apis.CHANGE_PASSWORD} : `,
+          resp.data,
+        );
+        this.setregLoader(false);
+        sucs();
+        store.Notifications.attemptToGetNotifications(
+          store.User.user._id,
+          () => {},
+        );
+      })
+      .catch(err => {
+        this.setregLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in CHANGE_PASSWORD ${db.apis.CHANGE_PASSWORD} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          return;
+        }
+        if (msg == 'Current Password is incorrect') {
+          invldcp();
+          return;
+        }
+        Alert.alert('', msg.toString());
+      });
   }
 
   getData(seterror) {

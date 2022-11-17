@@ -30,16 +30,15 @@ import {Utils} from '@react-native-firebase/app';
 export default observer(ChatPhotoModal);
 
 function ChatPhotoModal(props) {
-  let isModalVisible = props.isVisible;
+  let isPhotoModalVisible = props.isPhotoModalVisible;
   const closeModal = () => {
-    props.setisVisible(false);
-    props.setpmessage('');
+    props.ClosePhotoModal();
   };
 
   return (
     <>
       <Modal
-        isVisible={isModalVisible}
+        isVisible={isPhotoModalVisible}
         backdropOpacity={1}
         backdropColor="white"
         animationIn="fadeIn"
