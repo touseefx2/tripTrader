@@ -271,7 +271,7 @@ function MyProfile(props) {
     // }
 
     let body = {
-      profileUpdateByUser: true,
+      // profileUpdateByUser: true,
     };
 
     NetInfo.fetch().then(state => {

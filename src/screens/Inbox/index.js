@@ -59,6 +59,7 @@ function Inbox(props) {
 
   let loader = store.User.dlc;
   const data = store.User.inbox;
+  let totalUnread = store.User.unreadInbox;
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
@@ -136,12 +137,11 @@ function Inbox(props) {
   const ListHeader = () => {
     const renderResult = () => {
       let length = data.length || 0;
-      let unread = data.unreadCount ? data.unreadCount : 0;
 
       return (
         <View style={styles.resultContainer}>
           <Text style={styles.resultText}>
-            {length} messages, {unread} unread
+            {length} messages, {totalUnread} unread
           </Text>
         </View>
       );

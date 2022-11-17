@@ -78,6 +78,7 @@ class user {
   @persist('object') @observable blockUsers = [];
   @persist('object') @observable totalblockUsers = 0;
   @persist('object') @observable inbox = 0;
+  @persist('object') @observable unreadInbox = 0;
   @observable fl = false;
   @observable bl = false;
   @observable ibl = false;
@@ -114,6 +115,9 @@ class user {
   };
   @action setibl = obj => {
     this.ibl = obj;
+  };
+  @action setunreadInbox = obj => {
+    this.unreadInbox = obj;
   };
 
   @observable messages = [];
@@ -2691,6 +2695,7 @@ class user {
     this.settotalfollowers(0);
     this.settotalfollowing(0);
     this.setinbox([]);
+    this.setunreadInbox(0);
   };
 
   // attemptToUploadImageEPS(body, p, c, seterror, suc) {
