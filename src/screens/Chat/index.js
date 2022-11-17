@@ -100,12 +100,6 @@ function Chat(props) {
           setGetDataOnce,
           c => setdata(c),
         );
-        setTimeout(() => {
-          let p = obj.roomName + '/' + rid;
-          store.User.attemptToReadAllMessages(p);
-        }, 1000);
-      } else {
-        setrefeshing(false);
       }
     });
   };
@@ -128,9 +122,8 @@ function Chat(props) {
       console.log('temp after :  ', temp.length);
       setdata([...temp]);
       scrollToBottom();
-
-      let p = obj.roomName + '/' + rid;
-      store.User.attemptToReadAllMessages(p);
+      // let p = obj.roomName + '/' + rid;
+      // store.User.attemptToReadAllMessages(p);
       return;
     });
   }, [socket]);
@@ -384,7 +377,8 @@ function Chat(props) {
             <>
               <View style={mx}>
                 <View style={mc}>{msg != '' && renderMsg()}</View>
-                {renderDate()}
+                {/* {renderDate()} */}
+                {renderDate2()}
               </View>
             </>
           )}
