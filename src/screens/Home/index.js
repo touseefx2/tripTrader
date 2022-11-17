@@ -437,11 +437,9 @@ function Home(props) {
   };
 
   const socket = store.General.socket;
-
   const SocketOff = () => {
     socket.emit('user left', {socket: socket.id});
   };
-
   useEffect(() => {
     store.General.setSocket(io(db.apis.BASE_URL));
     return () => {

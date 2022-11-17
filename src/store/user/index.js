@@ -2669,6 +2669,9 @@ class user {
     store.Notifications.clearNotifications();
     store.Offers.clearOffers();
     this.setisNotification(true);
+
+    const socket = store.General.socket;
+    socket.emit('user left', {socket: socket.id});
   }
 
   @action.bound
