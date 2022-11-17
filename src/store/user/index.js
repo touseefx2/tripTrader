@@ -360,9 +360,25 @@ class user {
             socket.emit('joinRoom', {username, roomName: e.roomName});
           });
         }
-
         setgetdata(true);
         this.setinbox(fa);
+
+        let ud = store.User.user._id;
+
+        let uc = 0;
+        if (fa.length > 0) {
+          fa.map((e, i, a) => {
+            if (
+              e.latestMessage &&
+              ud != e.latestMessage.sendBy._id &&
+              e.latestMessage.isRead == false
+            ) {
+              uc++;
+            }
+          });
+        }
+
+        this.setunreadInbox(uc);
       })
       .catch(err => {
         this.setibl(false);
@@ -379,6 +395,7 @@ class user {
         }
         if (msg == 'No records found') {
           this.setinbox([]);
+          this.setunreadInbox(0);
           setgetdata(true);
           return;
         }
@@ -506,6 +523,11 @@ class user {
   @observable tripsLoadero = false;
   @observable photosLoadero = false;
   @observable mLoadero = false;
+
+  @observable chatmsgSendLoader = false;
+  @action setchatmsgSendLoader = obj => {
+    this.chatmsgSendLoader = obj;
+  };
 
   @action setotherUserModalLoader = obj => {
     this.otherUserModalLoader = obj;
@@ -1377,6 +1399,55 @@ class user {
           let msg = err.response.data.message || err.response.status || err;
           console.log(
             `Error in upload trips photo ${db.apis.IMAGE_UPLOAD} : `,
+            msg,
+          );
+          if (msg == 503 || msg == 500) {
+            Alert.alert('', 'Server not response');
+            // store.General.setisServerError(true);
+            return;
+          }
+          // seterror(msg.toString())
+          Alert.alert('', msg.toString());
+        });
+    });
+  }
+
+  attemptToChatUploadImage(bd, suc) {
+    this.setchatmsgSendLoader(true);
+    let imgArr = [...bd];
+    console.log('upload before chat photos : ', imgArr);
+    let ua = [];
+    imgArr.map((e, i, a) => {
+      const data = new FormData();
+      const newFile = {
+        uri: e.uri,
+        type: e.type,
+        name: e.fileName,
+      };
+      data.append('files', newFile);
+      fetch(db.apis.BASE_URL + db.apis.IMAGE_UPLOAD, {
+        method: 'post',
+        body: data,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+        .then(response => response.json())
+        .then(responseData => {
+          console.warn('upload photo success : ');
+          let rsp = responseData.data[0].imgrUrl;
+          ua.push(rsp);
+          if (ua.length == a.length) {
+            suc(ua);
+            return;
+          }
+        })
+        .catch(err => {
+          this.setchatmsgSendLoader(false);
+
+          let msg = err.response.data.message || err.response.status || err;
+          console.log(
+            `Error in upload chat photos ${db.apis.IMAGE_UPLOAD} : `,
             msg,
           );
           if (msg == 503 || msg == 500) {

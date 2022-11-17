@@ -14,6 +14,8 @@ import {
   FlatList,
   Linking,
   PermissionsAndroid,
+  Keyboard,
+  Alert,
 } from 'react-native';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
@@ -28,7 +30,6 @@ import MaskedView from '@react-native-community/masked-view';
 import Svg, {Path} from 'react-native-svg';
 import {responsiveHeight} from 'react-native-responsive-dimensions';
 import {Utils} from '@react-native-firebase/app';
-
 import IntentLauncher from 'react-native-intent-launcher';
 import {request, PERMISSIONS, check} from 'react-native-permissions';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
@@ -41,8 +42,13 @@ function ChatPhotoModal(props) {
   let isShowPrmsn = props.isShowPrmsn;
   let prmsnChk = props.prmsnChk;
   let DT = 'ChatPhotos';
-  let maxPhotos = 6;
+  let maxPhotos = 4;
   let photos = props.photos;
+  let pmessage = props.pmessage;
+  let loader = store.User.chatmsgSendLoader;
+
+  const [pvm, setpvm] = useState(false);
+  const [si, setsi] = useState(0);
 
   const setisAddPhotoModal = c => {
     props.isAddPhotoModal(c);
@@ -55,50 +61,100 @@ function ChatPhotoModal(props) {
   };
   const closeAddPhotoModal = () => {
     props.ClosePhotoModal();
+    setsi(0);
+    setpvm('');
   };
   const setphotos = c => {
     props.setphotos(c);
   };
+  const setpmessage = c => {
+    props.setpmessage(c);
+  };
 
-  const MultipleImage = async button => {
+  const MultipleImage = async chk => {
     setisShowPrmsn(false);
-
     let apiLevel = store.General.apiLevel;
+    Keyboard.dismiss();
+
+    let d = photos.length;
+    let max = maxPhotos;
+    let msg = 'You can upload only ' + max + ' images';
+    if (d == max) {
+      Alert.alert('', msg);
+      return;
+    }
+    let maxPhotos = 4 - photos.length;
     try {
       let options = {
         mediaType: 'image',
         isPreview: false,
-        singleSelectedMode: true,
+        maxSelectedAssets: maxPhotos,
       };
-
       const res = await MultipleImagePicker.openPicker(options);
       if (res) {
         console.log('mutipicker image res true  ');
-        const {path, fileName, mime} = res;
-        let uri = path;
-        if (Platform.OS == 'android' && apiLevel < 29) {
-          uri = 'file://' + uri;
-        }
+        let data = photos.slice();
+        let ar = data;
 
-        ImageCompressor.compress(uri, {
-          compressionMethod: 'auto',
-        })
-          .then(async res => {
-            let imageObject = {
-              uri: res,
-              type: mime,
-              fileName: fileName,
-            };
-            console.log('Compress image  : ', imageObject);
-            if (button == 'ChatPhotos') {
-              return;
-            } else {
-              return;
+        if (data.length > 0) {
+          res.map((e, i, a) => {
+            let uri = e.path;
+            let fileName = e.fileName;
+            let type = e.mime;
+            if (Platform.OS == 'android' && apiLevel < 29) {
+              uri = 'file://' + uri;
             }
-          })
-          .catch(err => {
-            console.log('Image compress error : ', err);
+
+            ImageCompressor.compress(uri, {
+              compressionMethod: 'auto',
+            })
+              .then(async res => {
+                let imageObject = {uri: res, fileName, type};
+                console.log('Compress image  : ', imageObject);
+                let isAlreadySelectimage = data.find(
+                  x => x.fileName == fileName,
+                )
+                  ? true
+                  : false;
+
+                if (chk == 'ChatPhotos' && !isAlreadySelectimage) {
+                  ar.push(imageObject);
+                }
+
+                if (i == a.length - 1) {
+                  setphotos(ar);
+                }
+              })
+              .catch(err => {
+                console.log('Image compress error : ', err);
+              });
           });
+        } else {
+          res.map((e, i, a) => {
+            let uri = e.path;
+            let fileName = e.fileName;
+            let type = e.mime;
+            if (Platform.OS == 'android' && apiLevel < 29) {
+              uri = 'file://' + uri;
+            }
+            ImageCompressor.compress(uri, {
+              compressionMethod: 'auto',
+            })
+              .then(async res => {
+                let imageObject = {uri: res, fileName, type};
+                console.log('Compress image  : ', imageObject);
+                if (chk == 'ChatPhotos') {
+                  ar.push(imageObject);
+                }
+                if (i == a.length - 1) {
+                  setphotos(ar);
+                }
+              })
+              .catch(err => {
+                console.log('Image compress error : ', err);
+              });
+          });
+        }
       }
     } catch (error) {
       console.log('multi photo picker error : ', error);
@@ -318,18 +374,30 @@ function ChatPhotoModal(props) {
     );
   };
 
+  const deletePhoto = i => {
+    let p = photos.slice();
+    p.splice(i, 1);
+    setphotos(p);
+  };
+
+  const photoClick = i => {
+    setsi(i);
+    setpvm(true);
+  };
+
   const renderShowPhotos = () => {
     let p = photos.map((e, i, a) => {
-      let uri = e.uri ? e.uri : e;
-      let c = e.uri ? true : false;
+      let uri = e.uri;
+
       const renderPhotoCross = () => {
         return (
           <Pressable
+            disabled={loader}
             style={({pressed}) => [
               {opacity: pressed ? 0.7 : 1.0},
               styles.crossContainer,
             ]}
-            onPress={() => openDeleteModal({uri: e.uri ? e.uri : e, i: i})}>
+            onPress={() => deletePhoto(i)}>
             <Image
               source={require('../../assets/images/cross/img.png')}
               style={{width: 9, height: 9, resizeMode: 'contain'}}
@@ -341,21 +409,13 @@ function ChatPhotoModal(props) {
         <>
           {a.length == maxPhotos && (
             <Pressable
-              // onPress={() => photoClick(i)}
+              disabled={loader}
+              onPress={() => photoClick(i)}
               style={({pressed}) => [
                 {opacity: pressed ? 0.9 : 1.0},
                 [styles.addImgContainer, {marginTop: 15}],
               ]}>
-              {!c && (
-                <ProgressiveFastImage
-                  style={styles.addImg}
-                  source={{uri: uri}}
-                  loadingImageStyle={styles.imageLoader}
-                  loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
-                  blurRadius={3}
-                />
-              )}
-              {c && <Image style={styles.addImg} source={{uri: uri}} />}
+              <Image style={styles.addImg} source={{uri: uri}} />
 
               {renderPhotoCross()}
             </Pressable>
@@ -364,29 +424,20 @@ function ChatPhotoModal(props) {
           {a.length < maxPhotos && (
             <>
               <Pressable
-                // onPress={() => photoClick(i)}
+                disabled={loader}
+                onPress={() => photoClick(i)}
                 style={({pressed}) => [
                   {opacity: pressed ? 0.9 : 1.0},
                   [styles.addImgContainer, {marginTop: 15}],
                 ]}>
-                {!c && (
-                  <ProgressiveFastImage
-                    style={styles.addImg}
-                    source={{uri: uri}}
-                    loadingImageStyle={styles.imageLoader}
-                    loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
-                    blurRadius={3}
-                  />
-                )}
-                {c && <Image style={styles.addImg} source={{uri: uri}} />}
+                <Image style={styles.addImg} source={{uri: uri}} />
                 {renderPhotoCross()}
               </Pressable>
 
               {i == a.length - 1 && (
                 <Pressable
-                  onPress={() => {
-                    setisAddPhotoModal(true);
-                  }}
+                  disabled={loader}
+                  onPress={() => onclickImage(DT)}
                   style={({pressed}) => [
                     {opacity: pressed ? 0.8 : 1.0},
                     [
@@ -415,6 +466,24 @@ function ChatPhotoModal(props) {
     });
 
     return p;
+  };
+
+  const photoUploadSuc = c => {
+    setphotos(c);
+    props.SendMessage(c);
+  };
+
+  const uploadPhotos = () => {
+    Keyboard.dismiss();
+
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.User.attemptToChatUploadImage(photos, photoUploadSuc);
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
   };
 
   return (
@@ -486,66 +555,104 @@ function ChatPhotoModal(props) {
                     </View>
                   </TouchableOpacity>
                 )}
-                {/* {photos.length > 0 && (
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                flexShrink: 1,
-                flexWrap: 'wrap',
-              }}>
-              {renderShowPhotos()}
-            </View>
-          )} */}
+                {photos.length > 0 && (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      flexShrink: 1,
+                      flexWrap: 'wrap',
+                    }}>
+                    {renderShowPhotos()}
+                  </View>
+                )}
               </View>
 
-              {/* <View style={styles.uploadIndication}>
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => {
-                      checkPermsn('gallery');
+              {photos.length > 0 && (
+                <>
+                  <View
+                    style={{
+                      marginTop: 50,
                     }}>
-                    <Image
-                      source={require('../../assets/images/uploadphoto/img.png')}
-                      style={styles.uploadIndicationLogo}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => {
-                      checkPermsn('camera');
-                    }}>
-                    <Image
-                      source={require('../../assets/images/takephoto/img.png')}
-                      style={styles.uploadIndicationLogo}
-                    />
-                  </TouchableOpacity>
-                </View> */}
+                    {!loader && (
+                      <>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            marginTop: 10,
+                          }}>
+                          <View
+                            style={{
+                              width: '81%',
+                              backgroundColor: '#F2F3F1',
+                              borderRadius: 100,
+                              paddingHorizontal: 15,
+                            }}>
+                            <TextInput
+                              placeholder="Add a caption..."
+                              value={pmessage}
+                              style={{width: '100%', borderRadius: 100}}
+                              onChangeText={t => {
+                                setpmessage(t);
+                              }}
+                            />
+                          </View>
 
-              <TouchableOpacity
-                onPress={closeAddPhotoModal}
-                activeOpacity={0.7}
-                style={{
-                  marginTop: 40,
-                  width: '100%',
-                  height: 48,
-                  borderRadius: 12,
-                  backgroundColor: '#B93B3B',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  alignSelf: 'center',
-                }}>
-                <Text
-                  style={[
-                    styles.buttonTextBottom,
-                    {
-                      color: theme.color.buttonText,
-                      fontFamily: theme.fonts.fontMedium,
-                    },
-                  ]}>
-                  Cancel
-                </Text>
-              </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={uploadPhotos}
+                            activeOpacity={0.8}>
+                            <Image
+                              style={{
+                                width: 47,
+                                height: 47,
+                                resizeMode: 'contain',
+                              }}
+                              source={require('../../assets/images/sendmessage/img.png')}
+                            />
+                          </TouchableOpacity>
+                        </View>
+                      </>
+                    )}
+
+                    {loader && (
+                      <ActivityIndicator
+                        color={theme.color.button1}
+                        size={40}
+                        style={{alignSelf: 'center', marginVertical: 10}}
+                      />
+                    )}
+                  </View>
+                </>
+              )}
+
+              {!loader && (
+                <TouchableOpacity
+                  onPress={closeAddPhotoModal}
+                  activeOpacity={0.7}
+                  style={{
+                    marginTop: 40,
+                    width: '100%',
+                    height: 48,
+                    borderRadius: 12,
+                    backgroundColor: '#B93B3B',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    alignSelf: 'center',
+                  }}>
+                  <Text
+                    style={[
+                      styles.buttonTextBottom,
+                      {
+                        color: theme.color.buttonText,
+                        fontFamily: theme.fonts.fontMedium,
+                      },
+                    ]}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+              )}
             </>
           )}
           {isShowPrmsn && (
@@ -591,6 +698,15 @@ function ChatPhotoModal(props) {
           {/* {renderCross()} */}
         </View>
       </SafeAreaView>
+
+      {pvm && (
+        <utils.FullimageModal
+          data={photos}
+          si={si}
+          show={pvm}
+          closModal={() => setpvm(!pvm)}
+        />
+      )}
     </Modal>
   );
 }

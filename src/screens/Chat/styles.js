@@ -676,10 +676,6 @@ export const styles = StyleSheet.create({
   },
 
   //make offer modal
-  fieldContainer: {
-    width: '100%',
-    marginTop: 12,
-  },
 
   fieldText: {
     color: theme.color.titleGreenForm,
@@ -807,5 +803,31 @@ export const styles = StyleSheet.create({
     fontSize: 13,
     color: theme.color.title,
     fontFamily: theme.fonts.fontMedium,
+  },
+  chatImgContainerOne: {
+    width: 148,
+    height: 148,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: theme.color.fieldBorder,
+  },
+  chatImgContainer: {
+    width: '48%',
+    height: 110,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: theme.color.fieldBorder,
+    marginRight: '2%',
+  },
+  chatImg: {
+    width: '100%',
+    height: '100%',
+
+    borderRadius: 12,
+  },
+  chatImageLoader: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 12,
   },
 });

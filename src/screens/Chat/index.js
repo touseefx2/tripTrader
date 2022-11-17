@@ -62,14 +62,20 @@ function Chat(props) {
       setisAddPhotoModal(false);
       setpmessage('');
       setphotos([]);
+      store.User.setchatmsgSendLoader(false);
     } else {
       setisShowPrmsn(false);
+      store.User.setchatmsgSendLoader(false);
     }
   };
 
   const [isShowPrmsn, setisShowPrmsn] = useState(false);
   const [prmsnChk, setprmsnChk] = useState('storage');
   const [isAddPhotoModal, setisAddPhotoModal] = useState(false);
+
+  const [pvm, setpvm] = useState(false);
+  const [pd, setpd] = useState([]);
+  const [si, setsi] = useState(0);
 
   const [isEmoji, setisEmoji] = useState(false);
 
@@ -304,11 +310,65 @@ function Chat(props) {
     flexDirection: 'row',
   };
 
+  const renderPhoto = (msg, images) => {
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          flexShrink: 1,
+          flexWrap: 'wrap',
+          marginBottom: msg == '' ? 0 : 10,
+        }}>
+        {renderShowPhotos(images)}
+      </View>
+    );
+  };
+
+  const photoClick = (i, d) => {
+    setsi(i);
+    setpd(d);
+    setpvm(true);
+  };
+
+  const renderShowPhotos = img => {
+    let p = img.map((e, i, a) => {
+      let uri = e;
+      console.log('e : ', e);
+      return (
+        <>
+          <Pressable
+            onPress={() => photoClick(i, img)}
+            style={({pressed}) => [
+              {opacity: pressed ? 0.9 : 1.0},
+              [
+                img.length <= 1
+                  ? styles.chatImgContainerOne
+                  : [styles.chatImgContainer, {marginBottom: 5}],
+              ],
+            ]}>
+            <ProgressiveFastImage
+              style={styles.chatImg}
+              source={{uri: uri}}
+              loadingImageStyle={styles.chatImageLoader}
+              loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
+              blurRadius={0}
+            />
+          </Pressable>
+        </>
+      );
+    });
+
+    return p;
+  };
+
   const ItemView = ({item, index}) => {
     let usr = item.sendBy._id;
     let msg = item.message || '';
+    let images = item.image || [];
+    let type = item.type;
     let isRead = item.isRead || false;
-    let date = CheckDate(item.updatedAt);
+    let date = CheckDate(item.createdAt);
     let photo = item.sendBy.image ? {uri: item.sendBy.image} : guest;
     let isCu = false;
     if (user._id == usr) {
@@ -318,13 +378,10 @@ function Chat(props) {
     const renderMsg = () => {
       return (
         <>
-          <Text
-            style={[
-              mt,
-              {color: isCu ? theme.color.subTitleAuth : theme.color.buttonText},
-            ]}>
-            {msg}
-          </Text>
+          {type == 'image' && images.length > 0 && renderPhoto(msg, images)}
+          {msg != '' && (
+            <Text style={[mt, {color: theme.color.subTitleAuth}]}>{msg}</Text>
+          )}
         </>
       );
     };
@@ -333,34 +390,36 @@ function Chat(props) {
       return (
         <>
           <View style={mc2}>
-            <Text
-              style={[
-                mt,
-                {
-                  color: isCu
-                    ? theme.color.subTitleAuth
-                    : theme.color.buttonText,
-                },
-              ]}>
-              {msg}
-            </Text>
+            {type == 'image' && images.length > 0 && renderPhoto(msg, images)}
+
+            {msg != '' && (
+              <Text
+                style={[
+                  mt,
+                  {
+                    color: theme.color.buttonText,
+                  },
+                ]}>
+                {msg}
+              </Text>
+            )}
           </View>
         </>
       );
     };
 
-    const renderDate = () => {
-      return (
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={[md, {marginRight: 5}]}>{date}</Text>
-          <utils.vectorIcon.MaterialCommunityIcons
-            name={!isRead ? 'check' : 'check-all'}
-            color={!isRead ? theme.color.subTitleLight : theme.color.button1}
-            size={16}
-          />
-        </View>
-      );
-    };
+    // const renderDate = () => {
+    //   return (
+    //     <View style={{flexDirection: 'row', alignItems: 'center'}}>
+    //       <Text style={[md, {marginRight: 5}]}>{date}</Text>
+    //       <utils.vectorIcon.MaterialCommunityIcons
+    //         name={!isRead ? 'check' : 'check-all'}
+    //         color={!isRead ? theme.color.subTitleLight : theme.color.button1}
+    //         size={16}
+    //       />
+    //     </View>
+    //   );
+    // };
 
     const renderDate2 = () => {
       return <Text style={md}>{date}</Text>;
@@ -386,9 +445,9 @@ function Chat(props) {
           {isCu && (
             <>
               <View style={mx}>
-                <View style={mc}>{msg != '' && renderMsg()}</View>
+                <View style={mc}>{renderMsg()}</View>
                 {/* {renderDate()} */}
-                {renderDate2()}
+                <View style={{alignItems: 'flex-end'}}>{renderDate2()}</View>
               </View>
             </>
           )}
@@ -404,8 +463,10 @@ function Chat(props) {
                   style={{
                     marginLeft: 10,
                   }}>
-                  {msg != '' && renderMsg2()}
-                  {renderDate2()}
+                  {renderMsg2()}
+                  <View style={{alignItems: 'flex-start'}}>
+                    {renderDate2()}
+                  </View>
                 </View>
               </View>
             </>
@@ -415,34 +476,34 @@ function Chat(props) {
     );
   };
 
-  const ListHeader = () => {
-    let num = total;
-    let t = `You have ${num} ${num > 1 ? 'users' : 'user'} blocked`;
-    return (
-      <View style={{width: '100%'}}>
-        <Text
-          style={{
-            color: theme.color.subTitle,
-            fontSize: 13,
-            fontFamily: theme.fonts.fontNormal,
-          }}>
-          {t}
-        </Text>
-      </View>
-    );
-  };
+  // const ListHeader = () => {
+  //   let num = total;
+  //   let t = `You have ${num} ${num > 1 ? 'users' : 'user'} blocked`;
+  //   return (
+  //     <View style={{width: '100%'}}>
+  //       <Text
+  //         style={{
+  //           color: theme.color.subTitle,
+  //           fontSize: 13,
+  //           fontFamily: theme.fonts.fontNormal,
+  //         }}>
+  //         {t}
+  //       </Text>
+  //     </View>
+  //   );
+  // };
 
-  const ListFooter = () => {
-    return (
-      <>
-        <View>
-          <View style={styles.listFooter}>
-            <Text style={styles.listFooterT}>End of results</Text>
-          </View>
-        </View>
-      </>
-    );
-  };
+  // const ListFooter = () => {
+  //   return (
+  //     <>
+  //       <View>
+  //         <View style={styles.listFooter}>
+  //           <Text style={styles.listFooterT}>End of results</Text>
+  //         </View>
+  //       </View>
+  //     </>
+  //   );
+  // };
 
   const renderHeader = () => {
     const render1 = () => {
@@ -502,7 +563,7 @@ function Chat(props) {
     );
   };
 
-  const SendMessage = () => {
+  const SendMessage = p => {
     closeEmoji();
     Keyboard.dismiss();
     NetInfo.fetch().then(state => {
@@ -512,10 +573,10 @@ function Chat(props) {
           roomName: obj.roomName,
           username: user.firstName + ' ' + user.lastName,
           message: !isAddPhotoModal ? message : pmessage,
-          image: photos,
+          image: p != '' ? p : [],
           type: !isAddPhotoModal ? 'text' : 'image',
         };
-        // console.log('ud : ', userDetails);
+        console.log('user detial send message : ', userDetails);
         socket.emit('chat', {userDetails});
         if (isAddPhotoModal) {
           ClosePhotoModal();
@@ -607,7 +668,7 @@ function Chat(props) {
           </View>
 
           <TouchableOpacity
-            onPress={SendMessage}
+            onPress={() => SendMessage('')}
             disabled={disable}
             style={{opacity: disable ? 0.5 : 1}}
             activeOpacity={0.8}>
@@ -670,6 +731,9 @@ function Chat(props) {
             ClosePhotoModal={() => ClosePhotoModal()}
             photos={photos}
             setphotos={c => setphotos(c)}
+            setpmessage={c => setpmessage(c)}
+            pmessage={pmessage}
+            SendMessage={c => SendMessage(c)}
           />
         )}
 
@@ -725,6 +789,18 @@ function Chat(props) {
         </SafeAreaView>
         {/* <utils.Loader load={loader} /> */}
         <Toast ref={toast} position="bottom" />
+
+        {pvm && (
+          <utils.FullimageModal
+            data={pd}
+            si={si}
+            show={pvm}
+            closModal={() => {
+              setpvm(!pvm);
+              setpd([]);
+            }}
+          />
+        )}
       </View>
     </>
   );

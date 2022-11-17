@@ -48,7 +48,7 @@ function ShowFollowers(props) {
 
   let fscreen = store.User.fscreen || '';
   let db = false;
-  if (fscreen == 'confirmedtrips' || fscreen == 'home') {
+  if (fscreen == 'Home') {
     db = true;
   }
 

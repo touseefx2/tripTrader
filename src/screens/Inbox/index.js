@@ -269,9 +269,11 @@ function Inbox(props) {
     let subtitle = '';
     let create = CheckDate(item.updatedAt);
     let isread = false;
+    let type = '';
 
     if (item.latestMessage) {
       let d = item.latestMessage;
+      type = d.type;
       subtitle = d.message;
       isendmymsg = d.sendBy._id == uid ? true : false;
       if (!isendmymsg) {
@@ -280,9 +282,11 @@ function Inbox(props) {
         isread = true;
       }
     }
-    console.log('isendmymsg : ', isendmymsg);
-    console.log('isread : ', isread);
-    console.log('item : ', item.latestMessage);
+
+    // console.log('item : ', item);
+    // console.log('isendmymsg : ', isendmymsg);
+    // console.log('isread : ', isread);
+    // console.log('item : ', item.latestMessage);
 
     const renderProfile = () => {
       return (
@@ -352,7 +356,7 @@ function Inbox(props) {
 
                 lineHeight: 21,
               }}>
-              {subtitle}
+              {type == 'text' ? subtitle : type}
             </Text>
           </View>
         </View>

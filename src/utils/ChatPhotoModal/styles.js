@@ -744,4 +744,40 @@ export const styles = StyleSheet.create({
     width: '100%',
     marginTop: 30,
   },
+  crossContainer: {
+    width: 22,
+    height: 22,
+    borderRadius: 22 / 2,
+
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    backgroundColor: theme.color.background,
+    right: 3,
+    top: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+  },
+  addImgContainer: {
+    width: '26%',
+    height: 80,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: theme.color.photoBorderColor,
+    marginRight: '2.3%',
+  },
+  addImg: {
+    width: '100%',
+    height: '100%',
+    // resizeMode: 'contain',
+    borderRadius: 12,
+  },
+  imageLoader: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 12,
+  },
 });
