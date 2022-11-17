@@ -95,7 +95,9 @@ function Chat(props) {
     });
   };
 
-  const SocketOff = () => {};
+  const SocketOff = () => {
+    socket.emit('user left', {socket: socket.id});
+  };
 
   const joinSocket = () => {
     let username = user.firstName + ' ' + user.lastName;

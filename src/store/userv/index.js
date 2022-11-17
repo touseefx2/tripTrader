@@ -1166,8 +1166,6 @@ class userv {
       });
   };
 
-  @action SocketOff = () => {};
-
   @action SendSecodMessage = (body, cid, suc) => {
     let uid = body.sendBy;
     let username = store.User.user.firstName + ' ' + store.User.user.lastName;
@@ -1189,7 +1187,7 @@ class userv {
 
     this.sethomeModalLoder(false);
     suc(true);
-    this.SocketOff();
+    socket.emit('user left', {socket: socket.id});
   };
 
   @action SendReportUser = (body, suc) => {

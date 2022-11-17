@@ -388,7 +388,7 @@ class user {
       });
   };
 
-  @action attemptToGetAllMessages = (uid, rid,setgetdata, setData) => {
+  @action attemptToGetAllMessages = (uid, rid, setgetdata, setData) => {
     console.log('GetAllMessages: ', 'true');
     this.setmessagesLoader(true);
 
@@ -405,7 +405,7 @@ class user {
         setgetdata(true);
         setData(dt);
 
-        let p= uid + '/'+rid
+        let p = uid + '/' + rid;
         this.attemptToReadAllMessages(p);
       })
       .catch(err => {
@@ -1234,8 +1234,6 @@ class user {
       });
   };
 
-  @action SocketOff = () => {};
-
   @action SendSecodMessage = (body, cid, suc) => {
     let uid = body.sendBy;
     let username = store.User.user.firstName + ' ' + store.User.user.lastName;
@@ -1254,7 +1252,7 @@ class user {
     socket.emit('chat', {userDetails});
     this.sethomeModalLoder(false);
     suc(true);
-    this.SocketOff();
+    socket.emit('user left', {socket: socket.id});
   };
 
   @action attemptToOtherUserMessageSend = (obj, suc) => {
