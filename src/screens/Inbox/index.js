@@ -77,14 +77,6 @@ function Inbox(props) {
     });
   };
 
-  // useEffect(() => {
-  //   if (!getDataOnce && internet) {
-  //     getDbData();
-  //   }
-
-  //   return () => {};
-  // }, [getDataOnce, internet]);
-
   useEffect(() => {
     if (internet) {
       onRefresh();
@@ -377,6 +369,7 @@ function Inbox(props) {
           props.navigation.navigate('Chat', {
             obj: item,
             title: title,
+            rid: u._id,
             // socket: socket,
           });
         }}

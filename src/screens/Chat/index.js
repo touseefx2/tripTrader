@@ -45,9 +45,7 @@ export default observer(Chat);
 let guest = require('../../assets/images/drawer/guest/img.png');
 
 function Chat(props) {
-  // const socket = store.General.socket;
-  // const socket = io(db.apis.BASE_URL);
-  const socket = store.General.socket;
+  const socket = io(db.apis.BASE_URL);
 
   let maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
@@ -56,6 +54,7 @@ function Chat(props) {
   const toastduration = 700;
   let obj = props.route.params.obj || false;
   let headerTitle = props.route.params.title || '';
+  let rid = props.route.params.rid || '';
 
   const [message, setmessage] = useState('');
   const [isEmoji, setisEmoji] = useState(false);
@@ -84,8 +83,11 @@ function Chat(props) {
   const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToGetAllMessages(obj.roomName, setGetDataOnce, c =>
-          setdata(c),
+        store.User.attemptToGetAllMessages(
+          obj.roomName,
+          rid,
+          setGetDataOnce,
+          c => setdata(c),
         );
       } else {
         setrefeshing(false);
@@ -93,20 +95,26 @@ function Chat(props) {
     });
   };
 
+  const SocketOff = () => {};
+
+  const joinSocket = () => {
+    let username = user.firstName + ' ' + user.lastName;
+    let rn = obj.roomName;
+    socket.emit('joinRoom', {username, roomName: rn});
+  };
+
   useEffect(() => {
     return () => {
-      // setData([]);
+      SocketOff();
     };
   }, []);
-
   useEffect(() => {
     if (internet) {
       onRefresh();
-      let username = user.firstName + ' ' + user.lastName;
-      let rn = obj.roomName;
-      socket.emit('joinRoom', {username, roomName: rn});
+      joinSocket();
+    } else {
+      SocketOff();
     }
-    return () => {};
   }, [internet]);
 
   useEffect(() => {

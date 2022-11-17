@@ -438,10 +438,14 @@ function Home(props) {
 
   const socket = store.General.socket;
 
+  const SocketOff = () => {};
+
   useEffect(() => {
     store.General.setSocket(io(db.apis.BASE_URL));
+    return () => {
+      SocketOff();
+    };
   }, []);
-
   useEffect(() => {
     socket.on('message', d => {
       console.log('socket on Home call and refresh  inboxes ');

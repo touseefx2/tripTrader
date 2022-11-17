@@ -1166,12 +1166,16 @@ class userv {
       });
   };
 
+  @action SocketOff = () => {};
+
   @action SendSecodMessage = (body, cid, suc) => {
     let uid = body.sendBy;
     let username = store.User.user.firstName + ' ' + store.User.user.lastName;
     let msg = body.message;
 
-    const socket = store.General.socket;
+    const socket = io(db.apis.BASE_URL);
+    let rn = cid;
+    socket.emit('joinRoom', {username, roomName: rn});
 
     let userDetails = {
       userId: uid,
@@ -1185,6 +1189,7 @@ class userv {
 
     this.sethomeModalLoder(false);
     suc(true);
+    this.SocketOff();
   };
 
   @action SendReportUser = (body, suc) => {

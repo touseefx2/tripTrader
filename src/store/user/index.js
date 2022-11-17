@@ -388,7 +388,7 @@ class user {
       });
   };
 
-  @action attemptToGetAllMessages = (uid, setgetdata, setData) => {
+  @action attemptToGetAllMessages = (uid, rid,setgetdata, setData) => {
     console.log('GetAllMessages: ', 'true');
     this.setmessagesLoader(true);
 
@@ -404,7 +404,9 @@ class user {
         let dt = resp.data.data || [];
         setgetdata(true);
         setData(dt);
-        this.attemptToReadAllMessages(params);
+
+        let p= uid + '/'+rid
+        this.attemptToReadAllMessages(p);
       })
       .catch(err => {
         this.setmessagesLoader(false);
@@ -1232,13 +1234,16 @@ class user {
       });
   };
 
+  @action SocketOff = () => {};
+
   @action SendSecodMessage = (body, cid, suc) => {
     let uid = body.sendBy;
     let username = store.User.user.firstName + ' ' + store.User.user.lastName;
     let msg = body.message;
 
-    const socket = store.General.socket;
-
+    const socket = io(db.apis.BASE_URL);
+    let rn = cid;
+    socket.emit('joinRoom', {username, roomName: rn});
     let userDetails = {
       userId: uid,
       roomName: cid,
@@ -1246,11 +1251,10 @@ class user {
       message: msg,
       type: 'text',
     };
-    // console.log('ud : ', userDetails);
     socket.emit('chat', {userDetails});
-
     this.sethomeModalLoder(false);
     suc(true);
+    this.SocketOff();
   };
 
   @action attemptToOtherUserMessageSend = (obj, suc) => {
