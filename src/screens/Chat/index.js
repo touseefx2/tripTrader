@@ -136,7 +136,11 @@ function Chat(props) {
   useEffect(() => {
     return () => {
       if (internet) {
-        store.User.attemptToGetInboxes(store.User.user._id, () => {});
+        let p = obj.roomName + '/' + rid;
+        store.User.attemptToReadAllMessages(p);
+        setTimeout(() => {
+          store.User.attemptToGetInboxes(store.User.user._id, () => {});
+        }, 500);
       }
     };
   }, [internet]);
