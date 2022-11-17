@@ -104,6 +104,21 @@ function Chat(props) {
     let rn = obj.roomName;
     socket.emit('joinRoom', {username, roomName: rn});
   };
+  useEffect(() => {
+    socket.on('message', d => {
+      console.log('socket on  reciver message in chat data ', d.message);
+      let temp = ndata.current;
+      console.log('temp befor :  ', temp.length);
+      temp.push(d);
+      console.log('temp after :  ', temp.length);
+      setdata([...temp]);
+      scrollToBottom();
+
+      let p = obj.roomName + '/' + rid;
+      store.User.attemptToReadAllMessages(p);
+      return;
+    });
+  }, [socket]);
 
   useEffect(() => {
     return () => {
@@ -126,19 +141,6 @@ function Chat(props) {
       }, 1000);
     }
   }, [getDataOnce]);
-
-  useEffect(() => {
-    socket.on('message', d => {
-      console.log('socket on  reciver message in chat data ', d.message);
-      let temp = ndata.current;
-      console.log('temp befor :  ', temp.length);
-      temp.push(d);
-      console.log('temp after :  ', temp.length);
-      setdata([...temp]);
-      scrollToBottom();
-      return;
-    });
-  }, [socket]);
 
   const scrollToBottom = () => {
     scrollRef?.current?.scrollToEnd({animated: true});
