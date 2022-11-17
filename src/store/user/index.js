@@ -4,7 +4,7 @@ import store from '../index';
 import NetInfo from '@react-native-community/netinfo';
 import db from '../../database/index';
 import {Alert} from 'react-native';
-
+import io from 'socket.io-client';
 class user {
   constructor() {
     makeObservable(this);
