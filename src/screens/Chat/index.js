@@ -141,6 +141,13 @@ function Chat(props) {
     };
   }, []);
   useEffect(() => {
+    return () => {
+      if (internet) {
+        store.User.attemptToGetInboxes(store.User.user._id, () => {});
+      }
+    };
+  }, [internet]);
+  useEffect(() => {
     if (internet) {
       onRefresh();
       joinSocket();
