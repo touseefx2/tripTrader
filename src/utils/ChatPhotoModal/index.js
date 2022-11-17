@@ -41,6 +41,8 @@ function ChatPhotoModal(props) {
   let isShowPrmsn = props.isShowPrmsn;
   let prmsnChk = props.prmsnChk;
   let DT = 'ChatPhotos';
+  let maxPhotos = 6;
+  let photos = props.photos;
 
   const setisAddPhotoModal = c => {
     props.isAddPhotoModal(c);
@@ -53,6 +55,9 @@ function ChatPhotoModal(props) {
   };
   const closeAddPhotoModal = () => {
     props.ClosePhotoModal();
+  };
+  const setphotos = c => {
+    props.setphotos(c);
   };
 
   const MultipleImage = async button => {
@@ -96,7 +101,6 @@ function ChatPhotoModal(props) {
           });
       }
     } catch (error) {
-      setisAddPhotoModal(false);
       console.log('multi photo picker error : ', error);
     }
   };
@@ -166,7 +170,7 @@ function ChatPhotoModal(props) {
           }
 
           if (reqPer2 == 'granted') {
-            props.onclickImage(DT);
+            onclickImage(DT);
           }
         }
       } catch (error) {
@@ -228,7 +232,7 @@ function ChatPhotoModal(props) {
         if (reqPer == 'granted') {
           const reqPer2 = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
           if (reqPer2 == 'granted') {
-            props.onclickImage(DT);
+            onclickImage(DT);
           }
         }
       } catch (error) {
@@ -248,7 +252,7 @@ function ChatPhotoModal(props) {
         setisShowPrmsn(true);
         setprmsnChk(c);
       } else {
-        props.onclickImage(DT);
+        onclickImage(DT);
       }
     }
 
@@ -314,18 +318,279 @@ function ChatPhotoModal(props) {
     );
   };
 
+  const renderShowPhotos = () => {
+    let p = photos.map((e, i, a) => {
+      let uri = e.uri ? e.uri : e;
+      let c = e.uri ? true : false;
+      const renderPhotoCross = () => {
+        return (
+          <Pressable
+            style={({pressed}) => [
+              {opacity: pressed ? 0.7 : 1.0},
+              styles.crossContainer,
+            ]}
+            onPress={() => openDeleteModal({uri: e.uri ? e.uri : e, i: i})}>
+            <Image
+              source={require('../../assets/images/cross/img.png')}
+              style={{width: 9, height: 9, resizeMode: 'contain'}}
+            />
+          </Pressable>
+        );
+      };
+      return (
+        <>
+          {a.length == maxPhotos && (
+            <Pressable
+              // onPress={() => photoClick(i)}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.9 : 1.0},
+                [styles.addImgContainer, {marginTop: 15}],
+              ]}>
+              {!c && (
+                <ProgressiveFastImage
+                  style={styles.addImg}
+                  source={{uri: uri}}
+                  loadingImageStyle={styles.imageLoader}
+                  loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
+                  blurRadius={3}
+                />
+              )}
+              {c && <Image style={styles.addImg} source={{uri: uri}} />}
+
+              {renderPhotoCross()}
+            </Pressable>
+          )}
+
+          {a.length < maxPhotos && (
+            <>
+              <Pressable
+                // onPress={() => photoClick(i)}
+                style={({pressed}) => [
+                  {opacity: pressed ? 0.9 : 1.0},
+                  [styles.addImgContainer, {marginTop: 15}],
+                ]}>
+                {!c && (
+                  <ProgressiveFastImage
+                    style={styles.addImg}
+                    source={{uri: uri}}
+                    loadingImageStyle={styles.imageLoader}
+                    loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
+                    blurRadius={3}
+                  />
+                )}
+                {c && <Image style={styles.addImg} source={{uri: uri}} />}
+                {renderPhotoCross()}
+              </Pressable>
+
+              {i == a.length - 1 && (
+                <Pressable
+                  onPress={() => {
+                    setisAddPhotoModal(true);
+                  }}
+                  style={({pressed}) => [
+                    {opacity: pressed ? 0.8 : 1.0},
+                    [
+                      styles.addImgContainer,
+                      {
+                        marginTop: 15,
+                        borderStyle: 'dashed',
+                        borderColor: theme.color.button1,
+                        backgroundColor: '#F2F3F1',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      },
+                    ],
+                  ]}>
+                  <utils.vectorIcon.Feather
+                    name="plus"
+                    color={theme.color.button1}
+                    size={24}
+                  />
+                </Pressable>
+              )}
+            </>
+          )}
+        </>
+      );
+    });
+
+    return p;
+  };
+
   return (
     <Modal
       isVisible={isAddPhotoModal}
       backdropOpacity={1}
-      backdropColor="white"
-      animationIn="fadeIn"
-      animationOut="fadeOut"
+      backdropColor="rgba(0,0,0,0.6)"
+      animationIn="slideInLeft"
+      animationOut="slideOutRight"
       coverScreen={false}
-      deviceHeight={Dimensions.get('screen').height}
+      deviceWidth={theme.window.Width}
+      deviceHeight={theme.window.Height}
       style={{padding: 0, margin: 0}}
       onBackButtonPress={closeAddPhotoModal}>
-      <SafeAreaView style={styles.modalContainerp}></SafeAreaView>
+      <SafeAreaView style={styles.modalContainerp}>
+        <View style={[styles.modalp]}>
+          {!isShowPrmsn && (
+            <>
+              <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                <Text style={styles.section2Title1}>Add chat photos</Text>
+              </View>
+
+              <View style={{marginTop: 10}}>
+                <Text style={styles.section2Title2}>
+                  Please added photos to send in chat
+                </Text>
+              </View>
+
+              <View style={styles.fieldContainer}>
+                {photos.length <= 0 && (
+                  <TouchableOpacity
+                    onPress={() => checkPermsn('gallery')}
+                    activeOpacity={0.7}
+                    style={{
+                      width: '80%',
+                      alignSelf: 'center',
+                      borderRadius: 12,
+                      borderWidth: 2,
+                      borderStyle: 'dashed',
+                      borderColor: theme.color.button1,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: 10,
+                      height: 60,
+                      backgroundColor: '#F2F3F1',
+                    }}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <Image
+                        source={require('../../assets/images/add_photo/img.png')}
+                        style={{
+                          width: 24,
+                          height: 24,
+                          resizeMode: 'contain',
+                          marginRight: 10,
+                        }}
+                      />
+
+                      <Text
+                        style={[
+                          styles.fieldText2,
+                          {
+                            fontFamily: theme.fonts.fontBold,
+                            fontSize: 14,
+                            color: theme.color.button1,
+                          },
+                        ]}>
+                        Add Photos
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                )}
+                {/* {photos.length > 0 && (
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                flexShrink: 1,
+                flexWrap: 'wrap',
+              }}>
+              {renderShowPhotos()}
+            </View>
+          )} */}
+              </View>
+
+              {/* <View style={styles.uploadIndication}>
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => {
+                      checkPermsn('gallery');
+                    }}>
+                    <Image
+                      source={require('../../assets/images/uploadphoto/img.png')}
+                      style={styles.uploadIndicationLogo}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => {
+                      checkPermsn('camera');
+                    }}>
+                    <Image
+                      source={require('../../assets/images/takephoto/img.png')}
+                      style={styles.uploadIndicationLogo}
+                    />
+                  </TouchableOpacity>
+                </View> */}
+
+              <TouchableOpacity
+                onPress={closeAddPhotoModal}
+                activeOpacity={0.7}
+                style={{
+                  marginTop: 40,
+                  width: '100%',
+                  height: 48,
+                  borderRadius: 12,
+                  backgroundColor: '#B93B3B',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                }}>
+                <Text
+                  style={[
+                    styles.buttonTextBottom,
+                    {
+                      color: theme.color.buttonText,
+                      fontFamily: theme.fonts.fontMedium,
+                    },
+                  ]}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            </>
+          )}
+          {isShowPrmsn && (
+            <>
+              <View
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text style={styles.section2Title1}>
+                  {prmsnChk == 'camera' ? 'Camera Access' : 'Storage Access'}
+                </Text>
+
+                <Image
+                  source={
+                    prmsnChk == 'camera'
+                      ? require('../../assets/images/ca/img.png')
+                      : require('../../assets/images/ca/img.png')
+                  }
+                  style={styles.section2Logo}
+                />
+
+                <View style={{width: '80%', alignSelf: 'center'}}>
+                  <Text
+                    style={[
+                      styles.section2LogoTitle,
+                      {
+                        textAlign: 'center',
+                      },
+                    ]}>
+                    {prmsnChk == 'camera'
+                      ? 'Trip Trader wants permission to access your camera.'
+                      : 'Trip Trader wants permission to access your storage.'}
+                  </Text>
+                </View>
+
+                <Text style={styles.section2LogoTitlee}>Grant access?</Text>
+              </View>
+
+              {renderButtonPermission()}
+            </>
+          )}
+          {/* {renderCross()} */}
+        </View>
+      </SafeAreaView>
     </Modal>
   );
 }

@@ -56,12 +56,12 @@ function Chat(props) {
     setmessage('');
   };
   const [pmessage, setpmessage] = useState('');
-  const [photo, setphoto] = useState([]);
+  const [photos, setphotos] = useState([]);
   const ClosePhotoModal = () => {
     if (!isShowPrmsn) {
       setisAddPhotoModal(false);
       setpmessage('');
-      setphoto([]);
+      setphotos([]);
     } else {
       setisShowPrmsn(false);
     }
@@ -512,7 +512,7 @@ function Chat(props) {
           roomName: obj.roomName,
           username: user.firstName + ' ' + user.lastName,
           message: !isAddPhotoModal ? message : pmessage,
-          image: photo,
+          image: photos,
           type: !isAddPhotoModal ? 'text' : 'image',
         };
         // console.log('ud : ', userDetails);
@@ -668,6 +668,8 @@ function Chat(props) {
             setisSowPrmsn={c => setisShowPrmsn(c)}
             setprmsnChk={c => setprmsnChk(c)}
             ClosePhotoModal={() => ClosePhotoModal()}
+            photos={photos}
+            setphotos={c => setphotos(c)}
           />
         )}
 

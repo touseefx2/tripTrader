@@ -216,18 +216,10 @@ export const styles = StyleSheet.create({
     textTransform: 'capitalize',
   },
 
-  section2Title1: {
-    color: theme.color.title,
-    fontSize: 20,
-    fontFamily: theme.fonts.fontBold,
-    alignSelf: 'center',
-    textTransform: 'capitalize',
-  },
   section2Title2: {
-    color: theme.color.buttonText,
-    fontSize: 16,
+    color: theme.color.subTitleLight,
+    fontSize: 14,
     fontFamily: theme.fonts.fontNormal,
-    marginTop: 10,
     alignSelf: 'center',
   },
   section3: {
@@ -321,13 +313,7 @@ export const styles = StyleSheet.create({
     alignSelf: 'center',
     textTransform: 'capitalize',
   },
-  section2Title2: {
-    color: theme.color.buttonText,
-    fontSize: 16,
-    fontFamily: theme.fonts.fontNormal,
-    marginTop: 10,
-    alignSelf: 'center',
-  },
+
   section3: {
     paddingHorizontal: 20,
     paddingBottom: 20,
@@ -705,27 +691,27 @@ export const styles = StyleSheet.create({
 
   modalContainerp: {
     flex: 1,
-    backgroundColor: 'transparent',
+
     alignItems: 'center',
     justifyContent: 'center',
   },
 
   modalp: {
-    width: '70%',
-    height: 400,
+    width: '85%',
     padding: 20,
     alignSelf: 'center',
     backgroundColor: theme.color.background,
     borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
 
-    elevation: 3,
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 1,
+    // },
+    // shadowOpacity: 0.22,
+    // shadowRadius: 2.22,
+
+    // elevation: 3,
   },
 
   section2LogoTitlee: {
@@ -753,5 +739,9 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: theme.fonts.fontBold,
     textTransform: 'capitalize',
+  },
+  fieldContainer: {
+    width: '100%',
+    marginTop: 30,
   },
 });
