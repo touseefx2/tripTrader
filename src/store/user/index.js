@@ -403,9 +403,6 @@ class user {
         let dt = resp.data.data || [];
         setgetdata(true);
         setData(dt);
-
-        let p = uid + '/' + rid;
-        this.attemptToReadAllMessages(p);
       })
       .catch(err => {
         this.setmessagesLoader(false);

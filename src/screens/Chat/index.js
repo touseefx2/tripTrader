@@ -100,6 +100,10 @@ function Chat(props) {
           setGetDataOnce,
           c => setdata(c),
         );
+        setTimeout(() => {
+          let p = obj.roomName + '/' + rid;
+          store.User.attemptToReadAllMessages(p);
+        }, 1000);
       } else {
         setrefeshing(false);
       }
