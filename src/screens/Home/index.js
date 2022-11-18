@@ -1327,7 +1327,13 @@ function Home(props) {
       return (
         <View style={styles.boxSection4}>
           <Pressable
-            onPress={() => onClickMakeOffer(item, index)}
+            onPress={() => {
+              if (store.User.user.subscriptionStatus == 'freemium') {
+                Alert.alert('', 'You  using free plan. Please subscribe plan ');
+              } else {
+                onClickMakeOffer(item, index);
+              }
+            }}
             style={({pressed}) => [
               {opacity: pressed ? 0.9 : 1.0},
               styles.sec4B,

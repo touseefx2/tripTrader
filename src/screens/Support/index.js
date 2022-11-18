@@ -109,10 +109,12 @@ function Support(props) {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         let body = {
+          title: topic.title,
           subject: subject,
           description: desc,
-          topic: topic.title,
+          email: store.User.user.email,
         };
+
         store.User.submitSupport(body, Suc);
       } else {
         // seterrorMessage('Please connect internet');
@@ -483,7 +485,7 @@ function Support(props) {
           focusScreen={store.General.focusScreen}
         />
       </SafeAreaView>
-
+      <utils.Loader load={loader} />
       <Toast ref={toast} position="bottom" />
     </View>
   );

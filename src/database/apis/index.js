@@ -40,7 +40,7 @@ const EDIT_REVIEW = 'api/review/updateAReview/';
 const DELETE_REVIEW = 'api/review/deleteAReview/';
 const DELETE_MY_REVIEW = 'api/review/';
 const DISPUTE_REVIEW = 'api/review/';
-const SUBMIT_SUPPORT = '';
+const SUBMIT_SUPPORT = 'api/support';
 const GET_ALL_HOME_TRIPS = 'api/trip/search?';
 const GET_ALL_HOME_TRIPS_GUEST = 'api/trip?status=active';
 

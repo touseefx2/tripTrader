@@ -970,7 +970,10 @@ function NewTrips(props) {
           },
           availableFrom: isSelDate1,
           availableTo: isSelDate2,
-          status: status,
+          status:
+            store.User.user.subscriptionStatus == 'freemium'
+              ? 'suspended'
+              : status,
           photos: photos,
           unAvailableDays: objct,
           location: location == false ? {} : location,
@@ -3768,8 +3771,12 @@ function NewTrips(props) {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => {
-            setmodalChk(!ch ? 'suspend' : 'activate');
-            setisModal(true);
+            if (store.User.user.subscriptionStatus == 'freemium') {
+              Alert.alert('', 'You  using free plan. Please subscribe plan ');
+            } else {
+              setmodalChk(!ch ? 'suspend' : 'activate');
+              setisModal(true);
+            }
           }}
           style={[bc, {backgroundColor: theme.color.button2}]}>
           <Text

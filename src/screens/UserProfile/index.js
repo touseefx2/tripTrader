@@ -232,7 +232,9 @@ function UserProfile(props) {
     Keyboard.dismiss();
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.Userv.BlockUser(closeBottomSheet);
+        store.Userv.BlockUser(closeBottomSheet, () => {
+          props.navigation.goBack();
+        });
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');

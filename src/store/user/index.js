@@ -3096,32 +3096,31 @@ class user {
     console.warn('submitSupport body : ', bd);
     this.setregLoader(true);
 
-    setTimeout(() => {
-      this.setregLoader(false);
-      suc();
-    }, 1000);
+    db.hitApi(db.apis.SUBMIT_SUPPORT, 'post', bd, this.authToken)
+      ?.then(resp => {
+        this.setregLoader(false);
+        console.log(
+          `response submitSupport  ${db.apis.SUBMIT_SUPPORT} : `,
+          resp.data,
+        );
 
-    // db.hitApi(db.apis.SUBMIT_SUPPORT + uid, 'put', bd, token)
-    //   ?.then(resp => {
-    //     this.setregLoader(false);
-    //     console.log(
-    //       `response submitSupport  ${db.apis.SUBMIT_SUPPORT  } : `,
-    //       resp.data,
-    //     );
-
-    //   })
-    //   .catch(err => {
-    //     this.setregLoader(false);
-    //     let msg = err.response.data.message || err.response.status || err;
-    //     console.log(`Error in submitSupport  ${db.apis.SUBMIT_SUPPORT} : `, msg);
-    //     if (msg == 503 || msg == 500) {
-    //       Alert.alert('', 'Server not response');
-    //       // store.General.setisServerError(true);
-    //       return;
-    //     }
-    //     // seterror(msg.toString())
-    //     Alert.alert('', msg.toString());
-    //   });
+        suc();
+      })
+      .catch(err => {
+        this.setregLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in submitSupport  ${db.apis.SUBMIT_SUPPORT} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
   }
 
   @action.bound
