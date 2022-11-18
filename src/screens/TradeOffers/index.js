@@ -69,6 +69,15 @@ function TradeOffers(props) {
   });
 
   useEffect(() => {
+    if (store.User.user == 'guest') {
+      Alert.alert(
+        'Limited Guest Access',
+        'This feature is only available to members.Please sign in or create an account.',
+      );
+    }
+  }, []);
+
+  useEffect(() => {
     store.User.setOfferProfileProps(props);
     if (user && user !== 'guest') {
       setTimeout(() => {

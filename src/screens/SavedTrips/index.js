@@ -920,6 +920,15 @@ function SavedTrips(props) {
     openModal({item: dt, i: ind}, 'tripRemove');
   };
 
+  useEffect(() => {
+    if (store.User.user == 'guest') {
+      Alert.alert(
+        'Limited Guest Access',
+        'This feature is only available to members.Please sign in or create an account.',
+      );
+    }
+  }, []);
+
   const ItemView = ({item, index}) => {
     let usr = item.hostId;
     //user
@@ -1151,7 +1160,10 @@ function SavedTrips(props) {
           <Pressable
             onPress={() => {
               if (store.User.user.subscriptionStatus == 'freemium') {
-                Alert.alert('', 'You  using free plan. Please subscribe plan ');
+                Alert.alert(
+                  'Limit Member access',
+                  'This feature is only availble for subscribed members Please subscribe to our plan and enjoy limitless service.',
+                );
               } else {
                 onClickMakeOffer(item, index);
               }
@@ -1164,7 +1176,16 @@ function SavedTrips(props) {
           </Pressable>
 
           <Pressable
-            onPress={() => onClickMessage(item, index)}
+            onPress={() => {
+              if (store.User.user.subscriptionStatus == 'freemium') {
+                Alert.alert(
+                  'Limit Member access',
+                  'This feature is only availble for subscribed members Please subscribe to our plan and enjoy limitless service.',
+                );
+              } else {
+                onClickMessage(item, index);
+              }
+            }}
             style={({pressed}) => [
               {opacity: pressed ? 0.9 : 1.0},
               [styles.sec4B, {backgroundColor: theme.color.button2}],

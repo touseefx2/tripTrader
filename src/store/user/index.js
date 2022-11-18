@@ -868,7 +868,8 @@ class user {
   // };
 
   @action attemptToGetHomeTripsGuest = setgetdata => {
-    this.setHomeLoader(true);
+    let isaps = store.Search.isApplySearch;
+    let isapf = store.Filters.isFilter;
 
     let query = isaps ? this.titleCase(store.Search.search) : '';
     let r = '';

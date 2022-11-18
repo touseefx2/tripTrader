@@ -64,7 +64,9 @@ function Inbox(props) {
   const refreshing = store.User.ibl;
   const onRefresh = React.useCallback(() => {
     console.warn('onrefresh cal');
-    getDbData();
+    if (user !== 'guest') {
+      getDbData();
+    }
   }, []);
   const getDbData = () => {
     NetInfo.fetch().then(state => {
@@ -80,6 +82,15 @@ function Inbox(props) {
     }
     return () => {};
   }, [internet]);
+
+  useEffect(() => {
+    if (store.User.user == 'guest') {
+      Alert.alert(
+        'Limited Guest Access',
+        'This feature is only available to members.Please sign in or create an account.',
+      );
+    }
+  }, []);
 
   const onclickSearchBar = () => {};
 

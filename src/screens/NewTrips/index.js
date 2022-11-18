@@ -289,6 +289,16 @@ function NewTrips(props) {
     setmodalHeight(0);
   };
 
+  useEffect(() => {
+    if (store.User.user == 'guest') {
+      Alert.alert(
+        'Limited Guest Access',
+        'This feature is only available to members.Please sign in or create an account.',
+        [{text: 'OK', onPress: () => props.navigation.goBack()}],
+      );
+    }
+  }, []);
+
   let loader = store.User.ctripsLoader;
 
   useEffect(() => {
@@ -3772,7 +3782,10 @@ function NewTrips(props) {
           activeOpacity={0.8}
           onPress={() => {
             if (store.User.user.subscriptionStatus == 'freemium') {
-              Alert.alert('', 'You  using free plan. Please subscribe plan ');
+              Alert.alert(
+                'Limit Member access',
+                'This feature is only availble for subscribed members Please subscribe to our plan and enjoy limitless service.',
+              );
             } else {
               setmodalChk(!ch ? 'suspend' : 'activate');
               setisModal(true);

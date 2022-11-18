@@ -1329,7 +1329,10 @@ function Home(props) {
           <Pressable
             onPress={() => {
               if (store.User.user.subscriptionStatus == 'freemium') {
-                Alert.alert('', 'You  using free plan. Please subscribe plan ');
+                Alert.alert(
+                  'Limit Member access',
+                  'This feature is only availble for subscribed members Please subscribe to our plan and enjoy limitless service.',
+                );
               } else {
                 onClickMakeOffer(item, index);
               }
@@ -1342,7 +1345,16 @@ function Home(props) {
           </Pressable>
 
           <Pressable
-            onPress={() => onClickMessage(item, index)}
+            onPress={() => {
+              if (store.User.user.subscriptionStatus == 'freemium') {
+                Alert.alert(
+                  'Limit Member access',
+                  'This feature is only availble for subscribed members Please subscribe to our plan and enjoy limitless service.',
+                );
+              } else {
+                onClickMessage(item, index);
+              }
+            }}
             style={({pressed}) => [
               {opacity: pressed ? 0.9 : 1.0},
               [styles.sec4B, {backgroundColor: theme.color.button2}],

@@ -497,7 +497,17 @@ function UserProfile(props) {
                   {opacity: pressed ? 0.8 : 1.0},
                   [styles.profileTitle2Conatinerm],
                 ]}
-                onPress={!isFollow ? FollowUser : unFollowUser}>
+                onPress={() => {
+                  if (store.User.user.subscriptionStatus == 'freemium') {
+                    Alert.alert(
+                      'Limit Member access',
+                      'This feature is only availble for subscribed members Please subscribe to our plan and enjoy limitless service.',
+                    );
+                  } else {
+                    if (!isFollow) FollowUser();
+                    else unFollowUser();
+                  }
+                }}>
                 <Text style={styles.profileTitle2ConatinerTitle2m}>
                   {isFollow ? 'Unfollow' : 'Follow'}
                 </Text>
@@ -777,7 +787,14 @@ function UserProfile(props) {
             <View style={{width: '100%'}}>
               <Pressable
                 onPress={() => {
-                  onClickBottomItem('message');
+                  if (store.User.user.subscriptionStatus == 'freemium') {
+                    Alert.alert(
+                      'Limit Member access',
+                      'This feature is only availble for subscribed members Please subscribe to our plan and enjoy limitless service.',
+                    );
+                  } else {
+                    onClickBottomItem('message');
+                  }
                 }}
                 style={({pressed}) => [
                   {opacity: pressed ? touchOpacity : 1.0},
@@ -798,7 +815,17 @@ function UserProfile(props) {
               <Sep />
               <Pressable
                 disabled={loader}
-                onPress={!isBlock ? BlockUser : UnBlockUser}
+                onPress={() => {
+                  if (store.User.user.subscriptionStatus == 'freemium') {
+                    Alert.alert(
+                      'Limit Member access',
+                      'This feature is only availble for subscribed members Please subscribe to our plan and enjoy limitless service.',
+                    );
+                  } else {
+                    if (!isBlock) BlockUser();
+                    else UnBlockUser();
+                  }
+                }}
                 style={({pressed}) => [
                   {opacity: pressed ? touchOpacity : 1.0},
                   itemConStyle,
@@ -818,7 +845,14 @@ function UserProfile(props) {
               <Sep />
               <Pressable
                 onPress={() => {
-                  onClickBottomItem('report');
+                  if (store.User.user.subscriptionStatus == 'freemium') {
+                    Alert.alert(
+                      'Limit Member access',
+                      'This feature is only availble for subscribed members Please subscribe to our plan and enjoy limitless service.',
+                    );
+                  } else {
+                    onClickBottomItem('report');
+                  }
                 }}
                 style={({pressed}) => [
                   {opacity: pressed ? touchOpacity : 1.0},
