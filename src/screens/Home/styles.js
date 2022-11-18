@@ -61,7 +61,7 @@ export const styles = StyleSheet.create({
   },
   SerchBarContainer: {
     width: '100%',
-    height: 48,
+
     borderRadius: 100,
     flexDirection: 'row',
     alignItems: 'center',

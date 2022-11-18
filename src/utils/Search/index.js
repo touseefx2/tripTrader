@@ -43,7 +43,7 @@ function Search(props) {
   let maxModalHeight = 280;
   const closeModal = () => {
     props.setisVisible(false);
-    setSearch('');
+
     setmodalHeight(0);
   };
 
@@ -133,9 +133,15 @@ function Search(props) {
 
       const renderInput = () => {
         return (
-          <View style={{width: '91%'}}>
+          <View style={{width: search == '' ? '91%' : '64%'}}>
             <TextInput
-              onSubmitEditing={() => {}}
+              onSubmitEditing={() => {
+                if (search != '') {
+                  store.Search.isApplySearch(true);
+                } else {
+                  store.Search.isApplySearch(false);
+                }
+              }}
               returnKeyType={'search'}
               style={styles.SerchBarInput}
               placeholder="Search"
@@ -147,10 +153,65 @@ function Search(props) {
         );
       };
 
+      const renderSearchButton = () => {
+        return (
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={{
+              width: '22%',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: theme.color.button2,
+              borderBottomRightRadius: 100,
+              borderTopRightRadius: 100,
+              height: '100%',
+            }}
+            onPress={() => {
+              store.Search.isApplySearch(false);
+            }}>
+            <Text
+              style={{
+                fontSize: 13.5,
+                color: theme.color.button1,
+                fontFamily: theme.fonts.fontMedium,
+              }}>
+              Search
+            </Text>
+          </TouchableOpacity>
+        );
+      };
+
+      const renderCrossButton = () => {
+        return (
+          <TouchableOpacity
+            onPress={() => setSearch('')}
+            activeOpacity={0.8}
+            style={{
+              width: '6%',
+              alignItems: 'center',
+              justifyContent: 'center',
+
+              height: '100%',
+            }}>
+            <utils.vectorIcon.AntDesign
+              name="close"
+              size={20}
+              color={theme.color.subTitle}
+            />
+          </TouchableOpacity>
+        );
+      };
+
       return (
         <View style={styles.SerchBarContainer}>
           {renderSearchIcon()}
           {renderInput()}
+          {search != '' && (
+            <>
+              {renderCrossButton()}
+              {renderSearchButton()}
+            </>
+          )}
         </View>
       );
     };

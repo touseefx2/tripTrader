@@ -41,7 +41,7 @@ const DELETE_REVIEW = 'api/review/deleteAReview/';
 const DELETE_MY_REVIEW = 'api/review/';
 const DISPUTE_REVIEW = 'api/review/';
 const SUBMIT_SUPPORT = '';
-const GET_ALL_HOME_TRIPS = 'api/trip/search?blockedUsers=';
+const GET_ALL_HOME_TRIPS = 'api/trip/search?';
 const GET_ALL_HOME_TRIPS_GUEST = 'api/trip?status=active';
 
 const GET_STATE = 'api/state?status=active';

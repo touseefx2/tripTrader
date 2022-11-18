@@ -7,6 +7,10 @@ class search {
     makeObservable(this);
   }
 
+  @observable isApplySearch = false;
+  @action setisApplySearch = obj => {
+    this.isApplySearch = obj;
+  };
   @observable search = '';
   @action setSearch = obj => {
     this.search = obj;
@@ -24,8 +28,8 @@ class search {
     this.popularSearch = obj;
   };
 
-  @persist('object') @observable recentSearch = [];
   // @observable recentSearch = ['Fishing', 'Hunting', 'Stays'];
+  @persist('object') @observable recentSearch = [];
   @action setrecentSearch = obj => {
     this.recentSearch = obj;
   };

@@ -1344,11 +1344,11 @@ function Home(props) {
 
     const renderInput = () => {
       return (
-        <View style={{width: '87%'}}>
+        <View style={{width: '88%', paddingVertical: 10}}>
           <Text
             style={{
-              fontSize: 16,
-              top: -2,
+              fontSize: 15.5,
+
               color: theme.color.subTitleLight,
             }}>
             Search
@@ -1376,7 +1376,6 @@ function Home(props) {
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-
                 width: '80%',
               },
             ]}
@@ -1385,8 +1384,14 @@ function Home(props) {
             {renderInput()}
           </Pressable>
           <Pressable
-            style={({pressed}) => [{opacity: pressed ? 0.7 : 1}]}
-            onPress={onclickFilter}>
+            style={({pressed}) => [
+              {
+                opacity: pressed ? 0.7 : 1,
+                paddingVertical: 10,
+              },
+            ]}
+            // onPress={onclickFilter}
+            onPress={onclickSearchBar}>
             {renderFilter()}
           </Pressable>
         </View>

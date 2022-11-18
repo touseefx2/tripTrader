@@ -48,7 +48,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 18,
+    paddingLeft: 18,
     backgroundColor: theme.color.background,
     shadowColor: 'rgba(0, 0, 0, 0.2)',
     shadowOffset: {
@@ -65,6 +65,7 @@ export const styles = StyleSheet.create({
     width: 18,
     height: 18,
     resizeMode: 'contain',
+    top: -1,
   },
   SerchBarInput: {
     width: '100%',

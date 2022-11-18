@@ -723,23 +723,30 @@ class user {
   };
 
   @action attemptToGetHomeTripsSearch = (setgetdata, bu, c) => {
-    console.warn('Get AllHomeTrip : ', 'true');
     this.setHomeLoader(true);
-
+    let r = '';
+    let us = '';
+    let loc = '';
+    let spsc = '';
+    let query = '';
+    let act = '';
     let b = this.user._id;
     if (bu.length > 0) {
       bu.map((e, i, a) => {
         b = b + ',' + e.userId._id;
       });
     }
-    console.log('blockUsers : ', b);
 
-    db.hitApi(db.apis.GET_ALL_HOME_TRIPS + b, 'get', {}, this.authToken)
+    let params = `rating=${r}&userStatus=${us}&location=${loc}&species=${spsc}&query=${query}&activity=${act}&blockedUsers=${b}`;
+
+    console.log('Get AllHomeTrip : ', db.apis.GET_ALL_HOME_TRIPS + params);
+
+    db.hitApi(db.apis.GET_ALL_HOME_TRIPS + params, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setHomeLoader(false);
 
         console.log(
-          `response Get AllHomeTrip   ${db.apis.GET_ALL_HOME_TRIPS}${b} : `,
+          `response Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS}  : `,
           resp.data,
         );
         let dt = resp.data.data;
@@ -757,7 +764,7 @@ class user {
 
         let msg = err.response.data.message || err.response.status || err;
         console.log(
-          `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS}${b}: `,
+          `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS} }: `,
           msg,
         );
         if (msg == 503 || msg == 500) {

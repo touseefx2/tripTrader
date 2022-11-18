@@ -960,7 +960,7 @@ function NewTrips(props) {
           hostId: store.User.user._id,
           tradeType: tripType.name,
           species: species.name,
-
+          featuredDate: new Date(),
           returnActivity: titleCase(Return),
           title: title,
           acceptTradeOffers: acceptOther,
