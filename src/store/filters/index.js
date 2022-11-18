@@ -76,7 +76,7 @@ class filters {
   @action clearAllFilters = () => {
     this.settripType([
       {name: 'Most Recent', isSel: false},
-      {name: 'Most Recent', isSel: false},
+      {name: 'Highest Rated', isSel: false},
       {name: 'Hunting', isSel: false},
       {name: 'Fishing', isSel: false},
     ]);

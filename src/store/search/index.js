@@ -39,10 +39,17 @@ class search {
     this.Loader = obj;
   };
 
+  @action clearSelSearches = () => {
+    this.setSearch('');
+
+    this.setisApplySearch(false);
+  };
+
   @action clearSearches = () => {
     this.setSearch('');
     // this.setpopularSearch([]);
     this.setrecentSearch([]);
+    this.setisApplySearch(false);
   };
 }
 export const Search = new search();

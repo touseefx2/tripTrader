@@ -12,6 +12,7 @@ import {
   TextInput,
   Pressable,
   FlatList,
+  Alert,
 } from 'react-native';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
@@ -34,19 +35,6 @@ function Sep(props) {
 }
 
 function Search(props) {
-  const [isShowFilters, setisShowFilters] = useState(false);
-  const [rfrsh, setrfrsh] = useState(false);
-  const [modalHeight, setmodalHeight] = useState(0);
-  let activeOpacity = 0.8;
-  let headerTitle = 'Search';
-  let isModalVisible = props.isVisible;
-  let maxModalHeight = 280;
-  const closeModal = () => {
-    props.setisVisible(false);
-
-    setmodalHeight(0);
-  };
-
   let search = store.Search.search;
   const setSearch = c => {
     store.Search.setSearch(c);
@@ -60,6 +48,31 @@ function Search(props) {
     store.Search.setpopularSearch(c);
   };
 
+  const [isShowFilters, setisShowFilters] = useState(false);
+  const [rfrsh, setrfrsh] = useState(false);
+  const [modalHeight, setmodalHeight] = useState(0);
+
+  const [s, sets] = useState('');
+
+  let isApplySearch = store.Search.isApplySearch;
+
+  let activeOpacity = 0.8;
+  let headerTitle = 'Search';
+  let isModalVisible = props.isVisible;
+  let maxModalHeight = 280;
+
+  useEffect(() => {
+    if (isApplySearch) {
+      sets(search);
+    }
+  }, [isApplySearch]);
+
+  const closeModal = () => {
+    props.setisVisible(false);
+    sets('');
+    setmodalHeight(0);
+  };
+
   const renderStatusBar = () => {
     return (
       <>
@@ -70,6 +83,18 @@ function Search(props) {
         />
       </>
     );
+  };
+
+  const onClickSearch = () => {
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.Search.setisApplySearch(true);
+        setSearch(s);
+        closeModal();
+      } else {
+        Alert.alert('', 'Please connect internet');
+      }
+    });
   };
 
   const renderContent = () => {
@@ -133,21 +158,19 @@ function Search(props) {
 
       const renderInput = () => {
         return (
-          <View style={{width: search == '' ? '91%' : '64%'}}>
+          <View style={{width: s == '' ? '91%' : '64%'}}>
             <TextInput
               onSubmitEditing={() => {
-                if (search != '') {
-                  store.Search.isApplySearch(true);
-                } else {
-                  store.Search.isApplySearch(false);
+                if (s != '') {
+                  onClickSearch();
                 }
               }}
               returnKeyType={'search'}
               style={styles.SerchBarInput}
               placeholder="Search"
               placeholderTextColor={theme.color.subTitleLight}
-              value={search}
-              onChangeText={t => setSearch(t)}
+              value={s}
+              onChangeText={t => sets(t)}
             />
           </View>
         );
@@ -167,7 +190,7 @@ function Search(props) {
               height: '100%',
             }}
             onPress={() => {
-              store.Search.isApplySearch(false);
+              onClickSearch();
             }}>
             <Text
               style={{
@@ -184,8 +207,8 @@ function Search(props) {
       const renderCrossButton = () => {
         return (
           <TouchableOpacity
-            onPress={() => setSearch('')}
-            activeOpacity={0.8}
+            onPress={() => sets('')}
+            activeOpacity={0.6}
             style={{
               width: '6%',
               alignItems: 'center',
@@ -206,7 +229,7 @@ function Search(props) {
         <View style={styles.SerchBarContainer}>
           {renderSearchIcon()}
           {renderInput()}
-          {search != '' && (
+          {s != '' && (
             <>
               {renderCrossButton()}
               {renderSearchButton()}
@@ -393,7 +416,7 @@ function Search(props) {
 
                 styles.itemContainer2,
               ]}
-              onPress={() => setSearch(item)}>
+              onPress={() => sets(item)}>
               <Text
                 style={{
                   fontSize: 14,

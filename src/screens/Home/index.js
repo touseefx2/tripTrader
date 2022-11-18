@@ -345,8 +345,6 @@ function Home(props) {
             'all',
           );
         }
-      } else {
-        setrefeshing(false);
       }
     });
   };
@@ -356,6 +354,14 @@ function Home(props) {
     }
     return () => {};
   }, [getDataOnce, internet]);
+
+  let isApplySrch = store.Search.isApplySearch;
+  useEffect(() => {
+    if (isApplySrch) {
+      onRefresh();
+    }
+    return () => {};
+  }, [isApplySrch]);
 
   const tripdata = store.User.trips;
   const [isDropDownTrip, setisDropDownTrip] = useState(false);
@@ -768,6 +774,26 @@ function Home(props) {
 
   const onclickSearchBar = () => {
     setisShowSearch(true);
+  };
+
+  const onCrossSearchBar = () => {
+    store.Search.clearSelSearches();
+    store.Filters.clearFilters();
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        if (user == 'guest') {
+          store.User.attemptToGetHomeTripsGuest(setGetDataOnce);
+        } else {
+          store.User.attemptToGetHomeTripsSearch(
+            setGetDataOnce,
+            blckUser,
+            'all',
+          );
+        }
+      } else {
+        Alert.alert('Please Connect internet');
+      }
+    });
   };
 
   const onclickFilter = () => {
@@ -1326,9 +1352,13 @@ function Home(props) {
   const ListHeader = () => {
     const renderResult = () => {
       let length = data.length || 0;
+
       return (
         <View style={styles.resultContainer}>
-          <Text style={styles.resultText}>{length} results</Text>
+          <Text style={styles.resultText}>
+            {length} {isApplySrch ? 'search' : ''} result
+            {length > 1 ? 's' : ''}
+          </Text>
         </View>
       );
     };
@@ -1348,10 +1378,12 @@ function Home(props) {
           <Text
             style={{
               fontSize: 14.5,
-              color: theme.color.subTitleLight,
+              color: !isApplySrch
+                ? theme.color.subTitleLight
+                : theme.color.subTitle,
               fontFamily: theme.fonts.fontNormal,
             }}>
-            Search
+            {!isApplySrch ? 'Search' : store.Search.search}
           </Text>
         </View>
       );
@@ -1362,6 +1394,16 @@ function Home(props) {
         <Image
           source={require('../../assets/images/searchBar/filter/img.png')}
           style={styles.Baricon}
+        />
+      );
+    };
+
+    const renderCross = () => {
+      return (
+        <utils.vectorIcon.AntDesign
+          name="close"
+          size={20}
+          color={theme.color.subTitle}
         />
       );
     };
@@ -1392,8 +1434,8 @@ function Home(props) {
               },
             ]}
             // onPress={onclickFilter}
-            onPress={onclickSearchBar}>
-            {renderFilter()}
+            onPress={!isApplySrch ? onclickSearchBar : onCrossSearchBar}>
+            {!isApplySrch ? renderFilter() : renderCross()}
           </Pressable>
         </View>
         {data.length > 0 && renderResult()}

@@ -787,67 +787,77 @@ class user {
       });
   };
 
-  @action attemptToGetHomeTrips = (setgetdata, setrfrsh) => {
-    console.warn('Get AllHomeTrip : ', 'true');
-    this.setHomeLoader(true);
+  // @action attemptToGetHomeTrips = (setgetdata, setrfrsh) => {
+  //   console.warn('Get AllHomeTrip : ', 'true');
+  //   this.setHomeLoader(true);
 
-    db.hitApi(db.apis.GET_ALL_HOME_TRIPS_GUEST, 'get', {}, this.authToken)
-      ?.then(resp => {
-        this.setHomeLoader(false);
-        setrfrsh(false);
-        console.log(
-          `response Get AllHomeTrip   ${db.apis.GET_ALL_HOME_TRIPS} : `,
-          resp.data,
-        );
-        let dt = resp.data.data;
-        let ar = [];
-        if (dt.length > 0) {
-          dt.map((e, i, a) => {
-            if (e.hostId._id != this.user._id) {
-              ar.push(e);
-            }
-          });
-        }
-        this.setHomeTrips(ar);
-        setgetdata(true);
-        this.allGetGeneralData();
-      })
-      .catch(err => {
-        this.setHomeLoader(false);
-        setrfrsh(false);
-        let msg = err.response.data.message || err.response.status || err;
-        console.log(
-          `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS} : `,
-          msg,
-        );
-        if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
-          return;
-        }
-        if (msg == 'No records found') {
-          setgetdata(true);
-          this.setHomeTrips([]);
+  //   db.hitApi(db.apis.GET_ALL_HOME_TRIPS_GUEST, 'get', {}, this.authToken)
+  //     ?.then(resp => {
+  //       this.setHomeLoader(false);
+  //       setrfrsh(false);
+  //       console.log(
+  //         `response Get AllHomeTrip   ${db.apis.GET_ALL_HOME_TRIPS} : `,
+  //         resp.data,
+  //       );
+  //       let dt = resp.data.data;
+  //       let ar = [];
+  //       if (dt.length > 0) {
+  //         dt.map((e, i, a) => {
+  //           if (e.hostId._id != this.user._id) {
+  //             ar.push(e);
+  //           }
+  //         });
+  //       }
+  //       this.setHomeTrips(ar);
+  //       setgetdata(true);
+  //       this.allGetGeneralData();
+  //     })
+  //     .catch(err => {
+  //       this.setHomeLoader(false);
+  //       setrfrsh(false);
+  //       let msg = err.response.data.message || err.response.status || err;
+  //       console.log(
+  //         `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS} : `,
+  //         msg,
+  //       );
+  //       if (msg == 503 || msg == 500) {
+  //         Alert.alert('', 'Server not response');
+  //         // store.General.setisServerError(true);
+  //         return;
+  //       }
+  //       if (msg == 'No records found') {
+  //         setgetdata(true);
+  //         this.setHomeTrips([]);
 
-          this.allGetGeneralData();
+  //         this.allGetGeneralData();
 
-          return;
-        }
-        // seterror(msg.toString())
-        Alert.alert('', msg.toString());
-      });
-  };
+  //         return;
+  //       }
+  //       // seterror(msg.toString())
+  //       Alert.alert('', msg.toString());
+  //     });
+  // };
 
   @action attemptToGetHomeTripsGuest = setgetdata => {
-    console.warn('Get AllHomeTrip : ', 'true');
     this.setHomeLoader(true);
+    let r = '';
+    let us = '';
+    let loc = '';
+    let spsc = '';
+    let query = '';
+    let act = '';
+    let b = '';
 
-    db.hitApi(db.apis.GET_ALL_HOME_TRIPS_GUEST, 'get', {}, this.authToken)
+    let params = `rating=${r}&userStatus=${us}&location=${loc}&species=${spsc}&query=${query}&activity=${act}&blockedUsers=${b}`;
+
+    console.log('Get AllHomeTrip : ', db.apis.GET_ALL_HOME_TRIPS + params);
+
+    db.hitApi(db.apis.GET_ALL_HOME_TRIPS + params, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setHomeLoader(false);
 
         console.log(
-          `response Get AllHomeTrip   ${db.apis.GET_ALL_HOME_TRIPS} : `,
+          `response Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS}  : `,
           resp.data,
         );
         let dt = resp.data.data;
@@ -863,7 +873,7 @@ class user {
 
         let msg = err.response.data.message || err.response.status || err;
         console.log(
-          `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS} : `,
+          `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS} }: `,
           msg,
         );
         if (msg == 503 || msg == 500) {
@@ -875,13 +885,55 @@ class user {
           setgetdata(true);
           this.setHomeTrips([]);
 
-          this.allGetGeneralData();
-
           return;
         }
         // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
+
+    // console.warn('Get AllHomeTrip : ', 'true');
+    // this.setHomeLoader(true);
+
+    // db.hitApi(db.apis.GET_ALL_HOME_TRIPS_GUEST, 'get', {}, this.authToken)
+    //   ?.then(resp => {
+    //     this.setHomeLoader(false);
+
+    //     console.log(
+    //       `response Get AllHomeTrip   ${db.apis.GET_ALL_HOME_TRIPS} : `,
+    //       resp.data,
+    //     );
+    //     let dt = resp.data.data;
+
+    //     this.setHomeTrips(dt);
+    //     setgetdata(true);
+
+    //     this.allGetGeneralData();
+    //     store.Notifications.attemptToGetNotificationsGuest();
+    //   })
+    //   .catch(err => {
+    //     this.setHomeLoader(false);
+
+    //     let msg = err.response.data.message || err.response.status || err;
+    //     console.log(
+    //       `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS} : `,
+    //       msg,
+    //     );
+    //     if (msg == 503 || msg == 500) {
+    //       Alert.alert('', 'Server not response');
+    //       // store.General.setisServerError(true);
+    //       return;
+    //     }
+    //     if (msg == 'No records found') {
+    //       setgetdata(true);
+    //       this.setHomeTrips([]);
+
+    //       this.allGetGeneralData();
+
+    //       return;
+    //     }
+    //     // seterror(msg.toString())
+    //     Alert.alert('', msg.toString());
+    //   });
   };
 
   //
