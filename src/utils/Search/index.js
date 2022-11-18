@@ -90,7 +90,9 @@ function Search(props) {
       if (state.isConnected) {
         setSearch(s);
         store.Search.setisApplySearch(true);
-
+        let dt = [...store.Search.recentSearch];
+        dt.unshift(s);
+        store.Search.setrecentSearch(dt);
         closeModal();
       } else {
         Alert.alert('', 'Please connect internet');
@@ -314,7 +316,7 @@ function Search(props) {
                 },
               ]}>
               <Pressable
-                onPress={() => setSearch(item)}
+                onPress={() => sets(item)}
                 style={({pressed}) => [
                   {
                     opacity: pressed ? activeOpacity : 1,
@@ -326,7 +328,6 @@ function Search(props) {
                     fontSize: 15.64,
                     color: '#101B10',
                     fontFamily: theme.fonts.fontNormal,
-                    textTransform: 'capitalize',
                   }}>
                   {title}
                 </Text>

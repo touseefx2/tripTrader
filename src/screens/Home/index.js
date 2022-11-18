@@ -1424,6 +1424,7 @@ function Home(props) {
       <>
         <View style={styles.SerchBarContainer}>
           <Pressable
+            disabled={isApplySrch}
             style={({pressed}) => [
               {opacity: pressed ? 0.7 : 1},
               {

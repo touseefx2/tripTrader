@@ -722,10 +722,21 @@ class user {
       });
   };
 
+  @action titleCase(str) {
+    var splitStr = str.toLowerCase().split(' ');
+    for (var i = 0; i < splitStr.length; i++) {
+      // You do not need to check if i is larger than splitStr length, as your for does that for you
+      // Assign it back to the array
+      splitStr[i] =
+        splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+    }
+    // Directly return the joined string
+    return splitStr.join(' ');
+  }
+
   @action attemptToGetHomeTripsSearch = (setgetdata, bu, c) => {
     let isaps = store.Search.isApplySearch;
     let isapf = store.Filters.isFilter;
-
     // this.setstripType(false);
     // this.setstripLocation(false);
     // this.setsactivity(false);
@@ -733,16 +744,21 @@ class user {
     // this.setshostRating(0);
     // this.setsvu(false);
     // this.setisFilter(false);
-
-    let query = isaps ? store.Search.search : '';
-    let r = isapf ? store.Filters.shostRating : '';
+    let query = isaps ? this.titleCase(store.Search.search) : '';
+    let r = '';
     let us = '';
+    let loc = '';
+    let spsc = '';
+    let act = '';
     if (isapf) {
+      r = store.Filters.shostRating != 0 ? store.Filters.shostRating : '';
       us = store.Filters.svu == true ? 'verified' : 'notVerified';
+      loc =
+        store.Filters.stripLocation != false ? store.Filters.stripLocation : '';
+      spsc = store.Filters.sspecies != false ? store.Filters.sspecies : '';
+      act = store.Filters.sactivity != false ? store.Filters.sactivity : '';
     }
-    let loc = isapf ? store.Filters.stripLocation : '';
-    let spsc = isapf ? store.Filters.sspecies : '';
-    let act = isapf ? store.Filters.sactivity : '';
+
     let b = this.user._id;
     if (bu.length > 0) {
       bu.map((e, i, a) => {
@@ -777,7 +793,7 @@ class user {
 
         let msg = err.response.data.message || err.response.status || err;
         console.log(
-          `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS} }: `,
+          `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS}${params} }: `,
           msg,
         );
         if (msg == 503 || msg == 500) {
@@ -853,18 +869,28 @@ class user {
 
   @action attemptToGetHomeTripsGuest = setgetdata => {
     this.setHomeLoader(true);
+
+    let query = isaps ? this.titleCase(store.Search.search) : '';
     let r = '';
     let us = '';
     let loc = '';
     let spsc = '';
-    let query = '';
     let act = '';
+    if (isapf) {
+      r = store.Filters.shostRating != 0 ? store.Filters.shostRating : '';
+      us = store.Filters.svu == true ? 'verified' : 'notVerified';
+      loc =
+        store.Filters.stripLocation != false ? store.Filters.stripLocation : '';
+      spsc = store.Filters.sspecies != false ? store.Filters.sspecies : '';
+      act = store.Filters.sactivity != false ? store.Filters.sactivity : '';
+    }
+
     let b = '';
 
     let params = `rating=${r}&userStatus=${us}&location=${loc}&species=${spsc}&query=${query}&activity=${act}&blockedUsers=${b}`;
 
     console.log('Get AllHomeTrip : ', db.apis.GET_ALL_HOME_TRIPS + params);
-
+    this.setHomeLoader(true);
     db.hitApi(db.apis.GET_ALL_HOME_TRIPS + params, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setHomeLoader(false);
