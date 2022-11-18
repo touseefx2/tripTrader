@@ -1348,7 +1348,8 @@ function Home(props) {
           <Text
             style={{
               fontSize: 14,
-              color: theme.color.subTitle,
+              color: theme.color.subTitleLight,
+              fontFamily: theme.fonts.fontNormal,
             }}>
             Search
           </Text>
