@@ -135,6 +135,8 @@ function Search(props) {
         return (
           <View style={{width: '91%'}}>
             <TextInput
+              onSubmitEditing={() => {}}
+              returnKeyType={'search'}
               style={styles.SerchBarInput}
               placeholder="Search"
               placeholderTextColor={theme.color.subTitleLight}

@@ -12,12 +12,20 @@ class search {
     this.search = obj;
   };
 
-  popularSearch = ['Fishing', 'Hunting', 'Stays', 'Bear', 'Deer', 'Birds'];
+  @observable popularSearch = [
+    'Fishing',
+    'Hunting',
+    'Stays',
+    'Bear',
+    'Deer',
+    'Birds',
+  ];
   @action setpopularSearch = obj => {
     this.popularSearch = obj;
   };
 
-  recentSearch = ['Fishing', 'Hunting', 'Stays'];
+  @persist('object') @observable recentSearch = [];
+  // @observable recentSearch = ['Fishing', 'Hunting', 'Stays'];
   @action setrecentSearch = obj => {
     this.recentSearch = obj;
   };
@@ -30,7 +38,7 @@ class search {
   @action clearSearches = () => {
     this.setSearch('');
     // this.setpopularSearch([]);
-    // this.setrecentSearch([]);
+    this.setrecentSearch([]);
   };
 }
 export const Search = new search();

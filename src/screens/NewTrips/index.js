@@ -361,6 +361,7 @@ function NewTrips(props) {
         setlocation(false);
       }
       let spcs = findItm(d.species || '', spcsDt, 'n');
+
       let sd = d.availableFrom;
       let ed = d.availableTo;
       let acceptOtherTrades = d.acceptTradeOffers;
@@ -959,6 +960,7 @@ function NewTrips(props) {
           hostId: store.User.user._id,
           tradeType: tripType.name,
           species: species.name,
+
           returnActivity: titleCase(Return),
           title: title,
           acceptTradeOffers: acceptOther,
@@ -973,6 +975,11 @@ function NewTrips(props) {
           unAvailableDays: objct,
           location: location == false ? {} : location,
         };
+
+        if (species.category) {
+          obj.category = species.category.name;
+        }
+
         if (objct == false) {
           delete obj.unAvailableDays;
         }
@@ -1059,6 +1066,10 @@ function NewTrips(props) {
           unAvailableDays: objct,
           location: location == false ? {} : location,
         };
+
+        if (species.category) {
+          obj.category = species.category.name;
+        }
         if (objct == false) {
           delete obj.unAvailableDays;
         }
