@@ -64,6 +64,21 @@ function ManageSubscription(props) {
 
   const loader = store.User.regLoader;
 
+  const Cancelsubscription = () => {
+    let body = {
+      'subscription.status': 'cancelled',
+    };
+
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.User.attemptToCancelSub(body, store.User.user._id);
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
+
   const renderMain = () => {
     const renderButton = () => {
       return (
@@ -114,7 +129,7 @@ function ManageSubscription(props) {
       return (
         <>
           <TouchableOpacity
-            // onPress={() => props.navigation.navigate('Plan')}
+            onPress={Cancelsubscription}
             activeOpacity={0.7}
             style={[
               styles.BottomButton,
@@ -215,7 +230,7 @@ function ManageSubscription(props) {
     }
 
     let txt =
-      status == 'canceled'
+      status == 'cancelled'
         ? `Your subscription plan has been ${status} and will not be renewed at the end of your billing cycle. You will continue to have full access until your plan ends on`
         : `Your subscription plan has been ${status} at`;
 

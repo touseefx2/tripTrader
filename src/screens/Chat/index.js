@@ -149,10 +149,10 @@ function Chat(props) {
     return () => {
       if (internet) {
         let p = obj.roomName + '/' + rid;
-        store.User.attemptToReadAllMessages(p);
+        store.User.attemptToReadAllMessages(p); //isko bad me cmnt kr dena ha jb real time krn ga read wala scene
         setTimeout(() => {
-          store.User.attemptToGetInboxes(store.User.user._id, () => {});
-        }, 500);
+          store.User.attemptToGetInboxes(store.User.user._id, () => {}, 'n');
+        }, 700);
       }
     };
   }, [internet]);

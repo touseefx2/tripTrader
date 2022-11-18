@@ -325,9 +325,11 @@ class user {
       });
   }
 
-  @action attemptToGetInboxes = (uid, setgetdata) => {
+  @action attemptToGetInboxes = (uid, setgetdata, c) => {
     console.warn('GET Inboxes : ', uid);
-    this.setibl(true);
+    if (c !== 'n') {
+      this.setibl(true);
+    }
 
     db.hitApi(db.apis.GET_INBOXES_BY_UID + uid, 'get', {}, this.authToken)
       ?.then(resp => {
@@ -2809,6 +2811,40 @@ class user {
           `Error in Edit Update user  ${db.apis.UPDATE_USER} : `,
           msg,
         );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  }
+
+  attemptToCancelSub(body, uid) {
+    // let body = {...this.user, ...body};
+    console.warn('cancel sub   body : ', body);
+    this.setregLoader(true);
+    db.hitApi(db.apis.UPDATE_USER + uid, 'put', body, this.authToken)
+      ?.then(resp => {
+        this.setregLoader(false);
+        console.log(
+          `response cancel sub  ${db.apis.UPDATE_USER + uid} : `,
+          resp.data,
+        );
+
+        let rsp = resp.data.data;
+        this.setUser(rsp);
+
+        // store.Notifications.attemptToGetNotifications(
+        //   store.User.user._id,
+        //   () => {},
+        // );
+      })
+      .catch(err => {
+        this.setregLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(`Error in cancel sub  ${db.apis.UPDATE_USER} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
           // store.General.setisServerError(true);
