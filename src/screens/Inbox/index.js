@@ -294,10 +294,10 @@ function Inbox(props) {
       }
     }
 
-    console.log('item : ', item);
-    console.log('isendmymsg : ', isendmymsg);
-    console.log('isread : ', isread);
-    console.log('item : ', item.latestMessage);
+    // console.log('item : ', item);
+    // console.log('isendmymsg : ', isendmymsg);
+    // console.log('isread : ', isread);
+    // console.log('item : ', item.latestMessage);
 
     const renderProfile = () => {
       return (

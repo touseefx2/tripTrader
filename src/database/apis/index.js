@@ -1,7 +1,7 @@
 //online link  ec2
-// const BASE_URL = 'http://ec2-13-126-189-174.ap-south-1.compute.amazonaws.com/';
+const BASE_URL = 'http://ec2-13-126-189-174.ap-south-1.compute.amazonaws.com/';
 //local link
-const BASE_URL = 'http://10.7.148.90:3001/';
+// const BASE_URL = 'http://10.7.148.90:3001/';
 
 //apis
 const GET_CITIES_AREAS = 'api/area/getAllAreas';
