@@ -1347,7 +1347,7 @@ function Home(props) {
         <View style={{width: '88%'}}>
           <Text
             style={{
-              fontSize: 14,
+              fontSize: 14.5,
               color: theme.color.subTitleLight,
               fontFamily: theme.fonts.fontNormal,
             }}>
