@@ -1344,11 +1344,10 @@ function Home(props) {
 
     const renderInput = () => {
       return (
-        <View style={{width: '88%', paddingVertical: 10}}>
+        <View style={{width: '88%'}}>
           <Text
             style={{
               fontSize: 15.5,
-
               color: theme.color.subTitleLight,
             }}>
             Search
@@ -1373,6 +1372,7 @@ function Home(props) {
             style={({pressed}) => [
               {opacity: pressed ? 0.7 : 1},
               {
+                paddingVertical: 10,
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
