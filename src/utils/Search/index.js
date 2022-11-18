@@ -88,8 +88,9 @@ function Search(props) {
   const onClickSearch = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.Search.setisApplySearch(true);
         setSearch(s);
+        store.Search.setisApplySearch(true);
+
         closeModal();
       } else {
         Alert.alert('', 'Please connect internet');

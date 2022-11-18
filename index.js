@@ -39,42 +39,52 @@ PushNotification.createChannel(
 );
 
 const callData = (topic, rid) => {
-  if (topic == 'newMessage') {
-    store.User.attemptToGetInboxes(store.User.user._id, () => {});
-    // if (rid != '') {
-    //   const socket = store.General.socket;
-    //   console.log('join roomin in RecieveNotification');
-    //   let username = store.User.user.firstName + ' ' + store.User.user.lastName;
-    //   socket.emit('joinRoom', {username, roomName: rid});
-    // }
-  }
-  if (topic == 'offerRecieved') {
-    store.Offers.attemptToGetReceiveOffers(
-      () => {},
-      () => {},
-    );
-  }
-  if (topic == 'offerDecline') {
-    store.Offers.attemptToGetSentOffers(
-      () => {},
-      () => {},
-    );
-  }
-  if (topic == 'offerCancel') {
-    store.Offers.attemptToGetReceiveOffers(
-      () => {},
-      () => {},
-    );
-  }
-  if (topic == 'offerConfirm') {
-    store.Offers.attemptToGetSentOffers(
-      () => {},
-      () => {},
-    );
-    store.Offers.attemptToGetConfirmOffers(
-      () => {},
-      () => {},
-    );
+  if (store.User.user !== 'guest') {
+    if (topic == 'newMessage') {
+      store.User.attemptToGetInboxes(store.User.user._id, () => {});
+      // if (rid != '') {
+      //   const socket = store.General.socket;
+      //   console.log('join roomin in RecieveNotification');
+      //   let username = store.User.user.firstName + ' ' + store.User.user.lastName;
+      //   socket.emit('joinRoom', {username, roomName: rid});
+      // }
+    }
+    if (topic == 'offerRecieved') {
+      store.Offers.attemptToGetReceiveOffers(
+        () => {},
+        () => {},
+      );
+    }
+    if (topic == 'offerDecline') {
+      store.Offers.attemptToGetSentOffers(
+        () => {},
+        () => {},
+      );
+    }
+    if (topic == 'offerCancel') {
+      store.Offers.attemptToGetReceiveOffers(
+        () => {},
+        () => {},
+      );
+    }
+    if (topic == 'offerConfirm') {
+      store.Offers.attemptToGetSentOffers(
+        () => {},
+        () => {},
+      );
+      store.Offers.attemptToGetConfirmOffers(
+        () => {},
+        () => {},
+      );
+    }
+
+    if (topic == 'followUser') {
+      store.User.attemptToGetFollowers(
+        store.User.user._id,
+        () => {},
+        () => {},
+      );
+    }
   }
 };
 
@@ -90,9 +100,13 @@ messaging().onMessage(async remoteMessage => {
   if (store.Notifications.isShowNotifcation) {
     store.Notifications.clearShowNotifications();
   }
-  store.Notifications.setisShowNotifcation(true);
-  store.Notifications.setNotifcationTitle(message);
-  store.Notifications.setNotifcationData(data);
+
+  if (store.User.user !== 'guest') {
+    store.Notifications.setisShowNotifcation(true);
+    store.Notifications.setNotifcationTitle(message);
+    store.Notifications.setNotifcationData(data);
+  }
+
   // PushNotification.localNotification({
   //   message: message,
   //   title: title,
@@ -107,8 +121,6 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
   let data = remoteMessage.data ? remoteMessage.data : '';
   let topic = data.topic;
   let roomId = data.chatRoomId || '';
-
-  callData(topic, roomId);
 });
 
 function MainApp() {

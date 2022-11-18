@@ -723,13 +723,26 @@ class user {
   };
 
   @action attemptToGetHomeTripsSearch = (setgetdata, bu, c) => {
-    this.setHomeLoader(true);
-    let r = '';
+    let isaps = store.Search.isApplySearch;
+    let isapf = store.Filters.isFilter;
+
+    // this.setstripType(false);
+    // this.setstripLocation(false);
+    // this.setsactivity(false);
+    // this.setsspecies(false);
+    // this.setshostRating(0);
+    // this.setsvu(false);
+    // this.setisFilter(false);
+
+    let query = isaps ? store.Search.search : '';
+    let r = isapf ? store.Filters.shostRating : '';
     let us = '';
-    let loc = '';
-    let spsc = '';
-    let query = '';
-    let act = '';
+    if (isapf) {
+      us = store.Filters.svu == true ? 'verified' : 'notVerified';
+    }
+    let loc = isapf ? store.Filters.stripLocation : '';
+    let spsc = isapf ? store.Filters.sspecies : '';
+    let act = isapf ? store.Filters.sactivity : '';
     let b = this.user._id;
     if (bu.length > 0) {
       bu.map((e, i, a) => {
@@ -740,7 +753,7 @@ class user {
     let params = `rating=${r}&userStatus=${us}&location=${loc}&species=${spsc}&query=${query}&activity=${act}&blockedUsers=${b}`;
 
     console.log('Get AllHomeTrip : ', db.apis.GET_ALL_HOME_TRIPS + params);
-
+    this.setHomeLoader(true);
     db.hitApi(db.apis.GET_ALL_HOME_TRIPS + params, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setHomeLoader(false);

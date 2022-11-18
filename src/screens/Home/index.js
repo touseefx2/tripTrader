@@ -358,7 +358,19 @@ function Home(props) {
   let isApplySrch = store.Search.isApplySearch;
   useEffect(() => {
     if (isApplySrch) {
-      onRefresh();
+      NetInfo.fetch().then(state => {
+        if (state.isConnected) {
+          if (user == 'guest') {
+            store.User.attemptToGetHomeTripsGuest(setGetDataOnce);
+          } else {
+            store.User.attemptToGetHomeTripsSearch(
+              setGetDataOnce,
+              blckUser,
+              '',
+            );
+          }
+        }
+      });
     }
     return () => {};
   }, [isApplySrch]);
@@ -1078,7 +1090,7 @@ function Home(props) {
     return (
       // Flat List Item
       <>
-        {!refreshing && getDataOnce && (
+        {/* {!refreshing && getDataOnce && (
           <Text
             style={{
               marginTop: '80%',
@@ -1090,10 +1102,10 @@ function Home(props) {
               fontFamily: theme.fonts.fontMedium,
               opacity: 0.4,
             }}
-            onPress={() => getItem(item)}>
+            >
             No Trips Found
           </Text>
-        )}
+        )} */}
       </>
     );
   };
@@ -1438,7 +1450,7 @@ function Home(props) {
             {!isApplySrch ? renderFilter() : renderCross()}
           </Pressable>
         </View>
-        {data.length > 0 && renderResult()}
+        {renderResult()}
       </>
     );
   };
@@ -5776,7 +5788,13 @@ function Home(props) {
               keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
-              ListHeaderComponent={data.length > 0 ? ListHeader : null}
+              ListHeaderComponent={
+                !isApplySrch && data.length > 0
+                  ? ListHeader
+                  : isApplySrch
+                  ? ListHeader
+                  : null
+              }
               ListFooterComponent={data.length > 0 ? ListFooter : null}
             />
           </View>
