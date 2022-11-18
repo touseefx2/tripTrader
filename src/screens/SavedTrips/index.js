@@ -1195,7 +1195,7 @@ function SavedTrips(props) {
 
     const renderSearch = () => {
       return (
-        <TouchableOpacity disabled>
+        <TouchableOpacity style={{}} disabled>
           <Image
             source={require('../../assets/images/searchBar/search/img.png')}
             style={styles.Baricon}

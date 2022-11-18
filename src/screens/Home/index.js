@@ -1347,8 +1347,8 @@ function Home(props) {
         <View style={{width: '88%'}}>
           <Text
             style={{
-              fontSize: 15.5,
-              color: theme.color.subTitleLight,
+              fontSize: 14,
+              color: theme.color.subTitle,
             }}>
             Search
           </Text>
@@ -1372,7 +1372,7 @@ function Home(props) {
             style={({pressed}) => [
               {opacity: pressed ? 0.7 : 1},
               {
-                paddingVertical: 10,
+                paddingVertical: 14,
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
@@ -1387,7 +1387,7 @@ function Home(props) {
             style={({pressed}) => [
               {
                 opacity: pressed ? 0.7 : 1,
-                paddingVertical: 10,
+                paddingVertical: 14,
               },
             ]}
             // onPress={onclickFilter}
