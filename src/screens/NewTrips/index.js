@@ -290,12 +290,10 @@ function NewTrips(props) {
   };
 
   useEffect(() => {
-    if (store.User.user == 'guest') {
-      Alert.alert(
-        'Limited Guest Access',
-        'This feature is only available to members.Please sign in or create an account.',
-        [{text: 'OK', onPress: () => props.navigation.goBack()}],
-      );
+    if (user == 'guest') {
+      store.General.setgoto('guestaccess');
+      store.User.Logout();
+      return;
     }
   }, []);
 
@@ -1074,7 +1072,10 @@ function NewTrips(props) {
           },
           availableFrom: isSelDate1,
           availableTo: isSelDate2,
-          status: status,
+          status:
+            store.User.user.subscriptionStatus == 'freemium'
+              ? 'suspended'
+              : status,
           photos: p,
           unAvailableDays: objct,
           location: location == false ? {} : location,
@@ -3782,10 +3783,7 @@ function NewTrips(props) {
           activeOpacity={0.8}
           onPress={() => {
             if (store.User.user.subscriptionStatus == 'freemium') {
-              Alert.alert(
-                'Limit Member access',
-                'This feature is only availble for subscribed members Please subscribe to our plan and enjoy limitless service.',
-              );
+              props.navigation.navigate('Plan');
             } else {
               setmodalChk(!ch ? 'suspend' : 'activate');
               setisModal(true);

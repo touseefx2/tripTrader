@@ -149,15 +149,15 @@ function Filters(props) {
   useEffect(() => {
     if (isModalVisible) {
       let chk = false;
-      const dt = [...trptype];
-      if (dt.length > 0) {
-        dt.map((e, i, a) => {
-          if (e.isSel == true) {
-            chk = true;
-            return;
-          }
-        });
-      }
+      // const dt = [...trptype];
+      // if (dt.length > 0) {
+      //   dt.map((e, i, a) => {
+      //     if (e.isSel == true) {
+      //       chk = true;
+      //       return;
+      //     }
+      //   });
+      // }
       if (loc) {
         chk = true;
       }
@@ -170,6 +170,11 @@ function Filters(props) {
       if (host > 0) {
         chk = true;
       }
+
+      if (vu) {
+        chk = true;
+      }
+
       setisFilter(chk);
     }
   }, [isModalVisible, trptype, loc, actvty, spcs, host]);
@@ -194,22 +199,22 @@ function Filters(props) {
 
   const onClickApplyFilters = () => {
     let chk = false;
-    let tt = [];
-    const dt = [...trptype];
-    if (dt.length > 0) {
-      dt.map((e, i, a) => {
-        if (e.isSel == true) {
-          tt.push(e.name);
-        }
-      });
-    }
+    // let tt = [];
+    // const dt = [...trptype];
+    // if (dt.length > 0) {
+    //   dt.map((e, i, a) => {
+    //     if (e.isSel == true) {
+    //       tt.push(e.name);
+    //     }
+    //   });
+    // }
 
-    if (tt.length > 0) {
-      chk = true;
-      setstripType(tt);
-    } else {
-      setstripType(false);
-    }
+    // if (tt.length > 0) {
+    //   chk = true;
+    //   setstripType(tt);
+    // } else {
+    //   setstripType(false);
+    // }
 
     if (loc) {
       chk = true;
@@ -304,6 +309,8 @@ function Filters(props) {
       </>
     );
   };
+
+  console.log('isFilter : ', isFilter);
 
   const renderContent = () => {
     const renderHeder = () => {

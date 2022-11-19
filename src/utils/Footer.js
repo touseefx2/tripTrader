@@ -29,30 +29,32 @@ function Footer(props) {
   let unfocusTextColor = 'rgba(30, 54, 37, 0.4)';
   let ao = 0.7;
 
-  let double = props.doubleBack || false;
+  // let double = props.doubleBack || false;
 
-  let c = false;
-  if (
-    screen == 'Followers' ||
-    screen == 'Notifications' ||
-    screen == 'UserProfile'
-  ) {
-    c = true;
-  }
-
-  console.log('c : ', c);
+  // let c = false;
+  // if (
+  //   screen == 'Followers' ||
+  //   screen == 'Notifications' ||
+  //   screen == 'UserProfile'
+  // ) {
+  //   c = true;
+  // }
 
   const goBack = () => {
-    if (c) {
+    // if (c) {
+    if (screen == 'Notifications') {
       nav.goBack();
-      if (double) {
-        nav.goBack();
-      }
     }
+
+    // if (double) {
+    //   nav.goBack();
+    // }
+    // }
   };
 
   const goToHome = () => {
     nav.navigate('Home');
+
     goBack();
   };
 

@@ -1170,6 +1170,12 @@ function Home(props) {
           <View style={styles.textContainer}>
             <Pressable
               onPress={() => {
+                if (user == 'guest') {
+                  // store.General.setgoto('guestaccess');
+                  // store.User.Logout();
+                  return;
+                }
+
                 store.Userv.clearUser();
                 store.Userv.setfscreen('home');
                 store.Userv.setUser(usr);
@@ -1207,7 +1213,14 @@ function Home(props) {
       const rendericon = () => {
         return (
           <Pressable
-            onPress={() => saveTrip(item, index)}
+            onPress={() => {
+              if (user == 'guest') {
+                store.General.setgoto('guestaccess');
+                store.User.Logout();
+                return;
+              }
+              saveTrip(item, index);
+            }}
             style={({pressed}) => [
               {opacity: pressed ? 0.7 : 1.0},
               styles.iconContainer,
@@ -1326,6 +1339,12 @@ function Home(props) {
         <View style={styles.boxSection4}>
           <Pressable
             onPress={() => {
+              if (user == 'guest') {
+                store.General.setgoto('guestaccess');
+                store.User.Logout();
+                return;
+              }
+
               if (store.User.user.subscriptionStatus == 'freemium') {
                 props.navigation.navigate('Plan');
               } else {
@@ -1341,6 +1360,11 @@ function Home(props) {
 
           <Pressable
             onPress={() => {
+              if (user == 'guest') {
+                store.General.setgoto('guestaccess');
+                store.User.Logout();
+                return;
+              }
               if (store.User.user.subscriptionStatus == 'freemium') {
                 props.navigation.navigate('Plan');
               } else {

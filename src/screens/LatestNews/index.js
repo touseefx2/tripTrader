@@ -51,6 +51,14 @@ function LatestNews(props) {
   let totalItems = cart.data.length > 0 ? cart.totalitems : 0;
   let tagLine = '';
 
+  useEffect(() => {
+    if (user == 'guest') {
+      store.General.setgoto('guestaccess');
+      store.User.Logout();
+      return;
+    }
+  }, []);
+
   const renderStatusBar = () => {
     return (
       <>

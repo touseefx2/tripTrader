@@ -232,9 +232,7 @@ function UserProfile(props) {
     Keyboard.dismiss();
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.Userv.BlockUser(closeBottomSheet, () => {
-          props.navigation.goBack();
-        });
+        store.Userv.BlockUser(closeBottomSheet);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -444,6 +442,17 @@ function UserProfile(props) {
       );
     };
 
+    const renderProfileShoww = () => {
+      return (
+        <TouchableOpacity disabled={true} style={styles.profileImageContainer}>
+          <Image
+            style={styles.ProfileImg}
+            source={require('../../assets/images/drawer/guest/img.png')}
+          />
+        </TouchableOpacity>
+      );
+    };
+
     const renderEditButton = () => {
       return (
         <TouchableOpacity
@@ -468,10 +477,10 @@ function UserProfile(props) {
               numberOfLines={1}
               ellipsizeMode="tail"
               style={styles.profileTitle}>
-              {userName}
+              {isBlock ? 'Trip Trader User' : userName}
             </Text>
           </View>
-          {user && (
+          {user && !isBlock && (
             <View style={styles.profileTitle2Conatiner}>
               <Pressable
                 style={({pressed}) => [
@@ -499,10 +508,7 @@ function UserProfile(props) {
                 ]}
                 onPress={() => {
                   if (store.User.user.subscriptionStatus == 'freemium') {
-                    Alert.alert(
-                      'Limit Member access',
-                      'This feature is only availble for subscribed members Please subscribe to our plan and enjoy limitless service.',
-                    );
+                    props.navigation.navigate('Plan');
                   } else {
                     if (!isFollow) FollowUser();
                     else unFollowUser();
@@ -532,6 +538,28 @@ function UserProfile(props) {
               </Pressable>
             </View>
           )}
+
+          {user && isBlock && (
+            <View style={styles.profileTitle2Conatinerr}>
+              <Pressable
+                disabled={loader}
+                style={({pressed}) => [
+                  {opacity: pressed ? 0.8 : 1.0},
+                  [styles.profileTitle2Conatinerm],
+                ]}
+                onPress={() => {
+                  if (store.User.user.subscriptionStatus == 'freemium') {
+                    props.navigation.navigate('Plan');
+                  } else {
+                    UnBlockUser();
+                  }
+                }}>
+                <Text style={styles.profileTitle2ConatinerTitle2m}>
+                  Unblock
+                </Text>
+              </Pressable>
+            </View>
+          )}
         </View>
       );
     };
@@ -539,8 +567,9 @@ function UserProfile(props) {
     return (
       <View style={{paddingHorizontal: 15}}>
         <View style={styles.profileSecConatiner}>
-          {renderProfileShow()}
-          {user && user !== 'guest' && renderEditButton()}
+          {!isBlock && renderProfileShow()}
+          {isBlock && renderProfileShoww()}
+          {user && !isBlock && renderEditButton()}
           {renderTextSection()}
         </View>
       </View>
@@ -788,10 +817,7 @@ function UserProfile(props) {
               <Pressable
                 onPress={() => {
                   if (store.User.user.subscriptionStatus == 'freemium') {
-                    Alert.alert(
-                      'Limit Member access',
-                      'This feature is only availble for subscribed members Please subscribe to our plan and enjoy limitless service.',
-                    );
+                    props.navigation.navigate('Plan');
                   } else {
                     onClickBottomItem('message');
                   }
@@ -812,15 +838,13 @@ function UserProfile(props) {
                   </Text>
                 </View>
               </Pressable>
+
               <Sep />
               <Pressable
                 disabled={loader}
                 onPress={() => {
                   if (store.User.user.subscriptionStatus == 'freemium') {
-                    Alert.alert(
-                      'Limit Member access',
-                      'This feature is only availble for subscribed members Please subscribe to our plan and enjoy limitless service.',
-                    );
+                    props.navigation.navigate('Plan');
                   } else {
                     if (!isBlock) BlockUser();
                     else UnBlockUser();
@@ -843,13 +867,11 @@ function UserProfile(props) {
                 </View>
               </Pressable>
               <Sep />
+
               <Pressable
                 onPress={() => {
                   if (store.User.user.subscriptionStatus == 'freemium') {
-                    Alert.alert(
-                      'Limit Member access',
-                      'This feature is only availble for subscribed members Please subscribe to our plan and enjoy limitless service.',
-                    );
+                    props.navigation.navigate('Plan');
                   } else {
                     onClickBottomItem('report');
                   }
@@ -870,6 +892,7 @@ function UserProfile(props) {
                   </Text>
                 </View>
               </Pressable>
+
               <Sep />
             </View>
           </View>
@@ -987,7 +1010,9 @@ function UserProfile(props) {
         const renderButton = () => {
           return (
             <Pressable
-              onPress={sendMessage}
+              onPress={() => {
+                sendMessage();
+              }}
               disabled={mloader == true ? true : message == '' ? true : false}
               style={({pressed}) => [
                 {opacity: pressed ? 0.9 : message == '' ? 0.5 : 1},
@@ -1186,7 +1211,9 @@ function UserProfile(props) {
             <>
               <TouchableOpacity
                 disabled={mloader || chk}
-                onPress={sendReport}
+                onPress={() => {
+                  sendReport();
+                }}
                 activeOpacity={0.7}
                 style={{
                   width: '100%',
@@ -1735,7 +1762,7 @@ function UserProfile(props) {
       <SafeAreaView style={styles.container2}>
         <View style={styles.container3}>
           {renderProfileSection()}
-          <View style={{flex: 1}}>{renderTabBar()}</View>
+          <View style={{flex: 1}}>{!isBlock && renderTabBar()}</View>
           <Toast ref={toast} position="bottom" />
 
           {renderShowCahngePhotoModal()}

@@ -50,7 +50,7 @@ export default HomeStack = () => {
 
       <Drawer.Screen
         name="NewTrip"
-        component={screens.NewTrips}
+        component={NewTripsStack}
         options={icon.NewTripicon}
       />
       <Drawer.Screen
@@ -259,6 +259,16 @@ let SavedTripsStack = () => {
         }}
       />
       <Stack.Screen
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+        name="Plan"
+        component={screens.Plan}
+      />
+      <Stack.Screen
         name="Notifications"
         component={screens.Notifications}
         options={props => {
@@ -344,6 +354,17 @@ let UserProfileStack = () => {
         //     swipeEnabled: false,
         //   });
         // }}
+      />
+
+      <Stack.Screen
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+        name="Plan"
+        component={screens.Plan}
       />
 
       <Stack.Screen
@@ -509,27 +530,27 @@ let ManageSubscriptionStack = () => {
   );
 };
 
-let NotificationsStack = () => {
-  return (
-    <Stack.Navigator
-      initialRouteName="Notification"
-      screenOptions={{
-        animationEnabled: false,
-        headerShown: false,
-      }}>
-      <Stack.Screen
-        name="Notification"
-        component={screens.Notifications}
-        options={props => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: true,
-          });
-        }}
-      />
-    </Stack.Navigator>
-  );
-};
+// let NotificationsStack = () => {
+//   return (
+//     <Stack.Navigator
+//       initialRouteName="Notification"
+//       screenOptions={{
+//         animationEnabled: false,
+//         headerShown: false,
+//       }}>
+//       <Stack.Screen
+//         name="Notification"
+//         component={screens.Notifications}
+//         options={props => {
+//           let parent = props.navigation.getParent();
+//           parent.setOptions({
+//             swipeEnabled: true,
+//           });
+//         }}
+//       />
+//     </Stack.Navigator>
+//   );
+// };
 
 let ConfirmedTripsStack = () => {
   return (
@@ -559,6 +580,50 @@ let ConfirmedTripsStack = () => {
           });
         }}
       />
+      <Stack.Screen
+        name="Notifications"
+        component={screens.Notifications}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+let NewTripsStack = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="NewTripss"
+      screenOptions={{
+        animationEnabled: false,
+        headerShown: false,
+      }}>
+      <Stack.Screen
+        name="NewTripss"
+        component={screens.NewTrips}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: true,
+          });
+        }}
+      />
+
+      <Stack.Screen
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+        name="Plan"
+        component={screens.Plan}
+      />
+
       <Stack.Screen
         name="Notifications"
         component={screens.Notifications}

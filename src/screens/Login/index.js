@@ -39,6 +39,11 @@ function Login(props) {
   useEffect(() => {
     if (goto == 'joinnow') {
       props.navigation.navigate('Signup');
+      store.General.setgoto('');
+    }
+    if (goto == 'guestaccess') {
+      goToGuestAccess();
+      store.General.setgoto('');
     }
   }, []);
 

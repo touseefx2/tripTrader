@@ -247,6 +247,15 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
   },
+  profileTitle2Conatinerr: {
+    width: '85%',
+    // backgroundColor: 'red',
+    marginTop: 10,
+
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
   profileTitle2Conatiner1: {
     alignItems: 'center',
     justifyContent: 'center',

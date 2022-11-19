@@ -320,6 +320,14 @@ function SavedTrips(props) {
   };
 
   useEffect(() => {
+    if (user == 'guest') {
+      store.General.setgoto('guestaccess');
+      store.User.Logout();
+      return;
+    }
+  }, []);
+
+  useEffect(() => {
     if (tripType != '') {
       setspcsData([]);
       let aa = [];
@@ -919,15 +927,6 @@ function SavedTrips(props) {
   const onClickremoveTrips = (dt, ind) => {
     openModal({item: dt, i: ind}, 'tripRemove');
   };
-
-  useEffect(() => {
-    if (store.User.user == 'guest') {
-      Alert.alert(
-        'Limited Guest Access',
-        'This feature is only available to members.Please sign in or create an account.',
-      );
-    }
-  }, []);
 
   const ItemView = ({item, index}) => {
     let usr = item.hostId;

@@ -84,11 +84,10 @@ function Inbox(props) {
   }, [internet]);
 
   useEffect(() => {
-    if (store.User.user == 'guest') {
-      Alert.alert(
-        'Limited Guest Access',
-        'This feature is only available to members.Please sign in or create an account.',
-      );
+    if (user == 'guest') {
+      store.General.setgoto('guestaccess');
+      store.User.Logout();
+      return;
     }
   }, []);
 

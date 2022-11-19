@@ -89,6 +89,13 @@ function Support(props) {
   const setErrMessage = c => {
     seterrorMessage(c);
   };
+  useEffect(() => {
+    if (user == 'guest') {
+      store.General.setgoto('guestaccess');
+      store.User.Logout();
+      return;
+    }
+  }, []);
 
   const Suc = () => {
     setisSubmit(true);

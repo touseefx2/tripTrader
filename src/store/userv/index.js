@@ -1310,7 +1310,7 @@ class userv {
       });
   };
 
-  @action BlockUser = (suc, suc2) => {
+  @action BlockUser = suc => {
     this.setgl(true);
     let uid1 = store.User.user._id;
     let uid2 = this.user._id;
@@ -1327,7 +1327,6 @@ class userv {
         this.attemptToGetHome(() => {});
         this.myUserGetGeneral('b');
         suc();
-        suc2();
       })
       .catch(err => {
         this.setgl(false);
