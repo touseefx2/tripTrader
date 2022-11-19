@@ -1139,6 +1139,7 @@ class user {
     }
     let body = {
       message: cmnt,
+      guestRating: 0,
     };
 
     db.hitApi(db.apis.EDIT_REVIEW + idd + '/' + id, 'put', body, this.authToken)

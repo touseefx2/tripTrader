@@ -355,7 +355,7 @@ function Received(props) {
           senderName: user.firstName + ' ' + user.lastName,
           isRead: false,
           message: message,
-           type: 'text',
+          type: 'text',
         };
         store.User.attemptToCheckFirstMessage(
           user._id,
@@ -2867,7 +2867,7 @@ function Received(props) {
             onPress={() => {
               closeModal();
               let p = store.User.offersProfileProps;
-              p.navigation.navigate('ConfirmTrips');
+              p.navigation.navigate('ConfirmedTrips');
             }}
             activeOpacity={0.7}
             style={{

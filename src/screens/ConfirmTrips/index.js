@@ -204,7 +204,7 @@ function ConfirmTrips(props) {
       return (
         <View style={styles.resultContainer}>
           <Text style={styles.resultText}>
-            You have {length} upcoming trips
+            You have {length} upcoming trip{length <= 1 ? '' : 's'}
           </Text>
         </View>
       );
@@ -1092,6 +1092,7 @@ function ConfirmTrips(props) {
 
           {isModal && !isSendMessage && renderModal()}
           {isSendMessage && renderMessageSendModal()}
+          {store.Notifications.isShowNotifcation && <utils.ShowNotifications />}
         </SafeAreaView>
       </View>
     </>

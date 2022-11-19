@@ -59,6 +59,7 @@ function Photos(props) {
   const onRefresh = React.useCallback(() => {
     console.warn('onrefresh cal');
     setRefreshing(true);
+    store.User.getUserById1(store.User.user._id, store.User.authToken, '');
     getDbData();
   }, []);
 
