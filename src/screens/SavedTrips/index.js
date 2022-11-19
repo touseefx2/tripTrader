@@ -1160,10 +1160,7 @@ function SavedTrips(props) {
           <Pressable
             onPress={() => {
               if (store.User.user.subscriptionStatus == 'freemium') {
-                Alert.alert(
-                  'Limit Member access',
-                  'This feature is only availble for subscribed members Please subscribe to our plan and enjoy limitless service.',
-                );
+                props.navigation.navigate('Plan');
               } else {
                 onClickMakeOffer(item, index);
               }
@@ -1178,10 +1175,7 @@ function SavedTrips(props) {
           <Pressable
             onPress={() => {
               if (store.User.user.subscriptionStatus == 'freemium') {
-                Alert.alert(
-                  'Limit Member access',
-                  'This feature is only availble for subscribed members Please subscribe to our plan and enjoy limitless service.',
-                );
+                props.navigation.navigate('Plan');
               } else {
                 onClickMessage(item, index);
               }

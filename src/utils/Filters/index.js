@@ -40,6 +40,9 @@ function Filters(props) {
   let headerTitle = 'Filters';
   let isModalVisible = props.isVisible;
   let isApplyFilter = store.Filters.isFilter;
+
+  let user = store.User.user;
+
   const [rfrsh, setrfrsh] = useState(false);
   const [isFilter, setisFilter] = useState(false);
 
@@ -171,6 +174,24 @@ function Filters(props) {
     }
   }, [isModalVisible, trptype, loc, actvty, spcs, host]);
 
+  const onrefrshdata = () => {
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        if (user == 'guest') {
+          store.User.attemptToGetHomeTripsGuest(c => props.setGetDataOnce(c));
+        } else {
+          store.User.attemptToGetHomeTripsSearch(
+            c => props.setGetDataOnce(c),
+            props.blckUser,
+            '',
+          );
+        }
+      } else {
+        Alert.alert('Please connect internet');
+      }
+    });
+  };
+
   const onClickApplyFilters = () => {
     let chk = false;
     let tt = [];
@@ -196,6 +217,7 @@ function Filters(props) {
     } else {
       setstripLoc(false);
     }
+
     if (actvty) {
       chk = true;
       setsactivity(actvty.name);
@@ -223,9 +245,12 @@ function Filters(props) {
     if (chk) {
       store.Filters.setisFilter(true);
       props.setisVisible(false);
+      onrefrshdata();
     } else {
       store.Filters.setisFilter(false);
       props.setisVisible(false);
+      store.Filters.clearFilters();
+      onrefrshdata();
     }
   };
 
@@ -674,7 +699,7 @@ function Filters(props) {
         <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}}>
           {renderVerifedchk()}
           <Sep />
-          {trptype.length > 0 && renderTripTypes()}
+          {/* {trptype.length > 0 && renderTripTypes()} */}
           <Sep />
           {renderDropDownFields()}
           <Sep />

@@ -754,7 +754,9 @@ class user {
       r = store.Filters.shostRating != 0 ? store.Filters.shostRating : '';
       us = store.Filters.svu == true ? 'verified' : 'notVerified';
       loc =
-        store.Filters.stripLocation != false ? store.Filters.stripLocation : '';
+        store.Filters.stripLocation != false
+          ? store.Filters.stripLocation.name
+          : '';
       spsc = store.Filters.sspecies != false ? store.Filters.sspecies : '';
       act = store.Filters.sactivity != false ? store.Filters.sactivity : '';
     }
@@ -881,7 +883,9 @@ class user {
       r = store.Filters.shostRating != 0 ? store.Filters.shostRating : '';
       us = store.Filters.svu == true ? 'verified' : 'notVerified';
       loc =
-        store.Filters.stripLocation != false ? store.Filters.stripLocation : '';
+        store.Filters.stripLocation != false
+          ? store.Filters.stripLocation.name
+          : '';
       spsc = store.Filters.sspecies != false ? store.Filters.sspecies : '';
       act = store.Filters.sactivity != false ? store.Filters.sactivity : '';
     }

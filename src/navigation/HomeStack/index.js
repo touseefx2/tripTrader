@@ -141,6 +141,17 @@ let HomeStack = () => {
           });
         }}
       />
+
+      <Stack.Screen
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+        name="Plan"
+        component={screens.Plan}
+      />
       <Stack.Screen
         name="Notifications"
         component={screens.Notifications}

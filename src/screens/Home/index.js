@@ -324,6 +324,9 @@ function Home(props) {
 
   const data = store.User.Hometrips;
 
+  let isApplyFilter = store.Filters.isFilter;
+  let isApplySrch = store.Search.isApplySearch;
+
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
     setgetDataOnce(C);
@@ -354,26 +357,6 @@ function Home(props) {
     }
     return () => {};
   }, [getDataOnce, internet]);
-
-  let isApplySrch = store.Search.isApplySearch;
-  useEffect(() => {
-    if (isApplySrch) {
-      NetInfo.fetch().then(state => {
-        if (state.isConnected) {
-          if (user == 'guest') {
-            store.User.attemptToGetHomeTripsGuest(setGetDataOnce);
-          } else {
-            store.User.attemptToGetHomeTripsSearch(
-              setGetDataOnce,
-              blckUser,
-              '',
-            );
-          }
-        }
-      });
-    }
-    return () => {};
-  }, [isApplySrch]);
 
   const tripdata = store.User.trips;
   const [isDropDownTrip, setisDropDownTrip] = useState(false);
@@ -784,23 +767,38 @@ function Home(props) {
     });
   };
 
+  useEffect(() => {
+    if (isApplySrch) {
+      NetInfo.fetch().then(state => {
+        if (state.isConnected) {
+          if (user == 'guest') {
+            store.User.attemptToGetHomeTripsGuest(setGetDataOnce);
+          } else {
+            store.User.attemptToGetHomeTripsSearch(
+              setGetDataOnce,
+              blckUser,
+              '',
+            );
+          }
+        }
+      });
+    }
+    return () => {};
+  }, [isApplySrch]);
+
   const onclickSearchBar = () => {
     setisShowSearch(true);
   };
 
   const onCrossSearchBar = () => {
     store.Search.clearSelSearches();
-    store.Filters.clearFilters();
+
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         if (user == 'guest') {
           store.User.attemptToGetHomeTripsGuest(setGetDataOnce);
         } else {
-          store.User.attemptToGetHomeTripsSearch(
-            setGetDataOnce,
-            blckUser,
-            'all',
-          );
+          store.User.attemptToGetHomeTripsSearch(setGetDataOnce, blckUser, '');
         }
       } else {
         Alert.alert('Please Connect internet');
@@ -1329,10 +1327,7 @@ function Home(props) {
           <Pressable
             onPress={() => {
               if (store.User.user.subscriptionStatus == 'freemium') {
-                Alert.alert(
-                  'Limit Member access',
-                  'This feature is only availble for subscribed members Please subscribe to our plan and enjoy limitless service.',
-                );
+                props.navigation.navigate('Plan');
               } else {
                 onClickMakeOffer(item, index);
               }
@@ -1347,10 +1342,7 @@ function Home(props) {
           <Pressable
             onPress={() => {
               if (store.User.user.subscriptionStatus == 'freemium') {
-                Alert.alert(
-                  'Limit Member access',
-                  'This feature is only availble for subscribed members Please subscribe to our plan and enjoy limitless service.',
-                );
+                props.navigation.navigate('Plan');
               } else {
                 onClickMessage(item, index);
               }
@@ -1386,7 +1378,8 @@ function Home(props) {
       return (
         <View style={styles.resultContainer}>
           <Text style={styles.resultText}>
-            {length} {isApplySrch ? 'search' : ''} result
+            {length} {isApplySrch ? 'search' : isApplyFilter ? 'filter' : ''}{' '}
+            result
             {length > 1 ? 's' : ''}
           </Text>
         </View>
@@ -1446,7 +1439,7 @@ function Home(props) {
             style={({pressed}) => [
               {opacity: pressed ? 0.7 : 1},
               {
-                paddingVertical: 14,
+                paddingVertical: 9,
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
@@ -1461,11 +1454,10 @@ function Home(props) {
             style={({pressed}) => [
               {
                 opacity: pressed ? 0.7 : 1,
-                paddingVertical: 14,
+                paddingVertical: 9,
               },
             ]}
-            // onPress={onclickFilter}
-            onPress={!isApplySrch ? onclickSearchBar : onCrossSearchBar}>
+            onPress={!isApplySrch ? onclickFilter : onCrossSearchBar}>
             {!isApplySrch ? renderFilter() : renderCross()}
           </Pressable>
         </View>
@@ -5807,13 +5799,7 @@ function Home(props) {
               keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
-              ListHeaderComponent={
-                !isApplySrch && data.length > 0
-                  ? ListHeader
-                  : isApplySrch
-                  ? ListHeader
-                  : null
-              }
+              ListHeaderComponent={ListHeader}
               ListFooterComponent={data.length > 0 ? ListFooter : null}
             />
           </View>
@@ -5836,12 +5822,16 @@ function Home(props) {
           <utils.Search
             isVisible={isShowSearch}
             setisVisible={c => setisShowSearch(c)}
+            setGetDataOnce={c => setGetDataOnce(c)}
+            blckUser={blckUser}
           />
         )}
         {isShowFilters && (
           <utils.Filters
             isVisible={isShowFilters}
             setisVisible={c => setisShowFilters(c)}
+            setGetDataOnce={c => setGetDataOnce(c)}
+            blckUser={blckUser}
           />
         )}
         {pvm && (

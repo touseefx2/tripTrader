@@ -161,7 +161,7 @@ function Search(props) {
 
       const renderInput = () => {
         return (
-          <View style={{width: s == '' ? '91%' : '64%'}}>
+          <View style={{width: s == '' ? '93%' : '65%'}}>
             <TextInput
               onSubmitEditing={() => {
                 if (s != '') {
@@ -484,6 +484,8 @@ function Search(props) {
             <utils.Filters
               isVisible={isShowFilters}
               setisVisible={c => setisShowFilters(c)}
+              setGetDataOnce={c => props.setGetDataOnce(c)}
+              blckUser={props.blckUser}
             />
           )}
         </View>
