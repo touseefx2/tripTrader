@@ -292,11 +292,17 @@ function MyProfile(props) {
   };
 
   const ShowFollowersScreen = c => {
-    props.navigation.navigate('ShowFollowers', {
-      chk: c,
-      user: userName,
-      cc: 'my',
-    });
+    // props.navigation.navigate('ShowFollowers', {
+    //   chk: c,
+    //   user: userName,
+    //   cc: 'my',
+    // });
+
+    props.navigation.navigate('ShowFollowers');
+    store.User.setcchk(c);
+    // store.Userv.setUser(store.User.user._id);
+    store.User.setffuser(userName);
+    store.User.setccc('my');
   };
 
   const renderProfileSection = () => {

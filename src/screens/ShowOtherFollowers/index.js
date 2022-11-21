@@ -36,15 +36,15 @@ import {ImageSlider} from 'react-native-image-slider-banner';
 import {Calendar} from 'react-native-calendars';
 import moment, {duration} from 'moment/moment';
 
-export default observer(ShowFollowers);
+export default observer(ShowOtherFollowers);
 
-function ShowFollowers(props) {
+function ShowOtherFollowers(props) {
   let maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
 
-  let chk = store.User.cchk;
-  let cc = store.User.ccc;
-  let headerTitle = store.User.ffuser;
+  const [chk, setchk] = useState(store.User.chk);
+  const [cc, setcc] = useState(store.User.cc);
+  const [headerTitle, setheaderTitle] = useState(store.User.fuser);
 
   let fscreen = store.User.fscreen || '';
   let db = false;
@@ -53,48 +53,50 @@ function ShowFollowers(props) {
   }
 
   let internet = store.General.isInternet;
-  let user = store.User.user;
-  let data = [];
+  let u = store.Userv.user;
+  // let data =   chk == 'followers' ? store.Userv.followers : store.Userv.following
 
-  data = chk == 'followers' ? store.User.followers : store.User.following;
+  const [user, setuser] = useState(u);
+  const [followers, setfollowers] = useState(0);
+  const [following, setfollowing] = useState(0);
+  const [data, setdata] = useState([]);
 
-  let mloader = store.User.fl;
-  let total = 0;
+  const [refreshing, setrefreshing] = useState(false);
 
-  total =
-    chk == 'followers' ? store.User.totalfollowers : store.User.totalfollowing;
+  let total = chk == 'followers' ? followers : following;
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
     setgetDataOnce(C);
   };
-  const [refreshing, setRefreshing] = React.useState(false);
-  const setrefeshing = c => {
-    setRefreshing(c);
-  };
+
   const onRefresh = React.useCallback(() => {
     console.warn('onrefresh cal');
-    setRefreshing(true);
+
     getDbData();
   }, []);
   const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         if (chk == 'followers') {
-          store.User.attemptToGetFollowers(
+          store.Userv.attemptToGetFollowers(
             user._id,
             setGetDataOnce,
-            setrefeshing,
+            c => setfollowers(c),
+            c => setfollowing(c),
+            c => setdata(c),
+            c => setrefreshing(c),
           );
         } else {
-          store.User.attemptToGetFollowing(
+          store.Userv.attemptToGetFollowing(
             user._id,
             setGetDataOnce,
-            setrefeshing,
+            c => setfollowers(c),
+            c => setfollowing(c),
+            c => setdata(c),
+            c => setrefreshing(c),
           );
         }
-      } else {
-        setrefeshing(false);
       }
     });
   };
@@ -119,7 +121,7 @@ function ShowFollowers(props) {
     return (
       // Flat List Item
       <>
-        {!mloader && getDataOnce && (
+        {!refreshing && getDataOnce && (
           <Text
             style={{
               marginTop: '80%',
@@ -134,18 +136,6 @@ function ShowFollowers(props) {
             onPress={() => getItem(item)}>
             {chk == 'followers' ? 'No Follower Found' : 'No Followeing Found'}
           </Text>
-        )}
-
-        {mloader && !getDataOnce && (
-          <ActivityIndicator
-            size={30}
-            color={theme.color.button1}
-            style={{
-              marginTop: '80%',
-
-              alignSelf: 'center',
-            }}
-          />
         )}
       </>
     );
@@ -237,7 +227,7 @@ function ShowFollowers(props) {
       <Pressable
         disabled={store.User.user._id == usrr._id}
         onPress={() => {
-          store.Userv.setfscreen('my');
+          store.Userv.setfscreen('home');
           store.Userv.setUser(usrr);
           store.Userv.addauthToken(store.User.authToken);
           props.navigation.navigate('UserProfile');
@@ -311,17 +301,6 @@ function ShowFollowers(props) {
               // ListHeaderComponent={data.length > 0 ? ListHeader : null}
               // ListFooterComponent={data.length > 0 ? ListFooter : null}
             />
-            {data.length > 0 && !getDataOnce && mloader && (
-              <ActivityIndicator
-                size={30}
-                color={theme.color.button1}
-                style={{
-                  top: '50%',
-                  position: 'absolute',
-                  alignSelf: 'center',
-                }}
-              />
-            )}
           </View>
 
           <utils.Footer

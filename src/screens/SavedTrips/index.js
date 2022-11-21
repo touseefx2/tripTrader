@@ -989,23 +989,13 @@ function SavedTrips(props) {
           <View style={styles.textContainer}>
             <Pressable
               onPress={() => {
-                store.User.clearOtherUser();
-                store.User.setfscreen('home');
-                const dd = {
-                  user: {
-                    _id: 2,
-                    first_name: 'mike',
-                    last_name: 'monuse',
-                    userName: 'mmouse',
-                    // photo:"",
-                    photo:
-                      'https://www.adobe.com/express/create/media_127540366421d3d5bfcaf8202527ca7d37741fd5d.jpeg?width=400&format=jpeg&optimize=medium',
-                    avg_rating: 3.8,
-                    total_reviews: 190,
-                    isVerified: true,
-                  },
-                };
-                store.User.setvUser(dd.user);
+                if (user == 'guest') {
+                  return;
+                }
+
+                store.Userv.setfscreen('savedtrip');
+                store.Userv.setUser(usr);
+                store.Userv.addauthToken(store.User.authToken);
                 props.navigation.navigate('UserProfile');
               }}
               style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}>
@@ -1039,7 +1029,13 @@ function SavedTrips(props) {
       const rendericon = () => {
         return (
           <Pressable
-            onPress={() => onClickremoveTrips(item, index)}
+            onPress={() => {
+              if (store.User.user.subscriptionStatus == 'freemium') {
+                props.navigation.navigate('Plan');
+              } else {
+                onClickremoveTrips(item, index);
+              }
+            }}
             style={({pressed}) => [
               {opacity: pressed ? 0.7 : 1.0},
               styles.iconContainer,

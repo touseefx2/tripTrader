@@ -1,33 +1,11 @@
-// import Location from './Location';
-// import Map from './Map';
-// import Home2 from './Home2';
-// import Home3 from './Home3';
-// import Search from './Search';
-// import Filter from './Filter';
-// import Help from './Help';
-// import Terms from './Terms';
-// import Checkout from './Checkout';
-// import CheckoutEmpty from './CheckoutEmpty';
-// import ResturantDetails from './ResturantDetails/index';
 import Plan from './Plan';
 import Chat from './Chat';
-
-// import Favourite from './Favourite';
-// import Orders from './Orders';
-// import OrdersDetails from './OrdersDetails';
-// import OrderIndication from './OrderIndication';
-// import Promo from './Promo';
-// import PromoDetails from './PromoDetails';
-
-// import Notification_Detail from "./Notification_Detail/index";
-// import RegisterProfile from "./RegisterProfile/index";
 import ManageSubscription from './ManageSubscription/index';
 import ShowFollowers from './ShowFollowers/index';
-
+import ShowOtherFollowers from './ShowOtherFollowers/index';
 import Splash from './Splash';
 import Home from './Home';
 import Notifications from './Notifications';
-
 import Login from './Login';
 import Signin from './Signin';
 import Signup from './Signup';
@@ -35,11 +13,10 @@ import GuestAccess from './GuestAccess';
 import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
 import VerifyCode from './VerifyCode';
-
 import Inbox from './Inbox';
 import NewTrips from './NewTrips';
-
 import UserProfile from './UserProfile';
+import FUserProfile from './FUserProfile';
 import MyProfile from './MyProfile';
 import EditProfile from './EditProfile';
 import TradeOffers from './TradeOffers';
@@ -62,7 +39,7 @@ export default screens = {
   VerifyCode,
   ResetPassword,
   GuestAccess,
-
+  FUserProfile,
   Home,
   Notifications,
   Inbox,
@@ -78,6 +55,7 @@ export default screens = {
   Settings,
   ChangePassword,
   ShowFollowers,
+  ShowOtherFollowers,
   UserProfile,
   ManageSubscription,
   Plan,

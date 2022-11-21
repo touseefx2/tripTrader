@@ -681,7 +681,10 @@ function ConfirmTrips(props) {
           <Pressable
             onPress={() => {
               let u = user;
-              store.Userv.clearUser();
+              if (store.User.user == 'guest') {
+                return;
+              }
+
               store.Userv.setfscreen('confirmedtrips');
               store.Userv.setUser(u);
               store.Userv.addauthToken(store.User.authToken);

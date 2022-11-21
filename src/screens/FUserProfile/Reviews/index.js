@@ -44,19 +44,11 @@ function Reviews(props) {
 
   let headerTitle = 'Reviews';
   let internet = store.General.isInternet;
-  let u = store.Userv.user;
-  const [user, setuser] = useState(u);
-  const [data, setdata] = useState([]);
-  const [isOneReview, setisOneReview] = useState(false);
-  const [isAnyTrade, setisAnyTrade] = useState(false);
-  const [loader, setloader] = useState(false);
+  let user = store.Userv.user;
+  let data = store.Userv.review;
+
   const totalData = data.length;
-
-  // let data = store.Userv.review;
-  // let loader = store.Userv.reviewLoader;
-  // const isAnyTrade = store.Userv.isAnyTrade;
-  // const isOneReview = store.Userv.isOneReview;
-
+  let loader = store.Userv.reviewLoader;
   let mloader = store.Userv.mLoader;
 
   const [modalObj, setmodalObj] = useState(false);
@@ -75,7 +67,8 @@ function Reviews(props) {
 
   const [isrModal, setisrModal] = useState(false);
   const [isrObj, setisrObj] = useState(false);
-
+  const isAnyTrade = store.Userv.isAnyTrade;
+  const isOneReview = store.Userv.isOneReview;
   //leave review
   const [rate, setrate] = useState(0);
   const [message, setMessage] = useState('');
@@ -99,15 +92,8 @@ function Reviews(props) {
   const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.Userv.attemptToGetReviews(
-          user._id,
-          setGetDataOnce,
-          setrefeshing,
-          c => setdata(c),
-          c => setisOneReview(c),
-          c => setloader(c),
-        );
-        store.Userv.attemptToGetLatestTrip(c => setisAnyTrade(c));
+        store.Userv.attemptToGetReviews(user._id, setGetDataOnce, setrefeshing);
+        store.Userv.attemptToGetLatestTrip();
       } else {
         setrefeshing(false);
       }

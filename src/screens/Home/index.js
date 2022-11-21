@@ -1171,12 +1171,9 @@ function Home(props) {
             <Pressable
               onPress={() => {
                 if (user == 'guest') {
-                  // store.General.setgoto('guestaccess');
-                  // store.User.Logout();
                   return;
                 }
 
-                store.Userv.clearUser();
                 store.Userv.setfscreen('home');
                 store.Userv.setUser(usr);
                 store.Userv.addauthToken(store.User.authToken);
@@ -1219,7 +1216,12 @@ function Home(props) {
                 store.User.Logout();
                 return;
               }
-              saveTrip(item, index);
+
+              if (store.User.user.subscriptionStatus == 'freemium') {
+                props.navigation.navigate('Plan');
+              } else {
+                saveTrip(item, index);
+              }
             }}
             style={({pressed}) => [
               {opacity: pressed ? 0.7 : 1.0},

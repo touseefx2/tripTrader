@@ -10,6 +10,33 @@ class user {
     makeObservable(this);
   }
 
+  @observable cchk = '';
+  @observable ffuser = '';
+  @observable ccc = '';
+  @action setcchk = obj => {
+    this.cchk = obj;
+  };
+  @action setffuser = obj => {
+    this.ffuser = obj;
+  };
+  @action setccc = obj => {
+    this.ccc = obj;
+  };
+
+  @observable chk = '';
+  @observable fuser = '';
+  @observable cc = '';
+  @action setchk = obj => {
+    this.chk = obj;
+  };
+  @action setfuser = obj => {
+    this.fuser = obj;
+  };
+
+  @action setcc = obj => {
+    this.cc = obj;
+  };
+
   @persist('object') @observable plans = false;
   @action setplans = obj => {
     this.plans = obj;
@@ -2329,7 +2356,7 @@ class user {
               resp.data,
             );
             let rsp = resp.data.data;
-            let plan = {annual_discount: 0, data: []};
+            let plan = {data: []};
             let dt = [];
             let features = [
               'Create trips and get offers',
@@ -2392,7 +2419,7 @@ class user {
           resp.data,
         );
         let rsp = resp.data.data;
-        let plan = {annual_discount: 0, data: []};
+        let plan = {data: []};
         let dt = [];
         let features = [
           'Create trips and get offers',
@@ -2694,7 +2721,7 @@ class user {
 
   @action.bound
   forgotPassword(body, goto, seterror) {
-    console.warn('Forgot Pswd  body : ', body);
+    console.log('Forgot Pswd  body : ', body);
     this.setregLoader(true);
 
     db.hitApi(db.apis.FORGOT_PSWD, 'put', body, null)
@@ -2745,7 +2772,7 @@ class user {
   @action.bound
   isPhoneExist(p, suc, seterror) {
     let phone = p.substring(1);
-    console.warn('isPhoneExist  body : ', phone);
+    console.log('isPhoneExist  body : ', phone);
     this.setregLoader(true);
 
     db.hitApi(db.apis.IS_PHONE_EXIST + phone, 'get', {}, null)
@@ -2845,9 +2872,15 @@ class user {
     store.Notifications.clearNotifications();
     store.Offers.clearOffers();
     this.setisNotification(true);
-
     const socket = store.General.socket;
     socket.emit('user left', {socket: socket.id});
+    this.setchk('');
+    this.setfuser('');
+    this.setcc('');
+    this.setcchk('');
+    this.setffuser('');
+    this.setccc('');
+    store.Userv.setUser(false);
   }
 
   @action.bound

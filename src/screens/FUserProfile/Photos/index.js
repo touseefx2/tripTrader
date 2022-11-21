@@ -34,17 +34,11 @@ export default observer(Photos);
 function Photos(props) {
   let headerTitle = 'Photos';
   let internet = store.General.isInternet;
-  // let user = store.Userv.user;
-  // let data = store.Userv.photos;
-  // let loader = store.Userv.photosLoader;
-  let mloader = store.Userv.mLoader;
-
-  let u = store.Userv.user;
-  const [user, setuser] = useState(u);
-  const [data, setdata] = useState([]);
-  const [loader, setloader] = useState(false);
-
+  let user = store.Userv.user;
+  let data = store.Userv.photos;
   const totalData = data.length;
+  let loader = store.Userv.photosLoader;
+  let mloader = store.Userv.mLoader;
 
   const [pvm, setpvm] = useState(false);
   const [si, setsi] = useState('');
@@ -71,13 +65,7 @@ function Photos(props) {
   const getDbData = c => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.Userv.attemptToGetPhotos(
-          user._id,
-          setGetDataOnce,
-          setrefeshing,
-          c => setdata(c),
-          c => setloader(c),
-        );
+        store.Userv.attemptToGetPhotos(user._id, setGetDataOnce, setrefeshing);
       } else {
         setRefreshing(false);
       }

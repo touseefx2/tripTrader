@@ -36,7 +36,7 @@ import auth from '@react-native-firebase/auth';
 
 export default observer(VerifyCode);
 function VerifyCode(props) {
-  let resendTime = 10; //second
+  let resendTime = 60; //second
   let screen = props.route.params.screen || '';
 
   const mobileReg = /^[0][3]\d{9}$/;

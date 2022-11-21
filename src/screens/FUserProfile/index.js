@@ -42,9 +42,9 @@ import Reviews from './Reviews';
 import Trips from './Trips';
 import Photos from './Photos';
 
-export default observer(UserProfile);
+export default observer(FUserProfile);
 
-function UserProfile(props) {
+function FUserProfile(props) {
   const refRBSheet = useRef();
 
   let maxModalHeight = theme.window.Height - 100;
@@ -55,24 +55,15 @@ function UserProfile(props) {
   let headerTitle = 'Profile';
 
   let internet = store.General.isInternet;
-  let u = store.Userv.user;
-  // let loader = store.Userv.gl;
+  let user = store.Userv.user;
+  let loader = store.Userv.gl;
 
   let userName = '';
   let phn = '';
+  let followers = store.Userv.totalfollowers;
+  let following = store.Userv.totalfollowing;
   let src = '';
   let srccnic = '';
-
-  const [user, setuser] = useState(u);
-  useEffect(() => {
-    setuser(u);
-  }, []);
-
-  console.log('uidddddddddddd : ', user._id);
-
-  const [followers, setfollowers] = useState(0);
-  const [following, setfollowing] = useState(0);
-  const [loader, setloader] = useState(false);
 
   if (user) {
     userName = user.firstName + ' ' + user.lastName;
@@ -123,12 +114,7 @@ function UserProfile(props) {
   const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.Userv.attemptToGetHome(
-          user._id,
-          setGetDataOnce,
-          c => setfollowers(c),
-          c => setfollowing(c),
-        );
+        store.Userv.attemptToGetHome(setGetDataOnce);
       }
     });
   };
@@ -224,12 +210,7 @@ function UserProfile(props) {
     Keyboard.dismiss();
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.Userv.unFollowUser(
-          user._id,
-          c => setfollowers(c),
-          c => setfollowing(c),
-          c => setloader(c),
-        );
+        store.Userv.unFollowUser();
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -240,12 +221,7 @@ function UserProfile(props) {
     Keyboard.dismiss();
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.Userv.FollowUser(
-          user._id,
-          c => setfollowers(c),
-          c => setfollowing(c),
-          c => setloader(c),
-        );
+        store.Userv.FollowUser();
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -256,13 +232,7 @@ function UserProfile(props) {
     Keyboard.dismiss();
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.Userv.BlockUser(
-          user._id,
-          closeBottomSheet,
-          c => setfollowers(c),
-          c => setfollowing(c),
-          c => setloader(c),
-        );
+        store.Userv.BlockUser(closeBottomSheet);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -273,13 +243,7 @@ function UserProfile(props) {
     Keyboard.dismiss();
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.Userv.UnBlockUser(
-          user._id,
-          closeBottomSheet,
-          c => setfollowers(c),
-          c => setfollowing(c),
-          c => setloader(c),
-        );
+        store.Userv.UnBlockUser(closeBottomSheet);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -303,7 +267,7 @@ function UserProfile(props) {
   useEffect(() => {
     store.User.setOtherProfileProps(props);
     return () => {
-      // store.Userv.clearUser();
+      store.Userv.clearUser();
     };
   }, []);
 
@@ -437,17 +401,11 @@ function UserProfile(props) {
   };
 
   const ShowFollowersScreen = c => {
-    // props.navigation.navigate('ShowFollowers', {
-    //   chk: c,
-    //   user: userName,
-    //   cc: 'other',
-    // });
-
-    props.navigation.navigate('ShowFollowers');
-    store.Userv.setUser(user);
-    store.User.setchk(c);
-    store.User.setfuser(userName);
-    store.User.setcc('other');
+    props.navigation.navigate('ShowFollowers', {
+      chk: c,
+      user: userName,
+      cc: 'other',
+    });
   };
 
   const renderProfileSection = () => {
@@ -1823,7 +1781,7 @@ function UserProfile(props) {
           closModal={() => setpvm(!pvm)}
         />
       )}
-
+      {/* {store.Notifications.isShowNotifcation && <utils.ShowNotifications />} */}
       <utils.Loader load={loader} />
     </View>
   );

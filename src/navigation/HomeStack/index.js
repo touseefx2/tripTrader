@@ -131,16 +131,6 @@ let HomeStack = () => {
           });
         }}
       />
-      <Stack.Screen
-        name="UserProfile"
-        component={UserProfileStack}
-        options={props => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-      />
 
       <Stack.Screen
         options={props => {
@@ -155,6 +145,17 @@ let HomeStack = () => {
       <Stack.Screen
         name="Notifications"
         component={screens.Notifications}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+      />
+
+      <Stack.Screen
+        name="UserProfile"
+        component={UserProfileStack}
         options={props => {
           let parent = props.navigation.getParent();
           parent.setOptions({
@@ -258,6 +259,18 @@ let SavedTripsStack = () => {
           });
         }}
       />
+
+      <Stack.Screen
+        name="UserProfile"
+        component={UserProfileStack}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+      />
+
       <Stack.Screen
         options={props => {
           let parent = props.navigation.getParent();
@@ -303,7 +316,7 @@ let ProfileStack = () => {
 
       <Stack.Screen
         name="ShowFollowers"
-        component={screens.ShowFollowers}
+        component={ShowFollowersStack}
         options={props => {
           let parent = props.navigation.getParent();
           parent.setOptions({
@@ -347,7 +360,7 @@ let UserProfileStack = () => {
 
       <Stack.Screen
         name="ShowFollowers"
-        component={screens.ShowFollowers}
+        component={ShowOtherFollowersStack}
         // options={props => {
         //   let parent = props.navigation.getParent();
         //   parent.setOptions({
@@ -570,13 +583,14 @@ let ConfirmedTripsStack = () => {
           });
         }}
       />
+
       <Stack.Screen
         name="UserProfile"
         component={UserProfileStack}
         options={props => {
           let parent = props.navigation.getParent();
           parent.setOptions({
-            swipeEnabled: true,
+            swipeEnabled: false,
           });
         }}
       />
@@ -622,6 +636,94 @@ let NewTripsStack = () => {
         }}
         name="Plan"
         component={screens.Plan}
+      />
+
+      <Stack.Screen
+        name="Notifications"
+        component={screens.Notifications}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+let ShowFollowersStack = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="ShowFollowerss"
+      screenOptions={{
+        animationEnabled: false,
+        headerShown: false,
+      }}>
+      <Stack.Screen
+        name="ShowFollowerss"
+        component={screens.ShowFollowers}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+      />
+
+      <Stack.Screen
+        name="UserProfile"
+        component={UserProfileStack}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+      />
+
+      <Stack.Screen
+        name="Notifications"
+        component={screens.Notifications}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+let ShowOtherFollowersStack = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="ShowFollowersss"
+      screenOptions={{
+        animationEnabled: false,
+        headerShown: false,
+      }}>
+      <Stack.Screen
+        name="ShowFollowersss"
+        component={screens.ShowOtherFollowers}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+      />
+
+      <Stack.Screen
+        name="UserProfile"
+        component={UserProfileStack}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
       />
 
       <Stack.Screen

@@ -3,7 +3,7 @@
 //online link  heroko
 const BASE_URL = 'https://triptrader-backend.herokuapp.com/';
 //local link
-// const BASE_URL = 'http://10.7.148.90:3001/';
+// const BASE_URL = 'http://192.168.0.105:3001/';
 
 //apis
 const GET_CITIES_AREAS = 'api/area/getAllAreas';

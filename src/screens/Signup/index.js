@@ -178,7 +178,9 @@ function Signup(props) {
   useEffect(() => {
     if (plans && plans.data.length > 0) {
       setPlan(plans.data[0]);
-      setsave(plans.annual_discount);
+      if (plans.annual_discount) {
+        setsave(plans.annual_discount);
+      }
     }
   }, [plans]);
 
@@ -441,45 +443,45 @@ function Signup(props) {
     clearAllField();
     Keyboard.dismiss();
 
-    // if (fn == '') {
-    //   setEmptyfn(true);
-    //   return;
-    // }
+    if (fn == '') {
+      setEmptyfn(true);
+      return;
+    }
 
-    // if (ln == '') {
-    //   setEmptyln(true);
-    //   return;
-    // }
+    if (ln == '') {
+      setEmptyln(true);
+      return;
+    }
 
-    // if (email == '') {
-    //   setEmptyemail(true);
-    //   return;
-    // }
+    if (email == '') {
+      setEmptyemail(true);
+      return;
+    }
 
-    // if (emailReg.test(email) === false) {
-    //   setinvalidemail(true);
-    //   return;
-    // }
+    if (emailReg.test(email) === false) {
+      setinvalidemail(true);
+      return;
+    }
 
-    // if (dob == '') {
-    //   setEmptydob(true);
-    //   return;
-    // }
+    if (dob == '') {
+      setEmptydob(true);
+      return;
+    }
 
-    // if (pswd == '') {
-    //   setEmptypswd(true);
-    //   return;
-    // }
+    if (pswd == '') {
+      setEmptypswd(true);
+      return;
+    }
 
-    // if (pswd.length < 8) {
-    //   setinvalidpswd(true);
-    //   return;
-    // }
+    if (pswd.length < 8) {
+      setinvalidpswd(true);
+      return;
+    }
 
-    // if (isTerms == false) {
-    //   setEmptyTerms(true);
-    //   return;
-    // }
+    if (isTerms == false) {
+      setEmptyTerms(true);
+      return;
+    }
 
     const body = {
       firstName: fn,
@@ -2043,36 +2045,40 @@ function Signup(props) {
                       </Text>
                     )}
                     {plan.type == 'monthly' && (
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          top: -5,
-                        }}>
-                        <Text
-                          style={{
-                            fontSize: 12,
-                            color: '#767676',
-                            fontFamily: theme.fonts.fontMedium,
-                          }}>
-                          Save ${toFixed(save, 0)} with an
-                        </Text>
-                        <TouchableOpacity
-                          activeOpacity={0.6}
-                          onPress={() => {
-                            setPlan(plans.data[0]);
-                          }}>
-                          <Text
+                      <>
+                        {save > 0 && (
+                          <View
                             style={{
-                              fontSize: 12,
-                              color: 'green',
-                              fontFamily: theme.fonts.fontMedium,
-                              marginLeft: 5,
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              top: -5,
                             }}>
-                            Annual Plan
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
+                            <Text
+                              style={{
+                                fontSize: 12,
+                                color: '#767676',
+                                fontFamily: theme.fonts.fontMedium,
+                              }}>
+                              Save ${toFixed(save, 0)} with an
+                            </Text>
+                            <TouchableOpacity
+                              activeOpacity={0.6}
+                              onPress={() => {
+                                setPlan(plans.data[0]);
+                              }}>
+                              <Text
+                                style={{
+                                  fontSize: 12,
+                                  color: 'green',
+                                  fontFamily: theme.fonts.fontMedium,
+                                  marginLeft: 5,
+                                }}>
+                                Annual Plan
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
+                        )}
+                      </>
                     )}
                   </View>
                   {plan.features.length > 0 && (

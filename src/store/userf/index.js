@@ -5,7 +5,7 @@ import NetInfo from '@react-native-community/netinfo';
 import db from '../../database/index';
 import {Alert} from 'react-native';
 import io from 'socket.io-client';
-class userv {
+class userf {
   constructor() {
     makeObservable(this);
   }
@@ -68,35 +68,26 @@ class userv {
     this.bl = obj;
   };
 
-  @action attemptToGetFollowers = (
-    uid,
-    setgetdata,
-    sflwrs,
-    sflwng,
-    setdt,
-    setr,
-  ) => {
+  @action attemptToGetFollowers = (uid, setgetdata, setrfrsh) => {
     console.warn('GET Followers  : ', 'true');
-    setr(true);
+    this.setfl(true);
 
     db.hitApi(db.apis.GET_FOLLOWERS + uid, 'get', {}, this.authToken)
       ?.then(resp => {
-        setr(false);
-
+        this.setfl(false);
+        setrfrsh(false);
         console.log(
           `response GET Followers   ${db.apis.GET_FOLLOWERS + uid} : `,
           resp.data,
         );
         let dt = resp.data.follower || [];
         setgetdata(true);
-        // this.setfollowers(dt);
-        // this.settotalfollowers(dt.length);
-        setdt(dt);
-        sflwrs(dt.length);
+        this.setfollowers(dt);
+        this.settotalfollowers(dt.length);
       })
       .catch(err => {
-        setr(false);
-
+        this.setfl(false);
+        setrfrsh(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in GET Followers  ${db.apis.GET_FOLLOWERS + uid} : `,
@@ -108,32 +99,22 @@ class userv {
           return;
         }
         if (msg == 'No records found') {
-          // this.setfollowers([]);
-          // this.settotalfollowers(0);
-          setdt([]);
-          sflwrs(0);
+          this.setfollowers([]);
+          this.settotalfollowers(0);
           return;
         }
         // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   };
-  @action attemptToGetFollowing = (
-    uid,
-    setgetdata,
-
-    sflwrs,
-    sflwng,
-    setdt,
-    setr,
-  ) => {
+  @action attemptToGetFollowing = (uid, setgetdata, setrfrsh) => {
     console.warn('GET Followers  : ', 'true');
-    setr(true);
+    this.setfl(true);
 
     db.hitApi(db.apis.GET_FOLLOWING + uid, 'get', {}, this.authToken)
       ?.then(resp => {
-        setr(false);
-
+        this.setfl(false);
+        setrfrsh(false);
         console.log(
           `response GET FOLLOWING  ${db.apis.GET_FOLLOWING + uid} : `,
           resp.data,
@@ -141,14 +122,12 @@ class userv {
         let dt = resp.data.following || [];
         console.log('dttt flwng : ', dt);
         setgetdata(true);
-        // this.setfollowing(dt);
-        // this.settotalfollowing(dt.length);
-        setdt(dt);
-        sflwng(dt.length);
+        this.setfollowing(dt);
+        this.settotalfollowing(dt.length);
       })
       .catch(err => {
-        setr(false);
-
+        this.setfl(false);
+        setrfrsh(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in GET FOLLOWING ${db.apis.GET_FOLLOWING + uid} : `,
@@ -160,10 +139,8 @@ class userv {
           return;
         }
         if (msg == 'No records found') {
-          // this.setfollowing([]);
-          // this.settotalfollowing(0);
-          setdt([]);
-          sflwng(0);
+          this.setfollowing([]);
+          this.settotalfollowing(0);
           return;
         }
         // seterror(msg.toString())
@@ -374,20 +351,13 @@ class userv {
     this.isOneReview = obj;
   };
 
-  @action attemptToGetReviews = (
-    uid,
-    setgetdata,
-    setrfrsh,
-    setdt,
-    setor,
-    setl,
-  ) => {
+  @action attemptToGetReviews = (uid, setgetdata, setrfrsh) => {
     console.log('get all Reviews : ', 'true');
-    setl(true);
+    this.setreviewLoader(true);
 
     db.hitApi(db.apis.GET_ALL_REVIEWS + uid, 'get', {}, this.authToken)
       ?.then(resp => {
-        setl(false);
+        this.setreviewLoader(false);
         setrfrsh(false);
         console.log(
           `response GET_ALL_REVIEWS   ${db.apis.GET_ALL_REVIEWS + uid} : `,
@@ -410,15 +380,10 @@ class userv {
           });
         }
 
-        this.attemptToCheckReview(
-          ar,
-          setgetdata,
-          c => setdt(c),
-          c => setor(c),
-        );
+        this.attemptToCheckReview(ar, setgetdata);
       })
       .catch(err => {
-        setl(false);
+        this.setreviewLoader(false);
         setrfrsh(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(
@@ -431,12 +396,7 @@ class userv {
           return;
         }
         if (msg == 'No records found') {
-          this.attemptToCheckReview(
-            [],
-            setgetdata,
-            () => {},
-            c => setor(c),
-          );
+          this.attemptToCheckReview([], setgetdata);
           return;
         }
         // seterror(msg.toString())
@@ -444,7 +404,7 @@ class userv {
       });
   };
 
-  @action attemptToCheckReview = (data, setgetdata, setdt, setor) => {
+  @action attemptToCheckReview = (data, setgetdata) => {
     console.warn('CheckReview : ', 'true');
 
     let params = this.user._id + '/' + store.User.user._id;
@@ -457,20 +417,20 @@ class userv {
         let msg = resp.data.message || '';
 
         if (msg == 'No review found') {
-          setdt(data);
-          setor(false);
+          this.setisOneReview(false);
+          this.setreview(data);
         } else {
-          setor(true);
+          this.setisOneReview(true);
           let d = resp.data.data[0];
           let dt = data;
           dt.unshift(d);
-          setdt(dt);
+          this.setreview(dt);
         }
         setgetdata(true);
       })
       .catch(err => {
         // setgetdata(true);
-        let msg = err;
+        let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in CheckReview ${db.apis.GET_ALL_REVIEWS + params} : `,
           msg,
@@ -486,7 +446,7 @@ class userv {
       });
   };
 
-  @action attemptToGetLatestTrip = setar => {
+  @action attemptToGetLatestTrip = () => {
     let array = store.Offers.cnfrmOffers || [];
     console.log('GetLatestTrip : ', array.length);
 
@@ -516,7 +476,7 @@ class userv {
         console.log('u2 : ', isu2);
 
         if (isu1 && isu2) {
-          setar(e);
+          this.setisAnyTrade(e);
           break;
         }
       }
@@ -554,13 +514,13 @@ class userv {
     //   });
   };
 
-  @action attemptToGetTrips = (uid, setgetdata, setrfrsh, setdt, setl) => {
+  @action attemptToGetTrips = (uid, setgetdata, setrfrsh) => {
     console.warn('GET_ALL_TRIP : ', 'true');
-    setl(true);
+    this.settripLoader(true);
 
     db.hitApi(db.apis.GET_ALL_TRIP + uid, 'get', {}, this.authToken)
       ?.then(resp => {
-        setl(false);
+        this.settripLoader(false);
         setrfrsh(false);
         console.log(
           `response GET_ALL_TRIP   ${db.apis.GET_ALL_TRIP + uid} : `,
@@ -568,10 +528,10 @@ class userv {
         );
         let dt = resp.data.data;
         setgetdata(true);
-        setdt(dt);
+        this.settrips(dt);
       })
       .catch(err => {
-        setl(false);
+        this.settripLoader(false);
         setrfrsh(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(
@@ -585,7 +545,7 @@ class userv {
         }
         if (msg == 'No records found') {
           setgetdata(true);
-          setdt([]);
+          this.settrips([]);
           return;
         }
         // seterror(msg.toString())
@@ -593,13 +553,13 @@ class userv {
       });
   };
 
-  @action attemptToGetPhotos = (uid, setgetdata, setrfrsh, setdt, setl) => {
+  @action attemptToGetPhotos = (uid, setgetdata, setrfrsh, dt) => {
     console.warn('getPhotosData : ', 'true');
-    setl(true);
+    this.setphotosLoader(true);
 
     db.hitApi(db.apis.GET_ALL_TRIP + uid, 'get', {}, this.authToken)
       ?.then(resp => {
-        setl(false);
+        this.setphotosLoader(false);
         setrfrsh(false);
         console.log(
           `response getPhotosData  ${db.apis.GET_ALL_TRIP + uid} : `,
@@ -620,18 +580,16 @@ class userv {
         }
 
         setgetdata(true);
-        setdt(dt);
+        this.setphotos(dt);
         this.attemptToGetTrips(
-          uid,
-          () => {},
-          () => {},
+          this.user._id,
           () => {},
           () => {},
         );
       })
       .catch(err => {
         setrfrsh(false);
-        setl(false);
+        this.setphotosLoader(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in getPhotosData ${db.apis.GET_ALL_TRIP + uid} : `,
@@ -644,7 +602,7 @@ class userv {
         }
         if (msg == 'No records found') {
           setgetdata(true);
-          setdt([]);
+          this.setphotos([]);
           return;
         }
         // seterror(msg.toString())
@@ -652,14 +610,10 @@ class userv {
       });
   };
 
-  @action attemptToGetHome = (uid, setgetdata, sflwrs, sflwng) => {
+  @action attemptToGetHome = setgetdata => {
     console.warn('Get AllGenralData : ', 'true');
-    this.allGetGeneralUserData(
-      uid,
-      setgetdata,
-      c => sflwrs(c),
-      c => sflwng(c),
-    );
+
+    this.allGetGeneralUserData(this.user._id, setgetdata);
   };
 
   //
@@ -1288,10 +1242,10 @@ class userv {
     }
   };
 
-  @action unFollowUser = (uid2, sflwrs, sflwng, setl) => {
-    setl(true);
+  @action unFollowUser = () => {
+    this.setgl(true);
     let uid1 = store.User.user._id;
-
+    let uid2 = this.user._id;
     let params = uid1 + '/' + uid2;
     db.hitApi(db.apis.UNFOLLOW_USER + params, 'put', {}, this.authToken)
       ?.then(resp => {
@@ -1300,18 +1254,13 @@ class userv {
           resp.data,
         );
         setTimeout(() => {
-          setl(false);
+          this.setgl(false);
         }, 1000);
-        this.attemptToGetHome(
-          uid2,
-          () => {},
-          c => sflwrs(c),
-          c => sflwng(c),
-        );
+        this.attemptToGetHome(() => {});
         this.myUserGetGeneral('');
       })
       .catch(err => {
-        setl(false);
+        this.setgl(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in UNFOLLOW_USER, ${db.apis.UNFOLLOW_USER}${params} : `,
@@ -1327,10 +1276,10 @@ class userv {
       });
   };
 
-  @action FollowUser = (uid2, sflwrs, sflwng, setl) => {
-    setl(true);
+  @action FollowUser = () => {
+    this.setgl(true);
     let uid1 = store.User.user._id;
-
+    let uid2 = this.user._id;
     let params = uid1 + '/' + uid2;
     db.hitApi(db.apis.FOLLOW_USER + params, 'put', {}, this.authToken)
       ?.then(resp => {
@@ -1339,18 +1288,13 @@ class userv {
           resp.data,
         );
         setTimeout(() => {
-          setl(false);
+          this.setgl(false);
         }, 1000);
-        this.attemptToGetHome(
-          uid2,
-          () => {},
-          c => sflwrs(c),
-          c => sflwng(c),
-        );
+        this.attemptToGetHome(() => {});
         this.myUserGetGeneral('');
       })
       .catch(err => {
-        setl(false);
+        this.setgl(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in FOLLOW_USER, ${db.apis.FOLLOW_USER}${params} : `,
@@ -1366,10 +1310,10 @@ class userv {
       });
   };
 
-  @action BlockUser = (uid2, suc, sflwrs, sflwng, setl) => {
-    setl(true);
+  @action BlockUser = suc => {
+    this.setgl(true);
     let uid1 = store.User.user._id;
-
+    let uid2 = this.user._id;
     let params = uid1 + '/' + uid2;
     db.hitApi(db.apis.BLOCK_USER + params, 'put', {}, this.authToken)
       ?.then(resp => {
@@ -1378,19 +1322,14 @@ class userv {
           resp.data,
         );
         setTimeout(() => {
-          setl(false);
+          this.setgl(false);
         }, 1000);
-        this.attemptToGetHome(
-          uid2,
-          () => {},
-          c => sflwrs(c),
-          c => sflwng(c),
-        );
+        this.attemptToGetHome(() => {});
         this.myUserGetGeneral('b');
         suc();
       })
       .catch(err => {
-        setl(false);
+        this.setgl(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in  BlockUser, ${db.apis.BLOCK_USER}${params} : `,
@@ -1406,10 +1345,10 @@ class userv {
       });
   };
 
-  @action UnBlockUser = (uid2, suc, sflwrs, sflwng, setl) => {
-    setl(true);
+  @action UnBlockUser = suc => {
+    this.setgl(true);
     let uid1 = store.User.user._id;
-
+    let uid2 = this.user._id;
     let params = uid1 + '/' + uid2;
     db.hitApi(db.apis.UNBLOCK_USER + params, 'put', {}, this.authToken)
       ?.then(resp => {
@@ -1418,19 +1357,14 @@ class userv {
           resp.data,
         );
         setTimeout(() => {
-          setl(false);
+          this.setgl(false);
         }, 1000);
-        this.attemptToGetHome(
-          uid2,
-          () => {},
-          c => sflwrs(c),
-          c => sflwng(c),
-        );
+        this.attemptToGetHome(() => {});
         this.myUserGetGeneral('b');
         suc();
       })
       .catch(err => {
-        setl(false);
+        this.setgl(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in  unBlockUser, ${db.apis.UNBLOCK_USER}${params} : `,
@@ -2219,24 +2153,14 @@ class userv {
     this.attemptToGetSpecies();
   }
 
-  @action.bound
-  allGetGeneralUserData(uid, sgd, sflwrs, sflwng) {
-    this.attemptToGetFollowers(
-      uid,
-      sgd,
-      c => sflwrs(c),
-      c => sflwng(c),
-      () => {},
-      () => {},
-    );
+  allGetGeneralUserData(uid, sgd) {
+    this.attemptToGetFollowers(uid, sgd, () => {});
     this.attemptToGetFollowing(
       uid,
-      sgd,
-      c => sflwrs(c),
-      c => sflwng(c),
       () => {},
       () => {},
     );
+    // this.getUserById1(uid, this.authToken, '');
   }
 
   @action.bound
@@ -3356,4 +3280,4 @@ class userv {
   }
 }
 
-export const Userv = new userv();
+export const Userf = new userf();

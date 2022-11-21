@@ -33,17 +33,10 @@ export default observer(Trips);
 function Trips(props) {
   let headerTitle = 'Trips';
   let internet = store.General.isInternet;
-  // let user = store.Userv.user;
-  // let data = store.Userv.trips;
-  // let loader = store.Userv.tripsLoader;
-
-  let u = store.Userv.user;
-  const [user, setuser] = useState(u);
-  const [data, setdata] = useState([]);
-  const [loader, setloader] = useState(false);
-
+  let user = store.Userv.user;
+  let data = store.Userv.trips;
   const totalData = data.length;
-
+  let loader = store.Userv.tripsLoader;
   let mloader = store.Userv.mLoader;
 
   const [pvm, setpvm] = useState(false);
@@ -71,13 +64,7 @@ function Trips(props) {
   const getDbData = c => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.Userv.attemptToGetTrips(
-          user._id,
-          setGetDataOnce,
-          setrefeshing,
-          c => setdata(c),
-          c => setloader(c),
-        );
+        store.Userv.attemptToGetTrips(user._id, setGetDataOnce, setrefeshing);
       } else {
         setrefeshing(false);
       }

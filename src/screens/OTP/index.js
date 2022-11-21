@@ -238,7 +238,7 @@ function OTP(props) {
             <Text
               key={index}
               style={[
-                Platform.os == 'android' ? styles.cell : styles.cellios,
+                Platform.OS == 'android' ? styles.cell : styles.cellios,
                 isFocused && styles.focusCell,
               ]}
               onLayout={getCellOnLayoutHandler(index)}>
