@@ -1,8 +1,10 @@
-//online link  ec2
+//Ec2
 // const BASE_URL = 'http://ec2-13-126-189-174.ap-south-1.compute.amazonaws.com/';
-//online link  heroko
+
+//Heroko
 const BASE_URL = 'https://triptrader-backend.herokuapp.com/';
-//local link
+
+//Local
 // const BASE_URL = 'http://192.168.0.105:3001/';
 
 //apis
