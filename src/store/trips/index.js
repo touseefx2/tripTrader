@@ -119,7 +119,7 @@ class trips {
       savedTrips: dt,
     };
 
-    console.warn('unSave Trip Body : ', body);
+    console.log('unSave Trip Body : ', body);
     this.setdLoader(true);
     let uid = store.User.user._id;
     let token = store.User.authToken;

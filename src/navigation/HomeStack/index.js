@@ -250,7 +250,7 @@ let SavedTripsStack = () => {
         headerShown: false,
       }}>
       <Stack.Screen
-        name="SavedTrips"
+        name="SavedTripse"
         component={screens.SavedTrips}
         options={props => {
           let parent = props.navigation.getParent();

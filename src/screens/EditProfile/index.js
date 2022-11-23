@@ -197,7 +197,7 @@ function EditProfile(props) {
       birthDate: dob,
       image: photo,
       identityProof: cnicFrontImage,
-      phone: phone,
+      phone: phone != '' ? phone.substring(1) : phone,
       phoneCountryCode:
         phoneCountryCode == '' ? RNLocalize.getCountry() : phoneCountryCode,
       profileUpdateByUser: true,
@@ -206,21 +206,15 @@ function EditProfile(props) {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         store.User.setregLoader(true);
-        if (imgArr.length <= 0) {
-          store.User.attemptToEditupdateUser(
-            body,
-            setErrMessage,
-            user._id,
-            suc,
-          );
+
+        if (phone !== '') {
+          store.User.isPhoneExistEditProfile(phone, body, imgArr, suc);
         } else {
-          store.User.attemptToEditUploadImage(
-            body,
-            setErrMessage,
-            user._id,
-            imgArr,
-            suc,
-          );
+          if (imgArr.length <= 0) {
+            store.User.attemptToEditupdateUser(body, suc);
+          } else {
+            store.User.attemptToEditUploadImage(body, imgArr, suc);
+          }
         }
       } else {
         // seterrorMessage('Please connect internet');

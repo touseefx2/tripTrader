@@ -1034,7 +1034,7 @@ function Sent(props) {
     <>
       <View style={styles.container}>
         {/* <utils.DrawerHeader props={props} headerTitle={headerTitle} /> */}
-        {!internet && <utils.InternetMessage />}
+        {/* {!internet && <utils.InternetMessage />} */}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <FlatList

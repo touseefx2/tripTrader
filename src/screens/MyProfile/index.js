@@ -279,8 +279,7 @@ function MyProfile(props) {
         store.User.setregLoader(true);
         store.User.attemptToEditUploadImage(
           body,
-          setErrMessage,
-          user._id,
+
           imgArr,
           closePhotoModal,
         );

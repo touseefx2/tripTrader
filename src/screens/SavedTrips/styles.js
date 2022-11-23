@@ -61,7 +61,7 @@ export const styles = StyleSheet.create({
   },
   SerchBarContainer: {
     width: '100%',
-    // height: 48,
+    height: 45,
     borderRadius: 100,
     flexDirection: 'row',
     alignItems: 'center',
@@ -81,7 +81,7 @@ export const styles = StyleSheet.create({
   },
   SerchBarInput: {
     width: '100%',
-    height: 50,
+    fontSize: 14.5,
     // height: '100%',
     fontFamily: theme.fonts.fontNormal,
   },
@@ -248,7 +248,7 @@ export const styles = StyleSheet.create({
   },
   tripImageConatiner: {
     width: '100%',
-    height: 245,
+    height: 210,
 
     borderTopWidth: 0.8,
     borderBottomWidth: 0.8,

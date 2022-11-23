@@ -2802,6 +2802,56 @@ class user {
   }
 
   @action.bound
+  isPhoneExistEditProfile(p, body, imgArr, suc) {
+    let phone = p.substring(1);
+    console.log('isPhoneExist  body : ', phone);
+
+    db.hitApi(db.apis.IS_PHONE_EXIST + phone, 'get', {}, null)
+      ?.then(resp => {
+        console.log(
+          `isPhoneExist res :  ${db.apis.IS_PHONE_EXIST}${phone} : `,
+          resp.data,
+        );
+
+        let rsp = resp.data[0];
+        if (rsp._id == this.user._id) {
+          if (imgArr.length <= 0) {
+            this.attemptToEditupdateUser(body, suc);
+          } else {
+            this.attemptToEditUploadImage(body, imgArr, suc);
+          }
+        } else {
+          Alert.alert('', 'This Phone number is already used by another user.');
+          this.setregLoader(false);
+          return;
+        }
+      })
+      .catch(err => {
+        this.setregLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in isPhoneExist ${db.apis.IS_PHONE_EXIST}${phone} : `,
+          msg,
+        );
+        if (msg == 'No user found.') {
+          if (imgArr.length <= 0) {
+            this.attemptToEditupdateUser(body, () => suc());
+          } else {
+            this.attemptToEditUploadImage(body, imgArr, () => suc());
+          }
+          return;
+        }
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  }
+
+  @action.bound
   attemptToVerifyCode(body, suc, suc2) {
     console.warn('attemptToVerifyCode  body : ', body);
     this.setregLoader(true);
@@ -2921,13 +2971,14 @@ class user {
   //   }, 1000);
   // }
 
-  attemptToEditupdateUser(body, setErrMessage, uid, suc) {
-    // let body = {...this.user, ...body};
-    console.warn('Edit Update user   body : ', body);
+  attemptToEditupdateUser(body, suc) {
+    console.log('Edit Update user   body : ', body);
 
+    let uid = this.user._id;
     db.hitApi(db.apis.UPDATE_USER + uid, 'put', body, this.authToken)
       ?.then(resp => {
         this.setregLoader(false);
+        suc();
         console.log(
           `response Edit Update user  ${db.apis.UPDATE_USER + uid} : `,
           resp.data,
@@ -2935,11 +2986,7 @@ class user {
 
         let rsp = resp.data.data;
         this.setUser(rsp);
-        suc();
-        store.Notifications.attemptToGetNotifications(
-          store.User.user._id,
-          () => {},
-        );
+        store.Notifications.attemptToGetNotifications(uid, () => {});
       })
       .catch(err => {
         this.setregLoader(false);
@@ -2950,10 +2997,10 @@ class user {
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
+
           return;
         }
-        // seterror(msg.toString())
+
         Alert.alert('', msg.toString());
       });
   }
@@ -2992,8 +3039,8 @@ class user {
       });
   }
 
-  attemptToEditUploadImage(bd, setErrMessage, uid, imgArr, suc) {
-    console.warn('upload photo body : ', imgArr);
+  attemptToEditUploadImage(bd, imgArr, suc) {
+    console.log('upload photo body : ', imgArr);
 
     let body = {...bd};
     let ii = 0;
@@ -3025,7 +3072,7 @@ class user {
           }
           ii++;
           if (ii == a.length) {
-            this.attemptToEditupdateUser(body, setErrMessage, uid, suc);
+            this.attemptToEditupdateUser(body, suc);
             return;
           }
         })

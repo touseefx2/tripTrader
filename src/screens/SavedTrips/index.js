@@ -34,6 +34,8 @@ import FastImage from 'react-native-fast-image';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import {Calendar} from 'react-native-calendars';
 import moment from 'moment/moment';
+import Accordion from 'react-native-collapsible/Accordion';
+import * as Animatable from 'react-native-animatable';
 
 function isObjectEmpty(value) {
   return (
@@ -231,7 +233,7 @@ function SavedTrips(props) {
   const [selDatess, setselDatess] = useState({});
   const [isSelDatee, setisSelDatee] = useState(false);
 
-  const data = store.Trips.saveTrips || [];
+  const dtt = store.Trips.saveTrips || [];
 
   let homeLoader = store.User.HomeLoader;
 
@@ -239,9 +241,18 @@ function SavedTrips(props) {
   const [isDropDownTrip, setisDropDownTrip] = useState(false);
   const [trip, settrip] = useState(false);
 
-  const [isCustom, setisCustom] = useState(false);
-
-  //make offer
+  const [data, setdata] = useState([]);
+  useEffect(() => {
+    let ar = [];
+    if (dtt.length > 0) {
+      dtt.map((e, i, a) => {
+        if (e) {
+          ar.push(e);
+        }
+      });
+    }
+    setdata(ar);
+  }, [dtt]);
 
   const [isDisableToday2, setisDisableToday2] = useState(false);
 
@@ -632,13 +643,9 @@ function SavedTrips(props) {
     });
   };
 
-  const onclickSearchBar = () => {
-    setisShowSearch(true);
-  };
+  const onclickSearchBar = () => {};
 
-  const onclickFilter = () => {
-    setisShowFilters(true);
-  };
+  const onclickFilter = () => {};
 
   const onClickMakeOffer = (dt, ind) => {
     let d = dt;
@@ -896,7 +903,7 @@ function SavedTrips(props) {
     return (
       <View
         style={{
-          height: 20,
+          height: 15,
         }}
       />
     );
@@ -928,277 +935,6 @@ function SavedTrips(props) {
     openModal({item: dt, i: ind}, 'tripRemove');
   };
 
-  const ItemView = ({item, index}) => {
-    let usr = item.hostId;
-    //user
-    let photo = usr.image || '';
-    let userName = usr.firstName + ' ' + usr.lastName;
-    let avgRating = usr.rating || 0;
-    let totalReviews = usr.reviews || 0;
-    let isVeirfy = usr.identityStatus == 'verified' ? true : false;
-
-    //trip
-    let status = item.status || '';
-    let tripPhotos = item.photos ? item.photos : [];
-    let titlee = item.title || '';
-    let locName = item.location.city + ', ' + item.location.state;
-    let trade = item.returnActivity || '';
-    let sd = item.availableFrom;
-    let sdy = parseInt(new Date(sd).getFullYear());
-    let ed = item.availableTo;
-    let edy = parseInt(new Date(ed).getFullYear());
-    let favlbl = '';
-
-    if (sdy == edy) {
-      favlbl =
-        moment(sd).format('MMM DD') + ' - ' + moment(ed).format('MMM DD, YYYY');
-    } else {
-      favlbl =
-        moment(sd).format('MMM DD, YYYY') +
-        ' - ' +
-        moment(ed).format('MMM DD, YYYY');
-    }
-
-    const renderSec1 = () => {
-      const renderProfile = () => {
-        return (
-          <View style={styles.ProfileImgContainer}>
-            <ProgressiveFastImage
-              style={styles.ProfileImg}
-              source={
-                photo != ''
-                  ? {uri: photo}
-                  : require('../../assets/images/drawer/guest/img.png')
-              }
-              loadingImageStyle={styles.imageLoader}
-              loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
-              blurRadius={5}
-            />
-            {isVeirfy && (
-              <Image
-                style={styles.iconVerify}
-                source={require('../../assets/images/verified/img.png')}
-              />
-            )}
-          </View>
-        );
-      };
-
-      const renderText = () => {
-        return (
-          <View style={styles.textContainer}>
-            <Pressable
-              onPress={() => {
-                if (user == 'guest') {
-                  return;
-                }
-
-                store.Userv.setfscreen('savedtrip');
-                store.Userv.setUser(usr);
-                store.Userv.addauthToken(store.User.authToken);
-                props.navigation.navigate('UserProfile');
-              }}
-              style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={styles.textContainertitle}>
-                {userName}
-              </Text>
-            </Pressable>
-
-            <View style={{flexDirection: 'row', marginTop: 2}}>
-              <utils.vectorIcon.Entypo
-                name="star"
-                color={theme.color.rate}
-                size={14}
-              />
-              <Text style={styles.textContainerRatetitle1}>
-                {' '}
-                {avgRating > 0 ? avgRating.toFixed(1) : avgRating}
-                {'  '}
-              </Text>
-              <Text style={styles.textContainerRatetitle2}>
-                {totalReviews > 300 ? '300+' : totalReviews} reviews
-              </Text>
-            </View>
-          </View>
-        );
-      };
-
-      const rendericon = () => {
-        return (
-          <Pressable
-            onPress={() => {
-              if (store.User.user.subscriptionStatus == 'freemium') {
-                props.navigation.navigate('Plan');
-              } else {
-                onClickremoveTrips(item, index);
-              }
-            }}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.7 : 1.0},
-              styles.iconContainer,
-            ]}>
-            <Image
-              style={styles.iconSave}
-              source={require('../../assets/images/delSave/img.png')}
-            />
-          </Pressable>
-        );
-      };
-
-      return (
-        <View style={styles.boxSection1}>
-          {renderProfile()}
-          {renderText()}
-          {rendericon()}
-        </View>
-      );
-    };
-
-    const renderSec2 = () => {
-      const renderTripImages = () => {
-        let chk =
-          tripPhotos.length <= 0
-            ? '0'
-            : tripPhotos.length == 1
-            ? '1'
-            : tripPhotos.length > 1
-            ? '2'
-            : '0';
-
-        return (
-          <>
-            {chk == '2' && (
-              <>
-                <View style={styles.tripImageConatiner}>
-                  <ImageSlider
-                    showHeader={false}
-                    preview={true}
-                    data={tripPhotos}
-                    autoPlay={false}
-                    // onItemChanged={indx => console.log('itm chng : ', indx)}
-                  />
-                </View>
-              </>
-            )}
-
-            {(chk == '0' || chk == '1') && (
-              <>
-                <Pressable
-                  style={({pressed}) => [
-                    {opacity: pressed ? 0.95 : 1.0},
-                    [styles.tripImageConatiner],
-                  ]}
-                  onPress={() => {
-                    setpvm(true);
-                    setpd(chk == '1' ? tripPhotos[0] : '');
-                    setpdc(chk == '1' ? 'tp' : 'ph');
-                  }}>
-                  <ProgressiveFastImage
-                    style={styles.tripImg}
-                    source={
-                      chk == '1'
-                        ? {uri: tripPhotos[0]}
-                        : require('../../assets/images/trip/img.jpeg')
-                    }
-                    loadingImageStyle={styles.imageLoader2}
-                    loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
-                    blurRadius={5}
-                  />
-                </Pressable>
-              </>
-            )}
-          </>
-        );
-      };
-
-      return <View style={styles.boxSection2}>{renderTripImages()}</View>;
-    };
-
-    const renderSec3 = () => {
-      return (
-        <View style={styles.boxSection3}>
-          <Text style={styles.sec3T1}>{titlee}</Text>
-          <View style={styles.sec3T2Container}>
-            <Image
-              style={styles.sec3Icon}
-              source={require('../../assets/images/location/img.png')}
-            />
-            <View style={{width: '95%'}}>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={styles.sec3T2}>
-                {locName}
-              </Text>
-            </View>
-          </View>
-          <View style={{marginTop: 10}}>
-            <Text style={styles.sec3T31}>In Return For</Text>
-            <Text style={styles.sec3T32}>{trade}</Text>
-          </View>
-          <View style={{marginTop: 10}}>
-            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.sec3T31}>
-              Availability
-            </Text>
-            <Text style={styles.sec3T32}>{favlbl}</Text>
-          </View>
-        </View>
-      );
-    };
-
-    const renderSec4 = () => {
-      return (
-        <View style={styles.boxSection4}>
-          <Pressable
-            onPress={() => {
-              if (store.User.user.subscriptionStatus == 'freemium') {
-                props.navigation.navigate('Plan');
-              } else {
-                onClickMakeOffer(item, index);
-              }
-            }}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.9 : 1.0},
-              styles.sec4B,
-            ]}>
-            <Text style={styles.sec4T}>make offer</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => {
-              if (store.User.user.subscriptionStatus == 'freemium') {
-                props.navigation.navigate('Plan');
-              } else {
-                onClickMessage(item, index);
-              }
-            }}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.9 : 1.0},
-              [styles.sec4B, {backgroundColor: theme.color.button2}],
-            ]}>
-            <Text style={[styles.sec4T, {color: theme.color.subTitle}]}>
-              message
-            </Text>
-          </Pressable>
-        </View>
-      );
-    };
-
-    return (
-      <>
-        <View style={[styles.boxContainer, {marginTop: index == 0 ? 7 : 0}]}>
-          {renderSec1()}
-          {renderSec2()}
-          {renderSec3()}
-          {renderSec4()}
-        </View>
-      </>
-    );
-  };
-
   const ListHeader = () => {
     const renderResult = () => {
       let length = data.length || 0;
@@ -1222,7 +958,7 @@ function SavedTrips(props) {
 
     const renderInput = () => {
       return (
-        <View style={{width: '85%'}}>
+        <View style={{width: '84%'}}>
           <TextInput
             editable={false}
             style={styles.SerchBarInput}
@@ -1262,18 +998,6 @@ function SavedTrips(props) {
       </View>
     );
   };
-
-  // const ListFooter = () => {
-  //   return (
-  //     <>
-  //       <View>
-  //         <View style={styles.listFooter}>
-  //           <Text style={styles.listFooterT}>End of results</Text>
-  //         </View>
-  //       </View>
-  //     </>
-  //   );
-  // };
 
   const openModal = (obj, c) => {
     setmodalObj(obj);
@@ -5885,6 +5609,519 @@ function SavedTrips(props) {
     );
   };
 
+  const [activeSections, setactiveSections] = useState([-1]);
+  const [showpic, setshowpic] = useState(true);
+  let animtntime = 1500;
+
+  const renderSectionTitle = (item, index) => {
+    let usr = item.hostId;
+    //user
+    let photo = usr.image || '';
+    let userName = usr.firstName + ' ' + usr.lastName;
+    let avgRating = usr.rating || 0;
+    let totalReviews = usr.reviews || 0;
+    let isVeirfy = usr.identityStatus == 'verified' ? true : false;
+
+    //trip
+    let status = item.status || '';
+    let tripPhotos = item.photos ? item.photos : [];
+    let titlee = item.title || '';
+    let locName = item.location.city + ', ' + item.location.state;
+    let trade = item.returnActivity || '';
+    let sd = item.availableFrom;
+    let sdy = parseInt(new Date(sd).getFullYear());
+    let ed = item.availableTo;
+    let edy = parseInt(new Date(ed).getFullYear());
+    let favlbl = '';
+
+    if (sdy == edy) {
+      favlbl =
+        moment(sd).format('MMM DD') + ' - ' + moment(ed).format('MMM DD, YYYY');
+    } else {
+      favlbl =
+        moment(sd).format('MMM DD, YYYY') +
+        ' - ' +
+        moment(ed).format('MMM DD, YYYY');
+    }
+
+    const renderSec1 = () => {
+      const renderProfile = () => {
+        return (
+          <View style={styles.ProfileImgContainer}>
+            <ProgressiveFastImage
+              style={styles.ProfileImg}
+              source={
+                photo != ''
+                  ? {uri: photo}
+                  : require('../../assets/images/drawer/guest/img.png')
+              }
+              loadingImageStyle={styles.imageLoader}
+              loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
+              blurRadius={5}
+            />
+            {isVeirfy && (
+              <Image
+                style={styles.iconVerify}
+                source={require('../../assets/images/verified/img.png')}
+              />
+            )}
+          </View>
+        );
+      };
+
+      const renderText = () => {
+        return (
+          <View style={styles.textContainer}>
+            <Pressable
+              onPress={() => {
+                if (user == 'guest') {
+                  return;
+                }
+
+                store.Userv.setfscreen('savedtrips');
+                store.Userv.setUser(usr);
+                store.Userv.addauthToken(store.User.authToken);
+                props.navigation.navigate('UserProfile');
+              }}
+              style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={styles.textContainertitle}>
+                {userName}
+              </Text>
+            </Pressable>
+
+            <View style={{flexDirection: 'row', marginTop: 2}}>
+              <utils.vectorIcon.Entypo
+                name="star"
+                color={theme.color.rate}
+                size={14}
+              />
+              <Text style={styles.textContainerRatetitle1}>
+                {' '}
+                {avgRating > 0 ? avgRating.toFixed(1) : avgRating}
+                {'  '}
+              </Text>
+              <Text style={styles.textContainerRatetitle2}>
+                {totalReviews > 300 ? '300+' : totalReviews} reviews
+              </Text>
+            </View>
+          </View>
+        );
+      };
+
+      const rendericon = () => {
+        return (
+          <Pressable
+            onPress={() => {
+              if (store.User.user.subscriptionStatus == 'freemium') {
+                props.navigation.navigate('Plan');
+              } else {
+                onClickremoveTrips(item, index);
+              }
+            }}
+            style={({pressed}) => [
+              {opacity: pressed ? 0.7 : 1.0},
+              styles.iconContainer,
+            ]}>
+            <Image
+              style={styles.iconSave}
+              source={require('../../assets/images/delSave/img.png')}
+            />
+          </Pressable>
+        );
+      };
+
+      return (
+        <View style={styles.boxSection1}>
+          {renderProfile()}
+          {renderText()}
+          {rendericon()}
+        </View>
+      );
+    };
+
+    return (
+      <>
+        <View>{renderSec1()}</View>
+      </>
+    );
+  };
+
+  const renderHeader = (item, index, isActive) => {
+    let usr = item.hostId;
+    //user
+    let photo = usr.image || '';
+    let userName = usr.firstName + ' ' + usr.lastName;
+    let avgRating = usr.rating || 0;
+    let totalReviews = usr.reviews || 0;
+    let isVeirfy = usr.identityStatus == 'verified' ? true : false;
+
+    //trip
+    let status = item.status || '';
+    let tripPhotos = item.photos ? item.photos : [];
+    let titlee = item.title || '';
+    let locName = item.location.city + ', ' + item.location.state;
+    let trade = item.returnActivity || '';
+    let sd = item.availableFrom;
+    let sdy = parseInt(new Date(sd).getFullYear());
+    let ed = item.availableTo;
+    let edy = parseInt(new Date(ed).getFullYear());
+    let favlbl = '';
+
+    if (sdy == edy) {
+      favlbl =
+        moment(sd).format('MMM DD') + ' - ' + moment(ed).format('MMM DD, YYYY');
+    } else {
+      favlbl =
+        moment(sd).format('MMM DD, YYYY') +
+        ' - ' +
+        moment(ed).format('MMM DD, YYYY');
+    }
+
+    const renderSec3c = () => {
+      return (
+        <View
+          style={{
+            width: '100%',
+            marginTop: 12,
+          }}>
+          {/* <View
+            style={{
+              width: '100%',
+              alignSelf: 'center',
+              height: 0.7,
+              backgroundColor: theme.color.fieldBorder,
+            }}
+          /> */}
+
+          <View
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingHorizontal: 10,
+              // marginTop: 10,
+            }}>
+            <View style={{width: '90%'}}>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={styles.sec3T1}>
+                {titlee}
+              </Text>
+              <View style={styles.sec3T2Container}>
+                <Image
+                  style={styles.sec3Icon}
+                  source={require('../../assets/images/location/img.png')}
+                />
+                <View style={{width: '95%'}}>
+                  <Text
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                    style={styles.sec3T2}>
+                    {locName}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            <utils.vectorIcon.Entypo
+              name="chevron-small-down"
+              color={theme.color.subTitleLight}
+              size={22}
+            />
+          </View>
+
+          <View style={{marginTop: 10, paddingHorizontal: 10}}>
+            <Text style={styles.sec3T31}>In Return For</Text>
+            <Text style={styles.sec3T32}>{trade}</Text>
+          </View>
+          {/* <View style={{marginTop: 10}}>
+            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.sec3T31}>
+              Availability
+            </Text>
+            <Text style={styles.sec3T32}>{favlbl}</Text>
+          </View> */}
+        </View>
+      );
+    };
+
+    return <View>{!isActive && renderSec3c()}</View>;
+  };
+
+  const renderContent = (item, index, isActive) => {
+    let usr = item.hostId;
+    //user
+    let photo = usr.image || '';
+    let userName = usr.firstName + ' ' + usr.lastName;
+    let avgRating = usr.rating || 0;
+    let totalReviews = usr.reviews || 0;
+    let isVeirfy = usr.identityStatus == 'verified' ? true : false;
+
+    //trip
+    let status = item.status || '';
+    let tripPhotos = item.photos ? item.photos : [];
+    let titlee = item.title || '';
+    let locName = item.location.city + ', ' + item.location.state;
+    let trade = item.returnActivity || '';
+    let sd = item.availableFrom;
+    let sdy = parseInt(new Date(sd).getFullYear());
+    let ed = item.availableTo;
+    let edy = parseInt(new Date(ed).getFullYear());
+
+    let favlbl = '';
+
+    if (sdy == edy) {
+      favlbl =
+        moment(sd).format('MMM DD') + ' - ' + moment(ed).format('MMM DD, YYYY');
+    } else {
+      favlbl =
+        moment(sd).format('MMM DD, YYYY') +
+        ' - ' +
+        moment(ed).format('MMM DD, YYYY');
+    }
+    const renderSec2 = () => {
+      const renderTripImages = () => {
+        let chk =
+          tripPhotos.length <= 0
+            ? '0'
+            : tripPhotos.length == 1
+            ? '1'
+            : tripPhotos.length > 1
+            ? '2'
+            : '0';
+
+        return (
+          <>
+            {chk == '2' && (
+              <>
+                <View style={styles.tripImageConatiner}>
+                  <ImageSlider
+                    showHeader={false}
+                    preview={true}
+                    data={tripPhotos}
+                    autoPlay={false}
+                    // onItemChanged={indx => console.log('itm chng : ', indx)}
+                  />
+                </View>
+              </>
+            )}
+
+            {(chk == '0' || chk == '1') && (
+              <>
+                <Pressable
+                  style={({pressed}) => [
+                    {opacity: pressed ? 0.95 : 1.0},
+                    [styles.tripImageConatiner],
+                  ]}
+                  onPress={() => {
+                    setpvm(true);
+                    setpd(chk == '1' ? tripPhotos[0] : '');
+                    setpdc(chk == '1' ? 'tp' : 'ph');
+                  }}>
+                  <ProgressiveFastImage
+                    style={styles.tripImg}
+                    source={
+                      chk == '1'
+                        ? {uri: tripPhotos[0]}
+                        : require('../../assets/images/trip/img.jpeg')
+                    }
+                    loadingImageStyle={styles.imageLoader2}
+                    loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
+                    blurRadius={5}
+                  />
+                </Pressable>
+              </>
+            )}
+          </>
+        );
+      };
+
+      return <View style={styles.boxSection2}>{renderTripImages()}</View>;
+    };
+
+    const renderSec2c = () => {
+      return (
+        <View style={styles.boxSection2}>
+          <Animatable.Image
+            style={[styles.tripImageConatiner]}
+            // style={styles.tripImg}
+            duration={animtntime}
+            easing="ease-out"
+            animation={isActive ? 'zoomIn' : false}
+            source={require('../../assets/gif/stl.gif')}
+          />
+        </View>
+      );
+    };
+
+    const renderSec3 = () => {
+      return (
+        <View style={styles.boxSection3}>
+          <Animatable.Text
+            style={styles.sec3T1}
+            duration={animtntime}
+            easing="ease-out"
+            animation={isActive ? 'zoomIn' : false}>
+            {titlee}
+          </Animatable.Text>
+
+          <View style={styles.sec3T2Container}>
+            <Animatable.Image
+              duration={animtntime}
+              easing="ease-out"
+              animation={isActive ? 'zoomIn' : false}
+              source={require('../../assets/images/location/img.png')}
+            />
+
+            <View style={{width: '95%'}}>
+              <Animatable.Text
+                style={styles.sec3T2}
+                duration={animtntime}
+                easing="ease-out"
+                animation={isActive ? 'zoomIn' : false}>
+                {locName}
+              </Animatable.Text>
+            </View>
+          </View>
+
+          <View style={{marginTop: 10}}>
+            <Animatable.Text
+              style={styles.sec3T31}
+              duration={animtntime}
+              easing="ease-out"
+              animation={isActive ? 'zoomIn' : false}>
+              In Return For
+            </Animatable.Text>
+            <Animatable.Text
+              style={styles.sec3T32}
+              duration={animtntime}
+              easing="ease-out"
+              animation={isActive ? 'zoomIn' : false}>
+              {trade}
+            </Animatable.Text>
+          </View>
+          <View style={{marginTop: 10}}>
+            <Animatable.Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={styles.sec3T31}
+              duration={animtntime}
+              easing="ease-out"
+              animation={isActive ? 'zoomIn' : false}>
+              Availability
+            </Animatable.Text>
+            <Animatable.Text
+              style={styles.sec3T32}
+              duration={animtntime}
+              easing="ease-out"
+              animation={isActive ? 'zoomIn' : false}>
+              {favlbl}
+            </Animatable.Text>
+          </View>
+
+          {/* <Text style={styles.sec3T1}>{titlee}</Text> */}
+          {/* <View style={styles.sec3T2Container}>
+            <Image
+              style={styles.sec3Icon}
+              source={require('../../assets/images/location/img.png')}
+            />
+            <View style={{width: '95%'}}>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={styles.sec3T2}>
+                {locName}
+              </Text>
+            </View>
+          </View> */}
+          {/* <View style={{marginTop: 10}}>
+            <Text style={styles.sec3T31}>In Return For</Text>
+            <Text style={styles.sec3T32}>{trade}</Text>
+          </View>
+          <View style={{marginTop: 10}}>
+            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.sec3T31}>
+              Availability
+            </Text>
+            <Text style={styles.sec3T32}>{favlbl}</Text>
+          </View> */}
+        </View>
+      );
+    };
+
+    const renderSec4 = () => {
+      return (
+        <View style={styles.boxSection4}>
+          <Pressable
+            onPress={() => {
+              if (store.User.user.subscriptionStatus == 'freemium') {
+                props.navigation.navigate('Plan');
+              } else {
+                onClickMakeOffer(item, index);
+              }
+            }}
+            style={({pressed}) => [
+              {opacity: pressed ? 0.9 : 1.0},
+              styles.sec4B,
+            ]}>
+            <Text style={styles.sec4T}>make offer</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => {
+              if (store.User.user.subscriptionStatus == 'freemium') {
+                props.navigation.navigate('Plan');
+              } else {
+                onClickMessage(item, index);
+              }
+            }}
+            style={({pressed}) => [
+              {opacity: pressed ? 0.9 : 1.0},
+              [styles.sec4B, {backgroundColor: theme.color.button2}],
+            ]}>
+            <Text style={[styles.sec4T, {color: theme.color.subTitle}]}>
+              message
+            </Text>
+          </Pressable>
+        </View>
+      );
+    };
+
+    return (
+      <Animatable.View
+        duration={300}
+        transition="backgroundColor"
+        style={{
+          backgroundColor: isActive
+            ? 'rgba(255,255,255,1)'
+            : 'rgba(245,252,255,1)',
+        }}>
+        {isActive && (
+          <>
+            {!showpic ? renderSec2() : renderSec2c()}
+            {renderSec3()}
+            {renderSec4()}
+          </>
+        )}
+      </Animatable.View>
+    );
+  };
+
+  const updateSections = activeSections => {
+    setactiveSections(activeSections);
+    setshowpic(true);
+  };
+
+  useEffect(() => {
+    if (activeSections[0] > -1) {
+      setTimeout(() => {
+        setshowpic(false);
+      }, animtntime);
+    }
+  }, [activeSections]);
+
   return (
     <>
       <View style={styles.container}>
@@ -5892,7 +6129,7 @@ function SavedTrips(props) {
         {!internet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
-            <FlatList
+            {/* <FlatList
               contentContainerStyle={{
                 paddingVertical: 12,
                 paddingHorizontal: 15,
@@ -5904,6 +6141,21 @@ function SavedTrips(props) {
               ItemSeparatorComponent={ItemSeparatorView}
               ListHeaderComponent={data.length > 0 ? ListHeader : null}
               // ListFooterComponent={data.length > 0 ? ListFooter : null}
+            /> */}
+
+            <Accordion
+              underlayColor={'rgba(245,252,255,1)'}
+              renderAsFlatList
+              listH={ListHeader}
+              elm={EmptyListMessage}
+              isv={ItemSeparatorView}
+              bxc={styles.boxContainer}
+              sections={data}
+              activeSections={activeSections}
+              renderSectionTitle={renderSectionTitle}
+              renderHeader={renderHeader}
+              renderContent={renderContent}
+              onChange={s => updateSections(s)}
             />
           </View>
 
@@ -5920,18 +6172,7 @@ function SavedTrips(props) {
         {isShowUnavliabledaysCal && renderCalender2()}
         {isOfferSend && renderShowOfferSendModal()}
         {isSendMessage && renderMessageSendModal()}
-        {isShowSearch && (
-          <utils.Search
-            isVisible={isShowSearch}
-            setisVisible={c => setisShowSearch(c)}
-          />
-        )}
-        {isShowFilters && (
-          <utils.Filters
-            isVisible={isShowFilters}
-            setisVisible={c => setisShowFilters(c)}
-          />
-        )}
+
         {pvm && (
           <utils.FullimageModal
             data={[]}
