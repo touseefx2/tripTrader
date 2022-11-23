@@ -84,81 +84,84 @@ function ChatPhotoModal(props) {
       return;
     }
     let maxPhotos = 4 - photos.length;
-    try {
-      let options = {
-        mediaType: 'image',
-        isPreview: false,
-        maxSelectedAssets: maxPhotos,
-      };
-      const res = await MultipleImagePicker.openPicker(options);
-      if (res) {
-        console.log('mutipicker image res true  ');
-        let data = photos.slice();
-        let ar = data;
 
-        if (data.length > 0) {
-          res.map((e, i, a) => {
-            let uri = e.path;
-            let fileName = e.fileName;
-            let type = e.mime;
-            if (Platform.OS == 'android' && apiLevel < 29) {
-              uri = 'file://' + uri;
-            }
+    setTimeout(async () => {
+      try {
+        let options = {
+          mediaType: 'image',
+          isPreview: false,
+          maxSelectedAssets: maxPhotos,
+        };
+        const res = await MultipleImagePicker.openPicker(options);
+        if (res) {
+          console.log('mutipicker image res true  ');
+          let data = photos.slice();
+          let ar = data;
 
-            ImageCompressor.compress(uri, {
-              compressionMethod: 'auto',
-            })
-              .then(async res => {
-                let imageObject = {uri: res, fileName, type};
-                console.log('Compress image  : ', imageObject);
-                let isAlreadySelectimage = data.find(
-                  x => x.fileName == fileName,
-                )
-                  ? true
-                  : false;
+          if (data.length > 0) {
+            res.map((e, i, a) => {
+              let uri = e.path;
+              let fileName = e.fileName;
+              let type = e.mime;
+              if (Platform.OS == 'android' && apiLevel < 29) {
+                uri = 'file://' + uri;
+              }
 
-                if (chk == 'ChatPhotos' && !isAlreadySelectimage) {
-                  ar.push(imageObject);
-                }
-
-                if (i == a.length - 1) {
-                  setphotos(ar);
-                }
+              ImageCompressor.compress(uri, {
+                compressionMethod: 'auto',
               })
-              .catch(err => {
-                console.log('Image compress error : ', err);
-              });
-          });
-        } else {
-          res.map((e, i, a) => {
-            let uri = e.path;
-            let fileName = e.fileName;
-            let type = e.mime;
-            if (Platform.OS == 'android' && apiLevel < 29) {
-              uri = 'file://' + uri;
-            }
-            ImageCompressor.compress(uri, {
-              compressionMethod: 'auto',
-            })
-              .then(async res => {
-                let imageObject = {uri: res, fileName, type};
-                console.log('Compress image  : ', imageObject);
-                if (chk == 'ChatPhotos') {
-                  ar.push(imageObject);
-                }
-                if (i == a.length - 1) {
-                  setphotos(ar);
-                }
+                .then(async res => {
+                  let imageObject = {uri: res, fileName, type};
+                  console.log('Compress image  : ', imageObject);
+                  let isAlreadySelectimage = data.find(
+                    x => x.fileName == fileName,
+                  )
+                    ? true
+                    : false;
+
+                  if (chk == 'ChatPhotos' && !isAlreadySelectimage) {
+                    ar.push(imageObject);
+                  }
+
+                  if (i == a.length - 1) {
+                    setphotos(ar);
+                  }
+                })
+                .catch(err => {
+                  console.log('Image compress error : ', err);
+                });
+            });
+          } else {
+            res.map((e, i, a) => {
+              let uri = e.path;
+              let fileName = e.fileName;
+              let type = e.mime;
+              if (Platform.OS == 'android' && apiLevel < 29) {
+                uri = 'file://' + uri;
+              }
+              ImageCompressor.compress(uri, {
+                compressionMethod: 'auto',
               })
-              .catch(err => {
-                console.log('Image compress error : ', err);
-              });
-          });
+                .then(async res => {
+                  let imageObject = {uri: res, fileName, type};
+                  console.log('Compress image  : ', imageObject);
+                  if (chk == 'ChatPhotos') {
+                    ar.push(imageObject);
+                  }
+                  if (i == a.length - 1) {
+                    setphotos(ar);
+                  }
+                })
+                .catch(err => {
+                  console.log('Image compress error : ', err);
+                });
+            });
+          }
         }
+      } catch (error) {
+        console.log('multi photo picker error : ', error);
       }
-    } catch (error) {
-      console.log('multi photo picker error : ', error);
-    }
+    }, 200);
   };
 
   const onclickImage = c => {

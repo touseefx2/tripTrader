@@ -17,7 +17,7 @@
     "sha1-key": "cd android && ./gradlew signingReport"
   },
   "dependencies": {
-    "@baronha/react-native-multiple-image-picker": "^0.4.10",
+    "@baronha/react-native-multiple-image-picker": "^0.4.13",
     "@freakycoder/react-native-progressive-fast-image": "^0.2.5",
     "@react-native-async-storage/async-storage": "^1.17.7",
     "@react-native-community/masked-view": "^0.1.11",

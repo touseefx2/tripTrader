@@ -89,13 +89,13 @@ export default HomeStack = () => {
 
       <Drawer.Screen
         name="LatestNews"
-        component={screens.LatestNews}
+        component={LatestNewsstack}
         options={icon.LatestNewsicon}
       />
 
       <Drawer.Screen
         name="PrivacyPolicy"
-        component={screens.PrivacyPolicy}
+        component={PrivacyPolicystack}
         options={icon.PrivacyPolicyicon}
       />
       <Drawer.Screen
@@ -103,12 +103,6 @@ export default HomeStack = () => {
         component={SettingsStack}
         options={icon.Settingsicons}
       />
-
-      {/* <Drawer.Screen
-        name="Notifications"
-        component={NotificationsStack}
-        options={icon.Notificationsicons}
-      /> */}
     </Drawer.Navigator>
   );
 };
@@ -459,7 +453,7 @@ let SettingsStack = () => {
 
       <Stack.Screen
         name="BlockUsers"
-        component={screens.BlockUsers}
+        component={BlockUserstack}
         options={props => {
           let parent = props.navigation.getParent();
           parent.setOptions({
@@ -482,6 +476,17 @@ let SettingsStack = () => {
       <Stack.Screen
         name="ManageSubscription"
         component={ManageSubscriptionStack}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+      />
+
+      <Stack.Screen
+        name="ContactUs"
+        component={ContactUsStack}
         options={props => {
           let parent = props.navigation.getParent();
           parent.setOptions({
@@ -525,6 +530,20 @@ let ChangePasswordStack = () => {
   );
 };
 
+let BlockUserstack = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="BlockUserss"
+      screenOptions={{
+        animationEnabled: false,
+        headerShown: false,
+      }}>
+      <Stack.Screen name="BlockUserss" component={screens.BlockUsers} />
+      <Stack.Screen name="Notifications" component={screens.Notifications} />
+    </Stack.Navigator>
+  );
+};
+
 let ManageSubscriptionStack = () => {
   return (
     <Stack.Navigator
@@ -543,27 +562,20 @@ let ManageSubscriptionStack = () => {
   );
 };
 
-// let NotificationsStack = () => {
-//   return (
-//     <Stack.Navigator
-//       initialRouteName="Notification"
-//       screenOptions={{
-//         animationEnabled: false,
-//         headerShown: false,
-//       }}>
-//       <Stack.Screen
-//         name="Notification"
-//         component={screens.Notifications}
-//         options={props => {
-//           let parent = props.navigation.getParent();
-//           parent.setOptions({
-//             swipeEnabled: true,
-//           });
-//         }}
-//       />
-//     </Stack.Navigator>
-//   );
-// };
+let ContactUsStack = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="ContactUss"
+      screenOptions={{
+        animationEnabled: false,
+        headerShown: false,
+      }}>
+      <Stack.Screen name="ContactUs" component={screens.ContactUs} />
+
+      <Stack.Screen name="Notifications" component={screens.Notifications} />
+    </Stack.Navigator>
+  );
+};
 
 let ConfirmedTripsStack = () => {
   return (
@@ -726,6 +738,70 @@ let ShowOtherFollowersStack = () => {
         }}
       />
 
+      <Stack.Screen
+        name="Notifications"
+        component={screens.Notifications}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+let LatestNewsstack = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="LatestNewss"
+      screenOptions={{
+        animationEnabled: false,
+        headerShown: false,
+      }}>
+      <Stack.Screen
+        name="LatestNewss"
+        component={screens.LatestNews}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: true,
+          });
+        }}
+      />
+      <Stack.Screen
+        name="Notifications"
+        component={screens.Notifications}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+let PrivacyPolicystack = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="PrivacyPolicyy"
+      screenOptions={{
+        animationEnabled: false,
+        headerShown: false,
+      }}>
+      <Stack.Screen
+        name="PrivacyPolicyy"
+        component={screens.PrivacyPolicy}
+        options={props => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: true,
+          });
+        }}
+      />
       <Stack.Screen
         name="Notifications"
         component={screens.Notifications}

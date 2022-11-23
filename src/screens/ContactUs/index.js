@@ -37,10 +37,10 @@ import {Calendar} from 'react-native-calendars';
 import moment, {duration} from 'moment/moment';
 import {SwipeListView} from 'react-native-swipe-list-view';
 
-export default observer(PrivacyPolicy);
+export default observer(ContactUs);
 
-function PrivacyPolicy(props) {
-  let headerTitle = 'Privacy Policy';
+function ContactUs(props) {
+  let headerTitle = 'Contact Us';
   let internet = store.General.isInternet;
   let user = store.User.user;
 
@@ -49,7 +49,11 @@ function PrivacyPolicy(props) {
   return (
     <>
       <View style={styles.container}>
-        <utils.DrawerHeader props={props} headerTitle={headerTitle} />
+        <utils.StackHeader
+          bell={true}
+          props={props}
+          headerTitle={headerTitle}
+        />
         {!internet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}></View>

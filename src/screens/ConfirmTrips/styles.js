@@ -539,8 +539,7 @@ export const styles = StyleSheet.create({
   mimageLoader: {
     height: '100%',
     width: '100%',
-    // resizeMode: 'contain',
-    // borderRadius: 38 / 2,
+    borderRadius: 48 / 2,
   },
 
   mProfileImgContainer2: {

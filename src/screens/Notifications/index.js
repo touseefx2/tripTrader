@@ -370,10 +370,11 @@ function Notifications(props) {
                   ? {uri: photo}
                   : require('../../assets/images/drawer/guest/img.png')
               }
-              loadingImageStyle={[
-                styles.imageLoader,
-                {borderRadius: isFollow ? 32 / 2 : 0},
-              ]}
+              loadingImageStyle={
+                Platform.OS == 'android'
+                  ? [styles.imageLoader, {borderRadius: isFollow ? 32 / 2 : 0}]
+                  : {}
+              }
               loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
               blurRadius={5}
             />

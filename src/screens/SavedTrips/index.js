@@ -1488,6 +1488,7 @@ function SavedTrips(props) {
                 )}
               </View>
             </View>
+            {showCal1 && renderCalender1()}
           </SafeAreaView>
         </Modal>
       );
@@ -2616,6 +2617,7 @@ function SavedTrips(props) {
                 )}
               </View>
             </View>
+            {showCalender && renderCalender()}
           </SafeAreaView>
         </Modal>
       );
@@ -3308,6 +3310,7 @@ function SavedTrips(props) {
                 )}
               </View>
             </View>
+            {isShowUnavliabledaysCal && renderCalender2()}
           </SafeAreaView>
         </Modal>
       );
@@ -6167,9 +6170,7 @@ function SavedTrips(props) {
         </SafeAreaView>
 
         {isModal && !isOfferSend && !isSendMessage && renderModal()}
-        {showCal1 && renderCalender1()}
-        {showCalender && renderCalender()}
-        {isShowUnavliabledaysCal && renderCalender2()}
+
         {isOfferSend && renderShowOfferSendModal()}
         {isSendMessage && renderMessageSendModal()}
 

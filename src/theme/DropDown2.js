@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
   emptyText: {
     color: 'grey',
     fontSize: responsiveFontSize(fontSize - 0.2),
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Poppins-Regular',
     textAlign: 'center',
   },
 });

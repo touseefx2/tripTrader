@@ -1418,6 +1418,7 @@ function Received(props) {
                 )}
               </View>
             </View>
+            {showCal1 && renderCalender1()}
           </SafeAreaView>
         </Modal>
       );
@@ -2972,8 +2973,6 @@ function Received(props) {
   return (
     <>
       <View style={styles.container}>
-        {/* <utils.DrawerHeader props={props} headerTitle={headerTitle} /> */}
-        {/* {!internet && <utils.InternetMessage />} */}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <FlatList
@@ -3007,15 +3006,7 @@ function Received(props) {
               />
             )}
           </View>
-
-          {/* <utils.Footer
-            nav={props.navigation}
-            screen={headerTitle}
-            focusScreen={store.General.focusScreen}
-          /> */}
-
           {isModal && renderModal()}
-          {showCal1 && renderCalender1()}
           {isSendMessage && renderMessageSendModal()}
           {isOfferSend && renderShowOfferSendModal()}
         </SafeAreaView>

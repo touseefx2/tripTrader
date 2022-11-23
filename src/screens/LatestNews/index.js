@@ -13,81 +13,56 @@ import {
   PermissionsAndroid,
   Platform,
   Dimensions,
+  Pressable,
+  TextInput,
+  FlatList,
+  ScrollView,
+  Keyboard,
+  Modal,
+  RefreshControl,
 } from 'react-native';
-// import Geolocation from 'react-native-geolocation-service';
-import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
-// import Geocoder from 'react-native-geocoding';
+import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
+// import ImageSlider from 'react-native-image-slider';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
 import utils from '../../utils/index';
 import theme from '../../theme';
-// import DynamicTabView from 'react-native-dynamic-tab-view';
-// import ImageSlider from 'react-native-image-slider';
-// import FastImage from 'react-native-fast-image';
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from 'react-native-responsive-dimensions';
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
-
-import RBSheet from 'react-native-raw-bottom-sheet';
 import {ActivityIndicator} from 'react-native-paper';
-import {ScrollView} from 'react-native-gesture-handler';
+import FastImage from 'react-native-fast-image';
+import {ImageSlider} from 'react-native-image-slider-banner';
+import {Calendar} from 'react-native-calendars';
+import moment, {duration} from 'moment/moment';
+import {SwipeListView} from 'react-native-swipe-list-view';
 
 export default observer(LatestNews);
 
 function LatestNews(props) {
-  const toast = useRef(null);
-  const toastduration = 700;
   let headerTitle = 'Latest News';
-
   let internet = store.General.isInternet;
   let user = store.User.user;
 
-  let loc = store.User.location;
-  let cart = store.User.cart;
-  let totalItems = cart.data.length > 0 ? cart.totalitems : 0;
-  let tagLine = '';
-
-  useEffect(() => {
-    if (user == 'guest') {
-      store.General.setgoto('guestaccess');
-      store.User.Logout();
-      return;
-    }
-  }, []);
-
-  const renderStatusBar = () => {
-    return (
-      <>
-        <StatusBar
-          translucent={false}
-          backgroundColor={theme.color.backgroundGreen}
-          barStyle={Platform.OS == 'android' ? 'light-content' : 'dark-content'}
-        />
-      </>
-    );
-  };
+  const data = [];
 
   return (
-    <SafeAreaView style={styles.container}>
-      {!internet && <utils.InternetMessage />}
-      {/* {tagLine != '' && <utils.TagLine tagLine={tagLine} />} */}
-      <utils.DrawerHeader props={props} headerTitle={headerTitle} />
-      <ScrollView contentContainerStyle={{padding: 20}}>
-        {/* {renderMain()} */}
-      </ScrollView>
+    <>
+      <View style={styles.container}>
+        <utils.DrawerHeader props={props} headerTitle={headerTitle} />
+        {!internet && <utils.InternetMessage />}
+        <SafeAreaView style={styles.container2}>
+          <View style={styles.container3}></View>
 
-      {renderStatusBar()}
-      <Toast ref={toast} position="bottom" />
-      {/* <utils.Loader2 load={Loader} /> */}
-      <utils.Footer
-        nav={props.navigation}
-        screen={headerTitle}
-        focusScreen={store.General.focusScreen}
-      />
-    </SafeAreaView>
+          <utils.Footer
+            nav={props.navigation}
+            screen={headerTitle}
+            focusScreen={store.General.focusScreen}
+          />
+
+          {store.Notifications.isShowNotifcation && <utils.ShowNotifications />}
+        </SafeAreaView>
+      </View>
+    </>
   );
 }

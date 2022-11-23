@@ -182,51 +182,54 @@ function MyProfile(props) {
     setisShowPrmsn(false);
     setisAddPhotoModal(false);
     let apiLevel = store.General.apiLevel;
-    try {
-      let options = {
-        mediaType: 'image',
-        isPreview: false,
-        singleSelectedMode: true,
-      };
 
-      const res = await MultipleImagePicker.openPicker(options);
-      if (res) {
-        console.log('mutipicker image res true  ');
-        const {path, fileName, mime} = res;
-        let uri = path;
-        if (Platform.OS == 'android' && apiLevel < 29) {
-          uri = 'file://' + uri;
-        }
+    setTimeout(async () => {
+      try {
+        let options = {
+          mediaType: 'image',
+          isPreview: false,
+          singleSelectedMode: true,
+        };
 
-        ImageCompressor.compress(uri, {
-          compressionMethod: 'auto',
-        })
-          .then(async res => {
-            let imageObject = {
-              uri: res,
-              type: mime,
-              fileName: fileName,
-            };
-            console.log('Compress image  : ', imageObject);
-            if (button == 'Profile') {
-              setisSHowChangePhoto(true);
-              setcphoto(imageObject);
+        const res = await MultipleImagePicker.openPicker(options);
+        if (res) {
+          console.log('mutipicker image res true  ');
+          const {path, fileName, mime} = res;
+          let uri = path;
+          if (Platform.OS == 'android' && apiLevel < 29) {
+            uri = 'file://' + uri;
+          }
 
-              return;
-            } else if (button == 'CNICFront') {
-              // setCnicFrontImage(imageObject);
-              return;
-            } else {
-              return;
-            }
+          ImageCompressor.compress(uri, {
+            compressionMethod: 'auto',
           })
-          .catch(err => {
-            console.log('Image compress error : ', err);
-          });
+            .then(async res => {
+              let imageObject = {
+                uri: res,
+                type: mime,
+                fileName: fileName,
+              };
+              console.log('Compress image  : ', imageObject);
+              if (button == 'Profile') {
+                setisSHowChangePhoto(true);
+                setcphoto(imageObject);
+
+                return;
+              } else if (button == 'CNICFront') {
+                // setCnicFrontImage(imageObject);
+                return;
+              } else {
+                return;
+              }
+            })
+            .catch(err => {
+              console.log('Image compress error : ', err);
+            });
+        }
+      } catch (error) {
+        console.log('multi photo picker error : ', error);
       }
-    } catch (error) {
-      console.log('multi photo picker error : ', error);
-    }
+    }, 500);
   };
 
   const onclickImage = c => {

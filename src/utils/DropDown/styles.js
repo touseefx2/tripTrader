@@ -81,7 +81,7 @@ export const styles = StyleSheet.create({
   emptyText: {
     color: 'grey',
     fontSize: 14,
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Poppins-Regular',
     textAlign: 'center',
   },
 });

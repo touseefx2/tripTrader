@@ -68,8 +68,6 @@ function UserProfile(props) {
     setuser(u);
   }, []);
 
-  console.log('uidddddddddddd : ', user._id);
-
   const [followers, setfollowers] = useState(0);
   const [following, setfollowing] = useState(0);
   const [loader, setloader] = useState(false);
@@ -95,6 +93,8 @@ function UserProfile(props) {
 
   const [isFollow, setisFollow] = useState(false);
   const [isBlock, setisBlock] = useState(false);
+
+  const [isOpenSheet, setisOpenSheet] = useState(false);
 
   const [modalObj, setmodalObj] = useState(false);
   const [modalChk, setmodalChk] = useState(false);
@@ -253,6 +253,7 @@ function UserProfile(props) {
     });
   };
   const BlockUser = () => {
+    closeBottomSheet();
     Keyboard.dismiss();
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
@@ -270,6 +271,7 @@ function UserProfile(props) {
     });
   };
   const UnBlockUser = () => {
+    closeBottomSheet();
     Keyboard.dismiss();
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
@@ -389,9 +391,7 @@ function UserProfile(props) {
       setmodalChk('message');
       setisModal(true);
     }
-    // if (chk == 'block') {
-    //   setisBlock(!isBlock);
-    // }
+
     if (chk == 'report') {
       closeBottomSheet();
       setmodalObj({item: user, i: 0});
@@ -401,10 +401,14 @@ function UserProfile(props) {
   };
 
   const openBottomSheet = () => {
-    refRBSheet?.current?.open();
+    setisOpenSheet(true);
+    setTimeout(() => {
+      refRBSheet?.current?.open();
+    }, 500);
   };
 
   const closeBottomSheet = () => {
+    setisOpenSheet(false);
     refRBSheet?.current?.close();
   };
 
@@ -1810,11 +1814,11 @@ function UserProfile(props) {
           {renderShowCahngePhotoModal()}
         </View>
       </SafeAreaView>
-
       {isModal && renderModal()}
       {isSendMessage && renderMessageSendModal()}
       {isSendReport && renderRepoerSendModal()}
-      {renderBottomSheet()}
+      <utils.Loader load={loader} />
+      {isOpenSheet && renderBottomSheet()}
       {pvm && (
         <utils.FullimageModal
           data={pv}
@@ -1823,8 +1827,6 @@ function UserProfile(props) {
           closModal={() => setpvm(!pvm)}
         />
       )}
-
-      <utils.Loader load={loader} />
     </View>
   );
 }

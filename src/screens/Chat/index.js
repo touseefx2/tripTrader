@@ -660,7 +660,7 @@ function Chat(props) {
               onFocus={closeEmoji}
               placeholder="Type a message"
               value={message}
-              style={{width: '100%', borderRadius: 100}}
+              style={{width: '100%', borderRadius: 100, height: 48}}
               onChangeText={t => {
                 setmessage(t);
               }}

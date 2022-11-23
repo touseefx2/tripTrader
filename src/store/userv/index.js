@@ -903,7 +903,7 @@ class userv {
       });
   };
 
-  @action attemptToPostReview = (body, suc, suc2) => {
+  @action attemptToPostReview = (body, suc, suc2, setdt, setor) => {
     console.warn('Leave review body : ', body);
     this.setmLoader(true);
     db.hitApi(db.apis.LEAVE_REVIEW, 'post', body, this.authToken)
@@ -917,7 +917,7 @@ class userv {
         // this.review.unshift(dt);
         suc();
         suc2();
-        this.attemptToCheckReview(this.review, () => {});
+        this.attemptToCheckReview(this.review, () => {}, setdt, setor);
       })
       .catch(err => {
         this.setmLoader(false);
@@ -976,7 +976,7 @@ class userv {
       });
   };
 
-  @action attemptToDeleteReview = (obj, suc) => {
+  @action attemptToDeleteReview = (obj, suc, setdt, setor) => {
     console.log('Delete review true ');
     this.setmLoader(true);
     let params = obj._id;
@@ -992,7 +992,7 @@ class userv {
         dd.splice(obj.i, 1);
         this.setreview(dd);
         suc();
-        this.attemptToCheckReview(dd, () => {});
+        this.attemptToCheckReview(dd, () => {}, setdt, setor);
       })
       .catch(err => {
         this.setmLoader(false);

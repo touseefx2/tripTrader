@@ -756,113 +756,60 @@ function Signup(props) {
 
   const MultipleImage = async button => {
     let apiLevel = store.General.apiLevel;
-    try {
-      let options = {
-        mediaType: 'image',
-        isPreview: false,
-        singleSelectedMode: true,
-      };
-
-      if (button == 'Profile') {
-        setisPhotoUpload(true);
-      }
-      if (button == 'CNICFront') {
-        setisCnicFrontUplaod(true);
-      }
-      setisShowGalleryPrmsn(false);
-      setisShowCameraPrmsn(false);
-      const res = await MultipleImagePicker.openPicker(options);
-      if (res) {
-        console.log('mutipicker image res true  ');
-        const {path, fileName, mime} = res;
-        let uri = path;
-        if (Platform.OS == 'android' && apiLevel < 29) {
-          uri = 'file://' + uri;
-        }
-
-        ImageCompressor.compress(uri, {
-          compressionMethod: 'auto',
-        })
-          .then(async res => {
-            let imageObject = {
-              uri: res,
-              type: mime,
-              fileName: fileName,
-            };
-            console.log('Compress image  : ', imageObject);
-            if (button == 'Profile') {
-              setphoto(imageObject);
-              return;
-            } else if (button == 'CNICFront') {
-              setCnicFrontImage(imageObject);
-              return;
-            } else {
-              return;
-            }
-          })
-          .catch(err => {
-            console.log('Image compress error : ', err);
-          });
-      }
-    } catch (error) {
-      console.log('multi photo picker error : ', error);
+    if (button == 'Profile') {
+      setisPhotoUpload(true);
     }
+    if (button == 'CNICFront') {
+      setisCnicFrontUplaod(true);
+    }
+    setisShowGalleryPrmsn(false);
+    setisShowCameraPrmsn(false);
+
+    setTimeout(async () => {
+      try {
+        let options = {
+          mediaType: 'image',
+          isPreview: false,
+          singleSelectedMode: true,
+        };
+        const res = await MultipleImagePicker.openPicker(options);
+        if (res) {
+          console.log('mutipicker image res true  ');
+          const {path, fileName, mime} = res;
+          let uri = path;
+          if (Platform.OS == 'android' && apiLevel < 29) {
+            uri = 'file://' + uri;
+          }
+
+          ImageCompressor.compress(uri, {
+            compressionMethod: 'auto',
+          })
+            .then(async res => {
+              let imageObject = {
+                uri: res,
+                type: mime,
+                fileName: fileName,
+              };
+              console.log('Compress image  : ', imageObject);
+              if (button == 'Profile') {
+                setphoto(imageObject);
+                return;
+              } else if (button == 'CNICFront') {
+                setCnicFrontImage(imageObject);
+                return;
+              } else {
+                return;
+              }
+            })
+            .catch(err => {
+              console.log('Image compress error : ', err);
+            });
+        }
+      } catch (error) {
+        console.log('multi photo picker error : ', error);
+      }
+    }, 500);
   };
-
-  // const checkPermsn = async (c, dt) => {
-  //   if (Platform.OS == 'android') {
-  //     if (c == 'camera') {
-  //       const permissionAndroid = await PermissionsAndroid.check(
-  //         'android.permission.CAMERA',
-  //       );
-
-  //       if (!permissionAndroid) {
-  //         setisShowGalleryPrmsn(false);
-  //         setisShowCameraPrmsn(true);
-  //       } else {
-  //         onclickImage(dt);
-  //       }
-  //     }
-
-  //     if (c == 'gallery') {
-  //       const permissionAndroid = await PermissionsAndroid.check(
-  //         'android.permission.READ_EXTERNAL_STORAGE',
-  //       );
-  //       if (!permissionAndroid) {
-  //         setisShowCameraPrmsn(false);
-  //         setisShowGalleryPrmsn(true);
-  //       } else {
-  //         onclickImage(dt);
-  //       }
-  //     }
-  //   }
-  // };
-
-  // const GalleryPermission = async () => {
-  //   if (Platform.OS == 'android') {
-  //     const reqPer = await PermissionsAndroid.request(
-  //       'android.permission.READ_EXTERNAL_STORAGE',
-  //     );
-  //     if (reqPer != 'granted') {
-  //       setisShowGalleryPrmsn(false);
-  //     } else {
-  //       setisShowGalleryPrmsn(false);
-  //     }
-  //   }
-  // };
-
-  // const CameraPermission = async () => {
-  //   if (Platform.OS == 'android') {
-  //     const reqPer = await PermissionsAndroid.request(
-  //       'android.permission.CAMERA',
-  //     );
-  //     if (reqPer != 'granted') {
-  //       setisShowCameraPrmsn(false);
-  //     } else {
-  //       setisShowCameraPrmsn(false);
-  //     }
-  //   }
-  // };
 
   const checkPermsn = async (c, dt) => {
     if (Platform.OS == 'android') {

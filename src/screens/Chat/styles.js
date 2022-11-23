@@ -4,7 +4,7 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
-
+let aph = theme.window.APPBAR_HEIGHT;
 export const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -230,8 +230,12 @@ function Reviews(props) {
             },
           ],
         };
-        store.Userv.attemptToPostReview(body, closeReviewModal, () =>
-          setisSendReview(true),
+        store.Userv.attemptToPostReview(
+          body,
+          closeReviewModal,
+          () => setisSendReview(true),
+          c => setdata(c),
+          c => setisOneReview(c),
         );
       } else {
         // seterrorMessage('Please connect internet');
@@ -262,7 +266,12 @@ function Reviews(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.Userv.attemptToDeleteReview(isdObj, closeDeleteModal);
+        store.Userv.attemptToDeleteReview(
+          isdObj,
+          closeDeleteModal,
+          c => setdata(c),
+          c => setisOneReview(c),
+        );
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');

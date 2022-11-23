@@ -708,7 +708,6 @@ function NewTrips(props) {
   };
 
   const onClickUnavailableDays = () => {
-    // if (!isObjectEmpty(selDates)) {
     if (isSelDate1 != '' && isSelDate2 != '') {
       if (isSetUnavailable) {
         let d = isSetUnavailable;
@@ -806,83 +805,85 @@ function NewTrips(props) {
       return;
     }
     let maxPhotos = 6 - photos.length;
-    try {
-      let options = {
-        mediaType: 'image',
-        isPreview: false,
-        maxSelectedAssets: maxPhotos,
-      };
-      const res = await MultipleImagePicker.openPicker(options);
-      if (res) {
-        console.log('mutipicker image res true  ');
-        let data = photos.slice();
-        let ar = data;
+    setTimeout(async () => {
+      try {
+        let options = {
+          mediaType: 'image',
+          isPreview: false,
+          maxSelectedAssets: maxPhotos,
+        };
+        const res = await MultipleImagePicker.openPicker(options);
+        if (res) {
+          console.log('mutipicker image res true  ');
+          let data = photos.slice();
+          let ar = data;
 
-        if (data.length > 0) {
-          res.map((e, i, a) => {
-            let uri = e.path;
-            let fileName = e.fileName;
-            let type = e.mime;
-            if (Platform.OS == 'android' && apiLevel < 29) {
-              uri = 'file://' + uri;
-            }
+          if (data.length > 0) {
+            res.map((e, i, a) => {
+              let uri = e.path;
+              let fileName = e.fileName;
+              let type = e.mime;
+              if (Platform.OS == 'android' && apiLevel < 29) {
+                uri = 'file://' + uri;
+              }
 
-            ImageCompressor.compress(uri, {
-              compressionMethod: 'auto',
-            })
-              .then(async res => {
-                let imageObject = {uri: res, fileName, type};
-                console.log('Compress image  : ', imageObject);
-                let isAlreadySelectimage = data.find(
-                  x => x.fileName == fileName,
-                )
-                  ? true
-                  : false;
-
-                if (chk == 'photo' && !isAlreadySelectimage) {
-                  ar.push(imageObject);
-                }
-
-                if (i == a.length - 1) {
-                  setPhotos(ar);
-                  setisAddPhotoModal(false);
-                }
+              ImageCompressor.compress(uri, {
+                compressionMethod: 'auto',
               })
-              .catch(err => {
-                console.log('Image compress error : ', err);
-              });
-          });
-        } else {
-          res.map((e, i, a) => {
-            let uri = e.path;
-            let fileName = e.fileName;
-            let type = e.mime;
-            if (Platform.OS == 'android' && apiLevel < 29) {
-              uri = 'file://' + uri;
-            }
-            ImageCompressor.compress(uri, {
-              compressionMethod: 'auto',
-            })
-              .then(async res => {
-                let imageObject = {uri: res, fileName, type};
-                console.log('Compress image  : ', imageObject);
-                if (chk == 'photo') {
-                  ar.push(imageObject);
-                }
-                if (i == a.length - 1) {
-                  setPhotos(ar);
-                  setisAddPhotoModal(false);
-                }
+                .then(async res => {
+                  let imageObject = {uri: res, fileName, type};
+                  console.log('Compress image  : ', imageObject);
+                  let isAlreadySelectimage = data.find(
+                    x => x.fileName == fileName,
+                  )
+                    ? true
+                    : false;
+
+                  if (chk == 'photo' && !isAlreadySelectimage) {
+                    ar.push(imageObject);
+                  }
+
+                  if (i == a.length - 1) {
+                    setPhotos(ar);
+                    setisAddPhotoModal(false);
+                  }
+                })
+                .catch(err => {
+                  console.log('Image compress error : ', err);
+                });
+            });
+          } else {
+            res.map((e, i, a) => {
+              let uri = e.path;
+              let fileName = e.fileName;
+              let type = e.mime;
+              if (Platform.OS == 'android' && apiLevel < 29) {
+                uri = 'file://' + uri;
+              }
+              ImageCompressor.compress(uri, {
+                compressionMethod: 'auto',
               })
-              .catch(err => {
-                console.log('Image compress error : ', err);
-              });
-          });
+                .then(async res => {
+                  let imageObject = {uri: res, fileName, type};
+                  console.log('Compress image  : ', imageObject);
+                  if (chk == 'photo') {
+                    ar.push(imageObject);
+                  }
+                  if (i == a.length - 1) {
+                    setPhotos(ar);
+                    setisAddPhotoModal(false);
+                  }
+                })
+                .catch(err => {
+                  console.log('Image compress error : ', err);
+                });
+            });
+          }
         }
+      } catch (error) {
+        console.log('multi photo picker error : ', error);
       }
-    } catch (error) {
-      console.log('multi photo picker error : ', error);
-    }
+    }, 500);
   };
 
   const closeAllDropDown = () => {
@@ -1415,136 +1416,6 @@ function NewTrips(props) {
       }
     };
 
-    // const getSelectedDayEvents = date => {
-    //   if (isObjectEmpty(markedDates)) {
-    //     let markedDates = {};
-    //     markedDates[date] = {
-    //       startingDay: true,
-    //       color: seDayColor,
-    //       textColor: 'white',
-    //       disabled: false,
-    //       disableTouchEvent: false,
-    //     };
-    //     setmarkedDates(markedDates);
-    //     return;
-    //   } else {
-    //     let md = {...markedDates};
-    //     const size = Object.keys(md).length;
-    //     let o = md[date];
-
-    //     if (o !== undefined) {
-    //       console.warn('The key exists.');
-
-    //       if (size < 2) {
-    //         delete md[date];
-    //         setmarkedDates(md);
-    //         return;
-    //       } else {
-    //         let c1 = Object.keys(md)[0];
-    //         let c2 = Object.keys(md)[size - 1];
-
-    //         let m = {};
-    //         if (c1 < date) {
-    //           m[c1] = {
-    //             startingDay: true,
-    //             color: seDayColor,
-    //             textColor: 'white',
-    //             disabled: false,
-    //             disableTouchEvent: false,
-    //           };
-    //         } else {
-    //           m[c2] = {
-    //             endingDay: true,
-    //             color: seDayColor,
-    //             textColor: 'white',
-    //             disabled: false,
-    //             disableTouchEvent: false,
-    //           };
-    //         }
-    //         setmarkedDates(m);
-    //         return;
-    //       }
-    //     } else {
-    //       console.warn('The key does not exist.');
-    //       let md = {...markedDates};
-    //       if (size >= 2) {
-    //         return;
-    //       }
-
-    //       let pd1 = Object.keys(md)[0];
-    //       let pd2 = date;
-    //       let mid = '';
-    //       let mxd = '';
-    //       if (pd1 > pd2) {
-    //         mxd = pd1;
-    //         mid = date;
-    //       } else {
-    //         mxd = date;
-    //         mid = pd1;
-    //       }
-    //       const a = moment(mxd);
-    //       const b = moment(mid);
-    //       const no_of_days = a.diff(b, 'days');
-    //       console.error('nod : ', no_of_days);
-    //       let totaldays = 0;
-    //       let t = dur.title;
-    //       if (t == 'days') {
-    //         totaldays = durNum;
-    //       } else if (t == 'weeks') {
-    //         totaldays = durNum * 7;
-    //       } else if (t == 'months') {
-    //         totaldays = durNum * 30;
-    //       } else if (t == 'years') {
-    //         totaldays = durNum * 365;
-    //       }
-    //       if (no_of_days < totaldays) {
-    //         Alert.alert(
-    //           '',
-    //           'Date range must be greater or equal than trip duration',
-    //         );
-    //         return;
-    //       }
-
-    //       var daylist = getDaysArray(new Date(mid), new Date(mxd));
-    //       let mdd = {};
-    //       if (daylist.length > 0) {
-    //         daylist.map((e, i, a) => {
-    //           let d = moment(e).format('YYYY-MM-DD');
-    //           if (i == 0) {
-    //             mdd[d] = {
-    //               startingDay: true,
-    //               color: seDayColor,
-    //               textColor: 'white',
-    //               disabled: false,
-    //               disableTouchEvent: false,
-    //             };
-    //           }
-    //           if (i > 0 && i < a.length - 1) {
-    //             mdd[d] = {
-    //               color: ocolor,
-    //               textColor: 'white',
-    //               disabled: true,
-    //               disableTouchEvent: true,
-    //             };
-    //           }
-    //           if (i == a.length - 1) {
-    //             mdd[d] = {
-    //               endingDay: true,
-    //               color: seDayColor,
-    //               textColor: 'white',
-    //               disabled: false,
-    //               disableTouchEvent: false,
-    //             };
-    //           }
-    //         });
-    //       }
-
-    //       setmarkedDates(mdd);
-    //       return;
-    //     }
-    //   }
-    // };
-
     const renderBottom = () => {
       let c = isSelDate ? false : true;
       let dn = durNum;
@@ -1658,13 +1529,13 @@ function NewTrips(props) {
               flex: 1,
               alignItems: 'center',
               justifyContent: 'center',
-              padding: 20,
+
               backgroundColor: 'rgba(0,0,0,0.5)',
             },
           ]}>
           <View
             style={{
-              width: '100%',
+              width: '90%',
               alignSelf: 'center',
               paddingBottom: 20,
               backgroundColor: theme.color.background,
@@ -1726,7 +1597,7 @@ function NewTrips(props) {
       </MModal>
     );
   };
-
+ 
   const renderUNavlblModal = () => {
     let c = modalHeight >= maxModalHeight ? true : false;
     let style = c
@@ -2346,6 +2217,7 @@ function NewTrips(props) {
               )}
             </View>
           </View>
+          {isShowUnavliabledaysCal && renderCalender2()}
         </SafeAreaView>
       </MModal>
     );
@@ -2534,13 +2406,13 @@ function NewTrips(props) {
               flex: 1,
               alignItems: 'center',
               justifyContent: 'center',
-              padding: 20,
+
               backgroundColor: 'rgba(0,0,0,0.5)',
             },
           ]}>
           <View
             style={{
-              width: '100%',
+              width: '90%',
               alignSelf: 'center',
               paddingBottom: 20,
               backgroundColor: theme.color.background,
@@ -5231,7 +5103,7 @@ function NewTrips(props) {
       {isModal && renderModal()}
       {showCalender && renderCalender()}
       {isShowUnavliableModal && renderUNavlblModal()}
-      {isShowUnavliabledaysCal && renderCalender2()}
+
       {isAddPhotoModal && renderAddPhotoModal()}
       {deleteModal && renderDeleteModal()}
       {isReviewTrip && renderReviewTripModal()}

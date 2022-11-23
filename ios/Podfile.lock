@@ -379,7 +379,7 @@ PODS:
     - React
   - react-native-geolocation-service (5.3.0):
     - React
-  - react-native-multiple-image-picker (0.4.10):
+  - react-native-multiple-image-picker (0.4.13):
     - React-Core
     - TLPhotoPicker (= 2.1.4)
   - react-native-netinfo (9.3.0):
@@ -518,6 +518,8 @@ PODS:
   - RNScreens (3.14.1):
     - React-Core
     - React-RCTImage
+  - RNSVG (13.2.0):
+    - React-Core
   - RNVectorIcons (9.2.0):
     - React-Core
   - SDWebImage (5.11.1):
@@ -616,6 +618,7 @@ DEPENDENCIES:
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -772,6 +775,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   Yoga:
@@ -833,7 +838,7 @@ SPEC CHECKSUMS:
   react-native-date-picker: 55193347d8d0f40948f441ffd4e5db6f0a8fbe13
   react-native-geocoder: 225895386f04bf37515eaa09c419dea9b923f40b
   react-native-geolocation-service: f32ef48fa665bd710207a3ac39bc127cac9cb993
-  react-native-multiple-image-picker: af1788309fa361fe7c910649d9e24097c34aac6f
+  react-native-multiple-image-picker: ba2725d577e1da7fa83ce1b12a81d84107556240
   react-native-netinfo: 129bd99f607a2dc5bb096168f3e5c150fd1f1c95
   react-native-pager-view: e76d64a5114a152e942caa09136e4e250709378c
   react-native-safe-area-context: b456e1c40ec86f5593d58b275bd0e9603169daca
@@ -863,6 +868,7 @@ SPEC CHECKSUMS:
   RNPermissions: dcdb7b99796bbeda6975a6e79ad519c41b251b1c
   RNReanimated: 5bdcbcc3a72aedeee7bb099604262403aa75a1e5
   RNScreens: aa9a97835afbbdc18a4757870b2b59b7d9fae16a
+  RNSVG: 07037623c36f12e41312730622d5f6b3656227ca
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d

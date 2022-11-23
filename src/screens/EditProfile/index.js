@@ -5,17 +5,14 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
   Alert,
   Linking,
   PermissionsAndroid,
   Platform,
-  Dimensions,
   Modal as MModal,
   TextInput,
   Keyboard,
+  KeyboardAvoidingView,
 } from 'react-native';
 
 import {styles} from './styles';
@@ -239,120 +236,58 @@ function EditProfile(props) {
     seterrorMessage(c);
   };
 
-  const renderHeader = () => {
-    const render1 = () => {
-      const onClick = () => {
-        goBack();
-      };
-      return (
-        <TouchableOpacity activeOpacity={0.4} onPress={onClick}>
-          <utils.vectorIcon.Ionicons
-            name="ios-chevron-back"
-            color={theme.color.backgroundGreenText}
-            size={24}
-          />
-        </TouchableOpacity>
-      );
-    };
-
-    const render2 = () => {
-      return (
-        <View style={{width: '75%'}}>
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={styles.headerTitle}>
-            {headerTitle}
-          </Text>
-        </View>
-      );
-    };
-
-    const render3 = () => {
-      const onClick = () => {
-        props.navigation.navigate('Notifications', {screen: headerTitle});
-      };
-      return (
-        <TouchableOpacity
-          style={{width: 22}}
-          disabled
-          activeOpacity={0.4}
-          onPress={onClick}>
-          {/* <utils.vectorIcon.SimpleLineIcons
-            name="bell"
-            color={theme.color.backgroundGreenText}
-            size={22}
-          />
-          <View
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: 8 / 2,
-              position: 'absolute',
-              right: 0,
-              top: 2,
-              backgroundColor: theme.color.ntfctnClr,
-            }}></View> */}
-        </TouchableOpacity>
-      );
-    };
-
-    return (
-      <View style={styles.headerConatainer}>
-        {render1()}
-        {render2()}
-        {render3()}
-      </View>
-    );
-  };
-
   const MultipleImage = async button => {
     setisShowPrmsn(false);
     setisAddPhotoModal(false);
     let apiLevel = store.General.apiLevel;
-    try {
-      let options = {
-        mediaType: 'image',
-        isPreview: false,
-        singleSelectedMode: true,
-      };
 
-      const res = await MultipleImagePicker.openPicker(options);
-      if (res) {
-        console.log('mutipicker image res true  ');
-        const {path, fileName, mime} = res;
-        let uri = path;
-        if (Platform.OS == 'android' && apiLevel < 29) {
-          uri = 'file://' + uri;
+    setTimeout(async () => {
+      try {
+        let options = {
+          mediaType: 'image',
+          isPreview: false,
+          singleSelectedMode: true,
+        };
+
+        const res = await MultipleImagePicker.openPicker(options);
+        if (res) {
+          console.log('mutipicker image res true  ');
+          const {path, fileName, mime} = res;
+          let uri = path;
+          if (Platform.OS == 'android' && apiLevel < 29) {
+            uri = 'file://' + uri;
+          }
+
+          ImageCompressor.compress(uri, {
+            compressionMethod: 'auto',
+          })
+            .then(async res => {
+              let imageObject = {
+                uri: res,
+                type: mime,
+                fileName: fileName,
+              };
+              console.log('Compress image  : ', imageObject);
+              if (button == 'Profile') {
+                setphoto(imageObject);
+                return;
+              } else if (button == 'CNICFront') {
+                setCnicFrontImage(imageObject);
+                return;
+              } else {
+                return;
+              }
+            })
+            .catch(err => {
+              console.log('Image compress error : ', err);
+            });
         }
 
-        ImageCompressor.compress(uri, {
-          compressionMethod: 'auto',
-        })
-          .then(async res => {
-            let imageObject = {
-              uri: res,
-              type: mime,
-              fileName: fileName,
-            };
-            console.log('Compress image  : ', imageObject);
-            if (button == 'Profile') {
-              setphoto(imageObject);
-              return;
-            } else if (button == 'CNICFront') {
-              setCnicFrontImage(imageObject);
-              return;
-            } else {
-              return;
-            }
-          })
-          .catch(err => {
-            console.log('Image compress error : ', err);
-          });
+        console.log('multi photo picker res  : ', res);
+      } catch (error) {
+        console.log('multi photo picker error : ', error);
       }
-    } catch (error) {
-      console.log('multi photo picker error : ', error);
-    }
+    }, 500);
   };
 
   const onclickImage = c => {
@@ -370,29 +305,6 @@ function EditProfile(props) {
 
     MultipleImage(c);
   };
-
-  // const uploadPhoto = c => {
-  //   let imgArr = [];
-
-  //   if (c == 'Profile') {
-  //     photo.chk = 'Profile';
-  //     imgArr.push(photo);
-  //   }
-
-  //   // if (c == 'CNICFront') {
-  //   //   cnicFrontImage.chk = 'CnicF';
-  //   //   imgArr.push(cnicFrontImage);
-  //   // }
-
-  //   NetInfo.fetch().then(state => {
-  //     if (state.isConnected) {
-  //       store.User.attemptToUploadImage2(imgArr, setErrMessage, setPhoto);
-  //     } else {
-  //       // seterrorMessage('Please connect internet');
-  //       Alert.alert('', 'Please connect internet');
-  //     }
-  //   });
-  // };
 
   const renderShowFieldError = c => {
     let text = c == 'card' ? cardErr : '';
@@ -798,32 +710,6 @@ function EditProfile(props) {
     );
   };
 
-  // const rendermainButton = () => {
-  //   return (
-  //     <View
-  //       style={{
-  //         padding: 20,
-  //         backgroundColor: theme.color.mainbottombutonbackground,
-  //         shadowColor: 'black',
-  //         shadowOffset: {
-  //           width: 0,
-  //           height: 11,
-  //         },
-  //         shadowOpacity: 0.55,
-  //         shadowRadius: 14.78,
-
-  //         elevation: 22,
-  //       }}>
-  //       <TouchableOpacity
-  //         onPress={saveProfile}
-  //         activeOpacity={0.7}
-  //         style={styles.BottomButton}>
-  //         <Text style={styles.buttonTextBottom}>Save Profile</Text>
-  //       </TouchableOpacity>
-  //     </View>
-  //   );
-  // };
-
   const rendermainButton2 = () => {
     return (
       <TouchableOpacity
@@ -1219,27 +1105,30 @@ function EditProfile(props) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* {renderHeader()} */}
+    <View style={styles.container}>
       <utils.DrawerHeader props={props} headerTitle={headerTitle} />
       {!internet && <utils.InternetMessage />}
 
       <SafeAreaView style={styles.container2}>
         <View style={styles.container3}>
-          <ScrollView
-            contentContainerStyle={{paddingHorizontal: 20, paddingBottom: 20}}>
-            {renderProfileSection()}
-            {renderFields()}
-            {rendermainButton2()}
-          </ScrollView>
-          <utils.Footer
-            nav={props.navigation}
-            screen={headerTitle}
-            focusScreen={store.General.focusScreen}
-          />
+          <KeyboardAvoidingView style={{flex: 1}} enabled>
+            <ScrollView
+              contentContainerStyle={{
+                paddingHorizontal: 20,
+                paddingBottom: 20,
+              }}>
+              {renderProfileSection()}
+              {renderFields()}
+              {rendermainButton2()}
+            </ScrollView>
+          </KeyboardAvoidingView>
         </View>
+        <utils.Footer
+          nav={props.navigation}
+          screen={headerTitle}
+          focusScreen={store.General.focusScreen}
+        />
       </SafeAreaView>
-      {/* {rendermainButton()} */}
 
       <Toast ref={toast} position="bottom" />
 
@@ -1256,6 +1145,6 @@ function EditProfile(props) {
       )}
 
       {isAddPhotoModal && renderAddPhotoModal()}
-    </SafeAreaView>
+    </View>
   );
 }

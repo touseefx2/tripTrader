@@ -148,7 +148,7 @@ const PrivacyPolicyicon = {
   drawerLabel: 'Privacy Policy',
   // headerShown: false,
   // swipeEnabled: true,
-  unmountOnBlur: true,
+  // unmountOnBlur: false,
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}

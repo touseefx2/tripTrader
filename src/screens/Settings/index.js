@@ -130,10 +130,13 @@ function Settings(props) {
       props.navigation.navigate('ManageSubscription');
     }
     if (c == 'contact us') {
+      props.navigation.navigate('ContactUs');
     }
     if (c == 'news') {
+      props.navigation.navigate('LatestNews');
     }
     if (c == 'privacy') {
+      props.navigation.navigate('PrivacyPolicy');
     }
     if (c == 'logout') {
       store.General.setgoto('home');

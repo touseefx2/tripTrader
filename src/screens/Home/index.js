@@ -437,6 +437,12 @@ function Home(props) {
     setisDropDownSpcs(false);
   };
 
+  useEffect(() => {
+    if (goto == 'profile') {
+      props.navigation.navigate('MyProfile');
+    }
+  }, []);
+
   const socket = store.General.socket;
   const SocketOff = () => {
     socket.emit('user left', {socket: socket.id});
@@ -544,12 +550,6 @@ function Home(props) {
   //end
   // console.log('minde : ', minDatee);
   // console.log('isdtdy : ', isDisableToday);
-
-  useEffect(() => {
-    if (goto == 'profile') {
-      props.navigation.navigate('MyProfile');
-    }
-  }, []);
 
   const setIsSendMessage = v => {
     setsendObj(modalObj.item.hostId);
@@ -1986,6 +1986,7 @@ function Home(props) {
                 )}
               </View>
             </View>
+            {showCal1 && renderCalender1()}
           </SafeAreaView>
         </Modal>
       );
@@ -3112,6 +3113,7 @@ function Home(props) {
                 )}
               </View>
             </View>
+            {showCalender && renderCalender()}
           </SafeAreaView>
         </Modal>
       );
@@ -3804,6 +3806,7 @@ function Home(props) {
                 )}
               </View>
             </View>
+            {isShowUnavliabledaysCal && renderCalender2()}
           </SafeAreaView>
         </Modal>
       );
@@ -5839,9 +5842,7 @@ function Home(props) {
 
         {renderStatusBar()}
         {isModal && !isOfferSend && !isSendMessage && renderModal()}
-        {showCal1 && renderCalender1()}
-        {showCalender && renderCalender()}
-        {isShowUnavliabledaysCal && renderCalender2()}
+
         {isOfferSend && renderShowOfferSendModal()}
         {isSendMessage && renderMessageSendModal()}
         {isShowSearch && (
