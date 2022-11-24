@@ -36,8 +36,8 @@ PushNotification.createChannel(
   created => console.log(`createChannel notification returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
 );
 
-const callData = (topic, rid) => {
-  if (store.User.user !== 'guest') {
+const callData = topic => {
+  if (store.User.user !== 'guest' && store.User.user) {
     if (topic == 'newMessage') {
       store.User.attemptToGetInboxes(store.User.user._id, () => {});
     }
@@ -92,7 +92,7 @@ messaging().onMessage(async remoteMessage => {
     store.Notifications.clearShowNotifications();
   }
 
-  if (store.User.user !== 'guest') {
+  if (store.User.user !== 'guest' && store.User.user) {
     store.Notifications.setisShowNotifcation(true);
     store.Notifications.setNotifcationTitle(message);
     store.Notifications.setNotifcationData(data);
@@ -110,7 +110,7 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
   let title = remoteMessage.notification?.title || '';
   let message = remoteMessage.notification?.body || '';
   let data = remoteMessage.data ? remoteMessage.data : '';
-  let topic = data.topic;
+  let topic = data.topic || '';
   // let roomId = data.chatRoomId || '';
   callData(topic);
 });
