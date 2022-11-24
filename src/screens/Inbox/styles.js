@@ -321,8 +321,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 10,
-    paddingTop: 20,
-    paddingBottom: 10,
+    paddingVertical: 20,
     // backgroundColor: 'red',
   },
   listFooterT: {

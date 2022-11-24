@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {
   View,
   Text,
@@ -54,8 +54,13 @@ function Inbox(props) {
   let user = store.User.user;
 
   let loader = store.User.dlc;
-  const data = store.User.inbox;
+  const d = store.User.inbox;
   let totalUnread = store.User.unreadInbox;
+
+  let limit = 25;
+  const [data, setdata] = useState(false);
+  const [page, setpage] = useState(1);
+  const [loadMore, setloadMore] = useState(false);
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
@@ -91,6 +96,49 @@ function Inbox(props) {
     }
   }, []);
 
+  const loadFirst = d => {
+    setloadMore(true);
+    let page = 0;
+    let p = page + 1;
+    let ar = [...d];
+    const dt = ar.slice(page * limit, limit * p);
+
+    let dd = [...dt];
+
+    console.log('pagination callllll load first : ', page * limit, limit * p);
+    setdata(dd);
+    setpage(p);
+    setloadMore(false);
+  };
+
+  const LoadMore = () => {
+    setloadMore(true);
+    setTimeout(() => {
+      let p = page + 1;
+      let ar = [...d];
+      const dt = ar.slice(page * limit, limit * p);
+      let dd = [...data, ...dt];
+      console.log('pagination callllll load more : ', page * limit, limit * p);
+      setdata(dd);
+      setpage(p);
+      setloadMore(false);
+    }, 100);
+  };
+
+  useEffect(() => {
+    if (getDataOnce && !refreshing) {
+      if (d.length > 0) {
+        loadFirst(d);
+      } else {
+        setdata([]);
+      }
+    }
+  }, [getDataOnce, d, refreshing]);
+
+  console.log('d : ', d.length);
+  console.log('data : ', data.length);
+  console.log('loadmore : ', loadMore);
+
   const onclickSearchBar = () => {};
 
   const deleteChat = (chatId, i) => {
@@ -121,7 +169,7 @@ function Inbox(props) {
     return (
       // Flat List Item
       <>
-        {!refreshing && getDataOnce && (
+        {getDataOnce && !loadMore && data != false && (
           <Text
             style={{
               marginTop: '80%',
@@ -432,14 +480,40 @@ function Inbox(props) {
   const ListFooter = () => {
     return (
       <>
-        <View>
-          <View style={styles.listFooter}>
+        <View style={styles.listFooter}>
+          {data.length == d.length && (
             <Text style={styles.listFooterT}>End of messages</Text>
-          </View>
+          )}
+
+          {data.length < d.length && (
+            <View
+              style={[
+                styles.listFooter,
+                {flexDirection: 'row', alignItems: 'center'},
+              ]}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                disabled={loadMore}
+                onPress={LoadMore}>
+                <Text style={styles.listFooterT}>Load More...</Text>
+              </TouchableOpacity>
+              {loadMore && (
+                <ActivityIndicator
+                  style={{marginLeft: 10}}
+                  size={16}
+                  color={theme.color.button1}
+                />
+              )}
+            </View>
+          )}
         </View>
       </>
     );
   };
+
+  // const onEndReach = () => {
+  //   // setloadMore(true);
+  // };
 
   return (
     <>
@@ -449,25 +523,32 @@ function Inbox(props) {
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <SwipeListView
+              useFlatList
+              // initialScrollIndex={0}
               ref={swipRef}
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
               }
               contentContainerStyle={{
-                paddingTop: 12,
-                paddingBottom: 40,
+                paddingVertical: 12,
               }}
               ListEmptyComponent={EmptyListMessage}
-              ListHeaderComponent={data.length > 0 ? ListHeader : null}
+              ListHeaderComponent={data && data.length > 0 ? ListHeader : null}
               keyExtractor={(item, index) => index.toString()}
-              ListFooterComponent={data.length > 0 ? ListFooter : null}
-              data={data}
+              ListFooterComponent={
+                data != false && data.length > 0 ? ListFooter : null
+              }
+              data={data == false ? [] : data}
               ItemSeparatorComponent={ItemSeparatorView}
               renderItem={ItemView}
               renderHiddenItem={ItemViewdelete}
               leftOpenValue={75}
               rightOpenValue={-75}
               disableRightSwipe
+              initialNumToRender={limit}
+              maxToRenderPerBatch={limit}
+              // onEndReachedThreshold={0.5}
+              // onEndReached={onEndReach}
             />
           </View>
 

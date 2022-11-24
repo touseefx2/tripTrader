@@ -389,9 +389,34 @@ class user {
             socket.emit('joinRoom', {username, roomName: e.roomName});
           });
         }
-        setgetdata(true);
-        this.setinbox(fa);
 
+        this.setinbox([
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+          ...fa,
+        ]);
+        setgetdata(true);
         let ud = store.User.user._id;
 
         let uc = 0;

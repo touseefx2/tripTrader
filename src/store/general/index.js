@@ -16,11 +16,11 @@ class general {
   @observable photoSelInd = 0;
   @observable Loading = true;
   @observable isInternet = false;
-  @persist('object') @observable isGLocation = false;
   @observable isLocation = false;
   @observable appState = AppState.currentState;
   @observable selectedFilter = [];
   @observable isUpdateNeeded = false;
+  @persist('object') @observable isGLocation = false;
   @persist('object') @observable apiLevel = '';
   @persist('object') @observable appBuildNumber = '';
   @persist('object') @observable appVersionNumber = '';

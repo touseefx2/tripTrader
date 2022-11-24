@@ -13,8 +13,6 @@ import {observer} from 'mobx-react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import ConnectivityManager from 'react-native-connectivity-status';
 
-// import {  } from 'react-navigation';
-
 export default observer(App);
 function App(props) {
   const Stack = createNativeStackNavigator();
@@ -26,11 +24,7 @@ function App(props) {
         UIManager.setLayoutAnimationEnabledExperimental(true);
       }
     }
-
     GlobalFont.applyGlobal(theme.fonts.fontNormal);
-    const unsubscribeNetinfo = NetInfo.addEventListener(state => {
-      store.General.setInternet(state.isConnected);
-    });
     const unsubscribeAppState = AppState.addEventListener(
       'change',
       appState => {
@@ -42,25 +36,32 @@ function App(props) {
         }
       },
     );
-    const unsubscribeConnectivityStatusSubscription =
-      ConnectivityManager.addStatusListener(({eventType, status}) => {
-        switch (eventType) {
-          case 'location':
-            store.General.setLocation(status);
-            break;
-        }
-      });
+    // const unsubscribeConnectivityStatusSubscription =
+    //   ConnectivityManager.addStatusListener(({eventType, status}) => {
+    //     switch (eventType) {
+    //       case 'location':
+    //         store.General.setLocation(status);
+    //         break;
+    //     }
+    //   });
+    const unsubscribeNetinfo = NetInfo.addEventListener(state => {
+      store.General.setInternet(state.isConnected);
+    });
+    setDeviceInfo();
 
+    return () => {
+      unsubscribeAppState.remove();
+      // unsubscribeConnectivityStatusSubscription.remove();
+      unsubscribeNetinfo();
+    };
+  }, []);
+
+  const setDeviceInfo = () => {
     store.General.setapiLevel(DeviceInfo.getApiLevel());
     store.General.setappBuildNumber(DeviceInfo.getBuildNumber());
     store.General.setpackage(DeviceInfo.getBundleId());
     store.General.setappVersionNumber(DeviceInfo.getVersion());
-    return () => {
-      unsubscribeConnectivityStatusSubscription.remove();
-      unsubscribeNetinfo();
-      // unsubscribeAppState();
-    };
-  }, []);
+  };
 
   return (
     <SafeAreaProvider>
@@ -70,10 +71,6 @@ function App(props) {
             <Stack.Screen name="Splash" component={screens.Splash} />
           )}
 
-          {/* {!store.General.Loading && (
-            <Stack.Screen name="AuthStack" component={stack.AuthStack} />
-          )} */}
-
           {!store.General.Loading && !user && (
             <Stack.Screen name="AuthStack" component={stack.AuthStack} />
           )}
@@ -81,10 +78,6 @@ function App(props) {
           {!store.General.Loading && user && (
             <Stack.Screen name="HomeStack" component={stack.HomeStack} />
           )}
-
-          {/* {!store.General.Loading && store.Resturants.isSetLocOnce && (
-            <Stack.Screen name="HomeStack" component={stack.DrawerStack} />
-          )} */}
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

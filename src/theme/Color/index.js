@@ -1,24 +1,5 @@
-//  const  AppHeaderColor ="#232322";
-
-//  const  AppHeaderTextColor="#da8e03"
-//  const unSelectColor="gray"
-
-//  const mainColor="white"
-//  const mainTextColor="black"
-//  const mainTextTitleColor="#da8e03"
-//  const mainTextSubtitleColor="#8b8b8b"
-
-//  const mainPlaceholderColor="silver"
-
-//  const borderspilitColor="#5c5c5c"
-
-//  const buttonLinerGC1="#0e47a1"
-//  const buttonLinerGC2="#002171"
-//  const buttonLinerTextColor="white"
-
 const background = '#FFFFFF';
 const backgroundGreen = '#283C2E';
-// const backgroundConatiner = '#E5E5E5';
 const backgroundConatiner = '#f5f5f5';
 
 const mainbottombutonbackground = '#e8e8e8';
@@ -98,7 +79,6 @@ export default color = {
   cartbuttonText,
   heart,
   titleGreen,
-
   footerCartbc1,
   footerCartbc2,
   footerCartText,
@@ -111,9 +91,7 @@ export default color = {
   addcartModalSubText,
   addcartModalText,
   addcartModalHeaderText,
-
   addcartModalTotalBackground,
-
   disableColor,
   disableTextColor,
   disableField,

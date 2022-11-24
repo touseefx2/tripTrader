@@ -22,7 +22,6 @@ requestUserPermission = async () => {
   }
 };
 requestUserPermission();
-
 PushNotification.createChannel(
   {
     channelId: 'triptraders', // (required)

@@ -37,6 +37,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>App would like permission to access your camera</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Application would like permission to access your current location</string>
 	<key>NSLocationAlwaysUsageDescription</key>
@@ -45,8 +47,6 @@
 	<string>Food delivery would like permission to access your current location</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>App would like permission to access your Gallery for photos and camera</string>
-	<key>NSCameraUsageDescription</key>
- <string>App would like permission to access your camera</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -75,6 +75,7 @@
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
