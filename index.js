@@ -8,9 +8,7 @@ import {Provider} from 'mobx-react';
 import store from './src/store/index';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
-
 configure({useProxies: 'never'});
-
 LogBox.ignoreAllLogs(true);
 
 requestUserPermission = async () => {
@@ -42,12 +40,6 @@ const callData = (topic, rid) => {
   if (store.User.user !== 'guest') {
     if (topic == 'newMessage') {
       store.User.attemptToGetInboxes(store.User.user._id, () => {});
-      // if (rid != '') {
-      //   const socket = store.General.socket;
-      //   console.log('join roomin in RecieveNotification');
-      //   let username = store.User.user.firstName + ' ' + store.User.user.lastName;
-      //   socket.emit('joinRoom', {username, roomName: rid});
-      // }
     }
     if (topic == 'offerRecieved') {
       store.Offers.attemptToGetReceiveOffers(
@@ -77,7 +69,6 @@ const callData = (topic, rid) => {
         () => {},
       );
     }
-
     if (topic == 'followUser') {
       store.User.attemptToGetFollowers(
         store.User.user._id,
@@ -94,8 +85,8 @@ messaging().onMessage(async remoteMessage => {
   let message = remoteMessage.notification?.body || '';
   let data = remoteMessage.data ? remoteMessage.data : '';
   let topic = data.topic || '';
-  let roomId = data.chatRoomId || '';
-  callData(topic, roomId);
+  // let roomId = data.chatRoomId || '';
+  callData(topic);
 
   if (store.Notifications.isShowNotifcation) {
     store.Notifications.clearShowNotifications();
@@ -120,7 +111,8 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
   let message = remoteMessage.notification?.body || '';
   let data = remoteMessage.data ? remoteMessage.data : '';
   let topic = data.topic;
-  let roomId = data.chatRoomId || '';
+  // let roomId = data.chatRoomId || '';
+  callData(topic);
 });
 
 function MainApp() {

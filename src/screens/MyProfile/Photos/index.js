@@ -56,10 +56,28 @@ function Photos(props) {
     setRefreshing(c);
   };
 
+  const callGeneral = () => {
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.User.getUserById1(store.User.user._id, store.User.authToken, '');
+        store.User.attemptToGetFollowers(
+          store.User.user._id,
+          () => {},
+          () => {},
+        );
+        store.User.attemptToGetFollowing(
+          store.User.user._id,
+          () => {},
+          () => {},
+        );
+      }
+    });
+  };
+
   const onRefresh = React.useCallback(() => {
     console.warn('onrefresh cal');
     setRefreshing(true);
-    store.User.getUserById1(store.User.user._id, store.User.authToken, '');
+    callGeneral();
     getDbData();
   }, []);
 

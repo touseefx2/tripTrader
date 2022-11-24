@@ -46,6 +46,14 @@ function LatestNews(props) {
 
   const data = [];
 
+  useEffect(() => {
+    if (user == 'guest') {
+      store.General.setgoto('guestaccess');
+      store.User.Logout();
+      return;
+    }
+  }, []);
+
   return (
     <>
       <View style={styles.container}>
