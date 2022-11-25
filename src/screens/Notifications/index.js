@@ -38,6 +38,75 @@ import moment, {duration} from 'moment/moment';
 
 export default observer(Notifications);
 
+function ListHeaders({search, setsearch, data}) {
+  const renderResult = () => {
+    let length = data.length || 0;
+    return (
+      <View style={styles.resultContainer}>
+        <Text style={styles.resultText}>
+          {length} notifications, {store.Notifications.unread} unread
+        </Text>
+      </View>
+    );
+  };
+
+  const renderSearch = () => {
+    return (
+      <TouchableOpacity disabled>
+        <Image
+          source={require('../../assets/images/searchBar/search/img.png')}
+          style={styles.Baricon}
+        />
+      </TouchableOpacity>
+    );
+  };
+
+  const renderInput = () => {
+    return (
+      <View style={{width: '85%'}}>
+        <TextInput
+          onChangeText={c => {
+            setsearch(c);
+          }}
+          value={search}
+          style={styles.SerchBarInput}
+          placeholder="Search"
+        />
+      </View>
+    );
+  };
+
+  const renderFilter = () => {
+    const onclick = () => {};
+
+    return (
+      <TouchableOpacity style={styles.Baricon} onPress={onclick} disabled>
+        {/* <Image
+          source={require('../../assets/images/searchBar/filter/img.png')}
+          style={styles.Baricon}
+        /> */}
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <View style={{marginHorizontal: 15}}>
+      <Pressable
+        style={({pressed}) => [
+          {opacity: pressed ? 0.9 : 1},
+          [styles.SerchBarContainer],
+        ]}
+        // onPress={onclickSearchBar}
+      >
+        {renderSearch()}
+        {renderInput()}
+        {renderFilter()}
+      </Pressable>
+      {data.length > 0 && renderResult()}
+    </View>
+  );
+}
+
 function Notifications(props) {
   let maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
@@ -87,6 +156,35 @@ function Notifications(props) {
     }
     return () => {};
   }, [getDataOnce, internet]);
+
+  const [search, setsearch] = useState('');
+  const [sdata, setsdata] = useState([]);
+  // useEffect(() => {
+  //   if (search != '') {
+  //     let data = [...store.User.notifications];
+  //     if (data.length > 0) {
+  //       let uid = user._id;
+  //       let ar = data.filter(item => {
+  //         let u = false;
+  //         if (item.userId1 && item.userId1._id != uid) {
+  //           u = item.userId1;
+  //         }
+  //         if (item.userId2 && item.userId2._id != uid) {
+  //           u = item.userId2;
+  //         }
+  //         let title = u.firstName + ' ' + u.lastName;
+
+  //         return title.toLowerCase().includes(search.toLowerCase());
+  //       });
+  //       setsdata(ar);
+  //     }
+  //   } else {
+  //     setsdata([]);
+  //   }
+  // }, [search]);
+
+  console.log('search : ', search);
+  console.log('sdataa : ', sdata.length);
 
   const JoinNow = () => {
     store.General.setgoto('joinnow');
@@ -187,70 +285,72 @@ function Notifications(props) {
     );
   };
 
-  const ListHeader = () => {
-    const renderResult = () => {
-      let length = data.length || 0;
-      return (
-        <View style={styles.resultContainer}>
-          <Text style={styles.resultText}>
-            {length} notifications, {store.Notifications.unread} unread
-          </Text>
-        </View>
-      );
-    };
+  // const ListHeader = () => {
+  //   const renderResult = () => {
+  //     let length = data.length || 0;
+  //     return (
+  //       <View style={styles.resultContainer}>
+  //         <Text style={styles.resultText}>
+  //           {length} notifications, {store.Notifications.unread} unread
+  //         </Text>
+  //       </View>
+  //     );
+  //   };
 
-    const renderSearch = () => {
-      return (
-        <TouchableOpacity disabled>
-          <Image
-            source={require('../../assets/images/searchBar/search/img.png')}
-            style={styles.Baricon}
-          />
-        </TouchableOpacity>
-      );
-    };
+  //   const renderSearch = () => {
+  //     return (
+  //       <TouchableOpacity disabled>
+  //         <Image
+  //           source={require('../../assets/images/searchBar/search/img.png')}
+  //           style={styles.Baricon}
+  //         />
+  //       </TouchableOpacity>
+  //     );
+  //   };
 
-    const renderInput = () => {
-      return (
-        <View style={{width: '85%'}}>
-          <TextInput
-            editable={false}
-            style={styles.SerchBarInput}
-            placeholder="Search"
-          />
-        </View>
-      );
-    };
+  //   const renderInput = () => {
+  //     return (
+  //       <View style={{width: '85%'}}>
+  //         <TextInput
+  //           onChangeText={c => {
+  //             setsearch(c);
+  //           }}
+  //           style={styles.SerchBarInput}
+  //           placeholder="Search"
+  //         />
+  //       </View>
+  //     );
+  //   };
 
-    const renderFilter = () => {
-      const onclick = () => {};
+  //   const renderFilter = () => {
+  //     const onclick = () => {};
 
-      return (
-        <TouchableOpacity style={styles.Baricon} onPress={onclick} disabled>
-          {/* <Image
-            source={require('../../assets/images/searchBar/filter/img.png')}
-            style={styles.Baricon}
-          /> */}
-        </TouchableOpacity>
-      );
-    };
+  //     return (
+  //       <TouchableOpacity style={styles.Baricon} onPress={onclick} disabled>
+  //         {/* <Image
+  //           source={require('../../assets/images/searchBar/filter/img.png')}
+  //           style={styles.Baricon}
+  //         /> */}
+  //       </TouchableOpacity>
+  //     );
+  //   };
 
-    return (
-      <View style={{marginHorizontal: 15}}>
-        <Pressable
-          style={({pressed}) => [
-            {opacity: pressed ? 0.9 : 1},
-            [styles.SerchBarContainer],
-          ]}
-          onPress={onclickSearchBar}>
-          {renderSearch()}
-          {renderInput()}
-          {renderFilter()}
-        </Pressable>
-        {data.length > 0 && renderResult()}
-      </View>
-    );
-  };
+  //   return (
+  //     <View style={{marginHorizontal: 15}}>
+  //       <Pressable
+  //         style={({pressed}) => [
+  //           {opacity: pressed ? 0.9 : 1},
+  //           [styles.SerchBarContainer],
+  //         ]}
+  //         onPress={onclickSearchBar}>
+  //         {renderSearch()}
+  //         {renderInput()}
+  //         {renderFilter()}
+  //       </Pressable>
+  //       {data.length > 0 && renderResult()}
+  //     </View>
+  //   );
+  // };
 
   function compare(d, dd) {
     let d1 = moment(d).format('YYYY-MM-DD');
@@ -334,6 +434,12 @@ function Notifications(props) {
 
     return t;
   }
+
+  const ListHeader = () => {
+    return (
+      <ListHeaders search={search} setsearch={c => setsearch(c)} data={data} />
+    );
+  };
 
   const ItemView = ({item, index}) => {
     let photo = item.icon || '';
@@ -617,7 +723,15 @@ function Notifications(props) {
               keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
-              ListHeaderComponent={data.length > 0 ? ListHeader : null}
+              ListHeaderComponent={
+                data.length > 0 ? (
+                  <ListHeaders
+                    search={search}
+                    setsearch={c => setsearch(c)}
+                    data={data}
+                  />
+                ) : null
+              }
               // ListFooterComponent={data.length > 0 ? ListFooter : null}
             />
           </View>

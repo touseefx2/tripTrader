@@ -2,10 +2,10 @@
 // const BASE_URL = 'http://ec2-13-126-189-174.ap-south-1.compute.amazonaws.com/';
 
 //Heroko
-const BASE_URL = 'https://triptrader-backend.herokuapp.com/';
+// const BASE_URL = 'https://triptrader-backend.herokuapp.com/';
 
 //Local
-// const BASE_URL = 'http://192.168.0.105:3001/';
+const BASE_URL = 'http://192.168.0.105:3001/';
 
 //apis
 const GET_CITIES_AREAS = 'api/area/getAllAreas';

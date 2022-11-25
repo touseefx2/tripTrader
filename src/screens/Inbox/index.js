@@ -36,8 +36,112 @@ import {ImageSlider} from 'react-native-image-slider-banner';
 import {Calendar} from 'react-native-calendars';
 import moment, {duration} from 'moment/moment';
 import {SwipeListView} from 'react-native-swipe-list-view';
+import Card from './Card/index';
+import CardDelete from './CardDelete';
 
 export default observer(Inbox);
+
+function ListHeader({search, setsearch, data, totalUnread}) {
+  const renderResult = () => {
+    return (
+      <View style={styles.resultContainer}>
+        <Text style={styles.resultText}>
+          {data.length} messages, {totalUnread} unread
+        </Text>
+      </View>
+    );
+  };
+
+  const renderSearch = () => {
+    return (
+      <TouchableOpacity disabled>
+        <Image
+          source={require('../../assets/images/searchBar/search/img.png')}
+          style={styles.Baricon}
+        />
+      </TouchableOpacity>
+    );
+  };
+
+  const renderInput = () => {
+    return (
+      <View style={{width: '85%'}}>
+        <TextInput
+          value={search}
+          style={styles.SerchBarInput}
+          placeholder="Search"
+          onChangeText={c => {
+            setsearch(c);
+          }}
+        />
+      </View>
+    );
+  };
+
+  const renderFilter = () => {
+    const onclick = () => {};
+
+    return (
+      <TouchableOpacity style={styles.Baricon} onPress={onclick} disabled>
+        {/* <Image
+          source={require('../../assets/images/searchBar/filter/img.png')}
+          style={styles.Baricon}
+        /> */}
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <View style={{marginHorizontal: 15}}>
+      <Pressable
+        style={({pressed}) => [
+          {opacity: pressed ? 0.9 : 1},
+          [styles.SerchBarContainer],
+        ]}
+        // onPress={onclickSearchBar}
+      >
+        {renderSearch()}
+        {renderInput()}
+        {renderFilter()}
+      </Pressable>
+      {data.length > 0 && renderResult()}
+    </View>
+  );
+}
+
+function ListFooter({data, d, loadMore, LoadMore}) {
+  return (
+    <>
+      <View style={styles.listFooter}>
+        {data.length == d.length && (
+          <Text style={styles.listFooterT}>End of messages</Text>
+        )}
+
+        {data.length < d.length && (
+          <View
+            style={[
+              styles.listFooter,
+              {flexDirection: 'row', alignItems: 'center'},
+            ]}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              disabled={loadMore}
+              onPress={LoadMore}>
+              <Text style={styles.listFooterT}>Load More...</Text>
+            </TouchableOpacity>
+            {loadMore && (
+              <ActivityIndicator
+                style={{marginLeft: 10}}
+                size={16}
+                color={theme.color.button1}
+              />
+            )}
+          </View>
+        )}
+      </View>
+    </>
+  );
+}
 
 function Inbox(props) {
   let guest = require('../../assets/images/drawer/guest/img.png');
@@ -57,16 +161,48 @@ function Inbox(props) {
   const d = store.User.inbox;
   let totalUnread = store.User.unreadInbox;
 
-  let limit = 25;
+  let limit = 16;
+
+  const [search, setsearch] = useState('');
+  const [sdata, setsdata] = useState([]);
+  useEffect(() => {
+    if (search != '') {
+      let data = [...store.User.inbox];
+      if (data.length > 0) {
+        let uid = user._id;
+        let ar = data.filter(item => {
+          let u = false;
+          if (item.userId1 && item.userId1._id != uid) {
+            u = item.userId1;
+          }
+          if (item.userId2 && item.userId2._id != uid) {
+            u = item.userId2;
+          }
+          let title = u.firstName + ' ' + u.lastName;
+
+          return title.toLowerCase().includes(search.toLowerCase());
+        });
+        setsdata(ar);
+      }
+    } else {
+      setsdata([]);
+    }
+  }, [search]);
+
+  console.log('search : ', search);
+  console.log('sdataa : ', sdata.length);
+
   const [data, setdata] = useState(false);
   const [page, setpage] = useState(1);
+  const [loadFirst, setloadFirst] = useState(false);
+
   const [loadMore, setloadMore] = useState(false);
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
     setgetDataOnce(C);
   };
-  const refreshing = store.User.ibl;
+  const refreshing = store.User.ibl || loadFirst;
   const onRefresh = React.useCallback(() => {
     console.warn('onrefresh cal');
     if (user !== 'guest') {
@@ -96,8 +232,8 @@ function Inbox(props) {
     }
   }, []);
 
-  const loadFirst = d => {
-    setloadMore(true);
+  const LoadFirst = d => {
+    setloadFirst(true);
     let page = 0;
     let p = page + 1;
     let ar = [...d];
@@ -108,10 +244,11 @@ function Inbox(props) {
     console.log('pagination callllll load first : ', page * limit, limit * p);
     setdata(dd);
     setpage(p);
-    setloadMore(false);
+
+    setloadFirst(false);
   };
 
-  const LoadMore = () => {
+  const LoadMore = async () => {
     setloadMore(true);
     setTimeout(() => {
       let p = page + 1;
@@ -122,18 +259,18 @@ function Inbox(props) {
       setdata(dd);
       setpage(p);
       setloadMore(false);
-    }, 100);
+    }, 1);
   };
 
   useEffect(() => {
-    if (getDataOnce && !refreshing) {
+    if (getDataOnce) {
       if (d.length > 0) {
-        loadFirst(d);
+        LoadFirst(d);
       } else {
         setdata([]);
       }
     }
-  }, [getDataOnce, d, refreshing]);
+  }, [getDataOnce]);
 
   console.log('d : ', d.length);
   console.log('data : ', data.length);
@@ -169,7 +306,7 @@ function Inbox(props) {
     return (
       // Flat List Item
       <>
-        {getDataOnce && !loadMore && data != false && (
+        {getDataOnce && !loadMore && data && data.length <= 0 && (
           <Text
             style={{
               marginTop: '80%',
@@ -188,331 +325,26 @@ function Inbox(props) {
     );
   };
 
-  const ListHeader = () => {
-    const renderResult = () => {
-      let length = data.length || 0;
+  // const ItemView = ({item, index}) => {
+  //   <Card
+  //     item={item}
+  //     index={index}
+  //     refreshing={refreshing}
+  //     data={data}
+  //     user={store.User.user}
+  //     props={props}
+  //   />;
+  // };
 
-      return (
-        <View style={styles.resultContainer}>
-          <Text style={styles.resultText}>
-            {length} messages, {totalUnread} unread
-          </Text>
-        </View>
-      );
-    };
-
-    const renderSearch = () => {
-      return (
-        <TouchableOpacity disabled>
-          <Image
-            source={require('../../assets/images/searchBar/search/img.png')}
-            style={styles.Baricon}
-          />
-        </TouchableOpacity>
-      );
-    };
-
-    const renderInput = () => {
-      return (
-        <View style={{width: '85%'}}>
-          <TextInput
-            editable={false}
-            style={styles.SerchBarInput}
-            placeholder="Search"
-          />
-        </View>
-      );
-    };
-
-    const renderFilter = () => {
-      const onclick = () => {};
-
-      return (
-        <TouchableOpacity style={styles.Baricon} onPress={onclick} disabled>
-          {/* <Image
-            source={require('../../assets/images/searchBar/filter/img.png')}
-            style={styles.Baricon}
-          /> */}
-        </TouchableOpacity>
-      );
-    };
-
-    return (
-      <View style={{marginHorizontal: 15}}>
-        <Pressable
-          style={({pressed}) => [
-            {opacity: pressed ? 0.9 : 1},
-            [styles.SerchBarContainer],
-          ]}
-          onPress={onclickSearchBar}>
-          {renderSearch()}
-          {renderInput()}
-          {renderFilter()}
-        </Pressable>
-        {data.length > 0 && renderResult()}
-      </View>
-    );
-  };
-
-  function compare(d, dd) {
-    let d1 = moment(d).format('YYYY-MM-DD');
-    let d2 = moment(dd).format('YYYY-MM-DD');
-    if (d2 > d1) {
-      return 'greater';
-    } else if (d2 < d1) {
-      return 'smaller';
-    } else {
-      return 'equal';
-    }
-  }
-
-  function diff_minutes(dt2, dt1) {
-    var diff = (dt2.getTime() - dt1.getTime()) / 1000;
-    diff /= 60;
-    return Math.abs(Math.round(diff));
-  }
-
-  function CheckDate(d) {
-    let t = '';
-    let ud = new Date(d); //update date
-    let cd = new Date(); //current date
-
-    let udcy = false; //is update date  current year
-    let udy = parseInt(ud.getFullYear());
-    let cdy = parseInt(cd.getFullYear());
-    if (udy == cdy) {
-      udcy = true;
-    }
-    // && min < 1440 // 1 daya minure
-    let sd = ud; //start date
-    let ed = cd; //end date
-    let ics = compare(sd, ed); //is check date
-    // console.log('updated date : ', moment(ud).format('YYYY-MM-DD hh:mm:ss a'));
-    // console.log('currentdate : ', moment(cd).format('YYYY-MM-DD hh:mm:ss a'));
-    // console.log('ics ', ics);
-
-    if (ics == 'greater') {
-      if (udcy) {
-        t = moment(ud).format('MMM DD');
-      } else {
-        t = moment(ud).format('MMM DD, YYYY');
-      }
-    } else {
-      let min = diff_minutes(ed, sd);
-      // console.log('minutes: ', min);
-      // if (min >= 0 && min <= 1) {
-      // t = 'Just now';
-      // } else if (min > 1) {
-      t = moment(ud).format('hh:mm a');
-      // }
-    }
-
-    return t;
-  }
-
-  const ItemView = ({item, index}) => {
-    let isendmymsg = false;
-
-    let uid = user._id;
-    let u = false;
-    if (item.userId1 && item.userId1._id != uid) {
-      u = item.userId1;
-    }
-    if (item.userId2 && item.userId2._id != uid) {
-      u = item.userId2;
-    }
-
-    let photo = u.image && u.image != '' ? {uri: u.image} : guest;
-    let title = u.firstName + ' ' + u.lastName;
-    let subtitle = '';
-    let create = CheckDate(item.updatedAt);
-    let isread = false;
-    let type = '';
-
-    if (item.latestMessage) {
-      let d = item.latestMessage;
-      type = d.type;
-      subtitle = d.message;
-      isendmymsg = d.sendBy._id == uid ? true : false;
-      if (!isendmymsg) {
-        isread = d.isRead;
-      } else {
-        isread = true;
-      }
-    }
-
-    // console.log('item : ', item);
-    // console.log('isendmymsg : ', isendmymsg);
-    // console.log('isread : ', isread);
-    // console.log('item : ', item.latestMessage);
-
-    const renderProfile = () => {
-      return (
-        <>
-          <View style={styles.mProfileImgContainer}>
-            <ProgressiveFastImage
-              style={styles.mProfileImg}
-              source={photo}
-              loadingImageStyle={styles.mimageLoader}
-              loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
-              blurRadius={5}
-            />
-          </View>
-        </>
-      );
-    };
-
-    const renderText = () => {
-      return (
-        <View style={[styles.mtextContainer]}>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <View style={{width: '69%'}}>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  color: '#101B10',
-                  fontSize: 16,
-                  fontFamily: theme.fonts.fontBold,
-                  lineHeight: 22.4,
-                  textTransform: 'capitalize',
-                }}>
-                {title}
-              </Text>
-            </View>
-            <View
-              style={{
-                width: '29%',
-
-                alignItems: 'flex-end',
-              }}>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  color: isread ? theme.color.subTitleLight : '#3C6B49',
-                  fontSize: 13,
-
-                  fontFamily: theme.fonts.fontMedium,
-
-                  lineHeight: 22.4,
-                }}>
-                {create}
-              </Text>
-            </View>
-          </View>
-
-          <View style={{marginTop: 3, width: '91%'}}>
-            <Text
-              numberOfLines={2}
-              ellipsizeMode="tail"
-              style={{
-                color: isread ? theme.color.subTitleLight : '#101B10',
-                fontSize: 14,
-
-                fontFamily: theme.fonts.fontMedium,
-
-                lineHeight: 21,
-              }}>
-              {type == 'text' ? subtitle : type}
-            </Text>
-          </View>
-        </View>
-      );
-    };
-
-    return (
-      <Pressable
-        disabled={refreshing}
-        onPress={() => {
-          store.User.setmessages([]);
-          props.navigation.navigate('Chat', {
-            obj: item,
-            title: title,
-            rid: u._id,
-          });
-        }}
-        style={({pressed}) => [
-          {opacity: pressed ? 1 : 1.0},
-          [
-            styles.modalinfoConatiner,
-            {
-              borderBottomWidth: index == data.length - 1 ? 0.7 : 0,
-              borderBottomColor: theme.color.fieldBorder,
-              backgroundColor: isread ? theme.color.background : '#EAF1E3',
-            },
-          ],
-        ]}>
-        {renderProfile()}
-        {renderText()}
-      </Pressable>
-    );
-  };
-  const ItemViewdelete = ({item, index}) => {
-    return (
-      <Pressable
-        disabled={refreshing}
-        onPress={() => {
-          deleteChat(item.roomName, index);
-        }}
-        style={({pressed}) => [
-          {opacity: pressed ? 0.7 : 1.0},
-          [[styles.modalinfoConatinerdelete]],
-        ]}>
-        <View
-          style={{
-            width: 75,
-            height: '100%',
-            // backgroundColor: 'red',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <utils.vectorIcon.MaterialIcons
-            name="delete-sweep"
-            color={'red'}
-            size={35}
-          />
-        </View>
-      </Pressable>
-    );
-  };
-
-  const ListFooter = () => {
-    return (
-      <>
-        <View style={styles.listFooter}>
-          {data.length == d.length && (
-            <Text style={styles.listFooterT}>End of messages</Text>
-          )}
-
-          {data.length < d.length && (
-            <View
-              style={[
-                styles.listFooter,
-                {flexDirection: 'row', alignItems: 'center'},
-              ]}>
-              <TouchableOpacity
-                activeOpacity={0.7}
-                disabled={loadMore}
-                onPress={LoadMore}>
-                <Text style={styles.listFooterT}>Load More...</Text>
-              </TouchableOpacity>
-              {loadMore && (
-                <ActivityIndicator
-                  style={{marginLeft: 10}}
-                  size={16}
-                  color={theme.color.button1}
-                />
-              )}
-            </View>
-          )}
-        </View>
-      </>
-    );
-  };
-
-  // const onEndReach = () => {
-  //   // setloadMore(true);
+  // const ItemViewdelete = ({item, index}) => {
+  //   return (
+  //     <CardDelete
+  //       item={item}
+  //       index={index}
+  //       refreshing={refreshing}
+  //       deleteChat={(c, i) => deleteChat(c, i)}
+  //     />
+  //   );
   // };
 
   return (
@@ -522,9 +354,10 @@ function Inbox(props) {
         {!internet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
+            {/* {ListHeader()} */}
             <SwipeListView
               useFlatList
-              // initialScrollIndex={0}
+              removeClippedSubviews
               ref={swipRef}
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -533,22 +366,45 @@ function Inbox(props) {
                 paddingVertical: 12,
               }}
               ListEmptyComponent={EmptyListMessage}
-              ListHeaderComponent={data && data.length > 0 ? ListHeader : null}
+              ListHeaderComponent={
+                data && data.length > 0 ? (
+                  <ListHeader
+                    search={search}
+                    setsearch={c => setsearch(c)}
+                    data={store.User.inbox}
+                    totalUnread={totalUnread}
+                  />
+                ) : null
+              }
               keyExtractor={(item, index) => index.toString()}
               ListFooterComponent={
-                data != false && data.length > 0 ? ListFooter : null
+                data != false && data.length > 0 ? (
+                  <ListFooter
+                    data={data}
+                    d={store.User.inbox}
+                    loadMore={loadMore}
+                    LoadMore={LoadMore}
+                  />
+                ) : null
               }
               data={data == false ? [] : data}
               ItemSeparatorComponent={ItemSeparatorView}
-              renderItem={ItemView}
-              renderHiddenItem={ItemViewdelete}
+              renderItem={({item, index}) => (
+                <Card
+                  item={item}
+                  index={index}
+                  refreshing={refreshing}
+                  data={data}
+                  user={store.User.user}
+                  props={props}
+                />
+              )}
+              // renderHiddenItem={ItemViewdelete}
               leftOpenValue={75}
               rightOpenValue={-75}
               disableRightSwipe
-              initialNumToRender={limit}
-              maxToRenderPerBatch={limit}
-              // onEndReachedThreshold={0.5}
-              // onEndReached={onEndReach}
+              initialNumToRender={6}
+              maxToRenderPerBatch={6}
             />
           </View>
 

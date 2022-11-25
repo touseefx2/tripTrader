@@ -152,7 +152,7 @@ function Chat(props) {
         store.User.attemptToReadAllMessages(p); //isko bad me cmnt kr dena ha jb real time krn ga read wala scene
         setTimeout(() => {
           store.User.attemptToGetInboxes(store.User.user._id, () => {}, 'n');
-        }, 700);
+        }, 200);
       }
     };
   }, [internet]);
