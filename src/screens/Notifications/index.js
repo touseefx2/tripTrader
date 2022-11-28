@@ -35,8 +35,21 @@ import FastImage from 'react-native-fast-image';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import {Calendar} from 'react-native-calendars';
 import moment, {duration} from 'moment/moment';
+import {FlashList} from '@shopify/flash-list';
 
 export default observer(Notifications);
+
+function ItemSeparatorView() {
+  return (
+    <View
+      style={{
+        height: 0.7,
+        backgroundColor: theme.color.fieldBorder,
+        width: '100%',
+      }}
+    />
+  );
+}
 
 function ListHeaders({search, setsearch, data}) {
   const renderResult = () => {
@@ -107,10 +120,61 @@ function ListHeaders({search, setsearch, data}) {
   );
 }
 
-function Notifications(props) {
-  let maxModalHeight = theme.window.Height - 100;
-  const [modalHeight, setmodalHeight] = useState(0);
+function ListFooter({data, d, loadMore, LoadMore}) {
+  return (
+    <>
+      <View style={styles.listFooter}>
+        {data.length == d && (
+          <Text style={styles.listFooterT}>End of messages</Text>
+        )}
 
+        {data.length < d && (
+          <View
+            style={[
+              styles.listFooter,
+              {flexDirection: 'row', alignItems: 'center'},
+            ]}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              disabled={loadMore}
+              onPress={LoadMore}>
+              <Text style={styles.listFooterT}>Load More...</Text>
+            </TouchableOpacity>
+            {loadMore && (
+              <ActivityIndicator
+                style={{marginLeft: 10}}
+                size={16}
+                color={theme.color.button1}
+              />
+            )}
+          </View>
+        )}
+      </View>
+    </>
+  );
+}
+
+function EmptyListMessage() {
+  return (
+    // Flat List Item
+    <>
+      <Text
+        style={{
+          marginTop: '25%',
+          alignItems: 'center',
+          justifyContent: 'center',
+          alignSelf: 'center',
+          fontSize: 13,
+          color: theme.color.subTitleLight,
+          fontFamily: theme.fonts.fontMedium,
+        }}>
+        No Notifications Found
+      </Text>
+    </>
+  );
+}
+
+function Notifications(props) {
   let headerTitle = 'Notifications';
 
   let internet = store.General.isInternet;
@@ -121,80 +185,57 @@ function Notifications(props) {
   if (previousScreen == 'userprofile' || previousScreen == 'followers') {
     db = true;
   }
+  const d = store.Notifications.notifications;
+  const td = store.Notifications.notificationsTotal;
 
-  const data = store.Notifications.notifications;
+  let limit = 16;
+  const [page, setpage] = useState(1);
+  const [loadFirst, setloadFirst] = useState(false);
 
-  const [getDataOnce, setgetDataOnce] = useState(
-    user !== 'guest' ? false : true,
-  );
+  const [loadMore, setloadMore] = useState(false);
+  const [data, setdata] = useState(d);
+
+  const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
     setgetDataOnce(C);
   };
   const refreshing = store.Notifications.Loader;
-
   const onRefresh = React.useCallback(() => {
-    if (user !== 'guest') {
-      console.warn('onrefresh cal');
-
-      getDbData();
-    }
+    console.log('onrefresh cal');
+    getDbData();
   }, []);
   const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         store.Notifications.attemptToGetNotifications(user._id, setGetDataOnce);
-      } else {
-        setrefeshing(false);
       }
     });
   };
   useEffect(() => {
     if (!getDataOnce && internet) {
-      if (user !== 'guest') {
-        onRefresh();
-      }
+      onRefresh();
     }
     return () => {};
   }, [getDataOnce, internet]);
 
   const [search, setsearch] = useState('');
-  const [sdata, setsdata] = useState([]);
-  // useEffect(() => {
-  //   if (search != '') {
-  //     let data = [...store.User.notifications];
-  //     if (data.length > 0) {
-  //       let uid = user._id;
-  //       let ar = data.filter(item => {
-  //         let u = false;
-  //         if (item.userId1 && item.userId1._id != uid) {
-  //           u = item.userId1;
-  //         }
-  //         if (item.userId2 && item.userId2._id != uid) {
-  //           u = item.userId2;
-  //         }
-  //         let title = u.firstName + ' ' + u.lastName;
-
-  //         return title.toLowerCase().includes(search.toLowerCase());
-  //       });
-  //       setsdata(ar);
-  //     }
-  //   } else {
-  //     setsdata([]);
-  //   }
-  // }, [search]);
-
-  console.log('search : ', search);
-  console.log('sdataa : ', sdata.length);
-
-  const JoinNow = () => {
-    store.General.setgoto('joinnow');
-    store.User.Logout();
-  };
-
-  const onclickSearchBar = () => {};
 
   const goBack = () => {
     props.navigation.goBack();
+  };
+
+  const LoadMore = async () => {
+    // setloadMore(true);
+    // setTimeout(() => {
+    //   let p = page + 1;
+    //   let ar = [...d];
+    //   const dt = ar.slice(page * limit, limit * p);
+    //   let dd = [...data, ...dt];
+    //   console.log('pagination callllll load more : ', page * limit, limit * p);
+    //   setdata(dd);
+    //   setpage(p);
+    //   setloadMore(false);
+    // }, 1);
   };
 
   const getFollowers = () => {
@@ -250,107 +291,6 @@ function Notifications(props) {
       ReadNotification(nid);
     }
   };
-
-  const ItemSeparatorView = () => {
-    return (
-      <View
-        style={{
-          height: 0.7,
-          backgroundColor: theme.color.fieldBorder,
-          width: '100%',
-        }}
-      />
-    );
-  };
-
-  const EmptyListMessage = ({item}) => {
-    return (
-      // Flat List Item
-      <>
-        {!refreshing && getDataOnce && (
-          <Text
-            style={{
-              marginTop: '75%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              alignSelf: 'center',
-              fontSize: 13,
-              color: theme.color.subTitleLight,
-              fontFamily: theme.fonts.fontMedium,
-            }}>
-            No any notifications
-          </Text>
-        )}
-      </>
-    );
-  };
-
-  // const ListHeader = () => {
-  //   const renderResult = () => {
-  //     let length = data.length || 0;
-  //     return (
-  //       <View style={styles.resultContainer}>
-  //         <Text style={styles.resultText}>
-  //           {length} notifications, {store.Notifications.unread} unread
-  //         </Text>
-  //       </View>
-  //     );
-  //   };
-
-  //   const renderSearch = () => {
-  //     return (
-  //       <TouchableOpacity disabled>
-  //         <Image
-  //           source={require('../../assets/images/searchBar/search/img.png')}
-  //           style={styles.Baricon}
-  //         />
-  //       </TouchableOpacity>
-  //     );
-  //   };
-
-  //   const renderInput = () => {
-  //     return (
-  //       <View style={{width: '85%'}}>
-  //         <TextInput
-  //           onChangeText={c => {
-  //             setsearch(c);
-  //           }}
-  //           style={styles.SerchBarInput}
-  //           placeholder="Search"
-  //         />
-  //       </View>
-  //     );
-  //   };
-
-  //   const renderFilter = () => {
-  //     const onclick = () => {};
-
-  //     return (
-  //       <TouchableOpacity style={styles.Baricon} onPress={onclick} disabled>
-  //         {/* <Image
-  //           source={require('../../assets/images/searchBar/filter/img.png')}
-  //           style={styles.Baricon}
-  //         /> */}
-  //       </TouchableOpacity>
-  //     );
-  //   };
-
-  //   return (
-  //     <View style={{marginHorizontal: 15}}>
-  //       <Pressable
-  //         style={({pressed}) => [
-  //           {opacity: pressed ? 0.9 : 1},
-  //           [styles.SerchBarContainer],
-  //         ]}
-  //         onPress={onclickSearchBar}>
-  //         {renderSearch()}
-  //         {renderInput()}
-  //         {renderFilter()}
-  //       </Pressable>
-  //       {data.length > 0 && renderResult()}
-  //     </View>
-  //   );
-  // };
 
   function compare(d, dd) {
     let d1 = moment(d).format('YYYY-MM-DD');
@@ -434,12 +374,6 @@ function Notifications(props) {
 
     return t;
   }
-
-  const ListHeader = () => {
-    return (
-      <ListHeaders search={search} setsearch={c => setsearch(c)} data={data} />
-    );
-  };
 
   const ItemView = ({item, index}) => {
     let photo = item.icon || '';
@@ -585,120 +519,6 @@ function Notifications(props) {
     );
   };
 
-  const ItemView2 = ({item, index}) => {
-    // let tripConf = require('../../assets/images/notification/TripConfirmed/img.png');
-    // let tripCrt = require('../../assets/images/notification/TripCreated/img.png');
-    let profileupd = require('../../assets/images/notification/ProfileUpdated/img.png');
-    let pswdchng = require('../../assets/images/notification/PasswordChanged/img.png');
-    // let guest = require('../../assets/images/drawer/guest/img.png');
-    let ntfctn = require('../../assets/images/drawer/guest/img.png');
-
-    let title = item.title || '';
-    let subtitle = item.message || '';
-    let topic = item.topic || '';
-    let create = CheckDate(item.createdAt);
-    let isread = item.isRead || false;
-    let c = false;
-
-    if (topic == 'fullaccess') {
-      c = true;
-    }
-
-    let photo =
-      title == 'Get full access for free'
-        ? pswdchng
-        : title == 'Welcome to Trip Trader!'
-        ? profileupd
-        : ntfctn;
-
-    const renderProfile = () => {
-      return (
-        <>
-          <View style={[styles.mProfileImgContainer2]}>
-            <Image style={styles.mProfileImg2} source={photo} />
-          </View>
-        </>
-      );
-    };
-
-    const renderText = () => {
-      return (
-        <View style={[styles.mtextContainer]}>
-          <Text
-            style={{
-              color: '#101B10',
-              fontSize: 16,
-              fontFamily: theme.fonts.fontBold,
-              lineHeight: 22.4,
-              textTransform: 'capitalize',
-            }}>
-            {title}
-          </Text>
-
-          {subtitle != '' && (
-            <View style={{marginTop: 3}}>
-              <Text
-                style={{
-                  color: ' #101B10',
-                  fontSize: 14,
-
-                  fontFamily: theme.fonts.fontNormal,
-
-                  lineHeight: 21,
-                }}>
-                {subtitle}{' '}
-                {c && (
-                  <Text
-                    onPress={JoinNow}
-                    style={{
-                      color: theme.color.title,
-                      fontSize: 14,
-                      textDecorationLine: 'underline',
-                      fontFamily: theme.fonts.fontBold,
-
-                      lineHeight: 21,
-                    }}>
-                    Join now
-                  </Text>
-                )}
-              </Text>
-            </View>
-          )}
-
-          <View style={{marginTop: 3}}>
-            <Text
-              style={{
-                color: isread ? theme.color.subTitleLight : '#3C6B49',
-                fontSize: 13,
-
-                fontFamily: theme.fonts.fontMedium,
-
-                lineHeight: 19.5,
-              }}>
-              {create}
-            </Text>
-          </View>
-        </View>
-      );
-    };
-
-    return (
-      <View
-        style={[
-          styles.modalinfoConatiner,
-          {
-            marginTop: index == 0 ? 15 : 0,
-            borderBottomWidth: index == data.length - 1 ? 0.7 : 0,
-            borderBottomColor: theme.color.fieldBorder,
-            backgroundColor: isread ? theme.color.background : '#EAF1E3',
-          },
-        ]}>
-        {renderProfile()}
-        {renderText()}
-      </View>
-    );
-  };
-
   return (
     <>
       <View style={styles.container}>
@@ -710,7 +530,8 @@ function Notifications(props) {
         {!internet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
-            <FlatList
+            <FlashList
+              estimatedItemSize={100}
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
               }
@@ -718,21 +539,35 @@ function Notifications(props) {
                 paddingTop: 12,
                 paddingBottom: 40,
               }}
+              initialNumToRender={10}
+              maxToRenderPerBatch={10}
               data={data}
-              renderItem={user == 'guest' ? ItemView2 : ItemView}
+              renderItem={ItemView}
               keyExtractor={(item, index) => index.toString()}
-              ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
               ListHeaderComponent={
-                data.length > 0 ? (
-                  <ListHeaders
-                    search={search}
-                    setsearch={c => setsearch(c)}
+                <ListHeaders
+                  search={search}
+                  setsearch={c => setsearch(c)}
+                  data={data}
+                />
+              }
+              ListFooterComponent={
+                data != false && data.length > 0 ? (
+                  <ListFooter
                     data={data}
+                    d={td}
+                    loadMore={loadMore}
+                    LoadMore={LoadMore}
                   />
                 ) : null
               }
-              // ListFooterComponent={data.length > 0 ? ListFooter : null}
+              ListEmptyComponent={
+                getDataOnce &&
+                !loadFirst &&
+                data &&
+                data.length <= 0 && <EmptyListMessage />
+              }
             />
           </View>
 

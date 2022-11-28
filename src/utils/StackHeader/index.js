@@ -66,7 +66,11 @@ function StackHeader(props) {
 
   const render3 = () => {
     const onClick = () => {
-      prop.navigation.navigate('Notifications', {screen: scrn});
+      if (store.User.user != 'guest') {
+        prop.navigation.navigate('Notifications', {screen: scrn});
+      } else {
+        prop.navigation.navigate('NotificationsGuest', {screen: scrn});
+      }
     };
     let src = require('../../assets/images/bell/img.png');
 
@@ -74,7 +78,11 @@ function StackHeader(props) {
       // <View style={{width: 22}} />
       <TouchableOpacity
         onPress={onClick}
-        disabled={headerTitle == 'Notifications' ? true : false}
+        disabled={
+          headerTitle == 'Notifications' || headerTitle == 'NotificationsGuest'
+            ? true
+            : false
+        }
         activeOpacity={0.8}>
         <Image
           source={src}

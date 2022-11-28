@@ -41,6 +41,18 @@ import CardDelete from './CardDelete';
 
 export default observer(Inbox);
 
+function ItemSeparatorView() {
+  return (
+    <View
+      style={{
+        height: 0.7,
+        backgroundColor: theme.color.fieldBorder,
+        width: '100%',
+      }}
+    />
+  );
+}
+
 function ListHeader({search, setsearch, data, totalUnread}) {
   const renderResult = () => {
     return (
@@ -143,31 +155,80 @@ function ListFooter({data, d, loadMore, LoadMore}) {
   );
 }
 
+function EmptyListMessage() {
+  return (
+    // Flat List Item
+    <>
+      <Text
+        style={{
+          marginTop: '25%',
+          alignItems: 'center',
+          justifyContent: 'center',
+          alignSelf: 'center',
+          fontSize: 13,
+          color: theme.color.subTitleLight,
+          fontFamily: theme.fonts.fontMedium,
+        }}>
+        No Chats Found
+      </Text>
+    </>
+  );
+}
+
 function Inbox(props) {
   let guest = require('../../assets/images/drawer/guest/img.png');
+  const scrollRef = useRef(null);
   const swipRef = useRef(null);
   const closeSwipe = () => {
     swipRef?.current?.safeCloseOpenRow();
   };
 
-  let maxModalHeight = theme.window.Height - 100;
-  const [modalHeight, setmodalHeight] = useState(0);
-
   let headerTitle = 'Inbox';
   let internet = store.General.isInternet;
   let user = store.User.user;
 
-  let loader = store.User.dlc;
-  const d = store.User.inbox;
-  let totalUnread = store.User.unreadInbox;
-
-  let limit = 16;
-
   const [search, setsearch] = useState('');
   const [sdata, setsdata] = useState([]);
+
   useEffect(() => {
     if (search != '') {
-      let data = [...store.User.inbox];
+      BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    }
+
+    if (search == '') {
+      scrollToTop();
+
+      BackHandler.removeEventListener(
+        'hardwareBackPress',
+        handleBackButtonClick,
+      );
+    }
+
+    return () => {
+      BackHandler.removeEventListener(
+        'hardwareBackPress',
+        handleBackButtonClick,
+      );
+    };
+  }, [search]);
+
+  const scrollToTop = () => {
+    scrollRef?.current?.scrollToOffset({animated: false, offset: 0});
+  };
+
+  function handleBackButtonClick() {
+    if (!props.navigation.isFocused()) {
+      return false;
+    } else {
+      setsearch('');
+
+      return true;
+    }
+  }
+
+  useEffect(() => {
+    let data = [...store.User.inbox];
+    if (search != '') {
       if (data.length > 0) {
         let uid = user._id;
         let ar = data.filter(item => {
@@ -182,19 +243,24 @@ function Inbox(props) {
 
           return title.toLowerCase().includes(search.toLowerCase());
         });
+
         setsdata(ar);
+      } else {
+        setsdata([]);
       }
     } else {
       setsdata([]);
     }
-  }, [search]);
+  }, [search, store.User.inbox]);
 
-  console.log('search : ', search);
-  console.log('sdataa : ', sdata.length);
+  let loader = store.User.dlc;
+  const d = search == '' ? store.User.inbox : sdata;
+  let totalUnread = store.User.unreadInbox;
 
-  const [data, setdata] = useState(false);
+  let limit = 16;
   const [page, setpage] = useState(1);
   const [loadFirst, setloadFirst] = useState(false);
+  const [data, setdata] = useState(false);
 
   const [loadMore, setloadMore] = useState(false);
 
@@ -270,13 +336,11 @@ function Inbox(props) {
         setdata([]);
       }
     }
-  }, [getDataOnce]);
+  }, [getDataOnce, d]);
 
   console.log('d : ', d.length);
   console.log('data : ', data.length);
   console.log('loadmore : ', loadMore);
-
-  const onclickSearchBar = () => {};
 
   const deleteChat = (chatId, i) => {
     Keyboard.dismiss();
@@ -290,63 +354,6 @@ function Inbox(props) {
     });
   };
 
-  const ItemSeparatorView = () => {
-    return (
-      <View
-        style={{
-          height: 0.7,
-          backgroundColor: theme.color.fieldBorder,
-          width: '100%',
-        }}
-      />
-    );
-  };
-
-  const EmptyListMessage = ({item}) => {
-    return (
-      // Flat List Item
-      <>
-        {getDataOnce && !loadMore && data && data.length <= 0 && (
-          <Text
-            style={{
-              marginTop: '80%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              alignSelf: 'center',
-              fontSize: 13,
-              color: theme.color.subTitleLight,
-              fontFamily: theme.fonts.fontMedium,
-            }}
-            onPress={() => getItem(item)}>
-            No Chats Found
-          </Text>
-        )}
-      </>
-    );
-  };
-
-  // const ItemView = ({item, index}) => {
-  //   <Card
-  //     item={item}
-  //     index={index}
-  //     refreshing={refreshing}
-  //     data={data}
-  //     user={store.User.user}
-  //     props={props}
-  //   />;
-  // };
-
-  // const ItemViewdelete = ({item, index}) => {
-  //   return (
-  //     <CardDelete
-  //       item={item}
-  //       index={index}
-  //       refreshing={refreshing}
-  //       deleteChat={(c, i) => deleteChat(c, i)}
-  //     />
-  //   );
-  // };
-
   return (
     <>
       <View style={styles.container}>
@@ -354,40 +361,48 @@ function Inbox(props) {
         {!internet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
-            {/* {ListHeader()} */}
             <SwipeListView
               useFlatList
               removeClippedSubviews
               ref={swipRef}
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
+              listViewRef={scrollRef}
+              leftOpenValue={75}
+              rightOpenValue={-75}
+              disableRightSwipe
+              initialNumToRender={6}
+              maxToRenderPerBatch={6}
+              data={data == false ? [] : data}
+              keyExtractor={(item, index) => index.toString()}
               contentContainerStyle={{
                 paddingVertical: 12,
               }}
-              ListEmptyComponent={EmptyListMessage}
-              ListHeaderComponent={
-                data && data.length > 0 ? (
-                  <ListHeader
-                    search={search}
-                    setsearch={c => setsearch(c)}
-                    data={store.User.inbox}
-                    totalUnread={totalUnread}
-                  />
-                ) : null
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
               }
-              keyExtractor={(item, index) => index.toString()}
+              ListHeaderComponent={
+                <ListHeader
+                  search={search}
+                  setsearch={c => setsearch(c)}
+                  data={d}
+                  totalUnread={totalUnread}
+                />
+              }
               ListFooterComponent={
                 data != false && data.length > 0 ? (
                   <ListFooter
                     data={data}
-                    d={store.User.inbox}
+                    d={d}
                     loadMore={loadMore}
                     LoadMore={LoadMore}
                   />
                 ) : null
               }
-              data={data == false ? [] : data}
+              ListEmptyComponent={
+                getDataOnce &&
+                !loadFirst &&
+                data &&
+                data.length <= 0 && <EmptyListMessage />
+              }
               ItemSeparatorComponent={ItemSeparatorView}
               renderItem={({item, index}) => (
                 <Card
@@ -399,18 +414,21 @@ function Inbox(props) {
                   props={props}
                 />
               )}
-              // renderHiddenItem={ItemViewdelete}
-              leftOpenValue={75}
-              rightOpenValue={-75}
-              disableRightSwipe
-              initialNumToRender={6}
-              maxToRenderPerBatch={6}
+              renderHiddenItem={({item, index}) => (
+                <CardDelete
+                  item={item}
+                  index={index}
+                  refreshing={refreshing}
+                  deleteChat={(c, i) => deleteChat(c, i)}
+                />
+              )}
             />
           </View>
 
           <utils.Footer
             nav={props.navigation}
             screen={headerTitle}
+            setsearch={() => setsearch('')}
             focusScreen={store.General.focusScreen}
           />
 

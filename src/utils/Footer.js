@@ -29,52 +29,45 @@ function Footer(props) {
   let unfocusTextColor = 'rgba(30, 54, 37, 0.4)';
   let ao = 0.7;
 
-  // let double = props.doubleBack || false;
-
-  // let c = false;
-  // if (
-  //   screen == 'Followers' ||
-  //   screen == 'Notifications' ||
-  //   screen == 'UserProfile'
-  // ) {
-  //   c = true;
-  // }
-
   const goBack = () => {
-    // if (c) {
-    if (screen == 'Notifications') {
+    if (screen == 'Notifications' || screen == 'NotificationsGuest') {
       nav.goBack();
     }
+  };
 
-    // if (double) {
-    //   nav.goBack();
-    // }
-    // }
+  const specificScreen = () => {
+    if (screen == 'Inbox') {
+      props.setsearch();
+    }
   };
 
   const goToHome = () => {
     nav.navigate('Home');
-
+    specificScreen();
     goBack();
   };
 
   const goToInbox = () => {
     nav.navigate('Inbox');
+    specificScreen();
     goBack();
   };
 
   const goToTradeOffers = () => {
     nav.navigate('TradeOffers');
+    specificScreen();
     goBack();
   };
 
   const goToSavedTrips = () => {
     nav.navigate('SavedTrips');
+    specificScreen();
     goBack();
   };
 
   const goToProfile = () => {
     nav.navigate('MyProfile');
+    specificScreen();
     goBack();
   };
 

@@ -61,7 +61,11 @@ function DrawerHeader(props) {
 
   const render3 = () => {
     const onClick = () => {
-      prop.navigation.navigate('Notifications', {screen: headerTitle});
+      if (store.User.user != 'guest') {
+        prop.navigation.navigate('Notifications', {screen: headerTitle});
+      } else {
+        prop.navigation.navigate('NotificationsGuest', {screen: headerTitle});
+      }
     };
     let src = require('../../assets/images/bell/img.png');
     return (

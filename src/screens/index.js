@@ -6,6 +6,7 @@ import ShowOtherFollowers from './ShowOtherFollowers/index';
 import Splash from './Splash';
 import Home from './Home';
 import Notifications from './Notifications';
+import NotificationsGuest from './NotificationsGuest';
 import Login from './Login';
 import Signin from './Signin';
 import Signup from './Signup';
@@ -42,6 +43,7 @@ export default screens = {
   ContactUs,
   Home,
   Notifications,
+  NotificationsGuest,
   Inbox,
   MyProfile,
   EditProfile,
