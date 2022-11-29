@@ -12,6 +12,7 @@ import Search from './Search';
 import {Countries} from './Countries';
 import FullimageModal from './FullimageModal';
 import AuthHeader from './AuthHeader';
+import navBarHeight from './navBarHeight';
 
 const utils = {
   vectorIcon,
@@ -28,6 +29,7 @@ const utils = {
   ShowNotifications,
   ChatPhotoModal,
   AuthHeader,
+  navBarHeight,
 };
 
 export default utils;
