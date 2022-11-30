@@ -211,6 +211,7 @@ function Card({item, index, refreshing, data, user, props}) {
   return (
     <Pressable
       // disabled={refreshing}
+
       onPress={() => {
         store.User.setmessages([]);
         props.navigation.navigate('Chat', {

@@ -36,6 +36,104 @@ import {Calendar} from 'react-native-calendars';
 import moment from 'moment/moment';
 import Accordion from 'react-native-collapsible/Accordion';
 import * as Animatable from 'react-native-animatable';
+import Card1 from './Card1';
+
+function ListHeader({search, setsearch, data}) {
+  const renderResult = () => {
+    let length = data.length || 0;
+    return (
+      <View style={styles.resultContainer}>
+        <Text style={styles.resultText}>{length} saved trip</Text>
+      </View>
+    );
+  };
+
+  const renderSearch = () => {
+    return (
+      <TouchableOpacity style={{}} disabled>
+        <Image
+          source={require('../../assets/images/searchBar/search/img.png')}
+          style={styles.Baricon}
+        />
+      </TouchableOpacity>
+    );
+  };
+
+  const renderInput = () => {
+    return (
+      <View style={{width: '84%'}}>
+        <TextInput
+          onChangeText={c => {
+            setsearch(c);
+          }}
+          value={search}
+          style={styles.SerchBarInput}
+          placeholder="Search"
+        />
+      </View>
+    );
+  };
+
+  const renderFilter = () => {
+    const onclick = () => {};
+
+    return (
+      <TouchableOpacity style={styles.Baricon} onPress={onclick} disabled>
+        {/* <Image
+          source={require('../../assets/images/searchBar/filter/img.png')}
+          style={styles.Baricon}
+        /> */}
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <View>
+      <Pressable
+        style={({pressed}) => [
+          {opacity: pressed ? 0.9 : 1},
+          [styles.SerchBarContainer],
+        ]}>
+        {renderSearch()}
+        {renderInput()}
+        {renderFilter()}
+      </Pressable>
+
+      {data.length > 0 && renderResult()}
+    </View>
+  );
+}
+
+function EmptyListMessage() {
+  return (
+    <>
+      <Text
+        style={{
+          marginTop: '40%',
+          alignItems: 'center',
+          justifyContent: 'center',
+          alignSelf: 'center',
+          fontSize: 13,
+          color: theme.color.title,
+          fontFamily: theme.fonts.fontMedium,
+          opacity: 0.4,
+        }}
+        onPress={() => getItem(item)}>
+        No any saved trip found
+      </Text>
+    </>
+  );
+}
+
+function ItemSeparatorView() {
+  return (
+    <View
+      style={{
+        height: 15,
+      }}
+    />
+  );
+}
 
 function isObjectEmpty(value) {
   return (
@@ -241,6 +339,8 @@ function SavedTrips(props) {
   const [isDropDownTrip, setisDropDownTrip] = useState(false);
   const [trip, settrip] = useState(false);
 
+  const [search, setsearch] = useState('');
+
   const [data, setdata] = useState([]);
   useEffect(() => {
     let ar = [];
@@ -251,7 +351,113 @@ function SavedTrips(props) {
         }
       });
     }
-    setdata(ar);
+    let da = ar.reverse();
+    // setdata(da);
+    setdata([
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+      ...da,
+    ]);
   }, [dtt]);
 
   const [isDisableToday2, setisDisableToday2] = useState(false);
@@ -297,9 +503,6 @@ function SavedTrips(props) {
   const [sendObj, setsendObj] = useState('');
   const [isSendMessage, setisSendMessage] = useState(false);
 
-  const [isShowSearch, setisShowSearch] = useState(false);
-  const [isShowFilters, setisShowFilters] = useState(false);
-
   const [pvm, setpvm] = useState(false);
   const [pd, setpd] = useState([]);
   const [pdc, setpdc] = useState('');
@@ -320,6 +523,17 @@ function SavedTrips(props) {
   const [spcsData, setspcsData] = useState([]);
   const [species, setspecies] = useState('');
   const [isDropDownSpcs, setisDropDownSpcs] = useState(false);
+
+  const [activeSections, setactiveSections] = useState([-1]);
+  const [showpic, setshowpic] = useState(true);
+  let animtntime = 1200;
+  useEffect(() => {
+    if (activeSections[0] > -1) {
+      setTimeout(() => {
+        setshowpic(false);
+      }, animtntime);
+    }
+  }, [activeSections]);
 
   const closeAllDropDown = () => {
     setisDropDownTrip(false);
@@ -643,10 +857,6 @@ function SavedTrips(props) {
     });
   };
 
-  const onclickSearchBar = () => {};
-
-  const onclickFilter = () => {};
-
   const onClickMakeOffer = (dt, ind) => {
     let d = dt;
 
@@ -899,104 +1109,8 @@ function SavedTrips(props) {
     setendRepOnS(md);
   };
 
-  const ItemSeparatorView = () => {
-    return (
-      <View
-        style={{
-          height: 15,
-        }}
-      />
-    );
-  };
-
-  const EmptyListMessage = () => {
-    return (
-      // Flat List Item
-      <>
-        <Text
-          style={{
-            marginTop: '80%',
-            alignItems: 'center',
-            justifyContent: 'center',
-            alignSelf: 'center',
-            fontSize: 13,
-            color: theme.color.title,
-            fontFamily: theme.fonts.fontMedium,
-            opacity: 0.4,
-          }}
-          onPress={() => getItem(item)}>
-          No any saved trip found
-        </Text>
-      </>
-    );
-  };
-
   const onClickremoveTrips = (dt, ind) => {
     openModal({item: dt, i: ind}, 'tripRemove');
-  };
-
-  const ListHeader = () => {
-    const renderResult = () => {
-      let length = data.length || 0;
-      return (
-        <View style={styles.resultContainer}>
-          <Text style={styles.resultText}>{length} saved trip</Text>
-        </View>
-      );
-    };
-
-    const renderSearch = () => {
-      return (
-        <TouchableOpacity style={{}} disabled>
-          <Image
-            source={require('../../assets/images/searchBar/search/img.png')}
-            style={styles.Baricon}
-          />
-        </TouchableOpacity>
-      );
-    };
-
-    const renderInput = () => {
-      return (
-        <View style={{width: '84%'}}>
-          <TextInput
-            editable={false}
-            style={styles.SerchBarInput}
-            placeholder="Search"
-          />
-        </View>
-      );
-    };
-
-    const renderFilter = () => {
-      const onclick = () => {};
-
-      return (
-        <TouchableOpacity style={styles.Baricon} onPress={onclick} disabled>
-          {/* <Image
-            source={require('../../assets/images/searchBar/filter/img.png')}
-            style={styles.Baricon}
-          /> */}
-        </TouchableOpacity>
-      );
-    };
-
-    return (
-      <View>
-        <Pressable
-          style={({pressed}) => [
-            {opacity: pressed ? 0.9 : 1},
-            [styles.SerchBarContainer],
-          ]}
-          onPress={onclickSearchBar}>
-          {renderSearch()}
-          {renderInput()}
-          {renderFilter()}
-        </Pressable>
-
-        {data.length > 0 && renderResult()}
-      </View>
-    );
   };
 
   const openModal = (obj, c) => {
@@ -5612,10 +5726,6 @@ function SavedTrips(props) {
     );
   };
 
-  const [activeSections, setactiveSections] = useState([-1]);
-  const [showpic, setshowpic] = useState(true);
-  let animtntime = 1500;
-
   const renderSectionTitle = (item, index) => {
     let usr = item.hostId;
     //user
@@ -5752,107 +5862,107 @@ function SavedTrips(props) {
     );
   };
 
-  const renderHeader = (item, index, isActive) => {
-    let usr = item.hostId;
-    //user
-    let photo = usr.image || '';
-    let userName = usr.firstName + ' ' + usr.lastName;
-    let avgRating = usr.rating || 0;
-    let totalReviews = usr.reviews || 0;
-    let isVeirfy = usr.identityStatus == 'verified' ? true : false;
+  // const renderHeader = (item, index, isActive) => {
+  //   let usr = item.hostId;
+  //   //user
+  //   let photo = usr.image || '';
+  //   let userName = usr.firstName + ' ' + usr.lastName;
+  //   let avgRating = usr.rating || 0;
+  //   let totalReviews = usr.reviews || 0;
+  //   let isVeirfy = usr.identityStatus == 'verified' ? true : false;
 
-    //trip
-    let status = item.status || '';
-    let tripPhotos = item.photos ? item.photos : [];
-    let titlee = item.title || '';
-    let locName = item.location.city + ', ' + item.location.state;
-    let trade = item.returnActivity || '';
-    let sd = item.availableFrom;
-    let sdy = parseInt(new Date(sd).getFullYear());
-    let ed = item.availableTo;
-    let edy = parseInt(new Date(ed).getFullYear());
-    let favlbl = '';
+  //   //trip
+  //   let status = item.status || '';
+  //   let tripPhotos = item.photos ? item.photos : [];
+  //   let titlee = item.title || '';
+  //   let locName = item.location.city + ', ' + item.location.state;
+  //   let trade = item.returnActivity || '';
+  //   let sd = item.availableFrom;
+  //   let sdy = parseInt(new Date(sd).getFullYear());
+  //   let ed = item.availableTo;
+  //   let edy = parseInt(new Date(ed).getFullYear());
+  //   let favlbl = '';
 
-    if (sdy == edy) {
-      favlbl =
-        moment(sd).format('MMM DD') + ' - ' + moment(ed).format('MMM DD, YYYY');
-    } else {
-      favlbl =
-        moment(sd).format('MMM DD, YYYY') +
-        ' - ' +
-        moment(ed).format('MMM DD, YYYY');
-    }
+  //   if (sdy == edy) {
+  //     favlbl =
+  //       moment(sd).format('MMM DD') + ' - ' + moment(ed).format('MMM DD, YYYY');
+  //   } else {
+  //     favlbl =
+  //       moment(sd).format('MMM DD, YYYY') +
+  //       ' - ' +
+  //       moment(ed).format('MMM DD, YYYY');
+  //   }
 
-    const renderSec3c = () => {
-      return (
-        <View
-          style={{
-            width: '100%',
-            marginTop: 12,
-          }}>
-          {/* <View
-            style={{
-              width: '100%',
-              alignSelf: 'center',
-              height: 0.7,
-              backgroundColor: theme.color.fieldBorder,
-            }}
-          /> */}
+  //   const renderSec3c = () => {
+  //     return (
+  //       <View
+  //         style={{
+  //           width: '100%',
+  //           marginTop: 12,
+  //         }}>
+  //         {/* <View
+  //           style={{
+  //             width: '100%',
+  //             alignSelf: 'center',
+  //             height: 0.7,
+  //             backgroundColor: theme.color.fieldBorder,
+  //           }}
+  //         /> */}
 
-          <View
-            style={{
-              width: '100%',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              paddingHorizontal: 10,
-              // marginTop: 10,
-            }}>
-            <View style={{width: '90%'}}>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={styles.sec3T1}>
-                {titlee}
-              </Text>
-              <View style={styles.sec3T2Container}>
-                <Image
-                  style={styles.sec3Icon}
-                  source={require('../../assets/images/location/img.png')}
-                />
-                <View style={{width: '95%'}}>
-                  <Text
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                    style={styles.sec3T2}>
-                    {locName}
-                  </Text>
-                </View>
-              </View>
-            </View>
+  //         <View
+  //           style={{
+  //             width: '100%',
+  //             flexDirection: 'row',
+  //             justifyContent: 'space-between',
+  //             paddingHorizontal: 10,
+  //             // marginTop: 10,
+  //           }}>
+  //           <View style={{width: '90%'}}>
+  //             <Text
+  //               numberOfLines={1}
+  //               ellipsizeMode="tail"
+  //               style={styles.sec3T1}>
+  //               {titlee}
+  //             </Text>
+  //             <View style={styles.sec3T2Container}>
+  //               <Image
+  //                 style={styles.sec3Icon}
+  //                 source={require('../../assets/images/location/img.png')}
+  //               />
+  //               <View style={{width: '95%'}}>
+  //                 <Text
+  //                   numberOfLines={1}
+  //                   ellipsizeMode="tail"
+  //                   style={styles.sec3T2}>
+  //                   {locName}
+  //                 </Text>
+  //               </View>
+  //             </View>
+  //           </View>
 
-            <utils.vectorIcon.Entypo
-              name="chevron-small-down"
-              color={theme.color.subTitleLight}
-              size={22}
-            />
-          </View>
+  //           <utils.vectorIcon.Entypo
+  //             name="chevron-small-down"
+  //             color={theme.color.subTitleLight}
+  //             size={22}
+  //           />
+  //         </View>
 
-          <View style={{marginTop: 10, paddingHorizontal: 10}}>
-            <Text style={styles.sec3T31}>In Return For</Text>
-            <Text style={styles.sec3T32}>{trade}</Text>
-          </View>
-          {/* <View style={{marginTop: 10}}>
-            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.sec3T31}>
-              Availability
-            </Text>
-            <Text style={styles.sec3T32}>{favlbl}</Text>
-          </View> */}
-        </View>
-      );
-    };
+  //         <View style={{marginTop: 10, paddingHorizontal: 10}}>
+  //           <Text style={styles.sec3T31}>In Return For</Text>
+  //           <Text style={styles.sec3T32}>{trade}</Text>
+  //         </View>
+  //         {/* <View style={{marginTop: 10}}>
+  //           <Text numberOfLines={1} ellipsizeMode="tail" style={styles.sec3T31}>
+  //             Availability
+  //           </Text>
+  //           <Text style={styles.sec3T32}>{favlbl}</Text>
+  //         </View> */}
+  //       </View>
+  //     );
+  //   };
 
-    return <View>{!isActive && renderSec3c()}</View>;
-  };
+  //   return <View>{!isActive && renderSec3c()}</View>;
+  // };
 
   const renderContent = (item, index, isActive) => {
     let usr = item.hostId;
@@ -6117,13 +6227,7 @@ function SavedTrips(props) {
     setshowpic(true);
   };
 
-  useEffect(() => {
-    if (activeSections[0] > -1) {
-      setTimeout(() => {
-        setshowpic(false);
-      }, animtntime);
-    }
-  }, [activeSections]);
+  const windowSize = data.length > 50 ? data.length / 4 : 21;
 
   return (
     <>
@@ -6132,33 +6236,32 @@ function SavedTrips(props) {
         {!internet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
-            {/* <FlatList
-              contentContainerStyle={{
-                paddingVertical: 12,
-                paddingHorizontal: 15,
-              }}
-              data={data}
-              renderItem={ItemView}
-              keyExtractor={(item, index) => index.toString()}
-              ListEmptyComponent={EmptyListMessage}
-              ItemSeparatorComponent={ItemSeparatorView}
-              ListHeaderComponent={data.length > 0 ? ListHeader : null}
-              // ListFooterComponent={data.length > 0 ? ListFooter : null}
-            /> */}
-
             <Accordion
+              decelerationRate={'fast'}
+              removeClippedSubviews
+              initialNumToRender={16}
+              windowSize={windowSize}
+              maxToRenderPerBatch={windowSize}
               underlayColor={'rgba(245,252,255,1)'}
               renderAsFlatList
-              listH={ListHeader}
-              elm={EmptyListMessage}
-              isv={ItemSeparatorView}
               bxc={styles.boxContainer}
               sections={data}
               activeSections={activeSections}
-              renderSectionTitle={renderSectionTitle}
-              renderHeader={renderHeader}
-              renderContent={renderContent}
               onChange={s => updateSections(s)}
+              elm={<EmptyListMessage />}
+              isv={ItemSeparatorView}
+              listH={
+                <ListHeader
+                  search={search}
+                  setsearch={c => setsearch(c)}
+                  data={data}
+                />
+              }
+              renderSectionTitle={renderSectionTitle}
+              renderHeader={(item, index, isActive) => (
+                <Card1 item={item} isActive={isActive} props={props} />
+              )}
+              renderContent={renderContent}
             />
           </View>
 

@@ -216,6 +216,7 @@ function Reviews(props) {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         let body = {
+          featuredDate: new Date(),
           hostId: user._id,
           guestId: store.User.user._id,
           tripDetails: {

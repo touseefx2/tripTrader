@@ -8,7 +8,7 @@ export default memo(CardDelete);
 function CardDelete({item, index, refreshing, deleteChat}) {
   return (
     <Pressable
-      disabled={refreshing}
+      // disabled={refreshing}
       onPress={() => {
         deleteChat(item.roomName, index);
       }}

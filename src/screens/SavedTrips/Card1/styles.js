@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import theme from '../../theme/index';
+import theme from '../../../theme/index';
 import {
   responsiveHeight,
   responsiveWidth,
