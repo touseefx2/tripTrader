@@ -2449,6 +2449,8 @@ class user {
       })
       .catch(err => {
         this.setregLoader(false);
+        store.General.checkServer(err);
+
         let msg = err.response.data.message || err.response.status || err;
         console.log(`Error in Login user ${db.apis.LOGIN_USER} : `, msg);
         if (msg == 503 || msg == 500) {
@@ -2521,6 +2523,8 @@ class user {
       })
       .catch(err => {
         this.setregLoader(false);
+        store.General.checkServer(err);
+
         let msg = err.response.data.message || err.response.status || err;
         console.log(`Error in create ${db.apis.REGISTER_USER} : `, msg);
         if (msg == 503 || msg == 500) {
@@ -2822,7 +2826,6 @@ class user {
 
         this.addauthToken(token);
         this.setUser(rsp);
-        store.Trips.setsaveTrips(rsp.savedTrips || []);
       })
       .catch(err => {
         let msg = err.response.data.message || err.response.status || err;

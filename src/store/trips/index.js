@@ -24,7 +24,17 @@ class trips {
     this.confirmTripsSendMessageLoader = obj;
   };
 
-  @persist('object') @observable saveTrips = [];
+  @observable isloadFirst = false;
+  @action setisloadFirst = obj => {
+    this.isloadFirst = obj;
+  };
+
+  @observable saveTripss = [];
+  @action setsaveTripss = obj => {
+    this.saveTripss = obj;
+  };
+
+  @observable saveTrips = [];
   @action setsaveTrips = obj => {
     this.saveTrips = obj;
   };
@@ -90,6 +100,7 @@ class trips {
         // //   this.setsaveTrips(ar);
         // // }
         this.setsaveTrips(rsp);
+
         suc(obj, i, true);
         return;
       })
@@ -107,14 +118,20 @@ class trips {
       });
   };
 
-  @action unSaveTrip = (obj, i, suc) => {
+  @action unSaveTrip = (obj, i, data, setdata, suc) => {
     let dt = [...this.saveTrips];
+    let dt2 = [...data];
+
     if (dt.length > 0) {
       let ind = dt.findIndex(x => x._id === obj._id);
       if (ind > -1) {
         dt.splice(ind, 1);
       }
     }
+    if (dt2.length > 0) {
+      dt2.splice(i, 1);
+    }
+
     let body = {
       savedTrips: dt,
     };
@@ -130,10 +147,14 @@ class trips {
           `response unSave Trip   ${db.apis.SAVE_TRIP} : `,
           resp.data,
         );
-        let rsp = resp.data.data.savedTrips || [];
 
+        let rsp = resp.data.data.savedTrips || [];
         this.setsaveTrips(rsp);
+
+        setdata(dt2);
+
         suc();
+
         return;
       })
       .catch(err => {
@@ -184,6 +205,8 @@ class trips {
 
   @action clearTrips = () => {
     this.setsaveTrips([]);
+    this.setisloadFirst(false);
+    this.setsaveTripss([]);
     this.setconfirmTrips([]);
     this.setsendOffers([]);
     this.setreceiveOffers([]);

@@ -60,8 +60,8 @@ function Footer(props) {
   };
 
   const goToSavedTrips = () => {
-    nav.navigate('SavedTrips');
     specificScreen();
+    nav.navigate('SavedTrips');
     goBack();
   };
 

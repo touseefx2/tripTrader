@@ -903,7 +903,7 @@ class userv {
       });
   };
 
-  @action attemptToPostReview = (body, suc, suc2, setdt, setor) => {
+  @action attemptToPostReview = (body, suc, suc2, dt, setdt, setor) => {
     console.warn('Leave review body : ', body);
     this.setmLoader(true);
     db.hitApi(db.apis.LEAVE_REVIEW, 'post', body, this.authToken)
@@ -917,7 +917,7 @@ class userv {
         // this.review.unshift(dt);
         suc();
         suc2();
-        this.attemptToCheckReview(this.review, () => {}, setdt, setor);
+        this.attemptToCheckReview(dt, () => {}, setdt, setor);
       })
       .catch(err => {
         this.setmLoader(false);
@@ -935,7 +935,7 @@ class userv {
       });
   };
 
-  @action attemptToEditReview = (obj, suc, suc2) => {
+  @action attemptToEditReview = (obj, data, setdt, suc, suc2) => {
     let body = {
       message: obj.message,
       guestRating: obj.rate,
@@ -948,12 +948,13 @@ class userv {
         this.setmLoader(false);
         console.log(
           `response Edit review  ${db.apis.UPDATE_LEAVE_REVIEW}${params} : `,
-          resp.data,
+          resp.data.data.messages,
         );
         let dt = resp.data.data;
-        let dd = [...this.review];
+        let dd = [...data];
         dd[obj.i] = dt;
-        this.setreview(dd);
+        setdt(dd);
+        // this.setreview(dd);
         suc();
         suc2();
       })
@@ -976,7 +977,7 @@ class userv {
       });
   };
 
-  @action attemptToDeleteReview = (obj, suc, setdt, setor) => {
+  @action attemptToDeleteReview = (obj, suc, dt, setdt, setor) => {
     console.log('Delete review true ');
     this.setmLoader(true);
     let params = obj._id;
@@ -988,9 +989,9 @@ class userv {
           resp.data,
         );
 
-        let dd = [...this.review];
+        let dd = [...dt];
         dd.splice(obj.i, 1);
-        this.setreview(dd);
+        setdt(dd);
         suc();
         this.attemptToCheckReview(dd, () => {}, setdt, setor);
       })

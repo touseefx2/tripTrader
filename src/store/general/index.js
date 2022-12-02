@@ -1,5 +1,5 @@
 import {observable, makeObservable, action} from 'mobx';
-import {AppState} from 'react-native';
+import {AppState, Alert} from 'react-native';
 import {persist} from 'mobx-persist';
 import io from 'socket.io-client';
 import db from '../../database/index';
@@ -10,6 +10,9 @@ class general {
   }
 
   @observable socket = io(db.apis.BASE_URL);
+
+  @observable ServerErrorTitle = 'Network Error';
+  @observable ServerErrorMessage = 'Server not respond.';
 
   @observable AppName = 'Trip Trader';
   @observable isServerError = false;
@@ -29,6 +32,13 @@ class general {
   @observable isSheetOpen = false;
   @observable focusScreen = '';
   @observable goto = 'home';
+
+  @action checkServer = err => {
+    if (err.response.data == undefined && err.response.status == 0) {
+      Alert.alert(this.ServerErrorTitle, this.ServerErrorMessage);
+      return;
+    }
+  };
 
   @action setphotoSelInd = obj => {
     this.photoSelInd = obj;

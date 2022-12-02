@@ -109,7 +109,7 @@ const SavedTripsicons = {
   drawerLabel: 'Saved Trips',
   // headerShown: false,
   // swipeEnabled: true,
-  // unmountOnBlur: true,
+  unmountOnBlur: true,
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}

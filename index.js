@@ -67,11 +67,19 @@ const callData = topic => {
         () => {},
         () => {},
       );
+      store.Notifications.attemptToGetNotifications(
+        store.User.user._id,
+        () => {},
+      );
     }
     if (topic == 'followUser') {
       store.User.attemptToGetFollowers(
         store.User.user._id,
         () => {},
+        () => {},
+      );
+      store.Notifications.attemptToGetNotifications(
+        store.User.user._id,
         () => {},
       );
     }

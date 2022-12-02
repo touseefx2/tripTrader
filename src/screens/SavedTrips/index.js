@@ -37,6 +37,8 @@ import moment from 'moment/moment';
 import Accordion from 'react-native-collapsible/Accordion';
 import * as Animatable from 'react-native-animatable';
 import Card1 from './Card1';
+import Card2 from './Card2';
+import Card3 from './Card3';
 
 function ListHeader({search, setsearch, data}) {
   const renderResult = () => {
@@ -109,7 +111,7 @@ function EmptyListMessage() {
     <>
       <Text
         style={{
-          marginTop: '40%',
+          marginTop: '25%',
           alignItems: 'center',
           justifyContent: 'center',
           alignSelf: 'center',
@@ -117,8 +119,7 @@ function EmptyListMessage() {
           color: theme.color.title,
           fontFamily: theme.fonts.fontMedium,
           opacity: 0.4,
-        }}
-        onPress={() => getItem(item)}>
+        }}>
         No any saved trip found
       </Text>
     </>
@@ -132,6 +133,40 @@ function ItemSeparatorView() {
         height: 15,
       }}
     />
+  );
+}
+
+function ListFooter({data, d, loadMore, LoadMore, limit}) {
+  return (
+    <>
+      <View style={styles.listFooter}>
+        {/* {data.length>0 && data.length==d.length && !loadMore&&(
+         <Text style={styles.listFooterT}>End of messages</Text>
+      )} */}
+
+        {data.length >= limit && data.length > 0 && data.length < d.length && (
+          <View
+            style={[
+              styles.listFooter,
+              {flexDirection: 'row', alignItems: 'center'},
+            ]}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              disabled={loadMore}
+              onPress={LoadMore}>
+              <Text style={styles.listFooterT}>Load More...</Text>
+            </TouchableOpacity>
+            {loadMore && (
+              <ActivityIndicator
+                style={{marginLeft: 10}}
+                size={16}
+                color={theme.color.button1}
+              />
+            )}
+          </View>
+        )}
+      </View>
+    </>
   );
 }
 
@@ -341,7 +376,18 @@ function SavedTrips(props) {
 
   const [search, setsearch] = useState('');
 
+  let limit = 3;
+  const [page, setpage] = useState(1);
+  const [loadMore, setloadMore] = useState(false);
   const [data, setdata] = useState([]);
+  const [isloadFirst, setisloadFirst] = useState(false);
+
+  // const data = store.Trips.saveTripss;
+  // const setdata = c => store.Trips.setsaveTripss(c);
+  // const isloadFirst = store.Trips.isloadFirst;
+  // const setisloadFirst = c => store.Trips.setisloadFirst(c);
+
+  const [d, setd] = useState([]);
   useEffect(() => {
     let ar = [];
     if (dtt.length > 0) {
@@ -352,113 +398,50 @@ function SavedTrips(props) {
       });
     }
     let da = ar.reverse();
-    // setdata(da);
-    setdata([
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-      ...da,
-    ]);
-  }, [dtt]);
+    setd(da);
+  }, []);
+
+  useEffect(() => {
+    if (d.length > 0 && !isloadFirst) {
+      LoadFirst(d);
+    }
+    if (d.length <= 0) {
+      setdata([]);
+    }
+  }, [d, isloadFirst]);
+
+  console.log('d  st: ', d.length);
+  console.log('data sttttttt : ', data.length);
+
+  const LoadFirst = d => {
+    let page = 0;
+    let p = page + 1;
+    let ar = [...d];
+    const dt = ar.slice(page * limit, limit * p);
+    let dd = [...dt];
+    console.log('----> Load First : ', page * limit, limit * p);
+    setdata(dd);
+    setisloadFirst(true);
+  };
+  useEffect(() => {
+    if (data.length == limit) {
+      setpage(1);
+    }
+  }, [data]);
+
+  const LoadMore = async () => {
+    setloadMore(true);
+    setTimeout(() => {
+      setloadMore(false);
+      let p = page + 1;
+      let ar = [...d];
+      const dt = ar.slice(page * limit, limit * p);
+      let dd = [...data, ...dt];
+      console.log('---> Load More : ', page * limit, limit * p);
+      setdata(dd);
+      setpage(p);
+    }, 1);
+  };
 
   const [isDisableToday2, setisDisableToday2] = useState(false);
 
@@ -503,10 +486,6 @@ function SavedTrips(props) {
   const [sendObj, setsendObj] = useState('');
   const [isSendMessage, setisSendMessage] = useState(false);
 
-  const [pvm, setpvm] = useState(false);
-  const [pd, setpd] = useState([]);
-  const [pdc, setpdc] = useState('');
-
   const [note, setnote] = useState('');
   const [location, setlocation] = useState(false);
 
@@ -526,7 +505,7 @@ function SavedTrips(props) {
 
   const [activeSections, setactiveSections] = useState([-1]);
   const [showpic, setshowpic] = useState(true);
-  let animtntime = 1200;
+  let animtntime = 1000;
   useEffect(() => {
     if (activeSections[0] > -1) {
       setTimeout(() => {
@@ -849,7 +828,14 @@ function SavedTrips(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.Trips.unSaveTrip(dt, i, closeMModal);
+        store.Trips.unSaveTrip(
+          dt,
+          i,
+          data,
+          c => setdata(c),
+          LoadMore,
+          closeMModal,
+        );
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -1107,6 +1093,11 @@ function SavedTrips(props) {
     setendRepOn(d);
     setendRepOnM(md);
     setendRepOnS(md);
+  };
+
+  const updateSections = activeSections => {
+    setactiveSections(activeSections);
+    setshowpic(true);
   };
 
   const onClickremoveTrips = (dt, ind) => {
@@ -5726,508 +5717,7 @@ function SavedTrips(props) {
     );
   };
 
-  const renderSectionTitle = (item, index) => {
-    let usr = item.hostId;
-    //user
-    let photo = usr.image || '';
-    let userName = usr.firstName + ' ' + usr.lastName;
-    let avgRating = usr.rating || 0;
-    let totalReviews = usr.reviews || 0;
-    let isVeirfy = usr.identityStatus == 'verified' ? true : false;
-
-    //trip
-    let status = item.status || '';
-    let tripPhotos = item.photos ? item.photos : [];
-    let titlee = item.title || '';
-    let locName = item.location.city + ', ' + item.location.state;
-    let trade = item.returnActivity || '';
-    let sd = item.availableFrom;
-    let sdy = parseInt(new Date(sd).getFullYear());
-    let ed = item.availableTo;
-    let edy = parseInt(new Date(ed).getFullYear());
-    let favlbl = '';
-
-    if (sdy == edy) {
-      favlbl =
-        moment(sd).format('MMM DD') + ' - ' + moment(ed).format('MMM DD, YYYY');
-    } else {
-      favlbl =
-        moment(sd).format('MMM DD, YYYY') +
-        ' - ' +
-        moment(ed).format('MMM DD, YYYY');
-    }
-
-    const renderSec1 = () => {
-      const renderProfile = () => {
-        return (
-          <View style={styles.ProfileImgContainer}>
-            <ProgressiveFastImage
-              style={styles.ProfileImg}
-              source={
-                photo != ''
-                  ? {uri: photo}
-                  : require('../../assets/images/drawer/guest/img.png')
-              }
-              loadingImageStyle={styles.imageLoader}
-              loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
-              blurRadius={5}
-            />
-            {isVeirfy && (
-              <Image
-                style={styles.iconVerify}
-                source={require('../../assets/images/verified/img.png')}
-              />
-            )}
-          </View>
-        );
-      };
-
-      const renderText = () => {
-        return (
-          <View style={styles.textContainer}>
-            <Pressable
-              onPress={() => {
-                if (user == 'guest') {
-                  return;
-                }
-
-                store.Userv.setfscreen('savedtrips');
-                store.Userv.setUser(usr);
-                store.Userv.addauthToken(store.User.authToken);
-                props.navigation.navigate('UserProfile');
-              }}
-              style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={styles.textContainertitle}>
-                {userName}
-              </Text>
-            </Pressable>
-
-            <View style={{flexDirection: 'row', marginTop: 2}}>
-              <utils.vectorIcon.Entypo
-                name="star"
-                color={theme.color.rate}
-                size={14}
-              />
-              <Text style={styles.textContainerRatetitle1}>
-                {' '}
-                {avgRating > 0 ? avgRating.toFixed(1) : avgRating}
-                {'  '}
-              </Text>
-              <Text style={styles.textContainerRatetitle2}>
-                {totalReviews > 300 ? '300+' : totalReviews} reviews
-              </Text>
-            </View>
-          </View>
-        );
-      };
-
-      const rendericon = () => {
-        return (
-          <Pressable
-            onPress={() => {
-              if (store.User.user.subscriptionStatus == 'freemium') {
-                props.navigation.navigate('Plan');
-              } else {
-                onClickremoveTrips(item, index);
-              }
-            }}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.7 : 1.0},
-              styles.iconContainer,
-            ]}>
-            <Image
-              style={styles.iconSave}
-              source={require('../../assets/images/delSave/img.png')}
-            />
-          </Pressable>
-        );
-      };
-
-      return (
-        <View style={styles.boxSection1}>
-          {renderProfile()}
-          {renderText()}
-          {rendericon()}
-        </View>
-      );
-    };
-
-    return (
-      <>
-        <View>{renderSec1()}</View>
-      </>
-    );
-  };
-
-  // const renderHeader = (item, index, isActive) => {
-  //   let usr = item.hostId;
-  //   //user
-  //   let photo = usr.image || '';
-  //   let userName = usr.firstName + ' ' + usr.lastName;
-  //   let avgRating = usr.rating || 0;
-  //   let totalReviews = usr.reviews || 0;
-  //   let isVeirfy = usr.identityStatus == 'verified' ? true : false;
-
-  //   //trip
-  //   let status = item.status || '';
-  //   let tripPhotos = item.photos ? item.photos : [];
-  //   let titlee = item.title || '';
-  //   let locName = item.location.city + ', ' + item.location.state;
-  //   let trade = item.returnActivity || '';
-  //   let sd = item.availableFrom;
-  //   let sdy = parseInt(new Date(sd).getFullYear());
-  //   let ed = item.availableTo;
-  //   let edy = parseInt(new Date(ed).getFullYear());
-  //   let favlbl = '';
-
-  //   if (sdy == edy) {
-  //     favlbl =
-  //       moment(sd).format('MMM DD') + ' - ' + moment(ed).format('MMM DD, YYYY');
-  //   } else {
-  //     favlbl =
-  //       moment(sd).format('MMM DD, YYYY') +
-  //       ' - ' +
-  //       moment(ed).format('MMM DD, YYYY');
-  //   }
-
-  //   const renderSec3c = () => {
-  //     return (
-  //       <View
-  //         style={{
-  //           width: '100%',
-  //           marginTop: 12,
-  //         }}>
-  //         {/* <View
-  //           style={{
-  //             width: '100%',
-  //             alignSelf: 'center',
-  //             height: 0.7,
-  //             backgroundColor: theme.color.fieldBorder,
-  //           }}
-  //         /> */}
-
-  //         <View
-  //           style={{
-  //             width: '100%',
-  //             flexDirection: 'row',
-  //             justifyContent: 'space-between',
-  //             paddingHorizontal: 10,
-  //             // marginTop: 10,
-  //           }}>
-  //           <View style={{width: '90%'}}>
-  //             <Text
-  //               numberOfLines={1}
-  //               ellipsizeMode="tail"
-  //               style={styles.sec3T1}>
-  //               {titlee}
-  //             </Text>
-  //             <View style={styles.sec3T2Container}>
-  //               <Image
-  //                 style={styles.sec3Icon}
-  //                 source={require('../../assets/images/location/img.png')}
-  //               />
-  //               <View style={{width: '95%'}}>
-  //                 <Text
-  //                   numberOfLines={1}
-  //                   ellipsizeMode="tail"
-  //                   style={styles.sec3T2}>
-  //                   {locName}
-  //                 </Text>
-  //               </View>
-  //             </View>
-  //           </View>
-
-  //           <utils.vectorIcon.Entypo
-  //             name="chevron-small-down"
-  //             color={theme.color.subTitleLight}
-  //             size={22}
-  //           />
-  //         </View>
-
-  //         <View style={{marginTop: 10, paddingHorizontal: 10}}>
-  //           <Text style={styles.sec3T31}>In Return For</Text>
-  //           <Text style={styles.sec3T32}>{trade}</Text>
-  //         </View>
-  //         {/* <View style={{marginTop: 10}}>
-  //           <Text numberOfLines={1} ellipsizeMode="tail" style={styles.sec3T31}>
-  //             Availability
-  //           </Text>
-  //           <Text style={styles.sec3T32}>{favlbl}</Text>
-  //         </View> */}
-  //       </View>
-  //     );
-  //   };
-
-  //   return <View>{!isActive && renderSec3c()}</View>;
-  // };
-
-  const renderContent = (item, index, isActive) => {
-    let usr = item.hostId;
-    //user
-    let photo = usr.image || '';
-    let userName = usr.firstName + ' ' + usr.lastName;
-    let avgRating = usr.rating || 0;
-    let totalReviews = usr.reviews || 0;
-    let isVeirfy = usr.identityStatus == 'verified' ? true : false;
-
-    //trip
-    let status = item.status || '';
-    let tripPhotos = item.photos ? item.photos : [];
-    let titlee = item.title || '';
-    let locName = item.location.city + ', ' + item.location.state;
-    let trade = item.returnActivity || '';
-    let sd = item.availableFrom;
-    let sdy = parseInt(new Date(sd).getFullYear());
-    let ed = item.availableTo;
-    let edy = parseInt(new Date(ed).getFullYear());
-
-    let favlbl = '';
-
-    if (sdy == edy) {
-      favlbl =
-        moment(sd).format('MMM DD') + ' - ' + moment(ed).format('MMM DD, YYYY');
-    } else {
-      favlbl =
-        moment(sd).format('MMM DD, YYYY') +
-        ' - ' +
-        moment(ed).format('MMM DD, YYYY');
-    }
-    const renderSec2 = () => {
-      const renderTripImages = () => {
-        let chk =
-          tripPhotos.length <= 0
-            ? '0'
-            : tripPhotos.length == 1
-            ? '1'
-            : tripPhotos.length > 1
-            ? '2'
-            : '0';
-
-        return (
-          <>
-            {chk == '2' && (
-              <>
-                <View style={styles.tripImageConatiner}>
-                  <ImageSlider
-                    showHeader={false}
-                    preview={true}
-                    data={tripPhotos}
-                    autoPlay={false}
-                    // onItemChanged={indx => console.log('itm chng : ', indx)}
-                  />
-                </View>
-              </>
-            )}
-
-            {(chk == '0' || chk == '1') && (
-              <>
-                <Pressable
-                  style={({pressed}) => [
-                    {opacity: pressed ? 0.95 : 1.0},
-                    [styles.tripImageConatiner],
-                  ]}
-                  onPress={() => {
-                    setpvm(true);
-                    setpd(chk == '1' ? tripPhotos[0] : '');
-                    setpdc(chk == '1' ? 'tp' : 'ph');
-                  }}>
-                  <ProgressiveFastImage
-                    style={styles.tripImg}
-                    source={
-                      chk == '1'
-                        ? {uri: tripPhotos[0]}
-                        : require('../../assets/images/trip/img.jpeg')
-                    }
-                    loadingImageStyle={styles.imageLoader2}
-                    loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
-                    blurRadius={5}
-                  />
-                </Pressable>
-              </>
-            )}
-          </>
-        );
-      };
-
-      return <View style={styles.boxSection2}>{renderTripImages()}</View>;
-    };
-
-    const renderSec2c = () => {
-      return (
-        <View style={styles.boxSection2}>
-          <Animatable.Image
-            style={[styles.tripImageConatiner]}
-            // style={styles.tripImg}
-            duration={animtntime}
-            easing="ease-out"
-            animation={isActive ? 'zoomIn' : false}
-            source={require('../../assets/gif/stl.gif')}
-          />
-        </View>
-      );
-    };
-
-    const renderSec3 = () => {
-      return (
-        <View style={styles.boxSection3}>
-          <Animatable.Text
-            style={styles.sec3T1}
-            duration={animtntime}
-            easing="ease-out"
-            animation={isActive ? 'zoomIn' : false}>
-            {titlee}
-          </Animatable.Text>
-
-          <View style={styles.sec3T2Container}>
-            <Animatable.Image
-              duration={animtntime}
-              easing="ease-out"
-              animation={isActive ? 'zoomIn' : false}
-              source={require('../../assets/images/location/img.png')}
-            />
-
-            <View style={{width: '95%'}}>
-              <Animatable.Text
-                style={styles.sec3T2}
-                duration={animtntime}
-                easing="ease-out"
-                animation={isActive ? 'zoomIn' : false}>
-                {locName}
-              </Animatable.Text>
-            </View>
-          </View>
-
-          <View style={{marginTop: 10}}>
-            <Animatable.Text
-              style={styles.sec3T31}
-              duration={animtntime}
-              easing="ease-out"
-              animation={isActive ? 'zoomIn' : false}>
-              In Return For
-            </Animatable.Text>
-            <Animatable.Text
-              style={styles.sec3T32}
-              duration={animtntime}
-              easing="ease-out"
-              animation={isActive ? 'zoomIn' : false}>
-              {trade}
-            </Animatable.Text>
-          </View>
-          <View style={{marginTop: 10}}>
-            <Animatable.Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={styles.sec3T31}
-              duration={animtntime}
-              easing="ease-out"
-              animation={isActive ? 'zoomIn' : false}>
-              Availability
-            </Animatable.Text>
-            <Animatable.Text
-              style={styles.sec3T32}
-              duration={animtntime}
-              easing="ease-out"
-              animation={isActive ? 'zoomIn' : false}>
-              {favlbl}
-            </Animatable.Text>
-          </View>
-
-          {/* <Text style={styles.sec3T1}>{titlee}</Text> */}
-          {/* <View style={styles.sec3T2Container}>
-            <Image
-              style={styles.sec3Icon}
-              source={require('../../assets/images/location/img.png')}
-            />
-            <View style={{width: '95%'}}>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={styles.sec3T2}>
-                {locName}
-              </Text>
-            </View>
-          </View> */}
-          {/* <View style={{marginTop: 10}}>
-            <Text style={styles.sec3T31}>In Return For</Text>
-            <Text style={styles.sec3T32}>{trade}</Text>
-          </View>
-          <View style={{marginTop: 10}}>
-            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.sec3T31}>
-              Availability
-            </Text>
-            <Text style={styles.sec3T32}>{favlbl}</Text>
-          </View> */}
-        </View>
-      );
-    };
-
-    const renderSec4 = () => {
-      return (
-        <View style={styles.boxSection4}>
-          <Pressable
-            onPress={() => {
-              if (store.User.user.subscriptionStatus == 'freemium') {
-                props.navigation.navigate('Plan');
-              } else {
-                onClickMakeOffer(item, index);
-              }
-            }}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.9 : 1.0},
-              styles.sec4B,
-            ]}>
-            <Text style={styles.sec4T}>make offer</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => {
-              if (store.User.user.subscriptionStatus == 'freemium') {
-                props.navigation.navigate('Plan');
-              } else {
-                onClickMessage(item, index);
-              }
-            }}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.9 : 1.0},
-              [styles.sec4B, {backgroundColor: theme.color.button2}],
-            ]}>
-            <Text style={[styles.sec4T, {color: theme.color.subTitle}]}>
-              message
-            </Text>
-          </Pressable>
-        </View>
-      );
-    };
-
-    return (
-      <Animatable.View
-        duration={300}
-        transition="backgroundColor"
-        style={{
-          backgroundColor: isActive
-            ? 'rgba(255,255,255,1)'
-            : 'rgba(245,252,255,1)',
-        }}>
-        {isActive && (
-          <>
-            {!showpic ? renderSec2() : renderSec2c()}
-            {renderSec3()}
-            {renderSec4()}
-          </>
-        )}
-      </Animatable.View>
-    );
-  };
-
-  const updateSections = activeSections => {
-    setactiveSections(activeSections);
-    setshowpic(true);
-  };
-
-  const windowSize = data.length > 50 ? data.length / 4 : 21;
+  const windowSize = data.length > 50 ? data.length / 4 : limit;
 
   return (
     <>
@@ -6237,13 +5727,13 @@ function SavedTrips(props) {
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <Accordion
+              renderAsFlatList
               decelerationRate={'fast'}
               removeClippedSubviews
-              initialNumToRender={16}
+              initialNumToRender={limit}
               windowSize={windowSize}
               maxToRenderPerBatch={windowSize}
               underlayColor={'rgba(245,252,255,1)'}
-              renderAsFlatList
               bxc={styles.boxContainer}
               sections={data}
               activeSections={activeSections}
@@ -6254,14 +5744,43 @@ function SavedTrips(props) {
                 <ListHeader
                   search={search}
                   setsearch={c => setsearch(c)}
-                  data={data}
+                  data={d}
                 />
               }
-              renderSectionTitle={renderSectionTitle}
               renderHeader={(item, index, isActive) => (
                 <Card1 item={item} isActive={isActive} props={props} />
               )}
-              renderContent={renderContent}
+              renderSectionTitle={(item, index) => (
+                <Card2
+                  item={item}
+                  index={index}
+                  user={store.User.user}
+                  props={props}
+                  onClickremoveTrips={(it, i) => onClickremoveTrips(it, i)}
+                />
+              )}
+              renderContent={(item, index, isActive) => (
+                <Card3
+                  item={item}
+                  index={index}
+                  isActive={isActive}
+                  user={store.User.user}
+                  props={props}
+                  showpic={showpic}
+                  animtntime={animtntime}
+                  onClickMessage={(it, i) => onClickMessage(it, i)}
+                  onClickMakeOffer={(it, i) => onClickMakeOffer(it, i)}
+                />
+              )}
+              ListFooterComponent={
+                <ListFooter
+                  data={data}
+                  d={d}
+                  loadMore={loadMore}
+                  LoadMore={LoadMore}
+                  limit={limit}
+                />
+              }
             />
           </View>
 
@@ -6277,20 +5796,6 @@ function SavedTrips(props) {
         {isOfferSend && renderShowOfferSendModal()}
         {isSendMessage && renderMessageSendModal()}
 
-        {pvm && (
-          <utils.FullimageModal
-            data={[]}
-            si={0}
-            show={pvm}
-            pd={pd}
-            pdc={pdc}
-            closModal={() => {
-              setpvm(!pvm);
-              setpd('');
-              setpdc('');
-            }}
-          />
-        )}
         {store.Notifications.isShowNotifcation && <utils.ShowNotifications />}
         <Toast ref={toast} position="bottom" />
       </View>

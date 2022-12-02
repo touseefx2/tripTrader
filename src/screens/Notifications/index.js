@@ -185,7 +185,7 @@ function Notifications(props) {
   if (previousScreen == 'userprofile' || previousScreen == 'followers') {
     db = true;
   }
-  const d = store.Notifications.notifications;
+  const data = store.Notifications.notifications;
   const td = store.Notifications.notificationsTotal;
 
   let limit = 16;
@@ -193,7 +193,7 @@ function Notifications(props) {
   const [loadFirst, setloadFirst] = useState(false);
 
   const [loadMore, setloadMore] = useState(false);
-  const [data, setdata] = useState(d);
+  // const [data, setdata] = useState(d);
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
@@ -380,7 +380,7 @@ function Notifications(props) {
     let title = item.title || '';
     let subtitle = item.message || '';
     let create = CheckDate(item.createdAt);
-    let isread = item.isRead || false;
+    let isread = item.isRead;
     let isFollow = false;
     let uname = '';
     let usrd = item.userId;
@@ -497,7 +497,7 @@ function Notifications(props) {
 
     return (
       <Pressable
-        disabled={refreshing || isread}
+        disabled={isread}
         onPress={() =>
           onclickNotification(isFollow ? 'profile' : title, item._id)
         }

@@ -713,7 +713,8 @@ function Inbox(props) {
     });
   };
 
-  const windowSize = data.length > 50 ? data.length / 4 : 21;
+  let limit = 16;
+  const windowSize = data.length > 50 ? data.length / 4 : limit;
 
   return (
     <>
@@ -725,7 +726,7 @@ function Inbox(props) {
             <SwipeListView
               useFlatList
               removeClippedSubviews
-              initialNumToRender={16}
+              initialNumToRender={limit}
               windowSize={windowSize}
               maxToRenderPerBatch={windowSize}
               ref={swipRef}

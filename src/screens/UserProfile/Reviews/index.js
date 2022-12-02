@@ -187,6 +187,7 @@ function Reviews(props) {
 
   const openReviewModal = c => {
     if (c) {
+      console.log('ccc : ', c);
       setisrObj(c);
       setrate(c.rate);
       setMessage(c.message);
@@ -235,6 +236,7 @@ function Reviews(props) {
           body,
           closeReviewModal,
           () => setisSendReview(true),
+          data,
           c => setdata(c),
           c => setisOneReview(c),
         );
@@ -252,8 +254,12 @@ function Reviews(props) {
       if (state.isConnected) {
         isrObj.message = message;
         isrObj.rate = rate;
-        store.Userv.attemptToEditReview(isrObj, closeReviewModal, () =>
-          setisSendReview(true),
+        store.Userv.attemptToEditReview(
+          isrObj,
+          data,
+          c => setdata(c),
+          closeReviewModal,
+          () => setisSendReview(true),
         );
       } else {
         // seterrorMessage('Please connect internet');
@@ -270,6 +276,7 @@ function Reviews(props) {
         store.Userv.attemptToDeleteReview(
           isdObj,
           closeDeleteModal,
+          data,
           c => setdata(c),
           c => setisOneReview(c),
         );
