@@ -118,8 +118,17 @@ class trips {
       });
   };
 
-  @action unSaveTrip = (obj, i, data, setdata, suc) => {
+  @action LoadMore = async (d, data, setd, setdata) => {
+    let ar = [...d];
+    const dt = ar.slice(data.length, data.length + 1);
+    let dd = [...data, ...dt];
+    setd(d);
+    setdata(dd);
+  };
+
+  @action unSaveTrip = (obj, i, data, setdata, d, setd, suc) => {
     let dt = [...this.saveTrips];
+    let dt1 = [...d];
     let dt2 = [...data];
 
     if (dt.length > 0) {
@@ -127,6 +136,9 @@ class trips {
       if (ind > -1) {
         dt.splice(ind, 1);
       }
+    }
+    if (dt1.length > 0) {
+      dt1.splice(i, 1);
     }
     if (dt2.length > 0) {
       dt2.splice(i, 1);
@@ -150,11 +162,10 @@ class trips {
 
         let rsp = resp.data.data.savedTrips || [];
         this.setsaveTrips(rsp);
-
-        setdata(dt2);
-
+        // setd(dt1);
+        // setdata(dt2);
+        this.LoadMore(dt1, dt2, setd, setdata);
         suc();
-
         return;
       })
       .catch(err => {

@@ -95,7 +95,7 @@ function CheckDate(d) {
 
 export default memo(Card);
 
-function Card({item, index, refreshing, data, user, props}) {
+function Card({item, index, refreshing, data, user, props, setsearch}) {
   let guest = require('../../../assets/images/drawer/guest/img.png');
 
   let isendmymsg = false;
@@ -219,6 +219,7 @@ function Card({item, index, refreshing, data, user, props}) {
           title: title,
           rid: u._id,
         });
+        setsearch('');
       }}
       style={({pressed}) => [
         {opacity: pressed ? 1 : 1.0},

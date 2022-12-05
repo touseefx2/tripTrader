@@ -588,6 +588,10 @@ function Inbox(props) {
   const [search, setsearch] = useState('');
   const [sdata, setsdata] = useState([]);
 
+  let loader = store.User.dlc;
+  const data = search == '' ? store.User.inbox : sdata;
+  let totalUnread = store.User.unreadInbox;
+
   useEffect(() => {
     if (search != '') {
       BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
@@ -651,10 +655,6 @@ function Inbox(props) {
     }
   }, [search, store.User.inbox]);
 
-  let loader = store.User.dlc;
-  const data = search == '' ? store.User.inbox : sdata;
-  let totalUnread = store.User.unreadInbox;
-
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
     setgetDataOnce(C);
@@ -699,11 +699,9 @@ function Inbox(props) {
           chatId,
           i,
           user._id,
-          // data,
-          // c => setdata(c),
-          // search,
-          // sdata,
-          // c => setdata(c),
+          search,
+          sdata,
+          c => setsdata(c),
           closeSwipe,
         );
       } else {
@@ -714,8 +712,8 @@ function Inbox(props) {
   };
 
   let limit = 16;
-  const windowSize = data.length > 50 ? data.length / 4 : limit;
-
+  const windowSize = 31;
+  // data.length > 63 ? data.length / 3 :
   return (
     <>
       <View style={styles.container}>
@@ -765,6 +763,7 @@ function Inbox(props) {
                   data={data}
                   user={store.User.user}
                   props={props}
+                  setsearch={c => setsearch(c)}
                 />
               )}
               renderHiddenItem={({item, index}) => (

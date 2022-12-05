@@ -58,10 +58,29 @@ class user {
 
   // attemptToDeleteChat(cid, i, uid, dt, setdt,srch,sdt,setsdt,suc) {
 
-  attemptToDeleteChat(cid, i, uid, suc) {
+  attemptToDeleteChat(cid, iii, uid, srch, sdt, setsdt, suc) {
     let params = cid + '/' + uid;
     console.warn('DeleteChat  true : ', params);
     this.setdlc(true);
+
+    let i = 0;
+    let ii = 0;
+
+    let dd = [...this.inbox];
+
+    if (dd.length > 0) {
+      let ind = dd.findIndex(x => x.roomName === cid);
+      if (ind > -1) {
+        i = ind;
+      }
+    }
+    let ddd = [...sdt];
+    if (ddd.length > 0) {
+      let ind = ddd.findIndex(x => x.roomName === cid);
+      if (ind > -1) {
+        ii = ind;
+      }
+    }
 
     db.hitApi(db.apis.DELETE_CHAT + params, 'put', {}, this.authToken)
       ?.then(resp => {
@@ -70,24 +89,19 @@ class user {
           `response DeleteChat  ${db.apis.DELETE_CHAT}${params} : `,
           resp.data,
         );
+
         suc();
-        let dd = [...this.inbox];
+
         dd.splice(i, 1);
         this.setinbox(dd);
-        // this.inbox.splice(i, 1); //no rfrsh
-
-        // let dd = [...dt];
-        // dd.splice(i, 1);
-        // setdt(dd);
-
-        // this.attemptToGetInboxes(
-        //   uid,
-        //   () => {},
-        //   () => {},
-        // );
+        if (srch != '') {
+          ddd.splice(ii, 1);
+          setsdt(ddd);
+        }
       })
       .catch(err => {
         this.setdlc(false);
+        store.General.checkServer(err);
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in DeleteChat  ${db.apis.DELETE_CHAT}${params}  : `,
@@ -429,71 +443,6 @@ class user {
         //   ...fa,
         //   ...fa,
         //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-
         //   ...fa,
         //   ...fa,
         //   ...fa,
@@ -2444,8 +2393,8 @@ class user {
         } else {
           this.setpswd('');
         }
-        this.allGetGeneralData();
-        this.allGetGeneralUserData(rsp._id);
+        // this.allGetGeneralData();
+        // this.allGetGeneralUserData(rsp._id);
       })
       .catch(err => {
         this.setregLoader(false);
@@ -2823,7 +2772,7 @@ class user {
           );
           return;
         }
-
+        store.Trips.setsaveTrips(rsp.savedTrips || []);
         this.addauthToken(token);
         this.setUser(rsp);
       })

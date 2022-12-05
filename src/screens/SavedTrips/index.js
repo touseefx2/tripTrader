@@ -337,6 +337,7 @@ function SavedTrips(props) {
   let maxModalHeight = theme.window.Height - 70;
   const [modalHeight, setmodalHeight] = useState(0);
   const scrollRef = useRef(null);
+  const scrollRef2 = useRef(null);
 
   const toast = useRef(null);
   const toastduration = 700;
@@ -376,7 +377,7 @@ function SavedTrips(props) {
 
   const [search, setsearch] = useState('');
 
-  let limit = 3;
+  let limit = 8;
   const [page, setpage] = useState(1);
   const [loadMore, setloadMore] = useState(false);
   const [data, setdata] = useState([]);
@@ -391,15 +392,26 @@ function SavedTrips(props) {
   useEffect(() => {
     let ar = [];
     if (dtt.length > 0) {
-      dtt.map((e, i, a) => {
-        if (e) {
-          ar.push(e);
-        }
-      });
+      setisloadFirst(false);
+      setpage(1);
+      if (search == '') {
+        dtt.map((e, i, a) => {
+          if (e) {
+            ar.push(e);
+          }
+        });
+      } else {
+        ar = dtt.filter(item => {
+          let title = item.hostId.firstName + ' ' + item.hostId.lastName;
+
+          return title.toLowerCase().includes(search.toLowerCase());
+        });
+      }
     }
+
     let da = ar.reverse();
     setd(da);
-  }, []);
+  }, [search]);
 
   useEffect(() => {
     if (d.length > 0 && !isloadFirst) {
@@ -424,10 +436,10 @@ function SavedTrips(props) {
     setisloadFirst(true);
   };
   useEffect(() => {
-    if (data.length == limit) {
+    if (page <= 0 && data.length >= limit) {
       setpage(1);
     }
-  }, [data]);
+  }, [data, page]);
 
   const LoadMore = async () => {
     setloadMore(true);
@@ -619,6 +631,42 @@ function SavedTrips(props) {
     }
   }, [minDatee]);
   //end
+
+  useEffect(() => {
+    if (search != '') {
+      BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    }
+
+    if (search == '') {
+      scrollToTop();
+
+      BackHandler.removeEventListener(
+        'hardwareBackPress',
+        handleBackButtonClick,
+      );
+    }
+
+    return () => {
+      BackHandler.removeEventListener(
+        'hardwareBackPress',
+        handleBackButtonClick,
+      );
+    };
+  }, [search]);
+
+  const scrollToTop = () => {
+    // scrollRef2?.current?.scrollToOffset({animated: false, offset: 0});
+  };
+
+  function handleBackButtonClick() {
+    if (!props.navigation.isFocused()) {
+      return false;
+    } else {
+      setsearch('');
+
+      return true;
+    }
+  }
 
   const setIsSendMessage = v => {
     setsendObj(modalObj.item.hostId);
@@ -814,16 +862,6 @@ function SavedTrips(props) {
   };
 
   const deleteTrip = (dt, i) => {
-    // Keyboard.dismiss();
-    // NetInfo.fetch().then(state => {
-    //   if (state.isConnected) {
-    //     store.Trips.attemptToDeleteTrip(dt, i, closeModal);
-    //   } else {
-    //     // seterrorMessage('Please connect internet');
-    //     Alert.alert('', 'Please connect internet');
-    //   }
-    // });
-
     Keyboard.dismiss();
 
     NetInfo.fetch().then(state => {
@@ -833,7 +871,9 @@ function SavedTrips(props) {
           i,
           data,
           c => setdata(c),
-          LoadMore,
+          d,
+          c => setd(c),
+
           closeMModal,
         );
       } else {
@@ -5717,7 +5757,8 @@ function SavedTrips(props) {
     );
   };
 
-  const windowSize = data.length > 50 ? data.length / 4 : limit;
+  const windowSize = 21;
+  // data.length > 36 ? data.length / 3 : 12;
 
   return (
     <>
@@ -5728,6 +5769,7 @@ function SavedTrips(props) {
           <View style={styles.container3}>
             <Accordion
               renderAsFlatList
+              ref={scrollRef2}
               decelerationRate={'fast'}
               removeClippedSubviews
               initialNumToRender={limit}
