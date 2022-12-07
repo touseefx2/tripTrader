@@ -357,6 +357,11 @@ function Home(props) {
     }
     return () => {};
   }, [getDataOnce, internet]);
+  useEffect(() => {
+    if (user && user !== 'guest') {
+      store.Trips.setsaveTrips(user.savedTrips || []);
+    }
+  }, [user]);
 
   const tripdata = store.User.trips;
   const [isDropDownTrip, setisDropDownTrip] = useState(false);

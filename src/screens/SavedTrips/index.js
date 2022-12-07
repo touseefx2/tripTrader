@@ -377,16 +377,11 @@ function SavedTrips(props) {
 
   const [search, setsearch] = useState('');
 
-  let limit = 8;
+  let limit = 10;
   const [page, setpage] = useState(1);
   const [loadMore, setloadMore] = useState(false);
   const [data, setdata] = useState([]);
   const [isloadFirst, setisloadFirst] = useState(false);
-
-  // const data = store.Trips.saveTripss;
-  // const setdata = c => store.Trips.setsaveTripss(c);
-  // const isloadFirst = store.Trips.isloadFirst;
-  // const setisloadFirst = c => store.Trips.setisloadFirst(c);
 
   const [d, setd] = useState([]);
   useEffect(() => {
@@ -411,6 +406,7 @@ function SavedTrips(props) {
 
     let da = ar.reverse();
     setd(da);
+    // setd([...da, ...da, ...da, ...da, ...da, ...da, ...da, ...da, ...da]);
   }, [search]);
 
   useEffect(() => {
@@ -422,8 +418,8 @@ function SavedTrips(props) {
     }
   }, [d, isloadFirst]);
 
-  console.log('d  st: ', d.length);
-  console.log('data sttttttt : ', data.length);
+  // console.log('d  st: ', d.length);
+  // console.log('data sttttttt : ', data.length);
 
   const LoadFirst = d => {
     let page = 0;

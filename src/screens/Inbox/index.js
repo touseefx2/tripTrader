@@ -712,7 +712,7 @@ function Inbox(props) {
   };
 
   let limit = 16;
-  const windowSize = 31;
+  const windowSize = 21;
   // data.length > 63 ? data.length / 3 :
   return (
     <>
@@ -722,6 +722,7 @@ function Inbox(props) {
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <SwipeListView
+              decelerationRate={'fast'}
               useFlatList
               removeClippedSubviews
               initialNumToRender={limit}

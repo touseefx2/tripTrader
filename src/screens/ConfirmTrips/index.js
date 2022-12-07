@@ -405,7 +405,7 @@ function ConfirmTrips(props) {
       isMyTrip = true;
     }
 
-    let user = isMyTrip ? item.offeredBy : item.offeredTo;
+    let  user= isMyTrip ? item.offeredBy : item.offeredTo;
     let ofer = isMyTrip ? item.hostTrip : item.offeredTrip;
     let trade = isMyTrip ? item.offeredTrip : item.hostTrip;
     let offernote = item.note || '';

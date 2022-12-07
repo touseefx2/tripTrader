@@ -519,6 +519,8 @@ function Notifications(props) {
     );
   };
 
+  const windowSize = 21;
+
   return (
     <>
       <View style={styles.container}>
@@ -531,6 +533,7 @@ function Notifications(props) {
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <FlashList
+              decelerationRate={'fast'}
               estimatedItemSize={100}
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -539,8 +542,9 @@ function Notifications(props) {
                 paddingTop: 12,
                 paddingBottom: 40,
               }}
-              initialNumToRender={10}
-              maxToRenderPerBatch={10}
+              initialNumToRender={limit}
+              windowSize={windowSize}
+              maxToRenderPerBatch={windowSize}
               data={data}
               renderItem={ItemView}
               keyExtractor={(item, index) => index.toString()}

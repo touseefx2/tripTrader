@@ -457,12 +457,6 @@ class user {
         //   ...fa,
         //   ...fa,
         //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
         // ]);
         setgetdata(true);
         let ud = store.User.user._id;
@@ -853,7 +847,8 @@ class user {
     let act = '';
     if (isapf) {
       r = store.Filters.shostRating != 0 ? store.Filters.shostRating : '';
-      us = store.Filters.svu == true ? 'verified' : 'notVerified';
+
+      us = store.Filters.svu == true ? 'verified' : '';
       loc =
         store.Filters.stripLocation != false
           ? store.Filters.stripLocation.name
@@ -869,7 +864,8 @@ class user {
       });
     }
 
-    let params = `rating=${r}&userStatus=${us}&location=${loc}&species=${spsc}&query=${query}&activity=${act}&blockedUsers=${b}`;
+    // let params = `query=${query}`;
+    let params = `rating=${r}&userStatus=${us}&location=${loc}&species=${spsc}&query=${query}&activity=${act}&tradeType=${act}&blockedUsers=${b}`;
 
     console.log('Get AllHomeTrip : ', db.apis.GET_ALL_HOME_TRIPS + params);
     this.setHomeLoader(true);
@@ -982,7 +978,7 @@ class user {
     let act = '';
     if (isapf) {
       r = store.Filters.shostRating != 0 ? store.Filters.shostRating : '';
-      us = store.Filters.svu == true ? 'verified' : 'notVerified';
+      us = store.Filters.svu == true ? 'verified' : '';
       loc =
         store.Filters.stripLocation != false
           ? store.Filters.stripLocation.name
@@ -993,7 +989,8 @@ class user {
 
     let b = '';
 
-    let params = `rating=${r}&userStatus=${us}&location=${loc}&species=${spsc}&query=${query}&activity=${act}&blockedUsers=${b}`;
+    // let params = `query=${query}`;
+    let params = `rating=${r}&userStatus=${us}&location=${loc}&species=${spsc}&query=${query}&activity=${act}&tradeType=${act}&blockedUsers=${b}`;
 
     console.log('Get AllHomeTrip : ', db.apis.GET_ALL_HOME_TRIPS + params);
     this.setHomeLoader(true);
@@ -2772,7 +2769,7 @@ class user {
           );
           return;
         }
-        store.Trips.setsaveTrips(rsp.savedTrips || []);
+
         this.addauthToken(token);
         this.setUser(rsp);
       })
