@@ -1597,7 +1597,7 @@ function NewTrips(props) {
       </MModal>
     );
   };
- 
+
   const renderUNavlblModal = () => {
     let c = modalHeight >= maxModalHeight ? true : false;
     let style = c
@@ -1925,7 +1925,7 @@ function NewTrips(props) {
 
       return (
         <>
-          <View style={[styles.fieldContainer, {marginTop: 15}]}>
+          {/* <View style={[styles.fieldContainer, {marginTop: 15}]}>
             <Text style={styles.fieldText}>Repeat for</Text>
             <View
               style={[
@@ -1998,7 +1998,7 @@ function NewTrips(props) {
                 {isDropDownrDur && renderDropDown('rdur')}
               </View>
             </View>
-          </View>
+          </View> */}
 
           <View style={[styles.fieldContainer, {marginTop: 15}]}>
             <Text style={styles.fieldText}>End Repeat On</Text>
@@ -3792,17 +3792,18 @@ function NewTrips(props) {
       return (
         <View style={{marginTop: 10}}>
           <Text style={styles.rmodalsubTitle}>
-            Review your trip details below. If everything looks good, click{' '}
+            Review your trip details below, if everything looks good, click{' '}
             <Text
               style={[
                 styles.rmodalsubTitle,
                 {fontFamily: theme.fonts.fontBold},
               ]}>
               {!isEdit ? 'Create Trip' : 'Update Trip'}
-            </Text>{' '}
+            </Text>
+            {/*  {' '}
             {!isEdit
               ? 'to make the trip available for trade offers.'
-              : 'to update the trip available for trade offers'}
+              : 'to update the trip available for trade offers'} */}
           </Text>
         </View>
       );

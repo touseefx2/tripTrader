@@ -131,6 +131,11 @@ class user {
   @observable bl = false;
   @observable ibl = false;
 
+  @observable pasObj = false;
+  @action setpasObj = obj => {
+    this.pasObj = obj;
+  };
+
   @action setfollowers = obj => {
     this.followers = obj;
   };
@@ -2400,7 +2405,7 @@ class user {
         let msg = err.response.data.message || err.response.status || err;
         console.log(`Error in Login user ${db.apis.LOGIN_USER} : `, msg);
         if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
+          Alert.alert('', 'Server not responding');
           // store.General.setisServerError(true);
           return;
         }
@@ -3135,7 +3140,7 @@ class user {
       })
         .then(response => response.json())
         .then(responseData => {
-          console.warn('upload photo success : ');
+          console.log('upload photo success : ');
           let rsp = responseData.data[0].imgrUrl;
           if (e.chk == 'Profile') {
             body.image = rsp;

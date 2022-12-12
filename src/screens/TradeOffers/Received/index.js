@@ -431,12 +431,12 @@ function Received(props) {
               marginTop: '80%',
               alignItems: 'center',
               justifyContent: 'center',
-              alignSelf: 'center',
+              textAlign: 'center',
               fontSize: 13,
               color: theme.color.subTitleLight,
               fontFamily: theme.fonts.fontMedium,
             }}>
-            No new received offers.
+            You have not received any offers yet
           </Text>
         )}
 

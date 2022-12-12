@@ -506,12 +506,12 @@ function ChatPhotoModal(props) {
           {!isShowPrmsn && (
             <>
               <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                <Text style={styles.section2Title1}>Add chat photos</Text>
+                <Text style={styles.section2Title1}>Add photos</Text>
               </View>
 
               <View style={{marginTop: 10}}>
                 <Text style={styles.section2Title2}>
-                  Please added photos to send in chat
+                  Please select photos to send
                 </Text>
               </View>
 
@@ -553,7 +553,7 @@ function ChatPhotoModal(props) {
                             color: theme.color.button1,
                           },
                         ]}>
-                        Add Photos
+                        Select Photos
                       </Text>
                     </View>
                   </TouchableOpacity>

@@ -611,63 +611,70 @@ function EditProfile(props) {
         </View>
 
         <View style={styles.Field}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <utils.vectorIcon.AntDesign
-              name="idcard"
-              color={theme.color.titleGreen}
-              size={20}
-            />
-            <Text style={[styles.FieldTitle1, {marginLeft: 7}]}>
-              Identity Verification
-            </Text>
-          </View>
-          <TouchableOpacity
-            disabled={cnicFrontImage == '' ? true : false}
-            activeOpacity={0.7}
-            onPress={() => {
-              onclickImage('cnicfView');
-            }}
-            style={styles.idCardContainer}>
-            {cnicFrontImage == '' && (
-              <View
-                style={{
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  paddingHorizontal: 10,
-                }}>
-                {/* <utils.vectorIcon.AntDesign
+          {!isCnicVerf && (
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <utils.vectorIcon.AntDesign
+                name="idcard"
+                color={theme.color.titleGreen}
+                size={20}
+              />
+              <Text style={[styles.FieldTitle1, {marginLeft: 7}]}>
+                Identity Verification
+              </Text>
+            </View>
+          )}
+
+          {!isCnicVerf && (
+            <TouchableOpacity
+              disabled={cnicFrontImage == '' ? true : false}
+              activeOpacity={0.7}
+              onPress={() => {
+                onclickImage('cnicfView');
+              }}
+              style={styles.idCardContainer}>
+              {cnicFrontImage == '' && (
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    paddingHorizontal: 10,
+                  }}>
+                  {/* <utils.vectorIcon.AntDesign
                   name="upload"
                   color={theme.color.titleGreen}
                   size={20}
                   style={{marginBottom: 10}}
                 /> */}
-                <Text style={styles.idCardContainerText}>
-                  Upload id card photo for account verification
-                </Text>
-              </View>
-            )}
-            {cnicFrontImage != '' && (
-              <Image
-                onLoadStart={() => {
-                  setcnicfImageLoader(false);
-                }}
-                onLoad={() => {
-                  setcnicfImageLoader(true);
-                }}
-                style={styles.idCardContainerImage}
-                source={{
-                  uri: cnicFrontImage.uri ? cnicFrontImage.uri : cnicFrontImage,
-                }}
-              />
-            )}
-            {!cnicfImageLoader && cnicFrontImage != '' && (
-              <ActivityIndicator
-                size={25}
-                color={theme.color.button1}
-                style={{top: 55, position: 'absolute'}}
-              />
-            )}
-          </TouchableOpacity>
+                  <Text style={styles.idCardContainerText}>
+                    Upload id card photo for account verification
+                  </Text>
+                </View>
+              )}
+              {cnicFrontImage != '' && (
+                <Image
+                  onLoadStart={() => {
+                    setcnicfImageLoader(false);
+                  }}
+                  onLoad={() => {
+                    setcnicfImageLoader(true);
+                  }}
+                  style={styles.idCardContainerImage}
+                  source={{
+                    uri: cnicFrontImage.uri
+                      ? cnicFrontImage.uri
+                      : cnicFrontImage,
+                  }}
+                />
+              )}
+              {!cnicfImageLoader && cnicFrontImage != '' && (
+                <ActivityIndicator
+                  size={25}
+                  color={theme.color.button1}
+                  style={{top: 55, position: 'absolute'}}
+                />
+              )}
+            </TouchableOpacity>
+          )}
 
           {isCnicVerf && (
             <View
@@ -686,25 +693,27 @@ function EditProfile(props) {
             </View>
           )}
 
-          {/* {!isCnicVerf&&( */}
-          <View
-            style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
-            <TouchableOpacity
-              activeOpacity={0.6}
-              onPress={() => {
-                setisAddPhotoModal(true);
-                setDT('CNICFront');
+          {!isCnicVerf && (
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: 10,
               }}>
-              <Text style={styles.idCardChangeText1}>Click here </Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.6}
+                onPress={() => {
+                  setisAddPhotoModal(true);
+                  setDT('CNICFront');
+                }}>
+                <Text style={styles.idCardChangeText1}>Click here </Text>
+              </TouchableOpacity>
 
-            <Text style={styles.idCardChangeText2}>
-              {cnicFrontImage == ''
-                ? 'to upload a new ID card.'
-                : 'to change a new ID card.'}
-            </Text>
-          </View>
-          {/* )} */}
+              <Text style={styles.idCardChangeText2}>
+                to upload a new ID card.
+              </Text>
+            </View>
+          )}
         </View>
       </View>
     );

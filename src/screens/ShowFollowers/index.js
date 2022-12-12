@@ -125,14 +125,16 @@ function ShowFollowers(props) {
               marginTop: '80%',
               alignItems: 'center',
               justifyContent: 'center',
-              alignSelf: 'center',
+              textAlign: 'center',
               fontSize: 13,
               color: theme.color.title,
               fontFamily: theme.fonts.fontMedium,
               opacity: 0.4,
             }}
             onPress={() => getItem(item)}>
-            {chk == 'followers' ? 'No Follower Found' : 'No Followeing Found'}
+            {chk == 'followers'
+              ? 'No Followers Found'
+              : 'You are not following anyone yet'}
           </Text>
         )}
 

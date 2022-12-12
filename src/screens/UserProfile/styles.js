@@ -213,8 +213,8 @@ export const styles = StyleSheet.create({
     // backgroundColor: 'red',
   },
   editImg: {
-    width: 21,
-    height: 5,
+    width: 28,
+    height: 28,
     resizeMode: 'contain',
   },
   TextSecConatiner: {

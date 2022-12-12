@@ -173,6 +173,11 @@ function Card3({
 
         <View style={styles.sec3T2Container}>
           <Animatable.Image
+            style={{
+              width: 20,
+              height: 20,
+              resizeMode: 'contain',
+            }}
             duration={animtntime}
             easing="ease-out"
             animation={isActive ? 'zoomIn' : false}

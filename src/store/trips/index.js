@@ -76,6 +76,49 @@ class trips {
     }
   };
 
+  @action attemptTounSaveTrip = (obj, i) => {
+    let dt = [...store.Trips.saveTrips];
+
+    if (dt.length > 0) {
+      let ind = dt.findIndex(x => x._id === obj._id);
+      if (ind > -1) {
+        dt.splice(ind, 1);
+      }
+    }
+
+    let body = {
+      savedTrips: dt,
+    };
+
+    console.log('unSave Trip Body : ', body);
+    this.setstLoader(true);
+    let uid = store.User.user._id;
+    let token = store.User.authToken;
+    db.hitApi(db.apis.SAVE_TRIP + uid, 'put', body, token)
+      ?.then(resp => {
+        this.setstLoader(false);
+        console.log(
+          `response unSave Trip   ${db.apis.SAVE_TRIP} : `,
+          resp.data,
+        );
+        let rsp = resp.data.data.savedTrips || [];
+        this.setsaveTrips(rsp);
+        return;
+      })
+      .catch(err => {
+        this.setstLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(`Error in unSave Trip ${db.apis.SAVE_TRIP} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  };
+
   @action SaveTrip = (obj, i, suc) => {
     let dt = [...this.saveTrips];
     let body = {

@@ -131,13 +131,13 @@ function Sent(props) {
               marginTop: '80%',
               alignItems: 'center',
               justifyContent: 'center',
-              alignSelf: 'center',
+              textAlign: 'center',
               fontSize: 13,
               color: theme.color.subTitleLight,
               fontFamily: theme.fonts.fontMedium,
             }}
             onPress={() => getItem(item)}>
-            No any sent offer found
+            You have no pending sent offers
           </Text>
         )}
 

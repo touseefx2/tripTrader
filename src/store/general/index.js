@@ -12,7 +12,7 @@ class general {
   @observable socket = io(db.apis.BASE_URL);
 
   @observable ServerErrorTitle = 'Network Error';
-  @observable ServerErrorMessage = 'Server not respond.';
+  @observable ServerErrorMessage = 'Server not responding';
 
   @observable AppName = 'Trip Trader';
   @observable isServerError = false;

@@ -96,14 +96,14 @@ function UserProfile(props) {
 
   const [isOpenSheet, setisOpenSheet] = useState(false);
 
+  const [isSendMessage, setisSendMessage] = useState(false);
+
   const [modalObj, setmodalObj] = useState(false);
   const [modalChk, setmodalChk] = useState(false);
   const [isModal, setisModal] = useState(false);
-  const [isSendMessage, setisSendMessage] = useState(false);
-
   const [isSendReport, setisSendReport] = useState(false);
-
   const [sendObj, setsendObj] = useState('');
+
   let mloader = store.Userv.homeModalLoder;
 
   const [message, setMessage] = useState('');
@@ -404,7 +404,7 @@ function UserProfile(props) {
     setisOpenSheet(true);
     setTimeout(() => {
       refRBSheet?.current?.open();
-    }, 500);
+    }, 100);
   };
 
   const closeBottomSheet = () => {
@@ -502,7 +502,7 @@ function UserProfile(props) {
     const renderEditButton = () => {
       return (
         <TouchableOpacity
-          style={{position: 'absolute', right: 15, top: 20}}
+          style={{position: 'absolute', right: 15, top: 15}}
           onPress={openBottomSheet}
           activeOpacity={0.7}>
           <View style={styles.editImgConatiner}>

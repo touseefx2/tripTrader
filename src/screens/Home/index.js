@@ -45,6 +45,16 @@ function isObjectEmpty(value) {
   );
 }
 
+function CheckisSave(obj, i, sdt) {
+  if (sdt.length > 0) {
+    let ind = sdt.findIndex(x => x._id === obj._id);
+    if (ind > -1) {
+      return true;
+    }
+  }
+  return false;
+}
+
 let seDayColor = theme.color.button1;
 let ocolor = '#569969';
 let activeOpacity = 0.8;
@@ -357,6 +367,7 @@ function Home(props) {
     }
     return () => {};
   }, [getDataOnce, internet]);
+
   useEffect(() => {
     if (user && user !== 'guest') {
       store.Trips.setsaveTrips(user.savedTrips || []);
@@ -772,6 +783,19 @@ function Home(props) {
     });
   };
 
+  const unSaveTrip = (dt, i) => {
+    Keyboard.dismiss();
+
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.Trips.attemptTounSaveTrip(dt, i);
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
+
   useEffect(() => {
     if (isApplySrch) {
       NetInfo.fetch().then(state => {
@@ -1135,6 +1159,8 @@ function Home(props) {
     let edy = parseInt(new Date(ed).getFullYear());
     let favlbl = '';
 
+    let isSave = CheckisSave(item, index, store.Trips.saveTrips.slice());
+
     if (sdy == edy) {
       favlbl =
         moment(sd).format('MMM DD') + ' - ' + moment(ed).format('MMM DD, YYYY');
@@ -1222,11 +1248,12 @@ function Home(props) {
                 return;
               }
 
-              if (store.User.user.subscriptionStatus == 'freemium') {
-                props.navigation.navigate('Plan');
-              } else {
-                saveTrip(item, index);
-              }
+              // if (store.User.user.subscriptionStatus == 'freemium') {
+              //   props.navigation.navigate('Plan');
+              // } else {
+              if (!isSave) saveTrip(item, index);
+              else unSaveTrip(item, index);
+              // }
             }}
             style={({pressed}) => [
               {opacity: pressed ? 0.7 : 1.0},
@@ -1234,7 +1261,11 @@ function Home(props) {
             ]}>
             <Image
               style={styles.iconSave}
-              source={require('../../assets/images/addSave/img.png')}
+              source={
+                !isSave
+                  ? require('../../assets/images/addSave/img.png')
+                  : require('../../assets/images/delSave/img.png')
+              }
             />
           </Pressable>
         );
@@ -1318,7 +1349,7 @@ function Home(props) {
               style={styles.sec3Icon}
               source={require('../../assets/images/location/img.png')}
             />
-            <View style={{width: '95%'}}>
+            <View style={{width: '94%'}}>
               <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
@@ -3480,7 +3511,7 @@ function Home(props) {
 
         return (
           <>
-            <View style={[styles.fieldContainer, {marginTop: 15}]}>
+            {/* <View style={[styles.fieldContainer, {marginTop: 15}]}>
               <Text style={styles.fieldText}>Repeat for</Text>
               <View
                 style={[
@@ -3553,7 +3584,7 @@ function Home(props) {
                   {isDropDownrDur && renderDropDown('rdur')}
                 </View>
               </View>
-            </View>
+            </View> */}
 
             <View style={[styles.fieldContainer, {marginTop: 15}]}>
               <Text style={styles.fieldText}>End Repeat On</Text>
@@ -5829,6 +5860,7 @@ function Home(props) {
                 paddingHorizontal: 15,
               }}
               data={data}
+              extraData={store.Trips.saveTrips}
               renderItem={ItemView}
               keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={EmptyListMessage}

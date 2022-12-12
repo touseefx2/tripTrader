@@ -5,7 +5,7 @@
 // const BASE_URL = 'https://triptraderapp-backend.herokuapp.com/';
 
 //Local
-const BASE_URL = 'http://192.168.0.106:3001/';
+const BASE_URL = 'http://192.168.0.102:3001/';
 
 //apis
 const GET_CITIES_AREAS = 'api/area/getAllAreas';

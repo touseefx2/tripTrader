@@ -830,4 +830,29 @@ export const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 12,
   },
+  mProfileImgContainerss: {
+    // borderWidth: 2,
+    borderColor: theme.color.fieldBorder,
+    width: 80,
+    height: 80,
+    borderRadius: 80 / 2,
+    borderWidth: 1,
+    borderColor: theme.color.fieldBc,
+
+    // alignItems: 'center',
+    // justifyContent: 'center',
+  },
+  mProfileImgss: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+    borderRadius: 80 / 2,
+  },
+
+  mimageLoader: {
+    height: '100%',
+    width: '100%',
+    // resizeMode: 'contain',
+    borderRadius: 80 / 2,
+  },
 });

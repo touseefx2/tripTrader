@@ -276,8 +276,8 @@ export const styles = StyleSheet.create({
     marginTop: 5,
   },
   sec3Icon: {
-    width: 11,
-    height: 15,
+    width: 20,
+    height: 20,
     resizeMode: 'contain',
   },
   sec3T2: {

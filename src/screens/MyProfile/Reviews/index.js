@@ -45,6 +45,12 @@ function Reviews(props) {
   let loader = store.User.reviewLoader;
   let mloader = store.User.mLoader;
 
+  let userName = '';
+
+  if (user != 'guest' && user) {
+    userName = user.firstName + ' ' + user.lastName;
+  }
+
   const [modalObj, setmodalObj] = useState(false);
   const [modalChk, setmodalChk] = useState(false);
   const [isModal, setisModal] = useState(false);
@@ -602,9 +608,10 @@ function Reviews(props) {
             fontSize: 14,
             color: theme.color.subTitleLight,
             fontFamily: theme.fonts.fontMedium,
+            textAlign: 'center',
           }}>
           {c == 'empty'
-            ? 'No reviews received yet.'
+            ? `${userName} has not received any reviews yet`
             : 'Please connect internet.'}
         </Text>
       </View>

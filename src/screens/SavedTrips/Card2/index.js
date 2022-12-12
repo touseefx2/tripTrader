@@ -142,11 +142,11 @@ function Card2({item, index, user, props, onClickremoveTrips}) {
       return (
         <Pressable
           onPress={() => {
-            if (store.User.user.subscriptionStatus == 'freemium') {
-              props.navigation.navigate('Plan');
-            } else {
-              onClickremoveTrips(item, index);
-            }
+            // if (store.User.user.subscriptionStatus == 'freemium') {
+            //   props.navigation.navigate('Plan');
+            // } else {
+            onClickremoveTrips(item, index);
+            // }
           }}
           style={({pressed}) => [
             {opacity: pressed ? 0.7 : 1.0},

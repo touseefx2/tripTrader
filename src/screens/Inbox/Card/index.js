@@ -214,11 +214,13 @@ function Card({item, index, refreshing, data, user, props, setsearch}) {
 
       onPress={() => {
         store.User.setmessages([]);
-        props.navigation.navigate('Chat', {
+        store.User.setpasObj({
           obj: item,
           title: title,
           rid: u._id,
+          ruser: u,
         });
+        props.navigation.navigate('Chat');
         setsearch('');
       }}
       style={({pressed}) => [

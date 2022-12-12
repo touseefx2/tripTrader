@@ -341,7 +341,7 @@ function SavedTrips(props) {
 
   const toast = useRef(null);
   const toastduration = 700;
-  let headerTitle = 'Saved';
+  let headerTitle = 'Saved Trips';
   let internet = store.General.isInternet;
   let user = store.User.user;
 
@@ -3120,7 +3120,7 @@ function SavedTrips(props) {
 
         return (
           <>
-            <View style={[styles.fieldContainer, {marginTop: 15}]}>
+            {/* <View style={[styles.fieldContainer, {marginTop: 15}]}>
               <Text style={styles.fieldText}>Repeat for</Text>
               <View
                 style={[
@@ -3193,7 +3193,7 @@ function SavedTrips(props) {
                   {isDropDownrDur && renderDropDown('rdur')}
                 </View>
               </View>
-            </View>
+            </View> */}
 
             <View style={[styles.fieldContainer, {marginTop: 15}]}>
               <Text style={styles.fieldText}>End Repeat On</Text>

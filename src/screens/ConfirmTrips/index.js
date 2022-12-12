@@ -179,7 +179,7 @@ function ConfirmTrips(props) {
               fontFamily: theme.fonts.fontMedium,
             }}
             onPress={() => getItem(item)}>
-            No confirm offer found
+            No confirmed trips found
           </Text>
         )}
 
@@ -405,7 +405,7 @@ function ConfirmTrips(props) {
       isMyTrip = true;
     }
 
-    let  user= isMyTrip ? item.offeredBy : item.offeredTo;
+    let user = isMyTrip ? item.offeredBy : item.offeredTo;
     let ofer = isMyTrip ? item.hostTrip : item.offeredTrip;
     let trade = isMyTrip ? item.offeredTrip : item.hostTrip;
     let offernote = item.note || '';

@@ -141,7 +141,7 @@ function Trips(props) {
           marginTop: '45%',
           alignItems: 'center',
           justifyContent: 'center',
-          alignSelf: 'center',
+          textAlign: 'center',
         }}>
         <Text
           style={{
@@ -150,7 +150,7 @@ function Trips(props) {
             fontFamily: theme.fonts.fontMedium,
           }}>
           {c == 'empty'
-            ? 'No trips available at this time'
+            ? 'You have not created any trips yet'
             : 'Please connect internet.'}
         </Text>
       </View>
@@ -212,7 +212,7 @@ function Trips(props) {
             numberOfLines={1}
             ellipsizeMode="tail"
             style={styles.filedTitle}>
-            for trade
+            In Return For
           </Text>
           <Text
             numberOfLines={1}

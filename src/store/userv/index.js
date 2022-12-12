@@ -1240,7 +1240,7 @@ class userv {
   @action SendReportUser = (body, suc) => {
     this.sethomeModalLoder(true);
     console.log('SendReportUser body : ', body);
-    db.hitApi(db.apis.SEND_REPORT_USER, 'post', body, this.authToken)
+    db.hitApi(db.apis.SEND_REPORT_USER, 'post', body, store.User.authToken)
       ?.then(resp => {
         this.sethomeModalLoder(false);
         console.log(
@@ -1294,7 +1294,7 @@ class userv {
     let uid1 = store.User.user._id;
 
     let params = uid1 + '/' + uid2;
-    db.hitApi(db.apis.UNFOLLOW_USER + params, 'put', {}, this.authToken)
+    db.hitApi(db.apis.UNFOLLOW_USER + params, 'put', {}, store.User.authToken)
       ?.then(resp => {
         console.log(
           `response UNFOLLOW_USER,  ${db.apis.UNFOLLOW_USER}${params} : `,
@@ -1333,7 +1333,7 @@ class userv {
     let uid1 = store.User.user._id;
 
     let params = uid1 + '/' + uid2;
-    db.hitApi(db.apis.FOLLOW_USER + params, 'put', {}, this.authToken)
+    db.hitApi(db.apis.FOLLOW_USER + params, 'put', {}, store.User.authToken)
       ?.then(resp => {
         console.log(
           `response FOLLOW_USER,  ${db.apis.FOLLOW_USER}${params} : `,
@@ -1342,12 +1342,7 @@ class userv {
         setTimeout(() => {
           setl(false);
         }, 1000);
-        this.attemptToGetHome(
-          uid2,
-          () => {},
-          c => sflwrs(c),
-          c => sflwng(c),
-        );
+        this.attemptToGetHome(uid2, () => {}, sflwrs, sflwng);
         this.myUserGetGeneral('');
       })
       .catch(err => {
@@ -1372,7 +1367,7 @@ class userv {
     let uid1 = store.User.user._id;
 
     let params = uid1 + '/' + uid2;
-    db.hitApi(db.apis.BLOCK_USER + params, 'put', {}, this.authToken)
+    db.hitApi(db.apis.BLOCK_USER + params, 'put', {}, store.User.authToken)
       ?.then(resp => {
         console.log(
           `response  BlockUser,  ${db.apis.BLOCK_USER}${params} : `,
@@ -1412,7 +1407,7 @@ class userv {
     let uid1 = store.User.user._id;
 
     let params = uid1 + '/' + uid2;
-    db.hitApi(db.apis.UNBLOCK_USER + params, 'put', {}, this.authToken)
+    db.hitApi(db.apis.UNBLOCK_USER + params, 'put', {}, store.User.authToken)
       ?.then(resp => {
         console.log(
           `response  unBlockUser,  ${db.apis.UNBLOCK_USER}${params} : `,
