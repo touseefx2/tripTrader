@@ -29,7 +29,6 @@ import {Image as ImageCompressor} from 'react-native-compressor';
 import {request, PERMISSIONS, check} from 'react-native-permissions';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
 import Modal from 'react-native-modal';
-
 import {
   responsiveHeight,
   responsiveWidth,
@@ -37,7 +36,7 @@ import {
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
 import IntentLauncher from 'react-native-intent-launcher';
-
+import * as Animatable from 'react-native-animatable';
 import {ScrollView} from 'react-native-gesture-handler';
 import {Calendar} from 'react-native-calendars';
 import moment, {duration} from 'moment';
@@ -101,6 +100,8 @@ function NewTrips(props) {
       disableTouchEvent: true,
     },
   };
+
+  let anmtnTime = 1500;
 
   let seDayColor = theme.color.button1;
   let ocolor = '#569969';
@@ -203,6 +204,14 @@ function NewTrips(props) {
   const toastduration = 700;
   let editTrip = store.User.editTripObj;
   let isEdit = store.User.editTrip ? true : false;
+
+  const [isTripSusIndication, setisTripSusIndication] = useState(false);
+  const openTripSuspendIndication = () => {
+    setisTripSusIndication(true);
+  };
+  const closeTripSuspendIndication = () => {
+    setisTripSusIndication(false);
+  };
 
   const [isDisableToday2, setisDisableToday2] = useState(false);
 
@@ -911,7 +920,17 @@ function NewTrips(props) {
   };
 
   const setIsTripCreatSuc = v => {
-    setisTripCreate(v);
+    if (store.User.user.subscriptionStatus == 'freemium') {
+      setTimeout(() => {
+        setisTripCreate(v);
+        closeTripSuspendIndication();
+        store.User.setctripLoader(false);
+      }, anmtnTime + 500);
+    } else {
+      store.User.setctripLoader(false);
+      closeTripSuspendIndication();
+      setisTripCreate(v);
+    }
   };
 
   function titleCase(str) {
@@ -997,11 +1016,22 @@ function NewTrips(props) {
         }
 
         console.log('Add Trip Object : ', obj);
+        if (store.User.user.subscriptionStatus == 'freemium') {
+          openTripSuspendIndication();
+        }
         store.User.setctripLoader(true);
         if (photos.length <= 0) {
-          store.User.attemptToCreateTrip(obj, setIsTripCreatSuc);
+          store.User.attemptToCreateTrip(
+            obj,
+            setIsTripCreatSuc,
+            closeTripSuspendIndication,
+          );
         } else {
-          store.User.attemptToCreateTripUploadImage(obj, setIsTripCreatSuc);
+          store.User.attemptToCreateTripUploadImage(
+            obj,
+            setIsTripCreatSuc,
+            closeTripSuspendIndication,
+          );
         }
       } else {
         // seterrorMessage('Please connect internet');
@@ -3007,7 +3037,7 @@ function NewTrips(props) {
     let abs = Platform.OS == 'ios' ? false : true;
     return (
       <utils.DropDown
-        // search={true}
+        search={true}
         data={data}
         onSelectItem={d => {
           onclickSelect(d);
@@ -3095,18 +3125,18 @@ function NewTrips(props) {
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}>
-            <View style={[styles.inputConatiner, {width: '58%'}]}>
+            <View style={[styles.inputConatiner, {width: '56%'}]}>
               <TextInput
                 value={city}
                 onChangeText={d => {
                   setcity(d);
                 }}
                 placeholder="Example: Southeastern"
-                style={styles.input}
+                style={[styles.input, {fontSize: 13}]}
               />
             </View>
             {/* location */}
-            <View style={{width: '40%'}}>
+            <View style={{width: '42%'}}>
               <TouchableOpacity
                 onPress={() => {
                   closeAllDropDown();
@@ -3931,6 +3961,53 @@ function NewTrips(props) {
       );
     };
 
+    const renderTripSusInd = () => {
+      let st = c
+        ? {
+            paddingHorizontal: 15,
+            alignSelf: 'center',
+          }
+        : {
+            paddingHorizontal: 10,
+            alignSelf: 'center',
+          };
+
+      return (
+        <View style={st}>
+          <View style={{alignSelf: 'center'}}>
+            <Animatable.Image
+              style={{
+                width: 220,
+                height: 150,
+              }}
+              duration={anmtnTime}
+              easing="ease-out"
+              animation={'zoomIn'}
+              source={require('../../assets/gif/smily.gif')}
+            />
+          </View>
+
+          <View style={{paddingBottom: 40}}>
+            <Animatable.Text
+              style={{
+                fontSize: 18,
+                fontFamily: theme.fonts.fontMedium,
+                color: theme.color.button1,
+                textAlign: 'center',
+              }}
+              duration={anmtnTime}
+              easing="ease-out"
+              animation={'zoomIn'}
+              // easing="ease-out"
+              // animation={'slideInLeft'}
+            >
+              Your trip will remain inactive until you subscribe.
+            </Animatable.Text>
+          </View>
+        </View>
+      );
+    };
+
     const renderBottom = () => {
       const renderButton1 = () => {
         return (
@@ -4098,46 +4175,50 @@ function NewTrips(props) {
     };
 
     return (
-      <MModal
-        visible={isReviewTrip}
-        transparent
-        onRequestClose={closeReviewModal}>
-        <SafeAreaView style={styles.modalContainer}>
-          <View style={styles.modalContainer2}>
-            <View
-              onLayout={event => {
-                if (!c) {
-                  let {height} = event.nativeEvent.layout;
-                  setmodalHeight(height);
-                }
-              }}
-              style={style}>
-              {c && (
-                <>
-                  {renderHeader()}
-                  <ScrollView
-                    contentContainerStyle={{paddingHorizontal: 15}}
-                    showsVerticalScrollIndicator={false}
-                    style={{flex: 1}}>
-                    {!isTripCreate && renderTitle()}
-                    {renderFields()}
-                  </ScrollView>
-                  {!isTripCreate ? renderBottom() : renderBottom2()}
-                </>
-              )}
+      <>
+        <MModal
+          visible={isReviewTrip}
+          transparent
+          onRequestClose={closeReviewModal}>
+          <SafeAreaView style={styles.modalContainer}>
+            <View style={styles.modalContainer2}>
+              <View
+                onLayout={event => {
+                  if (!c) {
+                    let {height} = event.nativeEvent.layout;
+                    setmodalHeight(height);
+                  }
+                }}
+                style={style}>
+                {c && (
+                  <>
+                    {!isTripSusIndication && renderHeader()}
+                    <ScrollView
+                      contentContainerStyle={{paddingHorizontal: 15}}
+                      showsVerticalScrollIndicator={false}
+                      style={{flex: 1}}>
+                      {!isTripCreate && !isTripSusIndication && renderTitle()}
+                      {!isTripSusIndication && renderFields()}
+                      {isTripSusIndication && renderTripSusInd()}
+                    </ScrollView>
+                    {!isTripCreate ? renderBottom() : renderBottom2()}
+                  </>
+                )}
 
-              {!c && (
-                <>
-                  {renderHeader()}
-                  {!isTripCreate && renderTitle()}
-                  {renderFields()}
-                  {!isTripCreate ? renderBottom() : renderBottom2()}
-                </>
-              )}
+                {!c && (
+                  <>
+                    {!isTripSusIndication && renderHeader()}
+                    {!isTripCreate && !isTripSusIndication && renderTitle()}
+                    {!isTripSusIndication && renderFields()}
+                    {isTripSusIndication && renderTripSusInd()}
+                    {!isTripCreate ? renderBottom() : renderBottom2()}
+                  </>
+                )}
+              </View>
             </View>
-          </View>
-        </SafeAreaView>
-      </MModal>
+          </SafeAreaView>
+        </MModal>
+      </>
     );
   };
 
@@ -5116,6 +5197,7 @@ function NewTrips(props) {
           closModal={() => setpvm(!pvm)}
         />
       )}
+
       <Toast ref={toast} position="bottom" />
     </View>
   );

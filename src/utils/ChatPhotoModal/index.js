@@ -502,7 +502,7 @@ function ChatPhotoModal(props) {
       style={{padding: 0, margin: 0}}
       onBackButtonPress={closeAddPhotoModal}>
       <SafeAreaView style={styles.modalContainerp}>
-        <View style={[styles.modalp]}>
+        <View style={styles.modalp}>
           {!isShowPrmsn && (
             <>
               <View style={{alignItems: 'center', justifyContent: 'center'}}>

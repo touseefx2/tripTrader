@@ -101,7 +101,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 15,
   },
   modal: {
     width: '100%',
@@ -155,7 +154,7 @@ export const styles = StyleSheet.create({
     elevation: 3,
   },
   rmodal: {
-    width: '100%',
+    width: '90%',
 
     paddingTop: 15,
     alignSelf: 'center',
@@ -172,7 +171,7 @@ export const styles = StyleSheet.create({
     elevation: 3,
   },
   rmodal2: {
-    width: '100%',
+    width: '90%',
 
     padding: 15,
     alignSelf: 'center',

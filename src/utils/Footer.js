@@ -38,6 +38,7 @@ function Footer(props) {
   const specificScreen = () => {
     if (screen == 'Inbox') {
       props.setsearch();
+      props.closeSwipe();
     }
   };
 

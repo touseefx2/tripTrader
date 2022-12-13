@@ -57,7 +57,11 @@ function PrivacyPolicy(props) {
   return (
     <>
       <View style={styles.container}>
-        <utils.DrawerHeader props={props} headerTitle={headerTitle} />
+        <utils.StackHeader
+          bell={true}
+          props={props}
+          headerTitle={headerTitle}
+        />
         {!internet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}></View>

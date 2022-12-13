@@ -783,6 +783,7 @@ function Inbox(props) {
             screen={headerTitle}
             setsearch={() => setsearch('')}
             focusScreen={store.General.focusScreen}
+            closeSwipe={() => closeSwipe()}
           />
 
           <utils.Loader load={loader} />

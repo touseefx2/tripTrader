@@ -101,7 +101,11 @@ function Card1({item, isActive}) {
             </Text>
             <View style={styles.sec3T2Container}>
               <Image
-                style={styles.sec3Icon}
+                style={{
+                  width: 20,
+                  height: 20,
+                  resizeMode: 'contain',
+                }}
                 source={require('../../../assets/images/location/img.png')}
               />
               <View style={{width: '95%'}}>

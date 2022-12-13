@@ -203,6 +203,7 @@ function Settings(props) {
       let title = 'notifications';
       return (
         <TouchableOpacity
+          disabled
           activeOpacity={ao}
           onPress={() => {
             onClick(title);

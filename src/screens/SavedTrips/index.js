@@ -1276,6 +1276,7 @@ function SavedTrips(props) {
       setstep(1);
       settrip(false);
       setmodalHeight(0);
+      closeAllDropDown();
     }
   };
 
@@ -1719,10 +1720,10 @@ function SavedTrips(props) {
           }
         };
 
-        let abs = Platform.OS == 'ios' ? false : true;
+        // let abs = Platform.OS == 'ios' ? false : true;
         return (
-          <theme.DropDown2
-            // search={true}
+          <utils.DropDown
+            search={true}
             data={data}
             onSelectItem={d => {
               onclickSelect(d);
@@ -1731,6 +1732,7 @@ function SavedTrips(props) {
               closeAllDropDown();
             }}
             c={c}
+            footer={true}
             // absolute={abs}
           />
         );
@@ -2179,10 +2181,10 @@ function SavedTrips(props) {
           }
         };
 
-        let abs = Platform.OS == 'ios' ? false : true;
+        // let abs = Platform.OS == 'ios' ? false : true;
         return (
           <utils.DropDown
-            // search={true}
+            search={true}
             data={data}
             onSelectItem={d => {
               onclickSelect(d);
@@ -2412,9 +2414,7 @@ function SavedTrips(props) {
                           textTransform: species == '' ? 'none' : 'capitalize',
                         },
                       ]}>
-                      {species == ''
-                        ? 'Select species'
-                        : species.name + ' k lkn lkjlkj'}
+                      {species == '' ? 'Select species' : species.name}
                     </Text>
                   </View>
                   <utils.vectorIcon.Fontisto

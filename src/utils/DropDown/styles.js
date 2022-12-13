@@ -1,4 +1,5 @@
 import {StyleSheet, Platform} from 'react-native';
+import theme from '../../theme';
 
 let bordercolor = '#D8E1DB';
 
@@ -12,7 +13,7 @@ export const styles = StyleSheet.create({
     borderTopRightRadius: 8,
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
-    backgroundColor: 'white',
+    backgroundColor: theme.color.background,
     zIndex: 100,
     shadowColor: '#000',
     shadowOffset: {
@@ -23,7 +24,7 @@ export const styles = StyleSheet.create({
     shadowRadius: 1.0,
 
     elevation: 1,
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   searchBarContainer: {
     width: '100%',
@@ -32,44 +33,35 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 15,
+    paddingHorizontal: 12,
   },
   rowContainer: {
     width: '100%',
     paddingVertical: 15,
     borderColor: bordercolor,
-    // paddingHorizontal: 15,
+    paddingHorizontal: 12,
   },
   rowContainer2: {
     width: '100%',
     paddingVertical: 15,
     borderColor: bordercolor,
     borderWidth: 1,
-    paddingHorizontal: 15,
-    // backgroundColor: 'white',
+    paddingHorizontal: 12,
+    backgroundColor: theme.color.background,
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 1,
-    // },
-    // shadowOpacity: 0.18,
-    // shadowRadius: 1.0,
-
-    // elevation: 1,
   },
   Text: {
-    color: 'black',
+    color: theme.color.title,
     fontSize: 13,
-    fontFamily: 'Poppins-Regular',
+    fontFamily: theme.fonts.fontNormal,
     lineHeight: 19,
     textTransform: 'capitalize',
   },
   Textc: {
-    color: '#3C6B49',
+    color: theme.color.button1,
     fontSize: 13,
-    fontFamily: 'Poppins-SemiBold',
+    fontFamily: theme.fonts.fontBold,
     lineHeight: 19,
   },
   emptyMessageConatiner: {

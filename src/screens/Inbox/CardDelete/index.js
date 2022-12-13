@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef, memo} from 'react';
-import {View, Pressable} from 'react-native';
+import {View, Pressable, Image} from 'react-native';
 import {styles} from './styles';
 import utils from '../../../utils/index';
 
@@ -24,11 +24,19 @@ function CardDelete({item, index, refreshing, deleteChat}) {
           alignItems: 'center',
           justifyContent: 'center',
         }}>
-        <utils.vectorIcon.MaterialIcons
+        <Image
+          style={{
+            width: 60,
+            height: 60,
+            left: -8,
+          }}
+          source={require('../../../assets/gif/delete.gif')}
+        />
+        {/* <utils.vectorIcon.MaterialIcons
           name="delete-sweep"
           color={'red'}
           size={35}
-        />
+        /> */}
       </View>
     </Pressable>
   );

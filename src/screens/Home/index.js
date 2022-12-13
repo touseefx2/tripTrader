@@ -1669,6 +1669,7 @@ function Home(props) {
       setstep(1);
       settrip(false);
       setmodalHeight(0);
+      closeAllDropDown();
     }
   };
 
@@ -2112,10 +2113,10 @@ function Home(props) {
           }
         };
 
-        let abs = Platform.OS == 'ios' ? false : true;
+        // let abs = Platform.OS == 'ios' ? false : true;
         return (
-          <theme.DropDown2
-            // search={true}
+          <utils.DropDown
+            search={true}
             data={data}
             onSelectItem={d => {
               onclickSelect(d);
@@ -2124,6 +2125,7 @@ function Home(props) {
               closeAllDropDown();
             }}
             c={c}
+            footer={true}
             // absolute={abs}
           />
         );
@@ -2572,10 +2574,10 @@ function Home(props) {
           }
         };
 
-        let abs = Platform.OS == 'ios' ? false : true;
+        //  let abs = Platform.OS == 'ios' ? false : true;
         return (
           <utils.DropDown
-            // search={true}
+            search={true}
             data={data}
             onSelectItem={d => {
               onclickSelect(d);

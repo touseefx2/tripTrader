@@ -1532,12 +1532,12 @@ class user {
     this.homeModalLoder = obj;
   };
 
-  @action attemptToCreateTrip = (body, suc) => {
+  @action attemptToCreateTrip = (body, suc, ctsi) => {
     console.log('create trip body : ', body);
 
     db.hitApi(db.apis.CREATE_TRIP, 'post', body, this.authToken)
       ?.then(resp => {
-        this.setctripLoader(false);
+        // this.setctripLoader(false);
         console.log(
           `response create trip  ${db.apis.CREATE_TRIP} : `,
           resp.data,
@@ -1558,6 +1558,7 @@ class user {
       })
       .catch(err => {
         this.setctripLoader(false);
+        ctsi();
         let msg = err.response.data.message || err.response.status || err;
         console.log(`Error in create trip ${db.apis.CREATE_TRIP} : `, msg);
         if (msg == 503 || msg == 500) {
@@ -1570,7 +1571,7 @@ class user {
       });
   };
 
-  attemptToCreateTripUploadImage(bd, suc) {
+  attemptToCreateTripUploadImage(bd, suc, ctsi) {
     let body = {...bd};
     let imgArr = body.photos;
     console.log('upload trips photo body : ', imgArr);
@@ -1604,7 +1605,7 @@ class user {
         })
         .catch(err => {
           this.setctripLoader(false);
-
+          ctsi();
           let msg = err.response.data.message || err.response.status || err;
           console.log(
             `Error in upload trips photo ${db.apis.IMAGE_UPLOAD} : `,

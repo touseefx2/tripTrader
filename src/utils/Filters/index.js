@@ -509,7 +509,7 @@ function Filters(props) {
         let abs = Platform.OS == 'ios' ? false : true;
         return (
           <utils.DropDown
-            // search={true}
+            search={true}
             data={data}
             onSelectItem={d => {
               onclickSelect(d);
