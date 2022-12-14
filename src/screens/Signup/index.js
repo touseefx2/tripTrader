@@ -336,7 +336,8 @@ function Signup(props) {
         !isShowCameraPrmsn &&
         !isShowGalleryPrmsn
       ) {
-        setSavePerMonth(0);
+        // setSavePerMonth(0);
+        setsave(0);
         setisPhoto1Upload(1);
       }
 
