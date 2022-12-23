@@ -499,7 +499,7 @@ function Notifications(props) {
       <Pressable
         disabled={isread}
         onPress={() =>
-          onclickNotification(isFollow ? 'profile' : title, item._id)
+          onclickNotification(isFollow ? 'profile' : title, item.messageId)
         }
         style={({pressed}) => [
           {opacity: pressed ? 0.7 : 1.0},
@@ -556,16 +556,16 @@ function Notifications(props) {
                   data={data}
                 />
               }
-              ListFooterComponent={
-                data != false && data.length > 0 ? (
-                  <ListFooter
-                    data={data}
-                    d={td}
-                    loadMore={loadMore}
-                    LoadMore={LoadMore}
-                  />
-                ) : null
-              }
+              // ListFooterComponent={
+              //   data != false && data.length > 0 ? (
+              //     <ListFooter
+              //       data={data}
+              //       d={td}
+              //       loadMore={loadMore}
+              //       LoadMore={LoadMore}
+              //     />
+              //   ) : null
+              // }
               ListEmptyComponent={
                 getDataOnce &&
                 !loadFirst &&

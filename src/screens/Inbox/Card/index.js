@@ -150,6 +150,14 @@ function Card({item, index, refreshing, data, user, props, setsearch}) {
   };
 
   const renderText = () => {
+    let st = '';
+    if (type) {
+      if (type == 'text') st = subtitle;
+      else st = type;
+    } else {
+      st = subtitle;
+    }
+
     return (
       <View style={[styles.mtextContainer]}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -201,7 +209,7 @@ function Card({item, index, refreshing, data, user, props, setsearch}) {
 
               lineHeight: 21,
             }}>
-            {type == 'text' ? subtitle : type}
+            {st}
           </Text>
         </View>
       </View>
@@ -213,6 +221,7 @@ function Card({item, index, refreshing, data, user, props, setsearch}) {
       // disabled={refreshing}
 
       onPress={() => {
+        console.log('item : ', item.latestMessage.message);
         store.User.setmessages([]);
         store.User.setpasObj({
           obj: item,

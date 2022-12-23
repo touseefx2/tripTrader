@@ -45,7 +45,12 @@ function Reviews(props) {
   let headerTitle = 'Reviews';
   let internet = store.General.isInternet;
   let u = store.Userv.user;
+  let userName = '';
   const [user, setuser] = useState(u);
+  if (user) {
+    userName = user.firstName + ' ' + user.lastName;
+  }
+
   const [data, setdata] = useState([]);
   const [isOneReview, setisOneReview] = useState(false);
   const [isAnyTrade, setisAnyTrade] = useState(false);
@@ -637,11 +642,11 @@ function Reviews(props) {
         <Text
           style={{
             fontSize: 13,
-            color: theme.color.title,
-            fontFamily: theme.fonts.fontBold,
+            color: theme.color.subTitle,
+            fontFamily: theme.fonts.fontMedium,
             textAlign: 'center',
           }}>
-          No trip reviews received yet.
+          {userName} has not received any reviews yet
         </Text>
         {isAnyTrade != false && !isOneReview && getDataOnce && (
           <View style={{width: '100%', marginTop: 10}}>
@@ -1295,6 +1300,15 @@ function Reviews(props) {
     };
 
     const renderSec1 = () => {
+      let tt = ''; // review trip title
+      let cuid = store.User.user._id; //curetn user id
+
+      if (cuid != isAnyTrade.offeredBy._id) {
+        tt = isAnyTrade.hostTrip.title;
+      } else {
+        tt = isAnyTrade.offeredTrip.title;
+      }
+
       return (
         <>
           <View>
@@ -1315,7 +1329,7 @@ function Reviews(props) {
                 source={require('../../../assets/images/info/img.png')}
               />
             </View>
-            <Text style={styles.mfT1trptitle}>{isAnyTrade.title}</Text>
+            <Text style={styles.mfT1trptitle}>{tt}</Text>
           </View>
 
           <View style={styles.modalFieldConatiner}>

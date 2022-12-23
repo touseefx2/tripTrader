@@ -30,12 +30,11 @@ import theme from '../../theme';
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
 import {ActivityIndicator} from 'react-native-paper';
-import FastImage from 'react-native-fast-image';
-import {ImageSlider} from 'react-native-image-slider-banner';
+
 import {Calendar} from 'react-native-calendars';
 import moment from 'moment/moment';
 import Accordion from 'react-native-collapsible/Accordion';
-import * as Animatable from 'react-native-animatable';
+
 import Card1 from './Card1';
 import Card2 from './Card2';
 import Card3 from './Card3';
@@ -458,7 +457,6 @@ function SavedTrips(props) {
   const [rdur, setrdur] = useState(rdurtn[0]);
   const [isDropDownrDur, setisDropDownrDur] = useState(false);
   const [trade, settrader] = useState('');
-
   const [durNum, setdurNum] = useState(1);
   const [showCalender, setshowCalender] = useState(false);
   const [iDate, setiDate] = useState(new Date());
@@ -1048,6 +1046,53 @@ function SavedTrips(props) {
     }
   }, [dur, durNum, isSelDate1, isSelDate2]);
 
+  // useEffect(() => {
+  //   if (rdurNum == '') {
+  //     setunavlblmarkedDates({});
+  //     return;
+  //   }
+
+  //   let ar = [];
+  //   if (dow.length > 0) {
+  //     dow.map((e, i, a) => {
+  //       if (e.isSel) {
+  //         ar.push(e);
+  //       }
+  //     });
+  //   }
+  //   if (ar.length > 0) {
+  //     var rweekNum = rdurNum;
+  //     var start = moment(isSelDate1);
+  //     var end = moment(endRepOn);
+  //     let mm = {};
+
+  //     ar.map((e, i, a) => {
+  //       var day = e.num; // Sunday=0
+  //       var result = [];
+  //       var current = start.clone();
+  //       while (current.day(7 + day).isBefore(end)) {
+  //         result.push(current.clone());
+  //       }
+  //       if (result.length > 0) {
+  //         result.map((e, i, a) => {
+  //           let d = e.format('YYYY-MM-DD');
+  //           mm[d] = {
+  //             marked: false,
+  //             selected: true,
+  //             customStyles: css,
+  //             selectedColor: 'red',
+  //             disabled: true,
+  //             disableTouchEvent: true,
+  //           };
+  //         });
+  //       }
+  //     });
+  //     setunavlblmarkedDates(mm);
+  //   } else {
+  //     setunavlblmarkedDates({});
+  //   }
+  // }, [dow, endRepOn, rdurNum]);
+
   useEffect(() => {
     if (rdurNum == '') {
       setunavlblmarkedDates({});
@@ -1071,13 +1116,18 @@ function SavedTrips(props) {
       ar.map((e, i, a) => {
         var day = e.num; // Sunday=0
         var result = [];
-        var current = start.clone();
-        while (current.day(7 + day).isBefore(end)) {
-          result.push(current.clone());
+        let tmp = start.clone().day(day);
+        if (tmp.isAfter(start, 'd')) {
+          result.push(tmp.format('YYYY-MM-DD'));
         }
+        while (tmp.isBefore(end)) {
+          tmp.add(7, 'days');
+          result.push(tmp.format('YYYY-MM-DD'));
+        }
+        result.pop();
         if (result.length > 0) {
           result.map((e, i, a) => {
-            let d = e.format('YYYY-MM-DD');
+            let d = moment(e).format('YYYY-MM-DD');
             mm[d] = {
               marked: false,
               selected: true,
@@ -1152,14 +1202,8 @@ function SavedTrips(props) {
   const closeModalAll = () => {
     clearModal1();
     clearModal2();
-
     clearModal3();
     clearModal4();
-    setmodalHeight(0);
-    setisShowUnavliableModal(false);
-    setisDisableToday2(false);
-    setisDisableToday(false);
-    setmindd(undefined);
   };
 
   const closeMModal = () => {
@@ -2841,6 +2885,92 @@ function SavedTrips(props) {
       }
       tt = tt.replace(/, *$/, '');
 
+      // const ApplyModal = () => {
+      //   let doweeks = dow.slice();
+
+      //   let dw = [];
+
+      //   if (doweeks.length > 0) {
+      //     doweeks.map((e, i, a) => {
+      //       if (e.isSel) {
+      //         dw.push(e.name);
+      //       }
+      //     });
+      //   }
+
+      //   let wtxt = '';
+      //   if (dw.length > 0) {
+      //     dw.map((e, i, a) => {
+      //       let sep = a[i + 2] == undefined ? ' and ' : ', ';
+
+      //       if (sep == ' and ' && i == a.length - 1) {
+      //         sep = '';
+      //       }
+      //       wtxt = wtxt + e + sep;
+      //     });
+      //   }
+      //   if (wtxt != '') {
+      //     wtxt = wtxt + ` (${rdur.title == 'weeks' ? 'weekly' : rdur.title})`;
+      //   }
+
+      //   let unw = [];
+      //   let exsd = [];
+
+      //   let ad = [];
+      //   if (!isObjectEmpty(selunmarkeSLCTdDates)) {
+      //     var myObject = selunmarkeSLCTdDates;
+      //     Object.keys(myObject).forEach(function (key, index) {
+      //       ad.push(key);
+      //       exsd.push(key);
+      //     });
+      //   }
+      //   if (!isObjectEmpty(unavlblmarkedDates)) {
+      //     var myObject = unavlblmarkedDates;
+      //     Object.keys(myObject).forEach(function (key, index) {
+      //       ad.push(key);
+      //       unw.push(key);
+      //     });
+      //   }
+
+      //   if (unw.length > 0) {
+      //     unw.sort(function (a, b) {
+      //       return Number(new Date(a)) - Number(new Date(b));
+      //     });
+      //   }
+      //   if (exsd.length > 0) {
+      //     exsd.sort(function (a, b) {
+      //       return Number(new Date(a)) - Number(new Date(b));
+      //     });
+      //   }
+      //   if (ad.length > 0) {
+      //     ad.sort(function (a, b) {
+      //       return Number(new Date(a)) - Number(new Date(b));
+      //     });
+      //   }
+
+      //   let obj = false;
+      //   if (dw.length > 0 || ad.length > 0) {
+      //     obj = {
+      //       days_of_week: dw, //main
+      //       repeat_every: {
+      //         //main
+      //         num: rdurNum,
+      //         title: rdur.title,
+      //         endRepeatOn: endRepOn,
+      //       },
+      //       wtxt: wtxt,
+      //       esd_text: tt,
+
+      //       unavailable_days_of_week: unw, //main
+      //       exclude_specific_dates: exsd, //main
+      //       all_unavailable_dates: ad, //main
+      //     };
+      //   }
+
+      //   setisSetUnavailable(obj);
+      //   setisShowUnavliableModal(false);
+      // };
+
       const ApplyModal = () => {
         let doweeks = dow.slice();
 
@@ -2902,6 +3032,32 @@ function SavedTrips(props) {
           ad.sort(function (a, b) {
             return Number(new Date(a)) - Number(new Date(b));
           });
+
+          let l = ad.length;
+          const a = moment(isSelDate2);
+          const b = moment(isSelDate1);
+          let td = a.diff(b, 'days');
+          td++;
+          let fl = td - l;
+          let totaldays = 0;
+          let t = dur.title;
+          if (t == 'days') {
+            totaldays = durNum;
+          } else if (t == 'weeks') {
+            totaldays = durNum * 7;
+          } else if (t == 'months') {
+            totaldays = durNum * 30;
+          } else if (t == 'years') {
+            totaldays = durNum * 365;
+          }
+
+          if (fl < totaldays) {
+            Alert.alert(
+              '',
+              'Total available dates is less then duration number days',
+            );
+            return;
+          }
         }
 
         let obj = false;
@@ -3120,7 +3276,7 @@ function SavedTrips(props) {
 
         return (
           <>
-            {/* <View style={[styles.fieldContainer, {marginTop: 15}]}>
+            <View style={[styles.fieldContainer, {marginTop: 15}]}>
               <Text style={styles.fieldText}>Repeat for</Text>
               <View
                 style={[
@@ -3193,7 +3349,7 @@ function SavedTrips(props) {
                   {isDropDownrDur && renderDropDown('rdur')}
                 </View>
               </View>
-            </View> */}
+            </View>
 
             <View style={[styles.fieldContainer, {marginTop: 15}]}>
               <Text style={styles.fieldText}>End Repeat On</Text>
@@ -3414,7 +3570,7 @@ function SavedTrips(props) {
           transparent
           onRequestClose={closeModal}>
           <SafeAreaView style={styles.modalContainer}>
-            <View style={[styles.modalContainer2, {margin: 12}]}>
+            <View style={[styles.modalContainer2, {margin: 15}]}>
               <View
                 onLayout={event => {
                   if (!c) {
@@ -3432,7 +3588,7 @@ function SavedTrips(props) {
                       style={{flex: 1}}>
                       {renderTitle()}
                       {renderWeek()}
-                      {renderRepeat()}
+                      {/* {renderRepeat()} */}
                       {renderOtherDates()}
                     </ScrollView>
                     {renderBottom()}
@@ -3444,7 +3600,7 @@ function SavedTrips(props) {
                     {renderHeader()}
                     {renderTitle()}
                     {renderWeek()}
-                    {renderRepeat()}
+                    {/* {renderRepeat()} */}
                     {renderOtherDates()}
                     {renderBottom()}
                   </>
@@ -3894,7 +4050,7 @@ function SavedTrips(props) {
       const renderField = () => {
         let item = modalObj.item;
         let usr = item.hostId;
-        let photo = usr.image || '';
+        let photo = usr?.image || '';
         let isVeirfy = usr.identityStatus == 'verified' ? true : false;
         let userName = usr.firstName + ' ' + usr.lastName;
 
@@ -4194,7 +4350,7 @@ function SavedTrips(props) {
       const renderInfo = () => {
         let usr = item.hostId;
         let userName = usr.firstName + ' ' + usr.lastName;
-        let photo = usr.image ? usr.image : '';
+        let photo = usr?.image ? usr.image : '';
 
         const renderProfile = () => {
           return (
@@ -5830,7 +5986,6 @@ function SavedTrips(props) {
         </SafeAreaView>
 
         {isModal && !isOfferSend && !isSendMessage && renderModal()}
-
         {isOfferSend && renderShowOfferSendModal()}
         {isSendMessage && renderMessageSendModal()}
 

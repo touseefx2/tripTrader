@@ -9,7 +9,7 @@ class general {
     makeObservable(this);
   }
 
-  @observable socket = io(db.apis.BASE_URL);
+  @observable socket = io(db.apis.BASE_URLS);
 
   @observable ServerErrorTitle = 'Network Error';
   @observable ServerErrorMessage = 'Server not responding';

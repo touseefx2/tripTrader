@@ -136,7 +136,7 @@ function EditProfile(props) {
   const [isAddPhotoModal, setisAddPhotoModal] = useState(false);
   const [DT, setDT] = useState(false);
 
-  let isEmailDisable = false;
+  let isEmailDisable = true;
 
   const suc = () => {
     props.navigation.navigate('MyProfile');
@@ -611,18 +611,18 @@ function EditProfile(props) {
         </View>
 
         <View style={styles.Field}>
-          {!isCnicVerf && (
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <utils.vectorIcon.AntDesign
-                name="idcard"
-                color={theme.color.titleGreen}
-                size={20}
-              />
-              <Text style={[styles.FieldTitle1, {marginLeft: 7}]}>
-                Identity Verification
-              </Text>
-            </View>
-          )}
+          {/* {!isCnicVerf && ( */}
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <utils.vectorIcon.AntDesign
+              name="idcard"
+              color={theme.color.titleGreen}
+              size={20}
+            />
+            <Text style={[styles.FieldTitle1, {marginLeft: 7}]}>
+              Identity Verification
+            </Text>
+          </View>
+          {/* )} */}
 
           {!isCnicVerf && (
             <TouchableOpacity
@@ -693,27 +693,29 @@ function EditProfile(props) {
             </View>
           )}
 
-          {!isCnicVerf && (
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: 10,
+          {/* {!isCnicVerf && ( */}
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: 10,
+            }}>
+            <TouchableOpacity
+              activeOpacity={0.6}
+              onPress={() => {
+                setisAddPhotoModal(true);
+                setDT('CNICFront');
               }}>
-              <TouchableOpacity
-                activeOpacity={0.6}
-                onPress={() => {
-                  setisAddPhotoModal(true);
-                  setDT('CNICFront');
-                }}>
-                <Text style={styles.idCardChangeText1}>Click here </Text>
-              </TouchableOpacity>
+              <Text style={styles.idCardChangeText1}>Click here </Text>
+            </TouchableOpacity>
 
-              <Text style={styles.idCardChangeText2}>
-                to upload a new ID card.
-              </Text>
-            </View>
-          )}
+            <Text style={styles.idCardChangeText2}>
+              {cnicFrontImage.uri || cnicFrontImage != ''
+                ? 'to upload a new ID card.'
+                : 'to add ID card'}
+            </Text>
+          </View>
+          {/* )} */}
         </View>
       </View>
     );

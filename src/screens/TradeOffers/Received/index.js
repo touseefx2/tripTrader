@@ -814,7 +814,7 @@ function Received(props) {
               justifyContent: 'space-between',
             }}>
             <View style={{width: '40%'}}>
-              <Text style={titleS}>OFFERED</Text>
+              <Text style={titleS}>OFFERING</Text>
               <Text style={titleM}>{title}</Text>
 
               <View style={{marginTop: 20}}>

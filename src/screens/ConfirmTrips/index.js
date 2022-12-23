@@ -405,9 +405,11 @@ function ConfirmTrips(props) {
       isMyTrip = true;
     }
 
-    let user = isMyTrip ? item.offeredBy : item.offeredTo;
-    let ofer = isMyTrip ? item.hostTrip : item.offeredTrip;
-    let trade = isMyTrip ? item.offeredTrip : item.hostTrip;
+    //confirm trip box
+
+    let user = isMyTrip ? item.offeredBy : item.offeredTo; //user data show
+    let ofer = isMyTrip ? item.hostTrip : item.offeredTrip; //offering
+    let trade = isMyTrip ? item.offeredTrip : item.hostTrip; //for trade
     let offernote = item.note || '';
     let create = CheckDate(item.updatedAt);
 

@@ -611,7 +611,7 @@ function Reviews(props) {
             textAlign: 'center',
           }}>
           {c == 'empty'
-            ? `${userName} has not received any reviews yet`
+            ? `You have not received any reviews yet`
             : 'Please connect internet.'}
         </Text>
       </View>

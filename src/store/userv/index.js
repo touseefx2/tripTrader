@@ -1218,7 +1218,7 @@ class userv {
     let username = store.User.user.firstName + ' ' + store.User.user.lastName;
     let msg = body.message;
 
-    const socket = io(db.apis.BASE_URL);
+    const socket = io(db.apis.BASE_URLS);
     let rn = cid;
     socket.emit('joinRoom', {username, roomName: rn});
 

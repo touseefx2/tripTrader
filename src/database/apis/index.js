@@ -1,11 +1,15 @@
-//Ec2
-// const BASE_URL = 'http://ec2-13-126-189-174.ap-south-1.compute.amazonaws.com/';
+//Local
+// const BASE_URL = 'http://10.7.148.145:3001/';
 
 //Heroko
 // const BASE_URL = 'https://triptraderapp-backend.herokuapp.com/';
 
-//Local
-const BASE_URL = 'http://192.168.0.102:3001/';
+// Ec2
+const BASE_URL = 'http://ec2-13-126-189-174.ap-south-1.compute.amazonaws.com/';
+
+//socket url
+const BASE_URLS =
+  'http://ec2-13-126-189-174.ap-south-1.compute.amazonaws.com:3001';
 
 //apis
 const GET_CITIES_AREAS = 'api/area/getAllAreas';
@@ -41,6 +45,7 @@ const GET_ALL_TRIP = 'api/trip?hostId=';
 const GET_ALL_REVIEWS = 'api/user/reviews/';
 const REPLY_REVIEW = 'api/review/replyToReview/';
 const EDIT_REVIEW = 'api/review/updateAReview/';
+const EDIT_REPLY = 'api/review/editAReply/';
 const DELETE_REVIEW = 'api/review/deleteAReview/';
 const DELETE_MY_REVIEW = 'api/review/';
 const DISPUTE_REVIEW = 'api/review/';
@@ -87,8 +92,9 @@ const UPDATE_LEAVE_REVIEW = 'api/review/updateAReview/';
 
 const GET_LATEST_TRIP = 'api/review/getLatestTrip/v2/';
 
-const GET_NOTIFICATIONS = 'api/notification/count/app?userId=';
-const READ_NOTIFICATIONS = 'api/notification/';
+// const GET_NOTIFICATIONS = 'api/notification/count/app?userId=';
+const GET_NOTIFICATIONS = 'api/notification/app/';
+const READ_NOTIFICATIONS = 'api/notification/markRead/';
 
 const GET_SENT_OFFERS = 'api/offer?offeredBy=';
 const GET_RECEIVED_OFFERS = 'api/offer?offeredTo=';
@@ -99,6 +105,7 @@ const CONFIRM_OFFERS = 'api/offer/confirmTrip/';
 
 export default apis = {
   BASE_URL,
+  BASE_URLS,
   GET_CITIES_AREAS,
   GET_SLIDER_IMAGES,
   GET_FOOD_CATEGORY,
@@ -131,6 +138,7 @@ export default apis = {
   GET_ALL_REVIEWS,
   REPLY_REVIEW,
   EDIT_REVIEW,
+  EDIT_REPLY,
   DELETE_REVIEW,
   DELETE_MY_REVIEW,
   DISPUTE_REVIEW,

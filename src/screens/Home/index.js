@@ -1008,6 +1008,53 @@ function Home(props) {
     }
   }, [dur, durNum, isSelDate1, isSelDate2]);
 
+  // useEffect(() => {
+  //   if (rdurNum == '') {
+  //     setunavlblmarkedDates({});
+  //     return;
+  //   }
+
+  //   let ar = [];
+  //   if (dow.length > 0) {
+  //     dow.map((e, i, a) => {
+  //       if (e.isSel) {
+  //         ar.push(e);
+  //       }
+  //     });
+  //   }
+  //   if (ar.length > 0) {
+  //     var rweekNum = rdurNum;
+  //     var start = moment(isSelDate1);
+  //     var end = moment(endRepOn);
+  //     let mm = {};
+
+  //     ar.map((e, i, a) => {
+  //       var day = e.num; // Sunday=0
+  //       var result = [];
+  //       var current = start.clone();
+  //       while (current.day(7 + day).isBefore(end)) {
+  //         result.push(current.clone());
+  //       }
+  //       if (result.length > 0) {
+  //         result.map((e, i, a) => {
+  //           let d = e.format('YYYY-MM-DD');
+  //           mm[d] = {
+  //             marked: false,
+  //             selected: true,
+  //             customStyles: css,
+  //             selectedColor: 'red',
+  //             disabled: true,
+  //             disableTouchEvent: true,
+  //           };
+  //         });
+  //       }
+  //     });
+  //     setunavlblmarkedDates(mm);
+  //   } else {
+  //     setunavlblmarkedDates({});
+  //   }
+  // }, [dow, endRepOn, rdurNum]);
+
   useEffect(() => {
     if (rdurNum == '') {
       setunavlblmarkedDates({});
@@ -1031,13 +1078,18 @@ function Home(props) {
       ar.map((e, i, a) => {
         var day = e.num; // Sunday=0
         var result = [];
-        var current = start.clone();
-        while (current.day(7 + day).isBefore(end)) {
-          result.push(current.clone());
+        let tmp = start.clone().day(day);
+        if (tmp.isAfter(start, 'd')) {
+          result.push(tmp.format('YYYY-MM-DD'));
         }
+        while (tmp.isBefore(end)) {
+          tmp.add(7, 'days');
+          result.push(tmp.format('YYYY-MM-DD'));
+        }
+        result.pop();
         if (result.length > 0) {
           result.map((e, i, a) => {
-            let d = e.format('YYYY-MM-DD');
+            let d = moment(e).format('YYYY-MM-DD');
             mm[d] = {
               marked: false,
               selected: true,
@@ -1260,11 +1312,11 @@ function Home(props) {
               styles.iconContainer,
             ]}>
             <Image
-              style={styles.iconSave}
+              style={!isSave ? styles.iconSave : styles.iconSave2}
               source={
                 !isSave
                   ? require('../../assets/images/addSave/img.png')
-                  : require('../../assets/images/delSave/img.png')
+                  : require('../../assets/images/homeSave/img.png')
               }
             />
           </Pressable>
@@ -1552,14 +1604,8 @@ function Home(props) {
   const closeModalAll = () => {
     clearModal1();
     clearModal2();
-
     clearModal3();
     clearModal4();
-    setmodalHeight(0);
-    setisShowUnavliableModal(false);
-    setisDisableToday2(false);
-    setisDisableToday(false);
-    setmindd(undefined);
   };
 
   const closeModal = () => {
@@ -3234,6 +3280,92 @@ function Home(props) {
       }
       tt = tt.replace(/, *$/, '');
 
+      // const ApplyModal = () => {
+      //   let doweeks = dow.slice();
+
+      //   let dw = [];
+
+      //   if (doweeks.length > 0) {
+      //     doweeks.map((e, i, a) => {
+      //       if (e.isSel) {
+      //         dw.push(e.name);
+      //       }
+      //     });
+      //   }
+
+      //   let wtxt = '';
+      //   if (dw.length > 0) {
+      //     dw.map((e, i, a) => {
+      //       let sep = a[i + 2] == undefined ? ' and ' : ', ';
+
+      //       if (sep == ' and ' && i == a.length - 1) {
+      //         sep = '';
+      //       }
+      //       wtxt = wtxt + e + sep;
+      //     });
+      //   }
+      //   if (wtxt != '') {
+      //     wtxt = wtxt + ` (${rdur.title == 'weeks' ? 'weekly' : rdur.title})`;
+      //   }
+
+      //   let unw = [];
+      //   let exsd = [];
+
+      //   let ad = [];
+      //   if (!isObjectEmpty(selunmarkeSLCTdDates)) {
+      //     var myObject = selunmarkeSLCTdDates;
+      //     Object.keys(myObject).forEach(function (key, index) {
+      //       ad.push(key);
+      //       exsd.push(key);
+      //     });
+      //   }
+      //   if (!isObjectEmpty(unavlblmarkedDates)) {
+      //     var myObject = unavlblmarkedDates;
+      //     Object.keys(myObject).forEach(function (key, index) {
+      //       ad.push(key);
+      //       unw.push(key);
+      //     });
+      //   }
+
+      //   if (unw.length > 0) {
+      //     unw.sort(function (a, b) {
+      //       return Number(new Date(a)) - Number(new Date(b));
+      //     });
+      //   }
+      //   if (exsd.length > 0) {
+      //     exsd.sort(function (a, b) {
+      //       return Number(new Date(a)) - Number(new Date(b));
+      //     });
+      //   }
+      //   if (ad.length > 0) {
+      //     ad.sort(function (a, b) {
+      //       return Number(new Date(a)) - Number(new Date(b));
+      //     });
+      //   }
+
+      //   let obj = false;
+      //   if (dw.length > 0 || ad.length > 0) {
+      //     obj = {
+      //       days_of_week: dw, //main
+      //       repeat_every: {
+      //         //main
+      //         num: rdurNum,
+      //         title: rdur.title,
+      //         endRepeatOn: endRepOn,
+      //       },
+      //       wtxt: wtxt,
+      //       esd_text: tt,
+
+      //       unavailable_days_of_week: unw, //main
+      //       exclude_specific_dates: exsd, //main
+      //       all_unavailable_dates: ad, //main
+      //     };
+      //   }
+
+      //   setisSetUnavailable(obj);
+      //   setisShowUnavliableModal(false);
+      // };
+
       const ApplyModal = () => {
         let doweeks = dow.slice();
 
@@ -3295,6 +3427,32 @@ function Home(props) {
           ad.sort(function (a, b) {
             return Number(new Date(a)) - Number(new Date(b));
           });
+
+          let l = ad.length;
+          const a = moment(isSelDate2);
+          const b = moment(isSelDate1);
+          let td = a.diff(b, 'days');
+          td++;
+          let fl = td - l;
+          let totaldays = 0;
+          let t = dur.title;
+          if (t == 'days') {
+            totaldays = durNum;
+          } else if (t == 'weeks') {
+            totaldays = durNum * 7;
+          } else if (t == 'months') {
+            totaldays = durNum * 30;
+          } else if (t == 'years') {
+            totaldays = durNum * 365;
+          }
+
+          if (fl < totaldays) {
+            Alert.alert(
+              '',
+              'Total available dates is less then duration number days',
+            );
+            return;
+          }
         }
 
         let obj = false;
@@ -3513,7 +3671,7 @@ function Home(props) {
 
         return (
           <>
-            {/* <View style={[styles.fieldContainer, {marginTop: 15}]}>
+            <View style={[styles.fieldContainer, {marginTop: 15}]}>
               <Text style={styles.fieldText}>Repeat for</Text>
               <View
                 style={[
@@ -3586,7 +3744,7 @@ function Home(props) {
                   {isDropDownrDur && renderDropDown('rdur')}
                 </View>
               </View>
-            </View> */}
+            </View>
 
             <View style={[styles.fieldContainer, {marginTop: 15}]}>
               <Text style={styles.fieldText}>End Repeat On</Text>
@@ -3807,7 +3965,7 @@ function Home(props) {
           transparent
           onRequestClose={closeModal}>
           <SafeAreaView style={styles.modalContainer}>
-            <View style={[styles.modalContainer2, {margin: 12}]}>
+            <View style={[styles.modalContainer2, {margin: 15}]}>
               <View
                 onLayout={event => {
                   if (!c) {
@@ -3825,7 +3983,7 @@ function Home(props) {
                       style={{flex: 1}}>
                       {renderTitle()}
                       {renderWeek()}
-                      {renderRepeat()}
+                      {/* {renderRepeat()} */}
                       {renderOtherDates()}
                     </ScrollView>
                     {renderBottom()}
@@ -3837,7 +3995,7 @@ function Home(props) {
                     {renderHeader()}
                     {renderTitle()}
                     {renderWeek()}
-                    {renderRepeat()}
+                    {/* {renderRepeat()} */}
                     {renderOtherDates()}
                     {renderBottom()}
                   </>

@@ -48,20 +48,21 @@ class notifications {
   }
 
   @action attemptToGetNotifications = (uid, setgetdata) => {
-    console.warn('GetNotifications true: ');
+    console.log('GetNotifications true: ');
     this.setLoader(true);
 
+    let route = uid + '?page=1&limit=10000';
     let token = store.User.authToken;
-    db.hitApi(db.apis.GET_NOTIFICATIONS + uid, 'get', {}, token)
+    db.hitApi(db.apis.GET_NOTIFICATIONS + route, 'get', {}, token)
       ?.then(resp => {
         this.setLoader(false);
 
         console.log(
-          `response GetNotifications   ${db.apis.GET_NOTIFICATIONS} : `,
+          `response GetNotifications   ${db.apis.GET_NOTIFICATIONS + route} : `,
           resp.data,
         );
         let dt = resp.data.data || [];
-        let count = resp.data.count[0].unread || 0;
+        let count = resp.data.count[0].unRead || 0;
         setgetdata(true);
         // // this.setnotificationsTotal();
         this.setnotifications(dt);
@@ -211,7 +212,7 @@ class notifications {
 
         let msg = err.response.data.message || err.response.status || err;
         console.log(
-          `Error in GetNotifications ${db.apis.GET_NOTIFICATIONS} : `,
+          `Error in GetNotifications ${db.apis.GET_NOTIFICATIONS + route} : `,
           msg,
         );
         if (msg == 503 || msg == 500) {
@@ -232,13 +233,17 @@ class notifications {
   };
 
   @action attemptToReadNotifications = nid => {
-    console.warn('Read Notification true: ');
+    console.log('Read Notification true: ');
     this.setLoader(true);
     let token = store.User.authToken;
-    db.hitApi(db.apis.READ_NOTIFICATIONS + nid, 'put', {isRead: true}, token)
+    let route = store.User.user._id + '/' + nid;
+    // isRead: true
+    db.hitApi(db.apis.READ_NOTIFICATIONS + route, 'put', {}, token)
       ?.then(resp => {
         console.log(
-          `response Read Notification   ${db.apis.READ_NOTIFICATIONS} : `,
+          `response Read Notification   ${
+            db.apis.READ_NOTIFICATIONS + route
+          } : `,
           resp.data,
         );
 
@@ -253,7 +258,7 @@ class notifications {
       .catch(err => {
         let msg = err.response.data.message || err.response.status || err;
         console.log(
-          `Error in Read Notification ${db.apis.READ_NOTIFICATIONS} : `,
+          `Error in Read Notification ${db.apis.READ_NOTIFICATIONS + route} : `,
           msg,
         );
         if (msg == 503 || msg == 500) {

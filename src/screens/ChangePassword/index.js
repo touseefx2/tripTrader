@@ -197,7 +197,7 @@ function ChangePassword(props) {
         text = Emptycp
           ? 'Please enter confirm password'
           : invalidCP
-          ? 'Confirm passwords does match'
+          ? 'Confirm passwords does not match'
           : '';
       }
 

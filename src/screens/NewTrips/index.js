@@ -668,15 +668,19 @@ function NewTrips(props) {
 
       ar.map((e, i, a) => {
         var day = e.num; // Sunday=0
-
         var result = [];
-        var current = start.clone();
-        while (current.day(7 + day).isBefore(end)) {
-          result.push(current.clone());
+        let tmp = start.clone().day(day);
+        if (tmp.isAfter(start, 'd')) {
+          result.push(tmp.format('YYYY-MM-DD'));
         }
+        while (tmp.isBefore(end)) {
+          tmp.add(7, 'days');
+          result.push(tmp.format('YYYY-MM-DD'));
+        }
+        result.pop();
         if (result.length > 0) {
           result.map((e, i, a) => {
-            let d = e.format('YYYY-MM-DD');
+            let d = moment(e).format('YYYY-MM-DD');
             mm[d] = {
               marked: false,
               selected: true,
@@ -1631,8 +1635,8 @@ function NewTrips(props) {
   const renderUNavlblModal = () => {
     let c = modalHeight >= maxModalHeight ? true : false;
     let style = c
-      ? [styles.umodal, {paddingTop: 0, height: maxModalHeight}]
-      : styles.umodal2;
+      ? [styles.umodal, {paddingTop: 0, height: maxModalHeight, width: '90%'}]
+      : [styles.umodal2, {width: '90%'}];
 
     let tt = '';
 
@@ -1779,6 +1783,32 @@ function NewTrips(props) {
         ad.sort(function (a, b) {
           return Number(new Date(a)) - Number(new Date(b));
         });
+
+        let l = ad.length;
+        const a = moment(isSelDate2);
+        const b = moment(isSelDate1);
+        let td = a.diff(b, 'days');
+        td++;
+        let fl = td - l;
+        let totaldays = 0;
+        let t = dur.title;
+        if (t == 'days') {
+          totaldays = durNum;
+        } else if (t == 'weeks') {
+          totaldays = durNum * 7;
+        } else if (t == 'months') {
+          totaldays = durNum * 30;
+        } else if (t == 'years') {
+          totaldays = durNum * 365;
+        }
+
+        if (fl < totaldays) {
+          Alert.alert(
+            '',
+            'Total available dates is less then duration number days',
+          );
+          return;
+        }
       }
 
       let obj = false;
@@ -1955,7 +1985,7 @@ function NewTrips(props) {
 
       return (
         <>
-          {/* <View style={[styles.fieldContainer, {marginTop: 15}]}>
+          <View style={[styles.fieldContainer, {marginTop: 15}]}>
             <Text style={styles.fieldText}>Repeat for</Text>
             <View
               style={[
@@ -2028,7 +2058,7 @@ function NewTrips(props) {
                 {isDropDownrDur && renderDropDown('rdur')}
               </View>
             </View>
-          </View> */}
+          </View>
 
           <View style={[styles.fieldContainer, {marginTop: 15}]}>
             <Text style={styles.fieldText}>End Repeat On</Text>
@@ -2228,7 +2258,7 @@ function NewTrips(props) {
                     style={{flex: 1}}>
                     {renderTitle()}
                     {renderWeek()}
-                    {renderRepeat()}
+                    {/* {renderRepeat()} */}
                     {renderOtherDates()}
                   </ScrollView>
                   {renderBottom()}
@@ -2240,7 +2270,7 @@ function NewTrips(props) {
                   {renderHeader()}
                   {renderTitle()}
                   {renderWeek()}
-                  {renderRepeat()}
+                  {/* {renderRepeat()} */}
                   {renderOtherDates()}
                   {renderBottom()}
                 </>

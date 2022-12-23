@@ -157,16 +157,24 @@ function Trips(props) {
     );
   };
 
-  const formatDate = date => {
-    var dd = moment(date).format('MMM DD, YYYY');
-    return dd;
-  };
-
   const renderShowData = ({item, index}) => {
     let title = item.tradeType || '';
     let offer = item.title || '';
     let trade = item.returnActivity || '';
-    let availability = item.availableFrom || '';
+    let sd = item.availableFrom;
+    let sdy = parseInt(new Date(sd).getFullYear());
+    let ed = item.availableTo;
+    let edy = parseInt(new Date(ed).getFullYear());
+    let availability = '';
+    if (sdy == edy) {
+      availability =
+        moment(sd).format('MMM DD') + ' - ' + moment(ed).format('MMM DD, YYYY');
+    } else {
+      availability =
+        moment(sd).format('MMM DD, YYYY') +
+        ' - ' +
+        moment(ed).format('MMM DD, YYYY');
+    }
     let status = item.status || '';
     let c = status == 'suspended' ? true : false;
     let tc = theme.color.boxTitle;
@@ -255,7 +263,7 @@ function Trips(props) {
         </View> */}
 
         <View style={styles.fieldContainer}>
-          <View style={{width: '50%'}}>
+          <View style={{width: '60%'}}>
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
@@ -269,7 +277,7 @@ function Trips(props) {
                 styles.filedTitle2,
                 {color: !c ? tc : theme.color.subTitleLight},
               ]}>
-              {formatDate(availability)}
+              {availability}
             </Text>
           </View>
           <Pressable

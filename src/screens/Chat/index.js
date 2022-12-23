@@ -42,7 +42,7 @@ export default observer(Chat);
 let guest = require('../../assets/images/drawer/guest/img.png');
 
 function Chat(props) {
-  const socket = io(db.apis.BASE_URL);
+  const socket = io(db.apis.BASE_URLS);
 
   let maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);

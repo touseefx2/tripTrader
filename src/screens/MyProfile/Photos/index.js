@@ -171,7 +171,7 @@ function Photos(props) {
             color: theme.color.subTitleLight,
             fontFamily: theme.fonts.fontMedium,
           }}>
-          {c == 'empty' ? 'No photos added.' : 'Please connect internet.'}
+          {c == 'empty' ? 'No photos added' : 'Please connect internet.'}
         </Text>
       </View>
     );
