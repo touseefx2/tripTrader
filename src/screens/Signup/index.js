@@ -33,10 +33,7 @@ import moment, {months} from 'moment';
 import Modal from 'react-native-modal';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import {Image as ImageCompressor} from 'react-native-compressor';
-import {
-  CreditCardInput,
-  LiteCreditCardInput,
-} from 'react-native-credit-card-input';
+import {LiteCreditCardInput} from 'react-native-credit-card-input';
 import {request, PERMISSIONS, check} from 'react-native-permissions';
 import DatePicker from 'react-native-date-picker';
 import IntentLauncher from 'react-native-intent-launcher';
@@ -566,8 +563,104 @@ function Signup(props) {
     });
   };
 
+  // const buyPlan = () => {
+  //   Keyboard.dismiss();
+
+  //   if (cfn == '') {
+  //     setEmptycfn(true);
+  //     return;
+  //   }
+
+  //   if (isValidCard == 'null') {
+  //     setcardErr('Please enter card number');
+  //     setisValidCard(false);
+  //     return;
+  //   }
+
+  //   if (isValidCard == true) {
+  //     if (iscTerms == false) {
+  //       setEmptycTerms(true);
+  //       return;
+  //     }
+
+  //     // const obj = {
+  //     //   plan: plan,
+  //     //   totalValue: tv,
+  //     //   isPromoApply: isPromoApply,
+  //     // card: {
+  //     //   name: cfn,
+  //     //   number: cn,
+  //     //   expiry: ce,
+  //     //   cvc: ccvc,
+  //     //   type: ct,
+  //     // },
+  //     // };
+
+  //     let tv = plan.type == 'annual' ? totalAnually : monthly;
+  //     tv = isPromoApply ? promoValue : tv;
+  //     let pda = 0;
+  //     if (isPromoApply) {
+  //       let p = (isPromoApply.discount || 0) / 100;
+
+  //       if (plan.type == 'monthly') {
+  //         pda = p * monthly;
+  //       }
+  //       if (plan.type == 'annual') {
+  //         pda = p * totalAnually;
+  //       }
+  //     }
+  //     let subscription = !isPromoApply
+  //       ? {
+  //           title: plan.type,
+  //           charges: plan.charges,
+  //           discount: plan.discount,
+  //           startDate: new Date(),
+  //           endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
+  //           amtPaid: tv,
+  //           status: 'active',
+  //         }
+  //       : {
+  //           title: plan.type,
+  //           charges: plan.charges,
+  //           discount: plan.discount,
+  //           startDate: new Date(),
+  //           endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
+  //           amtPaid: tv,
+  //           status: 'active',
+  //           promoCode: isPromoApply.code,
+  //           promoCodeDiscount: isPromoApply.discount,
+  //           promoCodeDiscountAmt: pda,
+  //         };
+
+  //     const obj = {
+  //       subscription: subscription,
+  //       subscriptionStatus: 'paid',
+  //     };
+
+  //     NetInfo.fetch().then(state => {
+  //       if (state.isConnected) {
+  //         let bd = {
+  //           email: store.User.user.email,
+  //           description: plan.type,
+  //           amount: tv,
+  //         };
+
+  //         store.User.BuyPlan(bd, () => subscribePlan(obj));
+  //       } else {
+  //         // seterrorMessage('Please connect internet');
+  //         Alert.alert('', 'Please connect internet');
+  //       }
+  //     });
+  //   }
+  // };
+
+  // const subscribePlan = obj => {
+  //   store.User.SubPlan(obj, usr._id, token, setErrMessage, subPlanSuc);
+  // };
+
   const subscribePlan = () => {
     Keyboard.dismiss();
+
     if (cfn == '') {
       setEmptycfn(true);
       return;
@@ -589,13 +682,13 @@ function Signup(props) {
       //   plan: plan,
       //   totalValue: tv,
       //   isPromoApply: isPromoApply,
-      //   card: {
-      //     name: cfn,
-      //     number: cn,
-      //     expiry: ce,
-      //     cvc: ccvc,
-      //     type: ct,
-      //   },
+      // card: {
+      //   name: cfn,
+      //   number: cn,
+      //   expiry: ce,
+      //   cvc: ccvc,
+      //   type: ct,
+      // },
       // };
 
       let tv = plan.type == 'annual' ? totalAnually : monthly;
@@ -1586,6 +1679,7 @@ function Signup(props) {
         <>
           <TouchableOpacity
             onPress={subscribePlan}
+            // onPress={buyPlan}
             activeOpacity={0.7}
             style={styles.BottomButton}>
             <Text style={styles.buttonTextBottom}>Subscribe</Text>

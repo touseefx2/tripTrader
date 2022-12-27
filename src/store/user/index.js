@@ -2712,6 +2712,32 @@ class user {
   }
 
   @action.bound
+  BuyPlan(body, suc) {
+    console.warn('Buy Plan body : ', body);
+    this.setregLoader(true);
+    db.hitApi(db.apis.BUY_PLAN + uid, 'put', body, token)
+      ?.then(resp => {
+        this.setregLoader(false);
+        console.log(`response Buy Plan    ${db.apis.BUY_PLAN} : `, resp.data);
+        let rsp = resp.data.data;
+
+        // suc();
+      })
+      .catch(err => {
+        this.setregLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(`Error in Buy Plan ${db.apis.BUY_PLAN} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          // store.General.setisServerError(true);
+          return;
+        }
+        // seterror(msg.toString())
+        Alert.alert('', msg.toString());
+      });
+  }
+
+  @action.bound
   getUserById(uid, token, c) {
     console.warn(' get user by id : ', uid);
     this.setregLoader(true);

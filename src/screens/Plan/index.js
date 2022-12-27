@@ -41,6 +41,7 @@ import {request, PERMISSIONS, check} from 'react-native-permissions';
 import DatePicker from 'react-native-date-picker';
 import IntentLauncher, {IntentConstant} from 'react-native-intent-launcher';
 import * as RNLocalize from 'react-native-localize';
+import {StripeProvider} from '@stripe/stripe-react-native';
 
 export default observer(Plan);
 function Plan(props) {
@@ -1145,6 +1146,11 @@ function Plan(props) {
   };
 
   return (
+    // <StripeProvider
+    //   publishableKey="pk_test_51M9HIuBmhbfqULZ4IstWDtc73GFl6mVRnA4jUcOR9BVRkndz1Ou2FSlOeP4WjGgYqlH4LflMtgUY8foGkY58lHAq00OGfQUjlR"
+    //   // urlScheme="your-url-scheme" // required for 3D Secure and bank redirects
+    //   // merchantIdentifier="merchant.com.{{YOUR_APP_NAME}}" // required for Apple Pay
+    // >
     <View style={styles.container}>
       <ImageBackground
         source={require('../../assets/images/background/img.png')}
@@ -1170,5 +1176,6 @@ function Plan(props) {
 
       {renderStatusBar()}
     </View>
+    // </StripeProvider>
   );
 }

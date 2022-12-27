@@ -1,5 +1,5 @@
 //Local
-// const BASE_URL = 'http://10.7.148.145:3001/';
+// const BASE_URL = 'http://192.168.100.4:3001/';
 
 //Heroko
 // const BASE_URL = 'https://triptraderapp-backend.herokuapp.com/';
@@ -18,6 +18,7 @@ const GET_FOOD_CATEGORY = 'api/category/getAllCategories?branch=';
 const PLACE_ORDER = 'api/orders';
 const REGISTER_USER = 'api/user';
 const UPDATE_USER = 'api/user/';
+const BUY_PLAN = 'api/stripe';
 const FORGOT_PSWD = 'api/user/password/forgot';
 const LOGIN_USER = 'api/user/login';
 const IMAGE_UPLOAD = 'api/upload';
@@ -185,4 +186,5 @@ export default apis = {
   CONFIRM_OFFERS,
   GET_All_Meesages,
   READ_All_Meesages,
+  BUY_PLAN,
 };
