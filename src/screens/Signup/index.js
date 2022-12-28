@@ -38,17 +38,22 @@ import {request, PERMISSIONS, check} from 'react-native-permissions';
 import DatePicker from 'react-native-date-picker';
 import IntentLauncher from 'react-native-intent-launcher';
 import * as RNLocalize from 'react-native-localize';
+import {
+  StripeProvider,
+  CardField,
+  useStripe,
+} from '@stripe/stripe-react-native';
 
 export default observer(Signup);
 function Signup(props) {
+  const {confirmPayment} = useStripe();
+
   const mobileReg = /^[0][3]\d{9}$/;
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
   const cnicReg = /\d{5}\d{8}\d/;
 
   const toast = useRef(null);
   const toastduration = 700;
-
-  let user = store.User.user;
 
   let loader = store.User.regLoader;
 
@@ -59,7 +64,8 @@ function Signup(props) {
   const [isValidCard, setisValidCard] = useState('null');
   const [cardErr, setcardErr] = useState('');
   const [cn, setcn] = useState('');
-  const [ct, setct] = useState('');
+  const [ld, setld] = useState(''); //last 4 digit
+  const [ct, setct] = useState(''); //card type
   const [ce, setce] = useState('');
   const [ccvc, setccvc] = useState('');
   const [inValidcn, setinValidcn] = useState('null');
@@ -114,7 +120,7 @@ function Signup(props) {
 
   const [errorMessage, seterrorMessage] = useState('');
 
-  const [usr, setusr] = useState(false);
+  const [user, setuser] = useState(false);
   const [token, setToken] = useState('');
   const [uphoto, setuphoto] = useState('');
   const [ucnicF, setucnicF] = useState('');
@@ -285,6 +291,7 @@ function Signup(props) {
     setcn('');
     setce('');
     setct('');
+    setld('');
     setpc('');
     setcardErr('');
     setEmptycfn(false);
@@ -553,7 +560,7 @@ function Signup(props) {
           setPhoto1Upload,
           SetUP,
           SetUCnicF,
-          usr._id,
+          user._id,
           token,
         );
       } else {
@@ -563,7 +570,7 @@ function Signup(props) {
     });
   };
 
-  // const buyPlan = () => {
+  // const subscribePlan = () => {
   //   Keyboard.dismiss();
 
   //   if (cfn == '') {
@@ -639,23 +646,13 @@ function Signup(props) {
 
   //     NetInfo.fetch().then(state => {
   //       if (state.isConnected) {
-  //         let bd = {
-  //           email: store.User.user.email,
-  //           description: plan.type,
-  //           amount: tv,
-  //         };
-
-  //         store.User.BuyPlan(bd, () => subscribePlan(obj));
+  //         store.User.SubPlan(obj, usr._id, token, setErrMessage, subPlanSuc);
   //       } else {
   //         // seterrorMessage('Please connect internet');
   //         Alert.alert('', 'Please connect internet');
   //       }
   //     });
   //   }
-  // };
-
-  // const subscribePlan = obj => {
-  //   store.User.SubPlan(obj, usr._id, token, setErrMessage, subPlanSuc);
   // };
 
   const subscribePlan = () => {
@@ -672,24 +669,31 @@ function Signup(props) {
       return;
     }
 
+    if (isValidCard == false) {
+      if (!inValidcn) {
+        setcardErr('Invalid card number');
+        setisValidCard(false);
+        return;
+      }
+
+      if (!inValidce) {
+        setcardErr('Invalid card expiry');
+        setisValidCard(false);
+        return;
+      }
+
+      if (!inValidccvc) {
+        setcardErr('Invalid card cvc');
+        setisValidCard(false);
+        return;
+      }
+    }
+
     if (isValidCard == true) {
       if (iscTerms == false) {
         setEmptycTerms(true);
         return;
       }
-
-      // const obj = {
-      //   plan: plan,
-      //   totalValue: tv,
-      //   isPromoApply: isPromoApply,
-      // card: {
-      //   name: cfn,
-      //   number: cn,
-      //   expiry: ce,
-      //   cvc: ccvc,
-      //   type: ct,
-      // },
-      // };
 
       let tv = plan.type == 'annual' ? totalAnually : monthly;
       tv = isPromoApply ? promoValue : tv;
@@ -713,6 +717,8 @@ function Signup(props) {
             endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
             amtPaid: tv,
             status: 'active',
+            lastDigit: ld,
+            cardBrand: ct,
           }
         : {
             title: plan.type,
@@ -725,6 +731,8 @@ function Signup(props) {
             promoCode: isPromoApply.code,
             promoCodeDiscount: isPromoApply.discount,
             promoCodeDiscountAmt: pda,
+            lastDigit: ld,
+            cardBrand: ct,
           };
 
       const obj = {
@@ -734,12 +742,51 @@ function Signup(props) {
 
       NetInfo.fetch().then(state => {
         if (state.isConnected) {
-          store.User.SubPlan(obj, usr._id, token, setErrMessage, subPlanSuc);
+          const body = {
+            email: store.User.user.email,
+            description: plan?.type,
+            amount: tv * 100,
+          };
+
+          store.User.BuyPlan(body, obj, (d, d2) => SucGetClientsecret(d, d2));
         } else {
           // seterrorMessage('Please connect internet');
           Alert.alert('', 'Please connect internet');
         }
       });
+
+      return;
+    }
+  };
+
+  const SucGetClientsecret = async (dt, obj) => {
+    console.log('data : ', dt);
+    try {
+      const {error, paymentIntent} = await confirmPayment(dt.cs, {
+        paymentMethodType: 'Card',
+        billingDetails: {name: cn},
+      });
+
+      if (error) {
+        store.User.setregLoader(false);
+        console.log(`confirmPayment error: `, error);
+        Alert.alert(`Paymment ${error.code}`, error.message);
+      } else if (paymentIntent) {
+        console.log(`confirmPayment response: `, paymentIntent);
+        // Alert.alert(`Success`, `Payment Succefull: ${paymentIntent.id}`);
+        obj.customerId = dt.cid;
+        store.User.SubPlan(
+          obj,
+          user._id,
+          user.email,
+          token,
+          setErrMessage,
+          subPlanSuc,
+        );
+      }
+    } catch (err) {
+      store.User.setregLoader(false);
+      console.log(`confirmPayment cath error: `, err);
     }
   };
 
@@ -751,7 +798,7 @@ function Signup(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.getUserById(usr._id, token, 'profile');
+        store.User.getUserById(user._id, token, 'profile');
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -767,7 +814,7 @@ function Signup(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.getUserById(usr._id, token, 'home');
+        store.User.getUserById(user._id, token, 'home');
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -792,7 +839,7 @@ function Signup(props) {
     console.log('result : ', r);
     console.log('plan : ', p);
     setToken(t);
-    setusr(r);
+    setuser(r);
     setplans(p);
     setisUserCreate(true);
   };
@@ -1505,24 +1552,54 @@ function Signup(props) {
       setpc(t);
     };
 
+    // const onChangeCard = t => {
+    //   console.log('card : ', t);
+    //   let valid = t.valid;
+    //   let cnvalid = t.status.number;
+    //   let cevalid = t.status.expiry;
+    //   let ccvcvalid = t.status.cvc;
+    //   setisValidCard(valid);
+    //   setinValidcn(cnvalid);
+    //   setinValidce(cevalid);
+    //   setinValidccvc(ccvcvalid);
+    //   let cn = t.values.number;
+    //   let ce = t.values.expiry;
+    //   let ccvc = t.values.cvc;
+    //   let ct = t.values.type;
+    //   setcn(cn);
+    //   setce(ce);
+    //   setccvc(ccvc);
+    //   setct(ct);
+    // };
+
     const onChangeCard = t => {
-      console.log('card : ', t);
-      let valid = t.valid;
-      let cnvalid = t.status.number;
-      let cevalid = t.status.expiry;
-      let ccvcvalid = t.status.cvc;
+      console.log('card detials : ', t);
+      setcardErr('');
+      // let valid = t.complete;
+      let valid = false;
+      let cnvalid = t.validNumber == 'Valid' ? true : false;
+      let cevalid = t.validExpiryDate == 'Valid' ? true : false;
+      let ccvcvalid = t.validCVC == 'Valid' ? true : false;
+
+      if (cnvalid && cevalid && ccvcvalid) {
+        valid = true;
+      }
+
       setisValidCard(valid);
       setinValidcn(cnvalid);
       setinValidce(cevalid);
       setinValidccvc(ccvcvalid);
-      let cn = t.values.number;
-      let ce = t.values.expiry;
-      let ccvc = t.values.cvc;
-      let ct = t.values.type;
-      setcn(cn);
-      setce(ce);
-      setccvc(ccvc);
+
+      let ct = t.brand;
+      let l4 = t.last4;
       setct(ct);
+      setld(l4);
+      // let cn = t.values.number;
+      // let ce = t.values.expiry;
+      // let ccvc = t.values.cvc;
+      // setcn(cn);
+      // setce(ce);
+      // setccvc(ccvc);
     };
 
     const Skip = () => {
@@ -2315,7 +2392,35 @@ function Signup(props) {
                   <Text style={styles.FieldTitle1}>card</Text>
                 </View>
 
-                <View
+                <CardField
+                  postalCodeEnabled={false}
+                  placeholders={{
+                    number: 'Card number',
+                  }}
+                  cardStyle={{
+                    textColor: theme.color.title,
+                    fontSize: 12,
+                    borderColor: theme.color.fieldBorder,
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    fontFamily: theme.fonts.fontNormal,
+                  }}
+                  style={{
+                    width: '100%',
+                    height: 45,
+
+                    // marginVertical: 30,
+                  }}
+                  onCardChange={cardDetails => {
+                    onChangeCard(cardDetails);
+                  }}
+                  onFocus={focusedField => {
+                    console.log('focusField', focusedField);
+                  }}
+                />
+                {isValidCard == false && renderShowFieldError('card')}
+
+                {/* <View
                   style={[
                     [
                       styles.FieldInputCard,
@@ -2331,7 +2436,7 @@ function Signup(props) {
                   ]}>
                   <LiteCreditCardInput onChange={onChangeCard} />
                 </View>
-                {isValidCard == false && renderShowFieldError('card')}
+                {isValidCard == false && renderShowFieldError('card')} */}
               </View>
 
               {isShowPromoFiled && (
@@ -2525,7 +2630,7 @@ function Signup(props) {
                 numberOfLines={1}
                 ellipsizeMode="tail"
                 style={styles.section2Title1}>
-                welcome, {usr.firstName}!
+                welcome, {user.firstName}!
               </Text>
               <View style={styles.section2LogoC}>
                 <Image
@@ -2668,41 +2773,43 @@ function Signup(props) {
   };
 
   return (
-    <View style={styles.container}>
-      <ImageBackground
-        source={require('../../assets/images/background/img.png')}
-        style={styles.container2}>
-        <SafeAreaView style={styles.container2}>
-          <utils.AuthHeader
-            props={props}
-            screen="signup"
-            goBack={() => goBack()}
+    <StripeProvider publishableKey={store.General.Stripe_Publish_Key}>
+      <View style={styles.container}>
+        <ImageBackground
+          source={require('../../assets/images/background/img.png')}
+          style={styles.container2}>
+          <SafeAreaView style={styles.container2}>
+            <utils.AuthHeader
+              props={props}
+              screen="signup"
+              goBack={() => goBack()}
+            />
+            <KeyboardAvoidingView style={{flex: 1}} enabled>
+              <ScrollView
+                style={{paddingHorizontal: 15}}
+                showsVerticalScrollIndicator={false}>
+                {!isUserCreate && renderSection2()}
+
+                {isUserCreate && renderSection2User()}
+              </ScrollView>
+            </KeyboardAvoidingView>
+          </SafeAreaView>
+        </ImageBackground>
+
+        {pvm && (
+          <utils.FullimageModal
+            data={pv}
+            si={0}
+            show={pvm}
+            closModal={() => setpvm(!pvm)}
           />
-          <KeyboardAvoidingView style={{flex: 1}} enabled>
-            <ScrollView
-              style={{paddingHorizontal: 15}}
-              showsVerticalScrollIndicator={false}>
-              {!isUserCreate && renderSection2()}
+        )}
+        <Toast ref={toast} position="center" />
+        <utils.Loader load={loader} />
 
-              {isUserCreate && renderSection2User()}
-            </ScrollView>
-          </KeyboardAvoidingView>
-        </SafeAreaView>
-      </ImageBackground>
-
-      {pvm && (
-        <utils.FullimageModal
-          data={pv}
-          si={0}
-          show={pvm}
-          closModal={() => setpvm(!pvm)}
-        />
-      )}
-      <Toast ref={toast} position="center" />
-      <utils.Loader load={loader} />
-
-      {renderStatusBar()}
-      {renderDateShowModal()}
-    </View>
+        {renderStatusBar()}
+        {renderDateShowModal()}
+      </View>
+    </StripeProvider>
   );
 }

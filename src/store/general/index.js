@@ -14,6 +14,9 @@ class general {
   @observable ServerErrorTitle = 'Network Error';
   @observable ServerErrorMessage = 'Server not responding';
 
+  @observable Stripe_Publish_Key =
+    'pk_test_51M9HIuBmhbfqULZ4IstWDtc73GFl6mVRnA4jUcOR9BVRkndz1Ou2FSlOeP4WjGgYqlH4LflMtgUY8foGkY58lHAq00OGfQUjlR';
+
   @observable AppName = 'Trip Trader';
   @observable isServerError = false;
   @observable photoSelInd = 0;

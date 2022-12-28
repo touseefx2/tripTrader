@@ -29,22 +29,17 @@ import {
 } from 'react-native-responsive-dimensions';
 import Toast from 'react-native-easy-toast';
 import NetInfo from '@react-native-community/netinfo';
-import moment, {months} from 'moment';
-import Modal from 'react-native-modal';
-import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
-import {Image as ImageCompressor} from 'react-native-compressor';
+import {LiteCreditCardInput} from 'react-native-credit-card-input';
 import {
-  CreditCardInput,
-  LiteCreditCardInput,
-} from 'react-native-credit-card-input';
-import {request, PERMISSIONS, check} from 'react-native-permissions';
-import DatePicker from 'react-native-date-picker';
-import IntentLauncher, {IntentConstant} from 'react-native-intent-launcher';
-import * as RNLocalize from 'react-native-localize';
-import {StripeProvider} from '@stripe/stripe-react-native';
+  StripeProvider,
+  CardField,
+  useStripe,
+} from '@stripe/stripe-react-native';
 
 export default observer(Plan);
 function Plan(props) {
+  const {confirmPayment} = useStripe();
+
   const mobileReg = /^[0][3]\d{9}$/;
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
   const cnicReg = /\d{5}\d{8}\d/;
@@ -64,12 +59,13 @@ function Plan(props) {
   const [isValidCard, setisValidCard] = useState('null');
   const [cardErr, setcardErr] = useState('');
   const [cn, setcn] = useState('');
-  const [ct, setct] = useState('');
+  const [ld, setld] = useState(''); //last 4 digit
+  const [ct, setct] = useState(''); //card type
   const [ce, setce] = useState('');
   const [ccvc, setccvc] = useState('');
-  const [inValidcn, setinValidcn] = useState('null');
-  const [inValidce, setinValidce] = useState('null');
-  const [inValidccvc, setinValidccvc] = useState('null');
+  const [inValidcn, setinValidcn] = useState(false);
+  const [inValidce, setinValidce] = useState(false);
+  const [inValidccvc, setinValidccvc] = useState(false);
   const [pc, setpc] = useState('');
   const [isShowPromoFiled, setisShowPromoFiled] = useState(false);
   const [isPromoApply, setisPromoApply] = useState(false);
@@ -177,6 +173,7 @@ function Plan(props) {
     setcn('');
     setce('');
     setct('');
+    setld('');
     setpc('');
     setcardErr('');
     setEmptycfn(false);
@@ -190,53 +187,97 @@ function Plan(props) {
     setisValidCard('null');
   };
 
-  useEffect(() => {
-    if (isValidCard == false) {
-      if (cn == '' || inValidcn == 'incomplete') {
-        setcardErr('Please enter full card number');
-        return;
-      }
-
-      if (cn == '' || inValidcn == 'incomplete') {
-        setcardErr('Please enter full card number');
-        return;
-      }
-
-      if (inValidcn != 'incomplete' && inValidcn == 'invalid') {
-        setcardErr('Card number is invalid');
-        return;
-      }
-
-      if (ce == '' || inValidce == 'incomplete') {
-        setcardErr('Please enter card expiration date');
-        return;
-      }
-
-      if (inValidce == 'invalid') {
-        setcardErr('Card expiration date is invalid');
-        return;
-      }
-
-      if (ccvc == '' || inValidccvc == 'incomplete') {
-        setcardErr('Please enter card cvc number');
-        return;
-      }
-
-      if (inValidccvc == 'invalid') {
-        setcardErr('Card cvc number is invalid');
-        return;
-      }
-    } else if (isValidCard == true) {
-      seterrorMessage('');
-    }
-  }, [isValidCard, ce, cn, ccvc, inValidcn, inValidce, inValidccvc]);
-
   const setErrMessage = c => {
     seterrorMessage(c);
   };
 
+  // const subscribePlan = () => {
+  //   Keyboard.dismiss();
+  //   if (cfn == '') {
+  //     setEmptycfn(true);
+  //     return;
+  //   }
+
+  //   if (isValidCard == 'null') {
+  //     setcardErr('Please enter card number');
+  //     setisValidCard(false);
+  //     return;
+  //   }
+
+  //   if (isValidCard == true) {
+  //     if (iscTerms == false) {
+  //       setEmptycTerms(true);
+  //       return;
+  //     }
+
+  //     // const obj = {
+  //     //   plan: plan,
+  //     //   totalValue: tv,
+  //     //   isPromoApply: isPromoApply,
+  //     //   card: {
+  //     //     name: cfn,
+  //     //     number: cn,
+  //     //     expiry: ce,
+  //     //     cvc: ccvc,
+  //     //     type: ct,
+  //     //   },
+  //     // };
+
+  //     let tv = plan.type == 'annual' ? totalAnually : monthly;
+  //     tv = isPromoApply ? promoValue : tv;
+  //     let pda = 0;
+  //     if (isPromoApply) {
+  //       let p = (isPromoApply.discount || 0) / 100;
+
+  //       if (plan.type == 'monthly') {
+  //         pda = p * monthly;
+  //       }
+  //       if (plan.type == 'annual') {
+  //         pda = p * totalAnually;
+  //       }
+  //     }
+  //     let subscription = !isPromoApply
+  //       ? {
+  //           title: plan.type,
+  //           charges: plan.charges,
+  //           discount: plan.discount,
+  //           startDate: new Date(),
+  //           endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
+  //           amtPaid: tv,
+  //           status: 'active',
+  //         }
+  //       : {
+  //           title: plan.type,
+  //           charges: plan.charges,
+  //           discount: plan.discount,
+  //           startDate: new Date(),
+  //           endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
+  //           amtPaid: tv,
+  //           status: 'active',
+  //           promoCode: isPromoApply.code,
+  //           promoCodeDiscount: isPromoApply.discount,
+  //           promoCodeDiscountAmt: pda,
+  //         };
+
+  //     const obj = {
+  //       subscription: subscription,
+  //       subscriptionStatus: 'paid',
+  //     };
+
+  //     NetInfo.fetch().then(state => {
+  //       if (state.isConnected) {
+  //         store.User.SubPlan(obj, user._id, token, setErrMessage, subPlanSuc);
+  //       } else {
+  //         // seterrorMessage('Please connect internet');
+  //         Alert.alert('', 'Please connect internet');
+  //       }
+  //     });
+  //   }
+  // };
+
   const subscribePlan = () => {
     Keyboard.dismiss();
+
     if (cfn == '') {
       setEmptycfn(true);
       return;
@@ -248,24 +289,31 @@ function Plan(props) {
       return;
     }
 
+    if (isValidCard == false) {
+      if (!inValidcn) {
+        setcardErr('Invalid card number');
+        setisValidCard(false);
+        return;
+      }
+
+      if (!inValidce) {
+        setcardErr('Invalid card expiry');
+        setisValidCard(false);
+        return;
+      }
+
+      if (!inValidccvc) {
+        setcardErr('Invalid card cvc');
+        setisValidCard(false);
+        return;
+      }
+    }
+
     if (isValidCard == true) {
       if (iscTerms == false) {
         setEmptycTerms(true);
         return;
       }
-
-      // const obj = {
-      //   plan: plan,
-      //   totalValue: tv,
-      //   isPromoApply: isPromoApply,
-      //   card: {
-      //     name: cfn,
-      //     number: cn,
-      //     expiry: ce,
-      //     cvc: ccvc,
-      //     type: ct,
-      //   },
-      // };
 
       let tv = plan.type == 'annual' ? totalAnually : monthly;
       tv = isPromoApply ? promoValue : tv;
@@ -289,6 +337,8 @@ function Plan(props) {
             endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
             amtPaid: tv,
             status: 'active',
+            lastDigit: ld,
+            cardBrand: ct,
           }
         : {
             title: plan.type,
@@ -301,6 +351,8 @@ function Plan(props) {
             promoCode: isPromoApply.code,
             promoCodeDiscount: isPromoApply.discount,
             promoCodeDiscountAmt: pda,
+            lastDigit: ld,
+            cardBrand: ct,
           };
 
       const obj = {
@@ -310,12 +362,52 @@ function Plan(props) {
 
       NetInfo.fetch().then(state => {
         if (state.isConnected) {
-          store.User.SubPlan(obj, user._id, token, setErrMessage, subPlanSuc);
+          const body = {
+            email: store.User.user.email,
+            description: plan?.type,
+            amount: tv * 100,
+          };
+
+          store.User.BuyPlan(body, obj, (d, d2) => SucGetClientsecret(d, d2));
         } else {
           // seterrorMessage('Please connect internet');
           Alert.alert('', 'Please connect internet');
         }
       });
+
+      return;
+    }
+  };
+
+  const SucGetClientsecret = async (dt, obj) => {
+    console.log('data : ', dt);
+    try {
+      const {error, paymentIntent} = await confirmPayment(dt.cs, {
+        paymentMethodType: 'Card',
+
+        billingDetails: {name: cn},
+      });
+
+      if (error) {
+        store.User.setregLoader(false);
+        console.log(`confirmPayment error: `, error);
+        Alert.alert(`Paymment ${error.code}`, error.message);
+      } else if (paymentIntent) {
+        console.log(`confirmPayment response: `, paymentIntent);
+        // Alert.alert(`Success`, `Payment Succefull: ${paymentIntent.id}`);
+        obj.customerId = dt.cid;
+        store.User.SubPlan(
+          obj,
+          user._id,
+          user.email,
+          token,
+          setErrMessage,
+          subPlanSuc,
+        );
+      }
+    } catch (err) {
+      store.User.setregLoader(false);
+      console.log(`confirmPayment cath error: `, err);
     }
   };
 
@@ -421,24 +513,54 @@ function Plan(props) {
       setpc(t);
     };
 
+    // const onChangeCard = t => {
+    //   console.log('card : ', t);
+    //   let valid = t.valid;
+    //   let cnvalid = t.status.number;
+    //   let cevalid = t.status.expiry;
+    //   let ccvcvalid = t.status.cvc;
+    //   setisValidCard(valid);
+    //   setinValidcn(cnvalid);
+    //   setinValidce(cevalid);
+    //   setinValidccvc(ccvcvalid);
+    //   let cn = t.values.number;
+    //   let ce = t.values.expiry;
+    //   let ccvc = t.values.cvc;
+    //   let ct = t.values.type;
+    //   setcn(cn);
+    //   setce(ce);
+    //   setccvc(ccvc);
+    //   setct(ct);
+    // };
+
     const onChangeCard = t => {
-      console.log('card : ', t);
-      let valid = t.valid;
-      let cnvalid = t.status.number;
-      let cevalid = t.status.expiry;
-      let ccvcvalid = t.status.cvc;
+      console.log('card detials : ', t);
+      setcardErr('');
+      // let valid = t.complete;
+      let valid = false;
+      let cnvalid = t.validNumber == 'Valid' ? true : false;
+      let cevalid = t.validExpiryDate == 'Valid' ? true : false;
+      let ccvcvalid = t.validCVC == 'Valid' ? true : false;
+
+      if (cnvalid && cevalid && ccvcvalid) {
+        valid = true;
+      }
+
       setisValidCard(valid);
       setinValidcn(cnvalid);
       setinValidce(cevalid);
       setinValidccvc(ccvcvalid);
-      let cn = t.values.number;
-      let ce = t.values.expiry;
-      let ccvc = t.values.cvc;
-      let ct = t.values.type;
-      setcn(cn);
-      setce(ce);
-      setccvc(ccvc);
+
+      let ct = t.brand;
+      let l4 = t.last4;
       setct(ct);
+      setld(l4);
+      // let cn = t.values.number;
+      // let ce = t.values.expiry;
+      // let ccvc = t.values.cvc;
+      // setcn(cn);
+      // setce(ce);
+      // setccvc(ccvc);
     };
 
     const Skip = () => {
@@ -928,7 +1050,35 @@ function Plan(props) {
                   <Text style={styles.FieldTitle1}>card</Text>
                 </View>
 
-                <View
+                <CardField
+                  postalCodeEnabled={false}
+                  placeholders={{
+                    number: 'Card number',
+                  }}
+                  cardStyle={{
+                    textColor: theme.color.title,
+                    fontSize: 12,
+                    borderColor: theme.color.fieldBorder,
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    fontFamily: theme.fonts.fontNormal,
+                  }}
+                  style={{
+                    width: '100%',
+                    height: 45,
+
+                    // marginVertical: 30,
+                  }}
+                  onCardChange={cardDetails => {
+                    onChangeCard(cardDetails);
+                  }}
+                  onFocus={focusedField => {
+                    console.log('focusField', focusedField);
+                  }}
+                />
+                {isValidCard == false && renderShowFieldError('card')}
+
+                {/* <View
                   style={[
                     [
                       styles.FieldInputCard,
@@ -944,7 +1094,7 @@ function Plan(props) {
                   ]}>
                   <LiteCreditCardInput onChange={onChangeCard} />
                 </View>
-                {isValidCard == false && renderShowFieldError('card')}
+                {isValidCard == false && renderShowFieldError('card')} */}
               </View>
 
               {isShowPromoFiled && (
@@ -1146,36 +1296,32 @@ function Plan(props) {
   };
 
   return (
-    // <StripeProvider
-    //   publishableKey="pk_test_51M9HIuBmhbfqULZ4IstWDtc73GFl6mVRnA4jUcOR9BVRkndz1Ou2FSlOeP4WjGgYqlH4LflMtgUY8foGkY58lHAq00OGfQUjlR"
-    //   // urlScheme="your-url-scheme" // required for 3D Secure and bank redirects
-    //   // merchantIdentifier="merchant.com.{{YOUR_APP_NAME}}" // required for Apple Pay
-    // >
-    <View style={styles.container}>
-      <ImageBackground
-        source={require('../../assets/images/background/img.png')}
-        style={styles.container2}>
-        <SafeAreaView style={styles.container2}>
-          <utils.AuthHeader
-            props={props}
-            screen="plan"
-            goBack={() => goBack()}
-          />
-          <KeyboardAvoidingView style={{flex: 1}} enabled>
-            <ScrollView
-              style={{paddingHorizontal: 15}}
-              showsVerticalScrollIndicator={false}>
-              {renderSection2()}
-            </ScrollView>
-          </KeyboardAvoidingView>
-        </SafeAreaView>
-      </ImageBackground>
+    <StripeProvider publishableKey={store.General.Stripe_Publish_Key}>
+      <View style={styles.container}>
+        <ImageBackground
+          source={require('../../assets/images/background/img.png')}
+          style={styles.container2}>
+          <SafeAreaView style={styles.container2}>
+            <utils.AuthHeader
+              props={props}
+              screen="plan"
+              goBack={() => goBack()}
+            />
+            <KeyboardAvoidingView style={{flex: 1}} enabled>
+              <ScrollView
+                style={{paddingHorizontal: 15}}
+                showsVerticalScrollIndicator={false}>
+                {renderSection2()}
+              </ScrollView>
+            </KeyboardAvoidingView>
+          </SafeAreaView>
+        </ImageBackground>
 
-      <Toast ref={toast} position="center" />
-      <utils.Loader load={loader} />
+        <Toast ref={toast} position="center" />
+        <utils.Loader load={loader} />
 
-      {renderStatusBar()}
-    </View>
-    // </StripeProvider>
+        {renderStatusBar()}
+      </View>
+    </StripeProvider>
   );
 }

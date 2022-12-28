@@ -50,14 +50,20 @@ function ManageSubscription(props) {
   let isSub = '';
   let isSubObj = false;
   let endDate = '';
-  const card = {
-    number: 4242424242424,
+
+  let card = {
+    number: 4040,
     type: 'visa',
   };
 
   if (user != 'guest' && user) {
     sub = user.subscriptionStatus || '';
     isSubObj = user.subscription || false;
+    if (isSubObj) {
+      card.number = isSubObj.lastDigit;
+      card.type = isSubObj.cardBrand;
+    }
+
     isSub = isSubObj.status;
     endDate = isSubObj.endDate ? isSubObj.endDate : '';
   }
@@ -147,9 +153,6 @@ function ManageSubscription(props) {
     const pt = isSubObj.title ? isSubObj.title : 'annual';
     const pt2 = pt.charAt(0).toUpperCase() + pt.slice(1);
 
-    const cn = card.number ? card.number : 88888888;
-    const ct = card.type ? card.type : 'visa';
-
     let planType = '';
     let crd = '';
 
@@ -161,9 +164,8 @@ function ManageSubscription(props) {
       let amnt = toFixed(isSubObj.charges ? isSubObj.charges : 0, 2);
       planType = pt2 + ` ($${amnt})`;
     }
-    if (card) {
-      crd = ct + ' ....' + cn.toString().slice(-4);
-    }
+
+    crd = card.type + ' .........' + card.number;
 
     return (
       <View style={styles.section2}>

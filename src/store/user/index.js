@@ -5,6 +5,8 @@ import NetInfo from '@react-native-community/netinfo';
 import db from '../../database/index';
 import {Alert} from 'react-native';
 import io from 'socket.io-client';
+import axios from 'axios';
+
 class user {
   constructor() {
     makeObservable(this);
@@ -118,6 +120,10 @@ class user {
   }
 
   @persist('object') @observable user = false;
+  @persist('object') @observable userCardInfo = false;
+  @action setuserCardInfo = obj => {
+    this.userCardInfo = obj;
+  };
 
   @persist('object') @observable followers = [];
   @persist('object') @observable totalfollowers = 0;
@@ -2352,6 +2358,7 @@ class user {
       () => {},
     );
     this.getUserById1(uid, this.authToken, '');
+
     this.attemptToGetInboxes(uid, () => {});
     store.Offers.attemptToGetSentOffers(
       () => {},
@@ -2370,7 +2377,7 @@ class user {
 
   @action.bound
   LoginUser(body, svp, seterror) {
-    console.warn('Login user body : ', body);
+    console.log('Login user body : ', body);
     this.setregLoader(true);
 
     db.hitApi(db.apis.LOGIN_USER, 'post', body, null)
@@ -2683,18 +2690,22 @@ class user {
   }
 
   @action.bound
-  SubPlan(body, uid, token, seterror, suc) {
+  SubPlan(body, uid, email, token, seterror, suc) {
     console.warn('plan subscribe body : ', body);
-    this.setregLoader(true);
+    // this.setregLoader(true);
     db.hitApi(db.apis.UPDATE_USER + uid, 'put', body, token)
       ?.then(resp => {
         this.setregLoader(false);
+        if (this.user?._id) {
+          this.getUserById(this.user._id, this.authToken, '');
+        }
+
+        this.getCardInfo(email);
         console.log(
           `response pan subscribe  ${db.apis.UPDATE_USER + uid} : `,
           resp.data,
         );
         let rsp = resp.data.data;
-
         suc(rsp);
       })
       .catch(err => {
@@ -2712,29 +2723,61 @@ class user {
   }
 
   @action.bound
-  BuyPlan(body, suc) {
-    console.warn('Buy Plan body : ', body);
-    this.setregLoader(true);
-    db.hitApi(db.apis.BUY_PLAN + uid, 'put', body, token)
-      ?.then(resp => {
-        this.setregLoader(false);
-        console.log(`response Buy Plan    ${db.apis.BUY_PLAN} : `, resp.data);
-        let rsp = resp.data.data;
+  getCardInfo(email) {
+    console.log('get card info : ', email);
 
-        // suc();
-      })
-      .catch(err => {
-        this.setregLoader(false);
-        let msg = err.response.data.message || err.response.status || err;
-        console.log(`Error in Buy Plan ${db.apis.BUY_PLAN} : `, msg);
-        if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
-          return;
-        }
-        // seterror(msg.toString())
-        Alert.alert('', msg.toString());
+    // db.hitApi(db.apis.CARD_INFO + email, 'get', {}, this.authToken)
+    //   ?.then(resp => {
+    //     this.setregLoader(false);
+    //     console.log(
+    //       `response get card info  ${db.apis.CARD_INFO + email} : `,
+    //       resp.data,
+    //     );
+    //     // let rsp = resp.data.data;
+    //     // this.setuserCardInfo(rsp)
+    //   })
+    //   .catch(err => {
+    //     console.log(
+    //       `Error in get card info  ${db.apis.CARD_INFO + email} : `,
+    //       err,
+    //     );
+    //   });
+  }
+
+  @action.bound
+  async BuyPlan(body, obj, suc) {
+    console.log('Buy Plan body : ', JSON.stringify(body));
+    this.setregLoader(true);
+
+    try {
+      let resp = await axios.post(`${db.apis.BASE_URL}${db.apis.BUY_PLAN}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
       });
+      // this.setregLoader(false);
+      console.log(`response Buy Plan   ${db.apis.BUY_PLAN} : `, resp.data);
+      let rsp = resp?.data;
+      let cid = rsp?.customerId; //customer id
+      let cs = rsp?.clientSecret; //client secret
+      suc({cid, cs}, obj);
+    } catch (err) {
+      this.setregLoader(false);
+
+      store.General.checkServer(err);
+
+      let msg = err.response.data.message || err.response.status || err;
+      console.log(`Error in Buy Plan ${db.apis.BUY_PLAN} : `, msg);
+      if (msg == 503 || msg == 500) {
+        Alert.alert('', 'Server not response');
+        // store.General.setisServerError(true);
+        return;
+      }
+      // seterror(msg.toString())
+      Alert.alert('', msg.toString());
+    }
   }
 
   @action.bound
@@ -2805,6 +2848,7 @@ class user {
 
         this.addauthToken(token);
         this.setUser(rsp);
+        this.getCardInfo(rsp.email);
       })
       .catch(err => {
         let msg = err.response.data.message || err.response.status || err;
@@ -3053,6 +3097,7 @@ class user {
 
   @action clearcurrentUser = () => {
     this.setUser(false);
+    this.setuserCardInfo(false);
     this.setphotos([]);
     this.setreview([]);
     this.settrips([]);
