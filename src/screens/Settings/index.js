@@ -144,6 +144,14 @@ function Settings(props) {
     }
   };
 
+  const onclickNot = isOn => {
+    store.User.setisNotification(isOn);
+    let body = {
+      notificationEnabled: isOn,
+    };
+    store.User.attemptToEditupdateUserNot(body);
+  };
+
   const renderMain = () => {
     const renderEditProfile = () => {
       let title = 'edit profile';
@@ -241,7 +249,7 @@ function Settings(props) {
                 opacity: 0.5,
               }}
               size="small"
-              onToggle={isOn => store.User.setisNotification(isOn)}
+              onToggle={isOn => onclickNot(isOn)}
             />
           </View>
         </TouchableOpacity>

@@ -503,21 +503,8 @@ function Signup(props) {
       subscriptionStatus: 'freemium',
       role: 'user',
       status: 'active',
+      notificationEnabled: true,
     };
-
-    // const user = {
-    //   first_name: fn,
-    //   last_name: ln,
-    //   email: email,
-    //   dob: dob,
-    //   pswd: pswd,
-    //   termsAccepted: isTerms,
-    //   //not requires if acnt create optional
-    //   photo: '',
-    //   cnic_front_image: '',
-    //   plan: sPlan,
-    //   phone: '',
-    // };
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
@@ -743,7 +730,7 @@ function Signup(props) {
       NetInfo.fetch().then(state => {
         if (state.isConnected) {
           const body = {
-            email: store.User.user.email,
+            email: user.email,
             description: plan?.type,
             amount: tv * 100,
           };
@@ -778,10 +765,11 @@ function Signup(props) {
         store.User.SubPlan(
           obj,
           user._id,
-          user.email,
+          dt.cid,
           token,
           setErrMessage,
           subPlanSuc,
+          'n',
         );
       }
     } catch (err) {

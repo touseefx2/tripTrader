@@ -371,6 +371,7 @@ function Home(props) {
   useEffect(() => {
     if (user && user !== 'guest') {
       store.Trips.setsaveTrips(user.savedTrips || []);
+      store.User.setisNotification(user.notificationEnabled);
     }
   }, [user]);
 

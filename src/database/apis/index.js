@@ -1,11 +1,11 @@
 //Local
-const BASE_URL = 'http://192.168.0.107:3001/';
+// const BASE_URL = 'http://192.168.0.100:3001/';
 
 //Heroko
 // const BASE_URL = 'https://triptraderapp-backend.herokuapp.com/';
 
 // Ec2
-// const BASE_URL = 'http://ec2-13-126-189-174.ap-south-1.compute.amazonaws.com/';
+const BASE_URL = 'http://ec2-13-126-189-174.ap-south-1.compute.amazonaws.com/';
 
 //socket url
 const BASE_URLS =
@@ -19,7 +19,7 @@ const PLACE_ORDER = 'api/orders';
 const REGISTER_USER = 'api/user';
 const UPDATE_USER = 'api/user/';
 const BUY_PLAN = 'api/stripe';
-const CARD_INFO = 'api/stripe?customerEmail=';
+const CARD_INFO = 'api/stripe?customerId=';
 const FORGOT_PSWD = 'api/user/password/forgot';
 const LOGIN_USER = 'api/user/login';
 const IMAGE_UPLOAD = 'api/upload';

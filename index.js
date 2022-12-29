@@ -99,10 +99,12 @@ messaging().onMessage(async remoteMessage => {
     store.Notifications.clearShowNotifications();
   }
 
-  if (store.User.user !== 'guest' && store.User.user) {
-    store.Notifications.setisShowNotifcation(true);
-    store.Notifications.setNotifcationTitle(message);
-    store.Notifications.setNotifcationData(data);
+  if (store.User.isNotification) {
+    if (store.User.user !== 'guest' && store.User.user) {
+      store.Notifications.setisShowNotifcation(true);
+      store.Notifications.setNotifcationTitle(message);
+      store.Notifications.setNotifcationData(data);
+    }
   }
 
   // PushNotification.localNotification({

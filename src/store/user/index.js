@@ -44,7 +44,7 @@ class user {
     this.plans = obj;
   };
 
-  @persist('object') @observable isNotification = true;
+  @persist('object') @observable isNotification = false;
 
   @action setisNotification = obj => {
     this.isNotification = obj;
@@ -120,9 +120,13 @@ class user {
   }
 
   @persist('object') @observable user = false;
-  @persist('object') @observable userCardInfo = false;
+  @persist('object') @observable userCardInfo = [];
+  @observable ucRef = false;
   @action setuserCardInfo = obj => {
     this.userCardInfo = obj;
+  };
+  @action setucRef = obj => {
+    this.ucRef = obj;
   };
 
   @persist('object') @observable followers = [];
@@ -2690,23 +2694,21 @@ class user {
   }
 
   @action.bound
-  SubPlan(body, uid, email, token, seterror, suc) {
-    console.warn('plan subscribe body : ', body);
-    // this.setregLoader(true);
+  SubPlan(body, uid, cid, token, seterror, suc, c) {
+    let chk = c || '';
+    console.log('plan subscribe body : ', body);
+
     db.hitApi(db.apis.UPDATE_USER + uid, 'put', body, token)
       ?.then(resp => {
         this.setregLoader(false);
-        if (this.user?._id) {
-          this.getUserById(this.user._id, this.authToken, '');
-        }
-
-        this.getCardInfo(email);
         console.log(
           `response pan subscribe  ${db.apis.UPDATE_USER + uid} : `,
           resp.data,
         );
         let rsp = resp.data.data;
         suc(rsp);
+
+        this.getCardInfo(cid, chk != 'n' ? 'tt' : '', token);
       })
       .catch(err => {
         this.setregLoader(false);
@@ -2723,25 +2725,48 @@ class user {
   }
 
   @action.bound
-  getCardInfo(email) {
+  getCardInfo(email, chk, token) {
     console.log('get card info : ', email);
+    if (chk == 'tt') {
+      this.setucRef(true);
 
-    // db.hitApi(db.apis.CARD_INFO + email, 'get', {}, this.authToken)
-    //   ?.then(resp => {
-    //     this.setregLoader(false);
-    //     console.log(
-    //       `response get card info  ${db.apis.CARD_INFO + email} : `,
-    //       resp.data,
-    //     );
-    //     // let rsp = resp.data.data;
-    //     // this.setuserCardInfo(rsp)
-    //   })
-    //   .catch(err => {
-    //     console.log(
-    //       `Error in get card info  ${db.apis.CARD_INFO + email} : `,
-    //       err,
-    //     );
-    //   });
+      setTimeout(() => {
+        db.hitApi(db.apis.CARD_INFO + email, 'get', {}, token)
+          ?.then(resp => {
+            this.setucRef(false);
+
+            console.log(
+              `response get card info  ${db.apis.CARD_INFO + email} : `,
+              resp.data.data.data[0].card,
+            );
+            let rsp = resp.data.data;
+            this.setuserCardInfo(rsp.data);
+          })
+          .catch(err => {
+            this.setucRef(false);
+            console.log(
+              `Error in get card info  ${db.apis.CARD_INFO + email} : `,
+              err,
+            );
+          });
+      }, 3000);
+    } else {
+      db.hitApi(db.apis.CARD_INFO + email, 'get', {}, token)
+        ?.then(resp => {
+          console.log(
+            `response get card info  ${db.apis.CARD_INFO + email} : `,
+            resp.data.data.data[0].card,
+          );
+          let rsp = resp.data.data;
+          this.setuserCardInfo(rsp.data);
+        })
+        .catch(err => {
+          console.log(
+            `Error in get card info  ${db.apis.CARD_INFO + email} : `,
+            err,
+          );
+        });
+    }
   }
 
   @action.bound
@@ -2848,7 +2873,9 @@ class user {
 
         this.addauthToken(token);
         this.setUser(rsp);
-        this.getCardInfo(rsp.email);
+        if (rsp.customerId && rsp.customerId != '') {
+          this.getCardInfo(rsp.customerId, '', this.authToken);
+        }
       })
       .catch(err => {
         let msg = err.response.data.message || err.response.status || err;
@@ -3072,7 +3099,7 @@ class user {
     store.Search.clearSearches();
     store.Notifications.clearNotifications();
     store.Offers.clearOffers();
-    this.setisNotification(true);
+
     const socket = store.General.socket;
     socket.emit('user left', {socket: socket.id});
     this.setchk('');
@@ -3097,7 +3124,8 @@ class user {
 
   @action clearcurrentUser = () => {
     this.setUser(false);
-    this.setuserCardInfo(false);
+    this.setuserCardInfo([]);
+    this.setucRef(false);
     this.setphotos([]);
     this.setreview([]);
     this.settrips([]);
@@ -3108,6 +3136,7 @@ class user {
     this.settotalfollowing(0);
     this.setinbox([]);
     this.setunreadInbox(0);
+    this.setisNotification(false);
   };
 
   // attemptToUploadImageEPS(body, p, c, seterror, suc) {
@@ -3154,6 +3183,27 @@ class user {
         }
 
         Alert.alert('', msg.toString());
+      });
+  }
+
+  attemptToEditupdateUserNot(body) {
+    console.log('Edit Update user   body : ', body);
+
+    let uid = this.user._id;
+    db.hitApi(db.apis.UPDATE_USER + uid, 'put', body, this.authToken)
+      ?.then(resp => {
+        console.log(
+          `response Edit Update user  ${db.apis.UPDATE_USER + uid} : `,
+          resp.data,
+        );
+        let rsp = resp.data.data;
+        this.setUser(rsp);
+      })
+      .catch(err => {
+        console.log(
+          `Error in Edit Update user  ${db.apis.UPDATE_USER} : `,
+          err,
+        );
       });
   }
 

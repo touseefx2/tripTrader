@@ -367,6 +367,9 @@ function Plan(props) {
             description: plan?.type,
             amount: tv * 100,
           };
+          if (user.customerId && user.customerId != '') {
+            body.customerId = user.customerId;
+          }
 
           store.User.BuyPlan(body, obj, (d, d2) => SucGetClientsecret(d, d2));
         } else {
@@ -393,13 +396,19 @@ function Plan(props) {
         console.log(`confirmPayment error: `, error);
         Alert.alert(`Paymment ${error.code}`, error.message);
       } else if (paymentIntent) {
-        console.log(`confirmPayment response: `, paymentIntent);
+        console.log(`confirmPayment response: true`);
+        // paymentIntent
         // Alert.alert(`Success`, `Payment Succefull: ${paymentIntent.id}`);
-        obj.customerId = dt.cid;
+
+        if (user.customerId && user.customerId != '') {
+        } else {
+          obj.customerId = dt.cid;
+        }
+
         store.User.SubPlan(
           obj,
           user._id,
-          user.email,
+          dt.cid,
           token,
           setErrMessage,
           subPlanSuc,

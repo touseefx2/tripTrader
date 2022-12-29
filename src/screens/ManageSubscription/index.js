@@ -30,6 +30,7 @@ import Toast from 'react-native-easy-toast';
 
 import {ScrollView} from 'react-native-gesture-handler';
 import moment from 'moment/moment';
+import {ActivityIndicator} from 'react-native-paper';
 
 export default observer(ManageSubscription);
 
@@ -56,23 +57,38 @@ function ManageSubscription(props) {
     type: 'visa',
   };
 
+  let ci = store.User.userCardInfo;
+  let loadCard = store.User.ucRef;
+
+  useEffect(() => {
+    if (user.customerId && user.customerId != '') {
+      store.User.getCardInfo(user.customerId, '', store.User.authToken);
+    }
+  }, []);
+
+  if (ci.length > 0) {
+    let d = ci[0].card;
+    // console.log('card info : ', d);
+    if (d) {
+      card.number = d.last4;
+      card.type = d.brand;
+    }
+  }
+
   if (user != 'guest' && user) {
     sub = user.subscriptionStatus || '';
     isSubObj = user.subscription || false;
-    if (isSubObj) {
-      card.number = isSubObj.lastDigit;
-      card.type = isSubObj.cardBrand;
-    }
-
     isSub = isSubObj.status;
     endDate = isSubObj.endDate ? isSubObj.endDate : '';
   }
+
+  let crd = card.type + ' .........' + card.number;
 
   const loader = store.User.regLoader;
 
   const Cancelsubscription = () => {
     let body = {
-      'subscription.status': 'cancelled',
+      'subscription.status': 'canceled',
     };
 
     NetInfo.fetch().then(state => {
@@ -154,7 +170,6 @@ function ManageSubscription(props) {
     const pt2 = pt.charAt(0).toUpperCase() + pt.slice(1);
 
     let planType = '';
-    let crd = '';
 
     if (pt == 'annual') {
       let amnt = toFixed(isSubObj.charges ? isSubObj.charges : 0, 2);
@@ -164,8 +179,6 @@ function ManageSubscription(props) {
       let amnt = toFixed(isSubObj.charges ? isSubObj.charges : 0, 2);
       planType = pt2 + ` ($${amnt})`;
     }
-
-    crd = card.type + ' .........' + card.number;
 
     return (
       <View style={styles.section2}>
@@ -183,18 +196,28 @@ function ManageSubscription(props) {
         </View>
         <View style={[styles.Fieldp, {marginTop: 5}]}>
           <Text style={styles.FieldpTitle}>Card:</Text>
-          <View style={{width: '80%', marginLeft: 5}}>
-            <Text
-              style={[
-                styles.FieldpTitle,
-                {
-                  fontFamily: theme.fonts.fontBold,
-                  color: theme.color.title,
-                  textTransform: 'capitalize',
-                },
-              ]}>
-              {crd}
-            </Text>
+          <View
+            style={{
+              width: '80%',
+              marginLeft: !loadCard ? 10 : 30,
+              alignItems: 'flex-start',
+            }}>
+            {loadCard && (
+              <ActivityIndicator size={20} color={theme.color.button1} />
+            )}
+            {!loadCard && (
+              <Text
+                style={[
+                  styles.FieldpTitle,
+                  {
+                    fontFamily: theme.fonts.fontBold,
+                    color: theme.color.title,
+                    textTransform: 'capitalize',
+                  },
+                ]}>
+                {crd}
+              </Text>
+            )}
           </View>
         </View>
 
@@ -223,16 +246,8 @@ function ManageSubscription(props) {
 
     let planType = pt + ' (' + status + ')';
 
-    const cn = card.number ? card.number : 88888888;
-    const ct = card.type ? card.type : 'visa';
-
-    let crd = '';
-    if (card) {
-      crd = ct + ' ....' + cn.toString().slice(-4);
-    }
-
     let txt =
-      status == 'cancelled'
+      status == 'canceled'
         ? `Your subscription plan has been ${status} and will not be renewed at the end of your billing cycle. You will continue to have full access until your plan ends on`
         : `Your subscription plan has been ${status} at`;
 
@@ -266,18 +281,28 @@ function ManageSubscription(props) {
         </View>
         <View style={[styles.Fieldp, {marginTop: 5}]}>
           <Text style={styles.FieldpTitle}>Card:</Text>
-          <View style={{width: '80%', marginLeft: 5}}>
-            <Text
-              style={[
-                styles.FieldpTitle,
-                {
-                  fontFamily: theme.fonts.fontBold,
+          <View
+            style={{
+              width: '80%',
+              marginLeft: !loadCard ? 10 : 30,
+              alignItems: 'flex-start',
+            }}>
+            {loadCard && (
+              <ActivityIndicator size={20} color={theme.color.button1} />
+            )}
+            {!loadCard && (
+              <Text
+                style={[
+                  styles.FieldpTitle,
+                  {
+                    fontFamily: theme.fonts.fontBold,
 
-                  textTransform: 'capitalize',
-                },
-              ]}>
-              {crd}
-            </Text>
+                    textTransform: 'capitalize',
+                  },
+                ]}>
+                {crd}
+              </Text>
+            )}
           </View>
         </View>
 
