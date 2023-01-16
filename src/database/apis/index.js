@@ -1,14 +1,12 @@
 //Local
-// const BASE_URL = 'http://192.168.0.100:3001/';
-
+// const BASE_URL = 'http://192.168.0.118:3001/';
 //Heroko
 // const BASE_URL = 'https://triptraderapp-backend.herokuapp.com/';
-
 // Ec2
 const BASE_URL = 'http://ec2-13-126-189-174.ap-south-1.compute.amazonaws.com/';
-
-//socket url
+//Ec2 socket url
 const BASE_URLS =
+  // 'http://192.168.0.118:3001';
   'http://ec2-13-126-189-174.ap-south-1.compute.amazonaws.com:3001';
 
 //apis
@@ -105,6 +103,8 @@ const GET_CONFIRM_OFFERS = 'api/offer/getConfirmedTrips/';
 const CANCEL_OFFER = 'api/offer/declineTrip/';
 const CONFIRM_OFFERS = 'api/offer/confirmTrip/';
 
+const CHECK_IS_EMAIL_EXIST = 'api/user/checkIfEmailExists?email=';
+
 export default apis = {
   BASE_URL,
   BASE_URLS,
@@ -189,4 +189,5 @@ export default apis = {
   READ_All_Meesages,
   BUY_PLAN,
   CARD_INFO,
+  CHECK_IS_EMAIL_EXIST,
 };

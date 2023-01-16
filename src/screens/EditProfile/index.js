@@ -1,46 +1,37 @@
-import React, {useEffect, useState, useRef} from 'react';
+import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
+import NetInfo from '@react-native-community/netinfo';
+import auth from '@react-native-firebase/auth';
+import {observer} from 'mobx-react';
+import moment from 'moment';
+import React, {useRef, useState} from 'react';
 import {
-  View,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
-  Image,
   Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Modal as MModal,
-  TextInput,
+  Image,
   Keyboard,
   KeyboardAvoidingView,
+  Linking,
+  Modal as MModal,
+  PermissionsAndroid,
+  Platform,
+  SafeAreaView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-
-import {styles} from './styles';
-import {observer} from 'mobx-react';
-import store from '../../store/index';
-import utils from '../../utils/index';
-import theme from '../../theme';
-
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from 'react-native-responsive-dimensions';
-import NetInfo from '@react-native-community/netinfo';
-import Toast from 'react-native-easy-toast';
-import moment from 'moment';
-
-import {ActivityIndicator} from 'react-native-paper';
-import {ScrollView} from 'react-native-gesture-handler';
-import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import {Image as ImageCompressor} from 'react-native-compressor';
-
+import DatePicker from 'react-native-date-picker';
+import Toast from 'react-native-easy-toast';
+import {ScrollView} from 'react-native-gesture-handler';
+import IntentLauncher from 'react-native-intent-launcher';
 import IntlPhoneInput from 'react-native-intl-phone-input';
 import * as RNLocalize from 'react-native-localize';
-
-import DatePicker from 'react-native-date-picker';
-
-import IntentLauncher from 'react-native-intent-launcher';
-import {request, PERMISSIONS, check} from 'react-native-permissions';
+import {ActivityIndicator} from 'react-native-paper';
+import {check, PERMISSIONS, request} from 'react-native-permissions';
+import store from '../../store/index';
+import theme from '../../theme';
+import utils from '../../utils/index';
+import {styles} from './styles';
 
 export default observer(EditProfile);
 
@@ -96,6 +87,8 @@ function EditProfile(props) {
     isCnicVerf = user.identityStatus == 'verified' ? true : false;
   }
 
+  const [isOtpModal, setisOtpModal] = useState(false);
+
   const [fn, setfn] = useState(userFName);
   const [Emptyfn, setEmptyfn] = useState(false);
   const [invalidfn, setinvalidfn] = useState(false);
@@ -114,6 +107,7 @@ function EditProfile(props) {
   const [Emptydob, setEmptydob] = useState(false);
 
   const [phone, setphone] = useState(phn);
+
   const [phoneCountryCode, setphoneCountryCode] = useState(cntry);
   const [isVerifyPhone, setisVerifyPhone] = useState(phn != '' ? true : 'a');
   const [invalidphone, setinvalidphone] = useState(false);
@@ -140,6 +134,55 @@ function EditProfile(props) {
 
   const suc = () => {
     props.navigation.navigate('MyProfile');
+  };
+
+  const signoutCurrentUser = () => {
+    if (auth().currentUser) {
+      auth().currentUser.delete();
+      auth().signOut();
+    }
+  };
+
+  const isPhoneExist = chk => {
+    if (!chk) {
+      let imgArr = [];
+
+      if (photo?.uri) {
+        photo.chk = 'Profile';
+        imgArr.push(photo);
+      }
+
+      if (cnicFrontImage?.uri) {
+        cnicFrontImage.chk = 'CnicF';
+        imgArr.push(cnicFrontImage);
+      }
+
+      const body = {
+        firstName: fn,
+        lastName: ln,
+        birthDate: dob,
+        image: photo,
+        identityProof: cnicFrontImage,
+        phone: phone != '' ? phone.substring(1) : phone,
+        phoneCountryCode:
+          phoneCountryCode == '' ? RNLocalize.getCountry() : phoneCountryCode,
+        profileUpdateByUser: true,
+      };
+
+      if (phn !== phone) {
+        console.log('phone change');
+        signoutCurrentUser();
+        setisOtpModal(true);
+        return;
+      } else {
+        if (imgArr.length <= 0) {
+          store.User.attemptToEditupdateUser(body, suc);
+        } else {
+          store.User.attemptToEditUploadImage(body, imgArr, suc);
+        }
+        return;
+      }
+    }
   };
 
   const saveProfile = () => {
@@ -205,7 +248,7 @@ function EditProfile(props) {
         store.User.setregLoader(true);
 
         if (phone !== '') {
-          store.User.isPhoneExistEditProfile(phone, body, imgArr, suc);
+          store.User.isPhoneExistEditProfile(phone, body, imgArr, isPhoneExist);
         } else {
           if (imgArr.length <= 0) {
             store.User.attemptToEditupdateUser(body, suc);
@@ -215,6 +258,45 @@ function EditProfile(props) {
         }
       } else {
         // seterrorMessage('Please connect internet');
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
+
+  const attemptToSaveProfile = () => {
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        let imgArr = [];
+
+        if (photo?.uri) {
+          photo.chk = 'Profile';
+          imgArr.push(photo);
+        }
+
+        if (cnicFrontImage?.uri) {
+          cnicFrontImage.chk = 'CnicF';
+          imgArr.push(cnicFrontImage);
+        }
+
+        const body = {
+          firstName: fn,
+          lastName: ln,
+          birthDate: dob,
+          image: photo,
+          identityProof: cnicFrontImage,
+          phone: phone != '' ? phone.substring(1) : phone,
+          phoneCountryCode:
+            phoneCountryCode == '' ? RNLocalize.getCountry() : phoneCountryCode,
+          profileUpdateByUser: true,
+        };
+
+        store.User.setregLoader(true);
+        if (imgArr.length <= 0) {
+          store.User.attemptToEditupdateUser(body, suc);
+        } else {
+          store.User.attemptToEditUploadImage(body, imgArr, suc);
+        }
+      } else {
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -1152,6 +1234,18 @@ function EditProfile(props) {
           si={0}
           show={pvm}
           closModal={() => setpvm(!pvm)}
+        />
+      )}
+
+      {isOtpModal && (
+        <utils.OtpModal
+          isModal={isOtpModal}
+          setisModal={c => {
+            setisOtpModal(c);
+          }}
+          attemptTosaveProfile={() => attemptToSaveProfile()}
+          phone={phone}
+          signoutCurrentUser={() => signoutCurrentUser()}
         />
       )}
 

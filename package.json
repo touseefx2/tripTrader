@@ -50,6 +50,7 @@
     "react-native-code-input": "^1.0.6",
     "react-native-collapsible": "^1.6.0",
     "react-native-compressor": "^1.5.2",
+    "react-native-confirmation-code-field": "^7.3.1",
     "react-native-connectivity-status": "^1.5.2",
     "react-native-countdown-circle-timer": "^3.0.9",
     "react-native-countdown-component": "^2.7.1",
@@ -87,6 +88,7 @@
     "react-native-ui-xg": "^0.0.6",
     "react-native-vector-icons": "^9.2.0",
     "react-native-version-check": "^3.4.3",
+    "react-native-webview": "^11.26.0",
     "socket.io-client": "^4.5.3",
     "toggle-switch-react-native": "^3.3.0"
   },

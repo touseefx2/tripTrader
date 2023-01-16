@@ -1,10 +1,10 @@
 import {Platform, StyleSheet} from 'react-native';
-import theme from '../../theme/index';
 import {
+  responsiveFontSize,
   responsiveHeight,
-  responsiveScreenFontSize,
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
+import theme from '../../theme/index';
 
 let aph = theme.window.APPBAR_HEIGHT - (Platform.OS == 'ios' ? 20 : 0);
 
@@ -386,5 +386,45 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: theme.fonts.fontBold,
     textTransform: 'capitalize',
+  },
+
+  BottomButtonwebview: {
+    width: responsiveWidth(30),
+    height: responsiveHeight(4),
+    position: 'absolute',
+    bottom: responsiveHeight(3),
+    right: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f25526',
+    borderRadius: 4,
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
+  },
+  loaderwebview: {
+    alignSelf: 'center',
+    marginTop: '90%',
+    position: 'absolute',
+  },
+  LinearGradientwebview: {
+    height: '100%',
+    width: '100%',
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonTextBottomwebview: {
+    color: '#fff',
+    fontSize: responsiveFontSize(2),
+    lineHeight: 19.36,
+    fontFamily: 'Inter-Bold',
   },
 });

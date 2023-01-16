@@ -1,53 +1,59 @@
-import React, {useEffect, useState, useRef} from 'react';
-import {
-  View,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
-  Image,
-  ImageBackground,
-  Linking,
-  ScrollView,
-  TextInput,
-  PermissionsAndroid,
-  Alert,
-  Keyboard,
-  Platform,
-  StatusBar,
-  KeyboardAvoidingView,
-  BackHandler,
-} from 'react-native';
-import {styles} from './styles';
-import {inject, observer} from 'mobx-react';
-import store from '../../store/index';
-import utils from '../../utils/index';
-import theme from '../../theme';
-import {
-  responsiveHeight,
-  responsiveScreenFontSize,
-  responsiveWidth,
-} from 'react-native-responsive-dimensions';
-import Toast from 'react-native-easy-toast';
-import NetInfo from '@react-native-community/netinfo';
-import moment, {months} from 'moment';
-import Modal from 'react-native-modal';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
-import {Image as ImageCompressor} from 'react-native-compressor';
-import {LiteCreditCardInput} from 'react-native-credit-card-input';
-import {request, PERMISSIONS, check} from 'react-native-permissions';
-import DatePicker from 'react-native-date-picker';
-import IntentLauncher from 'react-native-intent-launcher';
-import * as RNLocalize from 'react-native-localize';
+import NetInfo from '@react-native-community/netinfo';
+import auth from '@react-native-firebase/auth';
 import {
-  StripeProvider,
   CardField,
+  StripeProvider,
   useStripe,
 } from '@stripe/stripe-react-native';
+import {observer} from 'mobx-react';
+import moment from 'moment';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  Alert,
+  BackHandler,
+  Image,
+  ImageBackground,
+  Keyboard,
+  KeyboardAvoidingView,
+  Linking,
+  PermissionsAndroid,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {Image as ImageCompressor} from 'react-native-compressor';
+import CountDown from 'react-native-countdown-component';
+import DatePicker from 'react-native-date-picker';
+import Toast from 'react-native-easy-toast';
+import IntentLauncher from 'react-native-intent-launcher';
+import * as RNLocalize from 'react-native-localize';
+import Modal from 'react-native-modal';
+import {ActivityIndicator} from 'react-native-paper';
+import {check, PERMISSIONS, request} from 'react-native-permissions';
+import RBSheet from 'react-native-raw-bottom-sheet';
+import {responsiveHeight} from 'react-native-responsive-dimensions';
+import {WebView} from 'react-native-webview';
+import store from '../../store/index';
+import theme from '../../theme';
+import utils from '../../utils/index';
+import {styles} from './styles';
 
 export default observer(Signup);
 function Signup(props) {
-  const {confirmPayment} = useStripe();
+  let resendTime = 15; //second
 
+  const {confirmPayment} = useStripe();
+  const termsConditionLink =
+    'http://triptraderweb.s3-website.ap-south-1.amazonaws.com/termsandconditionsapp';
+
+  let internet = store.General.isInternet;
+  const rbSheet = useRef(null);
   const mobileReg = /^[0][3]\d{9}$/;
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
   const cnicReg = /\d{5}\d{8}\d/;
@@ -56,6 +62,8 @@ function Signup(props) {
   const toastduration = 700;
 
   let loader = store.User.regLoader;
+
+  const [isFinish, setFinish] = useState(false);
 
   const [isUserCreate, setisUserCreate] = useState(false);
 
@@ -137,6 +145,9 @@ function Signup(props) {
   const [annualy, setannualy] = useState(0);
   const [save, setsave] = useState(0);
   const [totalAnually, settotalAnually] = useState(0);
+
+  const [isTermsLoad, setIsTermsLoad] = useState(false);
+  const [openTermsAndConditions, setOpenTermsAndConditions] = useState(false);
 
   function toFixed(num, fix) {
     var re = new RegExp('^-?\\d+(?:.\\d{0,' + (fix || -1) + '})?');
@@ -508,12 +519,204 @@ function Signup(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.registerUser(body, setErrMessage, isusercreate);
+        store.User.checkEmailExist(email, body, checkIsEmailExist);
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
+  };
+
+  const checkIsEmailExist = (body, isEmailExist) => {
+    console.log('isEmailExist : ', isEmailExist);
+    if (isEmailExist) {
+      store.User.setregLoader(false);
+      Alert.alert(
+        '',
+        `This email ${body.email} is already in use. Please try with another email.`,
+      );
+    } else {
+      signInAnonymously();
+    }
+  };
+
+  const [chkOnce, setchkOnce] = useState(false);
+  const [isResendLink, setisResendLink] = useState(false);
+  const [isCreateFirebaseUser, setisCreateFirebaseUser] = useState(false);
+  const [isemailVerify, setisemailVerify] = useState(false);
+  let onAuthStateChangedUnsubscribe = null;
+  let unsubscribeSetInterval = useRef(null);
+
+  const signoutCurrentUser = () => {
+    if (auth().currentUser) {
+      auth().currentUser.delete();
+      auth().signOut();
+    }
+  };
+
+  const onClickClearInterval = () => {
+    clearInterval(unsubscribeSetInterval.current);
+    unsubscribeSetInterval.current = null;
+  };
+
+  useEffect(() => {
+    if (internet && !chkOnce) {
+      onClickClearInterval();
+      signoutCurrentUser();
+      setTimeout(() => {
+        setchkOnce(true);
+      }, 1500);
+    }
+
+    return () => {
+      onClickClearInterval();
+      signoutCurrentUser();
+    };
+  }, [internet, chkOnce]);
+
+  useEffect(() => {
+    if (chkOnce) {
+      onAuthStateChangedUnsubscribe = auth().onAuthStateChanged(userIs => {
+        if (userIs) {
+          setisCreateFirebaseUser(userIs);
+        }
+      });
+
+      return () => {
+        onAuthStateChangedUnsubscribe();
+      };
+    }
+  }, [chkOnce]);
+
+  useEffect(() => {
+    if (isCreateFirebaseUser) {
+      console.log('isUsr true : ');
+      let isUsr = isCreateFirebaseUser;
+      isUsr
+        .updateEmail(email)
+        .then(() =>
+          isUsr?.sendEmailVerification().then(c => {
+            console.log('verfication link sent');
+            clearAll();
+            setisResendLink(false);
+            setFinish(false);
+            store.User.setregLoader(false);
+            openBottomSheet();
+
+            unsubscribeSetInterval.current = setInterval(function () {
+              console.log('----> interval cal');
+              auth().currentUser.reload();
+              if (auth().currentUser.emailVerified) {
+                onClickClearInterval();
+                setisemailVerify(true);
+              }
+            }, 4000);
+          }),
+        )
+        .catch(error => {
+          console.log('sendEmailVerification cathc error', error);
+
+          if (error.code == 'auth/too-many-requests') {
+            let errorMessage =
+              'We have blocked all requests from this device due to unusual activity. Try again later.';
+            Alert.alert('Too- Many Requests', errorMessage);
+          }
+
+          clearAll();
+          setisResendLink(false);
+          setFinish(false);
+          store.User.setregLoader(false);
+        });
+    }
+  }, [isCreateFirebaseUser]);
+
+  useEffect(() => {
+    if (isemailVerify) {
+      console.log('email verfied succecss');
+      setisemailVerify(false);
+      closeBottomSheet();
+
+      const body = {
+        firstName: fn,
+        lastName: ln,
+        email: email,
+        birthDate: dob,
+        termsAccepted: isTerms,
+        password: pswd,
+        phone: '',
+        phoneCountryCode: RNLocalize.getCountry(),
+        image: '',
+        identityProof: '',
+        registrationCode: store.User.notificationToken,
+        subscriptionStatus: 'freemium',
+        role: 'user',
+        status: 'active',
+        notificationEnabled: true,
+      };
+      store.User.registerUser(
+        body,
+        setErrMessage,
+        isusercreate,
+        () => onClickClearInterval(),
+        () => signoutCurrentUser(),
+      );
+    }
+  }, [isemailVerify]);
+
+  const signInAnonymously = async () => {
+    clearAll();
+    signoutCurrentUser();
+
+    auth()
+      .signInAnonymously()
+      .then(userIs => {
+        console.log('signInAnonymously true');
+      })
+      .catch(error => {
+        if (error.code === 'auth/operation-not-allowed') {
+          console.log('Enable anonymous in your firebase console.');
+        }
+        console.error('signInAnonymously catch error : ', error);
+
+        clearAll();
+        setisResendLink(false); //resend loader
+        setFinish(false); //timer
+        store.User.setregLoader(false); //create account loader
+      });
+  };
+
+  const clearAll = () => {
+    onClickClearInterval();
+    setisUserCreate(false);
+    setisemailVerify(false);
+  };
+
+  const reSendLink = () => {
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        setisResendLink(true);
+        setTimeout(() => {
+          signInAnonymously();
+        }, 1500);
+      } else {
+        Alert.alert('', 'Please connect internet');
+      }
+    });
+  };
+
+  const openBottomSheet = () => {
+    rbSheet?.current?.open();
+  };
+
+  const closeBottomSheet = () => {
+    rbSheet?.current?.close();
+  };
+
+  const onCloseBottomSheet = () => {
+    setFinish(false);
+    setisResendLink(false);
+    onClickClearInterval();
+    setisUserCreate(false);
+    signoutCurrentUser();
   };
 
   const uploadPhoto = c => {
@@ -823,13 +1026,11 @@ function Signup(props) {
   };
 
   const isusercreate = (t, r, p) => {
-    console.log('token : ', t);
-    console.log('result : ', r);
-    console.log('plan : ', p);
     setToken(t);
     setuser(r);
     setplans(p);
     setisUserCreate(true);
+    onClickClearInterval();
   };
 
   function addMonths(date, months) {
@@ -1277,7 +1478,9 @@ function Signup(props) {
       setisTerms(!isTerms);
     };
 
-    const TermsnCndtnClick = () => {};
+    const TermsnCndtnClick = () => {
+      openTerms();
+    };
 
     const goToSignin = () => {
       props.navigation.navigate('Signin');
@@ -2760,6 +2963,222 @@ function Signup(props) {
     );
   };
 
+  const renderBottomSheet = () => {
+    const renderTimer = () => {
+      return (
+        <TouchableOpacity
+          activeOpacity={0.7}
+          disabled={!isFinish || isResendLink ? true : false}
+          onPress={reSendLink}
+          style={{position: 'absolute', alignSelf: 'center', bottom: 30}}>
+          {!isFinish ? (
+            <>
+              <CountDown
+                size={14}
+                until={resendTime}
+                onFinish={() => setFinish(true)}
+                digitStyle={{backgroundColor: 'transparent'}}
+                digitTxtStyle={{
+                  color: theme.color.titleGreen,
+                  fontSize: 15,
+                  fontFamily: theme.fonts.fontBold,
+                }}
+                timeToShow={['S']}
+                timeLabels={{s: null}}
+                showSeparator
+              />
+            </>
+          ) : (
+            <Text
+              style={{
+                color: theme.color.titleGreen,
+                fontSize: 13,
+                fontFamily: theme.fonts.fontBold,
+                textDecorationLine: 'underline',
+              }}>
+              Resend Link
+            </Text>
+          )}
+        </TouchableOpacity>
+      );
+    };
+
+    return (
+      <>
+        <RBSheet
+          ref={rbSheet}
+          height={responsiveHeight(60)}
+          closeOnPressBack={true}
+          openDuration={250}
+          onClose={onCloseBottomSheet}
+          closeOnDragDown={true}
+          closeOnPressMask={false}
+          KeyboardAvoidingView={true}
+          customStyles={{
+            wrapper: {
+              flex: 1,
+              // backgroundColor: 'transparent',
+            },
+            container: {
+              backgroundColor: theme.color.button1,
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
+              shadowColor: '#000',
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+
+              elevation: 5,
+            },
+            draggableIcon: {
+              backgroundColor: theme.color.backgroundConatiner,
+              opacity: 0.5,
+            },
+          }}>
+          <View
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+
+              padding: 25,
+            }}>
+            {!isResendLink && (
+              <utils.vectorIcon.MaterialCommunityIcons
+                name="check-decagram"
+                color={theme.color.buttonText}
+                size={60}
+              />
+            )}
+            {isResendLink && (
+              <Image
+                style={{width: 62, height: 62}}
+                source={require('../../assets/gif/spinner.gif')}
+              />
+            )}
+
+            <Text
+              style={{
+                textAlign: 'center',
+                textTransform: 'capitalize',
+                fontSize: 19,
+                color: theme.color.buttonText,
+                fontFamily: theme.fonts.fontBold,
+                marginTop: 10,
+              }}>
+              Verification link sent
+            </Text>
+          </View>
+
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: theme.color.background,
+              padding: 20,
+            }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                fontSize: 14.5,
+                color: theme.color.title,
+                fontFamily: theme.fonts.fontNormal,
+                marginTop: 20,
+              }}>
+              We have sent a verification link to{' '}
+              <Text
+                style={{
+                  textAlign: 'center',
+                  fontSize: 14.5,
+                  color: theme.color.title,
+                  fontFamily: theme.fonts.fontBold,
+                }}>
+                {email}.
+              </Text>
+            </Text>
+            <Text
+              style={{
+                textAlign: 'center',
+                fontSize: 14.5,
+                color: theme.color.title,
+                fontFamily: theme.fonts.fontNormal,
+              }}>
+              Please click on the link to verify your email address and activate
+              your account. Thankyou.
+            </Text>
+
+            {!isResendLink && renderTimer()}
+          </View>
+        </RBSheet>
+      </>
+    );
+  };
+
+  const openTerms = () => {
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        setOpenTermsAndConditions(true);
+      } else {
+        Alert.alert('Network Error', 'Please connect internet.');
+      }
+    });
+  };
+
+  const renderOpenTermsAndCondition = () => {
+    return (
+      <Modal
+        isVisible={openTermsAndConditions}
+        backdropOpacity={0.5}
+        animationInTiming={1000}
+        backdropTransitionInTiming={1000}
+        animationOutTiming={500}
+        style={{margin: 0, padding: 0}}
+        animationIn="slideInUp"
+        animationOut="slideOutDown"
+        backdropTransitionOutTiming={700}
+        onRequestClose={() => {
+          setOpenTermsAndConditions(false);
+          setIsTermsLoad(false);
+        }}>
+        <SafeAreaView style={{flex: 1}}>
+          <WebView
+            source={{
+              uri: termsConditionLink,
+            }}
+            javaScriptEnabled={true}
+            onLoad={() => {
+              setIsTermsLoad(true);
+            }}
+            domStorageEnabled={true}
+            startInLoadingState={false}
+            scalesPageToFit={true}
+          />
+
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => {
+              setOpenTermsAndConditions(false);
+              setIsTermsLoad(false);
+            }}
+            style={styles.BottomButtonwebview}>
+            {/* <LinearGradient
+              colors={['#f25526', '#f25526']}
+              style={styles.LinearGradientwebview}> */}
+            <Text style={styles.buttonTextBottomwebview}>Close</Text>
+            {/* </LinearGradient> */}
+          </TouchableOpacity>
+
+          {!isTermsLoad && (
+            <View style={styles.loaderwebview}>
+              <ActivityIndicator color={theme.color.button1} size={40} />
+            </View>
+          )}
+        </SafeAreaView>
+      </Modal>
+    );
+  };
+
   return (
     <StripeProvider publishableKey={store.General.Stripe_Publish_Key}>
       <View style={styles.container}>
@@ -2797,6 +3216,8 @@ function Signup(props) {
 
         {renderStatusBar()}
         {renderDateShowModal()}
+        {renderBottomSheet()}
+        {openTermsAndConditions && renderOpenTermsAndCondition()}
       </View>
     </StripeProvider>
   );

@@ -1,34 +1,19 @@
-import React, {useEffect, useState, useRef} from 'react';
+import {observer} from 'mobx-react';
+import React, {useEffect, useRef} from 'react';
 import {
-  View,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
   Image,
   ImageBackground,
-  Linking,
+  SafeAreaView,
   ScrollView,
-  TextInput,
-  PermissionsAndroid,
-  Dimensions,
-  Alert,
-  Keyboard,
-  Modal,
-  Platform,
   StatusBar,
-  PixelRatio,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import {styles} from './styles';
-import {inject, observer} from 'mobx-react';
-import store from '../../store/index';
-import utils from '../../utils/index';
-import theme from '../../theme';
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from 'react-native-responsive-dimensions';
 import Toast from 'react-native-easy-toast';
-import NetInfo from '@react-native-community/netinfo';
+import store from '../../store/index';
+import theme from '../../theme';
+import {styles} from './styles';
 
 export default observer(Login);
 function Login(props) {

@@ -1,11 +1,11 @@
-import {observable, makeObservable, action} from 'mobx';
-import {persist} from 'mobx-persist';
-import store from '../index';
 import NetInfo from '@react-native-community/netinfo';
-import db from '../../database/index';
+import axios from 'axios';
+import {action, makeObservable, observable} from 'mobx';
+import {persist} from 'mobx-persist';
 import {Alert} from 'react-native';
 import io from 'socket.io-client';
-import axios from 'axios';
+import db from '../../database/index';
+import store from '../index';
 
 class user {
   constructor() {
@@ -2429,10 +2429,44 @@ class user {
   }
 
   @action.bound
-  registerUser(body, seterror, suc) {
+  checkEmailExist(email, body, suc) {
+    this.setregLoader(true);
+    db.hitApi(db.apis.CHECK_IS_EMAIL_EXIST + email, 'get', {}, null)
+      ?.then(resp => {
+        console.log(
+          `response CHECK_IS_EMAIL_EXIST ${
+            db.apis.CHECK_IS_EMAIL_EXIST + email
+          } : `,
+          resp.data,
+        );
+        let isexist = false;
+        let rsp = resp.data;
+
+        if (rsp.message == 'No records found') {
+          isexist = false;
+        }
+        if (rsp.data) {
+          isexist = true;
+        }
+        suc(body, isexist);
+        return;
+      })
+      .catch(err => {
+        this.setregLoader(false);
+        store.General.checkServer(err);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in CHECK_IS_EMAIL_EXIST  ${ddb.apis.CHECK_IS_EMAIL_EXIST} : `,
+          msg,
+        );
+        Alert.alert('', msg.toString());
+      });
+  }
+
+  @action.bound
+  registerUser(body, seterror, suc, clearInterval, signout) {
     console.warn('Register user body : ', body);
     this.setregLoader(true);
-
     db.hitApi(db.apis.REGISTER_USER, 'post', body, null)
       ?.then(resp => {
         console.log(`response create ${db.apis.REGISTER_USER} : `, resp.data);
@@ -2441,6 +2475,8 @@ class user {
 
         db.hitApi(db.apis.GET_All_Plan, 'get', {}, null)
           ?.then(resp => {
+            clearInterval();
+            signout();
             this.setregLoader(false);
             console.log(
               `response get all plan  ${db.apis.GET_All_Plan} : `,
@@ -2486,17 +2522,12 @@ class user {
           });
       })
       .catch(err => {
-        this.setregLoader(false);
-        store.General.checkServer(err);
-
         let msg = err.response.data.message || err.response.status || err;
         console.log(`Error in create ${db.apis.REGISTER_USER} : `, msg);
-        if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
-          return;
-        }
-        // seterror(msg.toString())
+        this.setregLoader(false);
+        clearInterval();
+        signout();
+        store.General.checkServer(err);
         Alert.alert('', msg.toString());
       });
   }
@@ -2993,14 +3024,11 @@ class user {
 
         let rsp = resp.data[0];
         if (rsp._id == this.user._id) {
-          if (imgArr.length <= 0) {
-            this.attemptToEditupdateUser(body, suc);
-          } else {
-            this.attemptToEditUploadImage(body, imgArr, suc);
-          }
+          suc(false);
         } else {
           Alert.alert('', 'This Phone number is already used by another user.');
           this.setregLoader(false);
+          suc(true);
           return;
         }
       })
@@ -3012,11 +3040,7 @@ class user {
           msg,
         );
         if (msg == 'No user found.') {
-          if (imgArr.length <= 0) {
-            this.attemptToEditupdateUser(body, () => suc());
-          } else {
-            this.attemptToEditUploadImage(body, imgArr, () => suc());
-          }
+          suc(false);
           return;
         }
         if (msg == 503 || msg == 500) {
