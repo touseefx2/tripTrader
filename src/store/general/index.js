@@ -11,9 +11,6 @@ class general {
 
   @observable socket = io(db.apis.BASE_URLS);
 
-  @observable ServerErrorTitle = 'Network Error';
-  @observable ServerErrorMessage = 'Server not responding';
-
   @observable Stripe_Publish_Key =
     'pk_test_51M9HIuBmhbfqULZ4IstWDtc73GFl6mVRnA4jUcOR9BVRkndz1Ou2FSlOeP4WjGgYqlH4LflMtgUY8foGkY58lHAq00OGfQUjlR';
 
@@ -38,7 +35,7 @@ class general {
 
   @action checkServer = err => {
     if (err.response.data == undefined && err.response.status == 0) {
-      Alert.alert(this.ServerErrorTitle, this.ServerErrorMessage);
+      Alert.alert('Network Error', 'Server not responding');
       return;
     }
   };
