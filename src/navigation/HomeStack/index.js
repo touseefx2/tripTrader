@@ -87,11 +87,11 @@ export default HomeStack = () => {
         options={icon.Supporticon}
       />
 
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="LatestNews"
         component={LatestNewsstack}
         options={icon.LatestNewsicon}
-      />
+      /> */}
 
       <Drawer.Screen
         name="Settings"
@@ -993,87 +993,44 @@ let ShowOtherFollowersStack = () => {
   );
 };
 
-let LatestNewsstack = () => {
-  return (
-    <Stack.Navigator
-      initialRouteName="LatestNewss"
-      screenOptions={{
-        animationEnabled: false,
-        headerShown: false,
-      }}>
-      <Stack.Screen
-        name="LatestNewss"
-        component={screens.LatestNews}
-        options={props => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: true,
-          });
-        }}
-      />
-      <Stack.Screen
-        name="Notifications"
-        component={screens.Notifications}
-        options={props => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-      />
-      <Stack.Screen
-        name="NotificationsGuest"
-        component={screens.NotificationsGuest}
-        options={props => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-      />
-    </Stack.Navigator>
-  );
-};
-
-let PrivacyPolicystack = () => {
-  return (
-    <Stack.Navigator
-      initialRouteName="PrivacyPolicyy"
-      screenOptions={{
-        animationEnabled: false,
-        headerShown: false,
-      }}>
-      <Stack.Screen
-        name="PrivacyPolicyy"
-        component={screens.PrivacyPolicy}
-        options={props => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: true,
-          });
-        }}
-      />
-      <Stack.Screen
-        name="Notifications"
-        component={screens.Notifications}
-        options={props => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-      />
-
-      <Stack.Screen
-        name="NotificationsGuest"
-        component={screens.NotificationsGuest}
-        options={props => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-      />
-    </Stack.Navigator>
-  );
-};
+// let LatestNewsstack = () => {
+//   return (
+//     <Stack.Navigator
+//       initialRouteName="LatestNewss"
+//       screenOptions={{
+//         animationEnabled: false,
+//         headerShown: false,
+//       }}>
+//       <Stack.Screen
+//         name="LatestNewss"
+//         component={screens.LatestNews}
+//         options={props => {
+//           let parent = props.navigation.getParent();
+//           parent.setOptions({
+//             swipeEnabled: true,
+//           });
+//         }}
+//       />
+//       <Stack.Screen
+//         name="Notifications"
+//         component={screens.Notifications}
+//         options={props => {
+//           let parent = props.navigation.getParent();
+//           parent.setOptions({
+//             swipeEnabled: false,
+//           });
+//         }}
+//       />
+//       <Stack.Screen
+//         name="NotificationsGuest"
+//         component={screens.NotificationsGuest}
+//         options={props => {
+//           let parent = props.navigation.getParent();
+//           parent.setOptions({
+//             swipeEnabled: false,
+//           });
+//         }}
+//       />
+//     </Stack.Navigator>
+//   );
+// };

@@ -132,9 +132,7 @@ function Settings(props) {
     if (c == 'contact us') {
       props.navigation.navigate('ContactUs');
     }
-    if (c == 'news') {
-      props.navigation.navigate('LatestNews');
-    }
+
     if (c == 'privacy') {
       props.navigation.navigate('PrivacyPolicy');
     }
@@ -337,33 +335,6 @@ function Settings(props) {
       );
     };
 
-    const renderNews = () => {
-      let title = 'news';
-      return (
-        <TouchableOpacity
-          activeOpacity={ao}
-          onPress={() => {
-            onClick(title);
-          }}
-          style={styles.mainContainer}>
-          <View style={styles.sec1Container}>
-            <View style={styles.iconConatiner}>
-              <Image source={newsIcon} style={styles.icon} />
-            </View>
-          </View>
-
-          <View style={styles.sec2Container}>
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={styles.sec2Title}>
-              {title}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      );
-    };
-
     const renderPrivacy = () => {
       let title = 'privacy';
       return (
@@ -429,7 +400,6 @@ function Settings(props) {
               {renderBlockUser()}
               {renderManageSubscription()}
               {renderContactus()}
-              {renderNews()}
               {renderPrivacy()}
               {renderLogout()}
             </>

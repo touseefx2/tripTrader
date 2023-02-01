@@ -15,6 +15,11 @@ export const styles = StyleSheet.create({
   },
   container2: {
     flex: 1,
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: theme.window.Width,
+    height: theme.window.Height,
   },
   Header: {
     marginTop: aph,

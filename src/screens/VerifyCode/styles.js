@@ -1,10 +1,5 @@
 import {Platform, StyleSheet} from 'react-native';
 import theme from '../../theme/index';
-import {
-  responsiveHeight,
-  responsiveWidth,
-  responsiveFontSize,
-} from 'react-native-responsive-dimensions';
 let aph = theme.window.APPBAR_HEIGHT + (Platform.OS == 'ios' ? 12 : 0);
 
 export const styles = StyleSheet.create({
@@ -14,6 +9,11 @@ export const styles = StyleSheet.create({
   },
   container2: {
     flex: 1,
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: theme.window.Width,
+    height: theme.window.Height,
   },
   Header: {
     marginTop: aph,

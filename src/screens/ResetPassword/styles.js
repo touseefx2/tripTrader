@@ -10,10 +10,15 @@ let aph = theme.window.APPBAR_HEIGHT + (Platform.OS == 'ios' ? 12 : 0);
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.color.button1,
+    backgroundColor: theme.color.backgroundGreen,
   },
   container2: {
     flex: 1,
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: theme.window.Width,
+    height: theme.window.Height,
   },
   Header: {
     marginTop: aph,

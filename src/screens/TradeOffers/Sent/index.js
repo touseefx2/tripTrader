@@ -109,8 +109,6 @@ function Sent(props) {
     });
   };
 
-  const onclickSearchBar = () => {};
-
   const ItemSeparatorView = () => {
     return (
       <View
@@ -742,18 +740,6 @@ function Sent(props) {
     );
   };
 
-  const ListFooter = () => {
-    return (
-      <>
-        <View>
-          <View style={styles.listFooter}>
-            <Text style={styles.listFooterT}>End of messages</Text>
-          </View>
-        </View>
-      </>
-    );
-  };
-
   const renderModal = () => {
     let c = modalHeight >= maxModalHeight ? true : false;
     let style = c ? [styles.modal, {height: maxModalHeight}] : styles.modal2;
@@ -834,63 +820,13 @@ function Sent(props) {
                 fontSize: 17,
                 color: theme.color.title,
                 fontFamily: theme.fonts.fontNormal,
+                textAlign: 'center',
               }}>
               Are you sure you would like to cancel your offer?
             </Text>
           </View>
         );
       };
-
-      // const renderField = () => {
-      //   let duration = parseInt(item.duration.number) || '';
-      //   let dtitile = item.duration.title;
-      //   let dt = '';
-
-      //   if (duration <= 1) {
-      //     duration = 'Whole';
-      //     dtitile = dtitile.substring(0, dtitile.length - 1);
-      //   }
-      //   dt = duration + ' ' + dtitile;
-      //   let offer = item.offer || '';
-      //   let trade = item.return || '';
-      //   return (
-      //     <>
-      //       <View style={{paddingLeft: 10, paddingRight: 20}}>
-      //         <View style={styles.field}>
-      //           <Text style={styles.filedTitle}>Offering</Text>
-      //           <Text style={[styles.filedTitle2, {color: theme.color.title}]}>
-      //             <Text
-      //               style={[
-      //                 styles.filedTitle2,
-      //                 {
-      //                   color: theme.color.title,
-      //                   textTransform: 'capitalize',
-      //                 },
-      //               ]}>
-      //               {dt}
-      //             </Text>{' '}
-      //             {offer}
-      //           </Text>
-      //         </View>
-
-      //         <View style={styles.field}>
-      //           <Text
-      //             numberOfLines={1}
-      //             ellipsizeMode="tail"
-      //             style={styles.filedTitle}>
-      //             for trade
-      //           </Text>
-      //           <Text
-      //             numberOfLines={1}
-      //             ellipsizeMode="tail"
-      //             style={[styles.filedTitle2, {color: theme.color.title}]}>
-      //             {trade}
-      //           </Text>
-      //         </View>
-      //       </View>
-      //     </>
-      //   );
-      // };
 
       const renderBottom = () => {
         const renderButton1 = () => {

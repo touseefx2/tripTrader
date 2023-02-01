@@ -133,7 +133,7 @@ function BlockUsers(props) {
               opacity: 0.4,
             }}
             onPress={() => getItem(item)}>
-            No user found
+            No users found
           </Text>
         )}
 

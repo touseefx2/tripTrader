@@ -103,9 +103,6 @@ function NewTrips(props) {
 
   let anmtnTime = 1500;
 
-  let seDayColor = theme.color.button1;
-  let ocolor = '#569969';
-
   var getDaysArray = function (start, end) {
     for (
       var arr = [], dt = new Date(start);
@@ -225,7 +222,9 @@ function NewTrips(props) {
   const [location, setlocation] = useState(false);
   const [title, settitle] = useState('');
 
-  const trptypeData = [...store.Filters.activity];
+  const typeData = [...store.Filters.activity];
+
+  const [trptypeData, settrptypeData] = useState([]);
   const [tripType, settripType] = useState('');
   const [isDropDownTT, setisDropDownTT] = useState(false);
 
@@ -238,10 +237,6 @@ function NewTrips(props) {
   const [spcsData, setspcsData] = useState([]);
   const [species, setspecies] = useState('');
   const [isDropDownSpcs, setisDropDownSpcs] = useState(false);
-
-  // const [actvtyList, setactvtyList] = useState([]);
-  // const [actvtyListS, setactvtyListS] = useState([]);
-  // const [isModalVisible, setModalVisible] = useState(false);
 
   const [status, setstatus] = useState('active');
   const [isDropDownDur, setisDropDownDur] = useState(false);
@@ -299,6 +294,23 @@ function NewTrips(props) {
   };
 
   useEffect(() => {
+    if (typeData.length > 0 && spcsDt.length > 0 && trptypeData.length <= 0) {
+      let activityList = [];
+      typeData.map(element => {
+        for (let index = 0; index < spcsDt.length; index++) {
+          const item = spcsDt[index];
+          if (item.type._id === element._id) {
+            activityList.push(element);
+            break;
+          }
+        }
+      });
+
+      settrptypeData(activityList);
+    }
+  }, [spcsDt, typeData, trptypeData]);
+
+  useEffect(() => {
     if (user == 'guest') {
       store.General.setgoto('guestaccess');
       store.User.Logout();
@@ -332,20 +344,6 @@ function NewTrips(props) {
       setspcsData(aa);
     }
   }, [tripType]);
-
-  // useEffect(() => {
-  //   let ar = [...store.Filters.activity];
-
-  //   let aa = [];
-  //   if (ar.length > 0) {
-  //     ar.map((e, i, a) => {
-  //       const obj = {name: e.name, added: false};
-  //       aa.push(obj);
-  //     });
-  //   }
-
-  //   setactvtyList(aa);
-  // }, [store.Filters.activity]);
 
   function findItm(v, data, c) {
     let obj = c == 'n' ? {name: v} : {title: v};
@@ -493,13 +491,23 @@ function NewTrips(props) {
       durNum != '' &&
       tripType != '' &&
       species != '' &&
-      location != false
+      location != false &&
+      photos.length > 0
     ) {
       setisButtonDisable(false);
     } else {
       setisButtonDisable(true);
     }
-  }, [tripType, location, species, isSelDate1, isSelDate2, Return, durNum]);
+  }, [
+    tripType,
+    location,
+    species,
+    isSelDate1,
+    isSelDate2,
+    Return,
+    durNum,
+    photos,
+  ]);
 
   useEffect(() => {
     if (isSelDate1 != '' && isSelDate2 != '') {
@@ -3609,13 +3617,7 @@ function NewTrips(props) {
               marginRight: 10,
             }}
           />
-          <Text style={styles.fieldText2}>
-            Trip Photos{' '}
-            <Text
-              style={[styles.fieldText2, {fontFamily: theme.fonts.fontNormal}]}>
-              (optional)
-            </Text>
-          </Text>
+          <Text style={styles.fieldText2}>Trip Photos</Text>
         </View>
 
         <View style={[styles.fieldContainer, {marginTop: 15}]}>
@@ -4988,202 +4990,6 @@ function NewTrips(props) {
       );
     }
   };
-
-  // const renderActivitesModal = () => {
-  //   const closeactvtyModal = () => {
-  //     setmodalHeight(0);
-  //     setModalVisible(false);
-
-  //     if (actvtyList.length > 0) {
-  //       let arr = [];
-  //       actvtyList.map((e, i, a) => {
-  //         let obj = {};
-  //         if (actvtyListS.length > 0) {
-  //           let ind = actvtyListS.some(item => e.name === item);
-  //           obj = {name: e.name, added: ind};
-  //           arr.push(obj);
-  //         } else {
-  //           obj = {name: e.name, added: false};
-  //           arr.push(obj);
-  //         }
-  //       });
-  //       setactvtyList(arr);
-  //     }
-  //   };
-
-  //   const renderFeatureModalHeader = () => {
-  //     return (
-  //       <View style={!c ? styles.Header : styles.Headere}>
-  //         <View>
-  //           <Text style={styles.HeaderText}>Select Activites</Text>
-  //         </View>
-
-  //         <TouchableOpacity
-  //           onPress={() => {
-  //             closeactvtyModal();
-  //           }}>
-  //           <utils.vectorIcon.Entypo
-  //             name={'cross'}
-  //             size={25}
-  //             color={theme.color.subTitleLight}
-  //           />
-  //         </TouchableOpacity>
-  //       </View>
-  //     );
-  //   };
-
-  //   const renderBottomFeatureButton = () => {
-  //     return (
-  //       <TouchableOpacity
-  //         activeOpacity={0.8}
-  //         onPress={() => {
-  //           if (actvtyList.length > 0) {
-  //             let arr = [];
-
-  //             actvtyList.map((e, i, a) => {
-  //               if (e.added) {
-  //                 arr.push(e.name);
-  //               }
-  //             });
-
-  //             setactvtyListS(arr);
-  //           }
-  //           setModalVisible(false);
-  //           setmodalHeight(0);
-  //         }}
-  //         style={!c ? styles.BottomButtona : styles.BottomButtonb}>
-  //         <Text style={styles.buttonTextBottom}>Done</Text>
-  //       </TouchableOpacity>
-  //     );
-  //   };
-
-  //   const Add = index => {
-  //     let temp = [...actvtyList];
-  //     temp[index].added = true;
-  //     setactvtyList(temp);
-  //   };
-  //   const Remove = index => {
-  //     let temp = [...actvtyList];
-  //     temp[index].added = false;
-  //     setactvtyList(temp);
-  //   };
-
-  //   let c = modalHeight >= maxModalHeight ? true : false;
-  //   let style = c
-  //     ? [styles.ModalBody, {height: maxModalHeight}]
-  //     : styles.ModalBody;
-
-  //   return (
-  //     <Modal
-  //       isVisible={isModalVisible}
-  //       backdropOpacity={0.6}
-  //       style={{
-  //         padding: 0,
-  //         margin: 0,
-  //         backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  //       }}
-  //       animationIn="fadeInLeft"
-  //       animationOut="fadeOutRight"
-  //       animationInTiming={600}
-  //       animationOutTiming={600}
-  //       onRequestClose={() => {
-  //         setmodalHeight(0);
-  //         setModalVisible(false);
-  //       }}
-  //       backdropTransitionInTiming={600}
-  //       backdropTransitionOutTiming={600}
-  //       onBackdropPress={() => {
-  //         closeactvtyModal();
-  //       }}>
-  //       <View style={style}>
-  //         {!c && (
-  //           <>
-  //             {renderFeatureModalHeader()}
-  //             <View
-  //               onLayout={event => {
-  //                 if (!c) {
-  //                   let {height} = event.nativeEvent.layout;
-  //                   setmodalHeight(height);
-  //                 }
-  //               }}
-  //               style={styles.ModalView}>
-  //               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-  //                 <FlatList
-  //                   data={actvtyList}
-  //                   numColumns={3}
-  //                   renderItem={({item, index}) => (
-  //                     <TouchableOpacity
-  //                       activeOpacity={0.6}
-  //                       onPress={
-  //                         item.added ? () => Remove(index) : () => Add(index)
-  //                       }>
-  //                       <View
-  //                         style={
-  //                           item.added
-  //                             ? styles.AddedFeaturesView
-  //                             : styles.FeaturesView
-  //                         }>
-  //                         <Text
-  //                           style={
-  //                             item.added
-  //                               ? styles.AddedFeatures
-  //                               : styles.Features
-  //                           }>
-  //                           {item.name}
-  //                         </Text>
-  //                       </View>
-  //                     </TouchableOpacity>
-  //                   )}
-  //                   keyExtractor={(item, index) => index.toString()}
-  //                 />
-  //               </ScrollView>
-  //             </View>
-  //             {renderBottomFeatureButton()}
-  //           </>
-  //         )}
-
-  //         {c && (
-  //           <>
-  //             {renderFeatureModalHeader()}
-
-  //             <ScrollView
-  //               style={styles.ModalView}
-  //               horizontal
-  //               showsHorizontalScrollIndicator={false}>
-  //               <FlatList
-  //                 data={actvtyList}
-  //                 numColumns={3}
-  //                 renderItem={({item, index}) => (
-  //                   <TouchableOpacity
-  //                     activeOpacity={0.6}
-  //                     onPress={
-  //                       item.added ? () => Remove(index) : () => Add(index)
-  //                     }>
-  //                     <View
-  //                       style={
-  //                         item.added
-  //                           ? styles.AddedFeaturesView
-  //                           : styles.FeaturesView
-  //                       }>
-  //                       <Text
-  //                         style={
-  //                           item.added ? styles.AddedFeatures : styles.Features
-  //                         }>
-  //                         {item.name}
-  //                       </Text>
-  //                     </View>
-  //                   </TouchableOpacity>
-  //                 )}
-  //                 keyExtractor={(item, index) => index.toString()}
-  //               />
-  //             </ScrollView>
-  //             {renderBottomFeatureButton()}
-  //           </>
-  //         )}
-  //       </View>
-  //     </Modal>
-  //   );
-  // };
 
   return (
     <View style={styles.container}>

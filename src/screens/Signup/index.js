@@ -54,9 +54,7 @@ function Signup(props) {
 
   let internet = store.General.isInternet;
   const rbSheet = useRef(null);
-  const mobileReg = /^[0][3]\d{9}$/;
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
-  const cnicReg = /\d{5}\d{8}\d/;
 
   const toast = useRef(null);
   const toastduration = 700;
@@ -1448,19 +1446,6 @@ function Signup(props) {
       setEmptydob(false);
 
       setPUdShow(true);
-    };
-
-    const onPUDChange = (event, selectedDate) => {
-      const selDate = selectedDate || dob;
-      const e = event.type;
-      if (Platform.OS === 'android') {
-        setPUdShow(false);
-      }
-
-      if (e == 'set') {
-        setPUTime(selDate);
-        setdob(selDate);
-      }
     };
 
     const enterPaswd = t => {
@@ -2880,69 +2865,6 @@ function Signup(props) {
   };
 
   const renderDateShowModal = () => {
-    {
-      /* ios */
-    }
-    {
-      /* <Modal
-          isVisible={pudshow && Platform.OS === 'ios'}
-          backdropOpacity={0.6}
-          animationIn="fadeInUp"
-          animationOut="fadeOutDown"
-          animationInTiming={600}
-          animationOutTiming={600}
-          onRequestClose={() => {
-            setPUdShow(false);
-          }}
-          backdropTransitionInTiming={600}
-          backdropTransitionOutTiming={600}
-          onBackdropPress={() => setPUdShow(false)}>
-          <View style={styles.CNICModal}>
-            <View style={styles.CNICModalHeader}>
-              <Text style={styles.CNICModalHeaderText}>Set Date</Text>
-              <utils.vectorIcon.Entypo
-                name="cross"
-                size={24}
-                color={'#fff'}
-                style={{padding: responsiveWidth(3)}}
-                onPress={() => setPUdShow(false)}
-              />
-            </View>
-            <DateTimePicker
-              testID="dateTimePicker"
-              value={puTime}
-              mode={'date'}
-              onTouchCancel={() => {
-                setPUdShow(false);
-              }}
-              maximumDate={new Date()}
-              display="spinner"
-              textColor="#000"
-              onChange={onPUDChange}
-            />
-          </View>
-        </Modal> */
-    }
-
-    {
-      /* android */
-    }
-
-    {
-      /* {pudshow && Platform.OS === 'android' && ( */
-    }
-
-    // <DateTimePicker
-    //   testID="dateTimePicker"
-    //   value={puTime}
-    //   mode={'date'}
-    //   display="spinner"
-    //   textColor="#000"
-    //   maximumDate={new Date()}
-    //   onChange={onPUDChange}
-    // />
-    // )}
-
     return (
       <DatePicker
         maximumDate={new Date()}
@@ -3162,11 +3084,7 @@ function Signup(props) {
               setIsTermsLoad(false);
             }}
             style={styles.BottomButtonwebview}>
-            {/* <LinearGradient
-              colors={['#f25526', '#f25526']}
-              style={styles.LinearGradientwebview}> */}
             <Text style={styles.buttonTextBottomwebview}>Close</Text>
-            {/* </LinearGradient> */}
           </TouchableOpacity>
 
           {!isTermsLoad && (

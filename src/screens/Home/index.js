@@ -431,7 +431,9 @@ function Home(props) {
   const [note, setnote] = useState('');
   const [location, setlocation] = useState(false);
 
-  const trptypeData = [...store.Filters.activity];
+  const typeData = [...store.Filters.activity];
+
+  const [trptypeData, settrptypeData] = useState([]);
   const [tripType, settripType] = useState('');
   const [isDropDownTT, setisDropDownTT] = useState(false);
 
@@ -453,6 +455,23 @@ function Home(props) {
     setisDropDownState(false);
     setisDropDownSpcs(false);
   };
+
+  useEffect(() => {
+    if (typeData.length > 0 && spcsDt.length > 0 && trptypeData.length <= 0) {
+      let activityList = [];
+      typeData.map(element => {
+        for (let index = 0; index < spcsDt.length; index++) {
+          const item = spcsDt[index];
+          if (item.type._id === element._id) {
+            activityList.push(element);
+            break;
+          }
+        }
+      });
+
+      settrptypeData(activityList);
+    }
+  }, [spcsDt, typeData, trptypeData]);
 
   useEffect(() => {
     if (goto == 'profile') {

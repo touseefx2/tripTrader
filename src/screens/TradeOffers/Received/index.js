@@ -88,19 +88,6 @@ let cs = {
   },
 };
 
-let css = {
-  container: {
-    backgroundColor: 'transparent',
-    borderWidth: 1.5,
-    borderColor: '#cccccc',
-    borderStyle: 'dashed',
-  },
-  text: {
-    color: theme.color.subTitleLight,
-    fontFamily: theme.fonts.fontMedium,
-  },
-};
-
 let td = {
   [moment().format('YYYY-MM-DD')]: {
     marked: false,
@@ -1943,6 +1930,7 @@ function Received(props) {
                 fontSize: 17,
                 color: theme.color.title,
                 fontFamily: theme.fonts.fontNormal,
+                textAlign: 'center',
               }}>
               Are you sure you would like to decline offer?
             </Text>
