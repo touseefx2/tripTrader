@@ -14,6 +14,7 @@ import Search from './Search';
 import ShowNotifications from './ShowNotifications';
 import StackHeader from './StackHeader';
 import vectorIcon from './vectorIcon';
+import WebViewModal from './WebViewModal';
 
 const utils = {
   vectorIcon,
@@ -32,6 +33,7 @@ const utils = {
   AuthHeader,
   navBarHeight,
   OtpModal,
+  WebViewModal,
 };
 
 export default utils;

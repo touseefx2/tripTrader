@@ -7,12 +7,15 @@ def REACT_NATIVE_VERSION = new File(['node', '--print',"JSON.parse(require('fs')
 
 buildscript {
     ext {
-        buildToolsVersion = "31.0.0"
-        minSdkVersion = 21
-        compileSdkVersion = 31
-        targetSdkVersion = 31
-            // compileSdkVersion = 33
-        // targetSdkVersion = 33
+       
+         buildToolsVersion = "30.0.3" //33 sdk
+         minSdkVersion = 21
+         compileSdkVersion = 33
+         targetSdkVersion = 33
+
+         // buildToolsVersion = "31.0.0"
+        // compileSdkVersion = 31
+        // targetSdkVersion = 31
 
  
     //push ntfctns
@@ -33,14 +36,14 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:7.0.4")
+        classpath("com.android.tools.build:gradle:7.4.0")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("de.undercouch:gradle-download-task:4.1.2")
 
 //firebase 
 //push ntfctns
 classpath 'com.google.gms:google-services:4.3.13'
-  classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31"
+  classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }

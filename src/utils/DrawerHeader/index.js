@@ -13,15 +13,7 @@ import {
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
-import utils from '../../utils/index';
 import theme from '../../theme';
-import FastImage from 'react-native-fast-image';
-import NetInfo from '@react-native-community/netinfo';
-import Toast from 'react-native-easy-toast';
-import MaskedView from '@react-native-community/masked-view';
-import Svg, {Path} from 'react-native-svg';
-import {responsiveHeight} from 'react-native-responsive-dimensions';
-import {Utils} from '@react-native-firebase/app';
 
 export default observer(DrawerHeader);
 function DrawerHeader(props) {

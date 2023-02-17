@@ -2419,11 +2419,9 @@ class user {
         console.log(`Error in Login user ${db.apis.LOGIN_USER} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not responding');
-          // store.General.setisServerError(true);
           return;
         }
 
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   }

@@ -1,13 +1,11 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
-  SafeAreaView,
   TouchableOpacity,
   Image,
   StatusBar,
   ScrollView,
-  ActivityIndicator,
   Dimensions,
   FlatList,
   Pressable,
@@ -19,13 +17,7 @@ import store from '../../store/index';
 import utils from '../index';
 import theme from '../../theme';
 import StarRating from 'react-native-star-rating';
-import FastImage from 'react-native-fast-image';
 import NetInfo from '@react-native-community/netinfo';
-import Toast from 'react-native-easy-toast';
-import MaskedView from '@react-native-community/masked-view';
-import Svg, {Path} from 'react-native-svg';
-import {responsiveHeight} from 'react-native-responsive-dimensions';
-import {Utils} from '@react-native-firebase/app';
 
 function Sep(props) {
   return <View style={{height: props.height || 20}} />;

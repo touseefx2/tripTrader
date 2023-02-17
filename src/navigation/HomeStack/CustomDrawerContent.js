@@ -25,29 +25,12 @@ import store from '../../store';
 
 export default observer(CustomDrawerContent);
 function CustomDrawerContent(props) {
-  let cS = store.General.focusScreen || '';
   let user = store.User.user;
-  let focusItemColor = 'rgba(255, 255, 255, 0.1)';
-  const {navigation, state, ...rest} = props;
-  let newState = {...state}; //copy from state before applying any filter. do not change original state
-  // if (user && user == 'guest') {
-  //   newState.routes = newState.routes.filter(
-  //     item =>
-  //       item.name !== 'TradeOffers' &&
-  //       item.name !== 'ConfirmedTrips' &&
-  //       item.name !== 'SavedTrips',
-  //   );
-  // }
 
-  // if (user && user !== 'guest') {
-  //   newState.routes = newState.routes.filter(item => item.name !== 'MyProfile');
-  // }
-  const {routes, index} = state;
+  const {routes, index} = props.state;
   const focusedRoute = routes[index].name; // this is the active route
-
-  const [profileImageLoader, setprofileImageLoader] = useState(false);
-
   store.General.setFocusScreen(focusedRoute);
+  const [profileImageLoader, setprofileImageLoader] = useState(false);
 
   const goToLogout = () => {
     store.User.Logout();

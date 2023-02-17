@@ -1,6 +1,7 @@
 import {StyleSheet} from 'react-native';
 import theme from '../../theme/index';
 import {
+  responsiveFontSize,
   responsiveHeight,
   responsiveWidth,
 } from 'react-native-responsive-dimensions';

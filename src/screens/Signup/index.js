@@ -33,12 +33,9 @@ import DatePicker from 'react-native-date-picker';
 import Toast from 'react-native-easy-toast';
 import IntentLauncher from 'react-native-intent-launcher';
 import * as RNLocalize from 'react-native-localize';
-import Modal from 'react-native-modal';
-import {ActivityIndicator} from 'react-native-paper';
 import {check, PERMISSIONS, request} from 'react-native-permissions';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {responsiveHeight} from 'react-native-responsive-dimensions';
-import {WebView} from 'react-native-webview';
 import store from '../../store/index';
 import theme from '../../theme';
 import utils from '../../utils/index';
@@ -57,7 +54,6 @@ function Signup(props) {
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
 
   const toast = useRef(null);
-  const toastduration = 700;
 
   let loader = store.User.regLoader;
 
@@ -144,8 +140,8 @@ function Signup(props) {
   const [save, setsave] = useState(0);
   const [totalAnually, settotalAnually] = useState(0);
 
-  const [isTermsLoad, setIsTermsLoad] = useState(false);
-  const [openTermsAndConditions, setOpenTermsAndConditions] = useState(false);
+  const [isShowTermsAndConditions, setIsShowTermsAndConditions] =
+    useState(false);
 
   function toFixed(num, fix) {
     var re = new RegExp('^-?\\d+(?:.\\d{0,' + (fix || -1) + '})?');
@@ -1464,7 +1460,7 @@ function Signup(props) {
     };
 
     const TermsnCndtnClick = () => {
-      openTerms();
+      openWebView();
     };
 
     const goToSignin = () => {
@@ -3037,64 +3033,14 @@ function Signup(props) {
     );
   };
 
-  const openTerms = () => {
+  const openWebView = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        setOpenTermsAndConditions(true);
+        setIsShowTermsAndConditions(true);
       } else {
         Alert.alert('Network Error', 'Please connect internet.');
       }
     });
-  };
-
-  const renderOpenTermsAndCondition = () => {
-    return (
-      <Modal
-        isVisible={openTermsAndConditions}
-        backdropOpacity={0.5}
-        animationInTiming={1000}
-        backdropTransitionInTiming={1000}
-        animationOutTiming={500}
-        style={{margin: 0, padding: 0}}
-        animationIn="slideInUp"
-        animationOut="slideOutDown"
-        backdropTransitionOutTiming={700}
-        onRequestClose={() => {
-          setOpenTermsAndConditions(false);
-          setIsTermsLoad(false);
-        }}>
-        <SafeAreaView style={{flex: 1}}>
-          <WebView
-            source={{
-              uri: termsConditionLink,
-            }}
-            javaScriptEnabled={true}
-            onLoad={() => {
-              setIsTermsLoad(true);
-            }}
-            domStorageEnabled={true}
-            startInLoadingState={false}
-            scalesPageToFit={true}
-          />
-
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => {
-              setOpenTermsAndConditions(false);
-              setIsTermsLoad(false);
-            }}
-            style={styles.BottomButtonwebview}>
-            <Text style={styles.buttonTextBottomwebview}>Close</Text>
-          </TouchableOpacity>
-
-          {!isTermsLoad && (
-            <View style={styles.loaderwebview}>
-              <ActivityIndicator color={theme.color.button1} size={40} />
-            </View>
-          )}
-        </SafeAreaView>
-      </Modal>
-    );
   };
 
   return (
@@ -3135,7 +3081,13 @@ function Signup(props) {
         {renderStatusBar()}
         {renderDateShowModal()}
         {renderBottomSheet()}
-        {openTermsAndConditions && renderOpenTermsAndCondition()}
+        {isShowTermsAndConditions && (
+          <utils.WebViewModal
+            link={termsConditionLink}
+            isVisible={isShowTermsAndConditions}
+            setisVisible={setIsShowTermsAndConditions}
+          />
+        )}
       </View>
     </StripeProvider>
   );

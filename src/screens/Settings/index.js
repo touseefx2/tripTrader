@@ -5,40 +5,24 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
   Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Dimensions,
 } from 'react-native';
-// import Geolocation from 'react-native-geolocation-service';
-import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
-// import Geocoder from 'react-native-geocoding';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
 import utils from '../../utils/index';
 import theme from '../../theme';
-// import DynamicTabView from 'react-native-dynamic-tab-view';
-// import ImageSlider from 'react-native-image-slider';
-// import FastImage from 'react-native-fast-image';
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from 'react-native-responsive-dimensions';
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
 import ToggleSwitch from 'toggle-switch-react-native';
-import RBSheet from 'react-native-raw-bottom-sheet';
-import {ActivityIndicator} from 'react-native-paper';
 import {ScrollView} from 'react-native-gesture-handler';
 
 export default observer(Settings);
 
 function Settings(props) {
+  const privacyPoicyLink =
+    'http://triptraderweb.s3-website.ap-south-1.amazonaws.com/privacypolicyapp';
+
   let ao = 0.8;
   let editprofileIcon = require('../../assets/images/settings/editprofile/img.png');
   let cpIcon = require('../../assets/images/settings/cp/img.png');
@@ -51,7 +35,6 @@ function Settings(props) {
   let logoutIcon = require('../../assets/images/settings/logout/img.png');
 
   const toast = useRef(null);
-  const toastduration = 700;
   let headerTitle = 'Settings';
 
   let internet = store.General.isInternet;
@@ -73,6 +56,9 @@ function Settings(props) {
   const [phone, setPhone] = useState(phn);
   const [cntry, setcntry] = useState(phnCntr);
   const [pwc, setpwc] = useState('');
+
+  const [isShowPrivacy, setIsShowPrivacy] = useState(false);
+
   useEffect(() => {
     if (phone != '' && cntry != '') {
       setTimeout(() => {
@@ -134,12 +120,23 @@ function Settings(props) {
     }
 
     if (c == 'privacy') {
-      props.navigation.navigate('PrivacyPolicy');
+      // props.navigation.navigate('PrivacyPolicy');
+      openWebView();
     }
     if (c == 'logout') {
       store.General.setgoto('home');
       store.User.Logout();
     }
+  };
+
+  const openWebView = () => {
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        setIsShowPrivacy(true);
+      } else {
+        Alert.alert('Network Error', 'Please connect internet.');
+      }
+    });
   };
 
   const onclickNot = isOn => {
@@ -408,7 +405,6 @@ function Settings(props) {
           {user && user == 'guest' && (
             <>
               {renderContactus()}
-              {renderNews()}
               {renderPrivacy()}
             </>
           )}
@@ -451,7 +447,6 @@ function Settings(props) {
 
   return (
     <View style={styles.container}>
-      {/* {tagLine != '' && <utils.TagLine tagLine={tagLine} />} */}
       <utils.DrawerHeader props={props} headerTitle={headerTitle} />
       {!internet && <utils.InternetMessage />}
       <SafeAreaView style={styles.container2}>
@@ -463,7 +458,6 @@ function Settings(props) {
             }}>
             {renderMain()}
           </ScrollView>
-          {/* <utils.Loader2 load={Loader} /> */}
         </View>
         {user && user == 'guest' && renderBottom()}
         <utils.Footer
@@ -472,7 +466,13 @@ function Settings(props) {
           focusScreen={store.General.focusScreen}
         />
       </SafeAreaView>
-
+      {isShowPrivacy && (
+        <utils.WebViewModal
+          link={privacyPoicyLink}
+          isVisible={isShowPrivacy}
+          setisVisible={setIsShowPrivacy}
+        />
+      )}
       <Toast ref={toast} position="bottom" />
     </View>
   );
