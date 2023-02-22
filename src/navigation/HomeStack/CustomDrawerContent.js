@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -12,14 +12,10 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
-
 import theme from '../../theme/index';
-import {inject, observer} from 'mobx-react';
+import {observer} from 'mobx-react';
 import utils from '../../utils/index';
-import {
-  responsiveFontSize,
-  responsiveHeight,
-} from 'react-native-responsive-dimensions';
+import {responsiveFontSize} from 'react-native-responsive-dimensions';
 import {ScrollView} from 'react-native-gesture-handler';
 import store from '../../store';
 

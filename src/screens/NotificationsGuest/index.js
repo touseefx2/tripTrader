@@ -1,40 +1,22 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
   SafeAreaView,
   TouchableOpacity,
   Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
-  Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Dimensions,
   Pressable,
   TextInput,
   FlatList,
-  ScrollView,
-  Keyboard,
   Modal,
   RefreshControl,
 } from 'react-native';
-import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-// import ImageSlider from 'react-native-image-slider';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
 import utils from '../../utils/index';
 import theme from '../../theme';
-import NetInfo from '@react-native-community/netinfo';
-import Toast from 'react-native-easy-toast';
-import {ActivityIndicator} from 'react-native-paper';
-import FastImage from 'react-native-fast-image';
-import {ImageSlider} from 'react-native-image-slider-banner';
-import {Calendar} from 'react-native-calendars';
-import moment, {duration} from 'moment/moment';
+import moment from 'moment';
 
 export default observer(NotificationsGuest);
 
@@ -105,7 +87,12 @@ function ListHeaders({search, setsearch, data}) {
   );
 }
 
-function NotificationsGuest(props) {
+function NotificationsGuest({
+  props,
+  callingScreen,
+  isShowModal,
+  setIsShowModal,
+}) {
   let headerTitle = 'Notifications';
 
   let internet = store.General.isInternet;
@@ -360,51 +347,62 @@ function NotificationsGuest(props) {
     );
   };
 
+  const closeModal = () => {
+    setIsShowModal(false);
+  };
+
   return (
     <>
-      <View style={styles.container}>
-        <utils.StackHeader
-          bell={true}
-          props={props}
-          headerTitle={headerTitle}
-        />
-        {!internet && <utils.InternetMessage />}
-        <SafeAreaView style={styles.container2}>
-          <View style={styles.container3}>
-            <FlatList
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
-              contentContainerStyle={{
-                paddingTop: 12,
-                paddingBottom: 40,
-              }}
-              data={data}
-              renderItem={ItemView2}
-              keyExtractor={(item, index) => index.toString()}
-              ListEmptyComponent={EmptyListMessage}
-              ItemSeparatorComponent={ItemSeparatorView}
-              ListHeaderComponent={
-                data.length > 0 ? (
-                  <ListHeaders
-                    search={search}
-                    setsearch={c => setsearch(c)}
-                    data={data}
-                  />
-                ) : null
-              }
-              // ListFooterComponent={data.length > 0 ? ListFooter : null}
-            />
-          </View>
-
-          <utils.Footer
-            doubleBack={db}
-            nav={props.navigation}
-            screen={headerTitle}
-            focusScreen={store.General.focusScreen}
+      <Modal visible={isShowModal} transparent onRequestClose={closeModal}>
+        <View style={styles.container}>
+          <utils.StackHeader
+            closeModal={closeModal}
+            bell={true}
+            props={props}
+            headerTitle={headerTitle}
           />
-        </SafeAreaView>
-      </View>
+          {!internet && <utils.InternetMessage />}
+          <SafeAreaView style={styles.container2}>
+            <View style={styles.container3}>
+              <FlatList
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+                contentContainerStyle={{
+                  paddingTop: 12,
+                  paddingBottom: 40,
+                }}
+                data={data}
+                renderItem={ItemView2}
+                keyExtractor={(item, index) => index.toString()}
+                ListEmptyComponent={EmptyListMessage}
+                ItemSeparatorComponent={ItemSeparatorView}
+                ListHeaderComponent={
+                  data.length > 0 ? (
+                    <ListHeaders
+                      search={search}
+                      setsearch={c => setsearch(c)}
+                      data={data}
+                    />
+                  ) : null
+                }
+                // ListFooterComponent={data.length > 0 ? ListFooter : null}
+              />
+            </View>
+
+            <utils.Footer
+              closeModal={closeModal}
+              doubleBack={db}
+              nav={props.navigation}
+              screen={headerTitle}
+              focusScreen={store.General.focusScreen}
+            />
+          </SafeAreaView>
+        </View>
+      </Modal>
     </>
   );
 }

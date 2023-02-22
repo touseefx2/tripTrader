@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, Image} from 'react-native';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
 import theme from '../../theme';
+import Notifications from '../../screens/Notifications';
 
 export default observer(StackHeader);
 function StackHeader(props) {
@@ -11,8 +12,13 @@ function StackHeader(props) {
   let headerTitle = props.headerTitle || '';
   let bell = props.bell || false;
   let scrn = props.screen || '';
+
+  const [isShowNotifiction, setIsShowNotifiction] = useState(false);
+  const [isShowGuestNotifiction, setIsShowGuestNotifiction] = useState(false);
+
   const goBack = () => {
-    prop.navigation.goBack();
+    if (headerTitle == 'Notifications') props.closeModal();
+    else prop.navigation.goBack();
   };
 
   let countRead = store.Notifications.unread;
@@ -48,16 +54,12 @@ function StackHeader(props) {
 
   const render3 = () => {
     const onClick = () => {
-      if (store.User.user != 'guest') {
-        prop.navigation.navigate('Notifications', {screen: scrn});
-      } else {
-        prop.navigation.navigate('NotificationsGuest', {screen: scrn});
-      }
+      if (store.User.user != 'guest') setIsShowNotifiction(true);
+      else setIsShowGuestNotifiction(true);
     };
     let src = require('../../assets/images/bell/img.png');
 
     return (
-      // <View style={{width: 22}} />
       <TouchableOpacity
         onPress={onClick}
         disabled={
@@ -93,6 +95,22 @@ function StackHeader(props) {
 
   return (
     <View style={styles.headerConatainer}>
+      {isShowNotifiction && (
+        <Notifications
+          props={prop}
+          callingScreen={headerTitle}
+          isShowModal={
+            store.User.user != 'guest'
+              ? isShowNotifiction
+              : isShowGuestNotifiction
+          }
+          setIsShowModal={
+            store.User.user != 'guest'
+              ? setIsShowNotifiction
+              : setIsShowGuestNotifiction
+          }
+        />
+      )}
       {render1()}
       {render2()}
       {bell && render3()}

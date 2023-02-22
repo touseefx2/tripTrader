@@ -1,11 +1,6 @@
 import React from 'react';
 import {Image} from 'react-native';
-import theme from '../../theme';
-import utils from '../../utils';
 
-const iconSize = 19;
-const focusColor = theme.color.backgroundGreenText;
-const unfocusColor = theme.color.backgroundGreenText;
 const styles = {
   icon: {
     width: 21,
@@ -16,9 +11,7 @@ const styles = {
 
 const Homeicon = {
   drawerLabel: 'Home',
-  // headerShown: false,
-  // swipeEnabled: true,
-  // unmountOnBlur: true,
+
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}
@@ -29,9 +22,7 @@ const Homeicon = {
 
 const Inboxicon = {
   drawerLabel: 'Inbox',
-  // headerShown: false,
-  // swipeEnabled: true,
-  // unmountOnBlur: true,
+
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}
@@ -42,8 +33,7 @@ const Inboxicon = {
 
 const NewTripicon = {
   drawerLabel: 'New Trip',
-  // headerShown: false,
-  // swipeEnabled: true,
+
   unmountOnBlur: true,
   drawerIcon: ({focused, size}) => (
     <Image
@@ -55,9 +45,7 @@ const NewTripicon = {
 
 const MyProfileicon = {
   drawerLabel: 'My Profile',
-  // headerShown: false,
-  // swipeEnabled: true,
-  // unmountOnBlur: true,
+
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}
@@ -68,8 +56,7 @@ const MyProfileicon = {
 
 const EditProfileicon = {
   drawerLabel: 'Edit Profile',
-  // headerShown: false,
-  // swipeEnabled: true,
+
   unmountOnBlur: true,
   drawerIcon: ({focused, size}) => (
     <Image
@@ -81,9 +68,7 @@ const EditProfileicon = {
 
 const TradeOffersicon = {
   drawerLabel: 'Trade Offers',
-  // headerShown: false,
-  // swipeEnabled: true,
-  // unmountOnBlur: true,
+
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}
@@ -94,9 +79,7 @@ const TradeOffersicon = {
 
 const ConfirmedTripsicon = {
   drawerLabel: 'Confirmed Trips',
-  // headerShown: false,
-  // swipeEnabled: true,
-  // unmountOnBlur: true,
+
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}
@@ -107,8 +90,7 @@ const ConfirmedTripsicon = {
 
 const SavedTripsicons = {
   drawerLabel: 'Saved Trips',
-  // headerShown: false,
-  // swipeEnabled: true,
+
   unmountOnBlur: true,
   drawerIcon: ({focused, size}) => (
     <Image
@@ -120,8 +102,7 @@ const SavedTripsicons = {
 
 const Supporticon = {
   drawerLabel: 'Support',
-  // headerShown: false,
-  // swipeEnabled: true,
+
   unmountOnBlur: true,
   drawerIcon: ({focused, size}) => (
     <Image
@@ -133,9 +114,6 @@ const Supporticon = {
 
 const LatestNewsicon = {
   drawerLabel: 'Latest News',
-  // headerShown: false,
-  // swipeEnabled: true,
-  // unmountOnBlur: true,
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}
@@ -146,9 +124,6 @@ const LatestNewsicon = {
 
 const PrivacyPolicyicon = {
   drawerLabel: 'Privacy Policy',
-  // headerShown: false,
-  // swipeEnabled: true,
-  // unmountOnBlur: false,
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}
@@ -159,8 +134,6 @@ const PrivacyPolicyicon = {
 
 const Settingsicons = {
   drawerLabel: 'Settings',
-  // headerShown: false,
-  // swipeEnabled: true,
   unmountOnBlur: true,
 
   drawerIcon: ({focused, size}) => (
@@ -173,9 +146,6 @@ const Settingsicons = {
 
 const Notificationsicons = {
   drawerLabel: 'Notifications',
-  // headerShown: false,
-  // swipeEnabled: true,
-  // unmountOnBlur: true,
 
   drawerIcon: ({focused, size}) => (
     <Image

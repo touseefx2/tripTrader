@@ -47,7 +47,7 @@ function Signup(props) {
 
   const {confirmPayment} = useStripe();
   const termsConditionLink =
-    'http://triptraderweb.s3-website.ap-south-1.amazonaws.com/termsandconditionsapp';
+    'http://ec2-35-175-134-9.compute-1.amazonaws.com/termsandconditionsapp';
 
   let internet = store.General.isInternet;
   const rbSheet = useRef(null);

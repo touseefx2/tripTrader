@@ -1,9 +1,5 @@
 import {StyleSheet} from 'react-native';
 import theme from '../../theme/index';
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from 'react-native-responsive-dimensions';
 
 export const styles = StyleSheet.create({
   container: {
@@ -177,12 +173,11 @@ export const styles = StyleSheet.create({
 
   textContainer: {
     width: '68%',
-    // backgroundColor: 'red',
+
     top: 5,
   },
   mtextContainer: {
     width: '77%',
-    // backgroundColor: 'red',
   },
   textContainertitle: {
     color: theme.color.titleGreen,

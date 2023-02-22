@@ -1,40 +1,26 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   SafeAreaView,
   TouchableOpacity,
   Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
-  Alert,
-  Linking,
-  PermissionsAndroid,
   Platform,
-  Dimensions,
   Pressable,
   TextInput,
-  FlatList,
-  ScrollView,
   Keyboard,
   Modal,
   RefreshControl,
 } from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-// import ImageSlider from 'react-native-image-slider';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
 import utils from '../../utils/index';
 import theme from '../../theme';
 import NetInfo from '@react-native-community/netinfo';
-import Toast from 'react-native-easy-toast';
 import {ActivityIndicator} from 'react-native-paper';
-import FastImage from 'react-native-fast-image';
-import {ImageSlider} from 'react-native-image-slider-banner';
-import {Calendar} from 'react-native-calendars';
-import moment, {duration} from 'moment/moment';
+import moment from 'moment/moment';
 import {FlashList} from '@shopify/flash-list';
 
 export default observer(Notifications);
@@ -174,15 +160,14 @@ function EmptyListMessage() {
   );
 }
 
-function Notifications(props) {
-  let headerTitle = 'Notifications';
-
+function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
+  const headerTitle = 'Notifications';
   let internet = store.General.isInternet;
   let user = store.User.user;
 
   let db = false;
-  let previousScreen = props.route.params.screen || '';
-  if (previousScreen == 'userprofile' || previousScreen == 'followers') {
+
+  if (callingScreen == 'UserProfile' || callingScreen == 'followers') {
     db = true;
   }
   const data = store.Notifications.notifications;
@@ -221,7 +206,7 @@ function Notifications(props) {
   const [search, setsearch] = useState('');
 
   const goBack = () => {
-    props.navigation.goBack();
+    closeModal();
   };
 
   const LoadMore = async () => {
@@ -519,70 +504,81 @@ function Notifications(props) {
     );
   };
 
+  const closeModal = () => {
+    setIsShowModal(false);
+  };
+
   const windowSize = 21;
 
   return (
     <>
-      <View style={styles.container}>
-        <utils.StackHeader
-          bell={true}
-          props={props}
-          headerTitle={headerTitle}
-        />
-        {!internet && <utils.InternetMessage />}
-        <SafeAreaView style={styles.container2}>
-          <View style={styles.container3}>
-            <FlashList
-              decelerationRate={'fast'}
-              estimatedItemSize={100}
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
-              contentContainerStyle={{
-                paddingTop: 12,
-                paddingBottom: 40,
-              }}
-              initialNumToRender={limit}
-              windowSize={windowSize}
-              maxToRenderPerBatch={windowSize}
-              data={data}
-              renderItem={ItemView}
-              keyExtractor={(item, index) => index.toString()}
-              ItemSeparatorComponent={ItemSeparatorView}
-              ListHeaderComponent={
-                <ListHeaders
-                  search={search}
-                  setsearch={c => setsearch(c)}
-                  data={data}
-                />
-              }
-              // ListFooterComponent={
-              //   data != false && data.length > 0 ? (
-              //     <ListFooter
-              //       data={data}
-              //       d={td}
-              //       loadMore={loadMore}
-              //       LoadMore={LoadMore}
-              //     />
-              //   ) : null
-              // }
-              ListEmptyComponent={
-                getDataOnce &&
-                !loadFirst &&
-                data &&
-                data.length <= 0 && <EmptyListMessage />
-              }
-            />
-          </View>
-
-          <utils.Footer
-            doubleBack={db}
-            nav={props.navigation}
-            screen={headerTitle}
-            focusScreen={store.General.focusScreen}
+      <Modal visible={isShowModal} transparent onRequestClose={closeModal}>
+        <View style={styles.container}>
+          <utils.StackHeader
+            closeModal={closeModal}
+            bell={true}
+            props={props}
+            headerTitle={headerTitle}
           />
-        </SafeAreaView>
-      </View>
+          {!internet && <utils.InternetMessage />}
+          <SafeAreaView style={styles.container2}>
+            <View style={styles.container3}>
+              <FlashList
+                decelerationRate={'fast'}
+                estimatedItemSize={100}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+                contentContainerStyle={{
+                  paddingTop: 12,
+                  paddingBottom: 40,
+                }}
+                initialNumToRender={limit}
+                windowSize={windowSize}
+                maxToRenderPerBatch={windowSize}
+                data={data}
+                renderItem={ItemView}
+                keyExtractor={(item, index) => index.toString()}
+                ItemSeparatorComponent={ItemSeparatorView}
+                ListHeaderComponent={
+                  <ListHeaders
+                    search={search}
+                    setsearch={c => setsearch(c)}
+                    data={data}
+                  />
+                }
+                // ListFooterComponent={
+                //   data != false && data.length > 0 ? (
+                //     <ListFooter
+                //       data={data}
+                //       d={td}
+                //       loadMore={loadMore}
+                //       LoadMore={LoadMore}
+                //     />
+                //   ) : null
+                // }
+                ListEmptyComponent={
+                  getDataOnce &&
+                  !loadFirst &&
+                  data &&
+                  data.length <= 0 && <EmptyListMessage />
+                }
+              />
+            </View>
+
+            <utils.Footer
+              closeModal={closeModal}
+              doubleBack={db}
+              nav={props.navigation}
+              screen={headerTitle}
+              focusScreen={store.General.focusScreen}
+            />
+          </SafeAreaView>
+        </View>
+      </Modal>
     </>
   );
 }

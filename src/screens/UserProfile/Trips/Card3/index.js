@@ -1,42 +1,13 @@
-import React, {useEffect, useState, useRef, memo} from 'react';
-import {
-  View,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
-  Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
-  Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Dimensions,
-  Pressable,
-  TextInput,
-  FlatList,
-  ScrollView,
-  Keyboard,
-  Modal,
-} from 'react-native';
+import React, {useState, memo} from 'react';
+import {View, Text, Pressable} from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-// import ImageSlider from 'react-native-image-slider';
 import {styles} from './styles';
-import {observer} from 'mobx-react';
 import store from '../../../../store/index';
 import utils from '../../../../utils/index';
 import theme from '../../../../theme';
-import NetInfo from '@react-native-community/netinfo';
-import Toast from 'react-native-easy-toast';
-import {ActivityIndicator} from 'react-native-paper';
-import FastImage from 'react-native-fast-image';
 import {ImageSlider} from 'react-native-image-slider-banner';
-import {Calendar} from 'react-native-calendars';
 import moment from 'moment/moment';
-import Accordion from 'react-native-collapsible/Accordion';
 import * as Animatable from 'react-native-animatable';
-import {FlashList} from '@shopify/flash-list';
 
 export default memo(Card3);
 
@@ -330,41 +301,6 @@ function Card3({
     );
   };
 
-  // const renderSec4 = () => {
-  //   return (
-  //     <View style={styles.boxSection4}>
-  //       <Pressable
-  //         onPress={() => {
-  //           // if (store.User.user.subscriptionStatus == 'freemium') {
-  //           //   props.navigation.navigate('Plan');
-  //           // } else {
-  //           //   onClickMakeOffer(item, index);
-  //           // }
-  //         }}
-  //         style={({pressed}) => [{opacity: pressed ? 0.9 : 1.0}, styles.sec4B]}>
-  //         <Text style={styles.sec4T}>make offer</Text>
-  //       </Pressable>
-
-  //       <Pressable
-  //         onPress={() => {
-  //           // if (store.User.user.subscriptionStatus == 'freemium') {
-  //           //   props.navigation.navigate('Plan');
-  //           // } else {
-  //           //   onClickMessage(item, index);
-  //           // }
-  //         }}
-  //         style={({pressed}) => [
-  //           {opacity: pressed ? 0.9 : 1.0},
-  //           [styles.sec4B, {backgroundColor: theme.color.button2}],
-  //         ]}>
-  //         <Text style={[styles.sec4T, {color: theme.color.subTitle}]}>
-  //           message
-  //         </Text>
-  //       </Pressable>
-  //     </View>
-  //   );
-  // };
-
   return (
     <>
       {pvm && (
@@ -394,7 +330,6 @@ function Card3({
             {!showpic ? renderSec2() : renderSec2c()}
             {c && renderSec3()}
             {!c && renderSec33()}
-            {/* {!c && renderSec4()} */}
           </>
         )}
       </Animatable.View>

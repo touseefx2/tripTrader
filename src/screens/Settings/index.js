@@ -21,7 +21,7 @@ export default observer(Settings);
 
 function Settings(props) {
   const privacyPoicyLink =
-    'http://triptraderweb.s3-website.ap-south-1.amazonaws.com/privacypolicyapp';
+    'http://ec2-35-175-134-9.compute-1.amazonaws.com/privacypolicyapp';
 
   let ao = 0.8;
   let editprofileIcon = require('../../assets/images/settings/editprofile/img.png');

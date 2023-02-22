@@ -1375,10 +1375,10 @@ class user {
 
   @observable homeModalLoder = false;
   @action attemptToOfferSend = (body, suc) => {
-    this.sethomeModalLoder(true);
+    this.setHomeModalLoder(true);
     db.hitApi(db.apis.OFFER_SEND, 'post', body, this.authToken)
       ?.then(resp => {
-        this.sethomeModalLoder(false);
+        this.setHomeModalLoder(false);
         console.log(`response OfferSend  ${db.apis.OFFER_SEND} : `, resp.data);
         store.Offers.attemptToGetSentOffers(
           () => {},
@@ -1387,7 +1387,7 @@ class user {
         suc(true);
       })
       .catch(err => {
-        this.sethomeModalLoder(false);
+        this.setHomeModalLoder(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(`Error in OfferSend ${db.apis.OFFER_SEND} : `, msg);
         if (msg == 503 || msg == 500) {
@@ -1402,7 +1402,7 @@ class user {
 
   @action attemptToCheckFirstMessage = (suid, ruid, obj, msg, suc) => {
     console.warn('check First Message');
-    this.sethomeModalLoder(true);
+    this.setHomeModalLoder(true);
     let params = suid + '/' + ruid;
     db.hitApi(db.apis.CHECK_FIRST_MESSAGE + params, 'get', {}, this.authToken)
       ?.then(resp => {
@@ -1433,7 +1433,7 @@ class user {
           this.SendFirstMessage(obj, suc);
           return;
         }
-        this.sethomeModalLoder(false);
+        this.setHomeModalLoder(false);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
           // store.General.setisServerError(true);
@@ -1446,7 +1446,7 @@ class user {
   @action SendFirstMessage = (body, suc) => {
     db.hitApi(db.apis.SEND_FIRST_MESSAGE, 'post', body, this.authToken)
       ?.then(resp => {
-        this.sethomeModalLoder(false);
+        this.setHomeModalLoder(false);
         console.log(
           `response SendFirstMessage  ${db.apis.SEND_FIRST_MESSAGE} : `,
           resp.data,
@@ -1458,7 +1458,7 @@ class user {
         this.attemptToGetInboxes(store.User.user._id, () => {});
       })
       .catch(err => {
-        this.sethomeModalLoder(false);
+        this.setHomeModalLoder(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in SendFirstMessage ${db.apis.SEND_FIRST_MESSAGE} : `,
@@ -1490,7 +1490,7 @@ class user {
       type: 'text',
     };
     socket.emit('chat', {userDetails});
-    this.sethomeModalLoder(false);
+    this.setHomeModalLoder(false);
     suc(true);
     socket.emit('user left', {socket: socket.id});
   };
@@ -1538,7 +1538,7 @@ class user {
     this.editTripObj = obj;
   };
 
-  @action sethomeModalLoder = obj => {
+  @action setHomeModalLoder = obj => {
     this.homeModalLoder = obj;
   };
 
@@ -1569,7 +1569,8 @@ class user {
       .catch(err => {
         this.setctripLoader(false);
         ctsi();
-        let msg = err.response.data.message || err.response.status || err;
+        // err.response.data.message || err.response.status ||
+        let msg = err;
         console.log(`Error in create trip ${db.apis.CREATE_TRIP} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
@@ -1606,6 +1607,7 @@ class user {
           console.warn('upload photo success : ');
           let rsp = responseData.data[0].imgrUrl;
           ua.push(rsp);
+
           if (ua.length == a.length) {
             delete body.photos;
             body.photos = ua;
@@ -1616,7 +1618,8 @@ class user {
         .catch(err => {
           this.setctripLoader(false);
           ctsi();
-          let msg = err.response.data.message || err.response.status || err;
+          // err.response.data.message || err.response.status ||
+          let msg = err;
           console.log(
             `Error in upload trips photo ${db.apis.IMAGE_UPLOAD} : `,
             msg,

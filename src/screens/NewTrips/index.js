@@ -299,7 +299,7 @@ function NewTrips(props) {
       typeData.map(element => {
         for (let index = 0; index < spcsDt.length; index++) {
           const item = spcsDt[index];
-          if (item.type._id === element._id) {
+          if (item.type && item.type._id === element._id) {
             activityList.push(element);
             break;
           }
@@ -309,23 +309,6 @@ function NewTrips(props) {
       settrptypeData(activityList);
     }
   }, [spcsDt, typeData, trptypeData]);
-
-  useEffect(() => {
-    if (user == 'guest') {
-      store.General.setgoto('guestaccess');
-      store.User.Logout();
-      return;
-    }
-  }, []);
-
-  let loader = store.User.ctripsLoader;
-
-  useEffect(() => {
-    return () => {
-      store.User.seteditTrip(false);
-      store.User.seteditTripObj(false);
-    };
-  }, []);
 
   useEffect(() => {
     if (tripType != '') {
@@ -344,6 +327,23 @@ function NewTrips(props) {
       setspcsData(aa);
     }
   }, [tripType]);
+
+  useEffect(() => {
+    if (user == 'guest') {
+      store.General.setgoto('guestaccess');
+      store.User.Logout();
+      return;
+    }
+  }, []);
+
+  let loader = store.User.ctripsLoader;
+
+  useEffect(() => {
+    return () => {
+      store.User.seteditTrip(false);
+      store.User.seteditTripObj(false);
+    };
+  }, []);
 
   function findItm(v, data, c) {
     let obj = c == 'n' ? {name: v} : {title: v};
@@ -1027,7 +1027,6 @@ function NewTrips(props) {
           delete obj.unAvailableDays;
         }
 
-        console.log('Add Trip Object : ', obj);
         if (store.User.user.subscriptionStatus == 'freemium') {
           openTripSuspendIndication();
         }

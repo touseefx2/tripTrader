@@ -1,26 +1,19 @@
-import React, {useEffect, useState, useRef} from 'react';
-import {
-  View,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
-  Image,
-  StatusBar,
-  ScrollView,
-  Modal,
-  ActivityIndicator,
-} from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, TouchableOpacity, Image} from 'react-native';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
 import theme from '../../theme';
+import Notifications from '../../screens/Notifications';
 
 export default observer(DrawerHeader);
 function DrawerHeader(props) {
-  let prop = props.props;
-  let headerTitle = props.headerTitle || '';
+  const prop = props.props;
+  const headerTitle = props.headerTitle || '';
+  const countRead = store.Notifications.unread;
 
-  let countRead = store.Notifications.unread;
+  const [isShowNotifiction, setIsShowNotifiction] = useState(false);
+  const [isShowGuestNotifiction, setIsShowGuestNotifiction] = useState(false);
 
   const render1 = () => {
     const onClick = () => {
@@ -53,20 +46,14 @@ function DrawerHeader(props) {
 
   const render3 = () => {
     const onClick = () => {
-      if (store.User.user != 'guest') {
-        prop.navigation.navigate('Notifications', {screen: headerTitle});
-      } else {
-        prop.navigation.navigate('NotificationsGuest', {screen: headerTitle});
-      }
+      // prop.navigation.navigate('Notifications', {screen: headerTitle});
+      // prop.navigation.navigate('NotificationsGuest', {screen: headerTitle});
+      if (store.User.user != 'guest') setIsShowNotifiction(true);
+      else setIsShowGuestNotifiction(true);
     };
     let src = require('../../assets/images/bell/img.png');
     return (
       <TouchableOpacity activeOpacity={0.8} onPress={onClick}>
-        {/* <utils.vectorIcon.SimpleLineIcons
-          name="bell"
-          color={theme.color.backgroundGreenText}
-          size={23}
-        /> */}
         <Image
           source={src}
           style={{
@@ -94,6 +81,22 @@ function DrawerHeader(props) {
 
   return (
     <View style={styles.headerConatainer}>
+      {isShowNotifiction && (
+        <Notifications
+          props={prop}
+          callingScreen={headerTitle}
+          isShowModal={
+            store.User.user != 'guest'
+              ? isShowNotifiction
+              : isShowGuestNotifiction
+          }
+          setIsShowModal={
+            store.User.user != 'guest'
+              ? setIsShowNotifiction
+              : setIsShowGuestNotifiction
+          }
+        />
+      )}
       {render1()}
       {render2()}
       {render3()}

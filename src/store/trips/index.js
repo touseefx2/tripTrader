@@ -12,13 +12,13 @@ class trips {
   }
 
   @observable stLoader = false;
-  @observable dLoader = false;
+  @observable deleteLoader = false;
   @observable confirmTripsSendMessageLoader = false;
   @action setstLoader = obj => {
     this.stLoader = obj;
   };
-  @action setdLoader = obj => {
-    this.dLoader = obj;
+  @action setDeleteLoader = obj => {
+    this.deleteLoader = obj;
   };
   @action setconfirmTripsSendMessageLoader = obj => {
     this.confirmTripsSendMessageLoader = obj;
@@ -52,9 +52,9 @@ class trips {
   };
   @action attemptToDeleteTrip = (item, ind, suc) => {
     console.warn('delete  save trip  : ', 'true');
-    this.setdLoader(true);
+    this.setDeleteLoader(true);
     setTimeout(() => {
-      this.setdLoader(false);
+      this.setDeleteLoader(false);
       this.deletesetsaveTrips(ind, suc);
     }, 1000);
   };
@@ -192,12 +192,12 @@ class trips {
     };
 
     console.log('unSave Trip Body : ', body);
-    this.setdLoader(true);
+    this.setDeleteLoader(true);
     let uid = store.User.user._id;
     let token = store.User.authToken;
     db.hitApi(db.apis.SAVE_TRIP + uid, 'put', body, token)
       ?.then(resp => {
-        this.setdLoader(false);
+        this.setDeleteLoader(false);
         console.log(
           `response unSave Trip   ${db.apis.SAVE_TRIP} : `,
           resp.data,
@@ -212,7 +212,7 @@ class trips {
         return;
       })
       .catch(err => {
-        this.setdLoader(false);
+        this.setDeleteLoader(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(`Error in unSave Trip ${db.apis.SAVE_TRIP} : `, msg);
         if (msg == 503 || msg == 500) {

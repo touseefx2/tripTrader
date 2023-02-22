@@ -64,7 +64,6 @@ function MyProfile(props) {
   let followers = store.User.totalfollowers;
   let following = store.User.totalfollowing;
   let src = '';
-  let srccnic = '';
   let isCnicVerf = false;
 
   console.log('flwng : ', following);
@@ -82,8 +81,7 @@ function MyProfile(props) {
         : '';
 
     src = user.image && user.image != '' ? user.image : '';
-    srccnic =
-      user.identityProof && user.identityProof != '' ? user.identityProof : '';
+
     isCnicVerf = user.identityStatus == 'notVerified' ? false : true;
   }
 
@@ -181,7 +179,7 @@ function MyProfile(props) {
   const MultipleImage = async button => {
     setisShowPrmsn(false);
     setisAddPhotoModal(false);
-    let apiLevel = store.General.apiLevel;
+    const apiLevel = store.General.apiLevel;
 
     setTimeout(async () => {
       try {

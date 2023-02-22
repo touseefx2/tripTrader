@@ -5,23 +5,16 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
-  TouchableHighlight,
-  StatusBar,
   BackHandler,
   Alert,
-  Linking,
-  PermissionsAndroid,
   Platform,
-  Dimensions,
   Pressable,
   TextInput,
-  FlatList,
   ScrollView,
   Keyboard,
   Modal,
 } from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-// import ImageSlider from 'react-native-image-slider';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
@@ -30,14 +23,16 @@ import theme from '../../theme';
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
 import {ActivityIndicator} from 'react-native-paper';
-
 import {Calendar} from 'react-native-calendars';
 import moment from 'moment/moment';
 import Accordion from 'react-native-collapsible/Accordion';
-
 import Card1 from './Card1';
 import Card2 from './Card2';
 import Card3 from './Card3';
+
+const activeOpacity = 0.8;
+const actSrc = require('../../assets/images/filters/activity/img.png');
+const spcSrc = require('../../assets/images/filters/species/img.png');
 
 function ListHeader({search, setsearch, data}) {
   const renderResult = () => {
@@ -175,12 +170,6 @@ function isObjectEmpty(value) {
     JSON.stringify(value) === '{}'
   );
 }
-
-let seDayColor = theme.color.button1;
-let ocolor = '#569969';
-let activeOpacity = 0.8;
-let actSrc = require('../../assets/images/filters/activity/img.png');
-let spcSrc = require('../../assets/images/filters/species/img.png');
 
 let cssf = {
   container: {
@@ -333,92 +322,70 @@ var getDaysArray = function (start, end) {
 export default observer(SavedTrips);
 
 function SavedTrips(props) {
-  let maxModalHeight = theme.window.Height - 70;
-  const [modalHeight, setmodalHeight] = useState(0);
+  const headerTitle = 'Saved Trips';
+  const windowSize = 21;
+  const limit = 10;
+  const maxModalHeight = theme.window.Height - 70;
   const scrollRef = useRef(null);
   const scrollRef2 = useRef(null);
-
   const toast = useRef(null);
-  const toastduration = 700;
-  let headerTitle = 'Saved Trips';
-  let internet = store.General.isInternet;
-  let user = store.User.user;
 
-  let mloader = store.User.homeModalLoder;
+  const {isInternet} = store.General;
+  const {user, homeModalLoder} = store.User;
+  const {deleteLoader, saveTrips} = store.Trips;
 
-  let mmloader = store.Trips.dLoader;
+  const [search, setSearch] = useState('');
 
-  const [modalObj, setmodalObj] = useState(false);
-  const [modalChk, setmodalChk] = useState(false);
-  const [isModal, setisModal] = useState(false);
+  const [modalHeight, setmodalHeight] = useState(0);
+  const [modalObj, setModalObj] = useState(null);
+  const [modalCheck, setModalCheck] = useState('');
+  const [isModal, setIsModal] = useState(false);
+
+  const [isOfferModal, setIsOfferModal] = useState(false);
+
   const [message, setMessage] = useState('');
-
-  const [step, setstep] = useState(1);
-
-  const [showCal1, setshowCal1] = useState(false);
-
+  const [step, setStep] = useState(1);
+  const [isChooseDateCalender, setIsChooseDateCalender] = useState(false);
   const [minDatee, setminDatee] = useState('');
   const [maxDatee, setmaxDatee] = useState('');
-  const [isDisableToday, setisDisableToday] = useState(false);
-  const [monthh, setmonthh] = useState(new Date());
+  const [isDisableToday, setIsDisableToday] = useState(false);
+  const [monthh, setMonthh] = useState(new Date());
 
   const [markedDatess, setmarkedDatess] = useState({});
   const [selDatess, setselDatess] = useState({});
   const [isSelDatee, setisSelDatee] = useState(false);
 
-  const dtt = store.Trips.saveTrips || [];
-
-  let homeLoader = store.User.HomeLoader;
-
   const tripdata = store.User.trips;
   const [isDropDownTrip, setisDropDownTrip] = useState(false);
   const [trip, settrip] = useState(false);
 
-  const [search, setsearch] = useState('');
-
-  let limit = 10;
   const [page, setpage] = useState(1);
   const [loadMore, setloadMore] = useState(false);
+  const [saveData, setSaveData] = useState([]);
   const [data, setdata] = useState([]);
   const [isloadFirst, setisloadFirst] = useState(false);
 
-  const [d, setd] = useState([]);
   useEffect(() => {
-    let ar = [];
-    if (dtt.length > 0) {
-      setisloadFirst(false);
-      setpage(1);
-      if (search == '') {
-        dtt.map((e, i, a) => {
-          if (e) {
-            ar.push(e);
-          }
-        });
-      } else {
-        ar = dtt.filter(item => {
-          let title = item.hostId.firstName + ' ' + item.hostId.lastName;
-
-          return title.toLowerCase().includes(search.toLowerCase());
-        });
-      }
+    let arr = [];
+    setisloadFirst(false);
+    setpage(1);
+    if (search == '') {
+      saveTrips.map(item => {
+        if (item) arr.push(item);
+      });
+    } else {
+      arr = saveTrips.filter(item => {
+        const title = item.hostId.firstName + ' ' + item.hostId.lastName;
+        return title.toLowerCase().includes(search.toLowerCase());
+      });
     }
-
-    let da = ar.reverse();
-    setd(da);
-    // setd([...da, ...da, ...da, ...da, ...da, ...da, ...da, ...da, ...da]);
+    setSaveData(arr.reverse());
   }, [search]);
 
   useEffect(() => {
-    if (d.length > 0 && !isloadFirst) {
-      LoadFirst(d);
-    }
-    if (d.length <= 0) {
-      setdata([]);
-    }
-  }, [d, isloadFirst]);
-
-  // console.log('d  st: ', d.length);
-  // console.log('data sttttttt : ', data.length);
+    if (saveData.length > 0 && !isloadFirst) LoadFirst(saveData);
+    if (saveData.length <= 0) setdata([]);
+  }, [saveData, isloadFirst]);
 
   const LoadFirst = d => {
     let page = 0;
@@ -441,7 +408,7 @@ function SavedTrips(props) {
     setTimeout(() => {
       setloadMore(false);
       let p = page + 1;
-      let ar = [...d];
+      let ar = [...saveData];
       const dt = ar.slice(page * limit, limit * p);
       let dd = [...data, ...dt];
       console.log('---> Load More : ', page * limit, limit * p);
@@ -456,11 +423,9 @@ function SavedTrips(props) {
   const [dur, setdur] = useState(durtn[0]); //time solts
   const [rdur, setrdur] = useState(rdurtn[0]);
   const [isDropDownrDur, setisDropDownrDur] = useState(false);
-  const [trade, settrader] = useState('');
   const [durNum, setdurNum] = useState(1);
   const [showCalender, setshowCalender] = useState(false);
   const [iDate, setiDate] = useState(new Date());
-  const [minDate, setminDate] = useState(new Date());
   const [month, setmonth] = useState(new Date());
   const [markedDates, setmarkedDates] = useState({});
   const [isSelDate, setisSelDate] = useState(false);
@@ -482,9 +447,6 @@ function SavedTrips(props) {
   const [unavlblSLCTmarkedDates, setunavlblSLCTmarkedDates] = useState({});
   const [selunmarkeSLCTdDates, setselunmarkedSLCTDates] = useState({});
   const [isSetUnavailable, setisSetUnavailable] = useState(false);
-  const [isShowPrmsn, setisShowPrmsn] = useState(false);
-  const [prmsnChk, setprmsnChk] = useState('');
-  const [DT, setDT] = useState(false);
 
   const [isButtonDisable, setisButtonDisable] = useState(false);
 
@@ -559,7 +521,7 @@ function SavedTrips(props) {
     if (
       !isObjectEmpty(markedDatess) &&
       !isObjectEmpty(modalObj) &&
-      modalChk == 'offer' &&
+      modalCheck == 'offer' &&
       step == 1
     ) {
       const size = Object.keys(markedDatess).length;
@@ -577,28 +539,24 @@ function SavedTrips(props) {
       } else if (t == 'years') {
         totaldays = duration * 365;
       }
-      if (size == totaldays) {
-        setisSelDatee(true);
-      } else {
-        setisSelDatee(false);
-      }
+      if (size == totaldays) setisSelDatee(true);
+      else setisSelDatee(false);
     }
 
     if (
       isObjectEmpty(markedDatess) &&
       !isObjectEmpty(modalObj) &&
-      modalChk == 'offer' &&
+      modalCheck == 'offer' &&
       step == 1
-    ) {
+    )
       setisSelDatee(false);
-    }
-  }, [markedDatess, modalObj, modalChk, step]);
+  }, [markedDatess, modalObj, modalCheck, step]);
 
   //for diable totday day color in step1 calender in make offer
   useEffect(() => {
     if (
       !isObjectEmpty(modalObj) &&
-      modalChk == 'offer' &&
+      modalCheck == 'offer' &&
       step == 1 &&
       isModal &&
       minDatee == ''
@@ -608,19 +566,19 @@ function SavedTrips(props) {
       let cd = moment().format('YYYY-MM-DD');
 
       if (sd <= cd) {
-        setisDisableToday(false);
+        setIsDisableToday(false);
       } else {
-        setisDisableToday(true);
+        setIsDisableToday(true);
       }
     }
-  }, [modalObj, modalChk, step, isModal, minDatee]);
+  }, [modalObj, modalCheck, step, isModal, minDatee]);
   useEffect(() => {
     if (minDatee != '') {
       let todayd = moment().format('YYYY-MM-DD');
       if (minDatee <= todayd) {
-        setisDisableToday(false);
+        setIsDisableToday(false);
       } else {
-        setisDisableToday(true);
+        setIsDisableToday(true);
       }
     }
   }, [minDatee]);
@@ -656,7 +614,7 @@ function SavedTrips(props) {
     if (!props.navigation.isFocused()) {
       return false;
     } else {
-      setsearch('');
+      setSearch('');
 
       return true;
     }
@@ -865,8 +823,8 @@ function SavedTrips(props) {
           i,
           data,
           c => setdata(c),
-          d,
-          c => setd(c),
+          saveData,
+          c => setSaveData(c),
 
           closeMModal,
         );
@@ -939,13 +897,14 @@ function SavedTrips(props) {
       unavailable: objct,
     };
 
-    openModal({item: obj, i: ind}, 'offer');
+    openModal({item: obj, selIndex: ind}, 'offer');
+    // openModal({item: obj, i: ind}, 'offer');
   };
   const onClickMessage = (dt, ind) => {
     openModal({item: dt, i: ind}, 'message');
   };
   const onClickCal = () => {
-    setshowCal1(!showCal1);
+    setIsChooseDateCalender(!isChooseDateCalender);
   };
 
   //make offer method
@@ -1191,12 +1150,15 @@ function SavedTrips(props) {
   };
 
   const openModal = (obj, c) => {
-    setmodalObj(obj);
-    setmodalChk(c);
-    setisModal(true);
-    if (c == 'offer') {
-      setstep(1);
-    }
+    setModalObj(obj);
+    if (c == 'offer') setIsOfferModal(true);
+
+    // setModalObj(obj);
+    // setModalCheck(c);
+    // setIsModal(true);
+    // if (c == 'offer') {
+    //   setStep(1);
+    // }
   };
 
   const closeModalAll = () => {
@@ -1207,9 +1169,9 @@ function SavedTrips(props) {
   };
 
   const closeMModal = () => {
-    setisModal(false);
-    setmodalObj(false);
-    setmodalChk(false);
+    setIsModal(false);
+    setModalObj(false);
+    setModalCheck('');
     setmodalHeight(0);
   };
 
@@ -1241,16 +1203,16 @@ function SavedTrips(props) {
   };
 
   const closeMessageModal = () => {
-    setisModal(false);
-    setmodalChk(false);
-    setmodalObj(false);
+    setIsModal(false);
+    setModalCheck('');
+    setModalObj(false);
     setMessage('');
   };
 
   const closeTripSaveModal = () => {
-    setisModal(false);
-    setmodalChk(false);
-    setmodalObj(false);
+    setIsModal(false);
+    setModalCheck('');
+    setModalObj(false);
   };
 
   const clearFields = (c, c2) => {
@@ -1273,7 +1235,6 @@ function SavedTrips(props) {
     setunavlblSLCTmarkedDates({});
     setselunmarkedSLCTDates({});
     if (c == 'all') {
-      settrader('');
       setdurNum(1);
       setrdurNum(1);
       setdur(durtn[0]);
@@ -1295,29 +1256,29 @@ function SavedTrips(props) {
   };
 
   const clearModal1 = () => {
-    if (!mloader) {
-      setisModal(false);
-      setmodalChk(false);
-      setmodalObj(false);
+    if (!homeModalLoder) {
+      setIsModal(false);
+      setModalCheck('');
+      setModalObj(false);
       setMessage('');
-      setshowCal1(false);
+      setIsChooseDateCalender(false);
       setselDatess({});
       setmarkedDatess({});
       setisSelDatee(false);
-      setstep(1);
+      setStep(1);
       setiDate(new Date());
       setminDatee('');
       setmaxDatee('');
-      setisDisableToday(false);
-      setmonthh(new Date());
+      setIsDisableToday(false);
+      setMonthh(new Date());
       setmodalHeight(0);
       closeAllDropDown();
     }
   };
 
   const clearModal2 = () => {
-    if (!mloader) {
-      setstep(1);
+    if (!homeModalLoder) {
+      setStep(1);
       settrip(false);
       setmodalHeight(0);
       closeAllDropDown();
@@ -1325,8 +1286,8 @@ function SavedTrips(props) {
   };
 
   const clearModal3 = () => {
-    if (!mloader) {
-      setstep(2);
+    if (!homeModalLoder) {
+      setStep(2);
       closeAllDropDown();
       setmodalHeight(0);
       setisShowUnavliableModal(false);
@@ -1336,8 +1297,8 @@ function SavedTrips(props) {
   };
 
   const clearModal4 = () => {
-    if (!mloader) {
-      setstep(3);
+    if (!homeModalLoder) {
+      setStep(3);
       closeAllDropDown();
       setmodalHeight(0);
     }
@@ -1360,19 +1321,20 @@ function SavedTrips(props) {
   }
 
   const renderModal = () => {
-    let c = modalHeight >= maxModalHeight ? true : false;
-    let style = c ? [styles.modal, {height: maxModalHeight}] : styles.modal2;
+    const item = modalObj.item;
+    const isMaxHeight = modalHeight >= maxModalHeight ? true : false;
+    const style = isMaxHeight
+      ? [styles.modal, {height: maxModalHeight}]
+      : styles.modal2;
 
-    if (modalChk == 'offer' && step == 1) {
-      let item = modalObj.item;
-
+    if (modalCheck == 'offer' && step == 1) {
       const renderHeader = () => {
         let text = 'Make Offer';
 
         const renderCross = () => {
           return (
             <Pressable
-              disabled={mloader}
+              disabled={homeModalLoder}
               style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
               onPress={closeModalAll}>
               <utils.vectorIcon.Ionicons
@@ -1391,7 +1353,7 @@ function SavedTrips(props) {
         return (
           <View
             style={
-              c
+              isMaxHeight
                 ? {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
@@ -1589,7 +1551,7 @@ function SavedTrips(props) {
         const renderButton2 = () => {
           const Continue = () => {
             setmodalHeight(0);
-            setstep(2);
+            setStep(2);
           };
 
           return (
@@ -1612,7 +1574,7 @@ function SavedTrips(props) {
         return (
           <View
             style={
-              c
+              isMaxHeight
                 ? {
                     backgroundColor: theme.color.background,
                     shadowColor: '#000000',
@@ -1627,7 +1589,9 @@ function SavedTrips(props) {
             }>
             <View
               style={
-                c ? styles.modalBottomContainer : styles.modalBottomContainer2
+                isMaxHeight
+                  ? styles.modalBottomContainer
+                  : styles.modalBottomContainer2
               }>
               {renderButton1()}
               {renderButton2()}
@@ -1642,13 +1606,13 @@ function SavedTrips(props) {
             <View style={styles.modalContainer2}>
               <View
                 onLayout={event => {
-                  if (!c) {
+                  if (!isMaxHeight) {
                     let {height} = event.nativeEvent.layout;
                     setmodalHeight(height);
                   }
                 }}
                 style={style}>
-                {c && (
+                {isMaxHeight && (
                   <>
                     {renderHeader()}
                     <ScrollView
@@ -1663,7 +1627,7 @@ function SavedTrips(props) {
                   </>
                 )}
 
-                {!c && (
+                {!isMaxHeight && (
                   <>
                     {renderHeader()}
                     {renderTitle()}
@@ -1674,22 +1638,20 @@ function SavedTrips(props) {
                 )}
               </View>
             </View>
-            {showCal1 && renderCalender1()}
+            {isChooseDateCalender && renderChooseDateCalender()}
           </SafeAreaView>
         </Modal>
       );
     }
 
-    if (modalChk == 'offer' && step == 2) {
-      let item = modalObj.item;
-
+    if (modalCheck == 'offer' && step == 2) {
       const renderHeader = () => {
         let text = 'Make Offer';
 
         const renderCross = () => {
           return (
             <Pressable
-              disabled={mloader}
+              disabled={homeModalLoder}
               style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
               onPress={closeModalAll}>
               <utils.vectorIcon.Ionicons
@@ -1708,7 +1670,7 @@ function SavedTrips(props) {
         return (
           <View
             style={
-              c
+              isMaxHeight
                 ? {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
@@ -1753,7 +1715,7 @@ function SavedTrips(props) {
 
         const onclickSelect = d => {
           if (d == 'customOffer') {
-            setstep(3);
+            setStep(3);
             closeAllDropDown();
             settrip(false);
             return;
@@ -1965,11 +1927,11 @@ function SavedTrips(props) {
             setisSelDate1('');
             setisSelDate2('');
             setisSelDate(false);
-            setminDate(new Date());
+
             setmarkedDates({});
             setselDates({});
             setisSetUnavailable(false);
-            setstep(3);
+            setStep(3);
           };
 
           return (
@@ -1992,7 +1954,7 @@ function SavedTrips(props) {
         return (
           <View
             style={
-              c
+              isMaxHeight
                 ? {
                     backgroundColor: theme.color.background,
                     shadowColor: '#000000',
@@ -2038,7 +2000,9 @@ function SavedTrips(props) {
               }}>
               <View
                 style={
-                  c ? styles.modalBottomContainer : styles.modalBottomContainer2
+                  isMaxHeight
+                    ? styles.modalBottomContainer
+                    : styles.modalBottomContainer2
                 }>
                 {renderButton1()}
                 {renderButton2()}
@@ -2054,13 +2018,13 @@ function SavedTrips(props) {
             <View style={styles.modalContainer2}>
               <View
                 onLayout={event => {
-                  if (!c) {
+                  if (!isMaxHeight) {
                     let {height} = event.nativeEvent.layout;
                     setmodalHeight(height);
                   }
                 }}
                 style={style}>
-                {c && (
+                {isMaxHeight && (
                   <>
                     {renderHeader()}
                     <ScrollView
@@ -2075,7 +2039,7 @@ function SavedTrips(props) {
                   </>
                 )}
 
-                {!c && (
+                {!isMaxHeight && (
                   <>
                     {renderHeader()}
                     {renderTitle()}
@@ -2092,16 +2056,14 @@ function SavedTrips(props) {
 
     //make custom offer
 
-    if (modalChk == 'offer' && step == 3 && !isShowUnavliableModal) {
-      let item = modalObj.item;
-
+    if (modalCheck == 'offer' && step == 3 && !isShowUnavliableModal) {
       const renderHeader = () => {
         let text = 'Make Offer';
 
         const renderCross = () => {
           return (
             <Pressable
-              disabled={mloader}
+              disabled={homeModalLoder}
               style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
               onPress={closeModalAll}>
               <utils.vectorIcon.Ionicons
@@ -2120,7 +2082,7 @@ function SavedTrips(props) {
         return (
           <View
             style={
-              c
+              isMaxHeight
                 ? {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
@@ -2685,7 +2647,7 @@ function SavedTrips(props) {
         const renderButton2 = () => {
           const Continue = () => {
             setmodalHeight(0);
-            setstep(4);
+            setStep(4);
           };
 
           return (
@@ -2708,7 +2670,7 @@ function SavedTrips(props) {
         return (
           <View
             style={
-              c
+              isMaxHeight
                 ? {
                     backgroundColor: theme.color.background,
                     shadowColor: '#000000',
@@ -2754,7 +2716,9 @@ function SavedTrips(props) {
               }}>
               <View
                 style={
-                  c ? styles.modalBottomContainer : styles.modalBottomContainer2
+                  isMaxHeight
+                    ? styles.modalBottomContainer
+                    : styles.modalBottomContainer2
                 }>
                 {renderButton1()}
                 {renderButton2()}
@@ -2770,13 +2734,13 @@ function SavedTrips(props) {
             <View style={[styles.modalContainer2, {margin: 15}]}>
               <View
                 onLayout={event => {
-                  if (!c) {
+                  if (!isMaxHeight) {
                     let {height} = event.nativeEvent.layout;
                     setmodalHeight(height);
                   }
                 }}
                 style={style}>
-                {c && (
+                {isMaxHeight && (
                   <>
                     {renderHeader()}
                     <ScrollView
@@ -2791,7 +2755,7 @@ function SavedTrips(props) {
                   </>
                 )}
 
-                {!c && (
+                {!isMaxHeight && (
                   <>
                     {renderHeader()}
                     {renderTitle()}
@@ -2809,7 +2773,7 @@ function SavedTrips(props) {
     }
 
     //set unavlble days
-    if (modalChk == 'offer' && step == 3 && isShowUnavliableModal) {
+    if (modalCheck == 'offer' && step == 3 && isShowUnavliableModal) {
       let c = modalHeight >= maxModalHeight ? true : false;
       let style = c
         ? [styles.umodal, {paddingTop: 0, height: maxModalHeight}]
@@ -2884,92 +2848,6 @@ function SavedTrips(props) {
         });
       }
       tt = tt.replace(/, *$/, '');
-
-      // const ApplyModal = () => {
-      //   let doweeks = dow.slice();
-
-      //   let dw = [];
-
-      //   if (doweeks.length > 0) {
-      //     doweeks.map((e, i, a) => {
-      //       if (e.isSel) {
-      //         dw.push(e.name);
-      //       }
-      //     });
-      //   }
-
-      //   let wtxt = '';
-      //   if (dw.length > 0) {
-      //     dw.map((e, i, a) => {
-      //       let sep = a[i + 2] == undefined ? ' and ' : ', ';
-
-      //       if (sep == ' and ' && i == a.length - 1) {
-      //         sep = '';
-      //       }
-      //       wtxt = wtxt + e + sep;
-      //     });
-      //   }
-      //   if (wtxt != '') {
-      //     wtxt = wtxt + ` (${rdur.title == 'weeks' ? 'weekly' : rdur.title})`;
-      //   }
-
-      //   let unw = [];
-      //   let exsd = [];
-
-      //   let ad = [];
-      //   if (!isObjectEmpty(selunmarkeSLCTdDates)) {
-      //     var myObject = selunmarkeSLCTdDates;
-      //     Object.keys(myObject).forEach(function (key, index) {
-      //       ad.push(key);
-      //       exsd.push(key);
-      //     });
-      //   }
-      //   if (!isObjectEmpty(unavlblmarkedDates)) {
-      //     var myObject = unavlblmarkedDates;
-      //     Object.keys(myObject).forEach(function (key, index) {
-      //       ad.push(key);
-      //       unw.push(key);
-      //     });
-      //   }
-
-      //   if (unw.length > 0) {
-      //     unw.sort(function (a, b) {
-      //       return Number(new Date(a)) - Number(new Date(b));
-      //     });
-      //   }
-      //   if (exsd.length > 0) {
-      //     exsd.sort(function (a, b) {
-      //       return Number(new Date(a)) - Number(new Date(b));
-      //     });
-      //   }
-      //   if (ad.length > 0) {
-      //     ad.sort(function (a, b) {
-      //       return Number(new Date(a)) - Number(new Date(b));
-      //     });
-      //   }
-
-      //   let obj = false;
-      //   if (dw.length > 0 || ad.length > 0) {
-      //     obj = {
-      //       days_of_week: dw, //main
-      //       repeat_every: {
-      //         //main
-      //         num: rdurNum,
-      //         title: rdur.title,
-      //         endRepeatOn: endRepOn,
-      //       },
-      //       wtxt: wtxt,
-      //       esd_text: tt,
-
-      //       unavailable_days_of_week: unw, //main
-      //       exclude_specific_dates: exsd, //main
-      //       all_unavailable_dates: ad, //main
-      //     };
-      //   }
-
-      //   setisSetUnavailable(obj);
-      //   setisShowUnavliableModal(false);
-      // };
 
       const ApplyModal = () => {
         let doweeks = dow.slice();
@@ -3094,7 +2972,7 @@ function SavedTrips(props) {
         const renderCross = () => {
           return (
             <Pressable
-              disabled={mloader}
+              disabled={homeModalLoder}
               style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
               onPress={closeModalAll}>
               <utils.vectorIcon.Ionicons
@@ -3614,16 +3492,14 @@ function SavedTrips(props) {
     }
 
     //review trip
-    if (modalChk == 'offer' && step == 4) {
-      let item = modalObj.item;
-
+    if (modalCheck == 'offer' && step == 4) {
       const renderHeader = () => {
         let text = 'Make Offer';
 
         const renderCross = () => {
           return (
             <Pressable
-              disabled={mloader}
+              disabled={homeModalLoder}
               style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
               onPress={closeModalAll}>
               <utils.vectorIcon.Ionicons
@@ -3642,7 +3518,7 @@ function SavedTrips(props) {
         return (
           <View
             style={
-              c
+              isMaxHeight
                 ? {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
@@ -3880,17 +3756,17 @@ function SavedTrips(props) {
         const renderButton2 = () => {
           return (
             <Pressable
-              disabled={mloader}
+              disabled={homeModalLoder}
               onPress={ConfirmSend}
               style={({pressed}) => [
                 {opacity: pressed ? 0.8 : 1.0},
                 styles.ButtonContainer,
                 {
                   backgroundColor: theme.color.button1,
-                  paddingHorizontal: !mloader ? 8 : 15,
+                  paddingHorizontal: !homeModalLoder ? 8 : 15,
                 },
               ]}>
-              {!mloader && (
+              {!homeModalLoder && (
                 <Text
                   style={[
                     styles.ButtonText,
@@ -3903,7 +3779,7 @@ function SavedTrips(props) {
                   Confirm and Send
                 </Text>
               )}
-              {mloader && (
+              {homeModalLoder && (
                 <ActivityIndicator size={18} color={theme.color.buttonText} />
               )}
             </Pressable>
@@ -3913,7 +3789,7 @@ function SavedTrips(props) {
         return (
           <View
             style={
-              c
+              isMaxHeight
                 ? {
                     backgroundColor: theme.color.background,
                     shadowColor: '#000000',
@@ -3959,7 +3835,7 @@ function SavedTrips(props) {
               }}>
               <View
                 style={
-                  c
+                  isMaxHeight
                     ? [styles.modalBottomContainer, {paddingTop: 15}]
                     : styles.modalBottomContainer2
                 }>
@@ -3977,13 +3853,13 @@ function SavedTrips(props) {
             <View style={[styles.modalContainer2, {margin: 12}]}>
               <View
                 onLayout={event => {
-                  if (!c) {
+                  if (!isMaxHeight) {
                     let {height} = event.nativeEvent.layout;
                     setmodalHeight(height);
                   }
                 }}
                 style={style}>
-                {c && (
+                {isMaxHeight && (
                   <>
                     {renderHeader()}
                     <ScrollView
@@ -3997,7 +3873,7 @@ function SavedTrips(props) {
                   </>
                 )}
 
-                {!c && (
+                {!isMaxHeight && (
                   <>
                     {renderHeader()}
                     {renderInfo()}
@@ -4013,14 +3889,14 @@ function SavedTrips(props) {
       );
     }
 
-    if (modalChk == 'message') {
+    if (modalCheck == 'message') {
       const renderHeader = () => {
         let text = 'Message User';
 
         const renderCross = () => {
           return (
             <Pressable
-              disabled={mloader}
+              disabled={homeModalLoder}
               style={({pressed}) => [
                 {opacity: pressed ? 0.7 : 1.0},
                 styles.modalCross,
@@ -4121,13 +3997,15 @@ function SavedTrips(props) {
           return (
             <Pressable
               onPress={sendMessage}
-              disabled={mloader == true ? true : message == '' ? true : false}
+              disabled={
+                homeModalLoder == true ? true : message == '' ? true : false
+              }
               style={({pressed}) => [
                 {opacity: pressed ? 0.9 : message == '' ? 0.5 : 1},
                 styles.ButtonContainer,
                 {backgroundColor: theme.color.button1, width: '100%'},
               ]}>
-              {!mloader && (
+              {!homeModalLoder && (
                 <Text
                   style={[
                     styles.ButtonText,
@@ -4136,7 +4014,7 @@ function SavedTrips(props) {
                   Send Message
                 </Text>
               )}
-              {mloader && (
+              {homeModalLoder && (
                 <ActivityIndicator size={20} color={theme.color.buttonText} />
               )}
             </Pressable>
@@ -4163,7 +4041,7 @@ function SavedTrips(props) {
       );
     }
 
-    if (modalChk == 'tripSave') {
+    if (modalCheck == 'tripSave') {
       const renderButton1 = () => {
         return (
           <>
@@ -4278,20 +4156,18 @@ function SavedTrips(props) {
       );
     }
 
-    if (modalChk == 'tripRemove') {
-      let item = modalObj.item;
-
+    if (modalCheck == 'tripRemove') {
       const renderHeader = () => {
         let text = 'Remove Saved Trip?';
 
         const renderCross = () => {
           return (
             <Pressable
-              disabled={mmloader}
+              disabled={deleteLoader}
               style={({pressed}) => [
                 {opacity: pressed ? 0.7 : 1.0},
                 [
-                  !c
+                  !isMaxHeight
                     ? {
                         position: 'absolute',
                         bottom: 0,
@@ -4321,7 +4197,7 @@ function SavedTrips(props) {
         return (
           <View
             style={
-              c
+              isMaxHeight
                 ? {
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -4442,7 +4318,7 @@ function SavedTrips(props) {
           return (
             <>
               <TouchableOpacity
-                disabled={mmloader}
+                disabled={deleteLoader}
                 onPress={() => deleteTrip(item, modalObj.i)}
                 activeOpacity={0.7}
                 style={{
@@ -4454,7 +4330,7 @@ function SavedTrips(props) {
                   borderRadius: 10,
                   alignSelf: 'center',
                 }}>
-                {!mmloader && (
+                {!deleteLoader && (
                   <Text
                     style={{
                       color: theme.color.buttonText,
@@ -4465,7 +4341,7 @@ function SavedTrips(props) {
                     Yes, remove now
                   </Text>
                 )}
-                {mmloader && (
+                {deleteLoader && (
                   <ActivityIndicator size={20} color={theme.color.buttonText} />
                 )}
               </TouchableOpacity>
@@ -4477,7 +4353,7 @@ function SavedTrips(props) {
           return (
             <>
               <TouchableOpacity
-                disabled={mmloader}
+                disabled={deleteLoader}
                 onPress={closeMModal}
                 activeOpacity={0.7}
                 style={{
@@ -4509,7 +4385,7 @@ function SavedTrips(props) {
         return (
           <View
             style={
-              c
+              isMaxHeight
                 ? {
                     backgroundColor: theme.color.background,
                     shadowColor: '#000000',
@@ -4524,7 +4400,7 @@ function SavedTrips(props) {
             }>
             <View
               style={
-                c
+                isMaxHeight
                   ? styles.modalBottomContainerrmv
                   : styles.modalBottomContainer2rmv
               }>
@@ -4541,13 +4417,13 @@ function SavedTrips(props) {
             <View style={styles.modalContainer2}>
               <View
                 onLayout={event => {
-                  if (!c) {
+                  if (!isMaxHeight) {
                     let {height} = event.nativeEvent.layout;
                     setmodalHeight(height);
                   }
                 }}
                 style={style}>
-                {c && (
+                {isMaxHeight && (
                   <>
                     {renderHeader()}
                     <ScrollView
@@ -4561,7 +4437,7 @@ function SavedTrips(props) {
                   </>
                 )}
 
-                {!c && (
+                {!isMaxHeight && (
                   <>
                     {renderHeader()}
                     {renderInfo()}
@@ -4577,7 +4453,7 @@ function SavedTrips(props) {
     }
   };
 
-  const renderCalender1 = () => {
+  const renderChooseDateCalender = () => {
     let item = modalObj.item;
 
     let duration = item.duration.number;
@@ -4585,8 +4461,6 @@ function SavedTrips(props) {
     let unavailable_days = item.unavailable.all_unavailable_dates || [];
     let mdt = moment(item.availablity.startDate).format('YYYY-MM-DD');
     let cdt = moment(new Date()).format('YYYY-MM-DD');
-
-    // console.log('mdt :  ', mdt, ' cdt : ', cdt, ' chk : ', mdt < cdt);
 
     let mind = '';
 
@@ -4613,7 +4487,7 @@ function SavedTrips(props) {
 
     const closeCalModal = () => {
       setmarkedDatess(selDatess);
-      setshowCal1(false);
+      setIsChooseDateCalender(false);
       const size = Object.keys(selDatess).length;
       const dt = Object.keys(selDatess);
 
@@ -4657,7 +4531,7 @@ function SavedTrips(props) {
 
       setmarkedDatess(fm);
       setselDatess(fm);
-      setshowCal1(false);
+      setIsChooseDateCalender(false);
       const size = Object.keys(fm).length;
       const dt = Object.keys(fm);
 
@@ -4936,7 +4810,10 @@ function SavedTrips(props) {
     };
     let todaymark = isDisableToday ? dtd : td;
     return (
-      <Modal visible={showCal1} transparent onRequestClose={closeCalModal}>
+      <Modal
+        visible={isChooseDateCalender}
+        transparent
+        onRequestClose={closeCalModal}>
         <SafeAreaView
           style={[
             {
@@ -4974,11 +4851,11 @@ function SavedTrips(props) {
               }}
               monthFormat={'yyyy MM'}
               onMonthChange={month => {
-                setmonthh(new Date(month.dateString));
+                setMonthh(new Date(month.dateString));
               }}
               firstDay={7}
-              onPressArrowLeft={subtractMonth => subtractMonth()}
-              onPressArrowRight={addMonth => addMonth()}
+              // onPressArrowLeft={subtractMonth => subtractMonth()}
+              // onPressArrowRight={addMonth => addMonth()}
               renderHeader={date => {
                 return (
                   <Text
@@ -5677,11 +5554,10 @@ function SavedTrips(props) {
       setisOfferSend(false);
     };
 
-    let fn = sendObj.firstName;
-    let ln = sendObj.lastName;
-    let sendOfferUsername = fn + ' ' + ln;
-
-    let src = require('../../assets/images/offerSentDone/img.png');
+    const firstName = sendObj.firstName;
+    const lastName = sendObj.lastName;
+    const sendOfferUsername = firstName + ' ' + lastName;
+    const src = require('../../assets/images/offerSentDone/img.png');
     return (
       <Modal
         animationType="slide"
@@ -5909,14 +5785,13 @@ function SavedTrips(props) {
     );
   };
 
-  const windowSize = 21;
-  // data.length > 36 ? data.length / 3 : 12;
+  console.log('modal obj : ', modalObj);
 
   return (
     <>
       <View style={styles.container}>
         <utils.DrawerHeader props={props} headerTitle={headerTitle} />
-        {!internet && <utils.InternetMessage />}
+        {!isInternet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <Accordion
@@ -5937,8 +5812,8 @@ function SavedTrips(props) {
               listH={
                 <ListHeader
                   search={search}
-                  setsearch={c => setsearch(c)}
-                  data={d}
+                  setsearch={c => setSearch(c)}
+                  data={saveData}
                 />
               }
               renderHeader={(item, index, isActive) => (
@@ -5969,7 +5844,7 @@ function SavedTrips(props) {
               ListFooterComponent={
                 <ListFooter
                   data={data}
-                  d={d}
+                  d={saveData}
                   loadMore={loadMore}
                   LoadMore={LoadMore}
                   limit={limit}
@@ -5985,7 +5860,16 @@ function SavedTrips(props) {
           />
         </SafeAreaView>
 
-        {isModal && !isOfferSend && !isSendMessage && renderModal()}
+        {/* {isModal && !isOfferSend && !isSendMessage && renderModal()} */}
+        {isOfferModal && (
+          <utils.MakeOffer
+            isModal={isOfferModal}
+            setIsModal={setIsOfferModal}
+            modalObj={modalObj}
+            setModalObj={setModalObj}
+            loader={homeModalLoder}
+          />
+        )}
         {isOfferSend && renderShowOfferSendModal()}
         {isSendMessage && renderMessageSendModal()}
 

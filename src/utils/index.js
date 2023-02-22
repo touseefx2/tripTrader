@@ -15,6 +15,8 @@ import ShowNotifications from './ShowNotifications';
 import StackHeader from './StackHeader';
 import vectorIcon from './vectorIcon';
 import WebViewModal from './WebViewModal';
+import {functions} from './functions';
+import MakeOffer from './MakeOffer';
 
 const utils = {
   vectorIcon,
@@ -34,6 +36,8 @@ const utils = {
   navBarHeight,
   OtpModal,
   WebViewModal,
+  functions,
+  MakeOffer,
 };
 
 export default utils;

@@ -1,28 +1,11 @@
-import React, {useEffect} from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  Platform,
-  Dimensions,
-  Image,
-  StatusBar,
-} from 'react-native';
+import React from 'react';
+import {View, StyleSheet, Text, TouchableOpacity, Image} from 'react-native';
 import theme from '../theme/index';
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from 'react-native-responsive-dimensions';
-import utils from '.';
-
-import store from '../store/index';
 import {observer} from 'mobx-react';
 
 export default observer(Footer);
 function Footer(props) {
   let nav = props.nav;
-  let user = store.User.user;
   let screen = props.screen;
   let focusScreen = props.focusScreen;
   let focusTextColor = theme.color.button1;
@@ -30,9 +13,7 @@ function Footer(props) {
   let ao = 0.7;
 
   const goBack = () => {
-    if (screen == 'Notifications' || screen == 'NotificationsGuest') {
-      nav.goBack();
-    }
+    if (screen == 'Notifications') props.closeModal();
   };
 
   const specificScreen = () => {

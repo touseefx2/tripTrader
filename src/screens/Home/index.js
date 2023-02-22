@@ -22,7 +22,6 @@ import {
   Modal,
 } from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-// import ImageSlider from 'react-native-image-slider';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
@@ -462,7 +461,7 @@ function Home(props) {
       typeData.map(element => {
         for (let index = 0; index < spcsDt.length; index++) {
           const item = spcsDt[index];
-          if (item.type._id === element._id) {
+          if (item.type && item.type._id === element._id) {
             activityList.push(element);
             break;
           }
@@ -472,6 +471,24 @@ function Home(props) {
       settrptypeData(activityList);
     }
   }, [spcsDt, typeData, trptypeData]);
+
+  useEffect(() => {
+    if (tripType != '') {
+      setspcsData([]);
+      let aa = [];
+      if (spcsDt.length > 0) {
+        spcsDt.map((e, i, a) => {
+          if (e.type) {
+            if (e.type.name == tripType.name) {
+              aa.push(e);
+            }
+          }
+        });
+      }
+
+      setspcsData(aa);
+    }
+  }, [tripType]);
 
   useEffect(() => {
     if (goto == 'profile') {
@@ -495,24 +512,6 @@ function Home(props) {
       store.User.attemptToGetInboxes(store.User.user._id, () => {});
     });
   }, [socket]);
-
-  useEffect(() => {
-    if (tripType != '') {
-      setspcsData([]);
-      let aa = [];
-      if (spcsDt.length > 0) {
-        spcsDt.map((e, i, a) => {
-          if (e.type) {
-            if (e.type.name == tripType.name) {
-              aa.push(e);
-            }
-          }
-        });
-      }
-
-      setspcsData(aa);
-    }
-  }, [tripType]);
 
   useEffect(() => {
     if (
@@ -1212,7 +1211,7 @@ function Home(props) {
   const ItemView = ({item, index}) => {
     let usr = item.hostId;
     //user
-    let photo = usr.image || '';
+    let photo = utils.functions.ImageReplace(usr.image) || '';
 
     let userName = usr.firstName + ' ' + usr.lastName;
     let avgRating = usr.rating || 0;

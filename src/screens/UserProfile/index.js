@@ -640,7 +640,7 @@ function UserProfile(props) {
 
         <utils.Footer
           nav={props.navigation}
-          screen={'UserProfile'}
+          screen={headerTitle}
           focusScreen={store.General.focusScreen}
         />
       </>
