@@ -20,10 +20,6 @@ export default function DateCalender({
   const {item} = modalObj;
   const {number, title} = item.duration;
   const {startDate, endDate} = item.availablity;
-
-  const [minimumDate, setMinimumDate] = useState(minDate);
-  const [maximumDate, setMaximumDate] = useState(maxDate);
-
   const all_unavailable_dates = item.unavailable.all_unavailable_dates || [];
   const start_date = moment(startDate).format('YYYY-MM-DD');
   const current_date = moment(new Date()).format('YYYY-MM-DD');
@@ -34,6 +30,18 @@ export default function DateCalender({
   else if (title == 'months') totalDays = number * 30;
   else if (title == 'years') totalDays = number * 365;
 
+  if (minDate == '') {
+    minDate =
+      start_date < current_date
+        ? moment(current_date).format('YYYY-MM-DD')
+        : moment(start_date).format('YYYY-MM-DD');
+  }
+  if (maxDate == '') maxDate = moment(endDate).format('YYYY-MM-DD');
+
+  const [minimumDate, setMinimumDate] = useState(minDate);
+  const [maximumDate, setMaximumDate] = useState(maxDate);
+  const [markedDates, setMarkedDates] = useState(selectedDates);
+
   all_unavailable_dates.map(item => {
     unavailableDays[moment(item).format('YYYY-MM-DD')] = {
       marked: false,
@@ -43,19 +51,6 @@ export default function DateCalender({
       disableTouchEvent: true,
     };
   });
-
-  const [markedDates, setMarkedDates] = useState(selectedDates);
-
-  useEffect(() => {
-    if (minimumDate == '') {
-      setMinimumDate(
-        start_date < current_date
-          ? moment(current_date).format('YYYY-MM-DD')
-          : moment(start_date).format('YYYY-MM-DD'),
-      );
-    }
-    if (maximumDate == '') setMaximumDate(moment(endDate).format('YYYY-MM-DD'));
-  }, [minimumDate, maximumDate]);
 
   const closeModal = () => {
     setIsModal(false);
@@ -134,7 +129,7 @@ export default function DateCalender({
       <SafeAreaView style={styles.container}>
         <View style={styles.container2}>
           <Calendar
-            theme={styles.calenderTheme}
+            theme={theme.dayStyle.calenderTheme}
             hideDayNames={false}
             hideArrows={false}
             hideExtraDays={false}

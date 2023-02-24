@@ -5,21 +5,18 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
-  Platform,
   Pressable,
   TextInput,
   Keyboard,
   Modal,
   RefreshControl,
 } from 'react-native';
-import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
 import utils from '../../utils/index';
 import theme from '../../theme';
 import NetInfo from '@react-native-community/netinfo';
-import {ActivityIndicator} from 'react-native-paper';
 import moment from 'moment/moment';
 import {FlashList} from '@shopify/flash-list';
 
@@ -29,7 +26,7 @@ function ItemSeparatorView() {
   return (
     <View
       style={{
-        height: 0.7,
+        height: 1,
         backgroundColor: theme.color.fieldBorder,
         width: '100%',
       }}
@@ -106,40 +103,6 @@ function ListHeaders({search, setsearch, data}) {
   );
 }
 
-function ListFooter({data, d, loadMore, LoadMore}) {
-  return (
-    <>
-      <View style={styles.listFooter}>
-        {data.length == d && (
-          <Text style={styles.listFooterT}>End of messages</Text>
-        )}
-
-        {data.length < d && (
-          <View
-            style={[
-              styles.listFooter,
-              {flexDirection: 'row', alignItems: 'center'},
-            ]}>
-            <TouchableOpacity
-              activeOpacity={0.7}
-              disabled={loadMore}
-              onPress={LoadMore}>
-              <Text style={styles.listFooterT}>Load More...</Text>
-            </TouchableOpacity>
-            {loadMore && (
-              <ActivityIndicator
-                style={{marginLeft: 10}}
-                size={16}
-                color={theme.color.button1}
-              />
-            )}
-          </View>
-        )}
-      </View>
-    </>
-  );
-}
-
 function EmptyListMessage() {
   return (
     // Flat List Item
@@ -162,29 +125,25 @@ function EmptyListMessage() {
 
 function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
   const headerTitle = 'Notifications';
-  let internet = store.General.isInternet;
-  let user = store.User.user;
+  const windowSize = 21;
+  const limit = 16;
+  const {isInternet} = store.General;
+  const {user, attemptToGetFollowers} = store.User;
+  const {
+    notifications,
+    Loader,
+    notificationsTotal,
+    attemptToReadNotifications,
+  } = store.Notifications;
 
-  let db = false;
-
-  if (callingScreen == 'UserProfile' || callingScreen == 'followers') {
-    db = true;
-  }
-  const data = store.Notifications.notifications;
-  const td = store.Notifications.notificationsTotal;
-
-  let limit = 16;
-  const [page, setpage] = useState(1);
   const [loadFirst, setloadFirst] = useState(false);
-
-  const [loadMore, setloadMore] = useState(false);
-  // const [data, setdata] = useState(d);
-
+  const [search, setsearch] = useState('');
   const [getDataOnce, setgetDataOnce] = useState(false);
+
   const setGetDataOnce = C => {
     setgetDataOnce(C);
   };
-  const refreshing = store.Notifications.Loader;
+
   const onRefresh = React.useCallback(() => {
     console.log('onrefresh cal');
     getDbData();
@@ -197,84 +156,33 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
     });
   };
   useEffect(() => {
-    if (!getDataOnce && internet) {
+    if (!getDataOnce && isInternet) {
       onRefresh();
     }
     return () => {};
-  }, [getDataOnce, internet]);
-
-  const [search, setsearch] = useState('');
+  }, [getDataOnce, isInternet]);
 
   const goBack = () => {
     closeModal();
   };
 
-  const LoadMore = async () => {
-    // setloadMore(true);
-    // setTimeout(() => {
-    //   let p = page + 1;
-    //   let ar = [...d];
-    //   const dt = ar.slice(page * limit, limit * p);
-    //   let dd = [...data, ...dt];
-    //   console.log('pagination callllll load more : ', page * limit, limit * p);
-    //   setdata(dd);
-    //   setpage(p);
-    //   setloadMore(false);
-    // }, 1);
-  };
-
   const getFollowers = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToGetFollowers(
-          store.User.user._id,
+        attemptToGetFollowers(
+          user._id,
           () => {},
           () => {},
         );
       }
     });
   };
-  const ReadNotification = nid => {
+  const ReadNotification = notificationId => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.Notifications.attemptToReadNotifications(nid);
+        attemptToReadNotifications(notificationId);
       }
     });
-  };
-
-  const onclickNotification = (c, nid) => {
-    Keyboard.dismiss();
-
-    if (c == 'Trip Confirmed') {
-      props.navigation.navigate('ConfirmedTrips');
-      goBack();
-      ReadNotification(nid);
-    }
-
-    if (c == 'New Trip Created') {
-      props.navigation.navigate('MyProfile');
-      goBack();
-      ReadNotification(nid);
-    }
-
-    if (c == 'Profile Updated') {
-      props.navigation.navigate('MyProfile');
-      goBack();
-      ReadNotification(nid);
-    }
-
-    if (c == 'Password Changed') {
-      props.navigation.navigate('MyProfile');
-      goBack();
-      ReadNotification(nid);
-    }
-
-    if (c == 'profile') {
-      props.navigation.navigate('MyProfile');
-      goBack();
-      getFollowers();
-      ReadNotification(nid);
-    }
   };
 
   function compare(d, dd) {
@@ -360,49 +268,192 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
     return t;
   }
 
-  const ItemView = ({item, index}) => {
-    let photo = item.icon || '';
-    let title = item.title || '';
-    let subtitle = item.message || '';
-    let create = CheckDate(item.createdAt);
-    let isread = item.isRead;
-    let isFollow = false;
-    let uname = '';
-    let usrd = item.userId;
+  const onclickNotification = (check, notificationId) => {
+    Keyboard.dismiss();
+    console.log('check : ', check);
+    // if (check == 'Trip Confirmed') {
+    //   props.navigation.navigate('ConfirmedTrips');
+    //   goBack();
+    //   ReadNotification(notificationId);
+    // }
 
-    if (subtitle.includes('followed')) {
+    // if (check == 'New Trip Created') {
+    //   props.navigation.navigate('MyProfile');
+    //   goBack();
+    //   ReadNotification(notificationId);
+    // }
+
+    // if (check == 'Profile Updated') {
+    //   props.navigation.navigate('MyProfile');
+    //   goBack();
+    //   ReadNotification(notificationId);
+    // }
+
+    // if (check == 'Password Changed') {
+    //   props.navigation.navigate('MyProfile');
+    //   goBack();
+    //   ReadNotification(notificationId);
+    // }
+
+    // if (check == 'Profile') {
+    //   props.navigation.navigate('MyProfile');
+    //   goBack();
+    //   getFollowers();
+    //   ReadNotification(notificationId);
+    // }
+  };
+
+  const checkPhotoShape = title => {
+    const shape =
+      title == 'Your offer was accepted!' ||
+      title.includes('posted a new trip!') ||
+      title == 'You have a new review' ||
+      title == 'A review for you was updated' ||
+      title == 'Don’t forget to leave a review!' ||
+      title == 'An offer was canceled' ||
+      title == 'Your offer was declined' ||
+      title.includes('New offer') ||
+      title.includes('New message') ||
+      title == ''
+        ? 'circle'
+        : title == 'A saved trip is expiring soon' ||
+          title.includes(`You’re hosting a trip in`) ||
+          title.includes(`Your trip starts in`)
+        ? 'square'
+        : 'normal';
+    return shape;
+  };
+
+  const getClickableText = title => {
+    const check =
+      title == 'Your offer was accepted!'
+        ? 'See confirmed trips'
+        : title.includes('posted a new trip!')
+        ? 'See trip details'
+        : title == 'Trip Confirmed'
+        ? 'confirmed trip'
+        : title == 'You have a new review' ||
+          title == 'A review for you was updated'
+        ? 'Read it now'
+        : title == 'Don’t forget to leave a review!'
+        ? 'Leave a review'
+        : title == 'An offer was canceled'
+        ? 'Send a message'
+        : title.includes('New offer')
+        ? 'See trip details'
+        : title.includes('New message')
+        ? 'Read full message'
+        : title == 'Apply for ID Verification'
+        ? 'Apply for Verification'
+        : title == 'A saved trip is expiring soon'
+        ? 'make an offer'
+        : title.includes(`You’re hosting a trip in`) ||
+          title.includes(`Your trip starts in`)
+        ? 'Review the details'
+        : title == 'Your next adventure awaits!'
+        ? 'Subscribe'
+        : title == 'Your subscription payment failed'
+        ? 'Manage Subscription'
+        : title == 'Your ID has been verified!'
+        ? 'Check it out'
+        : title == 'Your ID has been rejected'
+        ? 'reapply for ID Verification'
+        : title == 'Your offer was declined'
+        ? 'Make new offer'
+        : '';
+
+    return check;
+  };
+
+  const checkClickableTextPosition = title => {
+    const pos =
+      title.includes(`You’re hosting a trip in`) ||
+      title.includes(`Your trip starts in`) ||
+      title == 'Your next adventure awaits!'
+        ? 'first'
+        : 'end';
+
+    return pos;
+  };
+
+  const checkLocalImage = title => {
+    const obj =
+      title == 'Password Changed'
+        ? require('../../assets/images/notification/PasswordChanged/img.png')
+        : title == 'Apply for ID Verification'
+        ? require('../../assets/images/notification/Verification/img.png')
+        : title == 'Profile Updated'
+        ? require('../../assets/images/notification/ProfileUpdated/img.png')
+        : title == 'New Trip Created' || title == 'Your next adventure awaits!'
+        ? require('../../assets/images/notification/TripCreated/img.png')
+        : title == 'Your review was disputed' ||
+          title == 'Your ID has been rejected' ||
+          title == 'Your subscription payment failed'
+        ? require('../../assets/images/notification/Reject/img.png')
+        : title == 'Your ID has been verified!'
+        ? require('../../assets/images/notification/Done/img.png')
+        : title == 'Trip Confirmed'
+        ? require('../../assets/images/notification/TripConfirmed/img.png')
+        : null;
+
+    return obj;
+  };
+
+  const ItemView = ({item, index}) => {
+    const follwingText = 'is following you';
+    const photo = item.icon || '';
+    const title = item.title || '';
+    const subTitle = item.message || '';
+    const create = CheckDate(item.createdAt);
+    const isRead = item.isRead;
+    const senderData = item.senderId || null;
+    const photoSahpe = checkPhotoShape(title);
+    const clickableText = getClickableText(title);
+    const clickableTextPosition = checkClickableTextPosition(title);
+    const isLocalImage = checkLocalImage(title);
+    const isDisabel =
+      clickableText == '' && isRead ? true : clickableText != '' ? true : false;
+    let isFollow = false;
+    let userName = '';
+    if (subTitle.includes(follwingText)) {
       isFollow = true;
-      uname = 'Nasreen malik';
-      // usrd.firstName + ' ' + usrd.lastName;
+      if (senderData)
+        userName = senderData.firstName + ' ' + senderData.lastName;
     }
+    const iconSrc = isLocalImage
+      ? isLocalImage
+      : photo !== ''
+      ? {uri: photo}
+      : require('../../assets/images/drawer/guest/img.png');
+    const borderRadius =
+      photoSahpe == 'circle' ? 33 / 2 : photoSahpe == 'square' ? 6 : 0;
+    const borderWidth =
+      photoSahpe == 'circle' || photoSahpe == 'square' ? 0.7 : 0;
 
     const renderProfile = () => {
       return (
         <>
-          <View style={styles.mProfileImgContainer}>
-            <ProgressiveFastImage
+          <View style={styles.ProfileContainer}>
+            <View
               style={[
-                styles.mProfileImg,
-
+                styles.mProfileImgContainer,
                 {
-                  borderRadius: isFollow ? 32 / 2 : 0,
-                  width: isFollow ? 32 : 27,
-                  height: isFollow ? 32 : 27,
+                  width: photoSahpe == 'circle' ? 33 : 28,
+                  height: photoSahpe == 'circle' ? 33 : 28,
+                  borderRadius: borderRadius,
+                  borderWidth: borderWidth,
                 },
-              ]}
-              source={
-                photo != ''
-                  ? {uri: photo}
-                  : require('../../assets/images/drawer/guest/img.png')
-              }
-              loadingImageStyle={
-                Platform.OS == 'android'
-                  ? [styles.imageLoader, {borderRadius: isFollow ? 32 / 2 : 0}]
-                  : {}
-              }
-              loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
-              blurRadius={5}
-            />
+              ]}>
+              <Image
+                style={[
+                  styles.mProfileImg,
+                  {
+                    borderRadius: borderRadius,
+                  },
+                ]}
+                source={iconSrc}
+              />
+            </View>
           </View>
         </>
       );
@@ -410,91 +461,78 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
 
     const renderText = () => {
       return (
-        <View style={[styles.mtextContainer]}>
+        <View style={styles.mtextContainer}>
           {isFollow && (
             <Text
-              style={{
-                color: '#3C6B49',
-                fontSize: 16,
-                fontFamily: theme.fonts.fontBold,
-                lineHeight: 22.4,
-                textTransform: 'capitalize',
-              }}>
-              {uname}{' '}
+              style={[styles.notificationTitle, {color: theme.color.button1}]}>
+              {userName}{' '}
               <Text
-                style={{
-                  color: '#101B10',
-                  fontSize: 16,
-                  fontFamily: theme.fonts.fontBold,
-                  lineHeight: 22.4,
-                  textTransform: 'none',
-                }}>
-                followed you
+                style={[
+                  styles.notificationTitle,
+                  {fontFamily: theme.fonts.fontNormal},
+                ]}>
+                {follwingText}
               </Text>
             </Text>
           )}
 
-          {!isFollow && (
-            <Text
-              style={{
-                color: '#101B10',
-                fontSize: 16,
-                fontFamily: theme.fonts.fontBold,
-                lineHeight: 22.4,
-                textTransform: 'capitalize',
-              }}>
-              {title}
-            </Text>
+          {!isFollow && <Text style={styles.notificationTitle}>{title}</Text>}
+
+          {subTitle != '' && !isFollow && (
+            <>
+              {clickableTextPosition == 'end' ? (
+                <Text style={styles.notificationSubTitle}>
+                  {subTitle}{' '}
+                  <Text
+                    onPress={() =>
+                      onclickNotification(clickableText, item.messageId)
+                    }
+                    style={styles.notificationClickSubTitle}>
+                    {clickableText}
+                  </Text>
+                </Text>
+              ) : (
+                <Text
+                  onPress={() =>
+                    onclickNotification(clickableText, item.messageId)
+                  }
+                  style={styles.notificationClickSubTitle}>
+                  {clickableText}{' '}
+                  <Text style={styles.notificationSubTitle}>{subTitle}</Text>
+                </Text>
+              )}
+            </>
           )}
 
-          {subtitle != '' && !isFollow && (
-            <View style={{marginTop: 3}}>
-              <Text
-                style={{
-                  color: ' #101B10',
-                  fontSize: 14,
-
-                  fontFamily: theme.fonts.fontNormal,
-
-                  lineHeight: 21,
-                }}>
-                {subtitle}
-              </Text>
-            </View>
-          )}
-
-          <View style={{marginTop: 3}}>
-            <Text
-              style={{
-                color: isread ? theme.color.subTitleLight : '#3C6B49',
-                fontSize: 13,
-
-                fontFamily: theme.fonts.fontMedium,
-
-                lineHeight: 19.5,
-              }}>
-              {create}
-            </Text>
-          </View>
+          <Text
+            style={[
+              styles.notificationDate,
+              {
+                color: isRead ? theme.color.subTitleLight : theme.color.button1,
+              },
+            ]}>
+            {create}
+          </Text>
         </View>
       );
     };
 
     return (
       <Pressable
-        disabled={isread}
-        onPress={() =>
-          onclickNotification(isFollow ? 'profile' : title, item.messageId)
-        }
+        disabled={isDisabel}
+        onPress={() => {
+          console.log('item : ', item);
+          onclickNotification(isFollow ? 'Profile' : title, item.messageId);
+        }}
         style={({pressed}) => [
           {opacity: pressed ? 0.7 : 1.0},
           [
-            styles.modalinfoConatiner,
+            styles.notificationConatiner,
             {
               marginTop: index == 0 ? 15 : 0,
-              borderBottomWidth: index == data.length - 1 ? 0.7 : 0,
+              borderBottomWidth: index == notifications.length - 1 ? 0.7 : 0,
               borderBottomColor: theme.color.fieldBorder,
-              backgroundColor: isread ? theme.color.background : '#EAF1E3',
+              backgroundColor: isRead ? theme.color.background : '#EAF1E3',
             },
           ],
         ]}>
@@ -508,8 +546,6 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
     setIsShowModal(false);
   };
 
-  const windowSize = 21;
-
   return (
     <>
       <Modal visible={isShowModal} transparent onRequestClose={closeModal}>
@@ -520,17 +556,14 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
             props={props}
             headerTitle={headerTitle}
           />
-          {!internet && <utils.InternetMessage />}
+          {!isInternet && <utils.InternetMessage />}
           <SafeAreaView style={styles.container2}>
             <View style={styles.container3}>
               <FlashList
-                decelerationRate={'fast'}
+                decelerationRate={0.6}
                 estimatedItemSize={100}
                 refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                  />
+                  <RefreshControl refreshing={Loader} onRefresh={onRefresh} />
                 }
                 contentContainerStyle={{
                   paddingTop: 12,
@@ -539,7 +572,7 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
                 initialNumToRender={limit}
                 windowSize={windowSize}
                 maxToRenderPerBatch={windowSize}
-                data={data}
+                data={notifications}
                 renderItem={ItemView}
                 keyExtractor={(item, index) => index.toString()}
                 ItemSeparatorComponent={ItemSeparatorView}
@@ -547,31 +580,20 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
                   <ListHeaders
                     search={search}
                     setsearch={c => setsearch(c)}
-                    data={data}
+                    data={notifications}
                   />
                 }
-                // ListFooterComponent={
-                //   data != false && data.length > 0 ? (
-                //     <ListFooter
-                //       data={data}
-                //       d={td}
-                //       loadMore={loadMore}
-                //       LoadMore={LoadMore}
-                //     />
-                //   ) : null
-                // }
                 ListEmptyComponent={
                   getDataOnce &&
                   !loadFirst &&
-                  data &&
-                  data.length <= 0 && <EmptyListMessage />
+                  notifications &&
+                  notifications.length <= 0 && <EmptyListMessage />
                 }
               />
             </View>
 
             <utils.Footer
               closeModal={closeModal}
-              doubleBack={db}
               nav={props.navigation}
               screen={headerTitle}
               focusScreen={store.General.focusScreen}

@@ -237,7 +237,6 @@ class notifications {
     this.setLoader(true);
     let token = store.User.authToken;
     let route = store.User.user._id + '/' + nid;
-    // isRead: true
     db.hitApi(db.apis.READ_NOTIFICATIONS + route, 'put', {}, token)
       ?.then(resp => {
         console.log(

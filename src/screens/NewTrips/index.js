@@ -224,7 +224,7 @@ function NewTrips(props) {
 
   const typeData = [...store.Filters.activity];
 
-  const [trptypeData, settrptypeData] = useState([]);
+  const {activityList} = store.Filters;
   const [tripType, settripType] = useState('');
   const [isDropDownTT, setisDropDownTT] = useState(false);
 
@@ -294,25 +294,7 @@ function NewTrips(props) {
   };
 
   useEffect(() => {
-    if (typeData.length > 0 && spcsDt.length > 0 && trptypeData.length <= 0) {
-      let activityList = [];
-      typeData.map(element => {
-        for (let index = 0; index < spcsDt.length; index++) {
-          const item = spcsDt[index];
-          if (item.type && item.type._id === element._id) {
-            activityList.push(element);
-            break;
-          }
-        }
-      });
-
-      settrptypeData(activityList);
-    }
-  }, [spcsDt, typeData, trptypeData]);
-
-  useEffect(() => {
     if (tripType != '') {
-      setspcsData([]);
       let aa = [];
       if (spcsDt.length > 0) {
         spcsDt.map((e, i, a) => {
@@ -365,7 +347,7 @@ function NewTrips(props) {
       let d = editTrip.data;
       let index = editTrip.index;
 
-      let tt = findItm(d.tradeType || '', trptypeData, 'n');
+      let tt = findItm(d.tradeType || '', activityList, 'n');
       let loc = d.location ? d.location : {};
       if (!isObjectEmpty(loc)) {
         setcity(loc.city);
@@ -3041,7 +3023,7 @@ function NewTrips(props) {
     let data = [];
 
     if (c == 'tt') {
-      data = trptypeData;
+      data = activityList;
     }
     if (c == 'state') {
       data = stateData;

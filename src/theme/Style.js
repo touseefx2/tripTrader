@@ -1,5 +1,4 @@
-import theme from '../theme/index';
-
+const title = '#000000';
 const subTitleLight = 'rgba(17, 17, 17, 0.4)';
 const fontMedium = 'Poppins-Medium';
 const button1 = '#3C6B49';
@@ -37,8 +36,19 @@ const markeDateStyle = {
   disableTouchEvent: false,
 };
 
+const calenderTheme = {
+  textDisabledColor: subTitleLight,
+  dayTextColor: title,
+  textDayFontSize: 13,
+  textDayFontFamily: fontMedium,
+  textDayHeaderFontSize: 13,
+  textSectionTitleColor: title,
+  textDayHeaderFontFamily: fontMedium,
+};
+
 export default dayStyle = {
   unavailableDaysStyle,
   selectedDaysStyle,
   markeDateStyle,
+  calenderTheme,
 };

@@ -1,29 +1,15 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   View,
-  Linking,
   TextInput,
-  Image,
-  StatusBar,
-  PermissionsAndroid,
-  TouchableOpacity,
   SafeAreaView,
-  ActivityIndicator,
-  Alert,
   TouchableHighlight,
   FlatList,
-  StyleSheet,
-  Dimensions,
   KeyboardAvoidingView,
-  Modal,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import theme from '../../theme/index';
-import {
-  responsiveFontSize,
-  responsiveHeight,
-} from 'react-native-responsive-dimensions';
 import {styles} from './styles';
 
 function SearchBar({search, setsearch}) {
@@ -80,13 +66,13 @@ function Footer({onClickItem}) {
 }
 
 export default function DropDown(props) {
-  let isSearchBar = props.search || false;
-  let isFooter = props.footer || false;
-  let c = props.c;
-  let absolute = props.absolute || false;
+  const isSearchBar = props.search || false;
+  const isFooter = props.footer || false;
+  const c = props.c;
+  const absolute = props.absolute || false;
 
   const [modalHeight, setmodalHeight] = useState(0);
-  let maxModalHeight = 247;
+  const maxModalHeight = 247;
 
   const [data, setData] = useState(props.data);
 
@@ -133,7 +119,7 @@ export default function DropDown(props) {
     setmodalHeight(0);
   };
 
-  const renderItems = ({item, index}) => {
+  const renderItems = ({item}) => {
     let title =
       c == 'loc' || c == 'actvty' || c == 'spcs' || c == 'state'
         ? item.name
@@ -164,9 +150,8 @@ export default function DropDown(props) {
     );
   };
 
-  let cc = modalHeight >= maxModalHeight ? true : false;
-
-  const style = cc
+  const isMaxHeight = modalHeight >= maxModalHeight ? true : false;
+  const style = isMaxHeight
     ? {
         height: 247,
         marginTop: absolute ? 53 : 8,
@@ -181,7 +166,7 @@ export default function DropDown(props) {
     <>
       <SafeAreaView
         onLayout={event => {
-          if (!cc) {
+          if (!isMaxHeight) {
             let {height} = event.nativeEvent.layout;
             setmodalHeight(height);
           }
@@ -190,7 +175,6 @@ export default function DropDown(props) {
         <KeyboardAvoidingView enabled>
           <View style={{paddingHorizontal: 0}}>
             <FlatList
-              // contentContainerStyle={{paddingHorizontal: 12}}
               showsVerticalScrollIndicator={false}
               initialNumToRender={24}
               maxToRenderPerBatch={10}
@@ -221,7 +205,6 @@ export default function DropDown(props) {
           </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
-      {/* {renderBottom()} */}
     </>
   );
 }

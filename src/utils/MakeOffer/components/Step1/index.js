@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {View, Text, Image, ScrollView, Pressable} from 'react-native';
 import {styles} from './styles';
-import theme from '../../../../theme';
 import DateCalender from './components/DateCalender';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
 import moment from 'moment';

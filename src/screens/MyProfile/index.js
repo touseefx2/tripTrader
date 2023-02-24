@@ -278,12 +278,7 @@ function MyProfile(props) {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         store.User.setregLoader(true);
-        store.User.attemptToEditUploadImage(
-          body,
-
-          imgArr,
-          closePhotoModal,
-        );
+        store.User.attemptToEditUploadImage(body, imgArr, closePhotoModal);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');

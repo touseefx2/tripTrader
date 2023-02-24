@@ -1,20 +1,26 @@
 import {StyleSheet} from 'react-native';
-import theme from '../../../../../../theme';
+import theme from '../../theme';
 
 export const styles = StyleSheet.create({
-  container: {
+  modalContainer: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  container2: {
+
+  modal: {
     width: '92%',
     alignSelf: 'center',
-    paddingBottom: 20,
     backgroundColor: theme.color.background,
     borderRadius: 10,
-    paddingTop: 5,
-    paddingHorizontal: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
   },
 });

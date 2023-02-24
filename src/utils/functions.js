@@ -26,4 +26,20 @@ function findItem(value, data, check) {
   return obj;
 }
 
-export const functions = {ImageReplace, isObjectEmpty, findItem};
+function getDaysBetweenDate(start, end) {
+  for (
+    var arr = [], date = new Date(start);
+    date <= new Date(end);
+    date.setDate(date.getDate() + 1)
+  ) {
+    arr.push(new Date(date));
+  }
+  return arr;
+}
+
+export const functions = {
+  ImageReplace,
+  isObjectEmpty,
+  findItem,
+  getDaysBetweenDate,
+};

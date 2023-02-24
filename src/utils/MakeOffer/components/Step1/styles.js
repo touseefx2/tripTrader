@@ -12,8 +12,8 @@ export const styles = StyleSheet.create({
     width: 55,
     height: 55,
     borderRadius: 55 / 2,
-    borderWidth: 2,
-    borderColor: theme.color.background,
+    borderWidth: 1,
+    borderColor: theme.color.photoBorderColor,
   },
   mProfileImg: {
     width: '100%',

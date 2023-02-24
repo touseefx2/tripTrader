@@ -163,8 +163,7 @@ export const styles = StyleSheet.create({
     top: 5,
   },
   mtextContainer: {
-    width: '88%',
-    // backgroundColor: 'red',
+    width: '86%',
   },
   textContainertitle: {
     color: theme.color.titleGreen,
@@ -216,7 +215,7 @@ export const styles = StyleSheet.create({
   },
   iconSave: {
     position: 'absolute',
-    // flex: 1,
+
     width: 27,
     height: 32,
     bottom: -20,
@@ -224,7 +223,7 @@ export const styles = StyleSheet.create({
   },
   iconVerify: {
     position: 'absolute',
-    // flex: 1,
+
     width: 22,
     height: 22,
     position: 'absolute',
@@ -241,9 +240,6 @@ export const styles = StyleSheet.create({
   },
   tripImg: {
     flex: 1,
-    // width: '100%',
-    // height: '100%',
-    // resizeMode: 'contain',
   },
   boxSection3: {
     marginTop: 12,
@@ -315,7 +311,6 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingTop: 20,
     paddingBottom: 10,
-    // backgroundColor: 'red',
   },
   listFooterT: {
     color: theme.color.subTitleLight,
@@ -323,7 +318,6 @@ export const styles = StyleSheet.create({
     fontFamily: theme.fonts.fontMedium,
   },
 
-  //modal
   modalContainer: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
@@ -335,7 +329,6 @@ export const styles = StyleSheet.create({
     margin: 20,
   },
   modal: {
-    // width: Platform.OS == 'android' ? '98%' : '88%',
     width: '100%',
     alignSelf: 'center',
     paddingTop: 0,
@@ -352,7 +345,6 @@ export const styles = StyleSheet.create({
     elevation: 3,
   },
   modal2: {
-    // width: Platform.OS == 'android' ? '98%' : '88%',
     width: '100%',
     alignSelf: 'center',
     padding: 15,
@@ -480,44 +472,12 @@ export const styles = StyleSheet.create({
     marginLeft: 5,
     top: 2,
   },
-  modalinfoConatiner: {
-    width: '100%',
-    // marginTop: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 12,
-    // borderRadius: 10,
-    // borderColor: theme.color.fieldBorder,
-    // borderWidth: 1,
-    flexDirection: 'row',
-    // alignItems: 'center',
-    justifyContent: 'space-between',
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 3.84,
-
-    // elevation: 5,
-    backgroundColor: theme.color.background,
-  },
-  modalinfoConatiner2: {
-    width: '100%',
-    marginTop: 10,
-    padding: 10,
-    borderRadius: 8,
-
-    backgroundColor: '#F5F5F5',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+  ProfileContainer: {
+    width: '11%',
+    top: 2,
   },
   mProfileImgContainer: {
-    width: 27,
-    height: 27,
-
-    top: 3,
+    borderColor: theme.color.subTitleLight,
   },
   mProfileImg: {
     width: '100%',
@@ -808,6 +768,38 @@ export const styles = StyleSheet.create({
   filedTitle2: {
     fontSize: 13,
     color: theme.color.title,
+    fontFamily: theme.fonts.fontMedium,
+  },
+  notificationConatiner: {
+    width: '100%',
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: theme.color.background,
+  },
+  notificationTitle: {
+    color: theme.color.subTitleAuth,
+    fontSize: 15.5,
+    fontFamily: theme.fonts.fontBold,
+  },
+
+  notificationSubTitle: {
+    color: theme.color.subTitleAuth,
+    fontSize: 13.5,
+    fontFamily: theme.fonts.fontNormal,
+    marginTop: 3,
+  },
+  notificationClickSubTitle: {
+    color: theme.color.button1,
+    fontSize: 13.5,
+    fontFamily: theme.fonts.fontMedium,
+    textDecorationLine: 'underline',
+    textDecorationColor: theme.color.button1,
+  },
+  notificationDate: {
+    fontSize: 12.5,
+    marginTop: 3,
     fontFamily: theme.fonts.fontMedium,
   },
 });

@@ -430,9 +430,9 @@ function Home(props) {
   const [note, setnote] = useState('');
   const [location, setlocation] = useState(false);
 
-  const typeData = [...store.Filters.activity];
+  const typeData = store.Filters.activity;
 
-  const [trptypeData, settrptypeData] = useState([]);
+  const {activityList, setActivityList} = store.Filters;
   const [tripType, settripType] = useState('');
   const [isDropDownTT, setisDropDownTT] = useState(false);
 
@@ -441,7 +441,7 @@ function Home(props) {
   const [State, setState] = useState('');
   const [isDropDownState, setisDropDownState] = useState(false);
 
-  const spcsDt = [...store.Filters.species];
+  const spcsDt = store.Filters.species;
   const [spcsData, setspcsData] = useState([]);
   const [species, setspecies] = useState('');
   const [isDropDownSpcs, setisDropDownSpcs] = useState(false);
@@ -456,21 +456,21 @@ function Home(props) {
   };
 
   useEffect(() => {
-    if (typeData.length > 0 && spcsDt.length > 0 && trptypeData.length <= 0) {
-      let activityList = [];
-      typeData.map(element => {
+    if (typeData.length > 0 && spcsDt.length > 0 && activityList.length <= 0) {
+      let activityLists = [];
+      typeData.map((element, index) => {
         for (let index = 0; index < spcsDt.length; index++) {
           const item = spcsDt[index];
           if (item.type && item.type._id === element._id) {
-            activityList.push(element);
+            activityLists.push(element);
             break;
           }
         }
       });
 
-      settrptypeData(activityList);
+      setActivityList(activityLists);
     }
-  }, [spcsDt, typeData, trptypeData]);
+  }, [spcsDt, typeData, activityList]);
 
   useEffect(() => {
     if (tripType != '') {
@@ -1211,7 +1211,7 @@ function Home(props) {
   const ItemView = ({item, index}) => {
     let usr = item.hostId;
     //user
-    let photo = utils.functions.ImageReplace(usr.image) || '';
+    let photo = usr.image || '';
 
     let userName = usr.firstName + ' ' + usr.lastName;
     let avgRating = usr.rating || 0;
@@ -2357,7 +2357,7 @@ function Home(props) {
           const Continue = () => {
             let d = trip;
 
-            let tt = findItm(d.tradeType || '', trptypeData, 'n');
+            let tt = findItm(d.tradeType || '', activityList, 'n');
             let loc = d.location ? d.location : {};
             let spcs = findItm(d.species || '', spcsDt, 'n');
             if (!isObjectEmpty(loc)) {
@@ -2610,7 +2610,7 @@ function Home(props) {
         let data = [];
 
         if (c == 'tt') {
-          data = trptypeData;
+          data = activityList;
         }
         if (c == 'state') {
           data = stateData;

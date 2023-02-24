@@ -411,17 +411,20 @@ function SavedTrips(props) {
   const [durNum, setdurNum] = useState(1);
   const [showCalender, setshowCalender] = useState(false);
   const [iDate, setiDate] = useState(new Date());
+  const [mindd, setmindd] = useState(undefined);
+  const [mind, setmind] = useState(undefined);
+
   const [month, setmonth] = useState(new Date());
   const [markedDates, setmarkedDates] = useState({});
   const [isSelDate, setisSelDate] = useState(false);
   const [selDates, setselDates] = useState({});
   const [isSelDate1, setisSelDate1] = useState('');
   const [isSelDate2, setisSelDate2] = useState('');
-  const [mindd, setmindd] = useState(undefined);
-  const [mind, setmind] = useState(undefined);
+
   const [maxd, setmaxd] = useState(undefined);
-  const [isShowUnavlsetselDatesiableModal, setisShowUnavliableModal] =
-    useState(false);
+  const [isShowUnavliableModal, setisShowUnavliableModal] = useState(false);
+
+  useState(false);
   const [dow, setdow] = useState(dw); //days of week
   const [rdurNum, setrdurNum] = useState(1);
   const [endRepOn, setendRepOn] = useState('');

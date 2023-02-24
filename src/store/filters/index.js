@@ -26,8 +26,13 @@ class filters {
   @action setactivity = obj => {
     this.activity = obj;
   };
-  @persist('object') @observable species = [];
 
+  @observable activityList = [];
+  @action setActivityList = obj => {
+    this.activityList = obj;
+  };
+
+  @persist('object') @observable species = [];
   @action setspecies = obj => {
     this.species = obj;
   };
@@ -84,7 +89,7 @@ class filters {
     this.settripLocation([]);
     this.setactivity([]);
     this.setspecies([]);
-
+    this.setActivityList([]);
     this.clearFilters();
   };
 }

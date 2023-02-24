@@ -78,7 +78,6 @@ export default function MakeOffer({
           )}
           {step == 3 && (
             <Step3
-              modalObj={modalObj}
               step={step}
               setStep={setStep}
               setmodalHeight={setmodalHeight}

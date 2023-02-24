@@ -63,9 +63,8 @@ function Step2({
 
     const onclickSelect = obj => {
       if (obj == 'customOffer') {
-        setStep(3);
-        closeDropDown();
-        setSelectedTrip(false);
+        setSelectedTrip(null);
+        goNext();
         return;
       }
       if (check == 'trip') {
