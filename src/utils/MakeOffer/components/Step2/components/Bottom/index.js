@@ -54,7 +54,7 @@ export default function Bottom({
       <View
         style={{
           width: '30%',
-          paddingLeft: 10,
+          paddingLeft: isMaxHeight ? 15 : 0,
         }}>
         <Text
           style={[

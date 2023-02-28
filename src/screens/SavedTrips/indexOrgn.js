@@ -425,7 +425,7 @@ function SavedTrips(props) {
   const [isShowUnavliableModal, setisShowUnavliableModal] = useState(false);
 
   useState(false);
-  const [dow, setdow] = useState(dw); //days of week
+  const [daysOfWeek, setdow] = useState(dw); //days of week
   const [rdurNum, setrdurNum] = useState(1);
   const [endRepOn, setendRepOn] = useState('');
   const [endRepOnM, setendRepOnM] = useState({});
@@ -1047,8 +1047,8 @@ function SavedTrips(props) {
     }
 
     let ar = [];
-    if (dow.length > 0) {
-      dow.map((e, i, a) => {
+    if (daysOfWeek.length > 0) {
+      daysOfWeek.map((e, i, a) => {
         if (e.isSel) {
           ar.push(e);
         }
@@ -1090,7 +1090,7 @@ function SavedTrips(props) {
     } else {
       setunavlblmarkedDates({});
     }
-  }, [dow, endRepOn, rdurNum]);
+  }, [daysOfWeek, endRepOn, rdurNum]);
 
   useEffect(() => {
     if (maxd != undefined && mind != undefined) {
@@ -2835,7 +2835,7 @@ function SavedTrips(props) {
       tt = tt.replace(/, *$/, '');
 
       const ApplyModal = () => {
-        let doweeks = dow.slice();
+        let doweeks = daysOfWeek.slice();
 
         let dw = [];
 
@@ -3015,7 +3015,7 @@ function SavedTrips(props) {
 
       const renderWeek = () => {
         const renderShowData = () => {
-          const d = dow.map((e, i, a) => {
+          const d = daysOfWeek.map((e, i, a) => {
             return (
               <View
                 style={{
@@ -3037,7 +3037,7 @@ function SavedTrips(props) {
                   }}
                   activeOpacity={0.5}
                   onPress={() => {
-                    let c = dow.slice();
+                    let c = daysOfWeek.slice();
                     if (c[i].isSel == false) {
                       setunavlblSLCTmarkedDates({});
                       setselunmarkedSLCTDates({});
@@ -3451,8 +3451,8 @@ function SavedTrips(props) {
                       style={{flex: 1}}>
                       {renderTitle()}
                       {renderWeek()}
-                      {/* {renderRepeat()} */}
                       {renderOtherDates()}
+                      {/* {renderRepeat()} */}
                     </ScrollView>
                     {renderBottom()}
                   </>
@@ -3463,8 +3463,8 @@ function SavedTrips(props) {
                     {renderHeader()}
                     {renderTitle()}
                     {renderWeek()}
-                    {/* {renderRepeat()} */}
                     {renderOtherDates()}
+                    {/* {renderRepeat()} */}
                     {renderBottom()}
                   </>
                 )}

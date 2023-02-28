@@ -134,12 +134,12 @@ class userv {
       ?.then(resp => {
         setr(false);
 
-        console.log(
-          `response GET FOLLOWING  ${db.apis.GET_FOLLOWING + uid} : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response GET FOLLOWING  ${db.apis.GET_FOLLOWING + uid} : `,
+        //   resp.data,
+        // );
         let dt = resp.data.following || [];
-        console.log('dttt flwng : ', dt);
+        // console.log('dttt flwng : ', dt);
         setgetdata(true);
         // this.setfollowing(dt);
         // this.settotalfollowing(dt.length);

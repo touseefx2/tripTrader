@@ -605,8 +605,6 @@ export const styles = StyleSheet.create({
     borderRadius: 35 / 2,
     borderWidth: 1,
     borderColor: theme.color.photoBorderColor,
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
   mProfileImgm: {
     width: '100%',

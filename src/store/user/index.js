@@ -62,7 +62,7 @@ class user {
 
   attemptToDeleteChat(cid, iii, uid, srch, sdt, setsdt, suc) {
     let params = cid + '/' + uid;
-    console.warn('DeleteChat  true : ', params);
+    console.log('DeleteChat  true : ', params);
     this.setdlc(true);
 
     let i = 0;
@@ -193,17 +193,17 @@ class user {
   };
 
   @action attemptToGetFollowers = (uid, setgetdata, setrfrsh) => {
-    console.warn('GET Followers  : ', 'true');
+    console.log('GET Followers  : ', 'true');
     this.setfl(true);
 
     db.hitApi(db.apis.GET_FOLLOWERS + uid, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setfl(false);
         setrfrsh(false);
-        console.log(
-          `response GET Followers   ${db.apis.GET_FOLLOWERS + uid} : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response GET Followers   ${db.apis.GET_FOLLOWERS + uid} : `,
+        //   resp.data,
+        // );
         let dt = resp.data.follower || [];
         setgetdata(true);
         this.setfollowers(dt);
@@ -232,19 +232,19 @@ class user {
       });
   };
   @action attemptToGetFollowing = (uid, setgetdata, setrfrsh) => {
-    console.warn('GET Followers  : ', 'true');
+    console.log('GET Followers  : ', 'true');
     this.setfl(true);
 
     db.hitApi(db.apis.GET_FOLLOWING + uid, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setfl(false);
         setrfrsh(false);
-        console.log(
-          `response GET FOLLOWING  ${db.apis.GET_FOLLOWING + uid} : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response GET FOLLOWING  ${db.apis.GET_FOLLOWING + uid} : `,
+        //   resp.data,
+        // );
         let dt = resp.data.following || [];
-        console.log('dttt flwng : ', dt);
+        // console.log('dttt flwng : ', dt);
         setgetdata(true);
         this.setfollowing(dt);
         this.settotalfollowing(dt.length);
@@ -272,17 +272,17 @@ class user {
       });
   };
   @action attemptToGetBloackUsers = (uid, setgetdata, setrfrsh, c) => {
-    console.warn('GET BloackUsers : ', 'true');
+    console.log('GET BloackUsers : ', 'true');
     this.setfl(true);
 
     db.hitApi(db.apis.GET_BLOCK_USER + uid, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setfl(false);
         setrfrsh(false);
-        console.log(
-          `response GET BloackUsers ${db.apis.GET_BLOCK_USER + uid} : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response GET BloackUsers ${db.apis.GET_BLOCK_USER + uid} : `,
+        //   resp.data,
+        // );
         let dt = resp.data.blocked || [];
         setgetdata(true);
 
@@ -317,16 +317,16 @@ class user {
   };
 
   attemptToUnblockUser(uid, ind, suc) {
-    console.warn('UnblockUser  true : ');
+    console.log('UnblockUser  true : ');
     this.setbl(true);
     let c = this.user._id + '/' + uid;
     db.hitApi(db.apis.UNBLOCK_USER + c, 'put', {}, this.authToken)
       ?.then(resp => {
         this.setbl(false);
-        console.log(
-          `response UnblockUser  ${db.apis.UNBLOCK_USER + c} : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response UnblockUser  ${db.apis.UNBLOCK_USER + c} : `,
+        //   resp.data,
+        // );
         // let rsp = resp.data.data;
         this.removeblockUsers(ind);
         this.getUserById1(this.user._id, this.authToken, '');
@@ -360,16 +360,16 @@ class user {
   }
 
   attemptToBlockUser(uid, ind, suc) {
-    console.warn('blockUser  true : ');
+    console.log('blockUser  true : ');
     this.setbl(true);
     let c = this.user._id + '/' + uid;
     db.hitApi(db.apis.BLOCK_USER + c, 'put', {}, this.authToken)
       ?.then(resp => {
         this.setbl(false);
-        console.log(
-          `response blockUser  ${db.apis.BLOCK_USER + c} : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response blockUser  ${db.apis.BLOCK_USER + c} : `,
+        //   resp.data,
+        // );
         // let rsp = resp.data.data;
         // this.removeblockUsers(ind);
         suc();
@@ -389,17 +389,17 @@ class user {
   }
 
   @action attemptToGetInboxes = (uid, setgetdata, c) => {
-    console.warn('GET Inboxes : ', uid);
+    console.log('GET Inboxes : ', uid);
     if (c !== 'n') {
       this.setibl(true);
     }
 
     db.hitApi(db.apis.GET_INBOXES_BY_UID + uid, 'get', {}, this.authToken)
       ?.then(resp => {
-        console.log(
-          `response GET Inboxes ${db.apis.GET_INBOXES_BY_UID + uid} : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response GET Inboxes ${db.apis.GET_INBOXES_BY_UID + uid} : `,
+        //   resp.data,
+        // );
         let dt = resp.data.doc || [];
         let fa = [];
 
@@ -525,10 +525,10 @@ class user {
     db.hitApi(db.apis.GET_All_Meesages + params, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setmessagesLoader(false);
-        console.log(
-          `response GetAllMessages ${db.apis.GET_All_Meesages + params} : `,
-          resp.data.data,
-        );
+        // console.log(
+        //   `response GetAllMessages ${db.apis.GET_All_Meesages + params} : `,
+        //   resp.data.data,
+        // );
         let dt = resp.data.data || [];
         setgetdata(true);
         setData(dt);
@@ -564,10 +564,10 @@ class user {
 
     db.hitApi(db.apis.READ_All_Meesages + params, 'put', {}, this.authToken)
       ?.then(resp => {
-        console.log(
-          `response ReadAllMessages ${db.apis.READ_All_Meesages + params} : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response ReadAllMessages ${db.apis.READ_All_Meesages + params} : `,
+        //   resp.data,
+        // );
       })
       .catch(err => {
         let msg = err.response.data.message || err.response.status || err;
@@ -684,17 +684,17 @@ class user {
   };
 
   @action attemptToGetReviews = (uid, setgetdata, setrfrsh) => {
-    console.warn('get all Reviews : ', 'true');
+    console.log('get all Reviews : ', 'true');
     this.setreviewLoader(true);
 
     db.hitApi(db.apis.GET_ALL_REVIEWS + uid, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setreviewLoader(false);
         setrfrsh(false);
-        console.log(
-          `response GET_ALL_REVIEWS   ${db.apis.GET_ALL_REVIEWS + uid} : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response GET_ALL_REVIEWS   ${db.apis.GET_ALL_REVIEWS + uid} : `,
+        //   resp.data,
+        // );
         let dt = resp.data.doc;
         let ar = [];
         if (dt.length > 0) {
@@ -737,17 +737,17 @@ class user {
   };
 
   @action attemptToGetTrips = (uid, setgetdata, setrfrsh) => {
-    console.warn('GET_ALL_TRIP : ', 'true');
+    console.log('GET_ALL_TRIP : ', 'true');
     this.settripLoader(true);
 
     db.hitApi(db.apis.GET_ALL_TRIP + uid, 'get', {}, this.authToken)
       ?.then(resp => {
         this.settripLoader(false);
         setrfrsh(false);
-        console.log(
-          `response GET_ALL_TRIP   ${db.apis.GET_ALL_TRIP + uid} : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response GET_ALL_TRIP   ${db.apis.GET_ALL_TRIP + uid} : `,
+        //   resp.data,
+        // );
         let dt = resp.data.data;
         setgetdata(true);
         this.settrips(dt);
@@ -776,17 +776,17 @@ class user {
   };
 
   @action attemptToGetPhotos = (uid, setgetdata, setrfrsh, dt) => {
-    console.warn('getPhotosData : ', 'true');
+    console.log('getPhotosData : ', 'true');
     this.setphotosLoader(true);
 
     db.hitApi(db.apis.GET_ALL_TRIP + uid, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setphotosLoader(false);
         setrfrsh(false);
-        console.log(
-          `response getPhotosData  ${db.apis.GET_ALL_TRIP + uid} : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response getPhotosData  ${db.apis.GET_ALL_TRIP + uid} : `,
+        //   resp.data,
+        // );
 
         let rp = resp.data.data;
         let dt = [];
@@ -847,13 +847,7 @@ class user {
   @action attemptToGetHomeTripsSearch = (setgetdata, bu, c) => {
     let isaps = store.Search.isApplySearch;
     let isapf = store.Filters.isFilter;
-    // this.setstripType(false);
-    // this.setstripLocation(false);
-    // this.setsactivity(false);
-    // this.setsspecies(false);
-    // this.setshostRating(0);
-    // this.setsvu(false);
-    // this.setisFilter(false);
+
     let query = isaps ? this.titleCase(store.Search.search) : '';
     let r = '';
     let us = '';
@@ -888,12 +882,11 @@ class user {
       ?.then(resp => {
         this.setHomeLoader(false);
 
-        console.log(
-          `response Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS}  : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS}  : `,
+        //   resp.data,
+        // );
         let dt = resp.data.data;
-
         this.setHomeTrips(dt);
         setgetdata(true);
 
@@ -931,7 +924,7 @@ class user {
   };
 
   // @action attemptToGetHomeTrips = (setgetdata, setrfrsh) => {
-  //   console.warn('Get AllHomeTrip : ', 'true');
+  //   console.log('Get AllHomeTrip : ', 'true');
   //   this.setHomeLoader(true);
 
   //   db.hitApi(db.apis.GET_ALL_HOME_TRIPS_GUEST, 'get', {}, this.authToken)
@@ -1013,10 +1006,10 @@ class user {
       ?.then(resp => {
         this.setHomeLoader(false);
 
-        console.log(
-          `response Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS}  : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS}  : `,
+        //   resp.data,
+        // );
         let dt = resp.data.data;
 
         this.setHomeTrips(dt);
@@ -1048,7 +1041,7 @@ class user {
         Alert.alert('', msg.toString());
       });
 
-    // console.warn('Get AllHomeTrip : ', 'true');
+    // console.log('Get AllHomeTrip : ', 'true');
     // this.setHomeLoader(true);
 
     // db.hitApi(db.apis.GET_ALL_HOME_TRIPS_GUEST, 'get', {}, this.authToken)
@@ -1117,7 +1110,7 @@ class user {
   };
 
   @action attemptToGetReviewso = (uid, setgetdata, setrfrsh, dt) => {
-    console.warn('getReviesData : ', 'true');
+    console.log('getReviesData : ', 'true');
     this.setreviewLoadero(true);
     setTimeout(() => {
       this.setreviewLoadero(false);
@@ -1128,7 +1121,7 @@ class user {
   };
 
   @action attemptToGetTripso = (uid, setgetdata, setrfrsh, dt) => {
-    console.warn('getTripsData : ', 'true');
+    console.log('getTripsData : ', 'true');
     this.settripLoadero(true);
     setTimeout(() => {
       this.settripLoadero(false);
@@ -1139,7 +1132,7 @@ class user {
   };
 
   @action attemptToGetPhotoso = (uid, setgetdata, setrfrsh, dt) => {
-    console.warn('getPhotosData : ', 'true');
+    console.log('getPhotosData : ', 'true');
     this.setphotosLoadero(true);
     setTimeout(() => {
       this.setphotosLoadero(false);
@@ -1151,7 +1144,7 @@ class user {
 
   //modal actions
   @action attemptToDeletePhotos = (obj, suc) => {
-    console.warn('deletePhoto  : ', 'true');
+    console.log('deletePhoto  : ', 'true');
 
     this.setmLoader(true);
     let i = obj.i;
@@ -1194,7 +1187,7 @@ class user {
       });
   };
   @action attemptToReplyComment = (obj, cmnt, suc) => {
-    console.warn('reply comment  : ', 'true');
+    console.log('reply comment  : ', 'true');
     this.setmLoader(true);
 
     let i = obj.i;
@@ -1235,7 +1228,7 @@ class user {
       });
   };
   @action attemptToEditComment = (obj, cmnt, suc) => {
-    console.warn('edit comment  : ', 'true');
+    console.log('edit comment  : ', 'true');
     this.setmLoader(true);
 
     let i = obj.i;
@@ -1282,7 +1275,7 @@ class user {
       });
   };
   @action attemptToDeleteComment = (obj, suc) => {
-    console.warn('delete comment  : ', 'true');
+    console.log('delete comment  : ', 'true');
     this.setmLoader(true);
 
     let i = obj.i;
@@ -1328,7 +1321,7 @@ class user {
       });
   };
   @action attemptToDisputeComment = (obj, suc) => {
-    console.warn('delete comment  : ', 'true');
+    console.log('delete comment  : ', 'true');
     this.setmLoader(true);
 
     let i = obj.i;
@@ -1374,7 +1367,7 @@ class user {
   @observable editTrip = false;
 
   @observable homeModalLoder = false;
-  @action attemptToOfferSend = (body, suc) => {
+  @action attemptToOfferSend = (body, offerSuccefullySend) => {
     this.setHomeModalLoder(true);
     db.hitApi(db.apis.OFFER_SEND, 'post', body, this.authToken)
       ?.then(resp => {
@@ -1384,7 +1377,7 @@ class user {
           () => {},
           () => {},
         );
-        suc(true);
+        offerSuccefullySend();
       })
       .catch(err => {
         this.setHomeModalLoder(false);
@@ -1401,7 +1394,7 @@ class user {
   };
 
   @action attemptToCheckFirstMessage = (suid, ruid, obj, msg, suc) => {
-    console.warn('check First Message');
+    console.log('check First Message');
     this.setHomeModalLoder(true);
     let params = suid + '/' + ruid;
     db.hitApi(db.apis.CHECK_FIRST_MESSAGE + params, 'get', {}, this.authToken)
@@ -1453,7 +1446,7 @@ class user {
         );
 
         let rn = resp.data.data.roomName;
-        suc(true);
+        suc();
 
         this.attemptToGetInboxes(store.User.user._id, () => {});
       })
@@ -1491,12 +1484,12 @@ class user {
     };
     socket.emit('chat', {userDetails});
     this.setHomeModalLoder(false);
-    suc(true);
+    suc();
     socket.emit('user left', {socket: socket.id});
   };
 
   @action attemptToOtherUserMessageSend = (obj, suc) => {
-    console.warn('message send  : ', 'true');
+    console.log('message send  : ', 'true');
     this.setotherUserModalLoader(true);
     setTimeout(() => {
       this.setotherUserModalLoader(false);
@@ -1604,7 +1597,7 @@ class user {
       })
         .then(response => response.json())
         .then(responseData => {
-          console.warn('upload photo success : ');
+          console.log('upload photo success : ');
           let rsp = responseData.data[0].imgrUrl;
           ua.push(rsp);
 
@@ -1657,7 +1650,7 @@ class user {
       })
         .then(response => response.json())
         .then(responseData => {
-          console.warn('upload photo success : ');
+          console.log('upload photo success : ');
           let rsp = responseData.data[0].imgrUrl;
           ua.push(rsp);
           if (ua.length == a.length) {
@@ -1685,7 +1678,7 @@ class user {
   }
 
   @action attemptToUpdateTrip = (body, tid, index, suc) => {
-    console.warn('update trip body  : ', body);
+    console.log('update trip body  : ', body);
 
     db.hitApi(db.apis.UPDATE_TRIP + tid, 'put', body, this.authToken)
       ?.then(resp => {
@@ -1719,7 +1712,7 @@ class user {
   };
 
   // @action attemptToDeleteTrip = (item, ind, suc) => {
-  //   console.warn('delete  save trip  : ', 'true');
+  //   console.log('delete  save trip  : ', 'true');
   //   this.setdLoader(true);
   //   setTimeout(() => {
   //     this.setdLoader(false);
@@ -1728,7 +1721,7 @@ class user {
   // };
 
   @action attemptToDeleteTrip = (body, tid, index, suc) => {
-    console.warn('delete trip body  : ', body);
+    console.log('delete trip body  : ', body);
 
     db.hitApi(db.apis.DELETE_TRIP + tid, 'delete', body, this.authToken)
       ?.then(resp => {
@@ -1781,7 +1774,7 @@ class user {
       })
         .then(response => response.json())
         .then(responseData => {
-          console.warn(
+          console.log(
             'upload update trips photo success : ',
             responseData.data[0].imgrUrl,
           );
@@ -2289,7 +2282,7 @@ class user {
 
     db.hitApi(db.apis.LOGIN_USER, 'post', body, null)
       ?.then((resp: any) => {
-        console.log(`response  ${db.apis.LOGIN_USER} : `, resp.data);
+        // console.log(`response  ${db.apis.LOGIN_USER} : `, resp.data);
         this.setloginLoader(false);
         this.addUser(resp.data.token, resp.data.doc);
         store.Orders.getOrderById();
@@ -2466,7 +2459,7 @@ class user {
 
   @action.bound
   registerUser(body, seterror, suc, clearInterval, signout) {
-    console.warn('Register user body : ', body);
+    console.log('Register user body : ', body);
     this.setregLoader(true);
     db.hitApi(db.apis.REGISTER_USER, 'post', body, null)
       ?.then(resp => {
@@ -2539,10 +2532,10 @@ class user {
     db.hitApi(db.apis.GET_All_Plan, 'get', {}, null)
       ?.then(resp => {
         this.setregLoader(false);
-        console.log(
-          `response get all plan  ${db.apis.GET_All_Plan} : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response get all plan  ${db.apis.GET_All_Plan} : `,
+        //   resp.data,
+        // );
         let rsp = resp.data.data;
         let plan = {data: []};
         let dt = [];
@@ -2582,7 +2575,7 @@ class user {
 
   @action.bound
   applyPromo(body, seterror, suc) {
-    console.warn('apply promo body : ', body);
+    console.log('apply promo body : ', body);
     this.setregLoader(true);
 
     db.hitApi(db.apis.CHECK_PROMO + body, 'get', {}, null)
@@ -2624,7 +2617,7 @@ class user {
             identityProof: body.cnic_front_image,
             identityStatus: 'pending',
           };
-    console.warn('Update user photo body : ', bd);
+    console.log('Update user photo body : ', bd);
     db.hitApi(db.apis.UPDATE_USER + uid, 'put', bd, token)
       ?.then(resp => {
         this.setregLoader(false);
@@ -2665,7 +2658,7 @@ class user {
     uid,
     token,
   ) {
-    console.warn('upload photo body : ', imgArr[0]);
+    console.log('upload photo body : ', imgArr[0]);
     this.setregLoader(true);
     let e = imgArr[0];
     let body = {};
@@ -2685,7 +2678,7 @@ class user {
     })
       .then(response => response.json())
       .then(responseData => {
-        console.warn('upload photo success : ');
+        console.log('upload photo success : ');
         let rsp = responseData.data[0].imgrUrl;
         if (e.chk == 'Profile') {
           body = {
@@ -2767,10 +2760,10 @@ class user {
           ?.then(resp => {
             this.setucRef(false);
 
-            console.log(
-              `response get card info  ${db.apis.CARD_INFO + email} : `,
-              resp.data.data.data[0].card,
-            );
+            // console.log(
+            //   `response get card info  ${db.apis.CARD_INFO + email} : `,
+            //   resp.data.data.data[0].card,
+            // );
             let rsp = resp.data.data;
             this.setuserCardInfo(rsp.data);
           })
@@ -2785,10 +2778,10 @@ class user {
     } else {
       db.hitApi(db.apis.CARD_INFO + email, 'get', {}, token)
         ?.then(resp => {
-          console.log(
-            `response get card info  ${db.apis.CARD_INFO + email} : `,
-            resp.data.data.data[0].card,
-          );
+          // console.log(
+          //   `response get card info  ${db.apis.CARD_INFO + email} : `,
+          //   resp.data.data.data[0].card,
+          // );
           let rsp = resp.data.data;
           this.setuserCardInfo(rsp.data);
         })
@@ -2839,15 +2832,15 @@ class user {
 
   @action.bound
   getUserById(uid, token, c) {
-    console.warn(' get user by id : ', uid);
+    console.log(' get user by id : ', uid);
     this.setregLoader(true);
     db.hitApi(db.apis.GET_USER_BY_ID + uid, 'get', {}, token)
       ?.then(resp => {
         this.setregLoader(false);
-        console.log(
-          `response get user by id  ${db.apis.GET_USER_BY_ID + uid} : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response get user by id  ${db.apis.GET_USER_BY_ID + uid} : `,
+        //   resp.data,
+        // );
         let rsp = resp.data.data[0];
 
         if (rsp.status == 'blocked') {
@@ -2885,13 +2878,13 @@ class user {
 
   @action.bound
   getUserById1(uid, token, c) {
-    console.warn(' get user by id : ', uid);
+    console.log(' get user by id : ', uid);
     db.hitApi(db.apis.GET_USER_BY_ID + uid, 'get', {}, token)
       ?.then(resp => {
-        console.log(
-          `response get user by id  ${db.apis.GET_USER_BY_ID + uid} : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response get user by id  ${db.apis.GET_USER_BY_ID + uid} : `,
+        //   resp.data,
+        // );
         let rsp = resp.data.data[0];
 
         if (rsp.status == 'blocked') {
@@ -2956,7 +2949,7 @@ class user {
 
   @action.bound
   forgotPassword2(body, suc) {
-    console.warn('Forgot Pswd  body : ', body);
+    console.log('Forgot Pswd  body : ', body);
     this.setregLoader(true);
 
     db.hitApi(db.apis.FORGOT_PSWD, 'put', body, null)
@@ -3056,7 +3049,7 @@ class user {
 
   @action.bound
   attemptToVerifyCode(body, suc, suc2) {
-    console.warn('attemptToVerifyCode  body : ', body);
+    console.log('attemptToVerifyCode  body : ', body);
     this.setregLoader(true);
 
     db.hitApi(db.apis.VERIFY_PIN, 'put', body, null)
@@ -3092,7 +3085,7 @@ class user {
 
   @action.bound
   updatePasword(body, seterror, sucs) {
-    console.warn('Update Psswd user body : ', body);
+    console.log('Update Psswd user body : ', body);
     this.setregLoader(true);
 
     db.hitApi(db.apis.UPD_PSWD, 'put', body, null)
@@ -3234,7 +3227,7 @@ class user {
 
   attemptToCancelSub(body, uid) {
     // let body = {...this.user, ...body};
-    console.warn('cancel sub   body : ', body);
+    console.log('cancel sub   body : ', body);
     this.setregLoader(true);
     db.hitApi(db.apis.UPDATE_USER + uid, 'put', body, this.authToken)
       ?.then(resp => {
@@ -3324,7 +3317,7 @@ class user {
     console.log(`get state`);
     db.hitApi(db.apis.GET_STATE, 'get', {}, null)
       ?.then(resp => {
-        console.log(`response get state ${db.apis.GET_STATE} : `, resp.data);
+        // console.log(`response get state ${db.apis.GET_STATE} : `, resp.data);
         let rsp = resp.data.data;
         store.Filters.settripLocation(rsp);
       })
@@ -3350,10 +3343,10 @@ class user {
     console.log(`get activity`);
     db.hitApi(db.apis.GET_ACTIVITY, 'get', {}, null)
       ?.then(resp => {
-        console.log(
-          `response get activity ${db.apis.GET_ACTIVITY} : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response get activity ${db.apis.GET_ACTIVITY} : `,
+        //   resp.data,
+        // );
         let rsp = resp.data.data;
         store.Filters.setactivity(rsp);
       })
@@ -3379,10 +3372,10 @@ class user {
     console.log(`get Species`);
     db.hitApi(db.apis.GET_SPECIES, 'get', {}, null)
       ?.then(resp => {
-        console.log(
-          `response get Species ${db.apis.GET_SPECIES} : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response get Species ${db.apis.GET_SPECIES} : `,
+        //   resp.data,
+        // );
         let rsp = resp.data.data;
 
         store.Filters.setspecies(rsp);
@@ -3406,7 +3399,7 @@ class user {
 
   @action.bound
   submitSupport(bd, suc) {
-    console.warn('submitSupport body : ', bd);
+    console.log('submitSupport body : ', bd);
     this.setregLoader(true);
 
     db.hitApi(db.apis.SUBMIT_SUPPORT, 'post', bd, this.authToken)
@@ -3562,7 +3555,7 @@ class user {
 
   @action.bound
   updateUser2(body, seterror, sp, cpm) {
-    console.warn('Update user body : ', body);
+    console.log('Update user body : ', body);
 
     this.setregLoader(false);
 
@@ -3682,10 +3675,10 @@ class user {
 
     db.hitApi(db.apis.CHANGE_PASSWORD, 'put', body, store.User.authToken)
       ?.then(resp => {
-        console.log(
-          `response CHANGE_PASSWORD  ${db.apis.CHANGE_PASSWORD} : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response CHANGE_PASSWORD  ${db.apis.CHANGE_PASSWORD} : `,
+        //   resp.data,
+        // );
         this.setregLoader(false);
         sucs();
         store.Notifications.attemptToGetNotifications(
@@ -3713,7 +3706,7 @@ class user {
   }
 
   getData(seterror) {
-    // console.warn('get home data');
+    // console.log('get home data');
     // this.setregLoader(true);
 
     // setTimeout(() => {

@@ -12,7 +12,7 @@ import theme from '../../../../../../theme';
 import utils from '../../../../../../utils';
 
 export default function Fields({
-  unAvailable,
+  unavailableText,
   tripType,
   isDropDownTripType,
   setIsDropDownTripType,
@@ -41,23 +41,6 @@ export default function Fields({
   const activeOpacity = 0.8;
   const activitySrc = require('../../../../../../assets/images/filters/activity/img.png');
   const speciesSrc = require('../../../../../../assets/images/filters/species/img.png');
-
-  let unavailableText = '';
-  let text1 = '';
-  let text2 = '';
-  if (unAvailable) {
-    text1 = unAvailable.wtxt;
-    text2 = unAvailable.esd_text;
-
-    if (text1 != '' && text2 != '') {
-      unavailableText = text1 + ', ' + text2;
-    }
-    if (text1 == '' && text2 != '') {
-      unavailableText = text2;
-    } else if (text1 != '' && text2 == '') {
-      unavailableText = text1;
-    }
-  }
 
   return (
     <>
@@ -216,15 +199,7 @@ export default function Fields({
                 setIsDropDownDuration(!isDropDownDuration);
               }}
               activeOpacity={0.6}
-              style={[
-                styles.inputConatiner,
-                {
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  paddingHorizontal: 15,
-                },
-              ]}>
+              style={styles.dropDowninputConatiner}>
               <View style={{width: '70%'}}>
                 <Text
                   numberOfLines={1}
@@ -308,7 +283,7 @@ export default function Fields({
         </Pressable>
       </View>
 
-      {selectedDates && (
+      {selectedDates && unavailableText == '' && (
         <View style={[styles.fieldContainer, {marginTop: 10}]}>
           <TouchableOpacity activeOpacity={0.8} onPress={openUnAvailableModal}>
             <Text style={styles.bottomText}>Set unavailable days</Text>

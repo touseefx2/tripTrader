@@ -36,6 +36,14 @@ const markeDateStyle = {
   disableTouchEvent: false,
 };
 
+const unMarkeDateStyle = {
+  customStyles: unavailableDaysStyle,
+  marked: false,
+  selected: true,
+  disabled: true,
+  disableTouchEvent: true,
+};
+
 const calenderTheme = {
   textDisabledColor: subTitleLight,
   dayTextColor: title,
@@ -51,4 +59,5 @@ export default dayStyle = {
   selectedDaysStyle,
   markeDateStyle,
   calenderTheme,
+  unMarkeDateStyle,
 };

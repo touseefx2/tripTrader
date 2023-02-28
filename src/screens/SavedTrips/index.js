@@ -273,6 +273,18 @@ const durtn = [
     title: 'weeks',
     type: 'durType',
   },
+  // {
+  //   _id: 2,
+  //   is_active: true,
+  //   title: 'months',
+  //   type: 'durType',
+  // },
+  // {
+  //   _id: 2,
+  //   is_active: true,
+  //   title: 'years',
+  //   type: 'durType',
+  // },
 ];
 
 const rdurtn = [
@@ -311,6 +323,7 @@ export default observer(SavedTrips);
 
 function SavedTrips(props) {
   const headerTitle = 'Saved Trips';
+  const windowSize = 21;
   const limit = 10;
   const maxModalHeight = theme.window.Height - 70;
   const scrollRef = useRef(null);
@@ -320,13 +333,22 @@ function SavedTrips(props) {
   const {isInternet} = store.General;
   const {user, homeModalLoder} = store.User;
   const {deleteLoader, saveTrips} = store.Trips;
+  const {activity, tripLocation} = store.Filters;
+
+  const [isSuccessModal, setIsSuccessModal] = useState(false);
+  const [successModalObj, setSuccessModalObj] = useState(null);
+  const [successCheck, setSuccessCheck] = useState('');
 
   const [search, setSearch] = useState('');
 
   const [modalHeight, setmodalHeight] = useState(0);
-  const [modalObj, setModalObj] = useState(null);
+
   const [modalCheck, setModalCheck] = useState('');
   const [isModal, setIsModal] = useState(false);
+
+  const [modalObj, setModalObj] = useState(null);
+  const [isOfferModal, setIsOfferModal] = useState(false);
+  const [isMessageModal, setIsMessageModal] = useState(false);
 
   const [message, setMessage] = useState('');
   const [step, setStep] = useState(1);
@@ -411,20 +433,16 @@ function SavedTrips(props) {
   const [durNum, setdurNum] = useState(1);
   const [showCalender, setshowCalender] = useState(false);
   const [iDate, setiDate] = useState(new Date());
-  const [mindd, setmindd] = useState(undefined);
-  const [mind, setmind] = useState(undefined);
-
   const [month, setmonth] = useState(new Date());
   const [markedDates, setmarkedDates] = useState({});
   const [isSelDate, setisSelDate] = useState(false);
   const [selDates, setselDates] = useState({});
   const [isSelDate1, setisSelDate1] = useState('');
   const [isSelDate2, setisSelDate2] = useState('');
-
+  const [mindd, setmindd] = useState(undefined);
+  const [mind, setmind] = useState(undefined);
   const [maxd, setmaxd] = useState(undefined);
   const [isShowUnavliableModal, setisShowUnavliableModal] = useState(false);
-
-  useState(false);
   const [dow, setdow] = useState(dw); //days of week
   const [rdurNum, setrdurNum] = useState(1);
   const [endRepOn, setendRepOn] = useState('');
@@ -825,71 +843,11 @@ function SavedTrips(props) {
   };
 
   const onClickMakeOffer = (dt, ind) => {
-    let d = dt;
-
-    let loc = d.location ? d.location : {};
-    let acceptOtherTrades = d.acceptTradeOffers;
-    let dr = {
-      number: d.duration.value,
-      title: d.duration.title,
-    };
-    let av = {
-      startDate: d.availableFrom,
-      endDate: d.availableTo,
-    };
-    let photos = d.photos || [];
-    let objct = {...d.unAvailableDays};
-    if (!isObjectEmpty(objct)) {
-      let ar = objct.allUnavailableDates || [];
-      let ar2 = objct.daysOfWeek || [];
-      if (ar.length <= 0 && ar2.length <= 0) {
-        objct = false;
-      }
-    }
-    if (objct != false) {
-      delete Object.assign(objct, {
-        days_of_week: objct.daysOfWeek,
-      })['daysOfWeek'];
-      delete Object.assign(objct, {
-        unavailable_days_of_week: objct.unavailableDaysOfWeek,
-      })['unavailableDaysOfWeek'];
-      delete Object.assign(objct, {
-        exclude_specific_dates: objct.excludeSpecificDates,
-      })['excludeSpecificDates'];
-      delete Object.assign(objct, {
-        all_unavailable_dates: objct.allUnavailableDates,
-      })['allUnavailableDates'];
-      delete Object.assign(objct, {wtxt: objct.dayWeekText})['dayWeekText'];
-      delete Object.assign(objct, {esd_text: objct.excludeDateText})[
-        'excludeDateText'
-      ];
-      let ra = {...objct.repeatEvery};
-      delete Object.assign(ra, {num: ra.value})['value'];
-      delete objct.repeatEvery;
-      objct.repeat_every = ra;
-    }
-
-    const obj = {
-      __v: dt.__v,
-      _id: dt._id,
-      user: dt.hostId,
-      tradeType: d.tradeType,
-      loc: loc,
-      species: d.species || '',
-      title: d.title || '',
-      return: d.returnActivity || '',
-      status: d.status,
-      acceptOtherTrades: acceptOtherTrades,
-      duration: dr,
-      availablity: av,
-      photos: photos,
-      unavailable: objct,
-    };
-
-    openModal({item: obj, i: ind}, 'offer');
+    openModal({item: dt, selIndex: ind}, 'offer');
+    // openModal({item: obj, i: ind}, 'offer');
   };
   const onClickMessage = (dt, ind) => {
-    openModal({item: dt, i: ind}, 'message');
+    openModal({item: dt, selIndex: ind}, 'message');
   };
   const onClickCal = () => {
     setIsChooseDateCalender(!isChooseDateCalender);
@@ -1137,13 +1095,17 @@ function SavedTrips(props) {
     openModal({item: dt, i: ind}, 'tripRemove');
   };
 
-  const openModal = (obj, c) => {
+  const openModal = (obj, check) => {
     setModalObj(obj);
-    setModalCheck(c);
-    setIsModal(true);
-    if (c == 'offer') {
-      setStep(1);
-    }
+    if (check == 'offer') setIsOfferModal(true);
+
+    if (check == 'message') setIsMessageModal(true);
+    // setModalObj(obj);
+    // setModalCheck(c);
+    // setIsModal(true);
+    // if (c == 'offer') {
+    //   setStep(1);
+    // }
   };
 
   const closeModalAll = () => {
@@ -2103,120 +2065,6 @@ function SavedTrips(props) {
         );
       };
 
-      const renderBottom = () => {
-        const renderButton1 = () => {
-          return (
-            <Pressable
-              onPress={closeModal}
-              style={({pressed}) => [
-                {
-                  opacity: pressed ? 0.9 : 1.0,
-                  paddingHorizontal: 15,
-                  paddingVertical: 8,
-                  borderRadius: 8,
-                  borderWidth: 1,
-                  borderColor: theme.color.fieldBorder,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginRight: 10,
-                },
-              ]}>
-              <Text
-                style={{
-                  fontSize: 12.5,
-                  fontFamily: theme.fonts.fontBold,
-                  color: '#30563A',
-                }}>
-                Back
-              </Text>
-            </Pressable>
-          );
-        };
-
-        const renderButton2 = () => {
-          const Continue = () => {
-            setmodalHeight(0);
-            setStep(4);
-          };
-
-          return (
-            <Pressable
-              disabled={isButtonDisable}
-              onPress={Continue}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.8 : isButtonDisable ? 0.5 : 1.0},
-                styles.ButtonContainer,
-                {backgroundColor: theme.color.button1},
-              ]}>
-              <Text
-                style={[styles.ButtonText, {color: theme.color.buttonText}]}>
-                Review Offer
-              </Text>
-            </Pressable>
-          );
-        };
-
-        return (
-          <View
-            style={
-              isMaxHeight
-                ? {
-                    backgroundColor: theme.color.background,
-                    shadowColor: '#000000',
-                    shadowOffset: {width: 0, height: -1}, // change this for more shadow
-                    shadowOpacity: 0.1,
-                    elevation: 5,
-                    borderBottomLeftRadius: 10,
-                    borderBottomRightRadius: 10,
-                    marginTop: 5,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    width: '100%',
-                  }
-                : {
-                    marginTop: 30,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    width: '100%',
-                  }
-            }>
-            <View
-              style={{
-                width: '30%',
-              }}>
-              <Text
-                style={{
-                  fontSize: 11,
-                  fontFamily: theme.fonts.fontNormal,
-                  color: theme.color.subTitleLight,
-                  paddingLeft: 10,
-                }}>
-                Step {step} of 4
-              </Text>
-            </View>
-
-            <View
-              style={{
-                width: '65%',
-
-                alignItems: 'flex-end',
-              }}>
-              <View
-                style={
-                  isMaxHeight
-                    ? styles.modalBottomContainer
-                    : styles.modalBottomContainer2
-                }>
-                {renderButton1()}
-                {renderButton2()}
-              </View>
-            </View>
-          </View>
-        );
-      };
-
       const renderDropDown = c => {
         let data = [];
 
@@ -2710,6 +2558,120 @@ function SavedTrips(props) {
               </View>
             </View>
           </>
+        );
+      };
+
+      const renderBottom = () => {
+        const renderButton1 = () => {
+          return (
+            <Pressable
+              onPress={closeModal}
+              style={({pressed}) => [
+                {
+                  opacity: pressed ? 0.9 : 1.0,
+                  paddingHorizontal: 15,
+                  paddingVertical: 8,
+                  borderRadius: 8,
+                  borderWidth: 1,
+                  borderColor: theme.color.fieldBorder,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginRight: 10,
+                },
+              ]}>
+              <Text
+                style={{
+                  fontSize: 12.5,
+                  fontFamily: theme.fonts.fontBold,
+                  color: '#30563A',
+                }}>
+                Back
+              </Text>
+            </Pressable>
+          );
+        };
+
+        const renderButton2 = () => {
+          const Continue = () => {
+            setmodalHeight(0);
+            setStep(4);
+          };
+
+          return (
+            <Pressable
+              disabled={isButtonDisable}
+              onPress={Continue}
+              style={({pressed}) => [
+                {opacity: pressed ? 0.8 : isButtonDisable ? 0.5 : 1.0},
+                styles.ButtonContainer,
+                {backgroundColor: theme.color.button1},
+              ]}>
+              <Text
+                style={[styles.ButtonText, {color: theme.color.buttonText}]}>
+                Review Offer
+              </Text>
+            </Pressable>
+          );
+        };
+
+        return (
+          <View
+            style={
+              isMaxHeight
+                ? {
+                    backgroundColor: theme.color.background,
+                    shadowColor: '#000000',
+                    shadowOffset: {width: 0, height: -1}, // change this for more shadow
+                    shadowOpacity: 0.1,
+                    elevation: 5,
+                    borderBottomLeftRadius: 10,
+                    borderBottomRightRadius: 10,
+                    marginTop: 5,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    width: '100%',
+                  }
+                : {
+                    marginTop: 30,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    width: '100%',
+                  }
+            }>
+            <View
+              style={{
+                width: '30%',
+              }}>
+              <Text
+                style={{
+                  fontSize: 11,
+                  fontFamily: theme.fonts.fontNormal,
+                  color: theme.color.subTitleLight,
+                  paddingLeft: 10,
+                }}>
+                Step {step} of 4
+              </Text>
+            </View>
+
+            <View
+              style={{
+                width: '65%',
+
+                alignItems: 'flex-end',
+              }}>
+              <View
+                style={
+                  isMaxHeight
+                    ? styles.modalBottomContainer
+                    : styles.modalBottomContainer2
+                }>
+                {renderButton1()}
+                {renderButton2()}
+              </View>
+            </View>
+          </View>
         );
       };
 
@@ -3927,7 +3889,7 @@ function SavedTrips(props) {
                 }
                 loadingImageStyle={styles.mimageLoaderm}
                 loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
-                blurRadius={5}
+                blurRadius={3}
               />
               {/* {isVeirfy && (
                 <Image
@@ -5770,8 +5732,6 @@ function SavedTrips(props) {
     );
   };
 
-  const windowSize = 21;
-
   return (
     <>
       <View style={styles.container}>
@@ -5844,11 +5804,47 @@ function SavedTrips(props) {
             focusScreen={store.General.focusScreen}
           />
         </SafeAreaView>
-
-        {isModal && !isOfferSend && !isSendMessage && renderModal()}
+        {/* {isModal && !isOfferSend && !isSendMessage && renderModal()} */}
+        {isOfferModal && (
+          <utils.MakeOffer
+            isModal={isOfferModal}
+            setIsModal={setIsOfferModal}
+            modalObj={modalObj}
+            setModalObj={setModalObj}
+            loader={homeModalLoder}
+            activity={activity}
+            species={store.Filters.species}
+            tripLocation={tripLocation}
+            setIsSuccessModal={setIsSuccessModal}
+            setSuccessModalObj={setSuccessModalObj}
+            setSuccessCheck={setSuccessCheck}
+          />
+        )}
+        {isMessageModal && (
+          <utils.MessageModal
+            isModal={isMessageModal}
+            setIsModal={setIsMessageModal}
+            modalObj={modalObj}
+            setModalObj={setModalObj}
+            loader={homeModalLoder}
+            setIsSuccessModal={setIsSuccessModal}
+            setSuccessModalObj={setSuccessModalObj}
+            setSuccessCheck={setSuccessCheck}
+          />
+        )}
+        {isSuccessModal && (
+          <utils.SuccessModal
+            isModal={isSuccessModal}
+            setIsModal={setIsSuccessModal}
+            modalObj={successModalObj}
+            setModalObj={setSuccessModalObj}
+            check={successCheck}
+            setCheck={setSuccessCheck}
+            props={props}
+          />
+        )}
         {isOfferSend && renderShowOfferSendModal()}
         {isSendMessage && renderMessageSendModal()}
-
         {store.Notifications.isShowNotifcation && <utils.ShowNotifications />}
         <Toast ref={toast} position="bottom" />
       </View>

@@ -1,28 +1,17 @@
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   ActivityIndicator,
-  ScrollView,
   Modal,
   Image,
   Pressable,
   SafeAreaView,
   Animated,
-  Dimensions,
 } from 'react-native';
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from 'react-native-responsive-dimensions';
-
+import {responsiveWidth} from 'react-native-responsive-dimensions';
 import {observer} from 'mobx-react';
-import NetInfo from '@react-native-community/netinfo';
-import RBSheet from 'react-native-raw-bottom-sheet';
 import utils from './index';
-import store from '../../src/store';
 import theme from '../../src/theme';
 
 export default observer(FullimageModal);

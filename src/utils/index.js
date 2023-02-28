@@ -18,6 +18,8 @@ import WebViewModal from './WebViewModal';
 import {functions} from './functions';
 import MakeOffer from './MakeOffer';
 import UnAvailableModal from './UnAvailableModal';
+import SuccessModal from './SuccessModal';
+import MessageModal from './MessageModal';
 
 const utils = {
   vectorIcon,
@@ -40,6 +42,8 @@ const utils = {
   functions,
   MakeOffer,
   UnAvailableModal,
+  SuccessModal,
+  MessageModal,
 };
 
 export default utils;

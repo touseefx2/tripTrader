@@ -23,20 +23,12 @@ import {FlashList} from '@shopify/flash-list';
 export default observer(Notifications);
 
 function ItemSeparatorView() {
-  return (
-    <View
-      style={{
-        height: 1,
-        backgroundColor: theme.color.fieldBorder,
-        width: '100%',
-      }}
-    />
-  );
+  return <View style={styles.separator} />;
 }
 
 function ListHeaders({search, setsearch, data}) {
   const renderResult = () => {
-    let length = data.length || 0;
+    const length = data.length || 0;
     return (
       <View style={styles.resultContainer}>
         <Text style={styles.resultText}>
@@ -104,23 +96,7 @@ function ListHeaders({search, setsearch, data}) {
 }
 
 function EmptyListMessage() {
-  return (
-    // Flat List Item
-    <>
-      <Text
-        style={{
-          marginTop: '25%',
-          alignItems: 'center',
-          justifyContent: 'center',
-          alignSelf: 'center',
-          fontSize: 13,
-          color: theme.color.subTitleLight,
-          fontFamily: theme.fonts.fontMedium,
-        }}>
-        No Notifications Found
-      </Text>
-    </>
-  );
+  return <Text style={styles.EmptyText}>No Notifications Found</Text>;
 }
 
 function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
@@ -218,8 +194,8 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
     let sd = ud; //start date
     let ed = cd; //end date
     let ics = compare(sd, ed); //is check date
-    console.log('updated date : ', moment(ud).format('YYYY-MM-DD hh:mm:ss a'));
-    console.log('currentdate : ', moment(cd).format('YYYY-MM-DD hh:mm:ss a'));
+    // console.log('updated date : ', moment(ud).format('YYYY-MM-DD hh:mm:ss a'));
+    // console.log('currentdate : ', moment(cd).format('YYYY-MM-DD hh:mm:ss a'));
 
     if (ics == 'greater') {
       var start = moment(moment(ed).format('YYYY-MM-DD'), 'YYYY-MM-DD');
@@ -247,7 +223,7 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
       }
     } else {
       let min = diff_minutes(ed, sd);
-      console.log('minutes: ', min);
+      // console.log('minutes: ', min);
       if (min >= 0 && min <= 1) {
         t = 'Just now';
       } else {
@@ -372,7 +348,6 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
       title == 'Your next adventure awaits!'
         ? 'first'
         : 'end';
-
     return pos;
   };
 
@@ -490,6 +465,11 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
                     style={styles.notificationClickSubTitle}>
                     {clickableText}
                   </Text>
+                  {clickableText == 'make an offer' && (
+                    <Text style={[styles.notificationSubTitle, {marginTop: 0}]}>
+                      ?
+                    </Text>
+                  )}
                 </Text>
               ) : (
                 <Text
@@ -497,8 +477,8 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
                     onclickNotification(clickableText, item.messageId)
                   }
                   style={styles.notificationClickSubTitle}>
-                  {clickableText}{' '}
-                  <Text style={styles.notificationSubTitle}>{subTitle}</Text>
+                  {clickableText}
+                  <Text style={styles.notificationSubTitle}> {subTitle}</Text>
                 </Text>
               )}
             </>
@@ -560,15 +540,12 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
           <SafeAreaView style={styles.container2}>
             <View style={styles.container3}>
               <FlashList
-                decelerationRate={0.6}
+                decelerationRate={0.5}
                 estimatedItemSize={100}
                 refreshControl={
                   <RefreshControl refreshing={Loader} onRefresh={onRefresh} />
                 }
-                contentContainerStyle={{
-                  paddingTop: 12,
-                  paddingBottom: 40,
-                }}
+                contentContainerStyle={styles.listContainer}
                 initialNumToRender={limit}
                 windowSize={windowSize}
                 maxToRenderPerBatch={windowSize}

@@ -16,20 +16,18 @@ export default function DateCalender({
   durationTitle,
   minDate,
   maxDate,
+  totalDays,
 }) {
   const {item} = modalObj;
-  const {number, title} = item.duration;
-  const {startDate, endDate} = item.availablity;
-  const all_unavailable_dates = item.unavailable.all_unavailable_dates || [];
+  const {availableFrom, availableTo, unAvailableDays} = item;
+  let numOfDays = totalDays;
+  const startDate = availableFrom;
+  const endDate = availableTo;
+
+  const all_unavailable_dates = unAvailableDays.all_unavailable_dates || [];
   const start_date = moment(startDate).format('YYYY-MM-DD');
   const current_date = moment(new Date()).format('YYYY-MM-DD');
-  let totalDays = 0;
   let unavailableDays = {};
-  if (title == 'days') totalDays = number;
-  else if (title == 'weeks') totalDays = number * 7;
-  else if (title == 'months') totalDays = number * 30;
-  else if (title == 'years') totalDays = number * 365;
-
   if (minDate == '') {
     minDate =
       start_date < current_date
@@ -85,8 +83,8 @@ export default function DateCalender({
   const selectedDayEvents = day => {
     const date = day.dateString;
     let datesArray = {};
-    if (totalDays <= 1) {
-      datesArray = datesArray[date] = theme.dayStyle.markeDateStyle;
+    if (numOfDays <= 1) {
+      datesArray[date] = theme.dayStyle.markeDateStyle;
       setMinimumDate(date);
       setMaximumDate(date);
     } else {
@@ -98,7 +96,7 @@ export default function DateCalender({
       });
 
       datesList.push(selectedDate);
-      for (let index = 0; index < totalDays; index++) {
+      for (let index = 0; index < numOfDays; index++) {
         if (selectedDate > moment(endDate).format('YYYY-MM-DD')) {
           break;
         }
@@ -107,7 +105,7 @@ export default function DateCalender({
           let ind = 0;
           ind = unavailableArr.findIndex(element => element === selectedDate);
           if (ind < 0) datesList.push(selectedDate);
-          else totalDays++;
+          else numOfDays++;
         } else datesList.push(selectedDate);
 
         selectedDate = moment(
@@ -146,7 +144,7 @@ export default function DateCalender({
             markedDates={{...unavailableDays, ...markedDates}}
           />
           <Bottom
-            totalDays={totalDays}
+            totalDays={numOfDays}
             durationTitle={durationTitle}
             markedDates={markedDates}
             onClickApply={onClickApply}

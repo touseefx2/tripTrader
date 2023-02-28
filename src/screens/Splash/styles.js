@@ -1,9 +1,5 @@
-import {Platform, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import theme from '../../theme/index';
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from 'react-native-responsive-dimensions';
 
 export const styles = StyleSheet.create({
   container: {
@@ -12,34 +8,19 @@ export const styles = StyleSheet.create({
   },
   container2: {
     flex: 1,
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: theme.window.Width,
+    height: theme.window.Height,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 15,
   },
-  background: {
-    flex: 1,
-    resizeMode: 'cover', // or 'stretch'
-    padding: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+
   logo: {
     width: 110,
     height: 110,
     resizeMode: 'contain',
-  },
-  title1: {
-    fontSize: 30,
-    fontFamily: theme.fonts.titleFont,
-    color: theme.color.buttonText,
-    alignSelf: 'center',
-    textTransform: 'uppercase',
-  },
-  title2: {
-    marginTop: 15,
-    fontSize: 30,
-    fontFamily: theme.fonts.fontBold,
-    color: 'white',
-    alignSelf: 'center',
   },
 });

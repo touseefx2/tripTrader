@@ -3,7 +3,6 @@ import {View, Text, Image, ScrollView, Pressable} from 'react-native';
 import {styles} from './styles';
 import DateCalender from './components/DateCalender';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-import moment from 'moment';
 import Bottom from './components/Bottom';
 
 export default function Step1({
@@ -14,43 +13,22 @@ export default function Step1({
   isMaxHeight,
   selectedDates,
   setSelectedDates,
+  durationTitle,
+  firstDate,
+  secondDate,
+  fieldText,
+  totalDays,
 }) {
   const {item} = modalObj;
-  const {number, title} = item.duration;
+  const {species} = item;
+  const {image, firstName, lastName} = item.hostId;
+
+  const photoSrc = image
+    ? {uri: image}
+    : require('../../../../assets/images/drawer/guest/img.png');
+  const userName = firstName + ' ' + lastName;
 
   const [isChooseDateCalender, setIsChooseDateCalender] = useState(false);
-
-  const photoSrc = item.user.image
-    ? {uri: item.user.image}
-    : require('../../../../assets/images/drawer/guest/img.png');
-  const userName = item.user.firstName + ' ' + item.user.lastName;
-  const titleFormat =
-    number <= 1 ? title.substring(0, title.length - 1) : title;
-  const durationTitle = number + ' ' + titleFormat;
-  const species = item.species || '';
-  let fieldText = '';
-  let firstDate = '';
-  let secondDate = '';
-  let dates = [];
-  if (selectedDates) {
-    dates = Object.keys(selectedDates).map(function (key) {
-      return key;
-    });
-
-    if (dates.length > 0) {
-      firstDate = dates[0];
-      if (dates.length > 1) {
-        secondDate = dates[dates.length - 1];
-        fieldText =
-          moment(firstDate).format('MMM DD, YYYY') +
-          ' - ' +
-          moment(secondDate).format('MMM DD, YYYY');
-      } else fieldText = moment(firstDate).format('MMM DD, YYYY');
-    }
-  } else {
-    fieldText =
-      number <= 1 ? 'Choose a trip date' : 'Choose a trip date or date range';
-  }
 
   const goNext = () => {
     setmodalHeight(0);
@@ -74,7 +52,7 @@ export default function Step1({
             source={photoSrc}
             loadingImageStyle={styles.mimageLoader}
             loadingSource={require('../../../../assets/images/imgLoad/img.jpeg')}
-            blurRadius={5}
+            blurRadius={3}
           />
         </View>
       );
@@ -176,6 +154,7 @@ export default function Step1({
           durationTitle={durationTitle}
           minDate={firstDate}
           maxDate={secondDate}
+          totalDays={totalDays}
         />
       )}
     </>

@@ -8,10 +8,10 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     alignItems: 'center',
+    paddingHorizontal: 15,
   },
   bottomWrapper1: {
-    width: '40%',
-    paddingLeft: 10,
+    width: '35%',
   },
   bottomWrapper1Text: {
     fontSize: 11,
@@ -19,11 +19,10 @@ export const styles = StyleSheet.create({
     color: theme.color.subTitleLight,
   },
   bottomWrapper2: {
-    width: '55%',
-    paddingRight: 10,
+    width: '52%',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    flexDirection: 'row',
   },
   button: {
     paddingHorizontal: 15,

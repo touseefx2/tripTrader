@@ -20,6 +20,7 @@ const hitApi = (
       baseURL: BASE_URL,
     });
   }
+
   switch (reqType) {
     case 'get':
       return new Promise((resolve, reject) => {
@@ -35,7 +36,6 @@ const hitApi = (
 
     case 'post':
       return new Promise((resolve, reject) => {
-        // const credentials = qs.stringify(params);
         occ
           .post(endPoint, params)
           .then(response => {

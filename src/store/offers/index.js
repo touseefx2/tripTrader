@@ -47,7 +47,7 @@ class offers {
   };
 
   @action attemptToGetSentOffers = (setgetdata, setrfrsh) => {
-    console.warn('Get sent offers true: ');
+    console.log('Get sent offers true: ');
     this.setLoader(true);
 
     let token = store.User.authToken;
@@ -56,11 +56,11 @@ class offers {
       ?.then(resp => {
         this.setLoader(false);
         setrfrsh(false);
-        console.log(
-          `response Get sent offers   ${db.apis.GET_SENT_OFFERS}${params} : `,
-        );
+        // console.log(
+        //   `response Get sent offers   ${db.apis.GET_SENT_OFFERS}${params} : `,
+        // );
         let dt = resp.data.data || [];
-        console.log(dt);
+        // console.log(dt);
         setgetdata(true);
         this.setsentOffers(dt);
         return;
@@ -90,7 +90,7 @@ class offers {
   };
 
   @action attemptToGetReceiveOffers = (setgetdata, setrfrsh) => {
-    console.warn('Get receive offers true: ');
+    console.log('Get receive offers true: ');
     this.setLoader2(true);
 
     let token = store.User.authToken;
@@ -99,11 +99,11 @@ class offers {
       ?.then(resp => {
         this.setLoader2(false);
         setrfrsh(false);
-        console.log(
-          `response Get receive offers   ${db.apis.GET_RECEIVED_OFFERS}${params} : `,
-        );
+        // console.log(
+        //   `response Get receive offers   ${db.apis.GET_RECEIVED_OFFERS}${params} : `,
+        // );
         let dt = resp.data.data || [];
-        console.log(dt);
+        // console.log(dt);
         setgetdata(true);
         this.setrcvOffers(dt);
         return;
@@ -133,7 +133,7 @@ class offers {
   };
 
   @action attemptToGetConfirmOffers = (setgetdata, setrfrsh) => {
-    console.warn('Get Confirm  offers true: ');
+    console.log('Get Confirm  offers true: ');
     this.setLoader3(true);
 
     let token = store.User.authToken;
@@ -143,11 +143,10 @@ class offers {
       ?.then(resp => {
         this.setLoader3(false);
         setrfrsh(false);
-        console.log(
-          `response Get Confirm offers   ${db.apis.GET_CONFIRM_OFFERS}${params} : `,
-        );
+        // console.log(
+        //   `response Get Confirm offers   ${db.apis.GET_CONFIRM_OFFERS}${params} : `,
+        // );
         let dt = resp.data.data || [];
-        console.log(dt);
         setgetdata(true);
         this.setcnfrmOffers(dt);
         return;

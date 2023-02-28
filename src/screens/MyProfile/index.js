@@ -5,14 +5,10 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
   Alert,
   Linking,
   PermissionsAndroid,
   Platform,
-  Dimensions,
   Modal as MModal,
   Pressable,
 } from 'react-native';
@@ -22,21 +18,13 @@ import {observer} from 'mobx-react';
 import store from '../../store/index';
 import utils from '../../utils/index';
 import theme from '../../theme';
-
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from 'react-native-responsive-dimensions';
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
-
-import RBSheet from 'react-native-raw-bottom-sheet';
 import {ActivityIndicator} from 'react-native-paper';
 import IntentLauncher from 'react-native-intent-launcher';
 import {request, PERMISSIONS, check} from 'react-native-permissions';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import {Image as ImageCompressor} from 'react-native-compressor';
-
 import {TabView, SceneMap} from 'react-native-tab-view';
 import Reviews from './Reviews';
 import Trips from './Trips';

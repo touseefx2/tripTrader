@@ -3,7 +3,7 @@ import {View, Text, Pressable} from 'react-native';
 import {styles} from './styles';
 import theme from '../../../../theme';
 
-export default function Bottom({isMaxHeight, step, goBack, onClickSave}) {
+export default function Bottom({isMaxHeight, goBack, onClickSave}) {
   const renderBack = () => {
     return (
       <Pressable
@@ -43,39 +43,13 @@ export default function Bottom({isMaxHeight, step, goBack, onClickSave}) {
   return (
     <View style={isMaxHeight ? styles.bottomMax : styles.bottom}>
       <View
-        style={{
-          width: '30%',
-          paddingLeft: 10,
-        }}>
-        {step !== 0 && (
-          <Text
-            style={[
-              styles.ButtonText,
-              {
-                fontSize: 11,
-                fontFamily: theme.fonts.fontNormal,
-                color: theme.color.subTitleLight,
-              },
-            ]}>
-            Step {step} of 4
-          </Text>
-        )}
-      </View>
-
-      <View
-        style={{
-          width: '65%',
-          alignItems: 'flex-end',
-        }}>
-        <View
-          style={
-            isMaxHeight
-              ? styles.modalBottomContainer
-              : styles.modalBottomContainer2
-          }>
-          {renderBack()}
-          {renderSave()}
-        </View>
+        style={
+          isMaxHeight
+            ? styles.modalBottomContainer
+            : styles.modalBottomContainer2
+        }>
+        {renderBack()}
+        {renderSave()}
       </View>
     </View>
   );

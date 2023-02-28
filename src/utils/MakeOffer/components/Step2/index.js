@@ -31,6 +31,8 @@ function Step2({
   isMaxHeight,
   selectedTrip,
   setSelectedTrip,
+  isTripRefresh,
+  setIsTripRefresh,
 }) {
   const {trips} = store.User;
   const [isDropDownTrip, setisDropDownTrip] = useState(false);
@@ -42,12 +44,14 @@ function Step2({
   const goBack = () => {
     setStep(1);
     setmodalHeight(0);
+    setSelectedTrip(null);
   };
 
   const goNext = () => {
     closeDropDown();
     setStep(3);
     setmodalHeight(0);
+    setIsTripRefresh(!isTripRefresh);
   };
 
   const renderTitle = () => {

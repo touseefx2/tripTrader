@@ -57,153 +57,16 @@ class notifications {
       ?.then(resp => {
         this.setLoader(false);
 
-        console.log(
-          `response GetNotifications   ${db.apis.GET_NOTIFICATIONS + route} : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response GetNotifications   ${db.apis.GET_NOTIFICATIONS + route} : `,
+        //   resp.data,
+        // );
         let dt = resp.data.data || [];
         let count = resp.data.count[0].unRead || 0;
         setgetdata(true);
-        // // this.setnotificationsTotal();
+        // this.setnotificationsTotal();
         this.setnotifications(dt);
 
-        // this.setnotifications([
-        //   ...dt,
-
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-
-        //   ...dt,
-        //   ...dt,
-
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        //   ...dt,
-        // ]);
         this.setunRead(count);
         return;
       })
@@ -211,6 +74,7 @@ class notifications {
         this.setLoader(false);
 
         let msg = err.response.data.message || err.response.status || err;
+
         console.log(
           `Error in GetNotifications ${db.apis.GET_NOTIFICATIONS + route} : `,
           msg,
@@ -239,12 +103,12 @@ class notifications {
     let route = store.User.user._id + '/' + nid;
     db.hitApi(db.apis.READ_NOTIFICATIONS + route, 'put', {}, token)
       ?.then(resp => {
-        console.log(
-          `response Read Notification   ${
-            db.apis.READ_NOTIFICATIONS + route
-          } : `,
-          resp.data,
-        );
+        // console.log(
+        //   `response Read Notification   ${
+        //     db.apis.READ_NOTIFICATIONS + route
+        //   } : `,
+        //   resp.data,
+        // );
 
         let count = this.unread;
         if (count >= 1) {
@@ -272,7 +136,7 @@ class notifications {
   };
 
   @action attemptToGetNotificationsGuest = () => {
-    console.warn('GetNotifications Guest true: ');
+    console.log('GetNotifications Guest true: ');
     this.setLoader(true);
     const dt2 = [
       {

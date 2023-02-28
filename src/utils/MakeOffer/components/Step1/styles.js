@@ -72,7 +72,6 @@ export const styles = StyleSheet.create({
     borderColor: theme.color.fieldBorder,
     borderWidth: 1,
     flexDirection: 'row',
-
     justifyContent: 'space-between',
   },
 

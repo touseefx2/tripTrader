@@ -10,7 +10,7 @@ export default function Bottom({
   onClickApply,
   closeModal,
 }) {
-  let durationText = durNum < 1 ? title.substring(0, title.length - 1) : title;
+  let durationText = durNum <= 1 ? title.substring(0, title.length - 1) : title;
   durationText = durNum + ' ' + durationText;
 
   return (

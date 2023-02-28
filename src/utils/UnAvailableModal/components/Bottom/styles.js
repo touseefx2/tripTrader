@@ -3,6 +3,7 @@ import theme from '../../../../theme';
 
 export const styles = StyleSheet.create({
   modalBottomContainer: {
+    width: '75%',
     paddingTop: 10,
     paddingBottom: 15,
     paddingHorizontal: 15,
@@ -11,6 +12,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   modalBottomContainer2: {
+    width: '75%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -36,16 +38,12 @@ export const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
     marginTop: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    alignItems: 'flex-end',
     width: '100%',
   },
   bottom: {
     marginTop: 30,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    alignItems: 'flex-end',
     width: '100%',
   },
 });

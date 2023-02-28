@@ -10,28 +10,24 @@ import moment from 'moment';
 export default function RangeCalender({
   isShowCalender,
   setIsShowCalender,
-  selectedDates,
-  setSelectedDates,
+  availablityDates,
+  setAvailablityDates,
   setUnAvailble,
   title,
   durationNum,
   minDate,
+  totalDays,
 }) {
-  const [markedDates, setMarkedDates] = useState(selectedDates);
+  const [markedDates, setMarkedDates] = useState(availablityDates);
 
-  let totalDays = 0;
   let isDisable = true;
   if (markedDates && Object.keys(markedDates).length > 1) isDisable = false;
-  if (title == 'days') totalDays = durationNum;
-  else if (title == 'weeks') totalDays = durationNum * 7;
-  else if (title == 'months') totalDays = durationNum * 30;
-  else if (title == 'years') totalDays = durationNum * 365;
 
   const closeCalender = () => {
     setIsShowCalender(false);
   };
   const onClickApply = () => {
-    setSelectedDates(markedDates);
+    setAvailablityDates(markedDates);
     setUnAvailble(null);
     closeCalender();
   };
@@ -81,7 +77,7 @@ export default function RangeCalender({
         }
         const date1 = moment(maxDate);
         const date2 = moment(minDate);
-        const no_of_days = date1.diff(date2, 'days');
+        const no_of_days = date1.diff(date2, 'days') + 1;
 
         if (no_of_days < totalDays) {
           Alert.alert(

@@ -48,7 +48,6 @@ function Sent(props) {
   let locationicon = require('../../../assets/images/confirmTrip/location/img.png');
 
   let internet = store.General.isInternet;
-  let user = store.User.user;
 
   const [modalObj, setmodalObj] = useState(false);
   const [modalChk, setmodalChk] = useState(false);

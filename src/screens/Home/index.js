@@ -342,7 +342,7 @@ function Home(props) {
   };
   const refreshing = store.User.HomeLoader;
   const onRefresh = React.useCallback(() => {
-    console.warn('onrefresh cal');
+    console.log('onrefresh cal');
     getDbData();
   }, [blckUser]);
   const getDbData = () => {
@@ -601,6 +601,7 @@ function Home(props) {
       closeModalAll();
     }, 5);
   };
+ 
 
   const ConfirmSend = () => {
     Keyboard.dismiss();
@@ -2665,7 +2666,7 @@ function Home(props) {
           if (!isObjectEmpty(selDates)) {
             if (isSetUnavailable) {
               let d = isSetUnavailable;
-              console.log('dddd : ', d);
+
               let ar = d.days_of_week;
               let ind = [];
               if (ar.length > 0) {
