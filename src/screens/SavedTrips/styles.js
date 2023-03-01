@@ -130,9 +130,7 @@ export const styles = StyleSheet.create({
     },
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
-
     elevation: 3,
-
     paddingVertical: 12,
   },
   boxSection1: {
@@ -326,7 +324,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingTop: 20,
     paddingBottom: 10,
-    // backgroundColor: 'red',
+    flexDirection: 'row',
   },
   listFooterT: {
     color: theme.color.subTitleLight,
@@ -845,4 +843,17 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   modalBottomContainer2rmv: {},
+  emptyMessage: {
+    marginTop: '50%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    fontSize: 13,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontMedium,
+    opacity: 0.4,
+  },
+  separator: {
+    height: 15,
+  },
 });

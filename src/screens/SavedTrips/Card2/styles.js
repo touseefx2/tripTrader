@@ -228,9 +228,9 @@ export const styles = StyleSheet.create({
   iconSave: {
     position: 'absolute',
     // flex: 1,
-    width: 27,
-    height: 32,
-    bottom: -20,
+    width: 19,
+    height: 21,
+    bottom: -14,
     resizeMode: 'contain',
   },
   iconVerify: {

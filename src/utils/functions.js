@@ -8,6 +8,16 @@ function isObjectEmpty(value) {
   );
 }
 
+function CheckisAlreadySaveTrip(obj, saveTripData) {
+  if (saveTripData.length > 0) {
+    let ind = saveTripData.findIndex(x => x._id === obj._id);
+    if (ind > -1) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function formatTitle(num, title) {
   let text = '';
   if (num <= 1) {
@@ -232,4 +242,5 @@ export const functions = {
   getUnavailableDaysObject,
   checkSameYearFormate,
   formatTitle,
+  CheckisAlreadySaveTrip,
 };

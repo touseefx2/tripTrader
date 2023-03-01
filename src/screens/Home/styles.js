@@ -226,19 +226,12 @@ export const styles = StyleSheet.create({
   iconSave: {
     position: 'absolute',
     // flex: 1,
-    width: 27,
-    height: 32,
-    bottom: -20,
+    width: 19,
+    height: 21,
+    bottom: -14,
     resizeMode: 'contain',
   },
-  iconSave2: {
-    position: 'absolute',
-    // flex: 1,
-    width: 21,
-    height: 22,
-    bottom: -15,
-    resizeMode: 'contain',
-  },
+
   iconVerify: {
     position: 'absolute',
     // flex: 1,

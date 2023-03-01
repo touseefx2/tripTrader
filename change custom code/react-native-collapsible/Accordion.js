@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { View, TouchableHighlight, FlatList } from 'react-native';
+import React, {Component} from 'react';
+import {View, TouchableHighlight, FlatList} from 'react-native';
 import Collapsible from './Collapsible';
 
 const COLLAPSIBLE_PROPS = [
@@ -30,12 +30,12 @@ export default class Accordion extends Component {
 
   _toggleSection(section) {
     if (!this.props.disabled) {
-      const { activeSections, expandMultiple, onChange } = this.props;
+      const {activeSections, expandMultiple, onChange} = this.props;
 
       let updatedSections = [];
 
       if (activeSections.includes(section)) {
-        updatedSections = activeSections.filter((a) => a !== section);
+        updatedSections = activeSections.filter(a => a !== section);
       } else if (expandMultiple) {
         updatedSections = [...activeSections, section];
       } else {
@@ -48,7 +48,7 @@ export default class Accordion extends Component {
     }
   }
 
-  _renderContainer = (section, key, renderCollapsible,index) => {
+  _renderContainer = (section, key, renderCollapsible, index) => {
     const {
       activeSections,
       sectionContainerStyle,
@@ -60,10 +60,10 @@ export default class Accordion extends Component {
       renderHeader,
       renderFooter,
       renderSectionTitle,
-      bxc
+      boxContainer,
     } = this.props;
     return (
-      <View key={key} style={[bxc, {marginTop: index == 0 ? 7 : 0}]}>
+      <View key={key} style={[boxContainer, {marginTop: index == 0 ? 7 : 0}]}>
         {renderSectionTitle(section, key, activeSections.includes(key))}
 
         {expandFromBottom && renderCollapsible(section, key)}
@@ -74,8 +74,7 @@ export default class Accordion extends Component {
           {...touchableProps}
           accessibilityState={{
             expanded: activeSections.includes(key),
-          }}
-        >
+          }}>
           {renderHeader(section, key, activeSections.includes(key), sections)}
         </Touchable>
 
@@ -107,17 +106,18 @@ export default class Accordion extends Component {
       disabled,
       renderAsFlatList,
       keyExtractor,
-      listH,
-      elm,
-      bxc,
-      isv,
+      listHeader,
+      emptyMessage,
+      boxContainer,
+      ItemSeparatorView,
+      c,
       ...restProps
     } = this.props;
 
     const viewProps = {};
     const collapsibleProps = {};
 
-    Object.keys(restProps).forEach((key) => {
+    Object.keys(restProps).forEach(key => {
       if (COLLAPSIBLE_PROPS.includes(key)) {
         collapsibleProps[key] = restProps[key];
       } else {
@@ -129,8 +129,7 @@ export default class Accordion extends Component {
       <Collapsible
         collapsed={!activeSections.includes(key)}
         {...collapsibleProps}
-        onAnimationEnd={() => onAnimationEnd(section, key)}
-      >
+        onAnimationEnd={() => onAnimationEnd(section, key)}>
         {renderContent(section, key, activeSections.includes(key), sections)}
       </Collapsible>
     );
@@ -138,22 +137,28 @@ export default class Accordion extends Component {
     if (renderAsFlatList) {
       return (
         <FlatList
-        contentContainerStyle={{
-          paddingVertical: 12,
-          paddingHorizontal: 15,
-        }}
+          // estimatedItemSize={180}
+          contentContainerStyle={{
+            paddingVertical: 12,
+            paddingHorizontal: 15,
+          }}
           style={containerStyle}
           data={sections}
           extraData={activeSections}
           nestedScrollEnabled={true}
           keyExtractor={keyExtractor}
-          ListHeaderComponent={sections.length > 0 ? ()=> listH() : null}
-          ListEmptyComponent={()=> elm()}
-          ItemSeparatorComponent={()=>isv()}
-          renderItem={({ item, index }) => {
+          ListHeaderComponent={listHeader}
+          ListEmptyComponent={emptyMessage}
+          ItemSeparatorComponent={ItemSeparatorView}
+          renderItem={({item, index}) => {
             const section = item;
             const key = keyExtractor(item, index);
-            return this._renderContainer(section, key, renderCollapsible,index);
+            return this._renderContainer(
+              section,
+              key,
+              renderCollapsible,
+              index,
+            );
           }}
           {...viewProps}
         />
@@ -164,7 +169,7 @@ export default class Accordion extends Component {
       <View style={containerStyle} {...viewProps}>
         {sections.map((section, index) => {
           const key = keyExtractor(section, index);
-          return this._renderContainer(section, key, renderCollapsible,index);
+          return this._renderContainer(section, key, renderCollapsible, index);
         })}
       </View>
     );

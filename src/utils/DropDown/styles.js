@@ -1,7 +1,8 @@
 import {StyleSheet, Platform} from 'react-native';
 import theme from '../../theme';
 
-let bordercolor = '#D8E1DB';
+const bordercolor = '#D8E1DB';
+const paddingHorizontal = 15;
 
 export const styles = StyleSheet.create({
   Container: {
@@ -11,8 +12,6 @@ export const styles = StyleSheet.create({
     alignSelf: 'center',
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
-    borderBottomLeftRadius: 8,
-    borderBottomRightRadius: 8,
     backgroundColor: theme.color.background,
     zIndex: 100,
     shadowColor: '#000',
@@ -24,7 +23,6 @@ export const styles = StyleSheet.create({
     shadowRadius: 1.0,
 
     elevation: 1,
-    // marginBottom: 10,
   },
   searchBarContainer: {
     width: '100%',
@@ -33,23 +31,23 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 12,
+    paddingHorizontal: paddingHorizontal,
   },
   rowContainer: {
-    width: '100%',
-    paddingVertical: 15,
-    borderColor: bordercolor,
-    paddingHorizontal: 12,
+    width: '90%',
+    paddingVertical: 13,
+    paddingHorizontal: paddingHorizontal,
   },
   rowContainer2: {
     width: '100%',
     paddingVertical: 15,
     borderColor: bordercolor,
     borderWidth: 1,
-    paddingHorizontal: 12,
+    paddingHorizontal: paddingHorizontal,
     backgroundColor: theme.color.background,
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
+    marginTop: 2,
   },
   Text: {
     color: theme.color.title,

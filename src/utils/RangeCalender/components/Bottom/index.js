@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, Pressable} from 'react-native';
 import {styles} from './styles';
-import theme from '../../../../../../../../theme';
+import theme from '../../../../theme';
 
 export default function Bottom({
   title,

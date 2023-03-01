@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import {View, Modal, SafeAreaView} from 'react-native';
-import moment from 'moment';
 import {styles} from './styles';
 import theme from '../../theme';
 import utils from '../../utils';
@@ -62,31 +61,15 @@ export default function MakeOffer({
   const [note, setNote] = useState('');
 
   let totalDays = 0;
-  const titleFormat = value <= 1 ? title.substring(0, title.length - 1) : title;
+  const titleFormat = utils.functions.formatTitle(value, title);
   const durationTitle = value + ' ' + titleFormat;
-  let firstDate = '';
-  let secondDate = '';
-  let fieldText = '';
   let minDate;
   let maxDate;
   let rangeValue;
   let unavailableText;
+
   if (title == 'days') totalDays = value;
   else if (title == 'weeks') totalDays = value * 7;
-
-  if (selectedDates) {
-    const size = Object.keys(selectedDates).length;
-    firstDate = moment(Object.keys(selectedDates)[0]).format('MMM DD, YYYY');
-    secondDate =
-      size > 1
-        ? moment(Object.keys(selectedDates)[size - 1]).format('MMM DD, YYYY')
-        : '';
-    if (secondDate != '') fieldText = firstDate + '  -  ' + secondDate;
-    else fieldText = firstDate;
-  } else {
-    fieldText =
-      value <= 1 ? 'Choose a trip date' : 'Choose a trip date or date range';
-  }
   if (availablityDates) {
     const size = Object.keys(availablityDates).length;
     const startDate = Object.keys(availablityDates)[0];
@@ -176,13 +159,48 @@ export default function MakeOffer({
     }
   };
 
+  const clearStep3Fields = () => {
+    setTripType(null);
+    setCity('');
+    setSelectedState(null);
+    setSelectedSpecies(null);
+    setDurationNum(1);
+    setDuration(durationList[0]);
+    setAvailablityDates(null);
+    setUnAvailble(null);
+    setNote('');
+  };
+
   const closeModal = () => {
     setIsModal(false);
     setModalObj(null);
   };
 
+  const goBack = () => {
+    if (!loader) {
+      if (step == 1) closeModal();
+
+      if (step == 2) {
+        setStep(1);
+        setSelectedTrip(null);
+        setmodalHeight(0);
+      }
+
+      if (step == 3) {
+        setStep(2);
+        clearStep3Fields();
+        setmodalHeight(0);
+      }
+
+      if (step == 4) {
+        setStep(3);
+        setmodalHeight(0);
+      }
+    }
+  };
+
   return (
-    <Modal visible={isModal} transparent onRequestClose={closeModal}>
+    <Modal visible={isModal} transparent onRequestClose={goBack}>
       <SafeAreaView style={styles.modalContainer}>
         <View
           onLayout={onViewLayout}
@@ -208,9 +226,6 @@ export default function MakeOffer({
               selectedDates={selectedDates}
               setSelectedDates={setSelectedDates}
               durationTitle={durationTitle}
-              firstDate={firstDate}
-              secondDate={secondDate}
-              fieldText={fieldText}
               totalDays={totalDays}
             />
           )}
@@ -256,6 +271,7 @@ export default function MakeOffer({
               unavailableText={unavailableText}
               note={note}
               setNote={setNote}
+              clearStep3Fields={clearStep3Fields}
             />
           )}
 

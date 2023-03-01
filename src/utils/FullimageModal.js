@@ -91,55 +91,6 @@ function FullimageModal(props) {
     };
 
     const renderImageArr = () => {
-      const renderLeft = () => {
-        let c = si < 1 ? true : false;
-
-        return (
-          <Pressable
-            disabled={c}
-            onPress={prevPhoto}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.8 : 1},
-              [
-                styles.changeButtonContainer,
-                {
-                  left: -10,
-                  backgroundColor: c ? disableClr : enableClr,
-                },
-              ],
-            ]}>
-            <utils.vectorIcon.EvilIcons
-              name="chevron-left"
-              color={!c ? theme.color.button1 : theme.color.subTitleLight}
-              size={35}
-            />
-          </Pressable>
-        );
-      };
-
-      const renderRight = () => {
-        let c = si == data.length - 1 ? true : false;
-
-        return (
-          <Pressable
-            disabled={c}
-            onPress={nextPhoto}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.8 : 1},
-              [
-                styles.changeButtonContainer,
-                {right: -10, backgroundColor: c ? disableClr : enableClr},
-              ],
-            ]}>
-            <utils.vectorIcon.EvilIcons
-              name="chevron-right"
-              color={!c ? theme.color.button1 : theme.color.subTitleLight}
-              size={35}
-            />
-          </Pressable>
-        );
-      };
-
       const renderIndicatior = () => {
         return (
           <View style={styles.indicatorContainer}>
@@ -173,7 +124,6 @@ function FullimageModal(props) {
                     key={ind}
                     source={{uri: val.uri ? val.uri : val}}
                     style={[styles.Image, {opacity}]}
-                    // style={[StyleSheet.absoluteFillObject, {opacity}]}
                     blurRadius={0}
                   />
                 );
@@ -210,13 +160,6 @@ function FullimageModal(props) {
                   return (
                     <View style={styles.previewImagemainContainer}>
                       <View style={styles.previewImageContainerStyle}>
-                        {/* <TouchableOpacity onPress={() => {
-                                  setSelectedIndex(index)
-                                  setImageViewer(!imageViewer)
-                              }} >
-                                  <Icon onPress={() => setImageViewer(!imageViewer)} name="close" size={34} color={closeIconColor} />
-                              </TouchableOpacity> */}
-
                         <Image
                           source={{
                             uri: item.uri ? item.uri : item,
@@ -230,11 +173,7 @@ function FullimageModal(props) {
               />
             </>
 
-            <>
-              {/* {renderLeft()}
-                {renderRight()} */}
-              {data.length > 1 && renderIndicatior()}
-            </>
+            <>{data.length > 1 && renderIndicatior()}</>
           </View>
         );
       } else {
@@ -291,12 +230,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     height: '100%',
   },
-  // previewImageStyle: {
-  //   width: width,
-  //   resizeMode: 'cover',
-  //   height: '100%',
-  //   borderRadius: 9,
-  // },
+
   modalContainer: {
     flex: 1,
     backgroundColor: "'rgba(0,0,0,0.5)'",
@@ -326,16 +260,7 @@ const styles = StyleSheet.create({
     right: 0,
     resizeMode: 'contain',
   },
-  // Image: {
-  //   position: 'absolute',
-  //   top: 0,
-  //   left: 0,
-  //   bottom: 0,
-  //   right: 0,
 
-  //   resizeMode: 'cover',
-  //   borderRadius: 9,
-  // },
   modalButtonContainer: {
     backgroundColor: theme.color.background,
     borderRadius: 35 / 2,

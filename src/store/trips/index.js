@@ -1,21 +1,18 @@
 import {observable, makeObservable, action} from 'mobx';
-import {AppState} from 'react-native';
-import {persist} from 'mobx-persist';
 import db from '../../database/index';
 import {Alert} from 'react-native';
 import store from '../index';
-import NetInfo from '@react-native-community/netinfo';
 
 class trips {
   constructor() {
     makeObservable(this);
   }
 
-  @observable stLoader = false;
+  @observable saveLoader = false;
   @observable deleteLoader = false;
   @observable confirmTripsSendMessageLoader = false;
-  @action setstLoader = obj => {
-    this.stLoader = obj;
+  @action setSaveLoader = obj => {
+    this.saveLoader = obj;
   };
   @action setDeleteLoader = obj => {
     this.deleteLoader = obj;
@@ -76,7 +73,7 @@ class trips {
     }
   };
 
-  @action attemptTounSaveTrip = (obj, i) => {
+  @action attemptTounSaveTrip = (obj, suc) => {
     let dt = [...store.Trips.saveTrips];
 
     if (dt.length > 0) {
@@ -91,22 +88,23 @@ class trips {
     };
 
     console.log('unSave Trip Body : ', body);
-    this.setstLoader(true);
+    this.setDeleteLoader(true);
     let uid = store.User.user._id;
     let token = store.User.authToken;
     db.hitApi(db.apis.SAVE_TRIP + uid, 'put', body, token)
       ?.then(resp => {
-        this.setstLoader(false);
+        this.setDeleteLoader(false);
         console.log(
           `response unSave Trip   ${db.apis.SAVE_TRIP} : `,
           resp.data,
         );
         let rsp = resp.data.data.savedTrips || [];
         this.setsaveTrips(rsp);
+        suc();
         return;
       })
       .catch(err => {
-        this.setstLoader(false);
+        this.setDeleteLoader(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(`Error in unSave Trip ${db.apis.SAVE_TRIP} : `, msg);
         if (msg == 503 || msg == 500) {
@@ -126,12 +124,12 @@ class trips {
     };
     body.savedTrips.push(obj._id);
     console.warn('Save Trip Body : ', body);
-    this.setstLoader(true);
+    this.setSaveLoader(true);
     let uid = store.User.user._id;
     let token = store.User.authToken;
     db.hitApi(db.apis.SAVE_TRIP + uid, 'put', body, token)
       ?.then(resp => {
-        this.setstLoader(false);
+        this.setSaveLoader(false);
         console.log(`response Save Trip   ${db.apis.SAVE_TRIP} : `, resp.data);
         let rsp = resp.data.data.savedTrips || [];
         // let dt = this.saveTrips.slice();
@@ -148,7 +146,7 @@ class trips {
         return;
       })
       .catch(err => {
-        this.setstLoader(false);
+        this.setSaveLoader(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(`Error in Save Trip ${db.apis.SAVE_TRIP} : `, msg);
         if (msg == 503 || msg == 500) {

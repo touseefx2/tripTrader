@@ -24,14 +24,11 @@ export default function Bottom({isMaxHeight, loader, message, sendMessage}) {
 
   return (
     <View
-      style={[
-        styles.bottom,
-        {
-          marginTop: isMaxHeight ? 12 : 24,
-          marginBottom: isMaxHeight ? 15 : 0,
-          width: isMaxHeight ? '92%' : '100%',
-        },
-      ]}>
+      style={{
+        marginTop: isMaxHeight ? 12 : 24,
+        marginBottom: isMaxHeight ? 15 : 0,
+        paddingHorizontal: isMaxHeight ? 15 : 0,
+      }}>
       {renderMessaeg()}
     </View>
   );

@@ -5,7 +5,6 @@ import utils from '../../../../utils';
 import store from '../../../../store';
 import {observer} from 'mobx-react';
 import Bottom from './components/Bottom';
-import RangeCalender from './components/RangeCalender';
 import Fields from './components/Fields';
 
 export default observer(Step3);
@@ -38,6 +37,7 @@ function Step3({
   unavailableText,
   note,
   setNote,
+  clearStep3Fields,
 }) {
   const {tripLocation, activityList} = store.Filters;
 
@@ -101,18 +101,6 @@ function Step3({
     setIsDropDownDuration(false);
   };
 
-  const clearStep3Fields = () => {
-    setTripType(null);
-    setCity('');
-    setSelectedState(null);
-    setSelectedSpecies(null);
-    setDurationNum(1);
-    setDuration(durationList[0]);
-    setAvailablityDates(null);
-    setUnAvailble(null);
-    setNote('');
-  };
-
   const goBack = () => {
     setStep(2);
     setmodalHeight(0);
@@ -164,7 +152,7 @@ function Step3({
         onSelectItem={onclickSelect}
         setVisible={closeAllDropDown}
         c={check}
-        absolute={false}
+        absolute={true}
       />
     );
   };
@@ -235,7 +223,7 @@ function Step3({
       />
 
       {isShowCalender && (
-        <RangeCalender
+        <utils.RangeCalender
           isShowCalender={isShowCalender}
           setIsShowCalender={setIsShowCalender}
           availablityDates={availablityDates}

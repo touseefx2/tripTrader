@@ -4,6 +4,7 @@ import {styles} from './styles';
 import theme from '../../theme';
 import Offer from './components/Offer';
 import Message from './components/Message';
+import Trip from './components/Trip';
 
 export default function SuccessModal({
   isModal,
@@ -57,6 +58,14 @@ export default function SuccessModal({
               isMaxHeight={isMaxHeight}
               closeModal={closeModal}
               props={props}
+            />
+          )}
+
+          {check == 'TripSave' && (
+            <Trip
+              modalObj={modalObj}
+              isMaxHeight={isMaxHeight}
+              closeModal={closeModal}
             />
           )}
         </View>

@@ -27,7 +27,7 @@ import {
   responsiveHeight,
 } from 'react-native-responsive-dimensions';
 
-export default function DropDown(props) {
+export default function DropDown2(props) {
   let isSearchBar = props.search || false;
   let c = props.c;
   let absolute = props.absolute || false;
@@ -135,7 +135,7 @@ export default function DropDown(props) {
   };
 
   const style =
-    data.length > 4
+    data.length > 2
       ? {
           height: responsiveHeight(20),
           marginTop: absolute ? 55 : 7,

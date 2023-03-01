@@ -101,4 +101,52 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 15,
     textAlignVertical: 'top',
   },
+
+  modalinfoConatiner: {
+    width: '100%',
+    marginTop: 10,
+    padding: 10,
+    borderRadius: 8,
+    borderColor: theme.color.fieldBorder,
+    borderWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+
+  mProfileImgContainer: {
+    width: 55,
+    height: 55,
+    borderRadius: 55 / 2,
+    borderWidth: 2,
+    borderColor: theme.color.background,
+  },
+  mProfileImg: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
+    borderRadius: 55 / 2,
+  },
+
+  mimageLoader: {
+    height: '100%',
+    width: '100%',
+    borderRadius: 55 / 2,
+  },
+
+  field: {
+    marginTop: 12,
+    width: '100%',
+  },
+  filedTitle: {
+    fontSize: 12,
+    color: theme.color.subTitleLight,
+    fontFamily: theme.fonts.fontBold,
+    textTransform: 'uppercase',
+  },
+  filedTitle2: {
+    fontSize: 13,
+    color: theme.color.title,
+    fontFamily: theme.fonts.fontMedium,
+    textTransform: 'capitalize',
+  },
 });

@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
 import {View, Text, Image, ScrollView, Pressable} from 'react-native';
 import {styles} from './styles';
-import DateCalender from './components/DateCalender';
+import utils from '../../../../utils';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
 import Bottom from './components/Bottom';
+import moment from 'moment';
 
 export default function Step1({
   modalObj,
@@ -14,21 +15,35 @@ export default function Step1({
   selectedDates,
   setSelectedDates,
   durationTitle,
-  firstDate,
-  secondDate,
-  fieldText,
   totalDays,
 }) {
   const {item} = modalObj;
+  const {value} = item.duration;
   const {species} = item;
   const {image, firstName, lastName} = item.hostId;
-
   const photoSrc = image
     ? {uri: image}
     : require('../../../../assets/images/drawer/guest/img.png');
   const userName = firstName + ' ' + lastName;
+  let firstDate = '';
+  let secondDate = '';
+  let fieldText = '';
 
   const [isChooseDateCalender, setIsChooseDateCalender] = useState(false);
+
+  if (selectedDates) {
+    const size = Object.keys(selectedDates).length;
+    firstDate = moment(Object.keys(selectedDates)[0]).format('MMM DD, YYYY');
+    secondDate =
+      size > 1
+        ? moment(Object.keys(selectedDates)[size - 1]).format('MMM DD, YYYY')
+        : '';
+    if (secondDate != '') fieldText = firstDate + '  -  ' + secondDate;
+    else fieldText = firstDate;
+  } else {
+    fieldText =
+      value <= 1 ? 'Choose a trip date' : 'Choose a trip date or date range';
+  }
 
   const goNext = () => {
     setmodalHeight(0);
@@ -145,7 +160,7 @@ export default function Step1({
         goNext={goNext}
       />
       {isChooseDateCalender && (
-        <DateCalender
+        <utils.SelectionCalender
           modalObj={modalObj}
           isModal={isChooseDateCalender}
           setIsModal={setIsChooseDateCalender}

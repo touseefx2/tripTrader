@@ -1,46 +1,14 @@
-import React, {useEffect, useState, useRef, memo} from 'react';
-import {
-  View,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
-  Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
-  Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Dimensions,
-  Pressable,
-  TextInput,
-  FlatList,
-  ScrollView,
-  Keyboard,
-  Modal,
-} from 'react-native';
+import React, {memo} from 'react';
+import {View, Text, Image, Pressable} from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-// import ImageSlider from 'react-native-image-slider';
 import {styles} from './styles';
-import {observer} from 'mobx-react';
 import store from '../../../store/index';
 import utils from '../../../utils/index';
 import theme from '../../../theme';
-import NetInfo from '@react-native-community/netinfo';
-import Toast from 'react-native-easy-toast';
-import {ActivityIndicator} from 'react-native-paper';
-import FastImage from 'react-native-fast-image';
-import {ImageSlider} from 'react-native-image-slider-banner';
-import {Calendar} from 'react-native-calendars';
-import moment from 'moment/moment';
-import Accordion from 'react-native-collapsible/Accordion';
-import * as Animatable from 'react-native-animatable';
-import {FlashList} from '@shopify/flash-list';
 
 export default memo(Card2);
 
-function Card2({item, index, user, props, onClickremoveTrips}) {
+function Card2({item, index, user, props, openModal}) {
   let usr = item.hostId;
 
   if (usr) {
@@ -50,28 +18,6 @@ function Card2({item, index, user, props, onClickremoveTrips}) {
     let avgRating = usr.rating || 0;
     let totalReviews = usr.reviews || 0;
     let isVeirfy = usr.identityStatus == 'verified' ? true : false;
-
-    //trip
-    let status = item.status || '';
-    let tripPhotos = item.photos ? item.photos : [];
-    let titlee = item.title || '';
-    let locName = item.location.city + ', ' + item.location.state;
-    let trade = item.returnActivity || '';
-    let sd = item.availableFrom;
-    let sdy = parseInt(new Date(sd).getFullYear());
-    let ed = item.availableTo;
-    let edy = parseInt(new Date(ed).getFullYear());
-    let favlbl = '';
-
-    if (sdy == edy) {
-      favlbl =
-        moment(sd).format('MMM DD') + ' - ' + moment(ed).format('MMM DD, YYYY');
-    } else {
-      favlbl =
-        moment(sd).format('MMM DD, YYYY') +
-        ' - ' +
-        moment(ed).format('MMM DD, YYYY');
-    }
 
     const renderSec1 = () => {
       const renderProfile = () => {
@@ -144,11 +90,7 @@ function Card2({item, index, user, props, onClickremoveTrips}) {
         return (
           <Pressable
             onPress={() => {
-              // if (store.User.user.subscriptionStatus == 'freemium') {
-              //   props.navigation.navigate('Plan');
-              // } else {
-              onClickremoveTrips(item, index);
-              // }
+              openModal({item: item, selIndex: index}, 'tripRemove');
             }}
             style={({pressed}) => [
               {opacity: pressed ? 0.7 : 1.0},

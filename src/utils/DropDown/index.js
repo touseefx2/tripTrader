@@ -58,7 +58,7 @@ function EmptyListMessage() {
 function Footer({onClickItem}) {
   return (
     <TouchableHighlight underlayColor={'#EEF6EF'} onPress={onClickItem}>
-      <View style={[styles.rowContainer2, {}]}>
+      <View style={styles.rowContainer2}>
         <Text style={styles.Textc}>Create Custom Offer...</Text>
       </View>
     </TouchableHighlight>
@@ -72,7 +72,7 @@ export default function DropDown(props) {
   const absolute = props.absolute || false;
 
   const [modalHeight, setmodalHeight] = useState(0);
-  const maxModalHeight = 247;
+  const maxModalHeight = 220;
 
   const [data, setData] = useState(props.data);
 
@@ -140,7 +140,7 @@ export default function DropDown(props) {
         onPress={() => {
           onClickItem(item);
         }}>
-        <View style={[styles.rowContainer, {}]}>
+        <View style={styles.rowContainer}>
           <Text style={[styles.Text, ts]}>
             {title}
             {c == 'tt' && ' Trip'}
@@ -153,12 +153,12 @@ export default function DropDown(props) {
   const isMaxHeight = modalHeight >= maxModalHeight ? true : false;
   const style = isMaxHeight
     ? {
-        height: 247,
-        marginTop: absolute ? 53 : 8,
+        height: maxModalHeight,
+        marginTop: absolute ? 50 : 8,
         position: absolute ? 'absolute' : 'relative',
       }
     : {
-        marginTop: absolute ? 53 : 8,
+        marginTop: absolute ? 50 : 8,
         position: absolute ? 'absolute' : 'relative',
       };
 
@@ -173,37 +173,40 @@ export default function DropDown(props) {
         }}
         style={[styles.Container, style]}>
         <KeyboardAvoidingView enabled>
-          <View style={{paddingHorizontal: 0}}>
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              initialNumToRender={24}
-              maxToRenderPerBatch={10}
-              data={data}
-              nestedScrollEnabled
-              ListEmptyComponent={
-                c == 'trip' && props.data.length <= 0 ? null : (
-                  <EmptyListMessage />
-                )
-              }
-              ListHeaderComponent={
-                isSearchBar && props.data.length > 0 ? (
-                  <SearchBar search={search} setsearch={c => setsearch(c)} />
-                ) : null
-              }
-              ListFooterComponent={
-                isFooter ? (
-                  <Footer
-                    onClickItem={() => {
-                      onClickItem('customOffer');
-                    }}
-                  />
-                ) : null
-              }
-              renderItem={renderItems}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          </View>
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            initialNumToRender={24}
+            maxToRenderPerBatch={10}
+            data={data}
+            nestedScrollEnabled
+            ListEmptyComponent={
+              c == 'trip' && props.data.length <= 0 ? null : (
+                <EmptyListMessage />
+              )
+            }
+            ListHeaderComponent={
+              isSearchBar && props.data.length > 0 ? (
+                <SearchBar search={search} setsearch={c => setsearch(c)} />
+              ) : null
+            }
+            renderItem={renderItems}
+            keyExtractor={(item, index) => index.toString()}
+            ItemSeparatorComponent={() => {
+              return (
+                <View
+                  style={{height: 1, backgroundColor: '#D8E1DB', width: '100%'}}
+                />
+              );
+            }}
+          />
         </KeyboardAvoidingView>
+        {isFooter && (
+          <Footer
+            onClickItem={() => {
+              onClickItem('customOffer');
+            }}
+          />
+        )}
       </SafeAreaView>
     </>
   );

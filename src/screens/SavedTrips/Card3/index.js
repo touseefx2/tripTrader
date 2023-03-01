@@ -1,42 +1,13 @@
-import React, {useEffect, useState, useRef, memo} from 'react';
-import {
-  View,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
-  Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
-  Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Dimensions,
-  Pressable,
-  TextInput,
-  FlatList,
-  ScrollView,
-  Keyboard,
-  Modal,
-} from 'react-native';
+import React, {useState, memo} from 'react';
+import {View, Text, Pressable} from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-// import ImageSlider from 'react-native-image-slider';
 import {styles} from './styles';
-import {observer} from 'mobx-react';
 import store from '../../../store/index';
 import utils from '../../../utils/index';
 import theme from '../../../theme';
-import NetInfo from '@react-native-community/netinfo';
-import Toast from 'react-native-easy-toast';
-import {ActivityIndicator} from 'react-native-paper';
-import FastImage from 'react-native-fast-image';
 import {ImageSlider} from 'react-native-image-slider-banner';
-import {Calendar} from 'react-native-calendars';
 import moment from 'moment/moment';
-import Accordion from 'react-native-collapsible/Accordion';
 import * as Animatable from 'react-native-animatable';
-import {FlashList} from '@shopify/flash-list';
 
 export default memo(Card3);
 
@@ -48,8 +19,7 @@ function Card3({
   isActive,
   showpic,
   animtntime,
-  onClickMessage,
-  onClickMakeOffer,
+  openModal,
 }) {
   const [pvm, setpvm] = useState(false);
   const [pd, setpd] = useState([]);
@@ -58,15 +28,8 @@ function Card3({
   let usr = item.hostId;
 
   if (usr) {
-    //user
-    let photo = usr?.image || '';
-    let userName = usr.firstName + ' ' + usr.lastName;
-    let avgRating = usr.rating || 0;
-    let totalReviews = usr.reviews || 0;
-    let isVeirfy = usr.identityStatus == 'verified' ? true : false;
-
     //trip
-    let status = item.status || '';
+
     let tripPhotos = item.photos ? item.photos : [];
     let titlee = item.title || '';
     let locName = item.location.city + ', ' + item.location.state;
@@ -109,7 +72,6 @@ function Card3({
                     preview={true}
                     data={tripPhotos}
                     autoPlay={false}
-                    // onItemChanged={indx => console.log('itm chng : ', indx)}
                   />
                 </View>
               </>
@@ -232,32 +194,6 @@ function Card3({
               {favlbl}
             </Animatable.Text>
           </View>
-
-          {/* <Text style={styles.sec3T1}>{titlee}</Text> */}
-          {/* <View style={styles.sec3T2Container}>
-            <Image
-              style={styles.sec3Icon}
-              source={require('../../assets/images/location/img.png')}
-            />
-            <View style={{width: '95%'}}>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={styles.sec3T2}>
-                {locName}
-              </Text>
-            </View>
-          </View> */}
-          {/* <View style={{marginTop: 10}}>
-            <Text style={styles.sec3T31}>In Return For</Text>
-            <Text style={styles.sec3T32}>{trade}</Text>
-          </View>
-          <View style={{marginTop: 10}}>
-            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.sec3T31}>
-              Availability
-            </Text>
-            <Text style={styles.sec3T32}>{favlbl}</Text>
-          </View> */}
         </View>
       );
     };
@@ -269,9 +205,7 @@ function Card3({
             onPress={() => {
               if (store.User.user.subscriptionStatus == 'freemium') {
                 props.navigation.navigate('Plan');
-              } else {
-                onClickMakeOffer(item, index);
-              }
+              } else openModal({item: item, selIndex: index}, 'offer');
             }}
             style={({pressed}) => [
               {opacity: pressed ? 0.9 : 1.0},
@@ -284,9 +218,7 @@ function Card3({
             onPress={() => {
               if (store.User.user.subscriptionStatus == 'freemium') {
                 props.navigation.navigate('Plan');
-              } else {
-                onClickMessage(item, index);
-              }
+              } else openModal({item: item, selIndex: index}, 'message');
             }}
             style={({pressed}) => [
               {opacity: pressed ? 0.9 : 1.0},

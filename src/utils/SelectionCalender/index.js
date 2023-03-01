@@ -1,13 +1,13 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {View, Modal, SafeAreaView} from 'react-native';
 import {styles} from './styles';
-import theme from '../../../../../../theme';
-import utils from '../../../../../../utils';
+import theme from '../../theme';
+import utils from '../../utils';
 import moment from 'moment';
 import {Calendar} from 'react-native-calendars';
 import Bottom from './components/Bottom';
 
-export default function DateCalender({
+export default function SelectionCalender({
   modalObj,
   isModal,
   setIsModal,

@@ -85,6 +85,7 @@ function Step2({
         setVisible={closeDropDown}
         c={check}
         footer={true}
+        absolute={false}
       />
     );
   };

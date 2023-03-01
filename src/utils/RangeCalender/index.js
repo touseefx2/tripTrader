@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {View, SafeAreaView, Modal, Alert} from 'react-native';
 import {styles} from './styles';
-import theme from '../../../../../../theme';
-import utils from '../../../../../../utils';
+import theme from '../../theme';
+import utils from '../../utils';
 import Bottom from './components/Bottom';
 import {Calendar} from 'react-native-calendars';
 import moment from 'moment';

@@ -47,8 +47,10 @@ export default function MessageModal({
   };
 
   const closeModal = () => {
-    setIsModal(false);
-    setModalObj(null);
+    if (!loader) {
+      setIsModal(false);
+      setModalObj(null);
+    }
   };
 
   const onChangeText = text => {
