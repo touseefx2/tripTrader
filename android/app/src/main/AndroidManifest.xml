@@ -28,10 +28,14 @@
       android:theme="@style/AppTheme">
 <!--  android:roundIcon="@mipmap/ic_launcher_round" -->
 
+
 <!-- push ntfctns -->
    <!-- Change the value to true to enable pop-up for in foreground on receiving remote notifications (for prevent duplicating while showing local notifications set this to false) -->
         <meta-data  android:name="com.dieam.reactnativepushnotification.notification_foreground"
                     android:value="false"/>
+<meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@mipmap/ic_notification" />
+   <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions" />
+ 
 <!-- end push ntfctns -->
       <activity
         android:name=".MainActivity"
@@ -41,9 +45,14 @@
         android:windowSoftInputMode="adjustResize"
         android:exported="true">
         <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+            
+        <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
+
+          <intent-filter>   
+            <data android:scheme="my-triptrader-app" />
+            </intent-filter>
       </activity>
     </application>
 </manifest>

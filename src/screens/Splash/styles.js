@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native';
+import {responsiveFontSize} from 'react-native-responsive-dimensions';
 import theme from '../../theme/index';
 
 export const styles = StyleSheet.create({
@@ -13,14 +14,17 @@ export const styles = StyleSheet.create({
     top: 0,
     width: theme.window.Width,
     height: theme.window.Height,
+  },
+
+  main: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 15,
   },
 
   logo: {
-    width: 110,
-    height: 110,
+    width: responsiveFontSize(15),
+    height: responsiveFontSize(15),
     resizeMode: 'contain',
   },
 });

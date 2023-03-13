@@ -57,92 +57,18 @@ class trips {
   };
 
   @action attemptToSaveTrip = (obj, i, suc) => {
-    let dt = this.saveTrips.slice();
-    if (dt.length > 0) {
-      let ind = dt.findIndex(x => x._id === obj._id);
-      if (ind > -1) {
-        suc({}, i, false);
-        return;
-      } else {
-        this.SaveTrip(obj, i, suc);
-        return;
-      }
-    } else {
-      this.SaveTrip(obj, i, suc);
-      return;
-    }
-  };
-
-  @action attemptTounSaveTrip = (obj, suc) => {
-    let dt = [...store.Trips.saveTrips];
-
-    if (dt.length > 0) {
-      let ind = dt.findIndex(x => x._id === obj._id);
-      if (ind > -1) {
-        dt.splice(ind, 1);
-      }
-    }
-
-    let body = {
-      savedTrips: dt,
-    };
-
-    console.log('unSave Trip Body : ', body);
-    this.setDeleteLoader(true);
-    let uid = store.User.user._id;
-    let token = store.User.authToken;
-    db.hitApi(db.apis.SAVE_TRIP + uid, 'put', body, token)
-      ?.then(resp => {
-        this.setDeleteLoader(false);
-        console.log(
-          `response unSave Trip   ${db.apis.SAVE_TRIP} : `,
-          resp.data,
-        );
-        let rsp = resp.data.data.savedTrips || [];
-        this.setsaveTrips(rsp);
-        suc();
-        return;
-      })
-      .catch(err => {
-        this.setDeleteLoader(false);
-        let msg = err.response.data.message || err.response.status || err;
-        console.log(`Error in unSave Trip ${db.apis.SAVE_TRIP} : `, msg);
-        if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
-          return;
-        }
-        // seterror(msg.toString())
-        Alert.alert('', msg.toString());
-      });
-  };
-
-  @action SaveTrip = (obj, i, suc) => {
-    let dt = [...this.saveTrips];
-    let body = {
-      savedTrips: dt,
-    };
-    body.savedTrips.push(obj._id);
-    console.warn('Save Trip Body : ', body);
+    const body = {tripId: obj._id};
+    console.log('Save Trip Body : ', body);
     this.setSaveLoader(true);
-    let uid = store.User.user._id;
-    let token = store.User.authToken;
+    const uid = store.User.user._id;
+    const token = store.User.authToken;
     db.hitApi(db.apis.SAVE_TRIP + uid, 'put', body, token)
       ?.then(resp => {
         this.setSaveLoader(false);
         console.log(`response Save Trip   ${db.apis.SAVE_TRIP} : `, resp.data);
-        let rsp = resp.data.data.savedTrips || [];
-        // let dt = this.saveTrips.slice();
-        // // if (dt.length > 0) {
-        // //   this.addsaveTrips(obj);
-        // // } else {
-        // //   let ar = [];
-        // //   ar.push(obj);
-        // //   this.setsaveTrips(ar);
-        // // }
+        const rsp = resp.data.data.savedTrips || [];
         this.setsaveTrips(rsp);
-
-        suc(obj, i, true);
+        suc(obj);
         return;
       })
       .catch(err => {
@@ -151,10 +77,72 @@ class trips {
         console.log(`Error in Save Trip ${db.apis.SAVE_TRIP} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
+
           return;
         }
-        // seterror(msg.toString())
+
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  @action attemptTounSaveTrip = (
+    screen,
+    obj,
+    i,
+    suc,
+    data,
+    setdata,
+    d,
+    setd,
+  ) => {
+    const body = {tripId: obj._id};
+    console.log('unSave Trip Body : ', body);
+    this.setDeleteLoader(true);
+    const uid = store.User.user._id;
+    const token = store.User.authToken;
+    db.hitApi(db.apis.UNSAVE_TRIP + uid, 'put', body, token)
+      ?.then(resp => {
+        this.setDeleteLoader(false);
+        console.log(
+          `response unSave Trip   ${db.apis.UNSAVE_TRIP} : `,
+          resp.data,
+        );
+        const rsp = resp.data.data.savedTrips || [];
+        this.setsaveTrips(rsp);
+        if (screen == 'home') {
+          suc();
+        } else {
+          const dt = [...this.saveTrips];
+          const dt1 = [...d];
+          const dt2 = [...data];
+
+          if (dt.length > 0) {
+            let ind = dt.findIndex(({tripId}) => tripId._id === obj._id);
+            if (ind > -1) {
+              dt.splice(ind, 1);
+            }
+          }
+          if (dt1.length > 0) {
+            dt1.splice(i, 1);
+          }
+          if (dt2.length > 0) {
+            dt2.splice(i, 1);
+          }
+
+          this.LoadMore(dt1, dt2, setd, setdata);
+          suc();
+        }
+      })
+      .catch(err => {
+        this.setDeleteLoader(false);
+        let msg = err.response.data.message || err.response.status || err;
+        console.log(`Error in unSave Trip ${db.apis.UNSAVE_TRIP} : `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+
+          return;
+        }
+
         Alert.alert('', msg.toString());
       });
   };
@@ -167,24 +155,7 @@ class trips {
     setdata(dd);
   };
 
-  @action unSaveTrip = (obj, i, data, setdata, d, setd, suc) => {
-    let dt = [...this.saveTrips];
-    let dt1 = [...d];
-    let dt2 = [...data];
-
-    if (dt.length > 0) {
-      let ind = dt.findIndex(x => x._id === obj._id);
-      if (ind > -1) {
-        dt.splice(ind, 1);
-      }
-    }
-    if (dt1.length > 0) {
-      dt1.splice(i, 1);
-    }
-    if (dt2.length > 0) {
-      dt2.splice(i, 1);
-    }
-
+  @action unSaveTrip = (obj, i, tdatdata, sea, d, setd, suc) => {
     let body = {
       savedTrips: dt,
     };

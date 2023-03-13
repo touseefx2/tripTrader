@@ -110,7 +110,8 @@ export default class Accordion extends Component {
       emptyMessage,
       boxContainer,
       ItemSeparatorView,
-      c,
+
+      screen,
       ...restProps
     } = this.props;
 
@@ -140,7 +141,7 @@ export default class Accordion extends Component {
           // estimatedItemSize={180}
           contentContainerStyle={{
             paddingVertical: 12,
-            paddingHorizontal: 15,
+            paddingHorizontal: screen == 'UserProfile' ? 0 : 15,
           }}
           style={containerStyle}
           data={sections}

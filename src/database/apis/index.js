@@ -1,9 +1,9 @@
 //Local
 
-const BASE_URL = 'http://192.168.0.134:3001/';
+const BASE_URL = 'http://192.168.100.4:3001/';
 // 'http://ec2-35-175-134-9.compute-1.amazonaws.com/';
 //socket url
-const BASE_URLS = 'http://192.168.0.134:3001/';
+const BASE_URLS = 'http://192.168.100.4:3001/';
 // 'http://ec2-35-175-134-9.compute-1.amazonaws.com:3001';
 
 //apis
@@ -59,7 +59,8 @@ const UNBLOCK_USER = 'api/user/unBlockAUser/';
 const FOLLOW_USER = 'api/user/followAUser/';
 const UNFOLLOW_USER = 'api/user/unFollowAUser/';
 const OFFER_SEND = 'api/offer';
-const SAVE_TRIP = 'api/user/';
+const SAVE_TRIP = 'api/user/saveTrip/';
+const UNSAVE_TRIP = 'api/user/unSaveTrip/';
 const CHECK_FIRST_MESSAGE = 'api/chat/checkifconversationexists/';
 const SEND_FIRST_MESSAGE = 'api/chat/sendFirstMessage';
 const SEND_SECOND_MESSAGE = 'api/chat/replyToChat/';
@@ -73,7 +74,8 @@ const DELETE_CHAT = 'api/chat/deleteAChat/';
 const DELETE_TRIP_PHOTO = 'api/trip/deleteImage/';
 const CHECK_REVIEW = 'api/review/checkIfAlreadyReviewed/';
 const LEAVE_REVIEW = 'api/review';
-const UPDATE_LEAVE_REVIEW = 'api/review/updateAReview/';
+// const UPDATE_LEAVE_REVIEW = 'api/review/updateAReview/';
+const UPDATE_LEAVE_REVIEW = 'api/review/editAReply/';
 const GET_LATEST_TRIP = 'api/review/getLatestTrip/v2/';
 // const GET_NOTIFICATIONS = 'api/notification/count/app?userId=';
 const GET_NOTIFICATIONS = 'api/notification/app/';
@@ -83,7 +85,7 @@ const GET_RECEIVED_OFFERS = 'api/offer?offeredTo=';
 const GET_CONFIRM_OFFERS = 'api/offer/getConfirmedTrips/';
 const CANCEL_OFFER = 'api/offer/declineTrip/';
 const CONFIRM_OFFERS = 'api/offer/confirmTrip/';
-const CHECK_IS_EMAIL_EXIST = 'api/user/checkIfEmailExists?email=';
+const RESEND_VERIFICATION_LINK = 'api/user/resendEmail';
 
 export default apis = {
   BASE_URL,
@@ -139,6 +141,7 @@ export default apis = {
   UNBLOCK_USER,
   OFFER_SEND,
   SAVE_TRIP,
+  UNSAVE_TRIP,
   CHECK_FIRST_MESSAGE,
   SEND_FIRST_MESSAGE,
   SEND_SECOND_MESSAGE,
@@ -161,5 +164,5 @@ export default apis = {
   READ_All_Meesages,
   BUY_PLAN,
   CARD_INFO,
-  CHECK_IS_EMAIL_EXIST,
+  RESEND_VERIFICATION_LINK,
 };

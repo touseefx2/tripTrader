@@ -775,29 +775,29 @@ function EditProfile(props) {
             </View>
           )}
 
-          {/* {!isCnicVerf && ( */}
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginTop: 10,
-            }}>
-            <TouchableOpacity
-              activeOpacity={0.6}
-              onPress={() => {
-                setisAddPhotoModal(true);
-                setDT('CNICFront');
+          {!isCnicVerf && (
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: 10,
               }}>
-              <Text style={styles.idCardChangeText1}>Click here </Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.6}
+                onPress={() => {
+                  setisAddPhotoModal(true);
+                  setDT('CNICFront');
+                }}>
+                <Text style={styles.idCardChangeText1}>Click here </Text>
+              </TouchableOpacity>
 
-            <Text style={styles.idCardChangeText2}>
-              {cnicFrontImage.uri || cnicFrontImage != ''
-                ? 'to upload a new ID card.'
-                : 'to add ID card'}
-            </Text>
-          </View>
-          {/* )} */}
+              <Text style={styles.idCardChangeText2}>
+                {cnicFrontImage.uri || cnicFrontImage != ''
+                  ? 'to upload a new ID card.'
+                  : 'to add ID card'}
+              </Text>
+            </View>
+          )}
         </View>
       </View>
     );

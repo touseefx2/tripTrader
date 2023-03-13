@@ -5,6 +5,7 @@ import {observer} from 'mobx-react';
 import store from '../../store/index';
 import utils from '../../utils/index';
 import theme from '../../theme';
+import {responsiveFontSize} from 'react-native-responsive-dimensions';
 
 export default observer(AuthHeader);
 function AuthHeader(props) {
@@ -21,12 +22,12 @@ function AuthHeader(props) {
 
   const renderLogo = () => {
     return (
-      <View style={styles.section1}>
+      <View style={styles.logoContainer}>
         <Image
           style={styles.logo}
           source={require('../../assets/images/logo/img.png')}
         />
-        <Text style={styles.title1}>{store.General.AppName}</Text>
+        <Text style={styles.title}>{store.General.AppName}</Text>
       </View>
     );
   };
@@ -40,7 +41,7 @@ function AuthHeader(props) {
         <utils.vectorIcon.Ionicons
           name={'chevron-back-outline'}
           color={theme.color.buttonText}
-          size={25}
+          size={responsiveFontSize(3.4)}
         />
       </TouchableOpacity>
     );

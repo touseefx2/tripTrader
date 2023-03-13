@@ -336,20 +336,22 @@ function Signin(props) {
 
   return (
     <View style={styles.container}>
-      <ImageBackground
+      <Image
         source={require('../../assets/images/background/img.png')}
-        style={styles.container2}>
-        <SafeAreaView style={styles.container2}>
-          <utils.AuthHeader props={props} />
+        style={styles.container2}
+      />
+      <SafeAreaView style={styles.container3}>
+        <utils.AuthHeader props={props} />
+
+        <ScrollView
+          style={{paddingHorizontal: 15, marginTop: responsiveHeight(3)}}
+          showsVerticalScrollIndicator={false}>
           <KeyboardAvoidingView style={{flex: 1}} enabled>
-            <ScrollView
-              style={{paddingHorizontal: 15}}
-              showsVerticalScrollIndicator={false}>
-              {renderSection2()}
-            </ScrollView>
+            {renderSection2()}
           </KeyboardAvoidingView>
-        </SafeAreaView>
-      </ImageBackground>
+        </ScrollView>
+      </SafeAreaView>
+
       <Toast ref={toast} position="bottom" />
       <utils.Loader load={loader} />
     </View>

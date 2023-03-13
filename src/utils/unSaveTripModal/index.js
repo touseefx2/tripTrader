@@ -50,19 +50,16 @@ export default function unSaveTripModal({
   const removeTrip = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        if (screen == 'Home') {
-          attemptTounSaveTrip(item, closeModal);
-        } else {
-          unSaveTrip(
-            item,
-            selIndex,
-            data,
-            setdata,
-            saveData,
-            setSaveData,
-            closeModal,
-          );
-        }
+        attemptTounSaveTrip(
+          screen,
+          item,
+          selIndex,
+          closeModal,
+          data,
+          setdata,
+          saveData,
+          setSaveData,
+        );
       } else Alert.alert('', 'Please connect internet');
     });
   };

@@ -4,10 +4,10 @@ import {
   responsiveFontSize,
   responsiveHeight,
   responsiveWidth,
-  responsiveScreenFontSize,
 } from 'react-native-responsive-dimensions';
 
-let aph = theme.window.APPBAR_HEIGHT - (Platform.OS == 'ios' ? 25 : 5);
+const appBarHeight =
+  theme.window.APPBAR_HEIGHT - (Platform.OS == 'ios' ? 25 : 5);
 
 export const styles = StyleSheet.create({
   container: {
@@ -26,70 +26,59 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   section1: {
-    marginTop: aph,
+    marginTop: appBarHeight,
   },
-  section2: {
-    marginBottom: 40,
-    width: '96%',
-    alignSelf: 'center',
-
-    // backgroundColor: 'red',
-  },
-  section2Title1: {
-    color: theme.color.buttonText,
-    // fontSize: responsiveFontSize(4.6),
-    fontSize: 34,
-    fontFamily: theme.fonts.fontBold,
-    letterSpacing: -1,
-    lineHeight: 41.2,
-    marginBottom: 10,
-  },
-  section2Title2: {
-    color: '#FAFAFA',
-    fontSize: 15,
-    // fontSize: responsiveFontSize(2),
-    fontFamily: theme.fonts.fontNormal,
-    lineHeight: 21.8,
-  },
-  section3: {
-    paddingHorizontal: 20,
-    paddingBottom: Platform.OS == 'android' ? responsiveHeight(4.5) : 10,
-
-    // backgroundColor: 'red',
-  },
-
   logo: {
-    width: 88,
-    height: 82.58,
+    width: responsiveFontSize(11.7),
+    height: responsiveFontSize(11.2),
     resizeMode: 'contain',
   },
   title1: {
-    // fontSize: responsiveFontSize(2.7),
-    fontSize: 20.5,
+    fontSize: responsiveFontSize(2.6),
     fontFamily: theme.fonts.titleFont,
     color: theme.color.buttonText,
     textTransform: 'uppercase',
-    lineHeight: 28.73,
-    marginTop: 2,
-
-    marginLeft: 5,
+    marginTop: responsiveHeight(0.5),
+    marginLeft: responsiveWidth(1),
   },
+  section2: {
+    marginBottom: responsiveHeight(5.2),
+    width: '96%',
+    alignSelf: 'center',
+  },
+  section2Title1: {
+    color: theme.color.buttonText,
+    fontSize: responsiveFontSize(4.5),
+    fontFamily: theme.fonts.fontBold,
+    letterSpacing: -1,
+    lineHeight: responsiveFontSize(5.6),
+    marginBottom: responsiveHeight(1.4),
+  },
+  section2Title2: {
+    color: '#FAFAFA',
+    fontSize: responsiveFontSize(1.9),
+    fontFamily: theme.fonts.fontNormal,
+  },
+  section3: {
+    width: '90%',
+    alignSelf: 'center',
+    paddingBottom:
+      Platform.OS == 'android' ? responsiveHeight(5) : responsiveHeight(2),
+  },
+
   BottomButton: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: theme.color.button1,
-    height: 58,
-    // height: responsiveHeight(8.4),
+    height: responsiveHeight(8),
     borderRadius: 10,
     alignSelf: 'center',
   },
   buttonTextBottom: {
     color: theme.color.buttonTextGreen,
-
-    fontSize: 16,
+    fontSize: responsiveFontSize(2.2),
     fontFamily: theme.fonts.fontBold,
-
     textTransform: 'capitalize',
   },
 
@@ -97,23 +86,14 @@ export const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 25,
+    marginTop: responsiveHeight(3.5),
     justifyContent: 'center',
+    alignSelf: 'center',
   },
-  buttonTextBottomTtitle1: {
+  buttonTextBottomTtitle: {
     color: '#FFFFFF',
-    fontSize: 14,
-    // fontSize: responsiveFontSize(1.85),
+    fontSize: responsiveFontSize(1.9),
     fontFamily: theme.fonts.fontNormal,
     opacity: 0.7,
-    lineHeight: 22,
-  },
-  buttonTextBottomTtitle2: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    // fontSize: responsiveFontSize(1.85),
-    fontFamily: theme.fonts.fontBold,
-    marginLeft: 5,
-    textDecorationLine: 'underline',
   },
 });

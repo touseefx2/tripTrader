@@ -31,11 +31,12 @@ import store from '../../../store';
 import NetInfo from '@react-native-community/netinfo';
 import theme from '../../../theme';
 import utils from '../../../utils/index';
-
 import Accordion from 'react-native-collapsible/Accordion';
 import Card1 from './Card1';
 import Card2 from './Card2';
 import Card3 from './Card3';
+import EmptyListMessage from './Components/EmptyListMessage';
+import ItemSeparatorView from './Components/ItemSeparatorView';
 
 function isObjectEmpty(value) {
   return (
@@ -198,15 +199,15 @@ var getDaysArray = function (start, end) {
   return arr;
 };
 
-function ItemSeparatorView() {
-  return (
-    <View
-      style={{
-        height: 15,
-      }}
-    />
-  );
-}
+// function ItemSeparatorView() {
+//   return (
+//     <View
+//       style={{
+//         height: 15,
+//       }}
+//     />
+//   );
+// }
 
 export default observer(Trips);
 
@@ -5497,7 +5498,7 @@ function Trips(props) {
 
         {data.length >= 0 && (
           <Accordion
-            c={'upt'}
+            screen="UserProfile"
             renderAsFlatList
             ref={scrollRef2}
             decelerationRate={'fast'}
@@ -5506,12 +5507,12 @@ function Trips(props) {
             windowSize={windowSize}
             maxToRenderPerBatch={windowSize}
             underlayColor={'rgba(245,252,255,1)'}
-            bxc={styles.boxContainer}
+            boxContainer={styles.boxContainer}
             sections={data}
             activeSections={activeSections}
             onChange={s => updateSections(s)}
-            // elm={<EmptyListMessage />}
-            isv={ItemSeparatorView}
+            emptyMessage={<EmptyListMessage />}
+            ItemSeparatorView={ItemSeparatorView}
             renderHeader={(item, index, isActive) => (
               <Card1
                 item={item}

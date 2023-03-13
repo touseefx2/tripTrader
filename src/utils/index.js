@@ -23,6 +23,7 @@ import MessageModal from './MessageModal';
 import RangeCalender from './RangeCalender';
 import SelectionCalender from './SelectionCalender';
 import unSaveTripModal from './unSaveTripModal';
+import EmailPopupSheet from './EmailPopupSheet';
 
 const utils = {
   vectorIcon,
@@ -50,6 +51,7 @@ const utils = {
   RangeCalender,
   SelectionCalender,
   unSaveTripModal,
+  EmailPopupSheet,
 };
 
 export default utils;

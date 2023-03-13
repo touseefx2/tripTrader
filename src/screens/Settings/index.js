@@ -20,9 +20,6 @@ import {ScrollView} from 'react-native-gesture-handler';
 export default observer(Settings);
 
 function Settings(props) {
-  const privacyPoicyLink =
-    'http://ec2-35-175-134-9.compute-1.amazonaws.com/privacypolicyapp';
-
   let ao = 0.8;
   let editprofileIcon = require('../../assets/images/settings/editprofile/img.png');
   let cpIcon = require('../../assets/images/settings/cp/img.png');
@@ -468,7 +465,7 @@ function Settings(props) {
       </SafeAreaView>
       {isShowPrivacy && (
         <utils.WebViewModal
-          link={privacyPoicyLink}
+          link={store.General.Privacy_and_Policy_Link}
           isVisible={isShowPrivacy}
           setisVisible={setIsShowPrivacy}
         />

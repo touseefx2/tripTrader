@@ -7,7 +7,7 @@ import theme from '../../theme';
 export default observer(ShowNotifications);
 
 function ShowNotifications(props) {
-  let title = store.Notifications.NotifcationTitle || 'as askas lkasjklas';
+  const title = store.Notifications.NotifcationTitle || '';
 
   useEffect(() => {
     console.log('Show Notification Call');

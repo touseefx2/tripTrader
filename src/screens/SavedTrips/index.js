@@ -6,12 +6,12 @@ import store from '../../store/index';
 import utils from '../../utils/index';
 import Toast from 'react-native-easy-toast';
 import Accordion from 'react-native-collapsible/Accordion';
-import Card1 from './Card1';
-import Card2 from './Card2';
-import Card3 from './Card3';
+import MainInfo from './MainInfo';
+import UserInfo from './UserInfo';
+import ExpandAllMainInfo from './ExpandAllMainInfo';
 import ListHeader from './Components/ListHeader';
-import EmptyListMessage from './Components/EmptyListMessage';
-import ItemSeparatorView from './Components/ItemSeparatorView';
+import EmptyListMessage from '../UserProfile/Trips/Components/EmptyListMessage';
+import ItemSeparatorView from '../UserProfile/Trips/Components/ItemSeparatorView';
 import ListFooter from './Components/ListFooter';
 
 export default observer(SavedTrips);
@@ -47,20 +47,42 @@ function SavedTrips(props) {
   const [showpic, setshowpic] = useState(true);
 
   useEffect(() => {
+    if (user == 'guest') {
+      store.General.setgoto('guestaccess');
+      store.User.Logout();
+      return;
+    }
+  }, []);
+
+  useEffect(() => {
     let arr = [];
     setisloadFirst(false);
     setpage(1);
     if (search == '') {
-      saveTrips.map(item => {
-        if (item) arr.push(item);
+      scrollToTop();
+      BackHandler.removeEventListener(
+        'hardwareBackPress',
+        handleBackButtonClick,
+      );
+
+      saveTrips.map(({tripId}) => {
+        if (tripId) arr.push(tripId);
       });
     } else {
-      arr = saveTrips.filter(item => {
-        const title = item.hostId.firstName + ' ' + item.hostId.lastName;
+      BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+      arr = saveTrips.filter(({tripId}) => {
+        const title = tripId.hostId.firstName + ' ' + tripId.hostId.lastName;
         return title.toLowerCase().includes(search.toLowerCase());
       });
     }
     setSaveData(arr.reverse());
+
+    return () => {
+      BackHandler.removeEventListener(
+        'hardwareBackPress',
+        handleBackButtonClick,
+      );
+    };
   }, [search]);
 
   useEffect(() => {
@@ -68,16 +90,6 @@ function SavedTrips(props) {
     if (saveData.length <= 0) setdata([]);
   }, [saveData, isloadFirst]);
 
-  const LoadFirst = d => {
-    let page = 0;
-    let p = page + 1;
-    let ar = [...d];
-    const dt = ar.slice(page * limit, limit * p);
-    let dd = [...dt];
-    console.log('----> Load First : ', page * limit, limit * p);
-    setdata(dd);
-    setisloadFirst(true);
-  };
   useEffect(() => {
     if (page <= 0 && data.length >= limit) {
       setpage(1);
@@ -92,35 +104,6 @@ function SavedTrips(props) {
     }
   }, [activeSections]);
 
-  useEffect(() => {
-    if (user == 'guest') {
-      store.General.setgoto('guestaccess');
-      store.User.Logout();
-      return;
-    }
-  }, []);
-
-  useEffect(() => {
-    if (search != '')
-      BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
-
-    if (search == '') {
-      scrollToTop();
-
-      BackHandler.removeEventListener(
-        'hardwareBackPress',
-        handleBackButtonClick,
-      );
-    }
-
-    return () => {
-      BackHandler.removeEventListener(
-        'hardwareBackPress',
-        handleBackButtonClick,
-      );
-    };
-  }, [search]);
-
   function handleBackButtonClick() {
     if (!props.navigation.isFocused()) {
       return false;
@@ -129,6 +112,17 @@ function SavedTrips(props) {
       return true;
     }
   }
+
+  const LoadFirst = data => {
+    let page = 0;
+    let p = page + 1;
+    let ar = [...data];
+    const dt = ar.slice(page * limit, limit * p);
+    let dd = [...dt];
+    console.log('----> Load First : ', page * limit, limit * p);
+    setdata(dd);
+    setisloadFirst(true);
+  };
 
   const LoadMore = async () => {
     setloadMore(true);
@@ -162,6 +156,8 @@ function SavedTrips(props) {
     if (check == 'tripRemove') setIsRemoveModal(true);
   };
 
+  console.log('data : ', data);
+
   return (
     <>
       <View style={styles.container}>
@@ -170,6 +166,7 @@ function SavedTrips(props) {
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <Accordion
+              screen="SavedTrips"
               renderAsFlatList
               ref={scrollRef}
               decelerationRate={'fast'}
@@ -192,10 +189,10 @@ function SavedTrips(props) {
                 />
               }
               renderHeader={(item, index, isActive) => (
-                <Card1 item={item} isActive={isActive} props={props} />
+                <MainInfo item={item} isActive={isActive} props={props} />
               )}
               renderSectionTitle={(item, index) => (
-                <Card2
+                <UserInfo
                   item={item}
                   index={index}
                   user={user}
@@ -204,7 +201,7 @@ function SavedTrips(props) {
                 />
               )}
               renderContent={(item, index, isActive) => (
-                <Card3
+                <ExpandAllMainInfo
                   item={item}
                   index={index}
                   isActive={isActive}

@@ -6,9 +6,9 @@ import store from '../../../store/index';
 import utils from '../../../utils/index';
 import theme from '../../../theme';
 
-export default memo(Card2);
+export default memo(UserInfo);
 
-function Card2({item, index, user, props, openModal}) {
+function UserInfo({item, index, user, props, openModal}) {
   let usr = item.hostId;
 
   if (usr) {

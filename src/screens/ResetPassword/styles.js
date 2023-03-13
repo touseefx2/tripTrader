@@ -20,6 +20,9 @@ export const styles = StyleSheet.create({
     width: theme.window.Width,
     height: theme.window.Height,
   },
+  container3: {
+    flex: 1,
+  },
   Header: {
     marginTop: aph,
     width: '100%',
@@ -31,11 +34,11 @@ export const styles = StyleSheet.create({
   section2: {
     backgroundColor: theme.color.background,
     borderRadius: 15,
-    marginBottom: 15,
+    marginBottom: responsiveHeight(1.9),
     paddingHorizontal: 15,
-    paddingVertical: 20,
-    marginTop: 30,
+    paddingVertical: responsiveHeight(1.9),
   },
+
   section2Title1: {
     color: theme.color.title,
     fontSize: 20,

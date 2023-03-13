@@ -33,7 +33,6 @@ const Inboxicon = {
 
 const NewTripicon = {
   drawerLabel: 'New Trip',
-
   unmountOnBlur: true,
   drawerIcon: ({focused, size}) => (
     <Image

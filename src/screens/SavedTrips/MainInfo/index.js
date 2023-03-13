@@ -4,9 +4,9 @@ import {styles} from './styles';
 import utils from '../../../utils/index';
 import theme from '../../../theme';
 
-export default memo(Card1);
+export default memo(MainInfo);
 
-function Card1({item, isActive}) {
+function MainInfo({item, isActive}) {
   let usr = item.hostId;
 
   if (usr) {

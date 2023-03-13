@@ -104,13 +104,20 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
   const windowSize = 21;
   const limit = 16;
   const {isInternet} = store.General;
-  const {user, attemptToGetFollowers} = store.User;
+  const {
+    user,
+    attemptToGetFollowers,
+    attemptToGetUser,
+    attemptToGetReviews,
+    attemptToGetInboxes,
+  } = store.User;
   const {
     notifications,
     Loader,
     notificationsTotal,
     attemptToReadNotifications,
   } = store.Notifications;
+  const {attemptToGetConfirmOffers, attemptToGetReceiveOffers} = store.Offers;
 
   const [loadFirst, setloadFirst] = useState(false);
   const [search, setsearch] = useState('');
@@ -142,23 +149,11 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
     closeModal();
   };
 
-  const getFollowers = () => {
-    NetInfo.fetch().then(state => {
-      if (state.isConnected) {
-        attemptToGetFollowers(
-          user._id,
-          () => {},
-          () => {},
-        );
-      }
-    });
-  };
-  const ReadNotification = notificationId => {
-    NetInfo.fetch().then(state => {
-      if (state.isConnected) {
-        attemptToReadNotifications(notificationId);
-      }
-    });
+  const goToUserProfile = senderUser => {
+    store.Userv.setfscreen(callingScreen || '');
+    store.Userv.setUser(senderUser);
+    store.Userv.addauthToken(store.User.authToken);
+    props.navigation.navigate('UserProfile');
   };
 
   function compare(d, dd) {
@@ -244,39 +239,107 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
     return t;
   }
 
-  const onclickNotification = (check, notificationId) => {
+  const onclickNotification = (title, action, item, isRead) => {
     Keyboard.dismiss();
-    console.log('check : ', check);
-    // if (check == 'Trip Confirmed') {
-    //   props.navigation.navigate('ConfirmedTrips');
-    //   goBack();
-    //   ReadNotification(notificationId);
-    // }
+    const notificationId = item.messageId;
+    const senderUser = item.senderId || null;
 
-    // if (check == 'New Trip Created') {
-    //   props.navigation.navigate('MyProfile');
-    //   goBack();
-    //   ReadNotification(notificationId);
-    // }
+    if (action == '') {
+      console.log('title : ', title);
+      if (
+        title == 'New Trip Created' ||
+        title == 'Profile Updated' ||
+        title == 'Password Changed' ||
+        title == 'Email Verification' ||
+        title == 'Profile' //follwowing user
+      ) {
+        props.navigation.navigate('MyProfile');
+      }
 
-    // if (check == 'Profile Updated') {
-    //   props.navigation.navigate('MyProfile');
-    //   goBack();
-    //   ReadNotification(notificationId);
-    // }
+      if (title == 'Your review was disputed') {
+        props.navigation.navigate('MyProfile');
+        goToUserProfile(senderUser);
+      }
+    }
 
-    // if (check == 'Password Changed') {
-    //   props.navigation.navigate('MyProfile');
-    //   goBack();
-    //   ReadNotification(notificationId);
-    // }
+    if (action != '') {
+      console.log('action : ', action);
+      if (
+        action == 'confirmed trip' ||
+        action == 'See confirmed trips' ||
+        action == 'Review the details'
+      ) {
+        props.navigation.navigate('ConfirmedTrips');
+        // if (isInternet) {
+        //   attemptToGetConfirmOffers(
+        //     () => {},
+        //     () => {},
+        //   );
+        // }
+      }
 
-    // if (check == 'Profile') {
-    //   props.navigation.navigate('MyProfile');
-    //   goBack();
-    //   getFollowers();
-    //   ReadNotification(notificationId);
-    // }
+      if (
+        action == 'Apply for Verification' ||
+        action == 'reapply for ID Verification' ||
+        action == 'Check it out'
+      ) {
+        props.navigation.navigate('EditProfile');
+        // if (isInternet) {
+        //   attemptToGetUser();
+        // }
+      }
+
+      if (action == 'Read it now') {
+        props.navigation.navigate('MyProfile');
+        // if (isInternet) {
+        //   attemptToGetReviews(
+        //     store.User.user._id,
+        //     () => {},
+        //     () => {},
+        //   );
+        // }
+      }
+
+      if (action == 'See trip details') {
+        if (title.includes('posted a new trip!')) {
+          goToUserProfile(senderUser);
+        } else if (title.includes('New offer')) {
+          props.navigation.navigate('TradeOffers'); //recieve ofer tab
+          // if (isInternet) {
+          //   attemptToGetReceiveOffers(
+          //     () => {},
+          //     () => {},
+          //   );
+          // }
+        }
+      }
+
+      if (
+        action == 'Leave a review' ||
+        action == 'Make new offer' ||
+        action == 'Send a message'
+      ) {
+        goToUserProfile(senderUser);
+      }
+
+      if (action == 'Read full message') {
+        props.navigation.navigate('Inbox');
+        // if (isInternet) {
+        //   attemptToGetInboxes(store.User.user._id, () => {});
+        // }
+      }
+
+      if (action == 'make an offer') {
+        props.navigation.navigate('SavedTrips');
+      }
+
+      if (action == 'Subscribe' || action == 'Manage Subscription') {
+        props.navigation.navigate('Plan');
+      }
+    }
+
+    goBack();
+    if (!isRead && isInternet) attemptToReadNotifications(notificationId);
   };
 
   const checkPhotoShape = title => {
@@ -332,7 +395,7 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
         ? 'Manage Subscription'
         : title == 'Your ID has been verified!'
         ? 'Check it out'
-        : title == 'Your ID has been rejected'
+        : title == 'Your ID has been rejected!'
         ? 'reapply for ID Verification'
         : title == 'Your offer was declined'
         ? 'Make new offer'
@@ -362,10 +425,10 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
         : title == 'New Trip Created' || title == 'Your next adventure awaits!'
         ? require('../../assets/images/notification/TripCreated/img.png')
         : title == 'Your review was disputed' ||
-          title == 'Your ID has been rejected' ||
+          title == 'Your ID has been rejected!' ||
           title == 'Your subscription payment failed'
         ? require('../../assets/images/notification/Reject/img.png')
-        : title == 'Your ID has been verified!'
+        : title == 'Your ID has been verified!' || title == 'Email Verification'
         ? require('../../assets/images/notification/Done/img.png')
         : title == 'Trip Confirmed'
         ? require('../../assets/images/notification/TripConfirmed/img.png')
@@ -459,9 +522,10 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
                 <Text style={styles.notificationSubTitle}>
                   {subTitle}{' '}
                   <Text
-                    onPress={() =>
-                      onclickNotification(clickableText, item.messageId)
-                    }
+                    onPress={() => {
+                      console.log('item : ', item);
+                      onclickNotification(title, clickableText, item, isRead);
+                    }}
                     style={styles.notificationClickSubTitle}>
                     {clickableText}
                   </Text>
@@ -473,12 +537,15 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
                 </Text>
               ) : (
                 <Text
-                  onPress={() =>
-                    onclickNotification(clickableText, item.messageId)
-                  }
-                  style={styles.notificationClickSubTitle}>
-                  {clickableText}
-                  <Text style={styles.notificationSubTitle}> {subTitle}</Text>
+                  onPress={() => {
+                    console.log('item : ', item);
+                    onclickNotification(title, clickableText, item, isRead);
+                  }}
+                  style={[styles.notificationSubTitle, {marginTop: 0}]}>
+                  <Text style={[styles.notificationClickSubTitle]}>
+                    {clickableText}
+                  </Text>{' '}
+                  {subTitle}
                 </Text>
               )}
             </>
@@ -502,7 +569,12 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
         disabled={isDisabel}
         onPress={() => {
           console.log('item : ', item);
-          onclickNotification(isFollow ? 'Profile' : title, item.messageId);
+          onclickNotification(
+            isFollow ? 'Profile' : title,
+            clickableText,
+            item,
+            isRead,
+          );
         }}
         style={({pressed}) => [
           {opacity: pressed ? 0.7 : 1.0},

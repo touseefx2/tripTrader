@@ -936,9 +936,17 @@ class userv {
   };
 
   @action attemptToEditReview = (obj, data, setdt, suc, suc2) => {
+    let userName = '';
+    const user2 = store.User.user;
+    if (user2) {
+      userName = user2.firstName + ' ' + user2.lastName;
+    }
+
     let body = {
       message: obj.message,
       guestRating: obj.rate,
+      guestName: userName,
+      isReviewEdited: true,
     };
     console.log('Edit review body : ', body);
     this.setmLoader(true);

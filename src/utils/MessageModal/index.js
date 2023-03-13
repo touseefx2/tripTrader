@@ -121,6 +121,7 @@ export default function MessageModal({
         const {user} = store.User;
         const senderId = user._id;
         const senderName = user.firstName + ' ' + user.lastName;
+        const senderImage = user.image || '';
 
         const obj = {
           userId1: senderId,
@@ -131,6 +132,7 @@ export default function MessageModal({
           isRead: false,
           message: message,
           type: 'text',
+          senderImage: senderImage,
         };
 
         store.User.attemptToCheckFirstMessage(

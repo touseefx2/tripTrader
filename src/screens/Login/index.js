@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native';
 import Toast from 'react-native-easy-toast';
+import {responsiveHeight} from 'react-native-responsive-dimensions';
 import store from '../../store/index';
 import theme from '../../theme';
 import {styles} from './styles';
@@ -100,7 +101,7 @@ function Login(props) {
                 backgroundColor: 'transparent',
                 borderWidth: 1,
                 borderColor: theme.color.fieldBorder,
-                marginTop: 12,
+                marginTop: responsiveHeight(2),
               },
             ]}>
             <Text
@@ -123,9 +124,18 @@ function Login(props) {
       return (
         <>
           <View style={styles.BottomButtonT}>
-            <Text style={styles.buttonTextBottomTtitle1}>Or you can</Text>
+            <Text style={styles.buttonTextBottomTtitle}>Or you can</Text>
             <TouchableOpacity onPress={onClickButton} activeOpacity={0.7}>
-              <Text style={styles.buttonTextBottomTtitle2}>
+              <Text
+                style={[
+                  styles.buttonTextBottomTtitle,
+                  {
+                    fontFamily: theme.fonts.fontBold,
+                    marginLeft: 5,
+                    opacity: 1,
+                    textDecorationLine: 'underline',
+                  },
+                ]}>
                 continue as a guest
               </Text>
             </TouchableOpacity>
@@ -160,21 +170,21 @@ function Login(props) {
     <View style={styles.container}>
       {renderStatusBar()}
 
-      <ImageBackground
+      <Image
         source={require('../../assets/images/background/img.png')}
-        style={styles.container2}>
-        <SafeAreaView style={styles.container3}>
-          <ScrollView
-            style={{flex: 1, paddingHorizontal: 20}}
-            showsVerticalScrollIndicator={false}>
-            {renderSection1()}
-          </ScrollView>
+        style={styles.container2}
+      />
+      <SafeAreaView style={styles.container3}>
+        <ScrollView
+          style={{flex: 1, paddingHorizontal: 20}}
+          showsVerticalScrollIndicator={false}>
+          {renderSection1()}
+        </ScrollView>
 
-          {renderSection3()}
-        </SafeAreaView>
+        {renderSection3()}
+      </SafeAreaView>
 
-        <Toast ref={toast} position="center" />
-      </ImageBackground>
+      <Toast ref={toast} position="center" />
     </View>
   );
 }

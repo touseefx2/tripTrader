@@ -104,7 +104,6 @@ export const styles = StyleSheet.create({
   },
   modal: {
     width: '100%',
-
     padding: 15,
     alignSelf: 'center',
     backgroundColor: theme.color.background,

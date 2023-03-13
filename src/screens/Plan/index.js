@@ -5,31 +5,23 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
-  ImageBackground,
-  Linking,
   ScrollView,
   TextInput,
-  PermissionsAndroid,
   Alert,
   Keyboard,
-  Platform,
   StatusBar,
   KeyboardAvoidingView,
   BackHandler,
 } from 'react-native';
 import {styles} from './styles';
-import {inject, observer} from 'mobx-react';
+import {observer} from 'mobx-react';
 import store from '../../store/index';
 import utils from '../../utils/index';
 import theme from '../../theme';
-import {
-  responsiveHeight,
-  responsiveScreenFontSize,
-  responsiveWidth,
-} from 'react-native-responsive-dimensions';
+import {responsiveHeight} from 'react-native-responsive-dimensions';
 import Toast from 'react-native-easy-toast';
 import NetInfo from '@react-native-community/netinfo';
-import {LiteCreditCardInput} from 'react-native-credit-card-input';
+
 import {
   StripeProvider,
   CardField,
@@ -138,7 +130,6 @@ function Plan(props) {
       'hardwareBackPress',
       handleBackButtonClick,
     );
-
     return () => {
       BackHandler.removeEventListener(
         'hardwareBackPress',
@@ -444,7 +435,7 @@ function Plan(props) {
   const subPlanSuc = c => {
     store.User.setUser(c);
     props.navigation.goBack();
-    clearCard();
+    // clearCard();
   };
 
   const applyPromoSuc = res => {
@@ -1307,24 +1298,25 @@ function Plan(props) {
   return (
     <StripeProvider publishableKey={store.General.Stripe_Publish_Key}>
       <View style={styles.container}>
-        <ImageBackground
+        <Image
           source={require('../../assets/images/background/img.png')}
-          style={styles.container2}>
-          <SafeAreaView style={styles.container2}>
-            <utils.AuthHeader
-              props={props}
-              screen="plan"
-              goBack={() => goBack()}
-            />
+          style={styles.container2}
+        />
+        <SafeAreaView style={styles.container3}>
+          <utils.AuthHeader
+            props={props}
+            screen="plan"
+            goBack={() => goBack()}
+          />
+
+          <ScrollView
+            style={{paddingHorizontal: 15, marginTop: responsiveHeight(3)}}
+            showsVerticalScrollIndicator={false}>
             <KeyboardAvoidingView style={{flex: 1}} enabled>
-              <ScrollView
-                style={{paddingHorizontal: 15}}
-                showsVerticalScrollIndicator={false}>
-                {renderSection2()}
-              </ScrollView>
+              {renderSection2()}
             </KeyboardAvoidingView>
-          </SafeAreaView>
-        </ImageBackground>
+          </ScrollView>
+        </SafeAreaView>
 
         <Toast ref={toast} position="center" />
         <utils.Loader load={loader} />

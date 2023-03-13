@@ -9,9 +9,9 @@ import {ImageSlider} from 'react-native-image-slider-banner';
 import moment from 'moment/moment';
 import * as Animatable from 'react-native-animatable';
 
-export default memo(Card3);
+export default memo(ExpandAllMainInfo);
 
-function Card3({
+function ExpandAllMainInfo({
   item,
   index,
   user,

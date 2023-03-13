@@ -11,13 +11,9 @@ import {
   Platform,
   TextInput,
   Pressable,
-  Dimensions,
   Modal as MModal,
-  KeyboardAvoidingView,
-  BackHandler,
   Keyboard,
   Alert,
-  FlatList,
 } from 'react-native';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
@@ -28,18 +24,16 @@ import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import {Image as ImageCompressor} from 'react-native-compressor';
 import {request, PERMISSIONS, check} from 'react-native-permissions';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-import Modal from 'react-native-modal';
 import {
+  responsiveFontSize,
   responsiveHeight,
-  responsiveWidth,
 } from 'react-native-responsive-dimensions';
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
 import IntentLauncher from 'react-native-intent-launcher';
-import * as Animatable from 'react-native-animatable';
 import {ScrollView} from 'react-native-gesture-handler';
 import {Calendar} from 'react-native-calendars';
-import moment, {duration} from 'moment';
+import moment from 'moment';
 
 function isObjectEmpty(value) {
   return (
@@ -50,8 +44,8 @@ function isObjectEmpty(value) {
 
 export default observer(NewTrips);
 
-let actSrc = require('../../assets/images/filters/activity/img.png');
-let spcSrc = require('../../assets/images/filters/species/img.png');
+const actSrc = require('../../assets/images/filters/activity/img.png');
+const spcSrc = require('../../assets/images/filters/species/img.png');
 
 function NewTrips(props) {
   let activeOpacity = 0.8;
@@ -202,14 +196,6 @@ function NewTrips(props) {
   let editTrip = store.User.editTripObj;
   let isEdit = store.User.editTrip ? true : false;
 
-  const [isTripSusIndication, setisTripSusIndication] = useState(false);
-  const openTripSuspendIndication = () => {
-    setisTripSusIndication(true);
-  };
-  const closeTripSuspendIndication = () => {
-    setisTripSusIndication(false);
-  };
-
   const [isDisableToday2, setisDisableToday2] = useState(false);
 
   let headerTitle = !isEdit ? 'New Trip' : 'Edit Trip';
@@ -318,7 +304,7 @@ function NewTrips(props) {
     }
   }, []);
 
-  let loader = store.User.ctripsLoader;
+  const loader = store.User.ctripsLoader;
 
   useEffect(() => {
     return () => {
@@ -914,17 +900,9 @@ function NewTrips(props) {
   };
 
   const setIsTripCreatSuc = v => {
-    if (store.User.user.subscriptionStatus == 'freemium') {
-      setTimeout(() => {
-        setisTripCreate(v);
-        closeTripSuspendIndication();
-        store.User.setctripLoader(false);
-      }, anmtnTime + 500);
-    } else {
-      store.User.setctripLoader(false);
-      closeTripSuspendIndication();
-      setisTripCreate(v);
-    }
+    store.User.setctripLoader(false);
+
+    setisTripCreate(v);
   };
 
   function titleCase(str) {
@@ -1009,22 +987,11 @@ function NewTrips(props) {
           delete obj.unAvailableDays;
         }
 
-        if (store.User.user.subscriptionStatus == 'freemium') {
-          openTripSuspendIndication();
-        }
         store.User.setctripLoader(true);
         if (photos.length <= 0) {
-          store.User.attemptToCreateTrip(
-            obj,
-            setIsTripCreatSuc,
-            closeTripSuspendIndication,
-          );
+          store.User.attemptToCreateTrip(obj, setIsTripCreatSuc);
         } else {
-          store.User.attemptToCreateTripUploadImage(
-            obj,
-            setIsTripCreatSuc,
-            closeTripSuspendIndication,
-          );
+          store.User.attemptToCreateTripUploadImage(obj, setIsTripCreatSuc);
         }
       } else {
         // seterrorMessage('Please connect internet');
@@ -3756,8 +3723,8 @@ function NewTrips(props) {
   };
 
   const renderReviewTripModal = () => {
-    let c = modalHeight >= maxModalHeight ? true : false;
-    let style = c
+    const c = modalHeight >= maxModalHeight ? true : false;
+    const style = c
       ? [styles.rmodal, {paddingTop: 0, height: maxModalHeight}]
       : styles.rmodal2;
 
@@ -3849,6 +3816,53 @@ function NewTrips(props) {
               : 'to update the trip available for trade offers'} */}
           </Text>
         </View>
+      );
+    };
+
+    const renderSubscribe = () => {
+      return (
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => {
+            props.navigation.navigate('Plan');
+          }}
+          style={{
+            marginTop: responsiveHeight(2),
+            width: '100%',
+            borderRadius: 4,
+            backgroundColor: '#EEFAF1',
+            padding: 15,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <View style={{width: '92%'}}>
+            <Text
+              style={{
+                fontSize: responsiveFontSize(1.85),
+                color: theme.color.title,
+                fontFamily: theme.fonts.fontNormal,
+              }}>
+              <Text
+                style={{
+                  fontSize: responsiveFontSize(1.85),
+                  color: theme.color.button1,
+                  textDecorationLine: 'underline',
+                  textDecorationColor: theme.color.button1,
+                  fontFamily: theme.fonts.fontBold,
+                }}>
+                Subscribe{' '}
+              </Text>
+              to make this trip available and receive trade offers.
+            </Text>
+          </View>
+
+          <utils.vectorIcon.AntDesign
+            name={'right'}
+            color={'#63896D'}
+            size={responsiveFontSize(2.4)}
+          />
+        </TouchableOpacity>
       );
     };
 
@@ -3951,7 +3965,7 @@ function NewTrips(props) {
                 // numberOfLines={4}
                 // ellipsizeMode="tail"
                 style={[styles.rTitle2, {textTransform: 'none'}]}>
-                {unavailable == '' ? 'Null' : unavailable}
+                {unavailable == '' ? 'None' : unavailable}
               </Text>
             </View>
           </View>
@@ -3970,53 +3984,6 @@ function NewTrips(props) {
               </View>
             </View>
           )}
-        </View>
-      );
-    };
-
-    const renderTripSusInd = () => {
-      let st = c
-        ? {
-            paddingHorizontal: 15,
-            alignSelf: 'center',
-          }
-        : {
-            paddingHorizontal: 10,
-            alignSelf: 'center',
-          };
-
-      return (
-        <View style={st}>
-          <View style={{alignSelf: 'center'}}>
-            <Animatable.Image
-              style={{
-                width: 220,
-                height: 150,
-              }}
-              duration={anmtnTime}
-              easing="ease-out"
-              animation={'zoomIn'}
-              source={require('../../assets/gif/smily.gif')}
-            />
-          </View>
-
-          <View style={{paddingBottom: 40}}>
-            <Animatable.Text
-              style={{
-                fontSize: 18,
-                fontFamily: theme.fonts.fontMedium,
-                color: theme.color.button1,
-                textAlign: 'center',
-              }}
-              duration={anmtnTime}
-              easing="ease-out"
-              animation={'zoomIn'}
-              // easing="ease-out"
-              // animation={'slideInLeft'}
-            >
-              Your trip will remain inactive until you subscribe.
-            </Animatable.Text>
-          </View>
         </View>
       );
     };
@@ -4193,43 +4160,47 @@ function NewTrips(props) {
           visible={isReviewTrip}
           transparent
           onRequestClose={closeReviewModal}>
-          <SafeAreaView style={styles.modalContainer}>
-            <View style={styles.modalContainer2}>
-              <View
-                onLayout={event => {
-                  if (!c) {
-                    let {height} = event.nativeEvent.layout;
-                    setmodalHeight(height);
-                  }
-                }}
-                style={style}>
-                {c && (
-                  <>
-                    {!isTripSusIndication && renderHeader()}
-                    <ScrollView
-                      contentContainerStyle={{paddingHorizontal: 15}}
-                      showsVerticalScrollIndicator={false}
-                      style={{flex: 1}}>
-                      {!isTripCreate && !isTripSusIndication && renderTitle()}
-                      {!isTripSusIndication && renderFields()}
-                      {isTripSusIndication && renderTripSusInd()}
-                    </ScrollView>
-                    {!isTripCreate ? renderBottom() : renderBottom2()}
-                  </>
-                )}
+          <View style={styles.modalContainer}>
+            <View
+              onLayout={event => {
+                if (!c) {
+                  const {height} = event.nativeEvent.layout;
+                  setmodalHeight(height);
+                }
+              }}
+              style={style}>
+              {c && (
+                <>
+                  {renderHeader()}
 
-                {!c && (
-                  <>
-                    {!isTripSusIndication && renderHeader()}
-                    {!isTripCreate && !isTripSusIndication && renderTitle()}
-                    {!isTripSusIndication && renderFields()}
-                    {isTripSusIndication && renderTripSusInd()}
-                    {!isTripCreate ? renderBottom() : renderBottom2()}
-                  </>
-                )}
-              </View>
+                  <ScrollView
+                    contentContainerStyle={{paddingHorizontal: 15}}
+                    showsVerticalScrollIndicator={false}
+                    style={{flex: 1}}>
+                    {!isTripCreate && renderTitle()}
+                    {isTripCreate &&
+                      store.User.user.subscriptionStatus == 'freemium' &&
+                      renderSubscribe()}
+                    {renderFields()}
+                  </ScrollView>
+                  {!isTripCreate ? renderBottom() : renderBottom2()}
+                </>
+              )}
+
+              {!c && (
+                <>
+                  {renderHeader()}
+                  {!isTripCreate && renderTitle()}
+                  {isTripCreate &&
+                    store.User.user.subscriptionStatus == 'freemium' &&
+                    renderSubscribe()}
+                  {renderFields()}
+
+                  {!isTripCreate ? renderBottom() : renderBottom2()}
+                </>
+              )}
             </View>
-          </SafeAreaView>
+          </View>
         </MModal>
       </>
     );
@@ -4974,9 +4945,9 @@ function NewTrips(props) {
 
   return (
     <View style={styles.container}>
-      {/* {tagLine != '' && <utils.TagLine tagLine={tagLine} />} */}
       <utils.DrawerHeader props={props} headerTitle={headerTitle} />
       {!internet && <utils.InternetMessage />}
+
       <SafeAreaView style={styles.container2}>
         <View style={styles.container3}>
           <ScrollView
@@ -5005,7 +4976,7 @@ function NewTrips(props) {
 
       {isAddPhotoModal && renderAddPhotoModal()}
       {deleteModal && renderDeleteModal()}
-      {isReviewTrip && renderReviewTripModal()}
+
       {pvm && (
         <utils.FullimageModal
           data={photos}
@@ -5016,6 +4987,7 @@ function NewTrips(props) {
       )}
 
       <Toast ref={toast} position="bottom" />
+      {isReviewTrip && renderReviewTripModal()}
     </View>
   );
 }

@@ -177,13 +177,13 @@ let InboxStack = () => {
 let NewTripsStack = () => {
   return (
     <Stack.Navigator
-      initialRouteName="NewTripss"
+      initialRouteName="NewTrips"
       screenOptions={{
         animationEnabled: false,
         headerShown: false,
       }}>
       <Stack.Screen
-        name="NewTripss"
+        name="NewTrips"
         component={screens.NewTrips}
         options={props => {
           let parent = props.navigation.getParent();

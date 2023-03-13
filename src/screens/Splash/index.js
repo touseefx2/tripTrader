@@ -15,7 +15,6 @@ import PushNotification from 'react-native-push-notification';
 import messaging from '@react-native-firebase/messaging';
 import {create} from 'mobx-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import theme from '../../theme';
 
 const getToken = async () => {
   let tok = await messaging().getToken();
@@ -34,17 +33,15 @@ Platform.OS === 'android'
 export default observer(Splash);
 
 function Splash(props) {
-  // hook
+  const {setLoading} = store.General;
 
   useEffect(() => {
     store.User.setmessages([]);
     hydrateStores();
     setTimeout(() => {
-      store.General.setLoading(false);
+      setLoading(false);
     }, 1000);
   }, []);
-
-  // method
 
   const hydrateStores = async () => {
     const hydrate = create({storage: AsyncStorage});
@@ -56,8 +53,6 @@ function Splash(props) {
     await hydrate('Offers', store.Offers);
     await hydrate('Notifications', store.Notifications);
   };
-
-  // render
 
   const renderStatusBar = () => {
     return (
@@ -76,16 +71,17 @@ function Splash(props) {
     <View style={styles.container}>
       {renderStatusBar()}
 
-      <ImageBackground
-        source={require('../../assets/images/background/imgS.png')}
-        style={styles.container2}>
+      <Image
+        source={require('../../assets/images/background/img.png')}
+        style={styles.container2}
+      />
+
+      <View style={styles.main}>
         <Image
           style={styles.logo}
           source={require('../../assets/images/logo/img.png')}
         />
-
-        {/* <Text style={styles.title1}>{store.General.AppName}</Text> */}
-      </ImageBackground>
+      </View>
     </View>
   );
 }

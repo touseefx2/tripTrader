@@ -8,8 +8,6 @@ import {
   Alert,
   Pressable,
   RefreshControl,
-  FlatList,
-  Keyboard,
 } from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
 import {styles} from './styles';
@@ -23,13 +21,15 @@ import {ImageSlider} from 'react-native-image-slider-banner';
 import moment from 'moment/moment';
 import io from 'socket.io-client';
 import db from '../../database/index';
+import {FlashList} from '@shopify/flash-list';
+import {notificationManager} from '../../services/NotificationManager';
+import PushNotification from 'react-native-push-notification';
 
 export default observer(Home);
 function Home(props) {
   const headerTitle = 'Home';
   const toast = useRef(null);
-
-  const {isInternet, goto} = store.General;
+  const {isInternet, goto, isEmailPopup, setIsEmailPopup} = store.General;
   const {isApplySearch} = store.Search;
   const {isShowNotifcation} = store.Notifications;
   const {
@@ -87,6 +87,12 @@ function Home(props) {
   }, [user]);
 
   useEffect(() => {
+    if (user && user !== 'guest' && getDataOnce) {
+      setIsEmailPopup(user?.isEmailVerified == false ? true : false);
+    }
+  }, [user, getDataOnce]);
+
+  useEffect(() => {
     if (activity.length > 0 && species.length > 0 && activityList.length <= 0) {
       let activityLists = [];
       activity.map((element, index) => {
@@ -103,6 +109,10 @@ function Home(props) {
   }, [species, activity, activityList]);
 
   useEffect(() => {
+    notificationManager.configure(
+      onOpenNotification,
+      onClickNotificationAction,
+    );
     if (goto == 'profile') {
       props.navigation.navigate('MyProfile');
     }
@@ -143,6 +153,110 @@ function Home(props) {
     }
   }, [isApplySearch]);
 
+  const goToEditProfile = props => {
+    props.navigation.navigate('EditProfile');
+  };
+
+  const goToMyProfile = props => {
+    props.navigation.navigate('MyProfile');
+  };
+
+  const goToInbox = props => {
+    props.navigation.navigate('Inbox');
+  };
+
+  const goToTradeOffer = props => {
+    props.navigation.navigate('TradeOffers');
+  };
+
+  const goToConfirmTrips = props => {
+    props.navigation.navigate('ConfirmedTrips');
+  };
+
+  const goToUserProfile = (props, senderUser) => {
+    console.log('su : ', senderUser);
+    store.Userv.setfscreen(headerTitle || '');
+    store.Userv.setUser(senderUser);
+    store.Userv.addauthToken(store.User.authToken);
+    props.navigation.navigate('UserProfile');
+  };
+
+  const goToSavedTrips = props => {
+    props.navigation.navigate('SavedTrips');
+  };
+
+  const onOpenNotification = notify => {
+    const topic = notify?.tag || '';
+    const actionArr = notify?.actions || [];
+    if (actionArr.length > 0) {
+      onClickNotificationAction(actionArr[0], notify);
+      return;
+    }
+
+    console.log('onOpenNotification :', notify);
+    console.log('topic :', topic);
+
+    if (topic === 'id-verified' || topic === 'id-notVerified') {
+      goToEditProfile(props);
+    }
+
+    if (
+      topic == 'newReview' ||
+      topic == 'updateInReview' ||
+      topic == 'followUser'
+    ) {
+      goToMyProfile(props);
+    }
+
+    if (topic == 'offerDecline' || topic == 'offerCancel') {
+      goToTradeOffer(props);
+    }
+
+    if (topic == 'offerConfirm') {
+      goToConfirmTrips(props);
+    }
+  };
+
+  const onClickNotificationAction = (action, notify) => {
+    const title = notify?.title || '';
+    const topic = notify?.tag || '';
+    const senderId = notify.userInfo;
+    console.log('onClickNotificationAction:', action);
+    console.log('topic :', topic);
+
+    if (action == 'Dismiss' || action == 'No Thanks') {
+      PushNotification.cancelAllLocalNotifications();
+    }
+
+    if (action == 'Apply for Verification') {
+      goToEditProfile(props);
+    }
+    if (action == 'Respond') {
+      //new message
+      goToInbox(props);
+    }
+
+    if (action == 'Review Offer Details') {
+      //offer recieve
+      goToTradeOffer(props);
+    }
+    if (action.includes('Message')) {
+      goToUserProfile(props, senderId);
+    }
+    if (action == 'Review Trip Details') {
+      //  offerAccepted tripStarts tripHosting
+      goToConfirmTrips(props);
+    }
+    if (action == 'Make Offer') {
+      //save trip expire
+      goToSavedTrips(props);
+    }
+    if (action == 'Leave Review' || action == 'See Trip Details') {
+      //newTripAdded  reviewReminder
+      goToUserProfile(props, senderId);
+    }
+  };
+
   const onRefresh = React.useCallback(() => {
     console.log('onrefresh cal');
     getDbData();
@@ -164,13 +278,10 @@ function Home(props) {
     });
   };
 
-  const saveTripSuccess = (item, index, isNotSave) => {
-    if (isNotSave) {
-      setSuccessModalObj({item: item, selIndex: index});
-      setSuccessCheck('TripSave');
-      setIsSuccessModal(true);
-      return;
-    } else Alert.alert('', 'Already saved');
+  const saveTripSuccess = item => {
+    setSuccessModalObj({item: item});
+    setSuccessCheck('TripSave');
+    setIsSuccessModal(true);
   };
 
   const saveTrip = (item, index) => {
@@ -287,7 +398,7 @@ function Home(props) {
     let edy = parseInt(new Date(ed).getFullYear());
     let favlbl = '';
 
-    let isSave = utils.functions.CheckisAlreadySaveTrip(
+    const isSave = utils.functions.CheckisAlreadySaveTrip(
       item,
       saveTrips.slice(),
     );
@@ -671,7 +782,9 @@ function Home(props) {
         {!isInternet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
-            <FlatList
+            <FlashList
+              decelerationRate={0.7}
+              estimatedItemSize={530}
               refreshControl={
                 <RefreshControl refreshing={HomeLoader} onRefresh={onRefresh} />
               }
@@ -786,6 +899,14 @@ function Home(props) {
         <utils.Loader load={saveLoader} />
         <Toast ref={toast} position="bottom" />
         {isShowNotifcation && <utils.ShowNotifications />}
+        {isEmailPopup && (
+          <utils.EmailPopupSheet
+            isModal={isEmailPopup}
+            setIsModal={setIsEmailPopup}
+            email={user?.email || ''}
+            user={user || null}
+          />
+        )}
       </View>
     </>
   );

@@ -1,12 +1,10 @@
-import {Platform, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {
   responsiveFontSize,
   responsiveHeight,
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
 import theme from '../../theme/index';
-
-let aph = theme.window.APPBAR_HEIGHT - (Platform.OS == 'ios' ? 20 : 0);
 
 export const styles = StyleSheet.create({
   container: {
@@ -21,27 +19,21 @@ export const styles = StyleSheet.create({
     width: theme.window.Width,
     height: theme.window.Height,
   },
-  Header: {
-    marginTop: aph,
-    width: '100%',
-
-    alignItems: 'center',
-    paddingHorizontal: 20,
+  container3: {
+    flex: 1,
   },
-  section1: {alignItems: 'center', justifyContent: 'center'},
   section2: {
     backgroundColor: theme.color.background,
     borderRadius: 15,
-    marginBottom: 15,
+    marginBottom: responsiveHeight(1.9),
     paddingHorizontal: 15,
-    paddingVertical: 20,
-    marginTop: 25,
+    paddingVertical: responsiveHeight(1.9),
   },
   section2Title1: {
     color: theme.color.title,
-    fontSize: 20,
+    fontSize: responsiveFontSize(2.7),
     fontFamily: theme.fonts.fontBold,
-    alignSelf: 'center',
+    textAlign: 'center',
     textTransform: 'capitalize',
   },
   section2Title2: {
@@ -55,37 +47,21 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 20,
     paddingTop: 10,
-    // backgroundColor: 'red',
   },
 
-  logo: {
-    width: 54.93,
-    height: 50.56,
-    resizeMode: 'contain',
-  },
-  title1: {
-    fontSize: 16,
-    fontFamily: theme.fonts.titleFont,
-    color: theme.color.buttonText,
-    textTransform: 'uppercase',
-    lineHeight: 20.9,
-  },
   BottomButton: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: theme.color.button1,
-    height: 55,
-    // height: responsiveHeight(8),
+    height: responsiveHeight(7.5),
     borderRadius: 10,
     alignSelf: 'center',
-
-    marginTop: 25,
+    marginTop: responsiveHeight(3),
   },
   buttonTextBottom: {
     color: theme.color.buttonText,
-    fontSize: 16,
-    // fontSize: responsiveScreenFontSize(2.15),
+    fontSize: responsiveFontSize(2.1),
     fontFamily: theme.fonts.fontBold,
     textTransform: 'capitalize',
   },
@@ -152,14 +128,14 @@ export const styles = StyleSheet.create({
   },
   errorMessageFieldText: {
     color: theme.color.fieldBordeError,
-    fontSize: 10,
+    fontSize: responsiveFontSize(1.3),
     fontFamily: theme.fonts.fontNormal,
   },
 
-  Field: {marginTop: 15},
+  Field: {marginTop: responsiveHeight(2.1)},
   FieldTitle1: {
     color: theme.color.titleGreenForm,
-    fontSize: 12.5,
+    fontSize: responsiveFontSize(1.7),
     fontFamily: theme.fonts.fontBold,
     textTransform: 'capitalize',
   },
@@ -167,7 +143,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 10,
     borderWidth: 1,
-    height: 45,
+    height: responsiveHeight(6.1),
     borderRadius: 8,
   },
   FieldInputCard: {
@@ -176,11 +152,18 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
   },
   Field2: {flexDirection: 'row'},
+  checkBoxContainer: {
+    width: responsiveFontSize(2.7),
+    height: responsiveFontSize(2.7),
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+  },
   Field2Title: {
     color: '#0E2932',
-    fontSize: 13,
+    fontSize: responsiveFontSize(1.75),
     fontFamily: theme.fonts.fontNormal,
-    // textTransform: 'capitalize',
     marginLeft: 10,
   },
 
@@ -197,12 +180,15 @@ export const styles = StyleSheet.create({
     color: theme.color.titleGreen,
     fontSize: 11.5,
     fontFamily: theme.fonts.fontMedium,
-    // textDecorationLine: 'underline',
+
     letterSpacing: -0.5,
-    // textTransform: 'capitalize',
   },
 
-  Field3: {marginTop: 20, alignItems: 'center', justifyContent: 'center'},
+  Field3: {
+    marginTop: responsiveHeight(2.4),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   Field3Title1: {
     color: theme.color.titleGreen,
     fontSize: 13.5,
@@ -217,7 +203,7 @@ export const styles = StyleSheet.create({
   },
   Field31Title1: {
     color: '#1E3625',
-    fontSize: 13.5,
+    fontSize: responsiveFontSize(1.8),
     fontFamily: theme.fonts.fontNormal,
   },
 

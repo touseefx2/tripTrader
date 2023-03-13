@@ -50,6 +50,8 @@ class user {
     this.isNotification = obj;
   };
 
+  @observable resendLoder = false;
+
   @observable vuser = false;
   @observable fscreen = '';
 
@@ -1246,6 +1248,7 @@ class user {
     let body = {
       message: cmnt,
       guestRating: 0,
+      isReviewEdited: false,
     };
 
     db.hitApi(db.apis.EDIT_REPLY + idd + '/' + id, 'put', body, this.authToken)
@@ -1320,7 +1323,7 @@ class user {
         Alert.alert('', msg.toString());
       });
   };
-  @action attemptToDisputeComment = (obj, suc) => {
+  @action attemptToDisputeComment = (obj, userName, suc) => {
     console.log('delete comment  : ', 'true');
     this.setmLoader(true);
 
@@ -1328,6 +1331,9 @@ class user {
     let body = {
       status: 'dispute',
       disputeOpenDate: new Date(),
+      disputantName: userName,
+      isDisputeUpdate: true,
+      recepientId: obj.item.guestId._id,
     };
     let id = obj.item._id;
 
@@ -1561,7 +1567,7 @@ class user {
       })
       .catch(err => {
         this.setctripLoader(false);
-        ctsi();
+
         // err.response.data.message || err.response.status ||
         let msg = err;
         console.log(`Error in create trip ${db.apis.CREATE_TRIP} : `, msg);
@@ -1610,7 +1616,7 @@ class user {
         })
         .catch(err => {
           this.setctripLoader(false);
-          ctsi();
+
           // err.response.data.message || err.response.status ||
           let msg = err;
           console.log(
@@ -1892,6 +1898,10 @@ class user {
 
   @action setregLoader = obj => {
     this.regLoader = obj;
+  };
+
+  @action setResendLoader = obj => {
+    this.resendLoder = obj;
   };
 
   @action setLocation = obj => {
@@ -2423,34 +2433,24 @@ class user {
   }
 
   @action.bound
-  checkEmailExist(email, body, suc) {
-    this.setregLoader(true);
-    db.hitApi(db.apis.CHECK_IS_EMAIL_EXIST + email, 'get', {}, null)
+  reSendVerificationLink(email, user) {
+    const body = {userId: user._id, userEmail: email};
+    this.setResendLoader(true);
+    console.log(`${db.apis.RESEND_VERIFICATION_LINK} : `, body);
+    db.hitApi(db.apis.RESEND_VERIFICATION_LINK, 'post', body, null)
       ?.then(resp => {
         console.log(
-          `response CHECK_IS_EMAIL_EXIST ${
-            db.apis.CHECK_IS_EMAIL_EXIST + email
-          } : `,
+          `response reSendVerificationLink ${db.apis.RESEND_VERIFICATION_LINK} : `,
           resp.data,
         );
-        let isexist = false;
-        let rsp = resp.data;
-
-        if (rsp.message == 'No records found') {
-          isexist = false;
-        }
-        if (rsp.data) {
-          isexist = true;
-        }
-        suc(body, isexist);
-        return;
+        this.setResendLoader(false);
       })
       .catch(err => {
-        this.setregLoader(false);
+        this.setResendLoader(false);
         store.General.checkServer(err);
-        let msg = err.response.data.message || err.response.status || err;
+        const msg = err.response.data.message || err.response.status || err;
         console.log(
-          `Error in CHECK_IS_EMAIL_EXIST  ${ddb.apis.CHECK_IS_EMAIL_EXIST} : `,
+          `Error in reSendVerificationLink ${db.apis.RESEND_VERIFICATION_LINK} : `,
           msg,
         );
         Alert.alert('', msg.toString());
@@ -2458,7 +2458,7 @@ class user {
   }
 
   @action.bound
-  registerUser(body, seterror, suc, clearInterval, signout) {
+  registerUser(body, suc) {
     console.log('Register user body : ', body);
     this.setregLoader(true);
     db.hitApi(db.apis.REGISTER_USER, 'post', body, null)
@@ -2469,8 +2469,6 @@ class user {
 
         db.hitApi(db.apis.GET_All_Plan, 'get', {}, null)
           ?.then(resp => {
-            clearInterval();
-            signout();
             this.setregLoader(false);
             console.log(
               `response get all plan  ${db.apis.GET_All_Plan} : `,
@@ -2519,8 +2517,7 @@ class user {
         let msg = err.response.data.message || err.response.status || err;
         console.log(`Error in create ${db.apis.REGISTER_USER} : `, msg);
         this.setregLoader(false);
-        clearInterval();
-        signout();
+
         store.General.checkServer(err);
         Alert.alert('', msg.toString());
       });

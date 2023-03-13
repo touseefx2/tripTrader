@@ -283,6 +283,7 @@ function Card3({
           </View>
 
           <Pressable
+            disabled
             style={({pressed}) => [
               {opacity: pressed ? 0.8 : 1.0},
               styles.buttonContainer,

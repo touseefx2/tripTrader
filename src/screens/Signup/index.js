@@ -1,19 +1,8 @@
-import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
-import NetInfo from '@react-native-community/netinfo';
-import auth from '@react-native-firebase/auth';
-import {
-  CardField,
-  StripeProvider,
-  useStripe,
-} from '@stripe/stripe-react-native';
-import {observer} from 'mobx-react';
-import moment from 'moment';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   Alert,
   BackHandler,
   Image,
-  ImageBackground,
   Keyboard,
   KeyboardAvoidingView,
   Linking,
@@ -27,37 +16,37 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {
+  CardField,
+  StripeProvider,
+  useStripe,
+} from '@stripe/stripe-react-native';
+import {
+  responsiveFontSize,
+  responsiveHeight,
+} from 'react-native-responsive-dimensions';
+import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
+import NetInfo from '@react-native-community/netinfo';
 import {Image as ImageCompressor} from 'react-native-compressor';
-import CountDown from 'react-native-countdown-component';
 import DatePicker from 'react-native-date-picker';
 import Toast from 'react-native-easy-toast';
 import IntentLauncher from 'react-native-intent-launcher';
 import * as RNLocalize from 'react-native-localize';
 import {check, PERMISSIONS, request} from 'react-native-permissions';
-import RBSheet from 'react-native-raw-bottom-sheet';
-import {responsiveHeight} from 'react-native-responsive-dimensions';
+import {observer} from 'mobx-react';
+import moment from 'moment';
+import {styles} from './styles';
 import store from '../../store/index';
 import theme from '../../theme';
 import utils from '../../utils/index';
-import {styles} from './styles';
 
 export default observer(Signup);
 function Signup(props) {
-  let resendTime = 15; //second
-
   const {confirmPayment} = useStripe();
-  const termsConditionLink =
-    'http://ec2-35-175-134-9.compute-1.amazonaws.com/termsandconditionsapp';
-
-  let internet = store.General.isInternet;
-  const rbSheet = useRef(null);
+  const {isEmailPopup, setIsEmailPopup} = store.General;
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
-
   const toast = useRef(null);
-
-  let loader = store.User.regLoader;
-
-  const [isFinish, setFinish] = useState(false);
+  const loader = store.User.regLoader;
 
   const [isUserCreate, setisUserCreate] = useState(false);
 
@@ -493,224 +482,34 @@ function Signup(props) {
       return;
     }
 
-    const body = {
-      firstName: fn,
-      lastName: ln,
-      email: email,
-      birthDate: dob,
-      termsAccepted: isTerms,
-      password: pswd,
-      phone: '',
-      phoneCountryCode: RNLocalize.getCountry(),
-      image: '',
-      identityProof: '',
-      registrationCode: store.User.notificationToken,
-      subscriptionStatus: 'freemium',
-      role: 'user',
-      status: 'active',
-      notificationEnabled: true,
-    };
-
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.checkEmailExist(email, body, checkIsEmailExist);
+        const body = {
+          firstName: fn,
+          lastName: ln,
+          email: email,
+          birthDate: dob,
+          termsAccepted: isTerms,
+          password: pswd,
+          phone: '',
+          phoneCountryCode: RNLocalize.getCountry(),
+          image: '',
+          identityProof: '',
+          registrationCode: store.User.notificationToken,
+          subscriptionStatus: 'freemium',
+          role: 'user',
+          status: 'active',
+          notificationEnabled: true,
+        };
+        store.User.registerUser(body, UserCreateSuccess);
       } else {
         Alert.alert('', 'Please connect internet');
       }
     });
   };
 
-  const checkIsEmailExist = (body, isEmailExist) => {
-    console.log('isEmailExist : ', isEmailExist);
-    if (isEmailExist) {
-      store.User.setregLoader(false);
-      Alert.alert(
-        '',
-        `This email ${body.email} is already in use. Please try with another email.`,
-      );
-    } else {
-      signInAnonymously();
-    }
-  };
-
-  const [chkOnce, setchkOnce] = useState(false);
-  const [isResendLink, setisResendLink] = useState(false);
-  const [isCreateFirebaseUser, setisCreateFirebaseUser] = useState(false);
-  const [isemailVerify, setisemailVerify] = useState(false);
-  let onAuthStateChangedUnsubscribe = null;
-  let unsubscribeSetInterval = useRef(null);
-
-  const signoutCurrentUser = () => {
-    if (auth().currentUser) {
-      auth().currentUser.delete();
-      auth().signOut();
-    }
-  };
-
-  const onClickClearInterval = () => {
-    clearInterval(unsubscribeSetInterval.current);
-    unsubscribeSetInterval.current = null;
-  };
-
-  useEffect(() => {
-    if (internet && !chkOnce) {
-      onClickClearInterval();
-      signoutCurrentUser();
-      setTimeout(() => {
-        setchkOnce(true);
-      }, 1500);
-    }
-
-    return () => {
-      onClickClearInterval();
-      signoutCurrentUser();
-    };
-  }, [internet, chkOnce]);
-
-  useEffect(() => {
-    if (chkOnce) {
-      onAuthStateChangedUnsubscribe = auth().onAuthStateChanged(userIs => {
-        if (userIs) {
-          setisCreateFirebaseUser(userIs);
-        }
-      });
-
-      return () => {
-        onAuthStateChangedUnsubscribe();
-      };
-    }
-  }, [chkOnce]);
-
-  useEffect(() => {
-    if (isCreateFirebaseUser) {
-      console.log('isUsr true : ');
-      let isUsr = isCreateFirebaseUser;
-      isUsr
-        .updateEmail(email)
-        .then(() =>
-          isUsr?.sendEmailVerification().then(c => {
-            console.log('verfication link sent');
-            clearAll();
-            setisResendLink(false);
-            setFinish(false);
-            store.User.setregLoader(false);
-            openBottomSheet();
-
-            unsubscribeSetInterval.current = setInterval(function () {
-              console.log('----> interval cal');
-              auth().currentUser.reload();
-              if (auth().currentUser.emailVerified) {
-                onClickClearInterval();
-                setisemailVerify(true);
-              }
-            }, 4000);
-          }),
-        )
-        .catch(error => {
-          console.log('sendEmailVerification cathc error', error);
-
-          if (error.code == 'auth/too-many-requests') {
-            let errorMessage =
-              'We have blocked all requests from this device due to unusual activity. Try again later.';
-            Alert.alert('Too- Many Requests', errorMessage);
-          }
-
-          clearAll();
-          setisResendLink(false);
-          setFinish(false);
-          store.User.setregLoader(false);
-        });
-    }
-  }, [isCreateFirebaseUser]);
-
-  useEffect(() => {
-    if (isemailVerify) {
-      console.log('email verfied succecss');
-      setisemailVerify(false);
-      closeBottomSheet();
-
-      const body = {
-        firstName: fn,
-        lastName: ln,
-        email: email,
-        birthDate: dob,
-        termsAccepted: isTerms,
-        password: pswd,
-        phone: '',
-        phoneCountryCode: RNLocalize.getCountry(),
-        image: '',
-        identityProof: '',
-        registrationCode: store.User.notificationToken,
-        subscriptionStatus: 'freemium',
-        role: 'user',
-        status: 'active',
-        notificationEnabled: true,
-      };
-      store.User.registerUser(
-        body,
-        setErrMessage,
-        isusercreate,
-        () => onClickClearInterval(),
-        () => signoutCurrentUser(),
-      );
-    }
-  }, [isemailVerify]);
-
-  const signInAnonymously = async () => {
-    clearAll();
-    signoutCurrentUser();
-
-    auth()
-      .signInAnonymously()
-      .then(userIs => {
-        console.log('signInAnonymously true');
-      })
-      .catch(error => {
-        if (error.code === 'auth/operation-not-allowed') {
-          console.log('Enable anonymous in your firebase console.');
-        }
-        console.error('signInAnonymously catch error : ', error);
-
-        clearAll();
-        setisResendLink(false); //resend loader
-        setFinish(false); //timer
-        store.User.setregLoader(false); //create account loader
-      });
-  };
-
-  const clearAll = () => {
-    onClickClearInterval();
-    setisUserCreate(false);
-    setisemailVerify(false);
-  };
-
-  const reSendLink = () => {
-    NetInfo.fetch().then(state => {
-      if (state.isConnected) {
-        setisResendLink(true);
-        setTimeout(() => {
-          signInAnonymously();
-        }, 1500);
-      } else {
-        Alert.alert('', 'Please connect internet');
-      }
-    });
-  };
-
-  const openBottomSheet = () => {
-    rbSheet?.current?.open();
-  };
-
-  const closeBottomSheet = () => {
-    rbSheet?.current?.close();
-  };
-
-  const onCloseBottomSheet = () => {
-    setFinish(false);
-    setisResendLink(false);
-    onClickClearInterval();
-    setisUserCreate(false);
-    signoutCurrentUser();
+  const openEmialPopupSheet = () => {
+    setIsEmailPopup(true);
   };
 
   const uploadPhoto = c => {
@@ -753,91 +552,6 @@ function Signup(props) {
       }
     });
   };
-
-  // const subscribePlan = () => {
-  //   Keyboard.dismiss();
-
-  //   if (cfn == '') {
-  //     setEmptycfn(true);
-  //     return;
-  //   }
-
-  //   if (isValidCard == 'null') {
-  //     setcardErr('Please enter card number');
-  //     setisValidCard(false);
-  //     return;
-  //   }
-
-  //   if (isValidCard == true) {
-  //     if (iscTerms == false) {
-  //       setEmptycTerms(true);
-  //       return;
-  //     }
-
-  //     // const obj = {
-  //     //   plan: plan,
-  //     //   totalValue: tv,
-  //     //   isPromoApply: isPromoApply,
-  //     // card: {
-  //     //   name: cfn,
-  //     //   number: cn,
-  //     //   expiry: ce,
-  //     //   cvc: ccvc,
-  //     //   type: ct,
-  //     // },
-  //     // };
-
-  //     let tv = plan.type == 'annual' ? totalAnually : monthly;
-  //     tv = isPromoApply ? promoValue : tv;
-  //     let pda = 0;
-  //     if (isPromoApply) {
-  //       let p = (isPromoApply.discount || 0) / 100;
-
-  //       if (plan.type == 'monthly') {
-  //         pda = p * monthly;
-  //       }
-  //       if (plan.type == 'annual') {
-  //         pda = p * totalAnually;
-  //       }
-  //     }
-  //     let subscription = !isPromoApply
-  //       ? {
-  //           title: plan.type,
-  //           charges: plan.charges,
-  //           discount: plan.discount,
-  //           startDate: new Date(),
-  //           endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
-  //           amtPaid: tv,
-  //           status: 'active',
-  //         }
-  //       : {
-  //           title: plan.type,
-  //           charges: plan.charges,
-  //           discount: plan.discount,
-  //           startDate: new Date(),
-  //           endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
-  //           amtPaid: tv,
-  //           status: 'active',
-  //           promoCode: isPromoApply.code,
-  //           promoCodeDiscount: isPromoApply.discount,
-  //           promoCodeDiscountAmt: pda,
-  //         };
-
-  //     const obj = {
-  //       subscription: subscription,
-  //       subscriptionStatus: 'paid',
-  //     };
-
-  //     NetInfo.fetch().then(state => {
-  //       if (state.isConnected) {
-  //         store.User.SubPlan(obj, usr._id, token, setErrMessage, subPlanSuc);
-  //       } else {
-  //         // seterrorMessage('Please connect internet');
-  //         Alert.alert('', 'Please connect internet');
-  //       }
-  //     });
-  //   }
-  // };
 
   const subscribePlan = () => {
     Keyboard.dismiss();
@@ -1019,12 +733,12 @@ function Signup(props) {
     });
   };
 
-  const isusercreate = (t, r, p) => {
-    setToken(t);
-    setuser(r);
-    setplans(p);
+  const UserCreateSuccess = (token, data, plans) => {
+    setToken(token);
+    setuser(data);
+    setplans(plans);
     setisUserCreate(true);
-    onClickClearInterval();
+    openEmialPopupSheet();
   };
 
   function addMonths(date, months) {
@@ -1314,13 +1028,6 @@ function Signup(props) {
       }
     }
   };
-  const renderShowError = () => {
-    return (
-      <View style={styles.errorMessageContainer}>
-        <Text style={styles.errorMessageText}>{errorMessage}</Text>
-      </View>
-    );
-  };
 
   const renderShowFieldError = c => {
     let text = c == 'card' ? cardErr : '';
@@ -1376,42 +1083,6 @@ function Signup(props) {
     return (
       <View style={styles.errorMessageFieldContainer}>
         <Text style={styles.errorMessageFieldText}>{text}</Text>
-      </View>
-    );
-  };
-
-  const renderHeader = () => {
-    const renderLogo = () => {
-      return (
-        <View style={styles.section1}>
-          <Image
-            style={styles.logo}
-            source={require('../../assets/images/logo/img.png')}
-          />
-          <Text style={styles.title1}>{store.General.AppName}</Text>
-        </View>
-      );
-    };
-
-    const renderBack = () => {
-      return (
-        <TouchableOpacity
-          activeOpacity={0.7}
-          onPress={goBack}
-          style={{position: 'absolute', left: 20}}>
-          <utils.vectorIcon.Ionicons
-            name={'chevron-back-outline'}
-            color={theme.color.buttonText}
-            size={27}
-          />
-        </TouchableOpacity>
-      );
-    };
-
-    return (
-      <View style={styles.Header}>
-        {renderLogo()}
-        {renderBack()}
       </View>
     );
   };
@@ -1491,9 +1162,11 @@ function Signup(props) {
       <View style={styles.section2}>
         <Text style={styles.section2Title1}>create account</Text>
 
-        {/* {errorMessage !== '' && renderShowError()} */}
-
-        <View style={[styles.joinFieldContainer, {marginTop: 20}]}>
+        <View
+          style={[
+            styles.joinFieldContainer,
+            {marginTop: responsiveHeight(2.1)},
+          ]}>
           <View style={[styles.Field, {width: '48%'}]}>
             <Text style={styles.FieldTitle1}>first name</Text>
             <TextInput
@@ -1635,53 +1308,28 @@ function Signup(props) {
           {(invalidpswd || Emptypswd) && renderShowFieldError('pswd')}
         </View>
 
-        <View style={{marginTop: 20}}>
+        <View style={styles.Field}>
           <View style={styles.Field2}>
             <TouchableOpacity
-              style={{
-                width: 20,
-                height: 20,
-                borderRadius: 4,
-                backgroundColor: !isTerms ? 'white' : theme.color.button1,
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderWidth: 1,
-                borderColor: !EmptyTerms
-                  ? theme.color.fieldBorder
-                  : theme.color.fieldBordeError,
-              }}
+              style={[
+                styles.checkBoxContainer,
+                {
+                  backgroundColor: !isTerms ? 'white' : theme.color.button1,
+                  borderColor: !EmptyTerms
+                    ? theme.color.fieldBorder
+                    : theme.color.fieldBordeError,
+                },
+              ]}
               activeOpacity={0.5}
               onPress={changeTerms}>
               {isTerms && (
                 <utils.vectorIcon.FontAwesome5
                   name={'check'}
                   color={theme.color.buttonText}
-                  size={11}
+                  size={responsiveFontSize(1.4)}
                 />
               )}
             </TouchableOpacity>
-
-            {/* <TouchableOpacity activeOpacity={0.5} onPress={changeTerms}>
-              {!isTerms && (
-                <utils.vectorIcon.Feather
-                  name={'square'}
-                  color={
-                    EmptyTerms
-                      ? theme.color.fieldBordeError
-                      : theme.color.subTitleLight
-                  }
-                  size={20}
-                />
-              )}
-
-              {isTerms && (
-                <utils.vectorIcon.AntDesign
-                  name={'checksquare'}
-                  color={theme.color.button1}
-                  size={20}
-                />
-              )}
-            </TouchableOpacity> */}
 
             <Text style={styles.Field2Title}>I agree to the </Text>
             <TouchableOpacity activeOpacity={0.7} onPress={TermsnCndtnClick}>
@@ -1698,9 +1346,8 @@ function Signup(props) {
         </View>
 
         {renderButton()}
-
         <View style={styles.Field3}>
-          <View style={styles.Field31}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text style={styles.Field31Title1}>Already a member?</Text>
             <TouchableOpacity activeOpacity={0.7} onPress={goToSignin}>
               <Text style={styles.Field31Title2}>Sign in</Text>
@@ -1723,26 +1370,6 @@ function Signup(props) {
     const enterpc = t => {
       setpc(t);
     };
-
-    // const onChangeCard = t => {
-    //   console.log('card : ', t);
-    //   let valid = t.valid;
-    //   let cnvalid = t.status.number;
-    //   let cevalid = t.status.expiry;
-    //   let ccvcvalid = t.status.cvc;
-    //   setisValidCard(valid);
-    //   setinValidcn(cnvalid);
-    //   setinValidce(cevalid);
-    //   setinValidccvc(ccvcvalid);
-    //   let cn = t.values.number;
-    //   let ce = t.values.expiry;
-    //   let ccvc = t.values.cvc;
-    //   let ct = t.values.type;
-    //   setcn(cn);
-    //   setce(ce);
-    //   setccvc(ccvc);
-    //   setct(ct);
-    // };
 
     const onChangeCard = t => {
       console.log('card detials : ', t);
@@ -1969,32 +1596,6 @@ function Signup(props) {
       );
     };
 
-    // const renderCross = c => {
-
-    //   return (
-    //     <TouchableOpacity
-    //       onPress={() => onClickCross(c)}
-    //       activeOpacity={0.7}
-    //       style={{
-    //         width: 16,
-    //         height: 16,
-    //         borderRadius: 16 / 2,
-    //         backgroundColor: theme.color.button1,
-    //         alignItems: 'center',
-    //         justifyContent: 'center',
-    //         position: 'absolute',
-    //         right: -6,
-    //         top: -7,
-    //       }}>
-    //       <utils.vectorIcon.Entypo
-    //         name="cross"
-    //         color={theme.color.buttonText}
-    //         size={14}
-    //       />
-    //     </TouchableOpacity>
-    //   );
-    // };
-
     const renderShowError2 = c => {
       let text = c == 'Profile' ? 'Please upload photo' : '';
 
@@ -2093,7 +1694,7 @@ function Signup(props) {
                   style={styles.section2Logo}
                 />
               )}
-              {/* {errorMessage !== '' && renderShowError()} */}
+
               {!isPhotoUpload && renderShowError2('Profile')}
               <Text style={styles.section2LogoTitle}>
                 {photo == ''
@@ -2163,7 +1764,6 @@ function Signup(props) {
                 />
               )}
 
-              {/* {errorMessage !== '' && renderShowError()} */}
               {!isCnicFrontUplaod && renderShowError2('Profile')}
               <Text style={[styles.section2LogoTitle]}>
                 {cnicFrontImage == ''
@@ -2268,7 +1868,7 @@ function Signup(props) {
                 ]}>
                 Choose a plan
               </Text>
-              {/* {errorMessage !== '' && renderShowError()} */}
+
               <Text
                 style={[styles.section2LogoTitle2c, {alignSelf: 'flex-start'}]}>
                 Unlock all features with a subscription.
@@ -2424,7 +2024,7 @@ function Signup(props) {
                 ]}>
                 Payment Information
               </Text>
-              {/* {errorMessage !== '' && renderShowError()} */}
+
               <Text
                 style={[
                   styles.section2LogoTitle2c,
@@ -2815,8 +2415,6 @@ function Signup(props) {
                 />
               </View>
 
-              {/* {errorMessage !== '' && renderShowError()} */}
-
               <Text style={styles.section2LogoTitle1c}>
                 Your account is ready.
               </Text>
@@ -2881,158 +2479,6 @@ function Signup(props) {
     );
   };
 
-  const renderBottomSheet = () => {
-    const renderTimer = () => {
-      return (
-        <TouchableOpacity
-          activeOpacity={0.7}
-          disabled={!isFinish || isResendLink ? true : false}
-          onPress={reSendLink}
-          style={{position: 'absolute', alignSelf: 'center', bottom: 30}}>
-          {!isFinish ? (
-            <>
-              <CountDown
-                size={14}
-                until={resendTime}
-                onFinish={() => setFinish(true)}
-                digitStyle={{backgroundColor: 'transparent'}}
-                digitTxtStyle={{
-                  color: theme.color.titleGreen,
-                  fontSize: 15,
-                  fontFamily: theme.fonts.fontBold,
-                }}
-                timeToShow={['S']}
-                timeLabels={{s: null}}
-                showSeparator
-              />
-            </>
-          ) : (
-            <Text
-              style={{
-                color: theme.color.titleGreen,
-                fontSize: 13,
-                fontFamily: theme.fonts.fontBold,
-                textDecorationLine: 'underline',
-              }}>
-              Resend Link
-            </Text>
-          )}
-        </TouchableOpacity>
-      );
-    };
-
-    return (
-      <>
-        <RBSheet
-          ref={rbSheet}
-          height={responsiveHeight(60)}
-          closeOnPressBack={true}
-          openDuration={250}
-          onClose={onCloseBottomSheet}
-          closeOnDragDown={true}
-          closeOnPressMask={false}
-          KeyboardAvoidingView={true}
-          customStyles={{
-            wrapper: {
-              flex: 1,
-              // backgroundColor: 'transparent',
-            },
-            container: {
-              backgroundColor: theme.color.button1,
-              borderTopLeftRadius: 30,
-              borderTopRightRadius: 30,
-              shadowColor: '#000',
-              shadowOffset: {
-                width: 0,
-                height: 2,
-              },
-              shadowOpacity: 0.25,
-              shadowRadius: 3.84,
-
-              elevation: 5,
-            },
-            draggableIcon: {
-              backgroundColor: theme.color.backgroundConatiner,
-              opacity: 0.5,
-            },
-          }}>
-          <View
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-
-              padding: 25,
-            }}>
-            {!isResendLink && (
-              <utils.vectorIcon.MaterialCommunityIcons
-                name="check-decagram"
-                color={theme.color.buttonText}
-                size={60}
-              />
-            )}
-            {isResendLink && (
-              <Image
-                style={{width: 62, height: 62}}
-                source={require('../../assets/gif/spinner.gif')}
-              />
-            )}
-
-            <Text
-              style={{
-                textAlign: 'center',
-                textTransform: 'capitalize',
-                fontSize: 19,
-                color: theme.color.buttonText,
-                fontFamily: theme.fonts.fontBold,
-                marginTop: 10,
-              }}>
-              Verification link sent
-            </Text>
-          </View>
-
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: theme.color.background,
-              padding: 20,
-            }}>
-            <Text
-              style={{
-                textAlign: 'center',
-                fontSize: 14.5,
-                color: theme.color.title,
-                fontFamily: theme.fonts.fontNormal,
-                marginTop: 20,
-              }}>
-              We have sent a verification link to{' '}
-              <Text
-                style={{
-                  textAlign: 'center',
-                  fontSize: 14.5,
-                  color: theme.color.title,
-                  fontFamily: theme.fonts.fontBold,
-                }}>
-                {email}.
-              </Text>
-            </Text>
-            <Text
-              style={{
-                textAlign: 'center',
-                fontSize: 14.5,
-                color: theme.color.title,
-                fontFamily: theme.fonts.fontNormal,
-              }}>
-              Please click on the link to verify your email address and activate
-              your account. Thankyou.
-            </Text>
-
-            {!isResendLink && renderTimer()}
-          </View>
-        </RBSheet>
-      </>
-    );
-  };
-
   const openWebView = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
@@ -3046,26 +2492,27 @@ function Signup(props) {
   return (
     <StripeProvider publishableKey={store.General.Stripe_Publish_Key}>
       <View style={styles.container}>
-        <ImageBackground
+        <Image
           source={require('../../assets/images/background/img.png')}
-          style={styles.container2}>
-          <SafeAreaView style={styles.container2}>
-            <utils.AuthHeader
-              props={props}
-              screen="signup"
-              goBack={() => goBack()}
-            />
-            <KeyboardAvoidingView style={{flex: 1}} enabled>
-              <ScrollView
-                style={{paddingHorizontal: 15}}
-                showsVerticalScrollIndicator={false}>
-                {!isUserCreate && renderSection2()}
+          style={styles.container2}
+        />
 
-                {isUserCreate && renderSection2User()}
-              </ScrollView>
+        <SafeAreaView style={styles.container3}>
+          <utils.AuthHeader
+            props={props}
+            screen="signup"
+            goBack={() => goBack()}
+          />
+
+          <ScrollView
+            style={{paddingHorizontal: 15, marginTop: responsiveHeight(3)}}
+            showsVerticalScrollIndicator={false}>
+            <KeyboardAvoidingView style={{flex: 1}} enabled>
+              {!isUserCreate && renderSection2()}
+              {isUserCreate && renderSection2User()}
             </KeyboardAvoidingView>
-          </SafeAreaView>
-        </ImageBackground>
+          </ScrollView>
+        </SafeAreaView>
 
         {pvm && (
           <utils.FullimageModal
@@ -3080,10 +2527,17 @@ function Signup(props) {
 
         {renderStatusBar()}
         {renderDateShowModal()}
-        {renderBottomSheet()}
+        {isEmailPopup && (
+          <utils.EmailPopupSheet
+            isModal={isEmailPopup}
+            setIsModal={setIsEmailPopup}
+            email={email}
+            user={user}
+          />
+        )}
         {isShowTermsAndConditions && (
           <utils.WebViewModal
-            link={termsConditionLink}
+            link={store.General.Terms_and_Conditions_Link}
             isVisible={isShowTermsAndConditions}
             setisVisible={setIsShowTermsAndConditions}
           />

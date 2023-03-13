@@ -44,9 +44,9 @@ function Reviews(props) {
 
   let headerTitle = 'Reviews';
   let internet = store.General.isInternet;
-  let u = store.Userv.user;
+  const u = store.Userv.user;
   let userName = '';
-  const [user, setuser] = useState(u);
+  const user = u;
   if (user) {
     userName = user.firstName + ' ' + user.lastName;
   }
@@ -219,6 +219,12 @@ function Reviews(props) {
   const postReview = () => {
     Keyboard.dismiss();
 
+    let userName = '';
+    const user2 = store.User.user;
+    if (user2) {
+      userName = user2.firstName + ' ' + user2.lastName;
+    }
+
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         let body = {
@@ -236,6 +242,7 @@ function Reviews(props) {
               message: message,
             },
           ],
+          guestName: userName,
         };
         store.Userv.attemptToPostReview(
           body,
@@ -259,6 +266,7 @@ function Reviews(props) {
       if (state.isConnected) {
         isrObj.message = message;
         isrObj.rate = rate;
+
         store.Userv.attemptToEditReview(
           isrObj,
           data,
@@ -502,15 +510,15 @@ function Reviews(props) {
         const renderReplyButton = () => {
           return (
             <Pressable
-              onPress={() =>
+              onPress={() => {
                 openReviewModal({
                   _id: item._id,
                   i: index,
                   rate: rate,
                   message: userComment,
                   mid: userCommentid,
-                })
-              }
+                });
+              }}
               style={({pressed}) => [
                 {opacity: pressed ? 0.7 : 1.0},
                 styles.smallButtonContainer,
@@ -520,16 +528,17 @@ function Reviews(props) {
           );
         };
 
-        const renderDisputeButton = () => {
+        const renderDeleteButton = () => {
           return (
             <Pressable
-              onPress={() =>
-                openDeleteModal({
-                  _id: item._id,
-                  i: index,
-                  mid: userCommentid,
-                })
-              }
+              onPress={() => {
+                console.log('item : ', item);
+                // openDeleteModal({
+                //   _id: item._id,
+                //   i: index,
+                //   mid: userCommentid,
+                // })
+              }}
               style={({pressed}) => [
                 {opacity: pressed ? 0.7 : 1.0},
                 styles.smallButtonContainer,
@@ -542,12 +551,33 @@ function Reviews(props) {
           );
         };
 
+        const renderShowDsipute = () => {
+          return (
+            <View style={styles.boxSection3}>
+              <utils.vectorIcon.AntDesign
+                name="warning"
+                color={'#B93B3B'}
+                size={14}
+              />
+              <Text style={styles.disputeTitle}>
+                This review is in dispute {formatdisputeDate(disputeDate)}
+              </Text>
+            </View>
+          );
+        };
+
         return (
-          <View style={styles.boxSection3}>
-            {renderReplyButton()}
-            <View style={{width: 12}} />
-            {renderDisputeButton()}
-          </View>
+          <>
+            {!dispute && (
+              <View style={styles.boxSection3}>
+                {renderReplyButton()}
+                <View style={{width: 12}} />
+                {renderDeleteButton()}
+              </View>
+            )}
+
+            {dispute && renderShowDsipute()}
+          </>
         );
       };
 

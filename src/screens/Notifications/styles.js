@@ -98,6 +98,8 @@ export const styles = StyleSheet.create({
     fontSize: 13.5,
     fontFamily: theme.fonts.fontNormal,
     marginTop: 3,
+    textDecorationLine: 'none',
+    textDecorationColor: 'transparent',
   },
   notificationClickSubTitle: {
     color: theme.color.button1,

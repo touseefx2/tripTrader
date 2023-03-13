@@ -13,6 +13,10 @@ class general {
 
   @observable Stripe_Publish_Key =
     'pk_test_51M9HIuBmhbfqULZ4IstWDtc73GFl6mVRnA4jUcOR9BVRkndz1Ou2FSlOeP4WjGgYqlH4LflMtgUY8foGkY58lHAq00OGfQUjlR';
+  @observable Terms_and_Conditions_Link =
+    'http://ec2-35-175-134-9.compute-1.amazonaws.com/termsandconditionsapp';
+  @observable Privacy_and_Policy_Link =
+    'http://ec2-35-175-134-9.compute-1.amazonaws.com/privacypolicyapp';
 
   @observable AppName = 'Trip Trader';
   @observable isServerError = false;
@@ -23,6 +27,8 @@ class general {
   @observable appState = AppState.currentState;
   @observable selectedFilter = [];
   @observable isUpdateNeeded = false;
+  @observable isEmailPopup = false;
+
   @persist('object') @observable isGLocation = false;
   @persist('object') @observable apiLevel = '';
   @persist('object') @observable appBuildNumber = '';
@@ -42,6 +48,10 @@ class general {
 
   @action setphotoSelInd = obj => {
     this.photoSelInd = obj;
+  };
+
+  @action setIsEmailPopup = obj => {
+    this.isEmailPopup = obj;
   };
 
   @action setgoto = obj => {

@@ -188,6 +188,7 @@ class offers {
       {
         received: false,
         sent: true,
+        isCanceled: true,
       },
       token,
     )
@@ -236,6 +237,7 @@ class offers {
       {
         received: true,
         sent: false,
+        isDeclined: true,
       },
       token,
     )

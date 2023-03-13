@@ -15,7 +15,16 @@ export const styles = StyleSheet.create({
   },
   container2: {
     flex: 1,
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: theme.window.Width,
+    height: theme.window.Height,
   },
+  container3: {
+    flex: 1,
+  },
+
   Header: {
     marginTop: aph,
     width: '100%',
@@ -27,10 +36,9 @@ export const styles = StyleSheet.create({
   section2: {
     backgroundColor: theme.color.background,
     borderRadius: 15,
-    marginBottom: 15,
+    marginBottom: responsiveHeight(1.9),
     paddingHorizontal: 15,
-    paddingVertical: 20,
-    marginTop: 25,
+    paddingVertical: responsiveHeight(1.9),
   },
   section2Title1: {
     color: theme.color.title,
