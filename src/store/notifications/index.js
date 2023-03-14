@@ -119,19 +119,11 @@ class notifications {
         return;
       })
       .catch(err => {
-        let msg = err.response.data.message || err.response.status || err;
+        const msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in Read Notification ${db.apis.READ_NOTIFICATIONS + route} : `,
           msg,
         );
-        if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
-          return;
-        }
-
-        // seterror(msg.toString())
-        Alert.alert('', msg.toString());
       });
   };
 

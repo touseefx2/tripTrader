@@ -88,7 +88,9 @@ function Home(props) {
 
   useEffect(() => {
     if (user && user !== 'guest' && getDataOnce) {
-      setIsEmailPopup(user?.isEmailVerified == false ? true : false);
+      setTimeout(() => {
+        setIsEmailPopup(user?.isEmailVerified == false ? true : false);
+      }, 3000);
     }
   }, [user, getDataOnce]);
 
@@ -187,7 +189,8 @@ function Home(props) {
 
   const onOpenNotification = notify => {
     const topic = notify?.tag || '';
-    const actionArr = notify?.actions || [];
+    const actionArr = JSON.parse(notify?.actions) || [];
+
     if (actionArr.length > 0) {
       onClickNotificationAction(actionArr[0], notify);
       return;
@@ -218,11 +221,9 @@ function Home(props) {
   };
 
   const onClickNotificationAction = (action, notify) => {
-    const title = notify?.title || '';
-    const topic = notify?.tag || '';
     const senderId = notify.userInfo;
-    console.log('onClickNotificationAction:', action);
-    console.log('topic :', topic);
+    console.log('onClickNotificationAction:', notify);
+    console.log('action :', action);
 
     if (action == 'Dismiss' || action == 'No Thanks') {
       PushNotification.cancelAllLocalNotifications();
@@ -783,7 +784,7 @@ function Home(props) {
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <FlashList
-              decelerationRate={0.7}
+              decelerationRate={0.6}
               estimatedItemSize={530}
               refreshControl={
                 <RefreshControl refreshing={HomeLoader} onRefresh={onRefresh} />

@@ -738,7 +738,7 @@ function Signup(props) {
     setuser(data);
     setplans(plans);
     setisUserCreate(true);
-    openEmialPopupSheet();
+    // openEmialPopupSheet();
   };
 
   function addMonths(date, months) {

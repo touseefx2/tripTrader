@@ -274,9 +274,11 @@ function NewTrips(props) {
   const [modalChk, setmodalChk] = useState(false);
   const [isModal, setisModal] = useState(false);
   const closeModalg = () => {
-    setmodalChk(false);
-    setisModal(false);
-    setmodalHeight(0);
+    if (!loader) {
+      setmodalChk(false);
+      setisModal(false);
+      setmodalHeight(0);
+    }
   };
 
   useEffect(() => {
@@ -3649,6 +3651,7 @@ function NewTrips(props) {
       status = dt.status;
       ch = status == 'suspended' ? true : false;
     }
+    console.log('dttt status  : ', status);
 
     return (
       <View
@@ -3751,7 +3754,9 @@ function NewTrips(props) {
           <Pressable
             disabled={loader}
             style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
-            onPress={closeReviewModal}>
+            onPress={() => {
+              closeReviewModal('');
+            }}>
             <utils.vectorIcon.Ionicons
               name="ios-close-outline"
               color={theme.color.title}
@@ -3825,6 +3830,11 @@ function NewTrips(props) {
           activeOpacity={0.8}
           onPress={() => {
             props.navigation.navigate('Plan');
+            setTimeout(() => {
+              closeReviewModal('');
+            }, 1000);
+            // setisReviewTrip(false);
+            // setisTripCreate(false);
           }}
           style={{
             marginTop: responsiveHeight(2),
@@ -3993,7 +4003,9 @@ function NewTrips(props) {
         return (
           <Pressable
             disabled={loader}
-            onPress={closeReviewModal}
+            onPress={() => {
+              closeReviewModal('');
+            }}
             style={({pressed}) => [
               {opacity: pressed ? 0.8 : 1.0},
               styles.ButtonContainer,
@@ -4159,7 +4171,9 @@ function NewTrips(props) {
         <MModal
           visible={isReviewTrip}
           transparent
-          onRequestClose={closeReviewModal}>
+          onRequestClose={() => {
+            closeReviewModal('');
+          }}>
           <View style={styles.modalContainer}>
             <View
               onLayout={event => {
@@ -4207,8 +4221,10 @@ function NewTrips(props) {
   };
 
   const renderModal = () => {
-    let c = modalHeight >= maxModalHeight ? true : false;
-    let style = c ? [styles.modal11, {height: maxModalHeight}] : styles.modal22;
+    const c = modalHeight >= maxModalHeight ? true : false;
+    const style = c
+      ? [styles.modal11, {height: maxModalHeight}]
+      : styles.modal22;
 
     if (modalChk == 'suspend') {
       const renderHeader = () => {
@@ -4321,7 +4337,7 @@ function NewTrips(props) {
 
       const renderBottom = () => {
         const renderButton1 = () => {
-          let t = 'Yes, suspend it now';
+          const t = 'Yes, suspend it now';
           return (
             <>
               <TouchableOpacity
@@ -4355,11 +4371,12 @@ function NewTrips(props) {
         };
 
         const renderButton2 = () => {
-          let t = 'No, keep it active';
+          const t = 'No, keep it active';
 
           return (
             <>
               <TouchableOpacity
+                disabled={loader}
                 onPress={closeModalg}
                 activeOpacity={0.7}
                 style={{
@@ -4565,7 +4582,7 @@ function NewTrips(props) {
 
       const renderBottom = () => {
         const renderButton1 = () => {
-          let t = 'Yes, delete it now';
+          const t = 'Yes, delete it now';
           return (
             <>
               <TouchableOpacity
@@ -4599,11 +4616,12 @@ function NewTrips(props) {
         };
 
         const renderButton2 = () => {
-          let t = 'No, keep it';
+          const t = 'No, keep it';
 
           return (
             <>
               <TouchableOpacity
+                disabled={loader}
                 onPress={closeModalg}
                 activeOpacity={0.7}
                 style={{
@@ -4809,7 +4827,7 @@ function NewTrips(props) {
 
       const renderBottom = () => {
         const renderButton1 = () => {
-          let t = 'Yes, activate it now';
+          const t = 'Yes, activate it now';
           return (
             <>
               <TouchableOpacity
@@ -4843,11 +4861,12 @@ function NewTrips(props) {
         };
 
         const renderButton2 = () => {
-          let t = 'No, keep it suspended';
+          const t = 'No, keep it suspended';
 
           return (
             <>
               <TouchableOpacity
+                disabled={loader}
                 onPress={closeModalg}
                 activeOpacity={0.7}
                 style={{

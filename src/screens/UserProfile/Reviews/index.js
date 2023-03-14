@@ -5,14 +5,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
   Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Dimensions,
   Modal,
   FlatList,
   ActivityIndicator,
@@ -215,6 +208,8 @@ function Reviews(props) {
       scrollRef?.current?.scrollToOffset({animated: true, offset: 0});
     }
   };
+
+  console.log('dt : ', data);
 
   const postReview = () => {
     Keyboard.dismiss();
@@ -532,12 +527,11 @@ function Reviews(props) {
           return (
             <Pressable
               onPress={() => {
-                console.log('item : ', item);
-                // openDeleteModal({
-                //   _id: item._id,
-                //   i: index,
-                //   mid: userCommentid,
-                // })
+                openDeleteModal({
+                  _id: item._id,
+                  i: index,
+                  mid: userCommentid,
+                });
               }}
               style={({pressed}) => [
                 {opacity: pressed ? 0.7 : 1.0},

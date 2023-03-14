@@ -234,11 +234,12 @@ class offers {
     db.hitApi(
       db.apis.CANCEL_OFFER + tid,
       'put',
-      {
-        received: true,
-        sent: false,
-        isDeclined: true,
-      },
+      {isCanceled: false, isDeclined: true, received: true},
+      // {
+      //   received: true,
+      //   sent: false,
+      //   isDeclined: true,
+      // },
       token,
     )
       ?.then(resp => {

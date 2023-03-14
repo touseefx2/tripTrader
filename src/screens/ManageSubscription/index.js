@@ -1,33 +1,19 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   View,
   Text,
   SafeAreaView,
   TouchableOpacity,
-  Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
   Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Dimensions,
   KeyboardAvoidingView,
-  TextInput,
-  Keyboard,
 } from 'react-native';
-// import Geolocation from 'react-native-geolocation-service';
-// import Geocoder from 'react-native-geocoding';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
 import utils from '../../utils/index';
 import theme from '../../theme';
-
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
-
 import {ScrollView} from 'react-native-gesture-handler';
 import moment from 'moment/moment';
 import {ActivityIndicator} from 'react-native-paper';
@@ -42,10 +28,10 @@ function toFixed(num, fix) {
 function ManageSubscription(props) {
   const toast = useRef(null);
   const toastduration = 700;
-  let headerTitle = 'Manage Subscription';
+  const headerTitle = 'Manage Subscription';
 
-  let internet = store.General.isInternet;
-  let user = store.User.user;
+  const {isInternet} = store.General;
+  const {user} = store.User;
 
   let sub = '';
   let isSub = '';
@@ -296,7 +282,6 @@ function ManageSubscription(props) {
                   styles.FieldpTitle,
                   {
                     fontFamily: theme.fonts.fontBold,
-
                     textTransform: 'capitalize',
                   },
                 ]}>
@@ -315,7 +300,7 @@ function ManageSubscription(props) {
     <View style={styles.container}>
       {/* {tagLine != '' && <utils.TagLine tagLine={tagLine} />} */}
       <utils.StackHeader bell={true} props={props} headerTitle={headerTitle} />
-      {!internet && <utils.InternetMessage />}
+      {!isInternet && <utils.InternetMessage />}
       <SafeAreaView style={styles.container2}>
         <View style={styles.container3}>
           <KeyboardAvoidingView style={{flex: 1}} enabled>

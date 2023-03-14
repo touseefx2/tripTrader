@@ -8,7 +8,6 @@ import {Provider} from 'mobx-react';
 import store from './src/store/index';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification, {Importance} from 'react-native-push-notification';
-
 configure({useProxies: 'never'});
 LogBox.ignoreAllLogs(true);
 
@@ -43,7 +42,12 @@ const callData = topic => {
       () => {},
     );
 
-    if (topic == 'id-notVerified' || topic == 'id-verified') {
+    if (
+      topic == 'id-notVerified' ||
+      topic == 'id-verified' ||
+      topic == 'emailVerified'
+    ) {
+      if (topic == 'emailVerified') store.General.setIsEmailPopup(false);
       store.User.attemptToGetUser();
     }
 
@@ -115,13 +119,8 @@ messaging().onMessage(async remoteMessage => {
   console.log('topic : ', topic);
   console.log('bigIcon : ', bigIcon);
   console.log('rightIcon : ', rightIcon);
-  const buttonsList = checkIsButton(topic, data);
-  showNotifcaton(message, title, topic, bigIcon, rightIcon, buttonsList, data);
-  if (topic == 'emailVerified') {
-    store.General.setIsEmailPopup(false);
-    return;
-  }
   callData(topic);
+  showNotifcaton(message, title, topic, bigIcon, rightIcon, data);
 
   // if (store.Notifications.isShowNotifcation) {
   //   store.Notifications.clearShowNotifications();
@@ -152,25 +151,14 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log('topic : ', topic);
   console.log('bigIcon : ', bigIcon);
   console.log('rightIcon : ', rightIcon);
-  const buttonsList = checkIsButton(topic, data);
-  showNotifcaton(message, title, topic, bigIcon, rightIcon, buttonsList, data);
-  if (topic == 'emailVerified') {
-    store.General.setIsEmailPopup(false);
-    return;
-  }
   callData(topic);
+  showNotifcaton(message, title, topic, bigIcon, rightIcon, data);
+
   // const roomId = data.chatRoomId || '';
 });
 
-const showNotifcaton = (
-  message,
-  title,
-  topic,
-  bigIcon,
-  rightIcon,
-  buttonsList,
-  data,
-) => {
+const showNotifcaton = (message, title, topic, bigIcon, rightIcon, data) => {
+  const buttonsList = checkIsButton(topic, data);
   PushNotification.localNotification({
     /* Android Only Properties */
     channelId: 'TripTradersX3', // (required) channelId, if the channel doesn't exist, notification will not trigger.

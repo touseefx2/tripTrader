@@ -462,7 +462,7 @@ class userv {
         } else {
           setor(true);
           let d = resp.data.data[0];
-          let dt = data;
+          let dt = data.slice();
           dt.unshift(d);
           setdt(dt);
         }

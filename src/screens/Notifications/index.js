@@ -104,20 +104,13 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
   const windowSize = 21;
   const limit = 16;
   const {isInternet} = store.General;
-  const {
-    user,
-    attemptToGetFollowers,
-    attemptToGetUser,
-    attemptToGetReviews,
-    attemptToGetInboxes,
-  } = store.User;
+  const {user} = store.User;
   const {
     notifications,
     Loader,
     notificationsTotal,
     attemptToReadNotifications,
   } = store.Notifications;
-  const {attemptToGetConfirmOffers, attemptToGetReceiveOffers} = store.Offers;
 
   const [loadFirst, setloadFirst] = useState(false);
   const [search, setsearch] = useState('');
@@ -244,6 +237,8 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
     const notificationId = item.messageId;
     const senderUser = item.senderId || null;
 
+    console.log('senderUser : ', senderUser);
+
     if (action == '') {
       console.log('title : ', title);
       if (
@@ -270,12 +265,6 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
         action == 'Review the details'
       ) {
         props.navigation.navigate('ConfirmedTrips');
-        // if (isInternet) {
-        //   attemptToGetConfirmOffers(
-        //     () => {},
-        //     () => {},
-        //   );
-        // }
       }
 
       if (
@@ -284,20 +273,10 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
         action == 'Check it out'
       ) {
         props.navigation.navigate('EditProfile');
-        // if (isInternet) {
-        //   attemptToGetUser();
-        // }
       }
 
       if (action == 'Read it now') {
         props.navigation.navigate('MyProfile');
-        // if (isInternet) {
-        //   attemptToGetReviews(
-        //     store.User.user._id,
-        //     () => {},
-        //     () => {},
-        //   );
-        // }
       }
 
       if (action == 'See trip details') {
@@ -305,12 +284,6 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
           goToUserProfile(senderUser);
         } else if (title.includes('New offer')) {
           props.navigation.navigate('TradeOffers'); //recieve ofer tab
-          // if (isInternet) {
-          //   attemptToGetReceiveOffers(
-          //     () => {},
-          //     () => {},
-          //   );
-          // }
         }
       }
 
@@ -324,9 +297,6 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
 
       if (action == 'Read full message') {
         props.navigation.navigate('Inbox');
-        // if (isInternet) {
-        //   attemptToGetInboxes(store.User.user._id, () => {});
-        // }
       }
 
       if (action == 'make an offer') {
@@ -566,7 +536,7 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
 
     return (
       <Pressable
-        disabled={isDisabel}
+        // disabled={isDisabel}
         onPress={() => {
           console.log('item : ', item);
           onclickNotification(

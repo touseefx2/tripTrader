@@ -1,13 +1,5 @@
 import React, {useEffect} from 'react';
-import {
-  View,
-  Text,
-  SafeAreaView,
-  Platform,
-  StatusBar,
-  ImageBackground,
-  Image,
-} from 'react-native';
+import {View, Platform, StatusBar, Image} from 'react-native';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
@@ -17,9 +9,9 @@ import {create} from 'mobx-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const getToken = async () => {
-  let tok = await messaging().getToken();
-  console.log('token ios :::: ', tok);
-  store.User.addnotificationToken(tok);
+  const token = await messaging().getToken();
+  console.log('token ios :::: ', token);
+  store.User.addnotificationToken(token);
 };
 Platform.OS === 'android'
   ? PushNotification.configure({
@@ -32,7 +24,7 @@ Platform.OS === 'android'
 
 export default observer(Splash);
 
-function Splash(props) {
+function Splash() {
   const {setLoading} = store.General;
 
   useEffect(() => {
