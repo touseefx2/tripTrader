@@ -5,6 +5,7 @@ import {observer} from 'mobx-react';
 import store from '../../store/index';
 import theme from '../../theme';
 import Notifications from '../../screens/Notifications';
+import NotificationsGuest from '../../screens/NotificationsGuest';
 
 export default observer(DrawerHeader);
 function DrawerHeader(props) {
@@ -19,24 +20,17 @@ function DrawerHeader(props) {
     const onClick = () => {
       prop.navigation.openDrawer();
     };
-    let src = require('../../assets/images/drawers/img.png');
+    const src = require('../../assets/images/drawers/img.png');
     return (
       <TouchableOpacity activeOpacity={0.5} onPress={onClick}>
-        <Image
-          source={src}
-          style={{
-            width: 24,
-            height: 24,
-            resizeMode: 'contain',
-          }}
-        />
+        <Image source={src} style={styles.drawerIcon} />
       </TouchableOpacity>
     );
   };
 
   const render2 = () => {
     return (
-      <View style={{width: '75%'}}>
+      <View style={{width: '74%'}}>
         <Text numberOfLines={1} ellipsizeMode="tail" style={styles.headerTitle}>
           {headerTitle}
         </Text>
@@ -46,55 +40,33 @@ function DrawerHeader(props) {
 
   const render3 = () => {
     const onClick = () => {
-      // prop.navigation.navigate('Notifications', {screen: headerTitle});
-      // prop.navigation.navigate('NotificationsGuest', {screen: headerTitle});
       if (store.User.user != 'guest') setIsShowNotifiction(true);
       else setIsShowGuestNotifiction(true);
     };
-    let src = require('../../assets/images/bell/img.png');
+    const src = require('../../assets/images/bell/img.png');
     return (
       <TouchableOpacity activeOpacity={0.8} onPress={onClick}>
-        <Image
-          source={src}
-          style={{
-            width: 26,
-            height: 26,
-            resizeMode: 'contain',
-          }}
-        />
-        {countRead > 0 && (
-          <View
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: 8 / 2,
-              position: 'absolute',
-              right: 3,
-              top: 3,
-              backgroundColor: theme.color.ntfctnClr,
-            }}
-          />
-        )}
+        <Image source={src} style={styles.bellIcon} />
+        {countRead > 0 && <View style={styles.dot} />}
       </TouchableOpacity>
     );
   };
 
   return (
     <View style={styles.headerConatainer}>
-      {isShowNotifiction && (
+      {isShowNotifiction ? (
         <Notifications
           props={prop}
           callingScreen={headerTitle}
-          isShowModal={
-            store.User.user != 'guest'
-              ? isShowNotifiction
-              : isShowGuestNotifiction
-          }
-          setIsShowModal={
-            store.User.user != 'guest'
-              ? setIsShowNotifiction
-              : setIsShowGuestNotifiction
-          }
+          isShowModal={isShowNotifiction}
+          setIsShowModal={setIsShowNotifiction}
+        />
+      ) : (
+        <NotificationsGuest
+          props={prop}
+          callingScreen={headerTitle}
+          isShowModal={isShowGuestNotifiction}
+          setIsShowModal={setIsShowGuestNotifiction}
         />
       )}
       {render1()}

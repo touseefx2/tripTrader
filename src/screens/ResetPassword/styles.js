@@ -1,9 +1,6 @@
 import {Platform, StyleSheet} from 'react-native';
 import theme from '../../theme/index';
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from 'react-native-responsive-dimensions';
+import {responsiveHeight} from 'react-native-responsive-dimensions';
 
 let aph = theme.window.APPBAR_HEIGHT + (Platform.OS == 'ios' ? 12 : 0);
 

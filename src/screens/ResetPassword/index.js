@@ -1,42 +1,28 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   View,
   Text,
   SafeAreaView,
   TouchableOpacity,
   Image,
-  ImageBackground,
-  Linking,
   ScrollView,
   TextInput,
-  PermissionsAndroid,
-  Dimensions,
   Alert,
   Keyboard,
-  Modal,
   Platform,
-  StatusBar,
   KeyboardAvoidingView,
 } from 'react-native';
 import {styles} from './styles';
-import {inject, observer} from 'mobx-react';
+import {observer} from 'mobx-react';
 import store from '../../store/index';
 import utils from '../../utils/index';
 import theme from '../../theme';
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from 'react-native-responsive-dimensions';
+import {responsiveHeight} from 'react-native-responsive-dimensions';
 import Toast from 'react-native-easy-toast';
 import NetInfo from '@react-native-community/netinfo';
-import IntlPhoneInput from 'react-native-intl-phone-input';
-import auth from '@react-native-firebase/auth';
 
 export default observer(ResetPassword);
 function ResetPassword(props) {
-  const mobileReg = /^[0][3]\d{9}$/;
-  const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
-  const cnicReg = /\d{5}\d{8}\d/;
   let screen = props.route.params.screen || '';
 
   let chk = props.route.params.chk || ''; //isemail or isphone

@@ -1,13 +1,9 @@
 import {StyleSheet} from 'react-native';
 import theme from '../../theme/index';
-import {
-  responsiveFontSize,
-  responsiveHeight,
-  responsiveWidth,
-} from 'react-native-responsive-dimensions';
+import {responsiveHeight} from 'react-native-responsive-dimensions';
 
-let iconContainerColor = theme.color.button2;
-let textColor = '#30563A';
+const iconContainerColor = theme.color.button2;
+const textColor = '#30563A';
 
 export const styles = StyleSheet.create({
   container: {

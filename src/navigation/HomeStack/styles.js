@@ -1,10 +1,11 @@
 import React from 'react';
 import {Image} from 'react-native';
+import {responsiveFontSize} from 'react-native-responsive-dimensions';
 
 const styles = {
   icon: {
-    width: 21,
-    height: 21,
+    width: responsiveFontSize(3),
+    height: responsiveFontSize(3),
     resizeMode: 'contain',
   },
 };

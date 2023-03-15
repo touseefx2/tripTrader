@@ -15,7 +15,10 @@ import {
 import theme from '../../theme/index';
 import {observer} from 'mobx-react';
 import utils from '../../utils/index';
-import {responsiveFontSize} from 'react-native-responsive-dimensions';
+import {
+  responsiveFontSize,
+  responsiveHeight,
+} from 'react-native-responsive-dimensions';
 import {ScrollView} from 'react-native-gesture-handler';
 import store from '../../store';
 
@@ -43,7 +46,7 @@ function CustomDrawerContent(props) {
           style={styles.logo}
           source={require('../../assets/images/logo/img.png')}
         />
-        <View style={{width: '70%', marginLeft: 10}}>
+        <View style={{width: '69%'}}>
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"
@@ -65,11 +68,11 @@ function CustomDrawerContent(props) {
 
   const renderBottom = () => {
     const renderProfile = () => {
-      let title1 =
+      const title1 =
         user == 'guest' ? 'guest user' : user.firstName + ' ' + user.lastName;
-      let title2 = user == 'guest' ? 'limited access' : 'member';
+      const title2 = user == 'guest' ? 'limited access' : 'member';
       let src = '';
-      let gsrc = require('../../assets/images/drawer/guest/img.png');
+      const gsrc = require('../../assets/images/drawer/guest/img.png');
       if (user == 'guest') {
         src = gsrc;
       }
@@ -126,21 +129,12 @@ function CustomDrawerContent(props) {
         {user && user !== 'guest' ? (
           <TouchableOpacity activeOpacity={0.7} onPress={goToLogout}>
             <Image
-              style={[styles.icon, {width: 24, height: 24}]}
+              style={styles.logoutIcon}
               source={require('../../assets/images/drawer/logout/img.png')}
             />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity
-            disabled
-            style={{width: 24}}
-            activeOpacity={0.7}
-            onPress={goToLogout}>
-            {/* <Image
-            style={[styles.icon, {width: 24, height: 24}]}
-            source={require('../../assets/images/drawer/logout/img.png')}
-          /> */}
-          </TouchableOpacity>
+          <View style={styles.logoutIcon} />
         )}
       </View>
     );
@@ -164,8 +158,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.color.backgroundGreen,
-    paddingTop: Platform.OS == 'ios' ? theme.window.STATUSBAR_HEIGHT + 12 : 25,
-    paddingBottom: 25,
+    paddingTop:
+      Platform.OS == 'ios'
+        ? theme.window.STATUSBAR_HEIGHT + responsiveHeight(1.6)
+        : responsiveHeight(3.3),
+    paddingBottom: responsiveHeight(3.3),
   },
   drwaerContentContainer: {
     flex: 1,
@@ -174,39 +171,32 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
   },
   Section1Text: {
-    // fontSize: 17,
-    fontSize: responsiveFontSize(2.3),
+    fontSize: responsiveFontSize(2.35),
     color: theme.color.buttonText,
     fontFamily: theme.fonts.titleFont,
-
     textTransform: 'uppercase',
   },
   Section2: {
     flex: 1,
     paddingHorizontal: 5,
-    marginTop: 10,
-    marginBottom: 10,
-    paddingVertical: 10,
-    // backgroundColor: 'blue',
+    marginVertical: responsiveHeight(1.5),
+    paddingVertical: responsiveHeight(1.5),
   },
 
   bottomContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 22,
   },
-  bottomContainerText: {
-    fontSize: 12,
-    color: theme.color.subTitle,
-    fontFamily: theme.fonts.fontNormal,
-  },
+
   logo: {
-    width: 70,
-    height: 70,
+    width: responsiveFontSize(9.6),
+    height: responsiveFontSize(9.6),
     resizeMode: 'contain',
   },
   itemContainer: {
@@ -228,9 +218,9 @@ const styles = StyleSheet.create({
     marginLeft: 7,
     textTransform: 'capitalize',
   },
-  icon: {
-    width: 20,
-    height: 20,
+  logoutIcon: {
+    width: responsiveFontSize(3.15),
+    height: responsiveFontSize(3.15),
     resizeMode: 'contain',
   },
   Profile: {
@@ -241,9 +231,9 @@ const styles = StyleSheet.create({
   },
 
   ProfileImgContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 60 / 2,
+    width: responsiveFontSize(8.2),
+    height: responsiveFontSize(8.2),
+    borderRadius: responsiveFontSize(8.2) / 2,
     borderWidth: 1,
     borderColor: theme.color.photoBorderColor,
     alignItems: 'center',
@@ -251,26 +241,22 @@ const styles = StyleSheet.create({
   },
 
   ProfileImg: {
-    width: '100%',
-    height: '100%',
-    // resizeMode: 'contain',
-    borderRadius: 60 / 2,
+    width: responsiveFontSize(8.1),
+    height: responsiveFontSize(8.1),
+    borderRadius: responsiveFontSize(8.1) / 2,
   },
 
-  ProfileTextContainer: {width: '70%'},
+  ProfileTextContainer: {width: '68.5%'},
   profileTitle1: {
-    fontSize: 14,
+    fontSize: responsiveFontSize(1.9),
     color: theme.color.backgroundGreenText,
     fontFamily: theme.fonts.fontBold,
-    lineHeight: 15,
     textTransform: 'capitalize',
   },
   profileTitle2: {
-    fontSize: 12,
+    fontSize: responsiveFontSize(1.7),
     color: 'rgba(255, 255, 255, 0.7)',
     fontFamily: theme.fonts.fontMedium,
-    lineHeight: 15,
-    marginTop: 3,
     textTransform: 'capitalize',
   },
 });

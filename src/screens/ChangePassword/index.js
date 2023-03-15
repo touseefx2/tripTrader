@@ -375,7 +375,6 @@ function ChangePassword(props) {
 
   return (
     <View style={styles.container}>
-      {/* {tagLine != '' && <utils.TagLine tagLine={tagLine} />} */}
       <utils.StackHeader bell={true} props={props} headerTitle={headerTitle} />
       {!internet && <utils.InternetMessage />}
       <SafeAreaView style={styles.container2}>
@@ -389,7 +388,6 @@ function ChangePassword(props) {
               {renderMain()}
             </ScrollView>
           </KeyboardAvoidingView>
-          {/* <utils.Loader2 load={Loader} /> */}
         </View>
         <utils.Footer
           nav={props.navigation}

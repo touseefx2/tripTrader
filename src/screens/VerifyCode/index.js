@@ -5,31 +5,20 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
-  ImageBackground,
-  Linking,
   ScrollView,
-  TextInput,
-  PermissionsAndroid,
-  Dimensions,
   Alert,
   Keyboard,
-  Modal,
   Platform,
-  StatusBar,
   KeyboardAvoidingView,
 } from 'react-native';
 import {styles} from './styles';
-import {inject, observer} from 'mobx-react';
+import {observer} from 'mobx-react';
 import store from '../../store/index';
 import utils from '../../utils/index';
 import theme from '../../theme';
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from 'react-native-responsive-dimensions';
+import {responsiveHeight} from 'react-native-responsive-dimensions';
 import Toast from 'react-native-easy-toast';
 import NetInfo from '@react-native-community/netinfo';
-
 import CodeInput from 'react-native-code-input';
 import CountDown from 'react-native-countdown-component';
 import auth from '@react-native-firebase/auth';

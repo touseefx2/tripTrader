@@ -878,7 +878,7 @@ class user {
     // let params = `query=${query}`;
     let params = `rating=${r}&userStatus=${us}&location=${loc}&species=${spsc}&query=${query}&activity=${act}&tradeType=${act}&blockedUsers=${b}&page=1&limit=10000`;
 
-    console.log('Get AllHomeTrip : ', db.apis.GET_ALL_HOME_TRIPS + params);
+    console.log('Get AllHomeTrip User : ', db.apis.GET_ALL_HOME_TRIPS + params);
     this.setHomeLoader(true);
     db.hitApi(db.apis.GET_ALL_HOME_TRIPS + params, 'get', {}, this.authToken)
       ?.then(resp => {
@@ -925,57 +925,6 @@ class user {
       });
   };
 
-  // @action attemptToGetHomeTrips = (setgetdata, setrfrsh) => {
-  //   console.log('Get AllHomeTrip : ', 'true');
-  //   this.setHomeLoader(true);
-
-  //   db.hitApi(db.apis.GET_ALL_HOME_TRIPS_GUEST, 'get', {}, this.authToken)
-  //     ?.then(resp => {
-  //       this.setHomeLoader(false);
-  //       setrfrsh(false);
-  //       console.log(
-  //         `response Get AllHomeTrip   ${db.apis.GET_ALL_HOME_TRIPS} : `,
-  //         resp.data,
-  //       );
-  //       let dt = resp.data.data;
-  //       let ar = [];
-  //       if (dt.length > 0) {
-  //         dt.map((e, i, a) => {
-  //           if (e.hostId._id != this.user._id) {
-  //             ar.push(e);
-  //           }
-  //         });
-  //       }
-  //       this.setHomeTrips(ar);
-  //       setgetdata(true);
-  //       this.allGetGeneralData();
-  //     })
-  //     .catch(err => {
-  //       this.setHomeLoader(false);
-  //       setrfrsh(false);
-  //       let msg = err.response.data.message || err.response.status || err;
-  //       console.log(
-  //         `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS} : `,
-  //         msg,
-  //       );
-  //       if (msg == 503 || msg == 500) {
-  //         Alert.alert('', 'Server not response');
-  //         // store.General.setisServerError(true);
-  //         return;
-  //       }
-  //       if (msg == 'No records found') {
-  //         setgetdata(true);
-  //         this.setHomeTrips([]);
-
-  //         this.allGetGeneralData();
-
-  //         return;
-  //       }
-  //       // seterror(msg.toString())
-  //       Alert.alert('', msg.toString());
-  //     });
-  // };
-
   @action attemptToGetHomeTripsGuest = setgetdata => {
     let isaps = store.Search.isApplySearch;
     let isapf = store.Filters.isFilter;
@@ -1002,12 +951,14 @@ class user {
     // let params = `query=${query}`;
     let params = `rating=${r}&userStatus=${us}&location=${loc}&species=${spsc}&query=${query}&activity=${act}&tradeType=${act}&blockedUsers=${b}&page=1&limit=10000`;
 
-    console.log('Get AllHomeTrip : ', db.apis.GET_ALL_HOME_TRIPS + params);
+    console.log(
+      'Get AllHomeTrip Guest : ',
+      db.apis.GET_ALL_HOME_TRIPS + params,
+    );
     this.setHomeLoader(true);
     db.hitApi(db.apis.GET_ALL_HOME_TRIPS + params, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setHomeLoader(false);
-
         // console.log(
         //   `response Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS}  : `,
         //   resp.data,
@@ -1022,15 +973,15 @@ class user {
       })
       .catch(err => {
         this.setHomeLoader(false);
-
-        let msg = err.response.data.message || err.response.status || err;
+        store.Notifications.attemptToGetNotificationsGuest();
+        const msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS} }: `,
           msg,
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
+
           return;
         }
         if (msg == 'No records found') {
@@ -1039,7 +990,7 @@ class user {
 
           return;
         }
-        // seterror(msg.toString())
+
         Alert.alert('', msg.toString());
       });
 
@@ -1994,15 +1945,11 @@ class user {
   }
 
   addUser(token, user, c) {
-    let chk = c || '';
+    const chk = c || '';
     store.General.setgoto(chk == '' ? 'home' : chk);
-    console.log('token : ', token);
-    console.log('user : ', user);
     this.addauthToken(token);
     this.setUser(user);
     store.Trips.setsaveTrips(user.savedTrips || []);
-
-    return;
   }
 
   @action.bound

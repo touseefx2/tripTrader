@@ -433,7 +433,6 @@ function Received(props) {
             color={theme.color.button1}
             style={{
               marginTop: '80%',
-
               alignSelf: 'center',
             }}
           />

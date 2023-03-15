@@ -132,8 +132,7 @@ function Sent(props) {
               fontSize: 13,
               color: theme.color.subTitleLight,
               fontFamily: theme.fonts.fontMedium,
-            }}
-            onPress={() => getItem(item)}>
+            }}>
             You have no pending sent offers
           </Text>
         )}

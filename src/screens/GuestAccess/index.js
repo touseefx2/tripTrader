@@ -1,107 +1,28 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useRef} from 'react';
 import {
   View,
   Text,
   SafeAreaView,
   TouchableOpacity,
   Image,
-  ImageBackground,
-  Linking,
   ScrollView,
-  TextInput,
-  PermissionsAndroid,
-  Dimensions,
-  Alert,
-  Keyboard,
-  Platform,
-  StatusBar,
-  KeyboardAvoidingView,
-  Modal as MModal,
 } from 'react-native';
 import {styles} from './styles';
-import {inject, observer} from 'mobx-react';
+import {observer} from 'mobx-react';
 import store from '../../store/index';
 import utils from '../../utils/index';
 import theme from '../../theme';
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from 'react-native-responsive-dimensions';
+import {responsiveHeight} from 'react-native-responsive-dimensions';
 import Toast from 'react-native-easy-toast';
-import NetInfo from '@react-native-community/netinfo';
 
 export default observer(GuestAccess);
 function GuestAccess(props) {
-  const mobileReg = /^[0][3]\d{9}$/;
-  const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
-  const cnicReg = /\d{5}\d{8}\d/;
-
   const toast = useRef(null);
-  const toastduration = 700;
-
-  let user = store.User.user;
-
-  let loader = store.User.regLoader;
-
-  const [errorMessage, seterrorMessage] = useState('');
-
-  const goBack = () => {
-    props.navigation.goBack();
-  };
-
-  const setErrMessage = c => {
-    seterrorMessage(c);
-  };
+  const loader = store.User.regLoader;
 
   const continueGuest = () => {
-    // NetInfo.fetch().then(state => {
-    //   if (state.isConnected) {
-    //     store.User.getData(setErrMessage);
-    //   } else {
-    //     // seterrorMessage('Please connect internet');
-    //     Alert.alert('', 'Please connect internet');
-    //   }
-    // });
-    let token = '';
-    let rslt = 'guest';
     store.General.setgoto('home');
-    store.User.addUser(token, rslt);
-  };
-
-  const renderHeader = () => {
-    const renderLogo = () => {
-      return (
-        <View style={styles.section1}>
-          <Image
-            style={styles.logo}
-            source={require('../../assets/images/logo/img.png')}
-          />
-          <Text style={styles.title1}>{store.General.AppName}</Text>
-        </View>
-      );
-    };
-
-    const renderBack = () => {
-      return (
-        <TouchableOpacity
-          activeOpacity={0.7}
-          onPress={goBack}
-          style={{position: 'absolute', left: 20}}>
-          <utils.vectorIcon.Ionicons
-            name={'chevron-back-outline'}
-            color={theme.color.buttonText}
-            size={27}
-          />
-        </TouchableOpacity>
-      );
-    };
-
-    return (
-      <View style={styles.Header}>
-        {renderLogo()}
-        {renderBack()}
-      </View>
-    );
+    store.User.addUser('', 'guest', '');
   };
 
   const renderSection2 = () => {
@@ -208,9 +129,7 @@ function GuestAccess(props) {
         <ScrollView
           style={{paddingHorizontal: 15, marginTop: responsiveHeight(3)}}
           showsVerticalScrollIndicator={false}>
-          <KeyboardAvoidingView style={{flex: 1}} enabled>
-            {renderSection2()}
-          </KeyboardAvoidingView>
+          {renderSection2()}
         </ScrollView>
       </SafeAreaView>
 

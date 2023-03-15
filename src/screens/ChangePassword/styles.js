@@ -285,7 +285,7 @@ export const styles = StyleSheet.create({
   FieldInput: {
     width: '100%',
     borderWidth: 1,
-    height: 45,
+    height: responsiveHeight(6.5),
     borderRadius: 8,
     paddingHorizontal: 10,
     backgroundColor: theme.color.background,

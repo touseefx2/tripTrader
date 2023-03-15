@@ -20,28 +20,23 @@ import {ScrollView} from 'react-native-gesture-handler';
 export default observer(Settings);
 
 function Settings(props) {
-  let ao = 0.8;
-  let editprofileIcon = require('../../assets/images/settings/editprofile/img.png');
-  let cpIcon = require('../../assets/images/settings/cp/img.png');
-  let notificationsIcon = require('../../assets/images/settings/notifications/img.png');
-  let blockUserIcon = require('../../assets/images/settings/blockuser/img.png');
-  let subIcon = require('../../assets/images/settings/subscription/img.png');
-  let contactusIcon = require('../../assets/images/settings/contactus/img.png');
-  let newsIcon = require('../../assets/images/settings/news/img.png');
-  let privacyIcon = require('../../assets/images/settings/privacy/img.png');
-  let logoutIcon = require('../../assets/images/settings/logout/img.png');
-
+  const editprofileIcon = require('../../assets/images/settings/editprofile/img.png');
+  const cpIcon = require('../../assets/images/settings/cp/img.png');
+  const notificationsIcon = require('../../assets/images/settings/notifications/img.png');
+  const blockUserIcon = require('../../assets/images/settings/blockuser/img.png');
+  const subIcon = require('../../assets/images/settings/subscription/img.png');
+  const contactusIcon = require('../../assets/images/settings/contactus/img.png');
+  const newsIcon = require('../../assets/images/settings/news/img.png');
+  const privacyIcon = require('../../assets/images/settings/privacy/img.png');
+  const logoutIcon = require('../../assets/images/settings/logout/img.png');
+  const headerTitle = 'Settings';
   const toast = useRef(null);
-  let headerTitle = 'Settings';
-
-  let internet = store.General.isInternet;
-  let user = store.User.user;
-
-  let isNotification = store.User.isNotification;
+  const activeOpacity = 0.8;
+  const {isInternet} = store.General;
+  const {user, isNotification} = store.User;
 
   let phn = '';
   let phnCntr = '';
-
   if (user != 'guest' && user) {
     phn = user.phone && user.phone !== null ? '+' + user.phone : '';
     phnCntr =
@@ -149,7 +144,7 @@ function Settings(props) {
       let title = 'edit profile';
       return (
         <TouchableOpacity
-          activeOpacity={ao}
+          activeOpacity={activeOpacity}
           onPress={() => {
             onClick(title);
           }}
@@ -176,7 +171,7 @@ function Settings(props) {
       let title = 'change password';
       return (
         <TouchableOpacity
-          activeOpacity={ao}
+          activeOpacity={activeOpacity}
           onPress={() => {
             onClick(title);
           }}
@@ -200,11 +195,11 @@ function Settings(props) {
     };
 
     const renderNotifications = () => {
-      let title = 'notifications';
+      const title = 'notifications';
       return (
         <TouchableOpacity
           disabled
-          activeOpacity={ao}
+          activeOpacity={activeOpacity}
           onPress={() => {
             onClick(title);
           }}
@@ -252,7 +247,7 @@ function Settings(props) {
       let title = 'Blocked Users';
       return (
         <TouchableOpacity
-          activeOpacity={ao}
+          activeOpacity={activeOpacity}
           onPress={() => {
             onClick(title);
           }}
@@ -279,7 +274,7 @@ function Settings(props) {
       let title = 'Manage Subscription';
       return (
         <TouchableOpacity
-          activeOpacity={ao}
+          activeOpacity={activeOpacity}
           onPress={() => {
             onClick(title);
           }}
@@ -306,7 +301,7 @@ function Settings(props) {
       let title = 'contact us';
       return (
         <TouchableOpacity
-          activeOpacity={ao}
+          activeOpacity={activeOpacity}
           onPress={() => {
             onClick(title);
           }}
@@ -333,7 +328,7 @@ function Settings(props) {
       let title = 'privacy';
       return (
         <TouchableOpacity
-          activeOpacity={ao}
+          activeOpacity={activeOpacity}
           onPress={() => {
             onClick(title);
           }}
@@ -360,7 +355,7 @@ function Settings(props) {
       let title = 'logout';
       return (
         <TouchableOpacity
-          activeOpacity={ao}
+          activeOpacity={activeOpacity}
           onPress={() => {
             onClick(title);
           }}
@@ -445,7 +440,7 @@ function Settings(props) {
   return (
     <View style={styles.container}>
       <utils.DrawerHeader props={props} headerTitle={headerTitle} />
-      {!internet && <utils.InternetMessage />}
+      {!isInternet && <utils.InternetMessage />}
       <SafeAreaView style={styles.container2}>
         <View style={styles.container3}>
           <ScrollView

@@ -10,7 +10,7 @@ let aph = theme.window.APPBAR_HEIGHT + (Platform.OS == 'ios' ? 12 : 0);
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.color.button1,
+    backgroundColor: theme.color.backgroundGreen,
   },
   container2: {
     flex: 1,
@@ -23,13 +23,7 @@ export const styles = StyleSheet.create({
   container3: {
     flex: 1,
   },
-  Header: {
-    marginTop: aph,
-    width: '100%',
 
-    alignItems: 'center',
-    paddingHorizontal: 20,
-  },
   section1: {alignItems: 'center', justifyContent: 'center'},
   section2: {
     backgroundColor: theme.color.background,

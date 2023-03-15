@@ -536,9 +536,9 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
 
     return (
       <Pressable
-        // disabled={isDisabel}
+        disabled={isDisabel}
         onPress={() => {
-          console.log('item : ', item);
+          // console.log('item : ', item);
           onclickNotification(
             isFollow ? 'Profile' : title,
             clickableText,

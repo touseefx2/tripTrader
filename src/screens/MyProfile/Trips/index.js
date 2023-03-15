@@ -148,6 +148,7 @@ function Trips(props) {
             fontSize: 14,
             color: theme.color.subTitleLight,
             fontFamily: theme.fonts.fontMedium,
+            textAlign: 'center',
           }}>
           {c == 'empty'
             ? 'You have not created any trips yet'

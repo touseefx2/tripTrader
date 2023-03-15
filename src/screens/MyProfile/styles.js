@@ -202,9 +202,9 @@ export const styles = StyleSheet.create({
     bottom: -3,
   },
   changeImg: {
-    width: 50,
-    height: 50,
-    elevation: 3,
+    width: 48,
+    height: 48,
+    resizeMode: 'contain',
   },
   editImgConatiner: {
     position: 'absolute',

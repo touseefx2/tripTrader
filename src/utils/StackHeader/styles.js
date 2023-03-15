@@ -1,125 +1,60 @@
 import {Platform, StyleSheet} from 'react-native';
 import theme from '../../theme/index';
 import {
-  responsiveFontSize,
   responsiveHeight,
-  responsiveWidth,
+  responsiveFontSize,
 } from 'react-native-responsive-dimensions';
-let aph = theme.window.APPBAR_HEIGHT;
+
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.color.backgroundGreen,
   },
   headerConatainer: {
+    width: '100%',
     backgroundColor: theme.color.backgroundGreen,
     paddingHorizontal: 15,
-    paddingVertical: 15,
-    elevation: 5,
+    paddingVertical: responsiveHeight(1.9),
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.6,
     shadowRadius: 1,
-    marginTop: Platform.OS == 'ios' ? aph : 0,
+    marginTop: Platform.OS == 'ios' ? theme.window.APPBAR_HEIGHT : 0,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  locContainer: {
-    width: '70%',
-    flexDirection: 'row',
-    // justifyContent: 'space-between',
-    backgroundColor: 'white',
-  },
-  locText: {
-    fontSize: 14,
-    color: theme.color.title,
-    fontFamily: theme.fonts.fontMedium,
-    lineHeight: 18,
-    textTransform: 'capitalize',
-  },
-  locText2: {
-    fontSize: 12,
-    color: theme.color.title,
-    fontFamily: theme.fonts.fontNormal,
-    lineHeight: 18,
-    textTransform: 'capitalize',
-  },
-  boxContainer: {
-    width: '100%',
-    height: responsiveHeight(20),
-    backgroundColor: '#FFC5B2',
-    borderRadius: 8,
-    marginBottom: 20,
-    elevation: 1,
-    padding: 15,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-
-  boxContainer2: {
-    width: '100%',
-    height: responsiveHeight(20),
-    backgroundColor: '#FEF0C0',
-    borderRadius: 8,
-    marginBottom: 20,
-    elevation: 1,
-    padding: 15,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-
-  boxContainerSecton1: {
-    width: '55%',
-
-    justifyContent: 'flex-end',
-  },
-
-  boxContainerSecton2: {
-    width: '40%',
-
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  bcs1Text1: {
-    fontSize: 16,
-    fontFamily: theme.fonts.fontMedium,
-    color: theme.color.title,
-  },
-
-  bcs1Text2: {
-    fontSize: 13,
-    fontFamily: theme.fonts.fontNormal,
-    color: theme.color.title,
-  },
-  bcs2Image: {flex: 1, resizeMode: 'contain', elevation: 5},
-  circleC: {
-    width: 18,
-    height: 18,
-    borderRadius: 218 / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: theme.color.buttonText,
-    position: 'absolute',
-    right: -7,
-    bottom: -1,
-    backgroundColor: theme.color.button1,
-  },
-  circleCText: {
-    fontSize: 8,
-    color: theme.color.buttonText,
-    fontFamily: theme.fonts.fontMedium,
-    top: 1,
+  backIcon: {
+    width: responsiveFontSize(3.2),
+    height: responsiveFontSize(3.2),
+    resizeMode: 'contain',
   },
   headerTitle: {
-    // fontSize: 18,
-    fontSize: 20,
+    fontSize: responsiveFontSize(2.5),
     fontFamily: theme.fonts.fontBold,
     color: theme.color.backgroundGreenText,
     textTransform: 'capitalize',
-    lineHeight: 30,
+  },
+  bellIcon: {
+    width: responsiveFontSize(3.5),
+    height: responsiveFontSize(3.5),
+    resizeMode: 'contain',
+  },
+  dot: {
+    width: responsiveFontSize(1),
+    height: responsiveFontSize(1),
+    borderRadius: responsiveFontSize(1) / 2,
+    position: 'absolute',
+    right: 3.5,
+    top: 4,
+    backgroundColor: theme.color.ntfctnClr,
   },
 });

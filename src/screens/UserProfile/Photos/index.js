@@ -163,6 +163,7 @@ function Photos(props) {
             fontSize: 14,
             color: theme.color.subTitleLight,
             fontFamily: theme.fonts.fontMedium,
+            textAlign: 'center',
           }}>
           {c == 'empty' ? 'No photos added' : 'Please connect internet.'}
         </Text>

@@ -260,10 +260,10 @@ function Home(props) {
 
   const onRefresh = React.useCallback(() => {
     console.log('onrefresh cal');
-    getDbData();
+    getDbData(blockUsers);
   }, [blockUsers]);
 
-  const getDbData = () => {
+  const getDbData = blockUsers => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         if (user == 'guest') {
@@ -443,10 +443,9 @@ function Home(props) {
         return (
           <View style={styles.textContainer}>
             <Pressable
+              disabled={user == 'guest' ? true : false}
               onPress={() => {
-                if (user == 'guest') {
-                  return;
-                }
+                if (user == 'guest') return;
 
                 store.Userv.setfscreen('home');
                 store.Userv.setUser(usr);

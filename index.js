@@ -120,7 +120,8 @@ messaging().onMessage(async remoteMessage => {
   console.log('bigIcon : ', bigIcon);
   console.log('rightIcon : ', rightIcon);
   callData(topic);
-  showNotifcaton(message, title, topic, bigIcon, rightIcon, data);
+  if (store.User.isNotification)
+    showNotifcaton(message, title, topic, bigIcon, rightIcon, data);
 
   // if (store.Notifications.isShowNotifcation) {
   //   store.Notifications.clearShowNotifications();
@@ -152,7 +153,8 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log('bigIcon : ', bigIcon);
   console.log('rightIcon : ', rightIcon);
   callData(topic);
-  showNotifcaton(message, title, topic, bigIcon, rightIcon, data);
+  if (store.User.isNotification)
+    showNotifcaton(message, title, topic, bigIcon, rightIcon, data);
 
   // const roomId = data.chatRoomId || '';
 });
@@ -220,13 +222,13 @@ function MainApp() {
   );
 }
 
-// function HeadlessCheck({isHeadless}) {
-//   console.warn('isHeadless : ', isHeadless);
-//   if (isHeadless) {
-//     // App has been launched in the background by iOS, ignore
-//     return null;
-//   }
-//   return <MainApp />;
-// }
+function HeadlessCheck({isHeadless}) {
+  console.log('isHeadless : ', isHeadless);
+  if (isHeadless) {
+    // App has been launched in the background by iOS, ignore
+    return null;
+  }
+  return <MainApp />;
+}
 
-AppRegistry.registerComponent(appName, () => MainApp);
+AppRegistry.registerComponent(appName, () => HeadlessCheck);

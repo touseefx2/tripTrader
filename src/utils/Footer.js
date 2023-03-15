@@ -2,15 +2,19 @@ import React from 'react';
 import {View, StyleSheet, Text, TouchableOpacity, Image} from 'react-native';
 import theme from '../theme/index';
 import {observer} from 'mobx-react';
+import {
+  responsiveFontSize,
+  responsiveHeight,
+} from 'react-native-responsive-dimensions';
 
 export default observer(Footer);
 function Footer(props) {
-  let nav = props.nav;
-  let screen = props.screen;
-  let focusScreen = props.focusScreen;
-  let focusTextColor = theme.color.button1;
-  let unfocusTextColor = 'rgba(30, 54, 37, 0.4)';
-  let ao = 0.7;
+  const nav = props.nav;
+  const screen = props.screen || '';
+  const focusScreen = props.focusScreen;
+  const focusTextColor = theme.color.button1;
+  const unfocusTextColor = 'rgba(30, 54, 37, 0.4)';
+  const activeOpacity = 0.7;
 
   const goBack = () => {
     if (screen == 'Notifications') props.closeModal();
@@ -62,7 +66,7 @@ function Footer(props) {
       <TouchableOpacity
         onPress={goToHome}
         style={styles.iconContainer}
-        activeOpacity={ao}>
+        activeOpacity={activeOpacity}>
         <Image style={styles.icon} source={img} />
         <Text
           style={[
@@ -84,7 +88,7 @@ function Footer(props) {
       <TouchableOpacity
         onPress={goToInbox}
         style={styles.iconContainer}
-        activeOpacity={ao}>
+        activeOpacity={activeOpacity}>
         <Image style={styles.icon} source={img} />
         <Text
           style={[
@@ -106,7 +110,7 @@ function Footer(props) {
       <TouchableOpacity
         onPress={goToTradeOffers}
         style={styles.iconContainer}
-        activeOpacity={ao}>
+        activeOpacity={activeOpacity}>
         <Image style={styles.icon} source={img} />
         <Text
           style={[
@@ -128,7 +132,7 @@ function Footer(props) {
       <TouchableOpacity
         onPress={goToSavedTrips}
         style={styles.iconContainer}
-        activeOpacity={ao}>
+        activeOpacity={activeOpacity}>
         <Image style={styles.icon} source={img} />
         <Text
           style={[
@@ -150,7 +154,7 @@ function Footer(props) {
       <TouchableOpacity
         onPress={goToProfile}
         style={styles.iconContainer}
-        activeOpacity={ao}>
+        activeOpacity={activeOpacity}>
         <Image style={styles.icon} source={img} />
         <Text
           style={[
@@ -179,29 +183,34 @@ const styles = StyleSheet.create({
   footerContainer: {
     backgroundColor: theme.color.background,
     paddingHorizontal: 25,
-    paddingVertical: 6,
+    paddingVertical: responsiveHeight(0.82),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    shadowColor: 'black',
-    shadowOffset: {width: 0, height: -0.5}, // change this for more shadow
-    shadowOpacity: 0.3,
-    elevation: 15,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.34,
+    shadowRadius: 6.27,
+    elevation: 10,
   },
   iconContainer: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   icon: {
-    width: 22,
-    height: 22,
+    width: responsiveFontSize(3),
+    height: responsiveFontSize(3),
     resizeMode: 'contain',
   },
   Text: {
-    fontSize: 12,
+    fontSize: responsiveFontSize(1.6),
     fontFamily: theme.fonts.fontMedium,
     textTransform: 'capitalize',
-    marginTop: 5,
+    marginTop: responsiveHeight(0.7),
+    textAlign: 'center',
   },
 });

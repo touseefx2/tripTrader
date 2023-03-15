@@ -93,17 +93,8 @@ function NotificationsGuest({
   isShowModal,
   setIsShowModal,
 }) {
-  let headerTitle = 'Notifications';
-
-  let internet = store.General.isInternet;
-  let user = store.User.user;
-
-  let db = false;
-  let previousScreen = props.route.params.screen || '';
-  if (previousScreen == 'userprofile' || previousScreen == 'followers') {
-    db = true;
-  }
-
+  const headerTitle = 'Notifications';
+  const {isInternet} = store.General;
   const data = store.Notifications.notifications;
 
   const [getDataOnce, setgetDataOnce] = useState(true);
@@ -234,25 +225,22 @@ function NotificationsGuest({
   }
 
   const ItemView2 = ({item, index}) => {
-    // let tripConf = require('../../assets/images/notification/TripConfirmed/img.png');
-    // let tripCrt = require('../../assets/images/notification/TripCreated/img.png');
-    let profileupd = require('../../assets/images/notification/ProfileUpdated/img.png');
-    let pswdchng = require('../../assets/images/notification/PasswordChanged/img.png');
-    // let guest = require('../../assets/images/drawer/guest/img.png');
-    let ntfctn = require('../../assets/images/drawer/guest/img.png');
+    const profileupd = require('../../assets/images/notification/ProfileUpdated/img.png');
+    const pswdchng = require('../../assets/images/notification/Privacy/img.png');
+    const ntfctn = require('../../assets/images/drawer/guest/img.png');
 
-    let title = item.title || '';
-    let subtitle = item.message || '';
-    let topic = item.topic || '';
-    let create = CheckDate(item.createdAt);
-    let isread = item.isRead || false;
+    const title = item.title || '';
+    const subtitle = item.message || '';
+    const topic = item.topic || '';
+    const create = CheckDate(item.createdAt);
+    const isread = item.isRead || false;
     let c = false;
 
     if (topic == 'fullaccess') {
       c = true;
     }
 
-    let photo =
+    const photo =
       title == 'Get full access for free'
         ? pswdchng
         : title == 'Welcome to Trip Trader!'
@@ -277,7 +265,6 @@ function NotificationsGuest({
               color: '#101B10',
               fontSize: 16,
               fontFamily: theme.fonts.fontBold,
-              lineHeight: 22.4,
               textTransform: 'capitalize',
             }}>
             {title}
@@ -289,10 +276,7 @@ function NotificationsGuest({
                 style={{
                   color: ' #101B10',
                   fontSize: 14,
-
                   fontFamily: theme.fonts.fontNormal,
-
-                  lineHeight: 21,
                 }}>
                 {subtitle}{' '}
                 {c && (
@@ -303,8 +287,6 @@ function NotificationsGuest({
                       fontSize: 14,
                       textDecorationLine: 'underline',
                       fontFamily: theme.fonts.fontBold,
-
-                      lineHeight: 21,
                     }}>
                     Join now
                   </Text>
@@ -320,8 +302,6 @@ function NotificationsGuest({
                 fontSize: 13,
 
                 fontFamily: theme.fonts.fontMedium,
-
-                lineHeight: 19.5,
               }}>
               {create}
             </Text>
@@ -361,7 +341,7 @@ function NotificationsGuest({
             props={props}
             headerTitle={headerTitle}
           />
-          {!internet && <utils.InternetMessage />}
+          {!isInternet && <utils.InternetMessage />}
           <SafeAreaView style={styles.container2}>
             <View style={styles.container3}>
               <FlatList
@@ -389,13 +369,11 @@ function NotificationsGuest({
                     />
                   ) : null
                 }
-                // ListFooterComponent={data.length > 0 ? ListFooter : null}
               />
             </View>
 
             <utils.Footer
               closeModal={closeModal}
-              doubleBack={db}
               nav={props.navigation}
               screen={headerTitle}
               focusScreen={store.General.focusScreen}

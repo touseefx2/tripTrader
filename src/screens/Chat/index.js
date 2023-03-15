@@ -39,7 +39,7 @@ import {responsiveHeight} from 'react-native-responsive-dimensions';
 
 export default observer(Chat);
 
-let guest = require('../../assets/images/drawer/guest/img.png');
+const guest = require('../../assets/images/drawer/guest/img.png');
 
 function Chat(props) {
   const socket = io(db.apis.BASE_URLS);
@@ -646,67 +646,6 @@ function Chat(props) {
   //     </>
   //   );
   // };
-
-  const renderHeader = () => {
-    const render1 = () => {
-      const onClick = () => {
-        props.navigation.goBack();
-      };
-      let src = require('../../assets/images/back/img.png');
-      return (
-        <TouchableOpacity activeOpacity={0.5} onPress={onClick}>
-          <Image
-            source={src}
-            style={{
-              width: 20,
-              height: 20,
-              resizeMode: 'contain',
-            }}
-          />
-        </TouchableOpacity>
-      );
-    };
-
-    const render2 = () => {
-      return (
-        <View style={{width: '75%'}}>
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={styles.headerTitle}>
-            {headerTitle}
-          </Text>
-        </View>
-      );
-    };
-
-    const render3 = () => {
-      const onClick = () => {
-        openBottomSheet();
-      };
-      let src = require('../../assets/images/vertical/img.png');
-      return (
-        <TouchableOpacity activeOpacity={0.6} onPress={onClick}>
-          <Image
-            source={src}
-            style={{
-              width: 27,
-              height: 27,
-              resizeMode: 'contain',
-            }}
-          />
-        </TouchableOpacity>
-      );
-    };
-
-    return (
-      <View style={styles.headerConatainer}>
-        {render1()}
-        {render2()}
-        {render3()}
-      </View>
-    );
-  };
 
   const SendMessage = p => {
     closeEmoji();
@@ -1671,7 +1610,13 @@ function Chat(props) {
           />
         )}
 
-        {renderHeader()}
+        <utils.StackHeader
+          bell={false}
+          chat={true}
+          openBottomSheet={openBottomSheet}
+          props={props}
+          headerTitle={headerTitle}
+        />
 
         {!internet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
@@ -1721,7 +1666,7 @@ function Chat(props) {
 
           {renderFooter()}
         </SafeAreaView>
-        {/* <utils.Loader load={loader} /> */}
+
         <Toast ref={toast} position="bottom" />
         <utils.Loader load={loader} />
         {pvm && (

@@ -5,13 +5,15 @@ import {observer} from 'mobx-react';
 import store from '../../store/index';
 import theme from '../../theme';
 import Notifications from '../../screens/Notifications';
+import NotificationsGuest from '../../screens/NotificationsGuest';
 
 export default observer(StackHeader);
 function StackHeader(props) {
-  let prop = props.props;
-  let headerTitle = props.headerTitle || '';
-  let bell = props.bell || false;
-  let scrn = props.screen || '';
+  const prop = props.props;
+  const headerTitle = props.headerTitle || '';
+  const isBell = props.bell || false;
+  const isChat = props.chat || false;
+  const countRead = store.Notifications.unread;
 
   const [isShowNotifiction, setIsShowNotifiction] = useState(false);
   const [isShowGuestNotifiction, setIsShowGuestNotifiction] = useState(false);
@@ -21,30 +23,21 @@ function StackHeader(props) {
     else prop.navigation.goBack();
   };
 
-  let countRead = store.Notifications.unread;
-
   const render1 = () => {
     const onClick = () => {
       goBack();
     };
-    let src = require('../../assets/images/back/img.png');
+    const src = require('../../assets/images/back/img.png');
     return (
       <TouchableOpacity activeOpacity={0.5} onPress={onClick}>
-        <Image
-          source={src}
-          style={{
-            width: 20,
-            height: 20,
-            resizeMode: 'contain',
-          }}
-        />
+        <Image source={src} style={styles.backIcon} />
       </TouchableOpacity>
     );
   };
 
   const render2 = () => {
     return (
-      <View style={{width: '76%'}}>
+      <View style={{width: '75%'}}>
         <Text numberOfLines={1} ellipsizeMode="tail" style={styles.headerTitle}>
           {headerTitle}
         </Text>
@@ -57,63 +50,54 @@ function StackHeader(props) {
       if (store.User.user != 'guest') setIsShowNotifiction(true);
       else setIsShowGuestNotifiction(true);
     };
-    let src = require('../../assets/images/bell/img.png');
+    const src = require('../../assets/images/bell/img.png');
+    let src2 = require('../../assets/images/vertical/img.png');
 
     return (
       <TouchableOpacity
-        onPress={onClick}
+        onPress={() => {
+          if (isBell) onClick();
+
+          if (isChat) props.openBottomSheet();
+        }}
         disabled={
           headerTitle == 'Notifications' || headerTitle == 'NotificationsGuest'
             ? true
             : false
         }
         activeOpacity={0.8}>
-        <Image
-          source={src}
-          style={{
-            width: 26,
-            height: 26,
-            resizeMode: 'contain',
-          }}
-        />
-        {countRead > 0 && (
-          <View
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: 8 / 2,
-              position: 'absolute',
-              right: 3,
-              top: 3,
-              backgroundColor: theme.color.ntfctnClr,
-            }}
-          />
+        {isBell && (
+          <>
+            <Image source={src} style={styles.bellIcon} />
+            {countRead > 0 && <View style={styles.dot} />}
+          </>
         )}
+        {!isBell && isChat && <Image source={src2} style={styles.bellIcon} />}
+        {!isBell && !isChat && <View style={styles.bellIcon} />}
       </TouchableOpacity>
     );
   };
 
   return (
     <View style={styles.headerConatainer}>
-      {isShowNotifiction && (
+      {isShowNotifiction ? (
         <Notifications
           props={prop}
           callingScreen={headerTitle}
-          isShowModal={
-            store.User.user != 'guest'
-              ? isShowNotifiction
-              : isShowGuestNotifiction
-          }
-          setIsShowModal={
-            store.User.user != 'guest'
-              ? setIsShowNotifiction
-              : setIsShowGuestNotifiction
-          }
+          isShowModal={isShowNotifiction}
+          setIsShowModal={setIsShowNotifiction}
+        />
+      ) : (
+        <NotificationsGuest
+          props={prop}
+          callingScreen={headerTitle}
+          isShowModal={isShowGuestNotifiction}
+          setIsShowModal={setIsShowGuestNotifiction}
         />
       )}
       {render1()}
       {render2()}
-      {bell && render3()}
+      {render3()}
     </View>
   );
 }

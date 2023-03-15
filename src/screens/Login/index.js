@@ -19,7 +19,6 @@ import {styles} from './styles';
 export default observer(Login);
 function Login(props) {
   const toast = useRef(null);
-  const toastduration = 700;
   let goto = store.General.goto;
 
   useEffect(() => {

@@ -143,11 +143,11 @@ function ShowOtherFollowers(props) {
 
   let src = require('../../assets/images/locationPin/img.png');
   const ItemView = ({item, index}) => {
-    let usrr = item.userId;
+    const usrr = item.userId;
     //user
-    let photo = usrr.image || '';
-    let userName = usrr.firstName + ' ' + usrr.lastName;
-    let location = usrr.location ? usrr.location : 'Pakistan';
+    const photo = usrr.image || '';
+    const userName = usrr.firstName + ' ' + usrr.lastName;
+    const location = usrr.location ? usrr.location : 'Pakistan';
 
     const renderProfile = () => {
       return (
@@ -225,7 +225,7 @@ function ShowOtherFollowers(props) {
 
     return (
       <Pressable
-        disabled={store.User.user._id == usrr._id}
+        disabled={store.User.user._id == usrr._id ? true : false}
         onPress={() => {
           store.Userv.setfscreen('home');
           store.Userv.setUser(usrr);
@@ -233,7 +233,7 @@ function ShowOtherFollowers(props) {
           props.navigation.navigate('UserProfile');
         }}
         style={({pressed}) => [
-          {opacity: pressed ? 0.7 : 1.0},
+          {opacity: pressed ? 0.8 : 1.0},
           [styles.modalinfoConatiner, {marginTop: index == 0 ? 15 : 0}],
         ]}>
         {renderProfile()}
@@ -272,6 +272,8 @@ function ShowOtherFollowers(props) {
       </>
     );
   };
+
+  console.log('data : ', data);
 
   return (
     <>

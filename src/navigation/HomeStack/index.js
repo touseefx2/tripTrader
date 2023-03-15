@@ -5,6 +5,7 @@ import screens from '../../screens/index';
 import icon from './styles';
 import CustomDrawerContent from './CustomDrawerContent';
 import theme from '../../theme';
+import {responsiveFontSize} from 'react-native-responsive-dimensions';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -27,7 +28,7 @@ export default HomeStack = () => {
         },
         drawerLabelStyle: {
           color: theme.color.backgroundGreenText,
-          fontSize: 13,
+          fontSize: responsiveFontSize(1.9),
         },
         drawerItemStyle: {},
         // drawerActiveBackgroundColor: theme.color.backgroundGreen,
