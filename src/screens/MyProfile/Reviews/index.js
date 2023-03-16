@@ -215,8 +215,6 @@ function Reviews(props) {
   const actionDelete = () => {
     Keyboard.dismiss();
 
-    Keyboard.dismiss();
-
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         store.User.attemptToDeleteComment(modalObj, closeModal);

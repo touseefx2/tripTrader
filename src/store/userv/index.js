@@ -76,7 +76,7 @@ class userv {
     setdt,
     setr,
   ) => {
-    console.warn('GET Followers  : ', 'true');
+    console.log('GET Followers  : ', uid);
     setr(true);
 
     db.hitApi(db.apis.GET_FOLLOWERS + uid, 'get', {}, store.User.authToken)

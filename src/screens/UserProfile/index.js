@@ -63,10 +63,7 @@ function UserProfile(props) {
   let src = '';
   let srccnic = '';
 
-  const [user, setuser] = useState(u);
-  useEffect(() => {
-    setuser(u);
-  }, []);
+  const user = u;
 
   const [followers, setfollowers] = useState(0);
   const [following, setfollowing] = useState(0);
