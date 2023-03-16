@@ -226,7 +226,7 @@ function Home(props) {
     console.log('action :', action);
 
     if (action == 'Dismiss' || action == 'No Thanks') {
-      PushNotification.cancelAllLocalNotifications();
+      PushNotification.cancelLocalNotification(notify.id);
     }
 
     if (action == 'Apply for Verification') {

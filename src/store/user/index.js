@@ -398,10 +398,10 @@ class user {
 
     db.hitApi(db.apis.GET_INBOXES_BY_UID + uid, 'get', {}, this.authToken)
       ?.then(resp => {
-        // console.log(
-        //   `response GET Inboxes ${db.apis.GET_INBOXES_BY_UID + uid} : `,
-        //   resp.data,
-        // );
+        console.log(
+          `response GET Inboxes ${db.apis.GET_INBOXES_BY_UID + uid} : `,
+          resp.data,
+        );
         let dt = resp.data.doc || [];
         let fa = [];
 
@@ -875,8 +875,7 @@ class user {
       });
     }
 
-    // let params = `query=${query}`;
-    let params = `rating=${r}&userStatus=${us}&location=${loc}&species=${spsc}&query=${query}&activity=${act}&tradeType=${act}&blockedUsers=${b}&page=1&limit=10000`;
+    const params = `rating=${r}&userStatus=${us}&location=${loc}&species=${spsc}&query=${query}&activity=${act}&tradeType=${act}&blockedUsers=${b}&page=1&limit=10000`;
 
     console.log('Get AllHomeTrip User : ', db.apis.GET_ALL_HOME_TRIPS + params);
     this.setHomeLoader(true);
@@ -885,8 +884,8 @@ class user {
         this.setHomeLoader(false);
 
         // console.log(
-        //   `response Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS}  : `,
-        //   resp.data,
+        //   `response Get AllHomeTrip User   ${db.apis.GET_ALL_HOME_TRIPS}  : `,
+        //   resp.data.data.length,
         // );
         let dt = resp.data.data;
         this.setHomeTrips(dt);
@@ -948,8 +947,7 @@ class user {
 
     let b = '';
 
-    // let params = `query=${query}`;
-    let params = `rating=${r}&userStatus=${us}&location=${loc}&species=${spsc}&query=${query}&activity=${act}&tradeType=${act}&blockedUsers=${b}&page=1&limit=10000`;
+    const params = `rating=${r}&userStatus=${us}&location=${loc}&species=${spsc}&query=${query}&activity=${act}&tradeType=${act}&blockedUsers=${b}&page=1&limit=10000`;
 
     console.log(
       'Get AllHomeTrip Guest : ',
@@ -960,8 +958,8 @@ class user {
       ?.then(resp => {
         this.setHomeLoader(false);
         // console.log(
-        //   `response Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS}  : `,
-        //   resp.data,
+        //   `response Get AllHomeTrip Guest  ${db.apis.GET_ALL_HOME_TRIPS}  : `,
+        //   resp.data.data.length,
         // );
         let dt = resp.data.data;
 

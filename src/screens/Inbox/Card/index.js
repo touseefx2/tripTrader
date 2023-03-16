@@ -95,7 +95,16 @@ function CheckDate(d) {
 
 export default memo(Card);
 
-function Card({item, index, refreshing, data, user, props, setsearch}) {
+function Card({
+  item,
+  index,
+  refreshing,
+  data,
+  user,
+  props,
+  setsearch,
+  closeSwipe,
+}) {
   let guest = require('../../../assets/images/drawer/guest/img.png');
 
   let isendmymsg = false;
@@ -222,6 +231,7 @@ function Card({item, index, refreshing, data, user, props, setsearch}) {
 
       onPress={() => {
         console.log('item : ', item.latestMessage.message);
+        closeSwipe();
         store.User.setmessages([]);
         store.User.setpasObj({
           obj: item,

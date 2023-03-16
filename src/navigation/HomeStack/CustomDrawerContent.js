@@ -98,9 +98,9 @@ function CustomDrawerContent(props) {
             />
             {!profileImageLoader && (
               <ActivityIndicator
-                size={18}
+                size={responsiveFontSize(2.6)}
                 color={theme.color.buttonText}
-                style={{top: 17, position: 'absolute'}}
+                style={{top: 20, position: 'absolute'}}
               />
             )}
           </View>
@@ -229,7 +229,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-
   ProfileImgContainer: {
     width: responsiveFontSize(8.2),
     height: responsiveFontSize(8.2),

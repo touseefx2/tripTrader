@@ -202,15 +202,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   icon: {
-    width: responsiveFontSize(3),
-    height: responsiveFontSize(3),
+    width: responsiveFontSize(3.3),
+    height: responsiveFontSize(3.3),
     resizeMode: 'contain',
   },
   Text: {
-    fontSize: responsiveFontSize(1.6),
+    fontSize: responsiveFontSize(1.5),
     fontFamily: theme.fonts.fontMedium,
-    textTransform: 'capitalize',
     marginTop: responsiveHeight(0.7),
     textAlign: 'center',
+    textTransform: 'uppercase',
   },
 });

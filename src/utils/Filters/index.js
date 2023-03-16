@@ -9,6 +9,7 @@ import {
   Dimensions,
   FlatList,
   Pressable,
+  Alert,
 } from 'react-native';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
@@ -33,7 +34,8 @@ function Filters(props) {
   let isModalVisible = props.isVisible;
   let isApplyFilter = store.Filters.isFilter;
 
-  let user = store.User.user;
+  const {user} = store.User;
+  const {isInternet} = store.General;
 
   const [rfrsh, setrfrsh] = useState(false);
   const [isFilter, setisFilter] = useState(false);
@@ -190,64 +192,68 @@ function Filters(props) {
   };
 
   const onClickApplyFilters = () => {
-    let chk = false;
-    // let tt = [];
-    // const dt = [...trptype];
-    // if (dt.length > 0) {
-    //   dt.map((e, i, a) => {
-    //     if (e.isSel == true) {
-    //       tt.push(e.name);
-    //     }
-    //   });
-    // }
+    if (isInternet) {
+      let chk = false;
+      // let tt = [];
+      // const dt = [...trptype];
+      // if (dt.length > 0) {
+      //   dt.map((e, i, a) => {
+      //     if (e.isSel == true) {
+      //       tt.push(e.name);
+      //     }
+      //   });
+      // }
 
-    // if (tt.length > 0) {
-    //   chk = true;
-    //   setstripType(tt);
-    // } else {
-    //   setstripType(false);
-    // }
+      // if (tt.length > 0) {
+      //   chk = true;
+      //   setstripType(tt);
+      // } else {
+      //   setstripType(false);
+      // }
 
-    if (loc) {
-      chk = true;
-      setstripLoc(loc);
+      if (loc) {
+        chk = true;
+        setstripLoc(loc);
+      } else {
+        setstripLoc(false);
+      }
+
+      if (actvty) {
+        chk = true;
+        setsactivity(actvty.name);
+      } else {
+        setsactivity(false);
+      }
+
+      if (spcs) {
+        chk = true;
+        setsspecies(spcs.name);
+      } else {
+        setsspecies(false);
+      }
+
+      if (host > 0) {
+        chk = true;
+      }
+      setshostRating(host);
+
+      if (vu) {
+        chk = true;
+      }
+      setsvu(vu);
+
+      if (chk) {
+        store.Filters.setisFilter(true);
+        props.setisVisible(false);
+        onrefrshdata();
+      } else {
+        store.Filters.setisFilter(false);
+        props.setisVisible(false);
+        store.Filters.clearFilters();
+        onrefrshdata();
+      }
     } else {
-      setstripLoc(false);
-    }
-
-    if (actvty) {
-      chk = true;
-      setsactivity(actvty.name);
-    } else {
-      setsactivity(false);
-    }
-
-    if (spcs) {
-      chk = true;
-      setsspecies(spcs.name);
-    } else {
-      setsspecies(false);
-    }
-
-    if (host > 0) {
-      chk = true;
-    }
-    setshostRating(host);
-
-    if (vu) {
-      chk = true;
-    }
-    setsvu(vu);
-
-    if (chk) {
-      store.Filters.setisFilter(true);
-      props.setisVisible(false);
-      onrefrshdata();
-    } else {
-      store.Filters.setisFilter(false);
-      props.setisVisible(false);
-      store.Filters.clearFilters();
-      onrefrshdata();
+      Alert.alert('Please connect internet');
     }
   };
 

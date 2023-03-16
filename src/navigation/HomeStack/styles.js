@@ -4,8 +4,8 @@ import {responsiveFontSize} from 'react-native-responsive-dimensions';
 
 const styles = {
   icon: {
-    width: responsiveFontSize(3),
-    height: responsiveFontSize(3),
+    width: responsiveFontSize(3.2),
+    height: responsiveFontSize(3.2),
     resizeMode: 'contain',
   },
 };

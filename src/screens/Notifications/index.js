@@ -536,7 +536,7 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
 
     return (
       <Pressable
-        disabled={isDisabel}
+        disabled={clickableText}
         onPress={() => {
           // console.log('item : ', item);
           onclickNotification(
@@ -547,7 +547,7 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
           );
         }}
         style={({pressed}) => [
-          {opacity: pressed ? 0.7 : 1.0},
+          {opacity: pressed ? 0.8 : 1.0},
           [
             styles.notificationConatiner,
             {

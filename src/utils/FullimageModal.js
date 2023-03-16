@@ -81,10 +81,9 @@ function FullimageModal(props) {
             {opacity: pressed ? 0.8 : 1},
             [styles.modalButtonContainer],
           ]}>
-          <utils.vectorIcon.AntDesign
-            name="close"
-            color={theme.color.subTitleLight}
-            size={16}
+          <Image
+            style={{width: 12, height: 12, resizeMode: 'contain'}}
+            source={require('../assets/images/imageCross/img.png')}
           />
         </Pressable>
       );
@@ -277,7 +276,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
-
     elevation: 3,
   },
   changeButtonContainer: {

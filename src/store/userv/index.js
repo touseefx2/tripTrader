@@ -79,7 +79,7 @@ class userv {
     console.warn('GET Followers  : ', 'true');
     setr(true);
 
-    db.hitApi(db.apis.GET_FOLLOWERS + uid, 'get', {}, this.authToken)
+    db.hitApi(db.apis.GET_FOLLOWERS + uid, 'get', {}, store.User.authToken)
       ?.then(resp => {
         setr(false);
 
@@ -130,7 +130,7 @@ class userv {
     console.warn('GET Followers  : ', 'true');
     setr(true);
 
-    db.hitApi(db.apis.GET_FOLLOWING + uid, 'get', {}, this.authToken)
+    db.hitApi(db.apis.GET_FOLLOWING + uid, 'get', {}, store.User.authToken)
       ?.then(resp => {
         setr(false);
 
@@ -174,7 +174,7 @@ class userv {
     console.warn('GET BloackUsers : ', 'true');
     this.setfl(true);
 
-    db.hitApi(db.apis.GET_BLOCK_USER + uid, 'get', {}, this.authToken)
+    db.hitApi(db.apis.GET_BLOCK_USER + uid, 'get', {}, store.User.authToken)
       ?.then(resp => {
         this.setfl(false);
         setrfrsh(false);
@@ -214,7 +214,7 @@ class userv {
     console.warn('UnblockUser  true : ');
     this.setbl(true);
     let c = this.user._id + '/' + uid;
-    db.hitApi(db.apis.UNBLOCK_USER + c, 'put', {}, this.authToken)
+    db.hitApi(db.apis.UNBLOCK_USER + c, 'put', {}, store.User.authToken)
       ?.then(resp => {
         this.setbl(false);
         console.log(
@@ -246,7 +246,7 @@ class userv {
     console.warn('blockUser  true : ');
     this.setbl(true);
     let c = this.user._id + '/' + uid;
-    db.hitApi(db.apis.BLOCK_USER + c, 'put', {}, this.authToken)
+    db.hitApi(db.apis.BLOCK_USER + c, 'put', {}, store.User.authToken)
       ?.then(resp => {
         this.setbl(false);
         console.log(
@@ -385,7 +385,7 @@ class userv {
     console.log('get all Reviews : ', 'true');
     setl(true);
 
-    db.hitApi(db.apis.GET_ALL_REVIEWS + uid, 'get', {}, this.authToken)
+    db.hitApi(db.apis.GET_ALL_REVIEWS + uid, 'get', {}, store.User.authToken)
       ?.then(resp => {
         setl(false);
         setrfrsh(false);
@@ -448,7 +448,7 @@ class userv {
     console.warn('CheckReview : ', 'true');
 
     let params = this.user._id + '/' + store.User.user._id;
-    db.hitApi(db.apis.CHECK_REVIEW + params, 'get', {}, this.authToken)
+    db.hitApi(db.apis.CHECK_REVIEW + params, 'get', {}, store.User.authToken)
       ?.then(resp => {
         console.log(
           `response CheckReview   ${db.apis.GET_ALL_REVIEWS + params} : `,
@@ -558,7 +558,7 @@ class userv {
     console.warn('GET_ALL_TRIP : ', 'true');
     setl(true);
 
-    db.hitApi(db.apis.GET_ALL_TRIP + uid, 'get', {}, this.authToken)
+    db.hitApi(db.apis.GET_ALL_TRIP + uid, 'get', {}, store.User.authToken)
       ?.then(resp => {
         setl(false);
         setrfrsh(false);
@@ -597,7 +597,7 @@ class userv {
     console.warn('getPhotosData : ', 'true');
     setl(true);
 
-    db.hitApi(db.apis.GET_ALL_TRIP + uid, 'get', {}, this.authToken)
+    db.hitApi(db.apis.GET_ALL_TRIP + uid, 'get', {}, store.User.authToken)
       ?.then(resp => {
         setl(false);
         setrfrsh(false);
@@ -1276,7 +1276,7 @@ class userv {
 
   @action myUserGetGeneral = c => {
     let uid = store.User.user._id;
-    store.User.getUserById1(uid, this.authToken, '');
+    store.User.getUserById1(uid, store.User.authToken, '');
     store.User.attemptToGetFollowers(
       uid,
       () => {},
@@ -1338,9 +1338,10 @@ class userv {
 
   @action FollowUser = (uid2, sflwrs, sflwng, setl) => {
     setl(true);
-    let uid1 = store.User.user._id;
+    const uid1 = store.User.user._id;
+    const params = uid1 + '/' + uid2;
+    console.log(`FOLLOW_USER,  ${db.apis.FOLLOW_USER}${params}   `);
 
-    let params = uid1 + '/' + uid2;
     db.hitApi(db.apis.FOLLOW_USER + params, 'put', {}, store.User.authToken)
       ?.then(resp => {
         console.log(
@@ -1371,10 +1372,10 @@ class userv {
   };
 
   @action BlockUser = (uid2, suc, sflwrs, sflwng, setl) => {
+    console.log(`store.User.authToke: `, store.User.authToken);
     setl(true);
-    let uid1 = store.User.user._id;
-
-    let params = uid1 + '/' + uid2;
+    const uid1 = store.User.user._id;
+    const params = uid1 + '/' + uid2;
     db.hitApi(db.apis.BLOCK_USER + params, 'put', {}, store.User.authToken)
       ?.then(resp => {
         console.log(
@@ -1412,9 +1413,8 @@ class userv {
 
   @action UnBlockUser = (uid2, suc, sflwrs, sflwng, setl) => {
     setl(true);
-    let uid1 = store.User.user._id;
-
-    let params = uid1 + '/' + uid2;
+    const uid1 = store.User.user._id;
+    const params = uid1 + '/' + uid2;
     db.hitApi(db.apis.UNBLOCK_USER + params, 'put', {}, store.User.authToken)
       ?.then(resp => {
         console.log(
@@ -1500,7 +1500,7 @@ class userv {
   @action attemptToCreateTrip = (body, suc) => {
     console.warn('create trip body : ', body);
 
-    db.hitApi(db.apis.CREATE_TRIP, 'post', body, this.authToken)
+    db.hitApi(db.apis.CREATE_TRIP, 'post', body, store.User.authToken)
       ?.then(resp => {
         this.setctripLoader(false);
         console.log(
@@ -1580,7 +1580,7 @@ class userv {
   @action attemptToUpdateTrip = (body, tid, index, suc) => {
     console.warn('update trip body  : ', body);
 
-    db.hitApi(db.apis.UPDATE_TRIP + tid, 'put', body, this.authToken)
+    db.hitApi(db.apis.UPDATE_TRIP + tid, 'put', body, store.User.authToken)
       ?.then(resp => {
         this.setctripLoader(false);
         console.log(
@@ -1619,7 +1619,7 @@ class userv {
   @action attemptToDeleteTrip = (body, tid, index, suc) => {
     console.warn('delete trip body  : ', body);
 
-    db.hitApi(db.apis.DELETE_TRIP + tid, 'delete', body, this.authToken)
+    db.hitApi(db.apis.DELETE_TRIP + tid, 'delete', body, store.User.authToken)
       ?.then(resp => {
         this.setctripLoader(false);
         console.log(
@@ -1943,7 +1943,7 @@ class userv {
       db.apis.GET_USER_BY_ID + this.user._id,
       'get',
       null,
-      this.authToken,
+      store.User.authToken,
     )
       ?.then((resp: any) => {
         console.log(`response  ${db.apis.GET_USER_BY_ID} : `, resp.data);
@@ -1970,7 +1970,7 @@ class userv {
       db.apis.GET_FAVRT_FOOD_LIST_BY_USER_ID + this.user._id,
       'get',
       null,
-      this.authToken,
+      store.User.authToken,
     )
       ?.then((resp: any) => {
         this.setfvrtloader(false);
@@ -2006,7 +2006,7 @@ class userv {
       db.apis.GET_ADDRESS_BY_USER_ID + this.user._id,
       'get',
       null,
-      this.authToken,
+      store.User.authToken,
     )
       ?.then((resp: any) => {
         this.setadrsloader(false);
@@ -2040,7 +2040,7 @@ class userv {
       db.apis.SET_FAVRT_FOOD_LIST_BY_USER_ID + this.user._id,
       'post',
       null,
-      this.authToken,
+      store.User.authToken,
     )
       ?.then((resp: any) => {
         this.setfvrtloader(false);
@@ -2075,7 +2075,7 @@ class userv {
       db.apis.REMOVE_FAVRT_FOOD_LIST_BY_USER_ID + this.user._id,
       'post',
       null,
-      this.authToken,
+      store.User.authToken,
     )
       ?.then((resp: any) => {
         this.setfvrtloader(false);
@@ -2108,7 +2108,7 @@ class userv {
       db.apis.ADD_ADDRESS_BY_USER_ID + this.user._id,
       'post',
       null,
-      this.authToken,
+      store.User.authToken,
     )
       ?.then((resp: any) => {
         this.setadrsloader(false);
@@ -2138,7 +2138,7 @@ class userv {
       db.apis.REMOVE_ADDRESS_BY_USER_ID + this.user._id,
       'post',
       null,
-      this.authToken,
+      store.User.authToken,
     )
       ?.then((resp: any) => {
         this.setadrsloader(false);
@@ -2856,7 +2856,7 @@ class userv {
     // let body = {...this.user, ...body};
     console.warn('Edit Update user   body : ', body);
 
-    db.hitApi(db.apis.UPDATE_USER + uid, 'put', body, this.authToken)
+    db.hitApi(db.apis.UPDATE_USER + uid, 'put', body, store.User.authToken)
       ?.then(resp => {
         this.setregLoader(false);
         console.log(
@@ -3065,14 +3065,14 @@ class userv {
       new_pass: np,
     };
 
-    console.log('auth token : ', this.authToken);
+    console.log('auth token : ', store.User.authToken);
 
     db.hitApi(
       db.apis.CHANGE_PASSWORD + this.user._id,
       'put',
       body,
 
-      this.authToken,
+      store.User.authToken,
     )
       ?.then(resp => {
         console.log(`response  ${db.apis.CHANGE_PASSWORD} : `, resp.data);

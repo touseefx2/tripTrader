@@ -166,6 +166,7 @@ const showNotifcaton = (message, title, topic, bigIcon, rightIcon, data) => {
     channelId: 'TripTradersX3', // (required) channelId, if the channel doesn't exist, notification will not trigger.
     actions: buttonsList, // (Android only) See the doc for notification actions to know more
     message: message,
+    id: parseInt(Math.random() * 1000000),
     title: title,
     tag: topic,
     invokeApp: false,
