@@ -176,7 +176,6 @@ function Home(props) {
   };
 
   const goToUserProfile = (props, senderUser) => {
-    console.log('su : ', senderUser);
     store.Userv.setfscreen(headerTitle || '');
     store.Userv.setUser(senderUser);
     store.Userv.addauthToken(store.User.authToken);
@@ -221,7 +220,7 @@ function Home(props) {
   };
 
   const onClickNotificationAction = (action, notify) => {
-    const senderId = notify.userInfo;
+    const senderId = JSON.parse(notify.userInfo);
     console.log('onClickNotificationAction:', notify);
     console.log('action :', action);
 
