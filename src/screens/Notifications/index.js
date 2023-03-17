@@ -10,6 +10,7 @@ import {
   Keyboard,
   Modal,
   RefreshControl,
+  FlatList,
 } from 'react-native';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
@@ -18,7 +19,7 @@ import utils from '../../utils/index';
 import theme from '../../theme';
 import NetInfo from '@react-native-community/netinfo';
 import moment from 'moment/moment';
-import {FlashList} from '@shopify/flash-list';
+// import {FlashList} from '@shopify/flash-list';
 
 export default observer(Notifications);
 
@@ -581,9 +582,9 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
           {!isInternet && <utils.InternetMessage />}
           <SafeAreaView style={styles.container2}>
             <View style={styles.container3}>
-              <FlashList
+              <FlatList
                 decelerationRate={0.5}
-                estimatedItemSize={100}
+                // estimatedItemSize={100}
                 refreshControl={
                   <RefreshControl refreshing={Loader} onRefresh={onRefresh} />
                 }

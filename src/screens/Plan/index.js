@@ -21,16 +21,15 @@ import theme from '../../theme';
 import {responsiveHeight} from 'react-native-responsive-dimensions';
 import Toast from 'react-native-easy-toast';
 import NetInfo from '@react-native-community/netinfo';
-
-import {
-  StripeProvider,
-  CardField,
-  useStripe,
-} from '@stripe/stripe-react-native';
+// import {
+//   StripeProvider,
+//   CardField,
+//   useStripe,
+// } from '@stripe/stripe-react-native';
 
 export default observer(Plan);
 function Plan(props) {
-  const {confirmPayment} = useStripe();
+  // const {confirmPayment} = useStripe();
 
   const mobileReg = /^[0][3]\d{9}$/;
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
@@ -362,7 +361,7 @@ function Plan(props) {
             body.customerId = user.customerId;
           }
 
-          store.User.BuyPlan(body, obj, (d, d2) => SucGetClientsecret(d, d2));
+          // store.User.BuyPlan(body, obj, (d, d2) => SucGetClientsecret(d, d2));
         } else {
           // seterrorMessage('Please connect internet');
           Alert.alert('', 'Please connect internet');
@@ -373,43 +372,43 @@ function Plan(props) {
     }
   };
 
-  const SucGetClientsecret = async (dt, obj) => {
-    console.log('data : ', dt);
-    try {
-      const {error, paymentIntent} = await confirmPayment(dt.cs, {
-        paymentMethodType: 'Card',
+  // const SucGetClientsecret = async (dt, obj) => {
+  //   console.log('data : ', dt);
+  //   try {
+  //     const {error, paymentIntent} = await confirmPayment(dt.cs, {
+  //       paymentMethodType: 'Card',
 
-        billingDetails: {name: cn},
-      });
+  //       billingDetails: {name: cn},
+  //     });
 
-      if (error) {
-        store.User.setregLoader(false);
-        console.log(`confirmPayment error: `, error);
-        Alert.alert(`Paymment ${error.code}`, error.message);
-      } else if (paymentIntent) {
-        console.log(`confirmPayment response: true`);
-        // paymentIntent
-        // Alert.alert(`Success`, `Payment Succefull: ${paymentIntent.id}`);
+  //     if (error) {
+  //       store.User.setregLoader(false);
+  //       console.log(`confirmPayment error: `, error);
+  //       Alert.alert(`Paymment ${error.code}`, error.message);
+  //     } else if (paymentIntent) {
+  //       console.log(`confirmPayment response: true`);
+  //       // paymentIntent
+  //       // Alert.alert(`Success`, `Payment Succefull: ${paymentIntent.id}`);
 
-        if (user.customerId && user.customerId != '') {
-        } else {
-          obj.customerId = dt.cid;
-        }
+  //       if (user.customerId && user.customerId != '') {
+  //       } else {
+  //         obj.customerId = dt.cid;
+  //       }
 
-        store.User.SubPlan(
-          obj,
-          user._id,
-          dt.cid,
-          token,
-          setErrMessage,
-          subPlanSuc,
-        );
-      }
-    } catch (err) {
-      store.User.setregLoader(false);
-      console.log(`confirmPayment cath error: `, err);
-    }
-  };
+  //       store.User.SubPlan(
+  //         obj,
+  //         user._id,
+  //         dt.cid,
+  //         token,
+  //         setErrMessage,
+  //         subPlanSuc,
+  //       );
+  //     }
+  //   } catch (err) {
+  //     store.User.setregLoader(false);
+  //     console.log(`confirmPayment cath error: `, err);
+  //   }
+  // };
 
   const applyPromo = () => {
     Keyboard.dismiss();
@@ -1050,7 +1049,7 @@ function Plan(props) {
                   <Text style={styles.FieldTitle1}>card</Text>
                 </View>
 
-                <CardField
+                {/* <CardField
                   postalCodeEnabled={false}
                   placeholders={{
                     number: 'Card number',
@@ -1075,26 +1074,8 @@ function Plan(props) {
                   onFocus={focusedField => {
                     console.log('focusField', focusedField);
                   }}
-                />
+                /> */}
                 {isValidCard == false && renderShowFieldError('card')}
-
-                {/* <View
-                  style={[
-                    [
-                      styles.FieldInputCard,
-                      {
-                        borderColor:
-                          isValidCard == false
-                            ? theme.color.fieldBordeError
-                            : isValidCard == true
-                            ? theme.color.button1
-                            : theme.color.fieldBorder,
-                      },
-                    ],
-                  ]}>
-                  <LiteCreditCardInput onChange={onChangeCard} />
-                </View>
-                {isValidCard == false && renderShowFieldError('card')} */}
               </View>
 
               {isShowPromoFiled && (
@@ -1296,33 +1277,29 @@ function Plan(props) {
   };
 
   return (
-    <StripeProvider publishableKey={store.General.Stripe_Publish_Key}>
-      <View style={styles.container}>
-        <Image
-          source={require('../../assets/images/background/img.png')}
-          style={styles.container2}
-        />
-        <SafeAreaView style={styles.container3}>
-          <utils.AuthHeader
-            props={props}
-            screen="plan"
-            goBack={() => goBack()}
-          />
+    // <StripeProvider publishableKey={store.General.Stripe_Publish_Key}>
+    <View style={styles.container}>
+      <Image
+        source={require('../../assets/images/background/img.png')}
+        style={styles.container2}
+      />
+      <SafeAreaView style={styles.container3}>
+        <utils.AuthHeader props={props} screen="plan" goBack={() => goBack()} />
 
-          <ScrollView
-            style={{paddingHorizontal: 15, marginTop: responsiveHeight(3)}}
-            showsVerticalScrollIndicator={false}>
-            <KeyboardAvoidingView style={{flex: 1}} enabled>
-              {renderSection2()}
-            </KeyboardAvoidingView>
-          </ScrollView>
-        </SafeAreaView>
+        <ScrollView
+          style={{paddingHorizontal: 15, marginTop: responsiveHeight(3)}}
+          showsVerticalScrollIndicator={false}>
+          <KeyboardAvoidingView style={{flex: 1}} enabled>
+            {renderSection2()}
+          </KeyboardAvoidingView>
+        </ScrollView>
+      </SafeAreaView>
 
-        <Toast ref={toast} position="center" />
-        <utils.Loader load={loader} />
+      <Toast ref={toast} position="center" />
+      <utils.Loader load={loader} />
 
-        {renderStatusBar()}
-      </View>
-    </StripeProvider>
+      {renderStatusBar()}
+    </View>
+    // </StripeProvider>
   );
 }

@@ -8,6 +8,7 @@ import {
   Alert,
   Pressable,
   RefreshControl,
+  FlatList,
 } from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
 import {styles} from './styles';
@@ -21,7 +22,7 @@ import {ImageSlider} from 'react-native-image-slider-banner';
 import moment from 'moment/moment';
 import io from 'socket.io-client';
 import db from '../../database/index';
-import {FlashList} from '@shopify/flash-list';
+// import {FlashList} from '@shopify/flash-list';
 import {notificationManager} from '../../services/NotificationManager';
 import PushNotification from 'react-native-push-notification';
 
@@ -188,7 +189,8 @@ function Home(props) {
 
   const onOpenNotification = notify => {
     const topic = notify?.tag || '';
-    const actionArr = JSON.parse(notify?.actions) || [];
+    const actionArr =
+      notify?.actions.length > 0 ? JSON.parse(notify?.actions) : [];
 
     if (actionArr.length > 0) {
       onClickNotificationAction(actionArr[0], notify);
@@ -781,9 +783,9 @@ function Home(props) {
         {!isInternet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
-            <FlashList
+            <FlatList
               decelerationRate={0.6}
-              estimatedItemSize={530}
+              // estimatedItemSize={530}
               refreshControl={
                 <RefreshControl refreshing={HomeLoader} onRefresh={onRefresh} />
               }

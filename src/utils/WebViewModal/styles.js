@@ -4,6 +4,7 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
+import theme from '../../theme';
 
 export const styles = StyleSheet.create({
   container: {
@@ -33,7 +34,6 @@ export const styles = StyleSheet.create({
   buttonTextBottomwebview: {
     color: '#fff',
     fontSize: responsiveFontSize(2),
-    lineHeight: 19.36,
-    fontFamily: 'Inter-Bold',
+    fontFamily: theme.fonts.fontBold,
   },
 });

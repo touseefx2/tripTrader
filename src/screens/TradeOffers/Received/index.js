@@ -144,10 +144,10 @@ function Received(props) {
   const [selDatess, setselDatess] = useState({});
   const [isSelDatee, setisSelDatee] = useState(false);
 
-  let data = store.Offers.rcvOffers;
-  let mloader = store.Offers.Loader2; //main loader
-  let mmloader = store.Offers.mLoader; //decline loader
-  let mmmloader = store.User.homeModalLoder; //msg loader
+  const data = store.Offers.rcvOffers;
+  const mloader = store.Offers.Loader2; //main loader
+  const mmloader = store.Offers.mLoader; //decline loader
+  const mmmloader = store.User.homeModalLoder; //msg loader
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {

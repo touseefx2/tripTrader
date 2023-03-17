@@ -16,11 +16,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {
-  CardField,
-  StripeProvider,
-  useStripe,
-} from '@stripe/stripe-react-native';
+// import {
+//   CardField,
+//   StripeProvider,
+//   useStripe,
+// } from '@stripe/stripe-react-native';
 import {
   responsiveFontSize,
   responsiveHeight,
@@ -42,7 +42,7 @@ import utils from '../../utils/index';
 
 export default observer(Signup);
 function Signup(props) {
-  const {confirmPayment} = useStripe();
+  // const {confirmPayment} = useStripe();
   const {isEmailPopup, setIsEmailPopup} = store.General;
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
   const toast = useRef(null);
@@ -646,7 +646,7 @@ function Signup(props) {
             amount: tv * 100,
           };
 
-          store.User.BuyPlan(body, obj, (d, d2) => SucGetClientsecret(d, d2));
+          // store.User.BuyPlan(body, obj, (d, d2) => SucGetClientsecret(d, d2));
         } else {
           // seterrorMessage('Please connect internet');
           Alert.alert('', 'Please connect internet');
@@ -657,37 +657,37 @@ function Signup(props) {
     }
   };
 
-  const SucGetClientsecret = async (dt, obj) => {
-    console.log('data : ', dt);
-    try {
-      const {error, paymentIntent} = await confirmPayment(dt.cs, {
-        paymentMethodType: 'Card',
-        billingDetails: {name: cn},
-      });
+  // const SucGetClientsecret = async (dt, obj) => {
+  //   console.log('data : ', dt);
+  //   try {
+  //     const {error, paymentIntent} = await confirmPayment(dt.cs, {
+  //       paymentMethodType: 'Card',
+  //       billingDetails: {name: cn},
+  //     });
 
-      if (error) {
-        store.User.setregLoader(false);
-        console.log(`confirmPayment error: `, error);
-        Alert.alert(`Paymment ${error.code}`, error.message);
-      } else if (paymentIntent) {
-        console.log(`confirmPayment response: `, paymentIntent);
-        // Alert.alert(`Success`, `Payment Succefull: ${paymentIntent.id}`);
-        obj.customerId = dt.cid;
-        store.User.SubPlan(
-          obj,
-          user._id,
-          dt.cid,
-          token,
-          setErrMessage,
-          subPlanSuc,
-          'n',
-        );
-      }
-    } catch (err) {
-      store.User.setregLoader(false);
-      console.log(`confirmPayment cath error: `, err);
-    }
-  };
+  //     if (error) {
+  //       store.User.setregLoader(false);
+  //       console.log(`confirmPayment error: `, error);
+  //       Alert.alert(`Paymment ${error.code}`, error.message);
+  //     } else if (paymentIntent) {
+  //       console.log(`confirmPayment response: `, paymentIntent);
+  //       // Alert.alert(`Success`, `Payment Succefull: ${paymentIntent.id}`);
+  //       obj.customerId = dt.cid;
+  //       store.User.SubPlan(
+  //         obj,
+  //         user._id,
+  //         dt.cid,
+  //         token,
+  //         setErrMessage,
+  //         subPlanSuc,
+  //         'n',
+  //       );
+  //     }
+  //   } catch (err) {
+  //     store.User.setregLoader(false);
+  //     console.log(`confirmPayment cath error: `, err);
+  //   }
+  // };
 
   const goTOProfile = () => {
     // let u = {...usr};
@@ -2164,7 +2164,7 @@ function Signup(props) {
                   <Text style={styles.FieldTitle1}>card</Text>
                 </View>
 
-                <CardField
+                {/* <CardField
                   postalCodeEnabled={false}
                   placeholders={{
                     number: 'Card number',
@@ -2189,26 +2189,8 @@ function Signup(props) {
                   onFocus={focusedField => {
                     console.log('focusField', focusedField);
                   }}
-                />
+                /> */}
                 {isValidCard == false && renderShowFieldError('card')}
-
-                {/* <View
-                  style={[
-                    [
-                      styles.FieldInputCard,
-                      {
-                        borderColor:
-                          isValidCard == false
-                            ? theme.color.fieldBordeError
-                            : isValidCard == true
-                            ? theme.color.button1
-                            : theme.color.fieldBorder,
-                      },
-                    ],
-                  ]}>
-                  <LiteCreditCardInput onChange={onChangeCard} />
-                </View>
-                {isValidCard == false && renderShowFieldError('card')} */}
               </View>
 
               {isShowPromoFiled && (
@@ -2490,59 +2472,59 @@ function Signup(props) {
   };
 
   return (
-    <StripeProvider publishableKey={store.General.Stripe_Publish_Key}>
-      <View style={styles.container}>
-        <Image
-          source={require('../../assets/images/background/img.png')}
-          style={styles.container2}
+    // <StripeProvider publishableKey={store.General.Stripe_Publish_Key}>
+    <View style={styles.container}>
+      <Image
+        source={require('../../assets/images/background/img.png')}
+        style={styles.container2}
+      />
+
+      <SafeAreaView style={styles.container3}>
+        <utils.AuthHeader
+          props={props}
+          screen="signup"
+          goBack={() => goBack()}
         />
 
-        <SafeAreaView style={styles.container3}>
-          <utils.AuthHeader
-            props={props}
-            screen="signup"
-            goBack={() => goBack()}
-          />
+        <ScrollView
+          style={{paddingHorizontal: 15, marginTop: responsiveHeight(3)}}
+          showsVerticalScrollIndicator={false}>
+          <KeyboardAvoidingView style={{flex: 1}} enabled>
+            {!isUserCreate && renderSection2()}
+            {isUserCreate && renderSection2User()}
+          </KeyboardAvoidingView>
+        </ScrollView>
+      </SafeAreaView>
 
-          <ScrollView
-            style={{paddingHorizontal: 15, marginTop: responsiveHeight(3)}}
-            showsVerticalScrollIndicator={false}>
-            <KeyboardAvoidingView style={{flex: 1}} enabled>
-              {!isUserCreate && renderSection2()}
-              {isUserCreate && renderSection2User()}
-            </KeyboardAvoidingView>
-          </ScrollView>
-        </SafeAreaView>
+      {pvm && (
+        <utils.FullimageModal
+          data={pv}
+          si={0}
+          show={pvm}
+          closModal={() => setpvm(!pvm)}
+        />
+      )}
+      <Toast ref={toast} position="center" />
+      <utils.Loader load={loader} />
 
-        {pvm && (
-          <utils.FullimageModal
-            data={pv}
-            si={0}
-            show={pvm}
-            closModal={() => setpvm(!pvm)}
-          />
-        )}
-        <Toast ref={toast} position="center" />
-        <utils.Loader load={loader} />
-
-        {renderStatusBar()}
-        {renderDateShowModal()}
-        {isEmailPopup && (
-          <utils.EmailPopupSheet
-            isModal={isEmailPopup}
-            setIsModal={setIsEmailPopup}
-            email={email}
-            user={user}
-          />
-        )}
-        {isShowTermsAndConditions && (
-          <utils.WebViewModal
-            link={store.General.Terms_and_Conditions_Link}
-            isVisible={isShowTermsAndConditions}
-            setisVisible={setIsShowTermsAndConditions}
-          />
-        )}
-      </View>
-    </StripeProvider>
+      {renderStatusBar()}
+      {renderDateShowModal()}
+      {isEmailPopup && (
+        <utils.EmailPopupSheet
+          isModal={isEmailPopup}
+          setIsModal={setIsEmailPopup}
+          email={email}
+          user={user}
+        />
+      )}
+      {isShowTermsAndConditions && (
+        <utils.WebViewModal
+          link={store.General.Terms_and_Conditions_Link}
+          isVisible={isShowTermsAndConditions}
+          setisVisible={setIsShowTermsAndConditions}
+        />
+      )}
+    </View>
+    // </StripeProvider>
   );
 }

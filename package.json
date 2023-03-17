@@ -28,7 +28,6 @@
     "@react-navigation/drawer": "^6.4.3",
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/native-stack": "^6.6.2",
-    "@shopify/flash-list": "^1.4.0",
     "axios": "^0.27.2",
     "mobx": "^6.6.1",
     "mobx-persist": "^0.4.1",
