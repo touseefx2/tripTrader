@@ -11,6 +11,10 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
+import {
+  responsiveFontSize,
+  responsiveHeight,
+} from 'react-native-responsive-dimensions';
 import theme from '../../../../../src/theme';
 
 type Props = {
@@ -198,7 +202,7 @@ export default function DrawerItem(props: Props) {
               label == 'New Trip ...' ||
               label == 'Support' ||
               label == 'Settings'
-                ? 17
+                ? responsiveHeight(2.5)
                 : 0,
           },
           style,
@@ -216,7 +220,10 @@ export default function DrawerItem(props: Props) {
             <View
               style={[
                 styles.label,
-                {marginLeft: iconNode ? 20 : 0, marginVertical: 5},
+                {
+                  marginLeft: iconNode ? 20 : 0,
+                  marginVertical: responsiveHeight(0.7),
+                },
               ]}>
               {typeof label === 'string' ? (
                 <Text
@@ -225,7 +232,6 @@ export default function DrawerItem(props: Props) {
                   style={[
                     {
                       color,
-
                       fontFamily: theme.fonts.fontNormal,
                     },
                     labelStyle,
@@ -248,6 +254,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     marginVertical: 0,
     overflow: 'hidden',
+    marginBottom: responsiveHeight(0.5),
   },
   wrapper: {
     flexDirection: 'row',

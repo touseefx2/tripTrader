@@ -660,7 +660,7 @@ function Reviews(props) {
     return (
       <View
         style={{
-          marginTop: '25%',
+          marginTop: '45%',
           width: '100%',
         }}>
         <Text

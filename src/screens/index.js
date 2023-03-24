@@ -25,14 +25,12 @@ import ConfirmTrips from './ConfirmTrips';
 import SavedTrips from './SavedTrips';
 import Support from './Support';
 import LatestNews from './LatestNews';
-import PrivacyPolicy from './PrivacyPolicy';
 import Settings from './Settings';
 import ChangePassword from './ChangePassword';
 import BlockUsers from './BlockUsers';
 
 export default screens = {
   Splash,
-
   Login,
   Signin,
   Signup,
@@ -53,7 +51,6 @@ export default screens = {
   SavedTrips,
   Support,
   LatestNews,
-  PrivacyPolicy,
   Settings,
   ChangePassword,
   ShowFollowers,

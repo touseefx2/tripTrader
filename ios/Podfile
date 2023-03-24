@@ -31,6 +31,8 @@ target 'Trip_Trader' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'ReactNativeCountries', :path => '../node_modules/react-native-countries'
+
   target 'Trip_TraderTests' do
     inherit! :complete
     # Pods for testing

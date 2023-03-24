@@ -38,6 +38,7 @@ class general {
   @observable isSheetOpen = false;
   @observable focusScreen = '';
   @observable goto = 'home';
+  @observable settingsGoTo = '';
 
   @action checkServer = err => {
     if (err.response.data == undefined && err.response.status == 0) {
@@ -56,6 +57,10 @@ class general {
 
   @action setgoto = obj => {
     this.goto = obj;
+  };
+
+  @action setSettingsGoTo = obj => {
+    this.settingsGoTo = obj;
   };
 
   @action setFocusScreen = obj => {

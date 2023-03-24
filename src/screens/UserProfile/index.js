@@ -1168,7 +1168,7 @@ function UserProfile(props) {
 
       const renderCenter = () => {
         let un = user.userName ? user.userName : 'uname';
-
+        const email = user.email;
         return (
           <View
             style={{
@@ -1213,7 +1213,7 @@ function UserProfile(props) {
                 color: theme.color.subTitleLight,
                 lineHeight: 20,
               }}>
-              @{un}
+              @{email}
             </Text>
 
             <View style={{width: '93%', alignSelf: 'center'}}>
@@ -1460,6 +1460,7 @@ function UserProfile(props) {
       setisSendMessage(false);
     };
 
+    const email = sendObj.email;
     let fn = sendObj.firstName;
     let ln = sendObj.lastName;
     let sendOfferUsername = fn + ' ' + ln;
@@ -1540,7 +1541,7 @@ function UserProfile(props) {
                   color: theme.color.subTitleLight,
                   lineHeight: 20,
                 }}>
-                @{un}
+                @{email}
               </Text>
             </View>
 
@@ -1627,6 +1628,7 @@ function UserProfile(props) {
       setisSendReport(false);
     };
     const renderCenter = () => {
+      const email = sendObj.email;
       let fn = sendObj.firstName;
       let ln = sendObj.lastName;
       let sendOfferUsername = fn + ' ' + ln;
@@ -1676,7 +1678,7 @@ function UserProfile(props) {
               color: theme.color.subTitleLight,
               lineHeight: 20,
             }}>
-            @{un}
+            @{email}
           </Text>
 
           <View style={{width: '93%', alignSelf: 'center'}}>

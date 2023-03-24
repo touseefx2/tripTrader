@@ -439,17 +439,6 @@ let SettingsStack = () => {
           });
         }}
       />
-
-      <Stack.Screen
-        name="PrivacyPolicy"
-        component={screens.PrivacyPolicy}
-        options={props => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-      />
     </Stack.Navigator>
   );
 };

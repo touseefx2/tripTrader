@@ -5,7 +5,7 @@ import Bottom from './components/Bottom';
 
 export default function Message({modalObj, isMaxHeight, closeModal, props}) {
   const {item} = modalObj;
-  const {firstName, lastName} = item.hostId;
+  const {firstName, lastName, email} = item.hostId;
   const userName = firstName + ' ' + lastName;
   const imageSrc = require('../../../../assets/images/msgSentDone/img.png');
 
@@ -29,9 +29,9 @@ export default function Message({modalObj, isMaxHeight, closeModal, props}) {
           <Text numberOfLines={1} ellipsizeMode="tail" style={styles.subTitle}>
             {userName}
           </Text>
-          {/* <Text numberOfLines={1} ellipsizeMode="tail" style={styles.subTitle2}>
-            @user
-          </Text> */}
+          <Text numberOfLines={1} ellipsizeMode="tail" style={styles.subTitle2}>
+            @{email}
+          </Text>
         </View>
       </>
     );

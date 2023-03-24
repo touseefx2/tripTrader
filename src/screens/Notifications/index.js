@@ -103,7 +103,7 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
   const headerTitle = 'Notifications';
   const windowSize = 21;
   const limit = 16;
-  const {isInternet} = store.General;
+  const {isInternet, setSettingsGoTo} = store.General;
   const {user} = store.User;
   const {
     notifications,
@@ -232,6 +232,8 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
     return t;
   }
 
+  console.log('calling screen : ', callingScreen);
+
   const onclickNotification = (title, action, item, isRead) => {
     Keyboard.dismiss();
     const notificationId = item.messageId;
@@ -245,14 +247,12 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
         title == 'New Trip Created' ||
         title == 'Profile Updated' ||
         title == 'Password Changed' ||
-        title == 'Email Verification' ||
-        title == 'Profile' //follwowing user
+        title == 'Email Verification'
       ) {
         props.navigation.navigate('MyProfile');
       }
 
-      if (title == 'Your review was disputed') {
-        props.navigation.navigate('MyProfile');
+      if (title == 'Your review was disputed' || title == 'Profile') {
         goToUserProfile(senderUser);
       }
     }
@@ -303,8 +303,18 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
         props.navigation.navigate('SavedTrips');
       }
 
-      if (action == 'Subscribe' || action == 'Manage Subscription') {
+      if (action == 'Subscribe') {
         props.navigation.navigate('Plan');
+      }
+
+      if (action == 'Manage Subscription') {
+        if (callingScreen == 'Settings') {
+          props.navigation.navigate('ManageSubscription');
+          setSettingsGoTo('');
+          return;
+        }
+        setSettingsGoTo('Manage Subscription');
+        props.navigation.navigate('Settings');
       }
     }
 

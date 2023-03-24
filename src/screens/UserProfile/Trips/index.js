@@ -5491,11 +5491,11 @@ function Trips(props) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
         {getDataOnce && data.length <= 0 && !loader && renderMessage('empty')}
-        {!getDataOnce &&
+        {/* {!getDataOnce &&
           !internet &&
           !loader &&
           data.length <= 0 &&
-          renderMessage('internet')}
+          renderMessage('internet')} */}
 
         {data.length >= 0 && (
           <Accordion
@@ -5512,7 +5512,7 @@ function Trips(props) {
             sections={data}
             activeSections={activeSections}
             onChange={s => updateSections(s)}
-            emptyMessage={<EmptyListMessage />}
+            // emptyMessage={<EmptyListMessage />}
             ItemSeparatorView={ItemSeparatorView}
             renderHeader={(item, index, isActive) => (
               <Card1

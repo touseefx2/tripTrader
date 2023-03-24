@@ -29,7 +29,8 @@ export default observer(Home);
 function Home(props) {
   const headerTitle = 'Home';
   const toast = useRef(null);
-  const {isInternet, goto, isEmailPopup, setIsEmailPopup} = store.General;
+  const {isInternet, goto, isEmailPopup, setIsEmailPopup, setSettingsGoTo} =
+    store.General;
   const {isApplySearch} = store.Search;
   const {isShowNotifcation} = store.Notifications;
   const {
@@ -190,8 +191,10 @@ function Home(props) {
     const topic = notify?.tag || '';
     const actionArr = JSON.parse(notify?.actions) || [];
 
-    if (actionArr.length > 0) {
-      onClickNotificationAction(actionArr[0], notify);
+    if (actionArr.length > 0 || topic == 'followUser') {
+      if (topic == 'followUser')
+        onClickNotificationAction('followUser', notify);
+      else onClickNotificationAction(actionArr[0], notify);
       return;
     }
 
@@ -202,11 +205,7 @@ function Home(props) {
       goToEditProfile(props);
     }
 
-    if (
-      topic == 'newReview' ||
-      topic == 'updateInReview' ||
-      topic == 'followUser'
-    ) {
+    if (topic == 'newReview' || topic == 'updateInReview') {
       goToMyProfile(props);
     }
 
@@ -217,12 +216,27 @@ function Home(props) {
     if (topic == 'offerConfirm') {
       goToConfirmTrips(props);
     }
+
+    if (topic == 'subscriptionStatus') {
+      props.navigation.navigate('Plan');
+    }
+
+    if (topic == 'subscriptionStatus') {
+      props.navigation.navigate('Plan');
+    }
+
+    if (topic == 'paymentFailed') {
+      setSettingsGoTo('Manage Subscription');
+      props.navigation.navigate('Settings');
+    }
   };
 
   const onClickNotificationAction = (action, notify) => {
-    const senderId = JSON.parse(notify.userInfo);
     console.log('onClickNotificationAction:', notify);
     console.log('action :', action);
+    const senderId = {};
+    if (action == 'followUser') senderId = notify?.data ? notify.data : {};
+    else senderId = notify?.userInfo ? JSON.parse(notify.userInfo) : {};
 
     if (action == 'Dismiss' || action == 'No Thanks') {
       PushNotification.cancelLocalNotification(notify.id);
@@ -251,8 +265,12 @@ function Home(props) {
       //save trip expire
       goToSavedTrips(props);
     }
-    if (action == 'Leave Review' || action == 'See Trip Details') {
-      //newTripAdded  reviewReminder
+    if (
+      action == 'Leave Review' ||
+      action == 'See Trip Details' ||
+      action == 'followUser'
+    ) {
+      //newTripAdded  reviewReminder userFollow
       goToUserProfile(props, senderId);
     }
   };

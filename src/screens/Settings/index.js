@@ -32,7 +32,7 @@ function Settings(props) {
   const headerTitle = 'Settings';
   const toast = useRef(null);
   const activeOpacity = 0.8;
-  const {isInternet} = store.General;
+  const {isInternet, settingsGoTo, setSettingsGoTo} = store.General;
   const {user, isNotification} = store.User;
 
   let phn = '';
@@ -50,6 +50,17 @@ function Settings(props) {
   const [pwc, setpwc] = useState('');
 
   const [isShowPrivacy, setIsShowPrivacy] = useState(false);
+
+  const goToManageSubscription = () => {
+    props.navigation.navigate('ManageSubscription');
+    setSettingsGoTo('');
+  };
+
+  useEffect(() => {
+    if (settingsGoTo != '') {
+      if (settingsGoTo == 'Manage Subscription') goToManageSubscription();
+    }
+  }, []);
 
   useEffect(() => {
     if (phone != '' && cntry != '') {
@@ -93,28 +104,20 @@ function Settings(props) {
   };
 
   const onClick = c => {
-    if (c == 'edit profile') {
-      props.navigation.navigate('EditProfile');
-    }
-    if (c == 'change password') {
-      props.navigation.navigate('ChangePassword');
-    }
+    if (c == 'edit profile') props.navigation.navigate('EditProfile');
+
+    if (c == 'change password') props.navigation.navigate('ChangePassword');
+
     if (c == 'notifications') {
     }
-    if (c == 'Blocked Users') {
-      props.navigation.navigate('BlockUsers');
-    }
-    if (c == 'Manage Subscription') {
-      props.navigation.navigate('ManageSubscription');
-    }
-    if (c == 'contact us') {
-      props.navigation.navigate('ContactUs');
-    }
+    if (c == 'Blocked Users') props.navigation.navigate('BlockUsers');
 
-    if (c == 'privacy') {
-      // props.navigation.navigate('PrivacyPolicy');
-      openWebView();
-    }
+    if (c == 'Manage Subscription') goToManageSubscription();
+
+    if (c == 'contact us') props.navigation.navigate('ContactUs');
+
+    if (c == 'privacy') openWebView();
+
     if (c == 'logout') {
       store.General.setgoto('home');
       store.User.Logout();

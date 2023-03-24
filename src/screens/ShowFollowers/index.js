@@ -158,7 +158,10 @@ function ShowFollowers(props) {
     const usrr = item.userId;
     const photo = usrr.image || '';
     const userName = usrr.firstName + ' ' + usrr.lastName;
-    const location = usrr.location ? usrr.location : 'Pakistan';
+    const location =
+      usrr?.countryName && usrr.countryName != ''
+        ? usrr.countryName
+        : 'Country';
 
     const renderProfile = () => {
       return (
@@ -203,7 +206,6 @@ function ShowFollowers(props) {
           <View
             style={{
               flexDirection: 'row',
-              alignItems: 'center',
               justifyContent: 'space-between',
             }}>
             <Image
@@ -214,17 +216,15 @@ function ShowFollowers(props) {
                 resizeMode: 'contain',
               }}
             />
-            <View style={{width: '94%'}}>
+            <View style={{width: '90%'}}>
               <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
                 style={{
                   color: theme.color.subTitleLight,
                   fontSize: 13,
-                  top: 2,
                   fontFamily: theme.fonts.fontMedium,
                   textTransform: 'capitalize',
-                  lineHeight: 25,
                 }}>
                 {location}
               </Text>
