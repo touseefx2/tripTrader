@@ -234,7 +234,7 @@ function Home(props) {
   const onClickNotificationAction = (action, notify) => {
     console.log('onClickNotificationAction:', notify);
     console.log('action :', action);
-    const senderId = {};
+    let senderId = {};
     if (action == 'followUser') senderId = notify?.data ? notify.data : {};
     else senderId = notify?.userInfo ? JSON.parse(notify.userInfo) : {};
 
