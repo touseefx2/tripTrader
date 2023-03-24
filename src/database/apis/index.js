@@ -1,5 +1,3 @@
-//Local
-
 const BASE_URL =
   // 'http://10.7.104.165:3001/';
   'http://ec2-35-175-134-9.compute-1.amazonaws.com/';
