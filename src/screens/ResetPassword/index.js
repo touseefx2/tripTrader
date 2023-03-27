@@ -112,7 +112,7 @@ function ResetPassword(props) {
         if (chk == 'email') {
           body = {
             newPassword: np,
-            email: value,
+            email: value.toLowerCase(),
           };
         } else {
           body = {

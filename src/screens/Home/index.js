@@ -29,8 +29,14 @@ export default observer(Home);
 function Home(props) {
   const headerTitle = 'Home';
   const toast = useRef(null);
-  const {isInternet, goto, isEmailPopup, setIsEmailPopup, setSettingsGoTo} =
-    store.General;
+  const {
+    isInternet,
+    goto,
+    isEmailPopup,
+    setIsEmailPopup,
+    setSettingsGoTo,
+    setOfferGoTo,
+  } = store.General;
   const {isApplySearch} = store.Search;
   const {isShowNotifcation} = store.Notifications;
   const {
@@ -211,6 +217,7 @@ function Home(props) {
 
     if (topic == 'offerDecline' || topic == 'offerCancel') {
       goToTradeOffer(props);
+      setOfferGoTo('sent');
     }
 
     if (topic == 'offerConfirm') {
@@ -253,6 +260,7 @@ function Home(props) {
     if (action == 'Review Offer Details') {
       //offer recieve
       goToTradeOffer(props);
+      setOfferGoTo('received');
     }
     if (action.includes('Message')) {
       goToUserProfile(props, senderId);

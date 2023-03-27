@@ -21,7 +21,7 @@ function CheckisAlreadySaveTrip(obj, saveTripData) {
 function formatTitle(num, title) {
   let text = '';
   if (num <= 1) {
-    text = title.substring(0, title.length - 1);
+    text = title.substring(0, title.trim().length - 1);
   } else {
     text = title;
   }

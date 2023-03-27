@@ -103,7 +103,7 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
   const headerTitle = 'Notifications';
   const windowSize = 21;
   const limit = 16;
-  const {isInternet, setSettingsGoTo} = store.General;
+  const {isInternet, setSettingsGoTo, setOfferGoTo} = store.General;
   const {user} = store.User;
   const {
     notifications,
@@ -232,8 +232,6 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
     return t;
   }
 
-  console.log('calling screen : ', callingScreen);
-
   const onclickNotification = (title, action, item, isRead) => {
     Keyboard.dismiss();
     const notificationId = item.messageId;
@@ -284,6 +282,7 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
           goToUserProfile(senderUser);
         } else if (title.includes('New offer')) {
           props.navigation.navigate('TradeOffers'); //recieve ofer tab
+          setOfferGoTo('received');
         }
       }
 
@@ -548,7 +547,6 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
       <Pressable
         disabled={clickableText}
         onPress={() => {
-          // console.log('item : ', item);
           onclickNotification(
             isFollow ? 'Profile' : title,
             clickableText,

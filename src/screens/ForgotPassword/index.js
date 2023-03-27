@@ -137,7 +137,7 @@ function ForgotPassword(props) {
           }
 
           let body = {
-            email: email,
+            email: email.toLowerCase(),
           };
 
           store.User.forgotPassword(body, gotoVerifyCode, setErrMessage);

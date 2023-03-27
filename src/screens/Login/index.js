@@ -2,7 +2,6 @@ import {observer} from 'mobx-react';
 import React, {useEffect, useRef} from 'react';
 import {
   Image,
-  ImageBackground,
   SafeAreaView,
   ScrollView,
   StatusBar,

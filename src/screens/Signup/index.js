@@ -32,7 +32,6 @@ import DatePicker from 'react-native-date-picker';
 import Toast from 'react-native-easy-toast';
 import IntentLauncher from 'react-native-intent-launcher';
 import * as RNLocalize from 'react-native-localize';
-import RNCountry from 'react-native-countries';
 import {check, PERMISSIONS, request} from 'react-native-permissions';
 import {observer} from 'mobx-react';
 import moment from 'moment';
@@ -483,24 +482,17 @@ function Signup(props) {
       return;
     }
 
-    let countryName = '';
-    const cntry = RNLocalize.getCountry();
-    const countryNamesWithCodes = RNCountry.getCountryNamesWithCodes;
-    const Country = countryNamesWithCodes.find(item => item.code === cntry);
-    if (Country) countryName = Country.name;
-
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         const body = {
           firstName: fn,
           lastName: ln,
-          email: email,
+          email: email.toLowerCase(),
           birthDate: dob,
           termsAccepted: isTerms,
           password: pswd,
           phone: '',
           phoneCountryCode: RNLocalize.getCountry(),
-          countryName: countryName,
           image: '',
           identityProof: '',
           registrationCode: store.User.notificationToken,

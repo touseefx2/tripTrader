@@ -41,13 +41,13 @@ function Sent(props) {
   let maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
 
-  let guest = require('../../../assets/images/drawer/guest/img.png');
-  let trnfericon = require('../../../assets/images/transfer/img.png');
-  let durtnicon = require('../../../assets/images/confirmTrip/duration/img.png');
-  let avlblicon = require('../../../assets/images/confirmTrip/available/img.png');
-  let locationicon = require('../../../assets/images/confirmTrip/location/img.png');
+  const guest = require('../../../assets/images/drawer/guest/img.png');
+  const trnfericon = require('../../../assets/images/transfer/img.png');
+  const durtnicon = require('../../../assets/images/confirmTrip/duration/img.png');
+  const avlblicon = require('../../../assets/images/confirmTrip/available/img.png');
+  const locationicon = require('../../../assets/images/confirmTrip/location/img.png');
 
-  let internet = store.General.isInternet;
+  const {isInternet, offerGoTo, setOfferGoTo} = store.General;
 
   const [modalObj, setmodalObj] = useState(false);
   const [modalChk, setmodalChk] = useState(false);
@@ -56,6 +56,15 @@ function Sent(props) {
   let data = store.Offers.sentOffers;
   let mloader = store.Offers.Loader;
   let mmloader = store.Offers.mLoader;
+
+  useEffect(() => {
+    if (offerGoTo != '') {
+      setTimeout(() => {
+        props.jumpTo(offerGoTo);
+        setOfferGoTo('');
+      }, 100);
+    }
+  }, [offerGoTo]);
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
@@ -80,11 +89,11 @@ function Sent(props) {
     });
   };
   useEffect(() => {
-    if (!getDataOnce && internet) {
+    if (!getDataOnce && isInternet) {
       getDbData();
     }
     return () => {};
-  }, [getDataOnce, internet]);
+  }, [getDataOnce, isInternet]);
 
   const closeModal = () => {
     if (!mmloader) {

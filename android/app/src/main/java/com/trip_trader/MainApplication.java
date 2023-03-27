@@ -4,8 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
-import com.taluttasgiran.ReactNativeCountriesPackage;
-import com.taluttasgiran.ReactNativeCountriesPackage;
 import com.poberwong.launcher.IntentLauncherPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;

@@ -238,10 +238,6 @@ function MyProfile(props) {
     }
   };
 
-  const setPhoto = c => {
-    setcphoto(c);
-  };
-
   const editProfile = () => {
     props.navigation.navigate('EditProfile');
   };
@@ -530,10 +526,9 @@ function MyProfile(props) {
       );
     };
 
-    let src =
-      cphoto != ''
-        ? {uri: cphoto.uri}
-        : require('../../assets/images/imgLoad/img.jpeg');
+    const src = cphoto
+      ? {uri: cphoto.uri}
+      : require('../../assets/images/imgLoad/img.jpeg');
     return (
       <MModal
         animationType="slide"

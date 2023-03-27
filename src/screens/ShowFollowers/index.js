@@ -158,10 +158,6 @@ function ShowFollowers(props) {
     const usrr = item.userId;
     const photo = usrr.image || '';
     const userName = usrr.firstName + ' ' + usrr.lastName;
-    const location =
-      usrr?.countryName && usrr.countryName != ''
-        ? usrr.countryName
-        : 'Country';
 
     const renderProfile = () => {
       return (
@@ -197,39 +193,11 @@ function ShowFollowers(props) {
               color: '#3C6B49',
               fontSize: 15,
               fontFamily: theme.fonts.fontBold,
-              lineHeight: 23,
+
               textTransform: 'capitalize',
             }}>
             {userName}
           </Text>
-
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Image
-              source={src}
-              style={{
-                width: 20,
-                height: 20,
-                resizeMode: 'contain',
-              }}
-            />
-            <View style={{width: '90%'}}>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  color: theme.color.subTitleLight,
-                  fontSize: 13,
-                  fontFamily: theme.fonts.fontMedium,
-                  textTransform: 'capitalize',
-                }}>
-                {location}
-              </Text>
-            </View>
-          </View>
         </View>
       );
     };

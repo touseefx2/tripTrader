@@ -122,7 +122,7 @@ function ChangePassword(props) {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         let body = {
-          email: store.User.user.email,
+          email: store.User.user.email.toLowerCase(),
           curr_pass: currentp,
           newPassword: np,
           confirmPassword: cp,

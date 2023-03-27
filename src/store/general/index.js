@@ -39,6 +39,7 @@ class general {
   @observable focusScreen = '';
   @observable goto = 'home';
   @observable settingsGoTo = '';
+  @observable offerGoTo = '';
 
   @action checkServer = err => {
     if (err.response.data == undefined && err.response.status == 0) {
@@ -61,6 +62,10 @@ class general {
 
   @action setSettingsGoTo = obj => {
     this.settingsGoTo = obj;
+  };
+
+  @action setOfferGoTo = obj => {
+    this.offerGoTo = obj;
   };
 
   @action setFocusScreen = obj => {
