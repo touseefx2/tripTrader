@@ -196,7 +196,11 @@ function Reviews(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToDisputeComment(modalObj, userName, closeModal);
+        store.User.attemptToDisputeComment(
+          modalObj,
+          utils.functions.capitalizeTheFirstLetterOfEachWord(userName),
+          closeModal,
+        );
       } else Alert.alert('', 'Please connect internet');
     });
   };

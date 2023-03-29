@@ -1229,7 +1229,9 @@ function Signup(props) {
           <Text style={[styles.FieldTitle1, {textTransform: 'none'}]}>
             Date of Birth
           </Text>
-          <View
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={showPUDatepicker}
             style={[
               styles.FieldInput,
               {
@@ -1241,24 +1243,21 @@ function Signup(props) {
                 alignItems: 'center',
               },
             ]}>
-            <TouchableOpacity
-              activeOpacity={0.5}
-              onPress={showPUDatepicker}
-              style={{width: '85%'}}>
+            <View style={{width: '85%'}}>
               {dob == '' && (
                 <Text style={styles.DateTextPlaceholder}>mm / dd / yyyy</Text>
               )}
               {dob != '' && (
                 <Text style={styles.DateText}>{formatDate(dob)}</Text>
               )}
-            </TouchableOpacity>
+            </View>
 
             <utils.vectorIcon.AntDesign
               name={'calendar'}
               color={'#30563A'}
               size={20}
             />
-          </View>
+          </TouchableOpacity>
 
           {Emptydob && renderShowFieldError('dob')}
         </View>

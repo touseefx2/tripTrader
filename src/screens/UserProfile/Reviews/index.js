@@ -237,7 +237,8 @@ function Reviews(props) {
               message: message,
             },
           ],
-          guestName: userName,
+          guestName:
+            utils.functions.capitalizeTheFirstLetterOfEachWord(userName),
         };
         store.Userv.attemptToPostReview(
           body,

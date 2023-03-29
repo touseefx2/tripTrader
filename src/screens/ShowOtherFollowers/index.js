@@ -145,8 +145,12 @@ function ShowOtherFollowers(props) {
   const ItemView = ({item, index}) => {
     const usrr = item.userId;
     //user
-    const photo = usrr.image || '';
-    const userName = usrr.firstName + ' ' + usrr.lastName;
+    let photo = '';
+    let userName = 'undefined';
+    if (usrr) {
+      photo = usrr.image || '';
+      userName = usrr.firstName + ' ' + usrr.lastName;
+    }
 
     const renderProfile = () => {
       return (
@@ -191,9 +195,11 @@ function ShowOtherFollowers(props) {
       );
     };
 
+    const isDisable = store.User.user._id == usrr?._id || !usrr ? true : false;
+
     return (
       <Pressable
-        disabled={store.User.user._id == usrr._id ? true : false}
+        disabled={isDisable}
         onPress={() => {
           store.Userv.setfscreen('home');
           store.Userv.setUser(usrr);

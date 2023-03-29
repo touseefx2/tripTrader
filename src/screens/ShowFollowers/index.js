@@ -156,8 +156,12 @@ function ShowFollowers(props) {
   const src = require('../../assets/images/locationPin/img.png');
   const ItemView = ({item, index}) => {
     const usrr = item.userId;
-    const photo = usrr.image || '';
-    const userName = usrr.firstName + ' ' + usrr.lastName;
+    let photo = '';
+    let userName = 'undefined';
+    if (usrr) {
+      photo = usrr.image || '';
+      userName = usrr.firstName + ' ' + usrr.lastName;
+    }
 
     const renderProfile = () => {
       return (
@@ -174,11 +178,11 @@ function ShowFollowers(props) {
             blurRadius={5}
           />
           {/* {isVeirfy && (
-            <Image
-              style={styles.miconVerify}
-              source={require('../../assets/images/verified/img.png')}
-            />
-          )} */}
+              <Image
+                style={styles.miconVerify}
+                source={require('../../assets/images/verified/img.png')}
+              />
+            )} */}
         </View>
       );
     };
@@ -202,9 +206,11 @@ function ShowFollowers(props) {
       );
     };
 
+    const isDisable = store.User.user._id == usrr?._id || !usrr ? true : false;
+
     return (
       <Pressable
-        disabled={store.User.user._id == usrr._id ? true : false}
+        disabled={isDisable}
         onPress={() => {
           store.Userv.setfscreen('my');
           store.Userv.setUser(usrr);

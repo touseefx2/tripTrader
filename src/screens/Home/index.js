@@ -197,9 +197,9 @@ function Home(props) {
     const topic = notify?.tag || '';
     const actionArr = JSON.parse(notify?.actions) || [];
 
-    if (actionArr.length > 0 || topic == 'followUser') {
-      if (topic == 'followUser')
-        onClickNotificationAction('followUser', notify);
+    if (actionArr.length > 0 || topic == 'followUser' || topic == 'dispute') {
+      if (topic == 'followUser' || topic == 'dispute')
+        onClickNotificationAction(topic, notify);
       else onClickNotificationAction(actionArr[0], notify);
       return;
     }
@@ -276,9 +276,10 @@ function Home(props) {
     if (
       action == 'Leave Review' ||
       action == 'See Trip Details' ||
-      action == 'followUser'
+      action == 'followUser' ||
+      action == 'dispute'
     ) {
-      //newTripAdded  reviewReminder userFollow
+      //newTripAdded  reviewReminder userFollow disputeReview
       goToUserProfile(props, senderId);
     }
   };

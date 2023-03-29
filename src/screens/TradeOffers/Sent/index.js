@@ -364,387 +364,389 @@ function Sent(props) {
   }
 
   const ItemView = ({item, index}) => {
-    let user = item.offeredTo;
-    let ofer = item.hostTrip;
-    let trade = item.offeredTrip;
-    let offernote = item.note || '';
-    let create = CheckDate(item.createdAt);
+    const user = item.offeredTo;
+    if (user) {
+      const ofer = item.hostTrip;
+      const trade = item.offeredTrip;
+      const offernote = item.note || '';
+      const create = CheckDate(item.createdAt);
 
-    //user info
-    let photo = user.image && user.image != '' ? {uri: user.image} : guest;
-    let userName = user.firstName + ' ' + user.lastName || '';
-    let avgRating = user.rating || 0;
-    let totalReviews = user.reviews || 0;
+      //user info
+      const photo = user?.image && user.image != '' ? {uri: user.image} : guest;
+      const userName = user.firstName + ' ' + user.lastName || '';
+      const avgRating = user.rating || 0;
+      const totalReviews = user.reviews || 0;
 
-    //offer by (host trip)
-    let title = ofer.species;
-    let dur = ofer.duration.value;
-    let t =
-      dur <= 1
-        ? ofer.duration.title.substring(0, ofer.duration.title.length - 1)
-        : ofer.duration.title;
-    dur = dur + ' ' + t;
-    let avlbl = FormatAvlblDate(ofer.availableFrom, ofer.availableTo);
-    let loc = ofer.location.city + ', ' + ofer.location.state;
+      //offer by (host trip)
+      let title = ofer.species;
+      let dur = ofer.duration.value;
+      let t =
+        dur <= 1
+          ? ofer.duration.title.substring(0, ofer.duration.title.length - 1)
+          : ofer.duration.title;
+      dur = dur + ' ' + t;
+      let avlbl = FormatAvlblDate(ofer.availableFrom, ofer.availableTo);
+      let loc = ofer.location.city + ', ' + ofer.location.state;
 
-    //ofer to (offer trip)
-    let titlet = trade.species;
-    let durt = trade.duration.value;
-    let tt =
-      durt <= 1
-        ? trade.duration.title.substring(0, trade.duration.title.length - 1)
-        : trade.duration.title;
-    durt = durt + ' ' + tt;
-    let preferdates = item.preferredDates;
-    let avlblt = FormatPrfrDate(preferdates);
-    let loct = trade.location.city + ', ' + trade.location.state;
+      //ofer to (offer trip)
+      let titlet = trade.species;
+      let durt = trade.duration.value;
+      let tt =
+        durt <= 1
+          ? trade.duration.title.substring(0, trade.duration.title.length - 1)
+          : trade.duration.title;
+      durt = durt + ' ' + tt;
+      let preferdates = item.preferredDates;
+      let avlblt = FormatPrfrDate(preferdates);
+      let loct = trade.location.city + ', ' + trade.location.state;
 
-    const renderProfile = () => {
-      return (
-        <>
-          <View style={styles.mProfileImgContainer}>
-            <ProgressiveFastImage
-              style={styles.mProfileImg}
-              source={photo}
-              loadingImageStyle={styles.mimageLoader}
-              loadingSource={require('../../../assets/images/imgLoad/img.jpeg')}
-              blurRadius={5}
-            />
-          </View>
-        </>
-      );
-    };
-
-    const renderText = () => {
-      return (
-        <View style={[styles.mtextContainer]}>
-          <View
-            style={{
-              width: '100%',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <View style={{width: '72%'}}>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  color: '#101B10',
-                  fontSize: 16,
-                  fontFamily: theme.fonts.fontBold,
-                  lineHeight: 22.4,
-                  textTransform: 'capitalize',
-                }}>
-                {userName}
-              </Text>
+      const renderProfile = () => {
+        return (
+          <>
+            <View style={styles.mProfileImgContainer}>
+              <ProgressiveFastImage
+                style={styles.mProfileImg}
+                source={photo}
+                loadingImageStyle={styles.mimageLoader}
+                loadingSource={require('../../../assets/images/imgLoad/img.jpeg')}
+                blurRadius={5}
+              />
             </View>
+          </>
+        );
+      };
+
+      const renderText = () => {
+        return (
+          <View style={[styles.mtextContainer]}>
             <View
               style={{
-                width: '27%',
-
-                alignItems: 'flex-end',
+                width: '100%',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
               }}>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
+              <View style={{width: '72%'}}>
+                <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  style={{
+                    color: '#101B10',
+                    fontSize: 16,
+                    fontFamily: theme.fonts.fontBold,
+                    lineHeight: 22.4,
+                    textTransform: 'capitalize',
+                  }}>
+                  {userName}
+                </Text>
+              </View>
+              <View
                 style={{
-                  color: theme.color.subTitleLight,
-                  fontSize: 11,
-                  fontFamily: theme.fonts.fontMedium,
-                  lineHeight: 22.4,
+                  width: '27%',
+
+                  alignItems: 'flex-end',
                 }}>
-                {create}
+                <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  style={{
+                    color: theme.color.subTitleLight,
+                    fontSize: 11,
+                    fontFamily: theme.fonts.fontMedium,
+                    lineHeight: 22.4,
+                  }}>
+                  {create}
+                </Text>
+              </View>
+            </View>
+
+            <View style={{flexDirection: 'row', marginTop: 3}}>
+              <utils.vectorIcon.Entypo
+                name="star"
+                color={theme.color.rate}
+                size={14}
+              />
+              <Text style={styles.textContainerRatetitle1}>
+                {' '}
+                {avgRating > 0 ? avgRating.toFixed(1) : avgRating}
+                {'  '}
+              </Text>
+              <Text style={styles.textContainerRatetitle2}>
+                {totalReviews > 300 ? '300+' : totalReviews} reviews
               </Text>
             </View>
           </View>
+        );
+      };
 
-          <View style={{flexDirection: 'row', marginTop: 3}}>
-            <utils.vectorIcon.Entypo
-              name="star"
-              color={theme.color.rate}
-              size={14}
-            />
-            <Text style={styles.textContainerRatetitle1}>
-              {' '}
-              {avgRating > 0 ? avgRating.toFixed(1) : avgRating}
-              {'  '}
-            </Text>
-            <Text style={styles.textContainerRatetitle2}>
-              {totalReviews > 300 ? '300+' : totalReviews} reviews
-            </Text>
+      const renderFields = () => {
+        let titleS = {
+          color: theme.color.subTitleLight,
+          fontSize: 11.5,
+          fontFamily: theme.fonts.fontBold,
+          textTransform: 'uppercase',
+        };
+
+        let titleM = {
+          color: theme.color.title,
+          fontSize: 13,
+          fontFamily: theme.fonts.fontMedium,
+          lineHeight: 19,
+        };
+
+        let iconS = {
+          width: 20,
+          height: 20,
+          resizeMode: 'contain',
+        };
+
+        let titleM2 = {
+          color: '#101B10',
+          fontSize: 13,
+          fontFamily: theme.fonts.fontNormal,
+          lineHeight: 19,
+        };
+
+        let offertitleS = {
+          color: '#101B10',
+          fontSize: 12,
+          fontFamily: theme.fonts.fontNormal,
+        };
+
+        return (
+          <View style={{width: '96%', marginTop: 20, alignSelf: 'center'}}>
+            <View
+              style={{
+                width: '100%',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}>
+              <View style={{width: '40%'}}>
+                <Text style={titleS}>YOU OFFERED</Text>
+                <Text style={titleM}>{title}</Text>
+
+                <View style={{marginTop: 20}}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Image style={iconS} source={durtnicon} />
+                    <View style={{width: '78%'}}>
+                      <Text style={titleM2}>{dur}</Text>
+                    </View>
+                  </View>
+
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginTop: 10,
+                    }}>
+                    <Image style={iconS} source={avlblicon} />
+                    <View style={{width: '78%'}}>
+                      <Text style={titleM2}>{avlbl}</Text>
+                    </View>
+                  </View>
+
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginTop: 10,
+                    }}>
+                    <Image style={iconS} source={locationicon} />
+                    <View style={{width: '78%'}}>
+                      <Text style={titleM2}>{loc}</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+
+              <Image
+                style={{
+                  width: 24,
+                  height: 24,
+                  resizeMode: 'contain',
+                  top: 26,
+                }}
+                source={trnfericon}
+              />
+
+              <View style={{width: '40%'}}>
+                <Text style={titleS}>for trade</Text>
+                <Text style={titleM}>{titlet}</Text>
+
+                <View style={{marginTop: 20}}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Image style={iconS} source={durtnicon} />
+                    <View style={{width: '78%'}}>
+                      <Text style={titleM2}>{durt}</Text>
+                    </View>
+                  </View>
+
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginTop: 10,
+                    }}>
+                    <Image style={iconS} source={avlblicon} />
+                    <View style={{width: '78%'}}>
+                      <Text style={titleM2}>{avlblt}</Text>
+                    </View>
+                  </View>
+
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginTop: 10,
+                    }}>
+                    <Image style={iconS} source={locationicon} />
+                    <View style={{width: '78%'}}>
+                      <Text style={titleM2}>{loct}</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+
+            {offernote != '' && (
+              <View style={{width: '100%', marginTop: 20}}>
+                <Text style={titleS}>OFFER NOTE</Text>
+                <Text style={offertitleS}>{offernote}</Text>
+              </View>
+            )}
           </View>
-        </View>
-      );
-    };
-
-    const renderFields = () => {
-      let titleS = {
-        color: theme.color.subTitleLight,
-        fontSize: 11.5,
-        fontFamily: theme.fonts.fontBold,
-        textTransform: 'uppercase',
+        );
       };
 
-      let titleM = {
-        color: theme.color.title,
-        fontSize: 13,
-        fontFamily: theme.fonts.fontMedium,
-        lineHeight: 19,
-      };
+      // const renderBottom = () => {
+      //   let bc = {
+      //     width: '46%',
+      //     alignItems: 'center',
+      //     justifyContent: 'center',
+      //     borderRadius: 5,
+      //     height: 46,
+      //     borderWidth: 1,
+      //     borderColor: theme.color.fieldBorder,
+      //   };
 
-      let iconS = {
-        width: 20,
-        height: 20,
-        resizeMode: 'contain',
-      };
+      //   let btS = {
+      //     color: '#3C6B49',
+      //     fontSize: 15,
+      //     fontFamily: theme.fonts.fontBold,
+      //   };
 
-      let titleM2 = {
-        color: '#101B10',
-        fontSize: 13,
-        fontFamily: theme.fonts.fontNormal,
-        lineHeight: 19,
-      };
+      //   return (
+      //     <View
+      //       style={{
+      //         width: '100%',
+      //         marginTop: 20,
+      //         alignSelf: 'center',
+      //         flexDirection: 'row',
+      //         alignItems: 'center',
+      //         justifyContent: 'space-between',
+      //       }}>
+      //       <Pressable
+      //         style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc]}
+      //         onPress={() => {
+      //           setmodalObj({item: item, i: index});
+      //           setmodalChk('message');
+      //           setisModal(true);
+      //         }}>
+      //         <Text numberOfLines={1} ellipsizeMode="tail" style={btS}>
+      //           Message
+      //         </Text>
+      //       </Pressable>
 
-      let offertitleS = {
-        color: '#101B10',
-        fontSize: 12,
-        fontFamily: theme.fonts.fontNormal,
-      };
+      //       <Pressable
+      //         onPress={() => {
+      //           store.User.clearOtherUser();
+      //           store.User.setfscreen('confirmedtrips');
+      //           store.User.setvUser(item.user);
 
-      return (
-        <View style={{width: '96%', marginTop: 20, alignSelf: 'center'}}>
+      //           props.navigation.navigate('UserProfile');
+      //         }}
+      //         style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc]}>
+      //         <Text numberOfLines={1} ellipsizeMode="tail" style={btS}>
+      //           View Profile
+      //         </Text>
+      //       </Pressable>
+      //     </View>
+      //   );
+      // };
+
+      const renderBottom = () => {
+        let bc = {
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: 8,
+          height: 48,
+          backgroundColor: '#F8ECEC',
+          // borderWidth: 1,
+          // borderColor: theme.color.fieldBorder,
+        };
+
+        let btS = {
+          color: '#B93B3B',
+          fontSize: 14,
+          fontFamily: theme.fonts.fontBold,
+        };
+
+        return (
           <View
             style={{
               width: '100%',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
+              marginTop: 30,
             }}>
-            <View style={{width: '40%'}}>
-              <Text style={titleS}>YOU OFFERED</Text>
-              <Text style={titleM}>{title}</Text>
-
-              <View style={{marginTop: 20}}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <Image style={iconS} source={durtnicon} />
-                  <View style={{width: '78%'}}>
-                    <Text style={titleM2}>{dur}</Text>
-                  </View>
-                </View>
-
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginTop: 10,
-                  }}>
-                  <Image style={iconS} source={avlblicon} />
-                  <View style={{width: '78%'}}>
-                    <Text style={titleM2}>{avlbl}</Text>
-                  </View>
-                </View>
-
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginTop: 10,
-                  }}>
-                  <Image style={iconS} source={locationicon} />
-                  <View style={{width: '78%'}}>
-                    <Text style={titleM2}>{loc}</Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-
-            <Image
-              style={{
-                width: 24,
-                height: 24,
-                resizeMode: 'contain',
-                top: 26,
+            <Pressable
+              onPress={() => {
+                setmodalObj({item: item, i: index});
+                setmodalChk('cancelOffer');
+                setisModal(true);
               }}
-              source={trnfericon}
-            />
-
-            <View style={{width: '40%'}}>
-              <Text style={titleS}>for trade</Text>
-              <Text style={titleM}>{titlet}</Text>
-
-              <View style={{marginTop: 20}}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <Image style={iconS} source={durtnicon} />
-                  <View style={{width: '78%'}}>
-                    <Text style={titleM2}>{durt}</Text>
-                  </View>
-                </View>
-
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginTop: 10,
-                  }}>
-                  <Image style={iconS} source={avlblicon} />
-                  <View style={{width: '78%'}}>
-                    <Text style={titleM2}>{avlblt}</Text>
-                  </View>
-                </View>
-
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginTop: 10,
-                  }}>
-                  <Image style={iconS} source={locationicon} />
-                  <View style={{width: '78%'}}>
-                    <Text style={titleM2}>{loct}</Text>
-                  </View>
-                </View>
-              </View>
-            </View>
+              style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc]}>
+              <Text numberOfLines={1} ellipsizeMode="tail" style={btS}>
+                Cancel Offer
+              </Text>
+            </Pressable>
           </View>
-
-          {offernote != '' && (
-            <View style={{width: '100%', marginTop: 20}}>
-              <Text style={titleS}>OFFER NOTE</Text>
-              <Text style={offertitleS}>{offernote}</Text>
-            </View>
-          )}
-        </View>
-      );
-    };
-
-    // const renderBottom = () => {
-    //   let bc = {
-    //     width: '46%',
-    //     alignItems: 'center',
-    //     justifyContent: 'center',
-    //     borderRadius: 5,
-    //     height: 46,
-    //     borderWidth: 1,
-    //     borderColor: theme.color.fieldBorder,
-    //   };
-
-    //   let btS = {
-    //     color: '#3C6B49',
-    //     fontSize: 15,
-    //     fontFamily: theme.fonts.fontBold,
-    //   };
-
-    //   return (
-    //     <View
-    //       style={{
-    //         width: '100%',
-    //         marginTop: 20,
-    //         alignSelf: 'center',
-    //         flexDirection: 'row',
-    //         alignItems: 'center',
-    //         justifyContent: 'space-between',
-    //       }}>
-    //       <Pressable
-    //         style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc]}
-    //         onPress={() => {
-    //           setmodalObj({item: item, i: index});
-    //           setmodalChk('message');
-    //           setisModal(true);
-    //         }}>
-    //         <Text numberOfLines={1} ellipsizeMode="tail" style={btS}>
-    //           Message
-    //         </Text>
-    //       </Pressable>
-
-    //       <Pressable
-    //         onPress={() => {
-    //           store.User.clearOtherUser();
-    //           store.User.setfscreen('confirmedtrips');
-    //           store.User.setvUser(item.user);
-
-    //           props.navigation.navigate('UserProfile');
-    //         }}
-    //         style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc]}>
-    //         <Text numberOfLines={1} ellipsizeMode="tail" style={btS}>
-    //           View Profile
-    //         </Text>
-    //       </Pressable>
-    //     </View>
-    //   );
-    // };
-
-    const renderBottom = () => {
-      let bc = {
-        width: '100%',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 8,
-        height: 48,
-        backgroundColor: '#F8ECEC',
-        // borderWidth: 1,
-        // borderColor: theme.color.fieldBorder,
-      };
-
-      let btS = {
-        color: '#B93B3B',
-        fontSize: 14,
-        fontFamily: theme.fonts.fontBold,
+        );
       };
 
       return (
-        <View
-          style={{
-            width: '100%',
-            marginTop: 30,
-          }}>
-          <Pressable
-            onPress={() => {
-              setmodalObj({item: item, i: index});
-              setmodalChk('cancelOffer');
-              setisModal(true);
-            }}
-            style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc]}>
-            <Text numberOfLines={1} ellipsizeMode="tail" style={btS}>
-              Cancel Offer
-            </Text>
-          </Pressable>
-        </View>
+        <Pressable
+          disabled
+          onPress={() => {}}
+          style={({pressed}) => [
+            {opacity: pressed ? 0.8 : 1.0},
+            [
+              styles.modalinfoConatiner,
+              {
+                marginTop: index == 0 ? 10 : 0,
+              },
+            ],
+          ]}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              width: '100%',
+            }}>
+            {renderProfile()}
+            {renderText()}
+          </View>
+          {renderFields()}
+          {renderBottom()}
+        </Pressable>
       );
-    };
-
-    return (
-      <Pressable
-        disabled
-        onPress={() => {}}
-        style={({pressed}) => [
-          {opacity: pressed ? 0.8 : 1.0},
-          [
-            styles.modalinfoConatiner,
-            {
-              marginTop: index == 0 ? 10 : 0,
-            },
-          ],
-        ]}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            width: '100%',
-          }}>
-          {renderProfile()}
-          {renderText()}
-        </View>
-        {renderFields()}
-        {renderBottom()}
-      </Pressable>
-    );
+    }
   };
 
   const renderModal = () => {
