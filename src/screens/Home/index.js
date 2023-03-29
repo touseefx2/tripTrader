@@ -204,9 +204,6 @@ function Home(props) {
       return;
     }
 
-    console.log('onOpenNotification :', notify);
-    console.log('topic :', topic);
-
     if (topic === 'id-verified' || topic === 'id-notVerified') {
       goToEditProfile(props);
     }
@@ -239,10 +236,9 @@ function Home(props) {
   };
 
   const onClickNotificationAction = (action, notify) => {
-    console.log('onClickNotificationAction:', notify);
-    console.log('action :', action);
     let senderId = {};
-    if (action == 'followUser') senderId = notify?.data ? notify.data : {};
+    if (action == 'followUser' || action == 'dispute')
+      senderId = notify?.data ? notify.data : {};
     else senderId = notify?.userInfo ? JSON.parse(notify.userInfo) : {};
 
     if (action == 'Dismiss' || action == 'No Thanks') {

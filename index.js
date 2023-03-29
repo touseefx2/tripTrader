@@ -105,11 +105,11 @@ const callData = topic => {
 };
 
 messaging().onMessage(async remoteMessage => {
-  const obj = JSON.parse(remoteMessage.data.notifee);
-  console.log('remot message frontend  : ', obj);
+  console.log('remot message frontend  : ', remoteMessage);
+  const obj = remoteMessage.data;
   const title = obj?.title || '';
-  const message = obj?.body || '';
-  const data = obj?.data || null;
+  const message = obj?.message || '';
+  const data = JSON.parse(obj?.data) || null;
   const topic = data?.topic || '';
   const bigIcon = data?.icon || data?.bigIcon || undefined;
   const rightIcon = data?.rightIcon || undefined;
@@ -119,9 +119,9 @@ messaging().onMessage(async remoteMessage => {
   console.log('topic : ', topic);
   console.log('bigIcon : ', bigIcon);
   console.log('rightIcon : ', rightIcon);
+  // if (store.User.isNotification)
+  showNotifcaton(message, title, topic, bigIcon, rightIcon, data);
   callData(topic);
-  if (store.User.isNotification)
-    showNotifcaton(message, title, topic, bigIcon, rightIcon, data);
 
   // if (store.Notifications.isShowNotifcation) {
   //   store.Notifications.clearShowNotifications();
@@ -138,11 +138,11 @@ messaging().onMessage(async remoteMessage => {
 });
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
-  const obj = JSON.parse(remoteMessage.data.notifee);
-  console.log('remot message background  : ', obj);
+  console.log('remot message background  : ', remoteMessage);
+  const obj = remoteMessage.data;
   const title = obj?.title || '';
-  const message = obj?.body || '';
-  const data = obj?.data || null;
+  const message = obj?.message || '';
+  const data = JSON.parse(obj?.data) || null;
   const topic = data?.topic || '';
   const bigIcon = data?.icon || data?.bigIcon || undefined;
   const rightIcon = data?.rightIcon || undefined;
@@ -152,11 +152,27 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log('topic : ', topic);
   console.log('bigIcon : ', bigIcon);
   console.log('rightIcon : ', rightIcon);
+  // if (store.User.isNotification)
+  showNotifcaton(message, title, topic, bigIcon, rightIcon, data);
   callData(topic);
-  if (store.User.isNotification)
-    showNotifcaton(message, title, topic, bigIcon, rightIcon, data);
 
-  // const roomId = data.chatRoomId || '';
+  //  const obj = JSON.parse(remoteMessage.data);
+  // console.log('remot message background  : ', obj);
+  // const title = obj?.title || '';
+  // const message = obj?.body || '';
+  // const data = obj?.data || null;
+  // const topic = data?.topic || '';
+  // const bigIcon = data?.icon || data?.bigIcon || undefined;
+  // const rightIcon = data?.rightIcon || undefined;
+  // console.log('title : ', title);
+  // console.log('message : ', message);
+  // console.log('data : ', data);
+  // console.log('topic : ', topic);
+  // console.log('bigIcon : ', bigIcon);
+  // console.log('rightIcon : ', rightIcon);
+  // callData(topic);
+  // if (store.User.isNotification)
+  //   showNotifcaton(message, title, topic, bigIcon, rightIcon, data);
 });
 
 const showNotifcaton = (message, title, topic, bigIcon, rightIcon, data) => {

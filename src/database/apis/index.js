@@ -1,11 +1,11 @@
 //Local
 
 const BASE_URL =
-  // 'http://10.7.104.165:3001/';
+  // 'http://192.168.100.12:3001/';
   'http://ec2-35-175-134-9.compute-1.amazonaws.com/';
 //socket url
 const BASE_URLS =
-  // 'http://10.7.104.165:3001/';
+  // 'http://192.168.100.12:3001';
   'http://ec2-35-175-134-9.compute-1.amazonaws.com:3001';
 
 //apis

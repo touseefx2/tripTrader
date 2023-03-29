@@ -8,7 +8,7 @@ class NotificationManager {
     PushNotification.configure({
       // (required) Called when a remote is received or opened, or local notification is opened
       onNotification: function (notification) {
-        // console.log('onNotification:', notification);
+        console.log('onNotification:', notification);
         // process the notification
         onOpenNotification(notification);
         // (required) Called when a remote is received or opened, or local notification is opened
@@ -17,7 +17,7 @@ class NotificationManager {
 
       // (optional) Called when Registered Action is pressed and invokeApp is false, if true onNotification will be called (Android)
       onAction: function (notification) {
-        // console.log('onAction notification:', notification);
+        console.log('onAction notification:', notification);
         // console.log('onAction:', notification.action);
         // process the action
         onClickNotificationAction(notification.action, notification);
