@@ -66,7 +66,7 @@ function BlockUsers(props) {
     setRefreshing(c);
   };
   const onRefresh = React.useCallback(() => {
-    console.warn('onrefresh cal');
+    console.log('onrefresh cal');
     setRefreshing(true);
     getDbData();
   }, []);

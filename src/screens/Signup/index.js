@@ -39,6 +39,7 @@ import {styles} from './styles';
 import store from '../../store/index';
 import theme from '../../theme';
 import utils from '../../utils/index';
+import {Notification} from '../../services/Notification';
 
 export default observer(Signup);
 function Signup(props) {
@@ -646,7 +647,7 @@ function Signup(props) {
             amount: tv * 100,
           };
 
-          store.User.BuyPlan(body, obj, (d, d2) => SucGetClientsecret(d, d2));
+          store.User.BuyPlan(body, obj, SucGetClientsecret);
         } else {
           // seterrorMessage('Please connect internet');
           Alert.alert('', 'Please connect internet');
@@ -658,7 +659,6 @@ function Signup(props) {
   };
 
   const SucGetClientsecret = async (dt, obj) => {
-    console.log('data : ', dt);
     try {
       const {error, paymentIntent} = await confirmPayment(dt.cs, {
         paymentMethodType: 'Card',
@@ -667,6 +667,7 @@ function Signup(props) {
 
       if (error) {
         store.User.setregLoader(false);
+        Notification.sendPaymentFailedNotification(user._id);
         console.log(`confirmPayment error: `, error);
         Alert.alert(`Paymment ${error.code}`, error.message);
       } else if (paymentIntent) {
@@ -685,6 +686,7 @@ function Signup(props) {
       }
     } catch (err) {
       store.User.setregLoader(false);
+      Notification.sendPaymentFailedNotification(user._id);
       console.log(`confirmPayment cath error: `, err);
     }
   };
@@ -2170,7 +2172,7 @@ function Signup(props) {
                   }}
                   cardStyle={{
                     textColor: theme.color.title,
-                    fontSize: 12,
+                    fontSize: responsiveFontSize(1.5),
                     borderColor: theme.color.fieldBorder,
                     borderWidth: 1,
                     borderRadius: 8,

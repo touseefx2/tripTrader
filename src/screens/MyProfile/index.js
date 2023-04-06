@@ -738,7 +738,7 @@ function MyProfile(props) {
             onclickImage(DT);
           }
         } catch (error) {
-          console.warn('Permsiion error : ', error);
+          console.log('Permsiion error : ', error);
         }
       }
     };

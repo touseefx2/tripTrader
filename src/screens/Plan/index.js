@@ -18,9 +18,13 @@ import {observer} from 'mobx-react';
 import store from '../../store/index';
 import utils from '../../utils/index';
 import theme from '../../theme';
-import {responsiveHeight} from 'react-native-responsive-dimensions';
+import {
+  responsiveFontSize,
+  responsiveHeight,
+} from 'react-native-responsive-dimensions';
 import Toast from 'react-native-easy-toast';
 import NetInfo from '@react-native-community/netinfo';
+import {Notification} from '../../services/Notification';
 
 import {
   StripeProvider,
@@ -182,90 +186,6 @@ function Plan(props) {
     seterrorMessage(c);
   };
 
-  // const subscribePlan = () => {
-  //   Keyboard.dismiss();
-  //   if (cfn == '') {
-  //     setEmptycfn(true);
-  //     return;
-  //   }
-
-  //   if (isValidCard == 'null') {
-  //     setcardErr('Please enter card number');
-  //     setisValidCard(false);
-  //     return;
-  //   }
-
-  //   if (isValidCard == true) {
-  //     if (iscTerms == false) {
-  //       setEmptycTerms(true);
-  //       return;
-  //     }
-
-  //     // const obj = {
-  //     //   plan: plan,
-  //     //   totalValue: tv,
-  //     //   isPromoApply: isPromoApply,
-  //     //   card: {
-  //     //     name: cfn,
-  //     //     number: cn,
-  //     //     expiry: ce,
-  //     //     cvc: ccvc,
-  //     //     type: ct,
-  //     //   },
-  //     // };
-
-  //     let tv = plan.type == 'annual' ? totalAnually : monthly;
-  //     tv = isPromoApply ? promoValue : tv;
-  //     let pda = 0;
-  //     if (isPromoApply) {
-  //       let p = (isPromoApply.discount || 0) / 100;
-
-  //       if (plan.type == 'monthly') {
-  //         pda = p * monthly;
-  //       }
-  //       if (plan.type == 'annual') {
-  //         pda = p * totalAnually;
-  //       }
-  //     }
-  //     let subscription = !isPromoApply
-  //       ? {
-  //           title: plan.type,
-  //           charges: plan.charges,
-  //           discount: plan.discount,
-  //           startDate: new Date(),
-  //           endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
-  //           amtPaid: tv,
-  //           status: 'active',
-  //         }
-  //       : {
-  //           title: plan.type,
-  //           charges: plan.charges,
-  //           discount: plan.discount,
-  //           startDate: new Date(),
-  //           endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
-  //           amtPaid: tv,
-  //           status: 'active',
-  //           promoCode: isPromoApply.code,
-  //           promoCodeDiscount: isPromoApply.discount,
-  //           promoCodeDiscountAmt: pda,
-  //         };
-
-  //     const obj = {
-  //       subscription: subscription,
-  //       subscriptionStatus: 'paid',
-  //     };
-
-  //     NetInfo.fetch().then(state => {
-  //       if (state.isConnected) {
-  //         store.User.SubPlan(obj, user._id, token, setErrMessage, subPlanSuc);
-  //       } else {
-  //         // seterrorMessage('Please connect internet');
-  //         Alert.alert('', 'Please connect internet');
-  //       }
-  //     });
-  //   }
-  // };
-
   const subscribePlan = () => {
     Keyboard.dismiss();
 
@@ -362,7 +282,7 @@ function Plan(props) {
             body.customerId = user.customerId;
           }
 
-          store.User.BuyPlan(body, obj, (d, d2) => SucGetClientsecret(d, d2));
+          store.User.BuyPlan(body, obj, SucGetClientsecret);
         } else {
           // seterrorMessage('Please connect internet');
           Alert.alert('', 'Please connect internet');
@@ -374,16 +294,15 @@ function Plan(props) {
   };
 
   const SucGetClientsecret = async (dt, obj) => {
-    console.log('data : ', dt);
     try {
       const {error, paymentIntent} = await confirmPayment(dt.cs, {
         paymentMethodType: 'Card',
-
         billingDetails: {name: cn},
       });
 
       if (error) {
         store.User.setregLoader(false);
+        Notification.sendPaymentFailedNotification(store.User.user._id);
         console.log(`confirmPayment error: `, error);
         Alert.alert(`Paymment ${error.code}`, error.message);
       } else if (paymentIntent) {
@@ -407,6 +326,7 @@ function Plan(props) {
       }
     } catch (err) {
       store.User.setregLoader(false);
+      Notification.sendPaymentFailedNotification(store.User.user._id);
       console.log(`confirmPayment cath error: `, err);
     }
   };
@@ -1057,7 +977,7 @@ function Plan(props) {
                   }}
                   cardStyle={{
                     textColor: theme.color.title,
-                    fontSize: 12,
+                    fontSize: responsiveFontSize(1.5),
                     borderColor: theme.color.fieldBorder,
                     borderWidth: 1,
                     borderRadius: 8,
@@ -1066,8 +986,6 @@ function Plan(props) {
                   style={{
                     width: '100%',
                     height: 45,
-
-                    // marginVertical: 30,
                   }}
                   onCardChange={cardDetails => {
                     onChangeCard(cardDetails);

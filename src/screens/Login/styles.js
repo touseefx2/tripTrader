@@ -48,7 +48,7 @@ export const styles = StyleSheet.create({
   },
   section2Title1: {
     color: theme.color.buttonText,
-    fontSize: responsiveFontSize(4.5),
+    fontSize: responsiveFontSize(4.4),
     fontFamily: theme.fonts.fontBold,
     letterSpacing: -1,
     lineHeight: responsiveFontSize(5.6),

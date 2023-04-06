@@ -1,4 +1,5 @@
 rootProject.name = 'Trip_Trader'
+ 
  include ':react-native-intent-launcher'
 project(':react-native-intent-launcher').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-intent-launcher/android')
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)

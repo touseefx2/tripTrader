@@ -1,26 +1,21 @@
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import PushNotification from 'react-native-push-notification';
+import store from '../store/index';
 
 // Must be outside of any component LifeCycle (such as `componentDidMount`).
 
 class NotificationManager {
-  configure = (onOpenNotification, onClickNotificationAction) => {
+  configure = () => {
     PushNotification.configure({
       // (required) Called when a remote is received or opened, or local notification is opened
       onNotification: function (notification) {
-        console.log('onNotification:', notification);
-        // process the notification
-        onOpenNotification(notification);
-        // (required) Called when a remote is received or opened, or local notification is opened
+        store.General.setgoToo(notification);
         notification.finish(PushNotificationIOS.FetchResult.NoData);
       },
 
       // (optional) Called when Registered Action is pressed and invokeApp is false, if true onNotification will be called (Android)
       onAction: function (notification) {
-        console.log('onAction notification:', notification);
-        // console.log('onAction:', notification.action);
-        // process the action
-        onClickNotificationAction(notification.action, notification);
+        store.General.setgoToo(notification);
       },
 
       // IOS ONLY (optional): default: all - Permissions to register.

@@ -151,7 +151,7 @@ function Chat(props) {
   };
   const refreshing = store.User.messagesLoader;
   const onRefresh = React.useCallback(() => {
-    console.warn('onrefresh cal');
+    console.log('onrefresh cal');
 
     getDbData();
   }, []);

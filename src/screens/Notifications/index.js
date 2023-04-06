@@ -104,7 +104,7 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
   const windowSize = 21;
   const limit = 16;
   const {isInternet, setSettingsGoTo, setOfferGoTo} = store.General;
-  const {user} = store.User;
+  const {user, isNotification} = store.User;
   const {
     notifications,
     Loader,
@@ -237,8 +237,6 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
     const notificationId = item.messageId;
     const senderUser = item.senderId || null;
 
-    console.log('senderUser : ', senderUser);
-
     if (action == '') {
       console.log('title : ', title);
       if (
@@ -248,6 +246,9 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
         title == 'Email Verification'
       ) {
         props.navigation.navigate('MyProfile');
+        if (!isNotification && isInternet && !isRead) {
+          store.User.attemptToGetUser();
+        }
       }
 
       if (title == 'Your review was disputed' || title == 'Profile') {
@@ -271,10 +272,20 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
         action == 'Check it out'
       ) {
         props.navigation.navigate('EditProfile');
+        if (!isNotification && isInternet && !isRead) {
+          store.User.attemptToGetUser();
+        }
       }
 
       if (action == 'Read it now') {
         props.navigation.navigate('MyProfile');
+        if (!isNotification && isInternet && !isRead) {
+          store.User.attemptToGetReviews(
+            store.User.user._id,
+            () => {},
+            () => {},
+          );
+        }
       }
 
       if (action == 'See trip details') {
@@ -283,6 +294,12 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
         } else if (title.includes('New offer')) {
           props.navigation.navigate('TradeOffers'); //recieve ofer tab
           setOfferGoTo('received');
+          if (!isNotification && isInternet && !isRead) {
+            store.Offers.attemptToGetReceiveOffers(
+              () => {},
+              () => {},
+            );
+          }
         }
       }
 
@@ -296,6 +313,9 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
 
       if (action == 'Read full message') {
         props.navigation.navigate('Inbox');
+        if (!isNotification && isInternet && !isRead) {
+          store.User.attemptToGetInboxes(store.User.user._id, () => {});
+        }
       }
 
       if (action == 'make an offer') {

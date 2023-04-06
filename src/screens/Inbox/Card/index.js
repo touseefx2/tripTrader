@@ -1,41 +1,14 @@
-import React, {useEffect, useState, useRef, memo} from 'react';
-import {
-  View,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
-  Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
-  Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Dimensions,
-  Pressable,
-  TextInput,
-  FlatList,
-  ScrollView,
-  Keyboard,
-  Modal,
-  RefreshControl,
-} from 'react-native';
+import React, {memo} from 'react';
+import {View, Text, Pressable} from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
 // import ImageSlider from 'react-native-image-slider';
 import {styles} from './styles';
-import {observer} from 'mobx-react';
+
 import store from '../../../store/index';
-import utils from '../../../utils/index';
+
 import theme from '../../../theme';
-import NetInfo from '@react-native-community/netinfo';
-import Toast from 'react-native-easy-toast';
-import {ActivityIndicator} from 'react-native-paper';
-import FastImage from 'react-native-fast-image';
-import {ImageSlider} from 'react-native-image-slider-banner';
-import {Calendar} from 'react-native-calendars';
-import moment, {duration} from 'moment/moment';
-import {SwipeListView} from 'react-native-swipe-list-view';
+
+import moment from 'moment/moment';
 
 function compare(d, dd) {
   let d1 = moment(d).format('YYYY-MM-DD');
@@ -105,10 +78,8 @@ function Card({
   setsearch,
   closeSwipe,
 }) {
-  let guest = require('../../../assets/images/drawer/guest/img.png');
-
+  const guest = require('../../../assets/images/drawer/guest/img.png');
   let isendmymsg = false;
-
   let uid = user._id;
   let u = false;
   if (item.userId1 && item.userId1._id != uid) {
@@ -118,8 +89,14 @@ function Card({
     u = item.userId2;
   }
 
-  let photo = u.image && u.image != '' ? {uri: u.image} : guest;
-  let title = u.firstName + ' ' + u.lastName;
+  let photo = guest;
+  let title = 'undefined';
+
+  if (u) {
+    photo = u?.image && u.image != '' ? {uri: u.image} : guest;
+    title = u.firstName + ' ' + u.lastName;
+  }
+
   let subtitle = '';
   let create = CheckDate(item.updatedAt);
   let isread = false;
@@ -129,7 +106,7 @@ function Card({
     let d = item.latestMessage;
     type = d.type;
     subtitle = d.message;
-    isendmymsg = d.sendBy._id == uid ? true : false;
+    isendmymsg = d?.sendBy?._id == uid ? true : false;
     if (!isendmymsg) {
       isread = d.isRead;
     } else {
@@ -227,8 +204,7 @@ function Card({
 
   return (
     <Pressable
-      // disabled={refreshing}
-
+      disabled={u ? false : true}
       onPress={() => {
         console.log('item : ', item.latestMessage.message);
         closeSwipe();

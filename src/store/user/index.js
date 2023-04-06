@@ -6,7 +6,7 @@ import {Alert} from 'react-native';
 import io from 'socket.io-client';
 import db from '../../database/index';
 import store from '../index';
-
+import {Notification} from '../../services/Notification';
 class user {
   constructor() {
     makeObservable(this);
@@ -427,54 +427,6 @@ class user {
         }
 
         this.setinbox(fa);
-        // this.setinbox([
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        //   ...fa,
-        // ]);
         setgetdata(true);
         let ud = store.User.user._id;
 
@@ -2679,6 +2631,7 @@ class user {
       })
       .catch(err => {
         this.setregLoader(false);
+        Notification.sendPaymentFailedNotification(uid);
         let msg = err.response.data.message || err.response.status || err;
         console.log(`Error in update user ${db.apis.UPDATE_USER} : `, msg);
         if (msg == 503 || msg == 500) {
@@ -2757,7 +2710,6 @@ class user {
       suc({cid, cs}, obj);
     } catch (err) {
       this.setregLoader(false);
-
       store.General.checkServer(err);
 
       let msg = err.response.data.message || err.response.status || err;

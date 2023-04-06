@@ -75,7 +75,7 @@ function Photos(props) {
   };
 
   const onRefresh = React.useCallback(() => {
-    console.warn('onrefresh cal');
+    console.log('onrefresh cal');
     setRefreshing(true);
     callGeneral();
     getDbData();

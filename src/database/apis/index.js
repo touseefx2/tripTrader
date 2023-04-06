@@ -1,12 +1,14 @@
 //Local
 
 const BASE_URL =
-  // 'http://192.168.100.12:3001/';
-  'http://ec2-35-175-134-9.compute-1.amazonaws.com/';
+  // 'http://192.168.100.2:3001/';
+  // 'http://ec2-35-175-134-9.compute-1.amazonaws.com/';
+  'https://api.trip-trader.com/';
 //socket url
 const BASE_URLS =
-  // 'http://192.168.100.12:3001';
+  //  'http://192.168.100.2:3001';
   'http://ec2-35-175-134-9.compute-1.amazonaws.com:3001';
+// 'https://api.trip-trader.com:3001';
 
 //apis
 const GET_CITIES_AREAS = 'api/area/getAllAreas';

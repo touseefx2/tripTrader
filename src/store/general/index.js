@@ -41,6 +41,11 @@ class general {
   @observable settingsGoTo = '';
   @observable offerGoTo = '';
 
+  @observable goToo = null;
+  @action setgoToo = obj => {
+    this.goToo = obj;
+  };
+
   @action checkServer = err => {
     if (err.response.data == undefined && err.response.status == 0) {
       Alert.alert('Network Error', 'Server not responding');

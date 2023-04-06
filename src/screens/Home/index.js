@@ -22,8 +22,8 @@ import moment from 'moment/moment';
 import io from 'socket.io-client';
 import db from '../../database/index';
 import {FlashList} from '@shopify/flash-list';
-import {notificationManager} from '../../services/NotificationManager';
 import PushNotification from 'react-native-push-notification';
+import firestore from '@react-native-firebase/firestore';
 
 export default observer(Home);
 function Home(props) {
@@ -118,14 +118,28 @@ function Home(props) {
   }, [species, activity, activityList]);
 
   useEffect(() => {
-    notificationManager.configure(
-      onOpenNotification,
-      onClickNotificationAction,
-    );
     if (goto == 'profile') {
       props.navigation.navigate('MyProfile');
     }
   }, []);
+
+  const notify = store.General.goToo;
+
+  useEffect(() => {
+    if (notify) {
+      const topic = notify?.tag || '';
+      let action = notify?.action || '';
+      if (action == '') {
+        const arr = JSON.parse(notify?.actions) || [];
+        if (arr.length > 0) action = arr[0];
+      }
+
+      if (action != '') onClickNotificationAction(action, notify);
+      else onOpenNotification(topic, action, notify);
+
+      store.General.setgoToo(null);
+    }
+  }, [notify]);
 
   const socket = store.General.socket;
   const SocketOff = () => {
@@ -193,14 +207,13 @@ function Home(props) {
     props.navigation.navigate('SavedTrips');
   };
 
-  const onOpenNotification = notify => {
-    const topic = notify?.tag || '';
-    const actionArr = JSON.parse(notify?.actions) || [];
+  const onOpenNotification = (topic, actions, notify) => {
+    console.log('onOpenNotification:', notify);
 
-    if (actionArr.length > 0 || topic == 'followUser' || topic == 'dispute') {
-      if (topic == 'followUser' || topic == 'dispute')
-        onClickNotificationAction(topic, notify);
-      else onClickNotificationAction(actionArr[0], notify);
+    if (topic == 'followUser' || topic == 'dispute')
+      onClickNotificationAction(topic, notify);
+    else {
+      onClickNotificationAction(actions, notify);
       return;
     }
 
@@ -236,10 +249,14 @@ function Home(props) {
   };
 
   const onClickNotificationAction = (action, notify) => {
+    if (action != 'followUser' && action != 'dispute') {
+      console.log('onClickNotificationAction:', notify);
+    }
+
     let senderId = {};
-    if (action == 'followUser' || action == 'dispute')
-      senderId = notify?.data ? notify.data : {};
-    else senderId = notify?.userInfo ? JSON.parse(notify.userInfo) : {};
+    // if (action == 'followUser' || action == 'dispute')
+    senderId = notify?.data ? notify.data : {};
+    // else senderId = notify?.userInfo ? notify.userInfo : {};
 
     if (action == 'Dismiss' || action == 'No Thanks') {
       PushNotification.cancelLocalNotification(notify.id);

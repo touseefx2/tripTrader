@@ -222,7 +222,7 @@ function Inbox(props) {
   };
   const refreshing = store.User.ibl;
   const onRefresh = React.useCallback(() => {
-    console.warn('onrefresh cal');
+    console.log('onrefresh cal');
     if (user !== 'guest') {
       getDbData();
     }
