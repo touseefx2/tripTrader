@@ -8,7 +8,7 @@ import store from '../../../store/index';
 
 import theme from '../../../theme';
 
-import moment from 'moment/moment';
+import moment from 'moment';
 
 function compare(d, dd) {
   let d1 = moment(d).format('YYYY-MM-DD');
@@ -79,45 +79,39 @@ function Card({
   closeSwipe,
 }) {
   const guest = require('../../../assets/images/drawer/guest/img.png');
-  let isendmymsg = false;
-  let uid = user._id;
-  let u = false;
-  if (item.userId1 && item.userId1._id != uid) {
-    u = item.userId1;
-  }
-  if (item.userId2 && item.userId2._id != uid) {
-    u = item.userId2;
-  }
 
+  const currentUserId = user._id;
+  let userObj = false;
   let photo = guest;
   let title = 'undefined';
-
-  if (u) {
-    photo = u?.image && u.image != '' ? {uri: u.image} : guest;
-    title = u.firstName + ' ' + u.lastName;
-  }
-
-  let subtitle = '';
-  let create = CheckDate(item.updatedAt);
-  let isread = false;
+  let subtitle = '---';
+  let create = '';
+  let isread = true;
   let type = '';
 
-  if (item.latestMessage) {
-    let d = item.latestMessage;
-    type = d.type;
-    subtitle = d.message;
-    isendmymsg = d?.sendBy?._id == uid ? true : false;
-    if (!isendmymsg) {
-      isread = d.isRead;
-    } else {
-      isread = true;
-    }
+  if (item.userId1 && item.userId1._id != currentUserId) {
+    userObj = item.userId1;
+  }
+  if (item.userId2 && item.userId2._id != currentUserId) {
+    userObj = item.userId2;
   }
 
-  // console.log('item : ', item);
-  // console.log('isendmymsg : ', isendmymsg);
-  // console.log('isread : ', isread);
-  // console.log('item : ', item.latestMessage);
+  if (userObj) {
+    photo =
+      userObj?.image && userObj.image != '' ? {uri: userObj.image} : guest;
+    title = userObj.firstName + ' ' + userObj.lastName;
+  }
+
+  if (item.latestMessage) {
+    create = CheckDate(item.latestMessage.updatedAt);
+    const latestMessage = item.latestMessage;
+    type = latestMessage.type;
+    subtitle = latestMessage.message;
+    const isEndMyMsg = latestMessage.user._id == currentUserId ? true : false;
+    if (!isEndMyMsg) {
+      isread = latestMessage.isRead;
+    }
+  }
 
   const renderProfile = () => {
     return (
@@ -204,16 +198,16 @@ function Card({
 
   return (
     <Pressable
-      disabled={u ? false : true}
+      disabled={userObj ? false : true}
       onPress={() => {
-        console.log('item : ', item.latestMessage.message);
+        // console.log('item : ', item.latestMessage.message);
         closeSwipe();
         store.User.setmessages([]);
         store.User.setpasObj({
           obj: item,
           title: title,
-          rid: u._id,
-          ruser: u,
+          rid: userObj._id,
+          ruser: userObj,
         });
         props.navigation.navigate('Chat');
         setsearch('');

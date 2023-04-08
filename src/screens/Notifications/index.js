@@ -17,7 +17,7 @@ import store from '../../store/index';
 import utils from '../../utils/index';
 import theme from '../../theme';
 import NetInfo from '@react-native-community/netinfo';
-import moment from 'moment/moment';
+import moment from 'moment';
 import {FlashList} from '@shopify/flash-list';
 
 export default observer(Notifications);
@@ -314,7 +314,7 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
       if (action == 'Read full message') {
         props.navigation.navigate('Inbox');
         if (!isNotification && isInternet && !isRead) {
-          store.User.attemptToGetInboxes(store.User.user._id, () => {});
+          store.User.attemptToGetInboxes(store.User.user._id, () => {}, '');
         }
       }
 

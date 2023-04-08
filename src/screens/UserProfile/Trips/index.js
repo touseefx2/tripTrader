@@ -24,7 +24,7 @@ import {
 } from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
 import {Calendar} from 'react-native-calendars';
-import moment from 'moment/moment';
+import moment from 'moment';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../../store';

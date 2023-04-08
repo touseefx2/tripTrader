@@ -33,7 +33,7 @@ import {ActivityIndicator} from 'react-native-paper';
 import FastImage from 'react-native-fast-image';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import {Calendar} from 'react-native-calendars';
-import moment from 'moment/moment';
+import moment from 'moment';
 import Accordion from 'react-native-collapsible/Accordion';
 import * as Animatable from 'react-native-animatable';
 import {FlashList} from '@shopify/flash-list';

@@ -15,7 +15,7 @@ import theme from '../../theme';
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
 import {ScrollView} from 'react-native-gesture-handler';
-import moment from 'moment/moment';
+import moment from 'moment';
 import {ActivityIndicator} from 'react-native-paper';
 
 export default observer(ManageSubscription);

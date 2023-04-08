@@ -108,7 +108,7 @@ const callData = async topic => {
     }
 
     if (topic == 'newMessage') {
-      store.User.attemptToGetInboxes(store.User.user._id, () => {});
+      store.User.attemptToGetInboxes(store.User.user._id, () => {}, '');
     }
     if (topic == 'offerRecieved') {
       store.Offers.attemptToGetReceiveOffers(
@@ -170,10 +170,25 @@ async function sendPaymentFailedNotification(uid) {
   });
 }
 
+async function sendMessageNotification(notificationBody) {
+  console.log('sendMessageNotification body : ', notificationBody);
+  await axios.post(
+    `${db.apis.BASE_URL}api/user/sendNotification/${notificationBody.userId}}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: notificationBody,
+    },
+  );
+}
+
 export const Notification = {
   requestUserPermission,
   createNotificationChannel,
   showNotificaton,
   callData,
   sendPaymentFailedNotification,
+  sendMessageNotification,
 };

@@ -1,18 +1,11 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   SafeAreaView,
   TouchableOpacity,
   Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
   Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Dimensions,
   Pressable,
   TextInput,
   FlatList,
@@ -28,12 +21,9 @@ import store from '../../../store/index';
 import utils from '../../../utils/index';
 import theme from '../../../theme';
 import NetInfo from '@react-native-community/netinfo';
-import Toast from 'react-native-easy-toast';
 import {ActivityIndicator} from 'react-native-paper';
-import FastImage from 'react-native-fast-image';
-import {ImageSlider} from 'react-native-image-slider-banner';
 import {Calendar} from 'react-native-calendars';
-import moment, {duration} from 'moment/moment';
+import moment from 'moment';
 
 export default observer(Received);
 
@@ -44,7 +34,7 @@ function isObjectEmpty(value) {
   );
 }
 
-let cssf = {
+const cssf = {
   container: {
     backgroundColor: 'transparent',
     borderWidth: 1.5,
@@ -57,7 +47,7 @@ let cssf = {
   },
 };
 
-let css2f = {
+const css2f = {
   container: {
     backgroundColor: 'transparent',
   },
@@ -67,7 +57,7 @@ let css2f = {
   },
 };
 
-let css2fd = {
+const css2fd = {
   container: {
     backgroundColor: 'transparent',
   },
@@ -77,7 +67,7 @@ let css2fd = {
   },
 };
 
-let cs = {
+const cs = {
   container: {
     backgroundColor: theme.color.button1,
   },
@@ -110,28 +100,30 @@ let dtd = {
 };
 
 function Received(props) {
-  let maxModalHeight = theme.window.Height - 100;
+  const maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
 
-  let guest = require('../../../assets/images/drawer/guest/img.png');
-  let trnfericon = require('../../../assets/images/transfer/img.png');
-  let durtnicon = require('../../../assets/images/confirmTrip/duration/img.png');
-  let avlblicon = require('../../../assets/images/confirmTrip/available/img.png');
-  let locationicon = require('../../../assets/images/confirmTrip/location/img.png');
+  const guest = require('../../../assets/images/drawer/guest/img.png');
+  const trnfericon = require('../../../assets/images/transfer/img.png');
+  const durtnicon = require('../../../assets/images/confirmTrip/duration/img.png');
+  const avlblicon = require('../../../assets/images/confirmTrip/available/img.png');
+  const locationicon = require('../../../assets/images/confirmTrip/location/img.png');
 
-  let internet = store.General.isInternet;
-  let user = store.User.user;
+  const {isInternet} = store.General;
+  const {offersProfileProps, homeModalLoder} = store.User;
 
-  const [modalObj, setmodalObj] = useState(false);
+  const [isMessageModal, setIsMessageModal] = useState(false);
+  const [isSuccessModal, setIsSuccessModal] = useState(false);
+  const [successModalObj, setSuccessModalObj] = useState(null);
+  const [successCheck, setSuccessCheck] = useState('');
+
+  const [modalObj, setModalObj] = useState(false);
   const [modalChk, setmodalChk] = useState(false);
   const [isModal, setisModal] = useState(false);
 
   const [isOfferSend, setisOfferSend] = useState(false);
 
-  const [isSendMessage, setisSendMessage] = useState(false);
   const [sendObj, setsendObj] = useState('');
-
-  const [message, setMessage] = useState('');
 
   const [step, setstep] = useState(1);
   const [showCal1, setshowCal1] = useState(false);
@@ -144,10 +136,9 @@ function Received(props) {
   const [selDatess, setselDatess] = useState({});
   const [isSelDatee, setisSelDatee] = useState(false);
 
-  let data = store.Offers.rcvOffers;
-  let mloader = store.Offers.Loader2; //main loader
-  let mmloader = store.Offers.mLoader; //decline loader
-  let mmmloader = store.User.homeModalLoder; //msg loader
+  const data = store.Offers.rcvOffers;
+  const mloader = store.Offers.Loader2; //main loader
+  const mmloader = store.Offers.mLoader; //decline loader
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
@@ -172,11 +163,11 @@ function Received(props) {
     });
   };
   useEffect(() => {
-    if (!getDataOnce && internet) {
+    if (!getDataOnce && isInternet) {
       getDbData();
     }
     return () => {};
-  }, [getDataOnce, internet]);
+  }, [getDataOnce, isInternet]);
 
   useEffect(() => {
     if (
@@ -253,19 +244,9 @@ function Received(props) {
   const closeOtherModal = () => {
     if (!mmloader) {
       setisModal(false);
-      setmodalObj(false);
+      setModalObj(false);
       setmodalChk(false);
       setmodalHeight(0);
-    }
-  };
-
-  const closeOtherModal2 = () => {
-    if (!mmmloader) {
-      setisModal(false);
-      setmodalObj(false);
-      setmodalChk(false);
-      setmodalHeight(0);
-      setMessage('');
     }
   };
 
@@ -321,43 +302,6 @@ function Received(props) {
     closeModalAll();
   };
 
-  const setIsSendMessage = v => {
-    setsendObj(modalObj.item.offeredBy);
-    closeOtherModal2();
-    setisSendMessage(v);
-  };
-
-  const sendMessage = () => {
-    Keyboard.dismiss();
-
-    NetInfo.fetch().then(state => {
-      if (state.isConnected) {
-        let item = modalObj.item;
-        let usr = item.offeredBy;
-        const obj = {
-          userId1: user._id,
-          userId2: usr._id,
-          sendBy: user._id,
-          sendTo: usr._id,
-          senderName: user.firstName + ' ' + user.lastName,
-          isRead: false,
-          message: message,
-          type: 'text',
-        };
-        store.User.attemptToCheckFirstMessage(
-          user._id,
-          usr._id,
-          obj,
-          message,
-          setIsSendMessage,
-        );
-      } else {
-        // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
-      }
-    });
-  };
-
   const closeModal = () => {
     if (step == 1) {
       closeModalAll();
@@ -376,8 +320,8 @@ function Received(props) {
     if (!mmloader) {
       setisModal(false);
       setmodalChk(false);
-      setmodalObj(false);
-      setMessage('');
+      setModalObj(false);
+
       setshowCal1(false);
       setselDatess({});
       setmarkedDatess({});
@@ -391,8 +335,6 @@ function Received(props) {
       setstep(1);
     }
   };
-
-  const onclickSearchBar = () => {};
 
   const onClickCal = () => {
     setshowCal1(!showCal1);
@@ -950,7 +892,7 @@ function Received(props) {
             }}>
             <Pressable
               onPress={() => {
-                setmodalObj({item: item, i: index});
+                setModalObj({item: item, i: index});
                 setmodalChk('cancelOffer');
                 setisModal(true);
               }}
@@ -963,9 +905,7 @@ function Received(props) {
             <Pressable
               style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc2]}
               onPress={() => {
-                setmodalObj({item: item, i: index});
-                setmodalChk('message');
-                setisModal(true);
+                openModal({item: item, selIndex: index}, 'message');
               }}>
               <Text numberOfLines={1} ellipsizeMode="tail" style={btS2}>
                 Message
@@ -1002,7 +942,7 @@ function Received(props) {
             {renderBottom2()}
             <Pressable
               onPress={() => {
-                setmodalObj({item: item, i: index});
+                setModalObj({item: item, i: index});
                 setmodalChk('offer');
                 setstep(1);
                 setisModal(true);
@@ -1046,8 +986,8 @@ function Received(props) {
   };
 
   const renderModal = () => {
-    let c = modalHeight >= maxModalHeight ? true : false;
-    let style = c ? [styles.modal, {height: maxModalHeight}] : styles.modal2;
+    const c = modalHeight >= maxModalHeight ? true : false;
+    const style = c ? [styles.modal, {height: maxModalHeight}] : styles.modal2;
 
     if (modalChk == 'offer' && step == 1) {
       let item = modalObj.item;
@@ -2075,157 +2015,6 @@ function Received(props) {
         </Modal>
       );
     }
-
-    //message
-    if (modalChk == 'message') {
-      const renderHeader = () => {
-        let text = 'Message User';
-
-        const renderCross = () => {
-          return (
-            <Pressable
-              disabled={mmmloader}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.7 : 1.0},
-                styles.modalCross,
-              ]}
-              onPress={closeOtherModal2}>
-              <utils.vectorIcon.Ionicons
-                name="ios-close-outline"
-                color={theme.color.title}
-                size={32}
-              />
-            </Pressable>
-          );
-        };
-
-        const renderTitle = () => {
-          return <Text style={styles.modalTitle}>{text}</Text>;
-        };
-
-        return (
-          <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            {renderTitle()}
-            {renderCross()}
-          </View>
-        );
-      };
-
-      const renderField = () => {
-        let item = modalObj.item.offeredBy;
-        let photo = item.image ? item.image : '';
-        let isVeirfy = item.identityStatus == 'verified' ? true : false;
-        let userName = item.firstName + ' ' + item.lastName;
-
-        const renderProfile = () => {
-          return (
-            <View style={styles.mProfileImgContainerm}>
-              <ProgressiveFastImage
-                style={styles.mProfileImgm}
-                source={
-                  photo != ''
-                    ? {uri: photo}
-                    : require('../../../assets/images/drawer/guest/img.png')
-                }
-                loadingImageStyle={styles.mimageLoaderm}
-                loadingSource={require('../../../assets/images/imgLoad/img.jpeg')}
-                blurRadius={5}
-              />
-              {/* {isVeirfy && (
-                  <Image
-                    style={styles.miconVerifym}
-                    source={require('../../assets/images/verified/img.png')}
-                  />
-                )} */}
-            </View>
-          );
-        };
-
-        return (
-          <View style={[styles.modalFieldConatiner, {marginTop: 15}]}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text style={styles.mT1}>To:</Text>
-              <View
-                style={{
-                  width: '89%',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  flexDirection: 'row',
-                }}>
-                {renderProfile()}
-                <Text numberOfLines={1} ellipsizeMode="tail" style={styles.mT2}>
-                  {userName}
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.textArea}>
-              <TextInput
-                value={message}
-                onChangeText={c => {
-                  setMessage(c);
-                }}
-                style={styles.mTextInpt}
-                placeholder="Type your message here"
-                multiline={true}
-                numberOfLines={10}
-              />
-            </View>
-          </View>
-        );
-      };
-
-      const renderBottom = () => {
-        const renderButton = () => {
-          return (
-            <Pressable
-              onPress={sendMessage}
-              disabled={mmmloader == true ? true : message == '' ? true : false}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.9 : message == '' ? 0.5 : 1},
-                styles.ButtonContainer,
-                {backgroundColor: theme.color.button1, width: '100%'},
-              ]}>
-              {!mmmloader && (
-                <Text
-                  style={[
-                    styles.ButtonText,
-                    {color: theme.color.buttonText, fontSize: 13},
-                  ]}>
-                  Send Message
-                </Text>
-              )}
-              {mmmloader && (
-                <ActivityIndicator size={20} color={theme.color.buttonText} />
-              )}
-            </Pressable>
-          );
-        };
-
-        return (
-          <View style={styles.modalBottomContainerrr}>{renderButton()}</View>
-        );
-      };
-
-      return (
-        <Modal visible={isModal} transparent onRequestClose={closeOtherModal2}>
-          <SafeAreaView style={styles.modalContainer}>
-            <View style={styles.modalContainer2}>
-              <View style={styles.modal2}>
-                {renderHeader()}
-                {renderField()}
-                {renderBottom()}
-              </View>
-            </View>
-          </SafeAreaView>
-        </Modal>
-      );
-    }
   };
 
   const renderCalender1 = () => {
@@ -2652,171 +2441,6 @@ function Received(props) {
     );
   };
 
-  const renderMessageSendModal = () => {
-    const renderButton1 = () => {
-      return (
-        <>
-          <TouchableOpacity
-            onPress={closeModal}
-            activeOpacity={0.7}
-            style={{
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: theme.color.button1,
-              height: 50,
-              borderRadius: 10,
-              alignSelf: 'center',
-
-              marginTop: 40,
-            }}>
-            <Text
-              style={{
-                color: theme.color.buttonText,
-                fontSize: 16,
-                fontFamily: theme.fonts.fontBold,
-
-                textTransform: 'capitalize',
-              }}>
-              Done
-            </Text>
-          </TouchableOpacity>
-        </>
-      );
-    };
-
-    const renderButton2 = () => {
-      return (
-        <>
-          <TouchableOpacity
-            onPress={() => {
-              closeModal();
-              let p = store.User.offersProfileProps;
-              p.navigation.navigate('Inbox');
-            }}
-            activeOpacity={0.7}
-            style={{
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: theme.color.button2,
-              height: 50,
-              borderRadius: 10,
-              alignSelf: 'center',
-              // borderWidth: 1,
-              // borderColor: theme.color.fieldBorder,
-              marginTop: 12,
-            }}>
-            <Text
-              style={{
-                color: '#30563A',
-                textTransform: 'none',
-                fontFamily: theme.fonts.fontBold,
-                fontSize: 14,
-              }}>
-              Go to Inbox
-            </Text>
-          </TouchableOpacity>
-        </>
-      );
-    };
-
-    const closeModal = () => {
-      setisSendMessage(false);
-    };
-
-    let fn = sendObj.firstName;
-    let ln = sendObj.lastName;
-    let sendOfferUsername = fn + ' ' + ln;
-    let un = sendObj.userName || 'user';
-    let src = require('../../../assets/images/msgSentDone/img.png');
-    return (
-      <Modal
-        animationType="slide"
-        visible={isSendMessage}
-        transparent
-        onRequestClose={closeModal}>
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            padding: 15,
-          }}>
-          <View
-            style={{
-              backgroundColor: theme.color.background,
-              borderRadius: 15,
-              marginBottom: 15,
-              padding: 18,
-              width: '100%',
-            }}>
-            <View
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-              }}>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  fontFamily: theme.fonts.fontBold,
-                  fontSize: 19,
-                  color: '#101B10',
-                  lineHeight: 29,
-                }}>
-                Message Sent
-              </Text>
-            </View>
-
-            <View
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginTop: 40,
-                width: '100%',
-              }}>
-              <Image
-                style={{width: 90, height: 90, resizeMode: 'contain'}}
-                source={src}
-              />
-
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  marginTop: 15,
-                  fontFamily: theme.fonts.fontBold,
-                  fontSize: 15,
-                  color: '#101B10',
-                  textTransform: 'capitalize',
-                  lineHeight: 20,
-                }}>
-                {sendOfferUsername}
-              </Text>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  fontFamily: theme.fonts.fontNormal,
-                  fontSize: 13,
-                  color: theme.color.subTitleLight,
-                  lineHeight: 20,
-                }}>
-                @{un}
-              </Text>
-            </View>
-
-            {renderButton1()}
-            {renderButton2()}
-          </View>
-        </View>
-      </Modal>
-    );
-  };
-
   const renderShowOfferSendModal = () => {
     const renderButton1 = () => {
       return (
@@ -2959,6 +2583,11 @@ function Received(props) {
     );
   };
 
+  const openModal = (obj, check) => {
+    setModalObj(obj);
+    if (check == 'message') setIsMessageModal(true);
+  };
+
   return (
     <>
       <View style={styles.container}>
@@ -2981,7 +2610,6 @@ function Received(props) {
               ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
               ListHeaderComponent={data.length > 0 ? ListHeader : null}
-              // ListFooterComponent={data.length > 0 ? ListFooter : null}
             />
             {data.length > 0 && !getDataOnce && mloader && (
               <ActivityIndicator
@@ -2996,8 +2624,33 @@ function Received(props) {
             )}
           </View>
           {isModal && renderModal()}
-          {isSendMessage && renderMessageSendModal()}
+
           {isOfferSend && renderShowOfferSendModal()}
+
+          {isMessageModal && (
+            <utils.MessageModal
+              isModal={isMessageModal}
+              setIsModal={setIsMessageModal}
+              modalObj={modalObj}
+              setModalObj={setModalObj}
+              loader={homeModalLoder}
+              setIsSuccessModal={setIsSuccessModal}
+              setSuccessModalObj={setSuccessModalObj}
+              setSuccessCheck={setSuccessCheck}
+            />
+          )}
+
+          {isSuccessModal && (
+            <utils.SuccessModal
+              isModal={isSuccessModal}
+              setIsModal={setIsSuccessModal}
+              modalObj={successModalObj}
+              setModalObj={setSuccessModalObj}
+              check={successCheck}
+              setCheck={setSuccessCheck}
+              props={offersProfileProps}
+            />
+          )}
         </SafeAreaView>
       </View>
     </>

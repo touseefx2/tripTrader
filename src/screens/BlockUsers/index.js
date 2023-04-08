@@ -3,22 +3,9 @@ import {
   View,
   Text,
   SafeAreaView,
-  TouchableOpacity,
-  Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
   Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Dimensions,
   Pressable,
-  TextInput,
   FlatList,
-  ScrollView,
-  Keyboard,
-  Modal,
   RefreshControl,
 } from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
@@ -30,15 +17,11 @@ import theme from '../../theme';
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
 import {ActivityIndicator} from 'react-native-paper';
-import FastImage from 'react-native-fast-image';
-import {ImageSlider} from 'react-native-image-slider-banner';
-import {Calendar} from 'react-native-calendars';
-import moment, {duration} from 'moment/moment';
 
 export default observer(BlockUsers);
 
 function BlockUsers(props) {
-  let maxModalHeight = theme.window.Height - 100;
+  const maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
   const toast = useRef(null);
   const toastduration = 700;

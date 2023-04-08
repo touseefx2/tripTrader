@@ -10,7 +10,7 @@ function CardDelete({item, index, refreshing, deleteChat}) {
     <Pressable
       // disabled={refreshing}
       onPress={() => {
-        deleteChat(item.roomName, index);
+        deleteChat(item._id, index);
       }}
       style={({pressed}) => [
         {opacity: pressed ? 0.7 : 1.0},

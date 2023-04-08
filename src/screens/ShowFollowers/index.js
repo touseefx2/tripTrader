@@ -1,67 +1,40 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   SafeAreaView,
-  TouchableOpacity,
-  Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
-  Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Dimensions,
   Pressable,
-  TextInput,
   FlatList,
-  ScrollView,
-  Keyboard,
-  Modal,
   RefreshControl,
 } from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-// import ImageSlider from 'react-native-image-slider';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
 import utils from '../../utils/index';
 import theme from '../../theme';
 import NetInfo from '@react-native-community/netinfo';
-import Toast from 'react-native-easy-toast';
 import {ActivityIndicator} from 'react-native-paper';
-import FastImage from 'react-native-fast-image';
-import {ImageSlider} from 'react-native-image-slider-banner';
-import {Calendar} from 'react-native-calendars';
-import moment, {duration} from 'moment/moment';
 
 export default observer(ShowFollowers);
 
 function ShowFollowers(props) {
-  let maxModalHeight = theme.window.Height - 100;
-  const [modalHeight, setmodalHeight] = useState(0);
-
-  let chk = store.User.cchk;
-  let cc = store.User.ccc;
-  let headerTitle = store.User.ffuser;
-
-  let fscreen = store.User.fscreen || '';
+  const chk = store.User.cchk;
+  const headerTitle = store.User.ffuser;
+  const fscreen = store.User.fscreen || '';
   let db = false;
   if (fscreen == 'Home') {
     db = true;
   }
 
-  let internet = store.General.isInternet;
-  let user = store.User.user;
-  let data = [];
+  const {isInternet} = store.General;
+  const {user} = store.User;
 
-  data = chk == 'followers' ? store.User.followers : store.User.following;
+  const data = chk == 'followers' ? store.User.followers : store.User.following;
 
-  let mloader = store.User.fl;
-  let total = 0;
+  const mloader = store.User.fl;
 
-  total =
+  const total =
     chk == 'followers' ? store.User.totalfollowers : store.User.totalfollowing;
 
   const [getDataOnce, setgetDataOnce] = useState(false);
@@ -99,11 +72,11 @@ function ShowFollowers(props) {
     });
   };
   useEffect(() => {
-    if (!getDataOnce && internet) {
+    if (!getDataOnce && isInternet) {
       getDbData();
     }
     return () => {};
-  }, [getDataOnce, internet]);
+  }, [getDataOnce, isInternet]);
 
   const ItemSeparatorView = () => {
     return (
@@ -267,7 +240,7 @@ function ShowFollowers(props) {
           headerTitle={headerTitle}
           screen={'followers'}
         />
-        {!internet && <utils.InternetMessage />}
+        {!isInternet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <FlatList

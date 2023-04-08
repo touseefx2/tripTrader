@@ -46,35 +46,27 @@ export default observer(UserProfile);
 
 function UserProfile(props) {
   const refRBSheet = useRef();
+  const toast = useRef(null);
+  const headerTitle = 'Profile';
 
-  let maxModalHeight = theme.window.Height - 100;
+  const maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
 
-  const toast = useRef(null);
-  const toastduration = 700;
-  let headerTitle = 'Profile';
-
-  let internet = store.General.isInternet;
-  let u = store.Userv.user;
-  // let loader = store.Userv.gl;
-
-  let userName = '';
-  let phn = '';
-  let src = '';
-  let srccnic = '';
-
-  const user = u;
+  const {isInternet} = store.General;
+  const {user} = store.Userv;
+  const homeModalLoder2 = store.Userv.homeModalLoder;
+  const {homeModalLoder} = store.User;
 
   const [followers, setfollowers] = useState(0);
   const [following, setfollowing] = useState(0);
   const [loader, setloader] = useState(false);
 
+  let userName = '';
+  let photo = '';
   if (user) {
     userName = user.firstName + ' ' + user.lastName;
-    src = user.image ? user.image : '';
+    photo = user.image ? user.image : '';
   }
-
-  const [photo, setphoto] = useState(src);
 
   const [pvm, setpvm] = useState(false); //show fulll image modal
   const [pv, setpv] = useState(''); //photo view
@@ -86,28 +78,28 @@ function UserProfile(props) {
 
   const [errorMessage, seterrorMessage] = useState('');
 
-  const [isTabBarShow, setisTabBarShow] = useState(false);
-
   const [isFollow, setisFollow] = useState(false);
   const [isBlock, setisBlock] = useState(false);
 
   const [isOpenSheet, setisOpenSheet] = useState(false);
 
-  const [isSendMessage, setisSendMessage] = useState(false);
+  const [isMessageModal, setIsMessageModal] = useState(false);
 
-  const [modalObj, setmodalObj] = useState(false);
+  const [isSuccessModal, setIsSuccessModal] = useState(false);
+  const [successModalObj, setSuccessModalObj] = useState(null);
+  const [successCheck, setSuccessCheck] = useState('');
+
+  const [modalObj, setModalObj] = useState(false);
   const [modalChk, setmodalChk] = useState(false);
   const [isModal, setisModal] = useState(false);
   const [isSendReport, setisSendReport] = useState(false);
   const [sendObj, setsendObj] = useState('');
 
-  let mloader = store.Userv.homeModalLoder;
-
   const [message, setMessage] = useState('');
   const closeModal = () => {
     setisModal(false);
     setmodalChk(false);
-    setmodalObj(false);
+    setModalObj(false);
     setMessage('');
     setmodalHeight(0);
     setisSendReport(false);
@@ -130,11 +122,11 @@ function UserProfile(props) {
     });
   };
   useEffect(() => {
-    if (!getDataOnce && internet) {
+    if (!getDataOnce && isInternet) {
       getDbData();
     }
     return () => {};
-  }, [getDataOnce, internet]);
+  }, [getDataOnce, isInternet]);
 
   useEffect(() => {
     if (store.User.user) {
@@ -158,43 +150,6 @@ function UserProfile(props) {
     }
   }, [store.User.user]);
 
-  const setIsSendMessage = v => {
-    setsendObj(modalObj.item);
-    closeModal();
-    setisSendMessage(v);
-  };
-  const sendMessage = () => {
-    Keyboard.dismiss();
-    NetInfo.fetch().then(state => {
-      if (state.isConnected) {
-        let usr = modalObj.item;
-        const obj = {
-          userId1: store.User.user._id,
-          userId2: usr._id,
-          sendBy: store.User.user._id,
-          sendTo: user._id,
-          senderName:
-            store.User.user.firstName + ' ' + store.User.user.lastName,
-          isRead: false,
-          message: message,
-          type: 'text',
-        };
-
-        console.log('body : ', obj);
-
-        store.Userv.attemptToCheckFirstMessage(
-          store.User.user._id,
-          usr._id,
-          obj,
-          message,
-          setIsSendMessage,
-        );
-      } else {
-        // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
-      }
-    });
-  };
   const setIsSendRport = v => {
     setsendObj(modalObj.item);
     closeModal();
@@ -384,15 +339,14 @@ function UserProfile(props) {
   const onClickBottomItem = chk => {
     if (chk == 'message') {
       closeBottomSheet();
-      setmodalObj({item: user, i: 0});
-      setmodalChk('message');
-      setisModal(true);
+      const obj = {hostId: user};
+      openModal({item: obj, selIndex: 0}, chk);
     }
 
     if (chk == 'report') {
       closeBottomSheet();
-      setmodalObj({item: user, i: 0});
-      setmodalChk('report');
+      setModalObj({item: user, i: 0});
+      setmodalChk(chk);
       setisModal(true);
     }
   };
@@ -788,10 +742,10 @@ function UserProfile(props) {
   };
 
   const renderBottomSheet = () => {
-    let messageIcon = require('../../assets/images/bottomsheet/messages/img.png');
-    let blockIcon = require('../../assets/images/bottomsheet/block/img.png');
-    let reportIcon = require('../../assets/images/bottomsheet/report/img.png');
-    let itemConStyle = {
+    const messageIcon = require('../../assets/images/bottomsheet/messages/img.png');
+    const blockIcon = require('../../assets/images/bottomsheet/block/img.png');
+    const reportIcon = require('../../assets/images/bottomsheet/report/img.png');
+    const itemConStyle = {
       width: '80%',
       // backgroundColor: 'red',
       paddingVertical: 5,
@@ -799,18 +753,18 @@ function UserProfile(props) {
       alignItems: 'center',
       justifyContent: 'space-between',
     };
-    let itemiconStyle = {
+    const itemiconStyle = {
       width: 24,
       height: 24,
       resizeMode: 'contain',
     };
-    let itemTextStyle = {
+    const itemTextStyle = {
       color: '#3C6B49',
       fontSize: 16,
       fontFamily: theme.fonts.fontMedium,
       lineHeight: 25,
     };
-    let touchOpacity = 0.8;
+    const touchOpacity = 0.8;
 
     const renderCross = () => {
       return (
@@ -945,158 +899,8 @@ function UserProfile(props) {
   };
 
   const renderModal = () => {
-    let c = modalHeight >= maxModalHeight ? true : false;
-    let style = c ? [styles.modal, {height: maxModalHeight}] : styles.modal2;
-
-    //message
-    if (modalChk == 'message') {
-      const renderHeader = () => {
-        let text = 'Message User';
-
-        const renderCross = () => {
-          return (
-            <Pressable
-              disabled={mloader}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.7 : 1.0},
-                styles.modalCross,
-              ]}
-              onPress={closeModal}>
-              <utils.vectorIcon.Ionicons
-                name="ios-close-outline"
-                color={theme.color.title}
-                size={32}
-              />
-            </Pressable>
-          );
-        };
-
-        const renderTitle = () => {
-          return <Text style={styles.modalTitle}>{text}</Text>;
-        };
-
-        return (
-          <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            {renderTitle()}
-            {renderCross()}
-          </View>
-        );
-      };
-
-      const renderField = () => {
-        let item = modalObj.item;
-
-        const renderProfile = () => {
-          return (
-            <View style={styles.mProfileImgContainerm}>
-              <ProgressiveFastImage
-                style={styles.mProfileImgm}
-                source={
-                  photo != ''
-                    ? {uri: photo}
-                    : require('../../assets/images/drawer/guest/img.png')
-                }
-                loadingImageStyle={styles.mimageLoaderm}
-                loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
-                blurRadius={5}
-              />
-              {/* {isVeirfy && (
-                  <Image
-                    style={styles.miconVerifym}
-                    source={require('../../assets/images/verified/img.png')}
-                  />
-                )} */}
-            </View>
-          );
-        };
-
-        return (
-          <View style={[styles.modalFieldConatiner, {marginTop: 15}]}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text style={styles.mT1}>To:</Text>
-              <View
-                style={{
-                  width: '89%',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  flexDirection: 'row',
-                }}>
-                {renderProfile()}
-                <Text numberOfLines={1} ellipsizeMode="tail" style={styles.mT2}>
-                  {userName}
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.textArea}>
-              <TextInput
-                value={message}
-                onChangeText={c => {
-                  setMessage(c);
-                }}
-                style={styles.mTextInpt}
-                placeholder="Type your message here"
-                multiline={true}
-                numberOfLines={10}
-              />
-            </View>
-          </View>
-        );
-      };
-
-      const renderBottom = () => {
-        const renderButton = () => {
-          return (
-            <Pressable
-              onPress={() => {
-                sendMessage();
-              }}
-              disabled={mloader == true ? true : message == '' ? true : false}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.9 : message == '' ? 0.5 : 1},
-                styles.ButtonContainer,
-                {backgroundColor: theme.color.button1, width: '100%'},
-              ]}>
-              {!mloader && (
-                <Text
-                  style={[
-                    styles.ButtonText,
-                    {color: theme.color.buttonText, fontSize: 13},
-                  ]}>
-                  Send Message
-                </Text>
-              )}
-              {mloader && (
-                <ActivityIndicator size={20} color={theme.color.buttonText} />
-              )}
-            </Pressable>
-          );
-        };
-
-        return (
-          <View style={styles.modalBottomContainerrr}>{renderButton()}</View>
-        );
-      };
-
-      return (
-        <MModal visible={isModal} transparent onRequestClose={closeModal}>
-          <SafeAreaView style={styles.modalContainer}>
-            <View style={styles.modalContainer2}>
-              <View style={styles.modal2}>
-                {renderHeader()}
-                {renderField()}
-                {renderBottom()}
-              </View>
-            </View>
-          </SafeAreaView>
-        </MModal>
-      );
-    }
+    const c = modalHeight >= maxModalHeight ? true : false;
+    const style = c ? [styles.modal, {height: maxModalHeight}] : styles.modal2;
 
     //report
     if (modalChk == 'report') {
@@ -1106,7 +910,7 @@ function UserProfile(props) {
         const renderCross = () => {
           return (
             <Pressable
-              disabled={mloader}
+              disabled={homeModalLoder2}
               style={({pressed}) => [
                 {opacity: pressed ? 0.7 : 1.0},
                 [
@@ -1213,7 +1017,7 @@ function UserProfile(props) {
                 color: theme.color.subTitleLight,
                 lineHeight: 20,
               }}>
-              @{email}
+              {email}
             </Text>
 
             <View style={{width: '93%', alignSelf: 'center'}}>
@@ -1253,7 +1057,7 @@ function UserProfile(props) {
           return (
             <>
               <TouchableOpacity
-                disabled={mloader || chk}
+                disabled={homeModalLoder2 || chk}
                 onPress={() => {
                   sendReport();
                 }}
@@ -1268,7 +1072,7 @@ function UserProfile(props) {
                   alignSelf: 'center',
                   opacity: chk ? 0.5 : 1,
                 }}>
-                {!mloader && (
+                {!homeModalLoder2 && (
                   <Text
                     style={{
                       color: theme.color.buttonText,
@@ -1279,7 +1083,7 @@ function UserProfile(props) {
                     Report User
                   </Text>
                 )}
-                {mloader && (
+                {homeModalLoder2 && (
                   <ActivityIndicator size={20} color={theme.color.buttonText} />
                 )}
               </TouchableOpacity>
@@ -1291,7 +1095,7 @@ function UserProfile(props) {
           return (
             <>
               <TouchableOpacity
-                disabled={mloader}
+                disabled={homeModalLoder2}
                 onPress={closeModal}
                 activeOpacity={0.7}
                 style={{
@@ -1387,172 +1191,6 @@ function UserProfile(props) {
     }
   };
 
-  const renderMessageSendModal = () => {
-    const renderButton1 = () => {
-      return (
-        <>
-          <TouchableOpacity
-            onPress={closeModal}
-            activeOpacity={0.7}
-            style={{
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: theme.color.button1,
-              height: 50,
-              borderRadius: 10,
-              alignSelf: 'center',
-
-              marginTop: 40,
-            }}>
-            <Text
-              style={{
-                color: theme.color.buttonText,
-                fontSize: 16,
-                fontFamily: theme.fonts.fontBold,
-
-                textTransform: 'capitalize',
-              }}>
-              Done
-            </Text>
-          </TouchableOpacity>
-        </>
-      );
-    };
-
-    const renderButton2 = () => {
-      return (
-        <>
-          <TouchableOpacity
-            onPress={() => {
-              closeModal();
-              props.navigation.navigate('Inbox');
-              props.navigation.goBack();
-            }}
-            activeOpacity={0.7}
-            style={{
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: theme.color.button2,
-              height: 50,
-              borderRadius: 10,
-              alignSelf: 'center',
-              // borderWidth: 1,
-              // borderColor: theme.color.fieldBorder,
-              marginTop: 12,
-            }}>
-            <Text
-              style={{
-                color: '#30563A',
-                textTransform: 'none',
-                fontFamily: theme.fonts.fontBold,
-                fontSize: 14,
-              }}>
-              Go to Inbox
-            </Text>
-          </TouchableOpacity>
-        </>
-      );
-    };
-
-    const closeModal = () => {
-      setisSendMessage(false);
-    };
-
-    const email = sendObj.email;
-    let fn = sendObj.firstName;
-    let ln = sendObj.lastName;
-    let sendOfferUsername = fn + ' ' + ln;
-    let un = sendObj.userName ? sendObj.userName : 'username';
-    let src = require('../../assets/images/msgSentDone/img.png');
-    return (
-      <MModal
-        animationType="slide"
-        visible={isSendMessage}
-        transparent
-        onRequestClose={closeModal}>
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            padding: 15,
-          }}>
-          <View
-            style={{
-              backgroundColor: theme.color.background,
-              borderRadius: 15,
-              marginBottom: 15,
-              padding: 18,
-              width: '100%',
-            }}>
-            <View
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-              }}>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  fontFamily: theme.fonts.fontBold,
-                  fontSize: 19,
-                  color: '#101B10',
-                  lineHeight: 29,
-                }}>
-                Message Sent
-              </Text>
-            </View>
-
-            <View
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginTop: 40,
-                width: '100%',
-              }}>
-              <Image
-                style={{width: 90, height: 90, resizeMode: 'contain'}}
-                source={src}
-              />
-
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  marginTop: 15,
-                  fontFamily: theme.fonts.fontBold,
-                  fontSize: 15,
-                  color: '#101B10',
-                  textTransform: 'capitalize',
-                  lineHeight: 20,
-                }}>
-                {sendOfferUsername}
-              </Text>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  fontFamily: theme.fonts.fontNormal,
-                  fontSize: 13,
-                  color: theme.color.subTitleLight,
-                  lineHeight: 20,
-                }}>
-                @{email}
-              </Text>
-            </View>
-
-            {renderButton1()}
-            {renderButton2()}
-          </View>
-        </View>
-      </MModal>
-    );
-  };
-
   const renderRepoerSendModal = () => {
     let c = modalHeight >= maxModalHeight ? true : false;
     let style = c ? [styles.modal, {height: maxModalHeight}] : styles.modal2;
@@ -1563,7 +1201,7 @@ function UserProfile(props) {
       const renderCross = () => {
         return (
           <Pressable
-            disabled={mloader}
+            disabled={homeModalLoder2}
             style={({pressed}) => [
               {opacity: pressed ? 0.7 : 1.0},
               [
@@ -1678,7 +1316,7 @@ function UserProfile(props) {
               color: theme.color.subTitleLight,
               lineHeight: 20,
             }}>
-            @{email}
+            {email}
           </Text>
 
           <View style={{width: '93%', alignSelf: 'center'}}>
@@ -1795,6 +1433,11 @@ function UserProfile(props) {
     );
   };
 
+  const openModal = (obj, check) => {
+    setModalObj(obj);
+    if (check == 'message') setIsMessageModal(true);
+  };
+
   return (
     <View style={styles.container}>
       <utils.StackHeader
@@ -1803,7 +1446,7 @@ function UserProfile(props) {
         props={props}
         headerTitle={headerTitle}
       />
-      {!internet && <utils.InternetMessage />}
+      {!isInternet && <utils.InternetMessage />}
       <SafeAreaView style={styles.container2}>
         <View style={styles.container3}>
           {renderProfileSection()}
@@ -1814,10 +1457,36 @@ function UserProfile(props) {
         </View>
       </SafeAreaView>
       {isModal && renderModal()}
-      {isSendMessage && renderMessageSendModal()}
+
       {isSendReport && renderRepoerSendModal()}
       <utils.Loader load={loader} />
       {isOpenSheet && renderBottomSheet()}
+
+      {isMessageModal && (
+        <utils.MessageModal
+          isModal={isMessageModal}
+          setIsModal={setIsMessageModal}
+          modalObj={modalObj}
+          setModalObj={setModalObj}
+          loader={homeModalLoder}
+          setIsSuccessModal={setIsSuccessModal}
+          setSuccessModalObj={setSuccessModalObj}
+          setSuccessCheck={setSuccessCheck}
+        />
+      )}
+
+      {isSuccessModal && (
+        <utils.SuccessModal
+          isModal={isSuccessModal}
+          setIsModal={setIsSuccessModal}
+          modalObj={successModalObj}
+          setModalObj={setSuccessModalObj}
+          check={successCheck}
+          setCheck={setSuccessCheck}
+          props={props}
+        />
+      )}
+
       {pvm && (
         <utils.FullimageModal
           data={pv}

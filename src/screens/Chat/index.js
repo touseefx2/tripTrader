@@ -5,14 +5,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
   Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Dimensions,
   Pressable,
   TextInput,
   FlatList,
@@ -30,36 +23,73 @@ import utils from '../../utils/index';
 import theme from '../../theme';
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
-import moment, {duration} from 'moment/moment';
+import moment from 'moment';
 import EmojiModal from 'react-native-emoji-modal';
-import io from 'socket.io-client';
-import db from '../../database/index';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {responsiveHeight} from 'react-native-responsive-dimensions';
+import {FireStore} from '../../services/FireStore';
+import firestore from '@react-native-firebase/firestore';
 
 export default observer(Chat);
 
 const guest = require('../../assets/images/drawer/guest/img.png');
 
 function Chat(props) {
-  const socket = io(db.apis.BASE_URLS);
+  const dir = {
+    width: '100%',
+    alignItems: 'flex-end',
+  };
 
-  let maxModalHeight = theme.window.Height - 100;
+  const mc = {
+    backgroundColor: '#F2F3F1',
+    borderTopLeftRadius: 12,
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
+    padding: 12,
+  };
+
+  const mc2 = {
+    backgroundColor: theme.color.button1,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 12,
+    padding: 12,
+  };
+
+  const mt = {
+    fontSize: 14,
+    color: theme.color.subTitleAuth,
+    fontFamily: theme.fonts.fontNormal,
+  };
+
+  const md = {
+    fontSize: 12,
+    color: theme.color.subTitleLight,
+    fontFamily: theme.fonts.fontNormal,
+    marginTop: 3,
+  };
+
+  const mx = {
+    maxWidth: '70%',
+  };
+
+  const mx2 = {
+    maxWidth: '70%',
+    flexDirection: 'row',
+  };
+
+  const maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
   const toast = useRef(null);
   const scrollRef = useRef(null);
-  const toastduration = 700;
-  let pasObj = store.User.pasObj;
-
-  let obj = pasObj?.obj || false;
-  let headerTitle = pasObj?.title || '';
-  let rid = pasObj?.rid || '';
-  let ruser = pasObj?.ruser || '';
-
-  let mloader = store.Userv.homeModalLoder;
-
-  let internet = store.General.isInternet;
-  let user = store.User.user;
+  const {isInternet} = store.General;
+  const {homeModalLoder} = store.Userv;
+  const {pasObj, setpasObj, user, setSendMessageLoader, sendMessageLoader} =
+    store.User;
+  const obj = pasObj?.obj || false;
+  const headerTitle = pasObj?.title || '';
+  const rid = pasObj?.rid || '';
+  const ruser = pasObj?.ruser || '';
 
   const [isOpenSheet, setisOpenSheet] = useState(false);
   const refRBSheet = useRef(null);
@@ -134,16 +164,7 @@ function Chat(props) {
 
   const [isEmoji, setisEmoji] = useState(false);
 
-  //for typing status
-  const [TypingStatus, setTypingStatus] = useState(false);
-
-  // const [data, setdata] = useState([]);
-  const ndata = useRef(data); // define mutable ref
   const [data, setdata] = useState([]);
-
-  useEffect(() => {
-    ndata.current = data;
-  }); // nRef is updated after each render
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
@@ -152,77 +173,63 @@ function Chat(props) {
   const refreshing = store.User.messagesLoader;
   const onRefresh = React.useCallback(() => {
     console.log('onrefresh cal');
-
     getDbData();
   }, []);
+
   const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToGetAllMessages(
-          obj.roomName,
-          rid,
-          setGetDataOnce,
-          c => setdata(c),
-        );
+        FireStore.getAllMessageInRoom(obj._id, rid, setGetDataOnce, setdata);
       }
     });
   };
 
-  const SocketOff = () => {
-    socket.emit('user left', {socket: socket.id});
-  };
-
-  const joinSocket = () => {
-    let username = user.firstName + ' ' + user.lastName;
-    let rn = obj.roomName;
-    socket.emit('joinRoom', {username, roomName: rn});
-  };
   useEffect(() => {
-    socket.on('message', d => {
-      console.log('socket on  reciver message in chat data ', d.message);
-      let temp = ndata.current;
-      console.log('temp befor :  ', temp.length);
-      temp.push(d);
-      console.log('temp after :  ', temp.length);
-      setdata([...temp]);
-      scrollToBottom();
-      // let p = obj.roomName + '/' + rid;
-      // store.User.attemptToReadAllMessages(p);
-      return;
+    var initState = true;
+    const curentUserId = user._id;
+    const roomId = obj._id;
+    const chatroomsRef = firestore().collection('chatrooms');
+    const ref = chatroomsRef.doc(roomId).collection('messages');
+
+    const observer = ref.onSnapshot(documentSnapshot => {
+      if (initState) {
+        initState = false;
+      } else {
+        console.log('---> onSnapshot Call Chat <----');
+        let fdata = [];
+        const data = documentSnapshot?.docs || [];
+        fdata = data
+          .map(item => ({...item.data(), _id: item.id}))
+          .sort((a, b) => a.createdAt - b.createdAt)
+          .filter(item => {
+            let isShow = true;
+            item.deletedBy.forEach(element => {
+              if (element == curentUserId) {
+                isShow = false;
+              }
+            });
+            if (isShow) return item;
+          });
+        setdata(fdata);
+        scrollToBottom();
+        FireStore.readAllMessageInRoom(roomId, rid);
+      }
     });
-  }, [socket]);
 
-  useEffect(() => {
     return () => {
-      SocketOff();
-      store.User.setpasObj(false);
+      observer();
+      setpasObj(false);
     };
   }, []);
   useEffect(() => {
-    return () => {
-      if (internet) {
-        let p = obj.roomName + '/' + rid;
-        store.User.attemptToReadAllMessages(p); //isko bad me cmnt kr dena ha jb real time krn ga read wala scene
-        setTimeout(() => {
-          store.User.attemptToGetInboxes(store.User.user._id, () => {}, 'n');
-        }, 200);
-      }
-    };
-  }, [internet]);
-  useEffect(() => {
-    if (internet) {
-      onRefresh();
-      joinSocket();
-    } else {
-      SocketOff();
-    }
-  }, [internet]);
+    if (isInternet) onRefresh();
+  }, [isInternet]);
 
   useEffect(() => {
     if (getDataOnce) {
       setTimeout(() => {
         scrollToBottom();
-      }, 1000);
+      }, 1200);
     }
   }, [getDataOnce]);
 
@@ -365,12 +372,6 @@ function Chat(props) {
     }
   }
 
-  function diff_minutes(dt2, dt1) {
-    var diff = (dt2.getTime() - dt1.getTime()) / 1000;
-    diff /= 60;
-    return Math.abs(Math.round(diff));
-  }
-
   function CheckDate(d) {
     let t = '';
     let ud = new Date(d); //update date
@@ -409,49 +410,6 @@ function Chat(props) {
     return t;
   }
 
-  let dir = {
-    width: '100%',
-    alignItems: 'flex-end',
-  };
-
-  let mc = {
-    backgroundColor: '#F2F3F1',
-    borderTopLeftRadius: 12,
-    borderBottomLeftRadius: 12,
-    borderBottomRightRadius: 12,
-    padding: 12,
-  };
-
-  let mc2 = {
-    backgroundColor: theme.color.button1,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-    borderBottomRightRadius: 12,
-    padding: 12,
-  };
-
-  let mt = {
-    fontSize: 14,
-    color: theme.color.subTitleAuth,
-    fontFamily: theme.fonts.fontNormal,
-  };
-
-  let md = {
-    fontSize: 12,
-    color: theme.color.subTitleLight,
-    fontFamily: theme.fonts.fontNormal,
-    marginTop: 3,
-  };
-
-  let mx = {
-    maxWidth: '70%',
-  };
-
-  let mx2 = {
-    maxWidth: '70%',
-    flexDirection: 'row',
-  };
-
   const renderPhoto = (msg, images) => {
     return (
       <View
@@ -476,7 +434,7 @@ function Chat(props) {
   const renderShowPhotos = img => {
     let p = img.map((e, i, a) => {
       let uri = e;
-      console.log('e : ', e);
+      // console.log('e : ', e);
       return (
         <>
           <Pressable
@@ -505,15 +463,15 @@ function Chat(props) {
   };
 
   const ItemView = ({item, index}) => {
-    let usr = item.sendBy._id;
-    let msg = item.message || '';
-    let images = item.image || [];
-    let type = item.type;
-    let isRead = item.isRead || false;
-    let date = CheckDate(item.createdAt);
-    let photo = item.sendBy.image ? {uri: item.sendBy.image} : guest;
+    const usr = item.user;
+    const msg = item.message || '';
+    const images = item.image || [];
+    const type = item.type;
+    const isRead = item.isRead || false;
+    const date = CheckDate(item.createdAt);
+    const photo = usr.image ? {uri: usr.image} : guest;
     let isCu = false;
-    if (user._id == usr) {
+    if (user._id == usr._id) {
       isCu = true;
     }
 
@@ -550,18 +508,18 @@ function Chat(props) {
       );
     };
 
-    // const renderDate = () => {
-    //   return (
-    //     <View style={{flexDirection: 'row', alignItems: 'center'}}>
-    //       <Text style={[md, {marginRight: 5}]}>{date}</Text>
-    //       <utils.vectorIcon.MaterialCommunityIcons
-    //         name={!isRead ? 'check' : 'check-all'}
-    //         color={!isRead ? theme.color.subTitleLight : theme.color.button1}
-    //         size={16}
-    //       />
-    //     </View>
-    //   );
-    // };
+    const renderDate = () => {
+      return (
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Text style={[md, {marginRight: 5}]}>{date}</Text>
+          <utils.vectorIcon.MaterialCommunityIcons
+            name={!isRead ? 'check' : 'check-all'}
+            color={!isRead ? theme.color.subTitleLight : theme.color.button1}
+            size={16}
+          />
+        </View>
+      );
+    };
 
     const renderDate2 = () => {
       return <Text style={md}>{date}</Text>;
@@ -588,8 +546,11 @@ function Chat(props) {
             <>
               <View style={mx}>
                 <View style={mc}>{renderMsg()}</View>
-                {/* {renderDate()} */}
-                <View style={{alignItems: 'flex-end'}}>{renderDate2()}</View>
+
+                <View style={{alignItems: 'flex-end'}}>
+                  {renderDate()}
+                  {/* {renderDate2()} */}
+                </View>
               </View>
             </>
           )}
@@ -618,55 +579,37 @@ function Chat(props) {
     );
   };
 
-  // const ListHeader = () => {
-  //   let num = total;
-  //   let t = `You have ${num} ${num > 1 ? 'users' : 'user'} blocked`;
-  //   return (
-  //     <View style={{width: '100%'}}>
-  //       <Text
-  //         style={{
-  //           color: theme.color.subTitle,
-  //           fontSize: 13,
-  //           fontFamily: theme.fonts.fontNormal,
-  //         }}>
-  //         {t}
-  //       </Text>
-  //     </View>
-  //   );
-  // };
-
-  // const ListFooter = () => {
-  //   return (
-  //     <>
-  //       <View>
-  //         <View style={styles.listFooter}>
-  //           <Text style={styles.listFooterT}>End of results</Text>
-  //         </View>
-  //       </View>
-  //     </>
-  //   );
-  // };
+  const sendMessageSuccess = () => {
+    console.log('Message sent');
+  };
 
   const SendMessage = p => {
     closeEmoji();
     Keyboard.dismiss();
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        let userDetails = {
-          userId: user._id,
-          roomName: obj.roomName,
-          username: user.firstName + ' ' + user.lastName,
+        setSendMessageLoader(true);
+        const chatMessageObject = {
+          user: user,
+          isRead: false,
           message: !isAddPhotoModal ? message : pmessage,
-          image: p != '' ? p : [],
           type: !isAddPhotoModal ? 'text' : 'image',
+          image: p != '' ? p : [],
+          deletedBy: [],
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
         };
-        console.log('user detial send message : ', userDetails);
-        socket.emit('chat', {userDetails});
-        if (isAddPhotoModal) {
-          ClosePhotoModal();
-        } else {
-          ClearMessage();
-        }
+
+        FireStore.sendChatMessage(
+          obj._id,
+          rid,
+          chatMessageObject,
+          sendMessageSuccess,
+          '',
+        );
+
+        if (isAddPhotoModal) ClosePhotoModal();
+        else ClearMessage();
       } else {
         Alert.alert('', 'Please connect internet');
       }
@@ -733,7 +676,14 @@ function Chat(props) {
     };
 
     const renderInputContainer = () => {
-      let disable = message == '' ? true : refreshing == true ? true : false;
+      const disable =
+        message == ''
+          ? true
+          : refreshing == true
+          ? true
+          : sendMessageLoader == true
+          ? true
+          : false;
       return (
         <View
           style={{
@@ -827,7 +777,7 @@ function Chat(props) {
         const renderCross = () => {
           return (
             <Pressable
-              disabled={mloader}
+              disabled={homeModalLoder}
               style={({pressed}) => [
                 {opacity: pressed ? 0.7 : 1.0},
                 [
@@ -888,8 +838,8 @@ function Chat(props) {
       };
 
       const renderCenter = () => {
-        let un = ruser.userName ? ruser.userName : 'uname';
-        let photo = ruser.image || '';
+        const photo = ruser.image || '';
+        const email = ruser.email || '';
 
         return (
           <View
@@ -935,7 +885,7 @@ function Chat(props) {
                 color: theme.color.subTitleLight,
                 lineHeight: 20,
               }}>
-              @{un}
+              {email}
             </Text>
 
             <View style={{width: '93%', alignSelf: 'center'}}>
@@ -975,7 +925,7 @@ function Chat(props) {
           return (
             <>
               <TouchableOpacity
-                disabled={mloader || chk}
+                disabled={homeModalLoder || chk}
                 onPress={() => {
                   sendReport();
                 }}
@@ -990,7 +940,7 @@ function Chat(props) {
                   alignSelf: 'center',
                   opacity: chk ? 0.5 : 1,
                 }}>
-                {!mloader && (
+                {!homeModalLoder && (
                   <Text
                     style={{
                       color: theme.color.buttonText,
@@ -1001,7 +951,7 @@ function Chat(props) {
                     Report User
                   </Text>
                 )}
-                {mloader && (
+                {homeModalLoder && (
                   <ActivityIndicator size={20} color={theme.color.buttonText} />
                 )}
               </TouchableOpacity>
@@ -1013,7 +963,7 @@ function Chat(props) {
           return (
             <>
               <TouchableOpacity
-                disabled={mloader}
+                disabled={homeModalLoder}
                 onPress={closeModal}
                 activeOpacity={0.7}
                 style={{
@@ -1110,8 +1060,8 @@ function Chat(props) {
   };
 
   const renderRepoerSendModal = () => {
-    let c = modalHeight >= maxModalHeight ? true : false;
-    let style = c ? [styles.modal, {height: maxModalHeight}] : styles.modal2;
+    const c = modalHeight >= maxModalHeight ? true : false;
+    const style = c ? [styles.modal, {height: maxModalHeight}] : styles.modal2;
 
     const renderHeader = () => {
       let text = 'Report User';
@@ -1119,7 +1069,7 @@ function Chat(props) {
       const renderCross = () => {
         return (
           <Pressable
-            disabled={mloader}
+            disabled={homeModalLoder}
             style={({pressed}) => [
               {opacity: pressed ? 0.7 : 1.0},
               [
@@ -1180,11 +1130,11 @@ function Chat(props) {
     };
 
     const renderCenter = () => {
-      let fn = sendObj.firstName;
-      let ln = sendObj.lastName;
-      let sendOfferUsername = fn + ' ' + ln;
-      let un = sendObj.userName || 'uname';
-      let src =
+      const fn = sendObj.firstName;
+      const ln = sendObj.lastName;
+      const sendOfferUsername = fn + ' ' + ln;
+      const email = sendObj.email || '';
+      const src =
         sendObj.image && sendObj.image != ''
           ? {uri: sendObj.image}
           : require('../../assets/images/drawer/guest/img.png');
@@ -1229,7 +1179,7 @@ function Chat(props) {
               color: theme.color.subTitleLight,
               lineHeight: 20,
             }}>
-            @{un}
+            {email}
           </Text>
 
           <View style={{width: '93%', alignSelf: 'center'}}>
@@ -1568,28 +1518,6 @@ function Chat(props) {
     );
   };
 
-  //typing
-  // const handleTyping = () => {
-
-  //   socket.emit('typing', { text: `${loggedInUser} is typing`, roomName: "9b1deb4d", });
-
-  // }
-  // const handleTypingLeave = () => {
-
-  //   socket.emit('typingLeave', { text: "", roomName: "9b1deb4d", });
-
-  // }
-  // useEffect(() => {
-
-  //   socket.on('typingResponse', (data) => setTypingStatus(data.text));
-
-  // }, [socket]);
-  // useEffect(() => {
-
-  //   socket.on('typingLeaveResponse', (data) => setTypingStatus(""));
-
-  // }, [socket]);
-
   return (
     <>
       <View style={styles.container}>
@@ -1618,7 +1546,7 @@ function Chat(props) {
           headerTitle={headerTitle}
         />
 
-        {!internet && <utils.InternetMessage />}
+        {!isInternet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <FlatList
@@ -1631,13 +1559,10 @@ function Chat(props) {
                 paddingHorizontal: 15,
               }}
               data={data}
-              // initialScrollIndex={Messages.length > 0 ? Messages.length - 1 : 0}
               renderItem={ItemView}
               keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
-              // ListHeaderComponent={data.length > 0 ? ListHeader : null}
-              // ListFooterComponent={data.length > 0 ? ListFooter : null}
             />
           </View>
 
@@ -1649,7 +1574,7 @@ function Chat(props) {
                 setmessage(m);
               }}
               onPressOutside={closeEmoji}
-              modalStyle={{padding: 10}}
+              modalStyle={{paddingBottom: responsiveHeight(4.5)}}
               backgroundStyle={{backgroundColor: '#fcfcfc'}}
               containerStyle={{
                 shadowColor: '#000',

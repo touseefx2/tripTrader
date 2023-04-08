@@ -18,9 +18,7 @@ import theme from '../../theme';
 import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
 import {ImageSlider} from 'react-native-image-slider-banner';
-import moment from 'moment/moment';
-import io from 'socket.io-client';
-import db from '../../database/index';
+import moment from 'moment';
 import {FlashList} from '@shopify/flash-list';
 import PushNotification from 'react-native-push-notification';
 import firestore from '@react-native-firebase/firestore';
@@ -54,6 +52,7 @@ function Home(props) {
     setisNotification,
     blockUsers,
     HomeLoader,
+    attemptToGetInboxes,
   } = store.User;
   const {deleteLoader, saveTrips, saveLoader, setsaveTrips, attemptToSaveTrip} =
     store.Trips;
@@ -141,22 +140,23 @@ function Home(props) {
     }
   }, [notify]);
 
-  const socket = store.General.socket;
-  const SocketOff = () => {
-    socket.emit('user left', {socket: socket.id});
-  };
   useEffect(() => {
-    store.General.setSocket(io(db.apis.BASE_URL));
-    return () => {
-      SocketOff();
-    };
+    const chatroomsRef = firestore().collection('chatrooms');
+    var initState = true;
+    const observer = chatroomsRef
+      .where(`user.${user._id}`, '==', true)
+      .onSnapshot(documentSnapshot => {
+        if (initState) {
+          initState = false;
+        } else {
+          console.log('---> onSnapshot Call Home <----');
+          attemptToGetInboxes(user._id, () => {}, '');
+        }
+      });
+
+    // Stop listening for updates when no longer required
+    return () => observer();
   }, []);
-  useEffect(() => {
-    socket.on('message', d => {
-      console.log('socket on Home call and refresh  inboxes ');
-      store.User.attemptToGetInboxes(user._id, () => {});
-    });
-  }, [socket]);
 
   useEffect(() => {
     if (isApplySearch) {

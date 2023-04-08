@@ -1,17 +1,13 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
   SafeAreaView,
   TouchableOpacity,
   Image,
-  StatusBar,
-  ScrollView,
   ActivityIndicator,
-  Dimensions,
   TextInput,
   Pressable,
-  FlatList,
   Linking,
   PermissionsAndroid,
   Keyboard,
@@ -96,7 +92,7 @@ function ChatPhotoModal(props) {
             res.map((e, i, a) => {
               let uri = e.path;
               let fileName = e.fileName;
-              let type = e.mime;
+              let type = e.mine;
               if (Platform.OS == 'android' && apiLevel < 29) {
                 uri = 'file://' + uri;
               }
@@ -129,10 +125,11 @@ function ChatPhotoModal(props) {
             res.map((e, i, a) => {
               let uri = e.path;
               let fileName = e.fileName;
-              let type = e.mime;
+              let type = e.mine;
               if (Platform.OS == 'android' && apiLevel < 29) {
                 uri = 'file://' + uri;
               }
+
               ImageCompressor.compress(uri, {
                 compressionMethod: 'auto',
               })

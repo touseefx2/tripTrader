@@ -6,7 +6,7 @@ import store from '../../../../store/index';
 import utils from '../../../../utils/index';
 import theme from '../../../../theme';
 import {ImageSlider} from 'react-native-image-slider-banner';
-import moment from 'moment/moment';
+import moment from 'moment';
 import * as Animatable from 'react-native-animatable';
 
 export default memo(Card3);

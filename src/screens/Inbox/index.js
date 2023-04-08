@@ -21,6 +21,7 @@ import NetInfo from '@react-native-community/netinfo';
 import {SwipeListView} from 'react-native-swipe-list-view';
 import Card from './Card/index';
 import CardDelete from './CardDelete';
+import {FireStore} from '../../services/FireStore';
 
 export default observer(Inbox);
 
@@ -135,22 +136,22 @@ function EmptyListMessage() {
 }
 
 function Inbox(props) {
-  let guest = require('../../assets/images/drawer/guest/img.png');
+  const guest = require('../../assets/images/drawer/guest/img.png');
   const scrollRef = useRef(null);
   const swipRef = useRef(null);
   const closeSwipe = () => {
     swipRef?.current?.safeCloseOpenRow();
   };
 
-  let headerTitle = 'Inbox';
-  let internet = store.General.isInternet;
-  let user = store.User.user;
+  const headerTitle = 'Inbox';
+  const {isInternet} = store.General;
+  const {user, attemptToGetInboxes, inbox} = store.User;
 
   const [search, setsearch] = useState('');
   const [sdata, setsdata] = useState([]);
 
   let loader = store.User.dlc;
-  const data = search == '' ? store.User.inbox : sdata;
+  const data = search == '' ? inbox : sdata;
   let totalUnread = store.User.unreadInbox;
 
   useEffect(() => {
@@ -230,17 +231,17 @@ function Inbox(props) {
   const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToGetInboxes(user._id, setGetDataOnce);
+        attemptToGetInboxes(user._id, setGetDataOnce, '');
       }
     });
   };
 
   useEffect(() => {
-    if (internet) {
+    if (isInternet) {
       onRefresh();
     }
     return () => {};
-  }, [internet]);
+  }, [isInternet]);
 
   useEffect(() => {
     if (user == 'guest') {
@@ -254,17 +255,16 @@ function Inbox(props) {
     Keyboard.dismiss();
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToDeleteChat(
+        FireStore.deleteChat(
+          inbox,
           chatId,
-          i,
           user._id,
           search,
           sdata,
-          c => setsdata(c),
+          setsdata,
           closeSwipe,
         );
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -277,7 +277,7 @@ function Inbox(props) {
     <>
       <View style={styles.container}>
         <utils.DrawerHeader props={props} headerTitle={headerTitle} />
-        {!internet && <utils.InternetMessage />}
+        {!isInternet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <SwipeListView

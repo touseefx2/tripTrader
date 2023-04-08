@@ -7,6 +7,8 @@ import io from 'socket.io-client';
 import db from '../../database/index';
 import store from '../index';
 import {Notification} from '../../services/Notification';
+import {FireStore} from '../../services/FireStore';
+
 class user {
   constructor() {
     makeObservable(this);
@@ -60,67 +62,6 @@ class user {
     this.dlc = obj;
   };
 
-  // attemptToDeleteChat(cid, i, uid, dt, setdt,srch,sdt,setsdt,suc) {
-
-  attemptToDeleteChat(cid, iii, uid, srch, sdt, setsdt, suc) {
-    let params = cid + '/' + uid;
-    console.log('DeleteChat  true : ', params);
-    this.setdlc(true);
-
-    let i = 0;
-    let ii = 0;
-
-    let dd = [...this.inbox];
-
-    if (dd.length > 0) {
-      let ind = dd.findIndex(x => x.roomName === cid);
-      if (ind > -1) {
-        i = ind;
-      }
-    }
-    let ddd = [...sdt];
-    if (ddd.length > 0) {
-      let ind = ddd.findIndex(x => x.roomName === cid);
-      if (ind > -1) {
-        ii = ind;
-      }
-    }
-
-    db.hitApi(db.apis.DELETE_CHAT + params, 'put', {}, this.authToken)
-      ?.then(resp => {
-        this.setdlc(false);
-        console.log(
-          `response DeleteChat  ${db.apis.DELETE_CHAT}${params} : `,
-          resp.data,
-        );
-
-        suc();
-
-        dd.splice(i, 1);
-        this.setinbox(dd);
-        if (srch != '') {
-          ddd.splice(ii, 1);
-          setsdt(ddd);
-        }
-      })
-      .catch(err => {
-        this.setdlc(false);
-        store.General.checkServer(err);
-        let msg = err.response.data.message || err.response.status || err;
-        console.log(
-          `Error in DeleteChat  ${db.apis.DELETE_CHAT}${params}  : `,
-          msg,
-        );
-        if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
-          return;
-        }
-        // seterror(msg.toString())
-        Alert.alert('', msg.toString());
-      });
-  }
-
   @persist('object') @observable user = false;
   @persist('object') @observable userCardInfo = [];
   @observable ucRef = false;
@@ -142,6 +83,11 @@ class user {
   @observable fl = false;
   @observable bl = false;
   @observable ibl = false;
+
+  @observable sendMessageLoader = false;
+  @action setSendMessageLoader = obj => {
+    this.sendMessageLoader = obj;
+  };
 
   @observable pasObj = false;
   @action setpasObj = obj => {
@@ -390,84 +336,8 @@ class user {
       });
   }
 
-  @action attemptToGetInboxes = (uid, setgetdata, c) => {
-    console.log('GET Inboxes : ', uid);
-    if (c !== 'n') {
-      this.setibl(true);
-    }
-
-    db.hitApi(db.apis.GET_INBOXES_BY_UID + uid, 'get', {}, this.authToken)
-      ?.then(resp => {
-        console.log(
-          `response GET Inboxes ${db.apis.GET_INBOXES_BY_UID + uid} : `,
-          resp.data,
-        );
-        let dt = resp.data.doc || [];
-        let fa = [];
-
-        if (dt.length > 0) {
-          const socket = store.General.socket;
-          dt.map((e, i, a) => {
-            let c = false;
-            let m = e.latestMessage.deletedBy ? e.latestMessage.deletedBy : [];
-            if (m.length > 0) {
-              m.map((ee, i, a) => {
-                if (ee == store.User.user._id) {
-                  c = true;
-                }
-              });
-            }
-            if (!c) {
-              fa.push(e);
-            }
-            let username =
-              store.User.user.firstName + ' ' + store.User.user.lastName;
-            socket.emit('joinRoom', {username, roomName: e.roomName});
-          });
-        }
-
-        this.setinbox(fa);
-        setgetdata(true);
-        let ud = store.User.user._id;
-
-        let uc = 0;
-        if (fa.length > 0) {
-          fa.map((e, i, a) => {
-            if (
-              e.latestMessage &&
-              ud != e.latestMessage.sendBy._id &&
-              e.latestMessage.isRead == false
-            ) {
-              uc++;
-            }
-          });
-        }
-
-        this.setibl(false);
-
-        this.setunreadInbox(uc);
-      })
-      .catch(err => {
-        this.setibl(false);
-        let msg = err.response.data.message || err.response.status || err;
-        console.log(
-          `Error in GET Inboxes ${db.apis.GET_INBOXES_BY_UID + uid} : `,
-          msg,
-        );
-        if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
-          return;
-        }
-        if (msg == 'No records found') {
-          this.setinbox([]);
-          this.setunreadInbox(0);
-          setgetdata(true);
-          return;
-        }
-        // seterror(msg.toString())
-        Alert.alert('', msg.toString());
-      });
+  @action attemptToGetInboxes = (userId, setGetdata, check) => {
+    FireStore.getAllCurrentUserRooms(userId, setGetdata, check);
   };
 
   @action attemptToGetAllMessages = (uid, rid, setgetdata, setData) => {
@@ -1355,7 +1225,7 @@ class user {
         let rn = resp.data.data.roomName;
         suc();
 
-        this.attemptToGetInboxes(store.User.user._id, () => {});
+        this.attemptToGetInboxes(store.User.user._id, () => {}, '');
       })
       .catch(err => {
         this.setHomeModalLoder(false);
@@ -2266,7 +2136,7 @@ class user {
     );
     this.getUserById1(uid, this.authToken, '');
 
-    this.attemptToGetInboxes(uid, () => {});
+    this.attemptToGetInboxes(uid, () => {}, '');
     store.Offers.attemptToGetSentOffers(
       () => {},
       () => {},

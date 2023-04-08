@@ -1,69 +1,41 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   SafeAreaView,
-  TouchableOpacity,
-  Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
-  Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Dimensions,
   Pressable,
-  TextInput,
   FlatList,
-  ScrollView,
-  Keyboard,
-  Modal,
   RefreshControl,
 } from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-// import ImageSlider from 'react-native-image-slider';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
 import utils from '../../utils/index';
 import theme from '../../theme';
 import NetInfo from '@react-native-community/netinfo';
-import Toast from 'react-native-easy-toast';
-import {ActivityIndicator} from 'react-native-paper';
-import FastImage from 'react-native-fast-image';
-import {ImageSlider} from 'react-native-image-slider-banner';
-import {Calendar} from 'react-native-calendars';
-import moment, {duration} from 'moment/moment';
 
 export default observer(ShowOtherFollowers);
 
 function ShowOtherFollowers(props) {
-  let maxModalHeight = theme.window.Height - 100;
-  const [modalHeight, setmodalHeight] = useState(0);
-
-  const [chk, setchk] = useState(store.User.chk);
-  const [cc, setcc] = useState(store.User.cc);
-  const [headerTitle, setheaderTitle] = useState(store.User.fuser);
-
-  let fscreen = store.User.fscreen || '';
+  const chk = store.User.chk;
+  const headerTitle = store.User.fuser;
+  const fscreen = store.User.fscreen || '';
   let db = false;
   if (fscreen == 'Home') {
     db = true;
   }
 
-  let internet = store.General.isInternet;
-  let u = store.Userv.user;
-  // let data =   chk == 'followers' ? store.Userv.followers : store.Userv.following
+  const {isInternet} = store.General;
+  const {user} = store.Userv;
 
-  const [user, setuser] = useState(u);
   const [followers, setfollowers] = useState(0);
   const [following, setfollowing] = useState(0);
   const [data, setdata] = useState([]);
 
   const [refreshing, setrefreshing] = useState(false);
 
-  let total = chk == 'followers' ? followers : following;
+  const total = chk == 'followers' ? followers : following;
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
@@ -101,11 +73,11 @@ function ShowOtherFollowers(props) {
     });
   };
   useEffect(() => {
-    if (!getDataOnce && internet) {
+    if (!getDataOnce && isInternet) {
       getDbData();
     }
     return () => {};
-  }, [getDataOnce, internet]);
+  }, [getDataOnce, isInternet]);
 
   const ItemSeparatorView = () => {
     return (
@@ -258,7 +230,7 @@ function ShowOtherFollowers(props) {
           headerTitle={headerTitle}
           screen={'followers'}
         />
-        {!internet && <utils.InternetMessage />}
+        {!isInternet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <FlatList

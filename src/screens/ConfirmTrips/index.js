@@ -1,78 +1,47 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   SafeAreaView,
   TouchableOpacity,
   Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
-  Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Dimensions,
   Pressable,
   TextInput,
   FlatList,
-  ScrollView,
-  Keyboard,
-  Modal,
   RefreshControl,
 } from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-// import ImageSlider from 'react-native-image-slider';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
 import utils from '../../utils/index';
 import theme from '../../theme';
 import NetInfo from '@react-native-community/netinfo';
-import Toast from 'react-native-easy-toast';
 import {ActivityIndicator} from 'react-native-paper';
-import FastImage from 'react-native-fast-image';
-import {ImageSlider} from 'react-native-image-slider-banner';
-import {Calendar} from 'react-native-calendars';
-import moment, {duration} from 'moment/moment';
+import moment from 'moment';
 
 export default observer(ConfirmTrips);
 
 function ConfirmTrips(props) {
-  let maxModalHeight = theme.window.Height - 100;
-  const [modalHeight, setmodalHeight] = useState(0);
+  const headerTitle = 'Confirmed Trips';
+  const guest = require('../../assets/images/drawer/guest/img.png');
+  const trnfericon = require('../../assets/images/transfer/img.png');
+  const durtnicon = require('../../assets/images/confirmTrip/duration/img.png');
+  const avlblicon = require('../../assets/images/confirmTrip/available/img.png');
+  const locationicon = require('../../assets/images/confirmTrip/location/img.png');
 
-  let headerTitle = 'Confirmed Trips';
+  const {isInternet} = store.General;
 
-  let guest = require('../../assets/images/drawer/guest/img.png');
-  let trnfericon = require('../../assets/images/transfer/img.png');
-  let durtnicon = require('../../assets/images/confirmTrip/duration/img.png');
-  let avlblicon = require('../../assets/images/confirmTrip/available/img.png');
-  let locationicon = require('../../assets/images/confirmTrip/location/img.png');
+  const [isMessageModal, setIsMessageModal] = useState(false);
+  const [isSuccessModal, setIsSuccessModal] = useState(false);
+  const [successModalObj, setSuccessModalObj] = useState(null);
+  const [successCheck, setSuccessCheck] = useState('');
 
-  let internet = store.General.isInternet;
-  let user = store.User.user;
+  const [modalObj, setModalObj] = useState(false);
 
-  const [modalObj, setmodalObj] = useState(false);
-  const [modalChk, setmodalChk] = useState(false);
-  const [isModal, setisModal] = useState(false);
-  const [isSendMessage, setisSendMessage] = useState(false);
-  const [sendObj, setsendObj] = useState('');
-
-  const [message, setMessage] = useState('');
-  const closeMessageModal = () => {
-    if (!mmmloader) {
-      setisModal(false);
-      setmodalChk(false);
-      setmodalObj(false);
-      setMessage('');
-    }
-  };
-
-  let data = store.Offers.cnfrmOffers;
-  let mloader = store.Offers.Loader3;
-  let mmloader = store.Offers.mLoader;
-  let mmmloader = store.User.homeModalLoder; //msg loader
+  const data = store.Offers.cnfrmOffers;
+  const mloader = store.Offers.Loader3;
+  const {homeModalLoder} = store.User; //msg loader
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
@@ -97,61 +66,13 @@ function ConfirmTrips(props) {
     });
   };
   useEffect(() => {
-    if (!getDataOnce && internet) {
+    if (!getDataOnce && isInternet) {
       getDbData();
     }
     return () => {};
-  }, [getDataOnce, internet]);
+  }, [getDataOnce, isInternet]);
 
   const onclickSearchBar = () => {};
-
-  const setIsSendMessage = v => {
-    let isMyTrip = false;
-    let item = modalObj.item;
-    if (store.User.user._id == item.offeredTo._id) {
-      isMyTrip = true;
-    }
-    let usr = isMyTrip ? item.offeredBy : item.offeredTo;
-    setsendObj(usr);
-    closeMessageModal();
-    setisSendMessage(v);
-  };
-
-  const sendMessage = () => {
-    Keyboard.dismiss();
-
-    NetInfo.fetch().then(state => {
-      if (state.isConnected) {
-        let isMyTrip = false;
-        let item = modalObj.item;
-        if (store.User.user._id == item.offeredTo._id) {
-          isMyTrip = true;
-        }
-        let usr = isMyTrip ? item.offeredBy : item.offeredTo;
-
-        const obj = {
-          userId1: user._id,
-          userId2: usr._id,
-          sendBy: user._id,
-          sendTo: usr._id,
-          senderName: user.firstName + ' ' + user.lastName,
-          isRead: false,
-          message: message,
-          type: 'text',
-        };
-        store.User.attemptToCheckFirstMessage(
-          user._id,
-          usr._id,
-          obj,
-          message,
-          setIsSendMessage,
-        );
-      } else {
-        // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
-      }
-    });
-  };
 
   const ItemSeparatorView = () => {
     return (
@@ -262,26 +183,6 @@ function ConfirmTrips(props) {
       </>
     );
   };
-
-  function FormatAvlblDate(s1, s2) {
-    let avlbl = '';
-
-    let sd = s1;
-    let sdy = parseInt(new Date(sd).getFullYear());
-    let ed = s2;
-    let edy = parseInt(new Date(ed).getFullYear());
-    if (sdy == edy) {
-      avlbl =
-        moment(sd).format('MMM DD') + ' - ' + moment(ed).format('MMM DD, YYYY');
-    } else {
-      avlbl =
-        moment(sd).format('MMM DD, YYYY') +
-        ' - ' +
-        moment(ed).format('MMM DD, YYYY');
-    }
-
-    return avlbl;
-  }
 
   function FormatPrfrDate(pd) {
     let t = '';
@@ -672,9 +573,7 @@ function ConfirmTrips(props) {
             <Pressable
               style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc]}
               onPress={() => {
-                setmodalObj({item: item, i: index});
-                setmodalChk('message');
-                setisModal(true);
+                openModal({item: item, selIndex: index}, 'message');
               }}>
               <Text numberOfLines={1} ellipsizeMode="tail" style={btS}>
                 Message
@@ -731,332 +630,16 @@ function ConfirmTrips(props) {
     }
   };
 
-  const renderMessageSendModal = () => {
-    const renderButton1 = () => {
-      return (
-        <>
-          <TouchableOpacity
-            onPress={closeModal}
-            activeOpacity={0.7}
-            style={{
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: theme.color.button1,
-              height: 50,
-              borderRadius: 10,
-              alignSelf: 'center',
-
-              marginTop: 40,
-            }}>
-            <Text
-              style={{
-                color: theme.color.buttonText,
-                fontSize: 16,
-                fontFamily: theme.fonts.fontBold,
-
-                textTransform: 'capitalize',
-              }}>
-              Done
-            </Text>
-          </TouchableOpacity>
-        </>
-      );
-    };
-
-    const renderButton2 = () => {
-      return (
-        <>
-          <TouchableOpacity
-            onPress={() => {
-              closeModal();
-              props.navigation.navigate('Inbox');
-            }}
-            activeOpacity={0.7}
-            style={{
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: theme.color.button2,
-              height: 50,
-              borderRadius: 10,
-              alignSelf: 'center',
-              // borderWidth: 1,
-              // borderColor: theme.color.fieldBorder,
-              marginTop: 12,
-            }}>
-            <Text
-              style={{
-                color: '#30563A',
-                textTransform: 'none',
-                fontFamily: theme.fonts.fontBold,
-                fontSize: 14,
-              }}>
-              Go to Inbox
-            </Text>
-          </TouchableOpacity>
-        </>
-      );
-    };
-
-    const closeModal = () => {
-      setisSendMessage(false);
-    };
-
-    let fn = sendObj.firstName;
-    let ln = sendObj.lastName;
-    let sendOfferUsername = fn + ' ' + ln;
-    let un = sendObj.userName || 'user';
-    let src = require('../../assets/images/msgSentDone/img.png');
-    return (
-      <Modal
-        animationType="slide"
-        visible={isSendMessage}
-        transparent
-        onRequestClose={closeModal}>
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            padding: 15,
-          }}>
-          <View
-            style={{
-              backgroundColor: theme.color.background,
-              borderRadius: 15,
-              marginBottom: 15,
-              padding: 18,
-              width: '100%',
-            }}>
-            <View
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-              }}>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  fontFamily: theme.fonts.fontBold,
-                  fontSize: 19,
-                  color: '#101B10',
-                  lineHeight: 29,
-                }}>
-                Message Sent
-              </Text>
-            </View>
-
-            <View
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginTop: 40,
-                width: '100%',
-              }}>
-              <Image
-                style={{width: 90, height: 90, resizeMode: 'contain'}}
-                source={src}
-              />
-
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  marginTop: 15,
-                  fontFamily: theme.fonts.fontBold,
-                  fontSize: 15,
-                  color: '#101B10',
-                  textTransform: 'capitalize',
-                  lineHeight: 20,
-                }}>
-                {sendOfferUsername}
-              </Text>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  fontFamily: theme.fonts.fontNormal,
-                  fontSize: 13,
-                  color: theme.color.subTitleLight,
-                  lineHeight: 20,
-                }}>
-                @{un}
-              </Text>
-            </View>
-
-            {renderButton1()}
-            {renderButton2()}
-          </View>
-        </View>
-      </Modal>
-    );
-  };
-
-  const renderModal = () => {
-    if (modalChk == 'message') {
-      const renderHeader = () => {
-        let text = 'Message User';
-
-        const renderCross = () => {
-          return (
-            <Pressable
-              disabled={mmmloader}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.7 : 1.0},
-                styles.modalCross,
-              ]}
-              onPress={closeMessageModal}>
-              <utils.vectorIcon.Ionicons
-                name="ios-close-outline"
-                color={theme.color.title}
-                size={32}
-              />
-            </Pressable>
-          );
-        };
-
-        const renderTitle = () => {
-          return <Text style={styles.modalTitle}>{text}</Text>;
-        };
-
-        return (
-          <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            {renderTitle()}
-            {renderCross()}
-          </View>
-        );
-      };
-
-      const renderField = () => {
-        let isMyTrip = false;
-        if (store.User.user._id == modalObj.item.offeredTo._id) {
-          isMyTrip = true;
-        }
-
-        let item = isMyTrip ? modalObj.item.offeredBy : modalObj.item.offeredTo;
-
-        let photo = item.image ? item.image : '';
-        let isVeirfy = item.identityStatus == 'verified' ? true : false;
-        let userName = item.firstName + ' ' + item.lastName;
-        const renderProfile = () => {
-          return (
-            <View style={styles.mProfileImgContainerm}>
-              <ProgressiveFastImage
-                style={styles.mProfileImgm}
-                source={
-                  photo != ''
-                    ? {uri: photo}
-                    : require('../../assets/images/drawer/guest/img.png')
-                }
-                loadingImageStyle={styles.mimageLoaderm}
-                loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
-                blurRadius={5}
-              />
-              {/* {isVeirfy && (
-                  <Image
-                    style={styles.miconVerifym}
-                    source={require('../../assets/images/verified/img.png')}
-                  />
-                )} */}
-            </View>
-          );
-        };
-
-        return (
-          <View style={[styles.modalFieldConatiner, {marginTop: 15}]}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text style={styles.mT1}>To:</Text>
-              <View
-                style={{
-                  width: '89%',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  flexDirection: 'row',
-                }}>
-                {renderProfile()}
-                <Text numberOfLines={1} ellipsizeMode="tail" style={styles.mT2}>
-                  {userName}
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.textArea}>
-              <TextInput
-                value={message}
-                onChangeText={c => {
-                  setMessage(c);
-                }}
-                style={styles.mTextInpt}
-                placeholder="Type your message here"
-                multiline={true}
-                numberOfLines={10}
-              />
-            </View>
-          </View>
-        );
-      };
-
-      const renderBottom = () => {
-        const renderButton = () => {
-          return (
-            <Pressable
-              onPress={sendMessage}
-              disabled={mmmloader == true ? true : message == '' ? true : false}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.9 : message == '' ? 0.5 : 1},
-                styles.ButtonContainer,
-                {backgroundColor: theme.color.button1, width: '100%'},
-              ]}>
-              {!mmmloader && (
-                <Text
-                  style={[
-                    styles.ButtonText,
-                    {color: theme.color.buttonText, fontSize: 13},
-                  ]}>
-                  Send Message
-                </Text>
-              )}
-              {mmmloader && (
-                <ActivityIndicator size={20} color={theme.color.buttonText} />
-              )}
-            </Pressable>
-          );
-        };
-
-        return (
-          <View style={styles.modalBottomContainerrr}>{renderButton()}</View>
-        );
-      };
-
-      return (
-        <Modal visible={isModal} transparent onRequestClose={closeMessageModal}>
-          <SafeAreaView style={styles.modalContainer}>
-            <View style={styles.modalContainer2}>
-              <View style={styles.modal2}>
-                {renderHeader()}
-                {renderField()}
-                {renderBottom()}
-              </View>
-            </View>
-          </SafeAreaView>
-        </Modal>
-      );
-    }
+  const openModal = (obj, check) => {
+    setModalObj(obj);
+    if (check == 'message') setIsMessageModal(true);
   };
 
   return (
     <>
       <View style={styles.container}>
         <utils.DrawerHeader props={props} headerTitle={headerTitle} />
-        {!internet && <utils.InternetMessage />}
+        {!isInternet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <FlatList
@@ -1097,8 +680,31 @@ function ConfirmTrips(props) {
             focusScreen={store.General.focusScreen}
           />
 
-          {isModal && !isSendMessage && renderModal()}
-          {isSendMessage && renderMessageSendModal()}
+          {isMessageModal && (
+            <utils.MessageModal
+              isModal={isMessageModal}
+              setIsModal={setIsMessageModal}
+              modalObj={modalObj}
+              setModalObj={setModalObj}
+              loader={homeModalLoder}
+              setIsSuccessModal={setIsSuccessModal}
+              setSuccessModalObj={setSuccessModalObj}
+              setSuccessCheck={setSuccessCheck}
+            />
+          )}
+
+          {isSuccessModal && (
+            <utils.SuccessModal
+              isModal={isSuccessModal}
+              setIsModal={setIsSuccessModal}
+              modalObj={successModalObj}
+              setModalObj={setSuccessModalObj}
+              check={successCheck}
+              setCheck={setSuccessCheck}
+              props={props}
+            />
+          )}
+
           {store.Notifications.isShowNotifcation && <utils.ShowNotifications />}
         </SafeAreaView>
       </View>
