@@ -23,7 +23,6 @@ import io from 'socket.io-client';
 import db from '../../database/index';
 import {FlashList} from '@shopify/flash-list';
 import PushNotification from 'react-native-push-notification';
-import firestore from '@react-native-firebase/firestore';
 
 export default observer(Home);
 function Home(props) {
