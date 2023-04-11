@@ -523,7 +523,7 @@ async function updateUserinFirestore(currentUserId, userObj) {
             const roomId = doc.id;
             const data = doc.data();
             let obj = null;
-            if (data.latestMessage.user._id == currentUserId) {
+            if (data?.latestMessage?.user?._id == currentUserId) {
               obj = {
                 'latestMessage.user': userObj,
               };
@@ -532,7 +532,7 @@ async function updateUserinFirestore(currentUserId, userObj) {
             if (obj == null) {
               obj = {};
             }
-            if (data.userId1._id == currentUserId) {
+            if (data?.userId1?._id == currentUserId) {
               obj.userId1 = userObj;
             } else {
               obj.userId2 = userObj;
