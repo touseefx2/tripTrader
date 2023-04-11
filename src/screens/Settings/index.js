@@ -50,6 +50,7 @@ function Settings(props) {
   const [pwc, setpwc] = useState('');
 
   const [isShowPrivacy, setIsShowPrivacy] = useState(false);
+  const [isDeletAccountModal, setIsDeletAccountModal] = useState(false);
 
   const goToManageSubscription = () => {
     props.navigation.navigate('ManageSubscription');
@@ -118,10 +119,20 @@ function Settings(props) {
 
     if (c == 'privacy') openWebView();
 
+    if (c == 'Delete Account') openDeleteAccountModal();
+
     if (c == 'logout') {
       store.General.setgoto('home');
       store.User.Logout();
     }
+  };
+
+  const openDeleteAccountModal = () => {
+    setIsDeletAccountModal(true);
+  };
+
+  const closeDeleteAccountModal = () => {
+    setIsDeletAccountModal(false);
   };
 
   const openWebView = () => {
@@ -354,6 +365,37 @@ function Settings(props) {
       );
     };
 
+    const renderDeleteAccount = () => {
+      const title = 'Delete Account';
+      return (
+        <TouchableOpacity
+          activeOpacity={activeOpacity}
+          onPress={() => {
+            onClick(title);
+          }}
+          style={styles.mainContainer}>
+          <View style={styles.sec1Container}>
+            <View style={styles.iconConatiner}>
+              <utils.vectorIcon.AntDesign
+                name="deleteuser"
+                color={theme.color.button1}
+                size={25}
+              />
+            </View>
+          </View>
+
+          <View style={styles.sec2Container}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={styles.sec2Title}>
+              {title}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      );
+    };
+
     const renderLogout = () => {
       let title = 'logout';
       return (
@@ -393,6 +435,7 @@ function Settings(props) {
               {renderManageSubscription()}
               {renderContactus()}
               {renderPrivacy()}
+              {renderDeleteAccount()}
               {renderLogout()}
             </>
           )}
@@ -466,6 +509,13 @@ function Settings(props) {
           link={store.General.Privacy_and_Policy_Link}
           isVisible={isShowPrivacy}
           setisVisible={setIsShowPrivacy}
+        />
+      )}
+
+      {isDeletAccountModal && (
+        <utils.deleteAccountModal
+          isModal={isDeletAccountModal}
+          setIsModal={setIsDeletAccountModal}
         />
       )}
       <Toast ref={toast} position="bottom" />

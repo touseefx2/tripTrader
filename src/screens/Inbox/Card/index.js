@@ -66,6 +66,14 @@ function CheckDate(d) {
   return t;
 }
 
+function dateConvert(timestamp) {
+  const date = new Date(
+    timestamp?.seconds * 1000 + timestamp?.nanoseconds / 1000000,
+  );
+
+  return new Date(date.getTime());
+}
+
 export default memo(Card);
 
 function Card({
@@ -79,11 +87,10 @@ function Card({
   closeSwipe,
 }) {
   const guest = require('../../../assets/images/drawer/guest/img.png');
-
   const currentUserId = user._id;
-  let userObj = false;
+  let userObj = null;
   let photo = guest;
-  let title = 'undefined';
+  let title = 'Trip Trader User';
   let subtitle = '---';
   let create = '';
   let isread = true;
@@ -102,12 +109,23 @@ function Card({
     title = userObj.firstName + ' ' + userObj.lastName;
   }
 
-  if (item.latestMessage) {
-    create = CheckDate(item.latestMessage.updatedAt);
+  if (item?.latestMessage) {
     const latestMessage = item.latestMessage;
+    create = CheckDate(new Date());
+    const date = latestMessage.updatedAt || null;
+
+    if (date != null) {
+      try {
+        create = CheckDate(dateConvert(date));
+      } catch (error) {}
+    }
     type = latestMessage.type;
     subtitle = latestMessage.message;
-    const isEndMyMsg = latestMessage.user._id == currentUserId ? true : false;
+    let isEndMyMsg = false;
+    if (latestMessage.user) {
+      isEndMyMsg = latestMessage.user?._id == currentUserId ? true : false;
+    }
+
     if (!isEndMyMsg) {
       isread = latestMessage.isRead;
     }
@@ -198,16 +216,16 @@ function Card({
 
   return (
     <Pressable
-      disabled={userObj ? false : true}
+      // disabled={userObj ? false : true}
       onPress={() => {
-        // console.log('item : ', item.latestMessage.message);
         closeSwipe();
         store.User.setmessages([]);
         store.User.setpasObj({
           obj: item,
           title: title,
-          rid: userObj._id,
+          rid: userObj?._id || '',
           ruser: userObj,
+          rBlockArr: userObj?.followers || [],
         });
         props.navigation.navigate('Chat');
         setsearch('');

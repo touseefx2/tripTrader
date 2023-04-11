@@ -34,27 +34,19 @@ export default observer(MyProfile);
 
 function MyProfile(props) {
   const toast = useRef(null);
-  const toastduration = 700;
-  let headerTitle = 'My Profile';
+  const headerTitle = 'My Profile';
 
-  let internet = store.General.isInternet;
-  let user = store.User.user;
-  let loader = store.User.regLoader;
+  const {isInternet} = store.General;
 
-  let loc = store.User.location;
-  let cart = store.User.cart;
-  let totalItems = cart.data.length > 0 ? cart.totalitems : 0;
-  let tagLine = '';
+  const {user, regLoader, setregLoader} = store.User;
 
   let userName = '';
   let phn = '';
   let phnCntr = '';
-  let followers = store.User.totalfollowers;
-  let following = store.User.totalfollowing;
+  const followers = store.User.totalfollowers;
+  const following = store.User.totalfollowing;
   let src = '';
   let isCnicVerf = false;
-
-  console.log('flwng : ', following);
 
   if (user == 'guest') {
     userName = 'guest';
@@ -78,8 +70,6 @@ function MyProfile(props) {
   const [isAddPhotoModal, setisAddPhotoModal] = useState(false);
   const [DT, setDT] = useState(false);
 
-  const [tab, setTab] = useState('reviews');
-
   const [photo, setphoto] = useState(src);
 
   const [phone, setPhone] = useState(phn);
@@ -91,8 +81,6 @@ function MyProfile(props) {
   const [pv, setpv] = useState(''); //photo view
 
   const [profileImageLoader, setprofileImageLoader] = useState(false);
-  const [showFullprofileImageLoader, setshowFullprofileImageLoader] =
-    useState(false);
 
   const [isSHowChangePhoto, setisSHowChangePhoto] = useState(false);
   const [cphoto, setcphoto] = useState(false);
@@ -174,13 +162,14 @@ function MyProfile(props) {
         let options = {
           mediaType: 'image',
           isPreview: false,
-          singleSelectedMode: true,
+          maxSelectedAssets: 1,
         };
 
-        const res = await MultipleImagePicker.openPicker(options);
-        if (res) {
+        const resp = await MultipleImagePicker.openPicker(options);
+        if (resp.length > 0) {
+          const res = resp[0];
           console.log('mutipicker image res true  ');
-          const {path, fileName, mime} = res;
+          const {path, fileName, mine} = res;
           let uri = path;
           if (Platform.OS == 'android' && apiLevel < 29) {
             uri = 'file://' + uri;
@@ -190,9 +179,9 @@ function MyProfile(props) {
             compressionMethod: 'auto',
           })
             .then(async res => {
-              let imageObject = {
+              const imageObject = {
                 uri: res,
-                type: mime,
+                type: mine,
                 fileName: fileName,
               };
               console.log('Compress image  : ', imageObject);
@@ -261,7 +250,7 @@ function MyProfile(props) {
 
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.setregLoader(true);
+        setregLoader(true);
         store.User.attemptToEditUploadImage(body, imgArr, closePhotoModal);
       } else {
         // seterrorMessage('Please connect internet');
@@ -437,7 +426,7 @@ function MyProfile(props) {
   };
 
   const closePhotoModal = () => {
-    if (!loader) {
+    if (!regLoader) {
       setisSHowChangePhoto(false);
       setcphoto(false);
     }
@@ -480,13 +469,13 @@ function MyProfile(props) {
       return (
         <>
           <TouchableOpacity
-            disabled={loader}
+            disabled={regLoader}
             onPress={() => {
               uploadPhoto(c);
             }}
             activeOpacity={0.7}
             style={[styles.BottomButton, {marginTop: 40}]}>
-            {!loader ? (
+            {!regLoader ? (
               <Text style={styles.buttonTextBottom}>Confirm & Continue</Text>
             ) : (
               <ActivityIndicator size={18} color={theme.color.buttonText} />
@@ -500,7 +489,7 @@ function MyProfile(props) {
       return (
         <>
           <TouchableOpacity
-            disabled={loader}
+            disabled={regLoader}
             onPress={() => {
               closePhotoModal();
             }}
@@ -936,7 +925,7 @@ function MyProfile(props) {
     <View style={styles.container}>
       {/* {tagLine != '' && <utils.TagLine tagLine={tagLine} />} */}
       <utils.DrawerHeader props={props} headerTitle={headerTitle} />
-      {!internet && <utils.InternetMessage />}
+      {!isInternet && <utils.InternetMessage />}
       <SafeAreaView style={styles.container2}>
         <View style={styles.container3}>
           {renderProfileSection()}

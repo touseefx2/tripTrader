@@ -24,7 +24,18 @@ const onReceiveNotification = remoteMessage => {
   const topic = data?.topic || '';
   const bigIcon = data?.icon || data?.bigIcon || undefined;
   const rightIcon = data?.rightIcon || undefined;
-  Notification.showNotificaton(message, title, topic, bigIcon, rightIcon, data);
+  if (topic == 'newMessagePush' && store.General.appState == 'active') {
+  } else {
+    Notification.showNotificaton(
+      message,
+      title,
+      topic,
+      bigIcon,
+      rightIcon,
+      data,
+    );
+  }
+
   Notification.callData(topic);
 };
 

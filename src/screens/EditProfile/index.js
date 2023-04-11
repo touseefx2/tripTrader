@@ -325,16 +325,17 @@ function EditProfile(props) {
 
     setTimeout(async () => {
       try {
-        let options = {
+        const options = {
           mediaType: 'image',
           isPreview: false,
-          singleSelectedMode: true,
+          maxSelectedAssets: 1,
         };
 
-        const res = await MultipleImagePicker.openPicker(options);
-        if (res) {
+        const resp = await MultipleImagePicker.openPicker(options);
+        if (resp.length > 0) {
+          const res = resp[0];
           console.log('mutipicker image res true  ');
-          const {path, fileName, mime} = res;
+          const {path, fileName, mine} = res;
           let uri = path;
           if (Platform.OS == 'android' && apiLevel < 29) {
             uri = 'file://' + uri;
@@ -346,7 +347,7 @@ function EditProfile(props) {
             .then(async res => {
               let imageObject = {
                 uri: res,
-                type: mime,
+                type: mine,
                 fileName: fileName,
               };
               console.log('Compress image  : ', imageObject);

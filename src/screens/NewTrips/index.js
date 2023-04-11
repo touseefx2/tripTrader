@@ -813,7 +813,7 @@ function NewTrips(props) {
             res.map((e, i, a) => {
               let uri = e.path;
               let fileName = e.fileName;
-              let type = e.mime;
+              let type = e.mine;
               if (Platform.OS == 'android' && apiLevel < 29) {
                 uri = 'file://' + uri;
               }
@@ -847,7 +847,7 @@ function NewTrips(props) {
             res.map((e, i, a) => {
               let uri = e.path;
               let fileName = e.fileName;
-              let type = e.mime;
+              let type = e.mine;
               if (Platform.OS == 'android' && apiLevel < 29) {
                 uri = 'file://' + uri;
               }

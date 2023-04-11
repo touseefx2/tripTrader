@@ -1,15 +1,11 @@
 import {observable, makeObservable, action} from 'mobx';
 import {AppState, Alert} from 'react-native';
 import {persist} from 'mobx-persist';
-import io from 'socket.io-client';
-import db from '../../database/index';
 
 class general {
   constructor() {
     makeObservable(this);
   }
-
-  @observable socket = io(db.apis.BASE_URLS);
 
   @observable Stripe_Publish_Key =
     'pk_test_51M9HIuBmhbfqULZ4IstWDtc73GFl6mVRnA4jUcOR9BVRkndz1Ou2FSlOeP4WjGgYqlH4LflMtgUY8foGkY58lHAq00OGfQUjlR';
@@ -128,10 +124,6 @@ class general {
 
   @action setappState = obj => {
     this.appState = obj;
-  };
-
-  @action setSocket = obj => {
-    this.socket = obj;
   };
 }
 export const General = new general();

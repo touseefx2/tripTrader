@@ -210,9 +210,9 @@ function Home(props) {
   const onOpenNotification = (topic, actions, notify) => {
     console.log('onOpenNotification:', notify);
 
-    if (topic == 'followUser' || topic == 'dispute')
+    if (topic == 'followUser' || topic == 'dispute') {
       onClickNotificationAction(topic, notify);
-    else {
+    } else if (actions != '') {
       onClickNotificationAction(actions, notify);
       return;
     }
@@ -221,7 +221,11 @@ function Home(props) {
       goToEditProfile(props);
     }
 
-    if (topic == 'newReview' || topic == 'updateInReview') {
+    if (
+      topic == 'newReview' ||
+      topic == 'updateInReview' ||
+      topic == 'emailVerified'
+    ) {
       goToMyProfile(props);
     }
 

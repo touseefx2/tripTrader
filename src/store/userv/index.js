@@ -4,7 +4,8 @@ import store from '../index';
 import NetInfo from '@react-native-community/netinfo';
 import db from '../../database/index';
 import {Alert} from 'react-native';
-import io from 'socket.io-client';
+import {FireStore} from '../../services/FireStore';
+
 class userv {
   constructor() {
     makeObservable(this);
@@ -1190,61 +1191,6 @@ class userv {
       });
   };
 
-  @action SendFirstMessage = (body, suc) => {
-    db.hitApi(db.apis.SEND_FIRST_MESSAGE, 'post', body, this.authToken)
-      ?.then(resp => {
-        this.sethomeModalLoder(false);
-        console.log(
-          `response SendFirstMessage  ${db.apis.SEND_FIRST_MESSAGE} : `,
-          resp.data,
-        );
-
-        let rn = resp.data.data.roomName;
-        suc(true);
-
-        store.User.attemptToGetInboxes(store.User.user._id, () => {},"");
-      })
-      .catch(err => {
-        this.sethomeModalLoder(false);
-        let msg = err.response.data.message || err.response.status || err;
-        console.log(
-          `Error in SendFirstMessage ${db.apis.SEND_FIRST_MESSAGE} : `,
-          msg,
-        );
-        if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
-          return;
-        }
-        // seterror(msg.toString())
-        Alert.alert('', msg.toString());
-      });
-  };
-
-  @action SendSecodMessage = (body, cid, suc) => {
-    let uid = body.sendBy;
-    let username = store.User.user.firstName + ' ' + store.User.user.lastName;
-    let msg = body.message;
-
-    const socket = io(db.apis.BASE_URLS);
-    let rn = cid;
-    socket.emit('joinRoom', {username, roomName: rn});
-
-    let userDetails = {
-      userId: uid,
-      roomName: cid,
-      username: username,
-      message: msg,
-      type: 'text',
-    };
-
-    socket.emit('chat', {userDetails});
-
-    this.sethomeModalLoder(false);
-    suc(true);
-    socket.emit('user left', {socket: socket.id});
-  };
-
   @action SendReportUser = (body, suc) => {
     this.sethomeModalLoder(true);
     console.log('SendReportUser body : ', body);
@@ -1385,6 +1331,7 @@ class userv {
         setTimeout(() => {
           setl(false);
         }, 1000);
+        FireStore.updateUserinFirestoreOnlyRoom(uid1, resp.data.data);
         this.attemptToGetHome(
           uid2,
           () => {},
@@ -1424,6 +1371,7 @@ class userv {
         setTimeout(() => {
           setl(false);
         }, 1000);
+        FireStore.updateUserinFirestoreOnlyRoom(uid1, resp.data.data);
         this.attemptToGetHome(
           uid2,
           () => {},

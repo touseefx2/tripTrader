@@ -25,13 +25,14 @@ async function sendMessage(
   const userId1 = sender._id;
   const userId2 = receiver._id;
   const user = {[userId1]: true, [userId2]: true};
+  const timestamp = firestore.FieldValue.serverTimestamp();
   const createRoomObject = {
     latestMessage: null,
     user,
     userId1: sender,
     userId2: receiver,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
+    createdAt: timestamp,
+    updatedAt: timestamp,
   };
   const chatMessageObject = {
     user: sender,
@@ -40,8 +41,8 @@ async function sendMessage(
     type: messageType,
     image: messageImage,
     deletedBy: [],
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
+    createdAt: timestamp,
+    updatedAt: timestamp,
   };
 
   setHomeModalLoder(true);
@@ -49,18 +50,23 @@ async function sendMessage(
   // console.log('chatRoomArr : ', chatRoomArr);
   const room = chatRoomArr.find(
     item =>
-      (item.userId1._id == userId1 && item.userId2._id == userId2) ||
-      (item.userId1._id == userId2 && item.userId2._id == userId1),
+      item.user.hasOwnProperty(userId1) && item.user.hasOwnProperty(userId2),
   );
   // console.log('room : ', room);
   if (room) {
-    sendChatMessage(room._id, userId2, chatMessageObject, success, 'read');
+    sendChatMessage(room._id, userId2, chatMessageObject, success, 'read', '');
     return;
   }
-  createChatRoom(createRoomObject, userId2, chatMessageObject, success);
+  createChatRoom(
+    createRoomObject,
+    userId2,
+    chatMessageObject,
+    success,
+    'first',
+  );
 }
 
-function getChatRoom() {
+async function getChatRoom() {
   return new Promise((resolve, reject) => {
     chatroomsRef
       .get()
@@ -81,11 +87,12 @@ function getChatRoom() {
   });
 }
 
-function createChatRoom(
+async function createChatRoom(
   createRoomObject,
   receiverId,
   chatMessageObject,
   success,
+  chk2,
 ) {
   const catchFunc = error => {
     setHomeModalLoder(false);
@@ -96,8 +103,15 @@ function createChatRoom(
     chatroomsRef
       .add(createRoomObject)
       .then(res => {
-        console.log('ChatRoom Created!!');
-        sendChatMessage(res.id, receiverId, chatMessageObject, success, 'read');
+        // console.log('ChatRoom Created!!');
+        sendChatMessage(
+          res.id,
+          receiverId,
+          chatMessageObject,
+          success,
+          'read',
+          chk2,
+        );
       })
       .catch(error => {
         catchFunc(error);
@@ -107,12 +121,13 @@ function createChatRoom(
   }
 }
 
-function sendChatMessage(
+async function sendChatMessage(
   roomId,
   receiverId,
   chatMessageObject,
   success,
   check,
+  chk2,
 ) {
   const catchFunc = error => {
     setHomeModalLoder(false);
@@ -126,13 +141,14 @@ function sendChatMessage(
       .collection('messages')
       .add(chatMessageObject)
       .then(res => {
-        console.log('sendChatMessage Success!!');
+        // console.log('sendChatMessage Success!!');
         updateLatestMessageinRoom(
           roomId,
           receiverId,
           chatMessageObject,
           success,
           check,
+          chk2,
         );
       })
       .catch(error => {
@@ -143,12 +159,13 @@ function sendChatMessage(
   }
 }
 
-function updateLatestMessageinRoom(
+async function updateLatestMessageinRoom(
   roomId,
   receiverId,
   chatMessageObject,
   success,
   check,
+  chk2,
 ) {
   const catchFunc = error => {
     setHomeModalLoder(false);
@@ -165,8 +182,8 @@ function updateLatestMessageinRoom(
       .then(() => {
         setHomeModalLoder(false);
         setSendMessageLoader(false);
-        console.log('LatestMessageinRoom updated!!');
-        success();
+        // console.log('LatestMessageinRoom updated!!');
+        success(chk2);
         if (check == 'read') readAllMessageInRoom(roomId, receiverId);
       })
       .catch(error => {
@@ -177,18 +194,25 @@ function updateLatestMessageinRoom(
   }
 }
 
-function getAllCurrentUserRooms(userId, setGetdata, check) {
+function dateConvert(timestamp) {
+  const date = new Date(
+    timestamp?.seconds * 1000 + timestamp?.nanoseconds / 1000000,
+  );
+
+  return new Date(date.getTime());
+}
+
+async function getAllCurrentUserRooms(userId, setGetdata, check) {
   const catchFunc = error => {
     setibl(false);
     console.log('Error getAllCurrentUserRooms: ' + error?.message || error);
   };
 
-  console.log('GET Inboxes : ', userId);
+  // console.log('GET Inboxes : ', userId);
   if (check !== 'n') setibl(true);
   try {
     chatroomsRef
       .where(`user.${userId}`, '==', true)
-
       .get()
       .then(querySnapshot => {
         let data = [];
@@ -197,7 +221,7 @@ function getAllCurrentUserRooms(userId, setGetdata, check) {
         if (querySnapshot.size > 0) {
           data = querySnapshot.docs.map(doc => ({...doc.data(), _id: doc.id}));
         }
-        console.log('getAllCurrentUserRooms resp: ', data.length);
+        // console.log('getAllCurrentUserRooms resp: ', data.length);
 
         data.forEach(item => {
           let c = false;
@@ -212,7 +236,7 @@ function getAllCurrentUserRooms(userId, setGetdata, check) {
         finalData.forEach(item => {
           if (
             item.latestMessage &&
-            userId != item.latestMessage.user._id &&
+            userId != (item.latestMessage.user?._id || null) &&
             item.latestMessage.isRead == false
           ) {
             count++;
@@ -221,9 +245,11 @@ function getAllCurrentUserRooms(userId, setGetdata, check) {
 
         setibl(false);
         setinbox(
-          finalData.sort(
-            (a, b) => b.latestMessage.updatedAt - a.latestMessage.updatedAt,
-          ),
+          finalData.sort((a, b) => {
+            const d1 = dateConvert(b.latestMessage.updatedAt);
+            const d2 = dateConvert(a.latestMessage.updatedAt);
+            return d1 - d2;
+          }),
         );
         setGetdata(true);
         setunreadInbox(count);
@@ -236,7 +262,7 @@ function getAllCurrentUserRooms(userId, setGetdata, check) {
   }
 }
 
-function updateLatestMessageObjectinRoom(
+async function updateLatestMessageObjectinRoom(
   roomId,
   currentUserId,
   deleteSuccess,
@@ -264,7 +290,7 @@ function updateLatestMessageObjectinRoom(
       .doc(roomId)
       .update(obj)
       .then(() => {
-        console.log(`updateLatestMessageObjectinRoom ${type} updated!!`);
+        // console.log(`updateLatestMessageObjectinRoom ${type} updated!!`);
         deleteSuccess();
       })
       .catch(error => {
@@ -275,7 +301,7 @@ function updateLatestMessageObjectinRoom(
   }
 }
 
-function deleteChatRoom(roomId, deleteSuccess) {
+async function deleteChatRoom(roomId, deleteSuccess) {
   const catchFunc = error => {
     console.log('Error deleteChatRoom: ' + error?.message || error);
     setdlc(false);
@@ -283,7 +309,7 @@ function deleteChatRoom(roomId, deleteSuccess) {
 
   try {
     const messagesRef = chatroomsRef.doc(roomId).collection('messages');
-    console.log('deleteChatRoom Success!!');
+
     chatroomsRef
       .doc(roomId)
       .delete()
@@ -292,7 +318,7 @@ function deleteChatRoom(roomId, deleteSuccess) {
           Promise.all(querySnapshot.docs.map(d => d.ref.delete()));
         });
 
-        console.log('deleteChatRoom Success!!');
+        // console.log('deleteChatRoom Success!!');
         deleteSuccess();
       })
       .catch(error => {
@@ -303,7 +329,7 @@ function deleteChatRoom(roomId, deleteSuccess) {
   }
 }
 
-function deleteChat(
+async function deleteChat(
   inbox,
   roomId,
   currentUserId,
@@ -345,8 +371,11 @@ function deleteChat(
     }
   };
 
-  console.log('deleteChat  : ', roomId);
-  const messagesRef = chatroomsRef.doc(roomId).collection('messages');
+  // console.log('deleteChat  : ', roomId);
+  const messagesRef = chatroomsRef
+    .doc(roomId)
+    .collection('messages')
+    .orderBy('createdAt', 'asc');
 
   setdlc(true);
 
@@ -354,9 +383,8 @@ function deleteChat(
     messagesRef
       .get()
       .then(querySnapshot => {
-        const sortArr = querySnapshot.docs.sort(
-          (a, b) => a.data().createdAt - b.data().createdAt,
-        );
+        const sortArr = querySnapshot.docs;
+
         sortArr.forEach((data, index, arr) => {
           const obj = {
             deletedBy: firestore.FieldValue.arrayUnion(currentUserId),
@@ -382,15 +410,18 @@ function deleteChat(
   }
 }
 
-function getAllMessageInRoom(roomId, receiverId, setGetdata, setData) {
+async function getAllMessageInRoom(roomId, receiverId, setGetdata, setData) {
   const catchFunc = error => {
     setmessagesLoader(false);
     console.log('Error getAllMessageInRoom: ' + error?.message || error);
   };
 
   const curentUserId = user._id;
-  console.log('getAllMessageInRoom', curentUserId);
-  const messagesRef = chatroomsRef.doc(roomId).collection('messages');
+  // console.log('getAllMessageInRoom', curentUserId);
+  const messagesRef = chatroomsRef
+    .doc(roomId)
+    .collection('messages')
+    .orderBy('createdAt', 'asc');
 
   try {
     setmessagesLoader(true);
@@ -404,7 +435,7 @@ function getAllMessageInRoom(roomId, receiverId, setGetdata, setData) {
               ...data.data(),
               _id: data.id,
             }))
-            .sort((a, b) => a.createdAt - b.createdAt)
+
             .filter(item => {
               let isShow = true;
               item.deletedBy.forEach(element => {
@@ -429,16 +460,17 @@ function getAllMessageInRoom(roomId, receiverId, setGetdata, setData) {
   }
 }
 
-function readAllMessageInRoom(roomId, receiverId) {
+async function readAllMessageInRoom(roomId, receiverId) {
   const catchFunc = error => {
     console.log('Error readAllMessageInRoom: ' + error?.message || error);
   };
 
-  console.log('readAllMessageInRoom ', roomId);
+  // console.log('readAllMessageInRoom ', roomId);
   const messagesRef = chatroomsRef
     .doc(roomId)
     .collection('messages')
-    .where(`user._id`, '==', receiverId);
+    .where(`user._id`, '==', receiverId)
+    .where('isRead', '==', false);
 
   const lastMessagesRef = chatroomsRef
     .doc(roomId)
@@ -457,7 +489,7 @@ function readAllMessageInRoom(roomId, receiverId) {
             };
             data.ref.update(obj);
           });
-          console.log('readAllMessageInRoom true');
+          // console.log('readAllMessageInRoom true');
 
           const lastMessage = await lastMessagesRef.get();
           if (lastMessage.docs.length > 0) {
@@ -476,6 +508,97 @@ function readAllMessageInRoom(roomId, receiverId) {
   }
 }
 
+async function updateUserinFirestore(currentUserId, userObj) {
+  const catchFunc = error => {
+    console.log('Error updateUserinFirestore: ' + error?.message || error);
+  };
+
+  const ref1 = chatroomsRef.where(`user.${currentUserId}`, '==', true);
+  try {
+    ref1
+      .get()
+      .then(querySnapshot => {
+        if (querySnapshot.size > 0) {
+          querySnapshot.docs.forEach(doc => {
+            const roomId = doc.id;
+            const data = doc.data();
+            let obj = null;
+            if (data.latestMessage.user._id == currentUserId) {
+              obj = {
+                'latestMessage.user': userObj,
+              };
+            }
+
+            if (obj == null) {
+              obj = {};
+            }
+            if (data.userId1._id == currentUserId) {
+              obj.userId1 = userObj;
+            } else {
+              obj.userId2 = userObj;
+            }
+
+            doc.ref.update(obj);
+
+            const ref2 = chatroomsRef
+              .doc(roomId)
+              .collection('messages')
+              .where('user._id', '==', currentUserId);
+            ref2.get().then(querySnapshot2 => {
+              if (querySnapshot2.size > 0) {
+                querySnapshot2.docs.forEach(doc2 => {
+                  const obj = {user: userObj};
+                  doc2.ref.update(obj);
+                });
+              }
+            });
+          });
+        }
+      })
+      .catch(error => {
+        catchFunc(error);
+      });
+  } catch (error) {
+    catchFunc(error);
+  }
+}
+
+async function updateUserinFirestoreOnlyRoom(currentUserId, userObj) {
+  const catchFunc = error => {
+    console.log(
+      'Error updateUserinFirestoreOnlyRoom: ' + error?.message || error,
+    );
+  };
+
+  const ref1 = chatroomsRef.where(`user.${currentUserId}`, '==', true);
+  try {
+    ref1
+      .get()
+      .then(querySnapshot => {
+        if (querySnapshot.size > 0) {
+          querySnapshot.docs.forEach(doc => {
+            const data = doc.data();
+
+            let obj = null;
+
+            if (data.userId1._id == currentUserId) {
+              obj = {userId1: userObj};
+            } else {
+              obj = {userId2: userObj};
+            }
+
+            doc.ref.update(obj);
+          });
+        }
+      })
+      .catch(error => {
+        catchFunc(error);
+      });
+  } catch (error) {
+    catchFunc(error);
+  }
+}
+
 export const FireStore = {
   sendMessage,
   sendChatMessage,
@@ -483,4 +606,6 @@ export const FireStore = {
   getAllCurrentUserRooms,
   deleteChat,
   getAllMessageInRoom,
+  updateUserinFirestore,
+  updateUserinFirestoreOnlyRoom,
 };

@@ -78,7 +78,8 @@ const checkIsButton = (topic, data) => {
 
   if (topic == 'newTripAdded') buttons = ['See Trip Details', 'No Thanks'];
 
-  if (topic == 'newMessage') buttons = ['Respond', 'Dismiss'];
+  if (topic == 'newMessage' || topic == 'newMessagePush')
+    buttons = ['Respond', 'Dismiss'];
 
   return buttons;
 };
@@ -107,8 +108,8 @@ const callData = async topic => {
       );
     }
 
-    if (topic == 'newMessage') {
-      store.User.attemptToGetInboxes(store.User.user._id, () => {}, '');
+    if (topic == 'newMessage' || topic == 'newMessagePush') {
+      // store.User.attemptToGetInboxes(store.User.user._id, () => {}, '');
     }
     if (topic == 'offerRecieved') {
       store.Offers.attemptToGetReceiveOffers(
@@ -173,7 +174,21 @@ async function sendPaymentFailedNotification(uid) {
 async function sendMessageNotification(notificationBody) {
   console.log('sendMessageNotification body : ', notificationBody);
   await axios.post(
-    `${db.apis.BASE_URL}api/user/sendNotification/${notificationBody.userId}}`,
+    `${db.apis.BASE_URL}api/user/sendNotification/${notificationBody.userId}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: notificationBody,
+    },
+  );
+}
+
+async function sendMessageNotificationPush(notificationBody) {
+  console.log('sendMessageNotificationPush body : ', notificationBody);
+  await axios.post(
+    `${db.apis.BASE_URL}api/user/sendPushNotification/${notificationBody.userId}`,
     {
       method: 'POST',
       headers: {
@@ -191,4 +206,5 @@ export const Notification = {
   callData,
   sendPaymentFailedNotification,
   sendMessageNotification,
+  sendMessageNotificationPush,
 };

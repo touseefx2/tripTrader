@@ -810,12 +810,14 @@ function Signup(props) {
         let options = {
           mediaType: 'image',
           isPreview: false,
-          singleSelectedMode: true,
+          maxSelectedAssets: 1,
         };
-        const res = await MultipleImagePicker.openPicker(options);
-        if (res) {
-          console.log('mutipicker image res true  ');
-          const {path, fileName, mime} = res;
+        const resp = await MultipleImagePicker.openPicker(options);
+        console.log('mutipicker image res true  ', resp);
+        if (resp.length > 0) {
+          const res = resp[0];
+
+          const {path, fileName, mine} = res;
           let uri = path;
           if (Platform.OS == 'android' && apiLevel < 29) {
             uri = 'file://' + uri;
@@ -827,7 +829,7 @@ function Signup(props) {
             .then(async res => {
               let imageObject = {
                 uri: res,
-                type: mime,
+                type: mine,
                 fileName: fileName,
               };
               console.log('Compress image  : ', imageObject);

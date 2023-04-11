@@ -112,7 +112,7 @@ export default function MessageModal({
     );
   };
 
-  const messageSendSuccessfully = () => {
+  const messageSendSuccessfully = check => {
     closeModal();
     setSuccessModalObj(modalObj);
     setSuccessCheck('MessageSend');
@@ -127,13 +127,17 @@ export default function MessageModal({
 
     const notificationBody = {
       title: `New message from ${senderName}`,
+      senderId: user._id,
       userId: item.hostId._id || item.offeredBy._id,
       message: message,
       icon: user?.image || '',
-      data: {topic: 'newMessage'},
+      data: {topic: check == 'first' ? 'newMessage' : 'newMessagePush'},
     };
-
-    Notification.sendMessageNotification(notificationBody);
+    if (check == 'first') {
+      Notification.sendMessageNotification(notificationBody);
+    } else {
+      Notification.sendMessageNotificationPush(notificationBody);
+    }
   };
 
   const sendMessage = () => {

@@ -1,7 +1,7 @@
 import axios, {AxiosInstance} from 'axios';
 import apis from '../apis/index';
 
-let BASE_URL = apis.BASE_URL;
+const BASE_URL = apis.BASE_URL;
 
 const hitApi = (
   endPoint: string,

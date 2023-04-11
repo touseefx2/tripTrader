@@ -29,6 +29,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import {responsiveHeight} from 'react-native-responsive-dimensions';
 import {FireStore} from '../../services/FireStore';
 import firestore from '@react-native-firebase/firestore';
+import {Notification} from '../../services/Notification';
 
 export default observer(Chat);
 
@@ -89,7 +90,7 @@ function Chat(props) {
   const obj = pasObj?.obj || false;
   const headerTitle = pasObj?.title || '';
   const rid = pasObj?.rid || '';
-  const ruser = pasObj?.ruser || '';
+  const ruser = pasObj?.ruser || null;
 
   const [isOpenSheet, setisOpenSheet] = useState(false);
   const refRBSheet = useRef(null);
@@ -106,6 +107,8 @@ function Chat(props) {
 
   const [isFollow, setisFollow] = useState(false);
   const [isBlock, setisBlock] = useState(false);
+  const [receiverBlockArr, setReceiverBlockArr] = useState(pasObj?.rBlockArr);
+  const [isBlockOther, setisBlockOther] = useState(false);
   useEffect(() => {
     if (user) {
       let blk = false;
@@ -127,6 +130,18 @@ function Chat(props) {
       setisFollow(flw);
     }
   }, [user]);
+
+  useEffect(() => {
+    let blk = false;
+    if (receiverBlockArr.length > 0) {
+      const dtt = receiverBlockArr;
+      const fi = dtt.findIndex(x => x.userId == user._id);
+      if (fi > -1) {
+        if (dtt[fi].block == true) blk = true;
+      }
+    }
+    setisBlockOther(blk);
+  }, [receiverBlockArr]);
 
   const [modalObj, setmodalObj] = useState(false);
   const [modalChk, setmodalChk] = useState(false);
@@ -186,21 +201,24 @@ function Chat(props) {
 
   useEffect(() => {
     var initState = true;
+    var initState2 = true;
     const curentUserId = user._id;
     const roomId = obj._id;
     const chatroomsRef = firestore().collection('chatrooms');
-    const ref = chatroomsRef.doc(roomId).collection('messages');
-
+    const ref = chatroomsRef
+      .doc(roomId)
+      .collection('messages')
+      .orderBy('createdAt', 'asc');
     const observer = ref.onSnapshot(documentSnapshot => {
       if (initState) {
         initState = false;
       } else {
-        console.log('---> onSnapshot Call Chat <----');
+        console.log('---> onSnapshot Call Chat ref1 <----');
         let fdata = [];
+
         const data = documentSnapshot?.docs || [];
         fdata = data
           .map(item => ({...item.data(), _id: item.id}))
-          .sort((a, b) => a.createdAt - b.createdAt)
           .filter(item => {
             let isShow = true;
             item.deletedBy.forEach(element => {
@@ -210,28 +228,45 @@ function Chat(props) {
             });
             if (isShow) return item;
           });
+
         setdata(fdata);
-        scrollToBottom();
+
         FireStore.readAllMessageInRoom(roomId, rid);
+      }
+    });
+
+    const ref2 = chatroomsRef.doc(roomId);
+
+    const observer2 = ref2.onSnapshot(documentSnapshot => {
+      if (initState2) {
+        initState2 = false;
+      } else {
+        const item = documentSnapshot.data() || [];
+        console.log('---> onSnapshot Call Chat ref2 <----');
+
+        let userObj = null;
+        if (item) {
+          if (item.userId1 && item.userId1._id == rid) {
+            userObj = item.userId1;
+          }
+          if (item.userId2 && item.userId2._id == rid) {
+            userObj = item.userId2;
+          }
+        }
+
+        setReceiverBlockArr(userObj ? userObj.followers : []);
       }
     });
 
     return () => {
       observer();
+      observer2();
       setpasObj(false);
     };
   }, []);
   useEffect(() => {
     if (isInternet) onRefresh();
   }, [isInternet]);
-
-  useEffect(() => {
-    if (getDataOnce) {
-      setTimeout(() => {
-        scrollToBottom();
-      }, 1200);
-    }
-  }, [getDataOnce]);
 
   const setIsSendRport = v => {
     setsendObj(modalObj.item);
@@ -322,10 +357,6 @@ function Chat(props) {
     });
   };
 
-  const scrollToBottom = () => {
-    scrollRef?.current?.scrollToEnd({animated: true});
-  };
-
   const ItemSeparatorView = () => {
     return (
       <View
@@ -333,30 +364,6 @@ function Chat(props) {
           height: 10,
         }}
       />
-    );
-  };
-
-  const EmptyListMessage = () => {
-    return (
-      // Flat List Item
-      <>
-        {/* {!mloader && getDataOnce && (
-          <Text
-            style={{
-              marginTop: '80%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              alignSelf: 'center',
-              fontSize: 13,
-              color: theme.color.title,
-              fontFamily: theme.fonts.fontMedium,
-              opacity: 0.4,
-            }}
-            onPress={() => getItem(item)}>
-            No user found
-          </Text>
-        )} */}
-      </>
     );
   };
 
@@ -462,16 +469,87 @@ function Chat(props) {
     return p;
   };
 
+  // let arr = [];
+  // function showDateSection(date) {
+  //   let isShow = false;
+  //   console.log('arr : ', arr);
+  //   if (arr.length <= 0) {
+  //     isShow = true;
+  //     arr.push(date);
+  //   } else {
+  //     const isFind = arr.find(e => {
+  //       if (e.date == date) return true;
+  //       else return false;
+  //     });
+  //     console.log('isFind : ', isFind);
+  //   }
+
+  //   const text = moment(date).format('DD MMMM YYYY');
+
+  //   if (isShow) {
+  //     return (
+  //       <View
+  //         style={{
+  //           width: '100%',
+  //           alignItems: 'center',
+  //           justifyContent: 'center',
+  //           paddingVertical: 20,
+  //         }}>
+  //         <View
+  //           style={{
+  //             paddingHorizontal: 8,
+  //             paddingVertical: 4,
+  //             borderRadius: 10,
+  //             backgroundColor: 'white',
+  //             shadowColor: '#000',
+  //             shadowOffset: {
+  //               width: 0,
+  //               height: 1,
+  //             },
+  //             shadowOpacity: 0.22,
+  //             shadowRadius: 2.22,
+
+  //             elevation: 3,
+  //           }}>
+  //           <Text
+  //             style={{
+  //               fontSize: 12,
+  //               color: theme.color.subTitle,
+  //               fontFamily: theme.fonts.fontMedium,
+  //               textTransform: 'capitalize',
+  //             }}>
+  //             {text}
+  //           </Text>
+  //         </View>
+  //       </View>
+  //     );
+  //   }
+  // }
+
+  function dateConvert(timestamp) {
+    const date = new Date(
+      timestamp?.seconds * 1000 + timestamp?.nanoseconds / 1000000,
+    );
+
+    return new Date(date.getTime());
+  }
+
   const ItemView = ({item, index}) => {
-    const usr = item.user;
+    const usr = item?.user || null;
     const msg = item.message || '';
     const images = item.image || [];
     const type = item.type;
     const isRead = item.isRead || false;
-    const date = CheckDate(item.createdAt);
-    const photo = usr.image ? {uri: usr.image} : guest;
+    let date = CheckDate(new Date());
+    if (item?.createdAt) {
+      date = CheckDate(dateConvert(item.createdAt));
+    }
+    let photo = guest;
+    if (usr) {
+      photo = usr.image ? {uri: usr.image} : guest;
+    }
     let isCu = false;
-    if (user._id == usr._id) {
+    if (usr && user._id == usr._id) {
       isCu = true;
     }
 
@@ -541,6 +619,7 @@ function Chat(props) {
 
     return (
       <>
+        {/* {showDateSection(item.createdAt)} */}
         <View style={[dir, {alignItems: isCu ? 'flex-end' : 'flex-start'}]}>
           {isCu && (
             <>
@@ -579,8 +658,30 @@ function Chat(props) {
     );
   };
 
-  const sendMessageSuccess = () => {
-    console.log('Message sent');
+  const sendMessageSuccess = check => {
+    console.log('Message sent ', check);
+
+    if (check == '') {
+      const senderName =
+        utils.functions.capitalizeTheFirstLetterOfEachWord(
+          user.firstName.trim(),
+        ) +
+        ' ' +
+        utils.functions.capitalizeTheFirstLetterOfEachWord(
+          user.lastName.trim(),
+        );
+
+      const notificationBody = {
+        title: `New message from ${senderName}`,
+        senderId: user._id,
+        userId: rid,
+        message: message,
+        icon: user?.image || '',
+        data: {topic: 'newMessagePush'},
+      };
+
+      Notification.sendMessageNotificationPush(notificationBody);
+    }
   };
 
   const SendMessage = p => {
@@ -589,6 +690,7 @@ function Chat(props) {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         setSendMessageLoader(true);
+        const timestamp = firestore.FieldValue.serverTimestamp();
         const chatMessageObject = {
           user: user,
           isRead: false,
@@ -596,8 +698,8 @@ function Chat(props) {
           type: !isAddPhotoModal ? 'text' : 'image',
           image: p != '' ? p : [],
           deletedBy: [],
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
+          createdAt: timestamp,
+          updatedAt: timestamp,
         };
 
         FireStore.sendChatMessage(
@@ -605,6 +707,7 @@ function Chat(props) {
           rid,
           chatMessageObject,
           sendMessageSuccess,
+          '',
           '',
         );
 
@@ -732,14 +835,14 @@ function Chat(props) {
           borderTopColor: theme.color.fieldBorder,
           padding: 20,
         }}>
-        {!isBlock && (
+        {!isBlock && !isBlockOther && (
           <>
             {renderOthers()}
             {renderInputContainer()}
           </>
         )}
 
-        {isBlock && (
+        {(isBlock || isBlockOther) && (
           <>
             <Text
               style={{
@@ -748,7 +851,9 @@ function Chat(props) {
                 fontFamily: theme.fonts.fontMedium,
                 textAlign: 'center',
               }}>
-              You have blocked this user
+              {isBlock
+                ? 'You have blocked this user'
+                : `You can't send message to this user. `}
             </Text>
           </>
         )}
@@ -1526,21 +1631,21 @@ function Chat(props) {
             isAddPhotoModal={isAddPhotoModal}
             isShowPrmsn={isShowPrmsn}
             prmsnChk={prmsnChk}
-            setisAddPhotoModal={c => setisAddPhotoModal(c)}
-            setisSowPrmsn={c => setisShowPrmsn(c)}
-            setprmsnChk={c => setprmsnChk(c)}
-            ClosePhotoModal={() => ClosePhotoModal()}
+            setisAddPhotoModal={setisAddPhotoModal}
+            setisSowPrmsn={setisShowPrmsn}
+            setprmsnChk={setprmsnChk}
+            ClosePhotoModal={ClosePhotoModal}
             photos={photos}
-            setphotos={c => setphotos(c)}
-            setpmessage={c => setpmessage(c)}
+            setphotos={setphotos}
+            setpmessage={setpmessage}
             pmessage={pmessage}
-            SendMessage={c => SendMessage(c)}
+            SendMessage={SendMessage}
           />
         )}
 
         <utils.StackHeader
           bell={false}
-          chat={true}
+          chat={ruser && !isBlockOther ? true : false}
           openBottomSheet={openBottomSheet}
           props={props}
           headerTitle={headerTitle}
@@ -1550,6 +1655,9 @@ function Chat(props) {
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <FlatList
+              onContentSizeChange={() =>
+                scrollRef?.current?.scrollToEnd({animated: true})
+              }
               ref={scrollRef}
               refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -1561,7 +1669,6 @@ function Chat(props) {
               data={data}
               renderItem={ItemView}
               keyExtractor={(item, index) => index.toString()}
-              ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
             />
           </View>

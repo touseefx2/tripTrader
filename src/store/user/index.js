@@ -3,7 +3,6 @@ import axios from 'axios';
 import {action, makeObservable, observable} from 'mobx';
 import {persist} from 'mobx-persist';
 import {Alert} from 'react-native';
-import io from 'socket.io-client';
 import db from '../../database/index';
 import store from '../index';
 import {Notification} from '../../services/Notification';
@@ -271,6 +270,7 @@ class user {
     db.hitApi(db.apis.UNBLOCK_USER + c, 'put', {}, this.authToken)
       ?.then(resp => {
         this.setbl(false);
+        FireStore.updateUserinFirestoreOnlyRoom(this.user._id, resp.data.data);
         // console.log(
         //   `response UnblockUser  ${db.apis.UNBLOCK_USER + c} : `,
         //   resp.data,
@@ -1211,58 +1211,6 @@ class user {
         }
         Alert.alert('', msg.toString());
       });
-  };
-
-  @action SendFirstMessage = (body, suc) => {
-    db.hitApi(db.apis.SEND_FIRST_MESSAGE, 'post', body, this.authToken)
-      ?.then(resp => {
-        this.setHomeModalLoder(false);
-        console.log(
-          `response SendFirstMessage  ${db.apis.SEND_FIRST_MESSAGE} : `,
-          resp.data,
-        );
-
-        let rn = resp.data.data.roomName;
-        suc();
-
-        this.attemptToGetInboxes(store.User.user._id, () => {}, '');
-      })
-      .catch(err => {
-        this.setHomeModalLoder(false);
-        let msg = err.response.data.message || err.response.status || err;
-        console.log(
-          `Error in SendFirstMessage ${db.apis.SEND_FIRST_MESSAGE} : `,
-          msg,
-        );
-        if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
-          return;
-        }
-        // seterror(msg.toString())
-        Alert.alert('', msg.toString());
-      });
-  };
-
-  @action SendSecodMessage = (body, cid, suc) => {
-    let uid = body.sendBy;
-    let username = store.User.user.firstName + ' ' + store.User.user.lastName;
-    let msg = body.message;
-
-    const socket = io(db.apis.BASE_URLS);
-    let rn = cid;
-    socket.emit('joinRoom', {username, roomName: rn});
-    let userDetails = {
-      userId: uid,
-      roomName: cid,
-      username: username,
-      message: msg,
-      type: 'text',
-    };
-    socket.emit('chat', {userDetails});
-    this.setHomeModalLoder(false);
-    suc();
-    socket.emit('user left', {socket: socket.id});
   };
 
   @action attemptToOtherUserMessageSend = (obj, suc) => {
@@ -2882,8 +2830,6 @@ class user {
     store.Notifications.clearNotifications();
     store.Offers.clearOffers();
 
-    const socket = store.General.socket;
-    socket.emit('user left', {socket: socket.id});
     this.setchk('');
     this.setfuser('');
     this.setcc('');
@@ -2921,23 +2867,10 @@ class user {
     this.setisNotification(false);
   };
 
-  // attemptToUploadImageEPS(body, p, c, seterror, suc) {
-  //   this.setregLoader(true);
-
-  //   setTimeout(() => {
-  //     let myObject = {...this.user, ...body};
-  //     myObject.photo = p;
-  //     myObject.cnic_front_image = c;
-  //     this.setUser(myObject);
-  //     this.setregLoader(false);
-  //     suc();
-  //   }, 1000);
-  // }
-
   attemptToEditupdateUser(body, suc) {
     console.log('Edit Update user   body : ', body);
 
-    let uid = this.user._id;
+    const uid = this.user._id;
     db.hitApi(db.apis.UPDATE_USER + uid, 'put', body, this.authToken)
       ?.then(resp => {
         this.setregLoader(false);
@@ -2947,9 +2880,10 @@ class user {
           resp.data,
         );
 
-        let rsp = resp.data.data;
+        const rsp = resp.data.data;
         this.setUser(rsp);
         store.Notifications.attemptToGetNotifications(uid, () => {});
+        FireStore.updateUserinFirestore(this.user._id, this.user);
       })
       .catch(err => {
         this.setregLoader(false);
@@ -3468,6 +3402,30 @@ class user {
         Alert.alert('', msg.toString());
       });
   }
+
+  @action attemptToDeleteAccount = (currentUserId, setLoader, suc) => {
+    console.log('delete account');
+    setLoader(true);
+    db.hitApi(db.apis.UPDATE_USER + currentUserId, 'delete', {}, this.authToken)
+      ?.then(resp => {
+        console.log(`response delete account:`, resp.data);
+        setLoader(false);
+        suc();
+        FireStore.updateUserinFirestore(currentUserId, null);
+        this.Logout();
+      })
+      .catch(err => {
+        setLoader(false);
+        const msg = err;
+        console.log(`Error in delete account: `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          return;
+        }
+
+        Alert.alert('', msg.toString());
+      });
+  };
 
   getData(seterror) {
     // console.log('get home data');

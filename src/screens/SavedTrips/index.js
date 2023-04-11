@@ -156,8 +156,6 @@ function SavedTrips(props) {
     if (check == 'tripRemove') setIsRemoveModal(true);
   };
 
-  console.log('data : ', data);
-
   return (
     <>
       <View style={styles.container}>
