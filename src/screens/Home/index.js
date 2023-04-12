@@ -135,7 +135,6 @@ function Home(props) {
 
       if (action != '') onClickNotificationAction(action, notify);
       else onOpenNotification(topic, action, notify);
-
       store.General.setgoToo(null);
     }
   }, [notify]);
