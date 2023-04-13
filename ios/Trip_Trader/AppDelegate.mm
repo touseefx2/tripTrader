@@ -84,6 +84,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 
   if (@available(iOS 13.0, *)) {
     rootView.backgroundColor = [UIColor systemBackgroundColor];
+    rootView.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
   } else {
     rootView.backgroundColor = [UIColor whiteColor];
   }

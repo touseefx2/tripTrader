@@ -65,14 +65,17 @@ function SavedTrips(props) {
         handleBackButtonClick,
       );
 
-      saveTrips.map(({tripId}) => {
+      saveTrips.forEach(({tripId}) => {
         if (tripId) arr.push(tripId);
       });
     } else {
       BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
-      arr = saveTrips.filter(({tripId}) => {
-        const title = tripId.hostId.firstName + ' ' + tripId.hostId.lastName;
-        return title.toLowerCase().includes(search.toLowerCase());
+      saveTrips.forEach(({tripId}) => {
+        const title =
+          tripId?.hostId?.firstName + ' ' + tripId?.hostId?.lastName || '';
+        if (title.toLowerCase().includes(search.toLowerCase())) {
+          arr.push(tripId);
+        }
       });
     }
     setSaveData(arr.reverse());

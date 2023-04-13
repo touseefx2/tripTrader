@@ -233,7 +233,6 @@ export default function UnAvailableModal({
               <Title />
               {renderWeek()}
               {renderOtherDates()}
-              {renderWeek()}
             </ScrollView>
           ) : (
             <>

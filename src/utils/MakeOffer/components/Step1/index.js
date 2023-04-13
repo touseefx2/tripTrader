@@ -19,7 +19,7 @@ export default function Step1({
 }) {
   const {item} = modalObj;
   const {value} = item.duration;
-  const {species} = item;
+  const {species, tradeType} = item;
   const {image, firstName, lastName} = item.hostId;
   const photoSrc = image
     ? {uri: image}
@@ -78,7 +78,7 @@ export default function Step1({
         <View style={styles.mtextContainer}>
           <Text
             style={[styles.mtextContainertitle, {textTransform: 'capitalize'}]}>
-            {species}
+            {species + ' ' + tradeType}
           </Text>
 
           <Text style={styles.textContainertitle2}>

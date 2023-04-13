@@ -56,16 +56,17 @@ function Step3({
       availablityDates &&
       durationNum != '' &&
       tripType != '' &&
-      speciesList != '' &&
+      selectedSpecies != null &&
       city != '' &&
       selectedState
     )
       setIsDisable(false);
+    else setIsDisable(true);
   }, [
     availablityDates,
     durationNum,
     tripType,
-    speciesList,
+    selectedSpecies,
     city,
     selectedState,
   ]);

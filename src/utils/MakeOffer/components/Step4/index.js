@@ -37,7 +37,7 @@ export default function Step4({
   const photoSrc = image
     ? {uri: image}
     : require('../../../../assets/images/drawer/guest/img.png');
-  const species = item.species || '';
+  const species = item.species + ' ' + item.tradeType || '';
   const locationName = city + ', ' + selectedState.name;
 
   const goBack = () => {
@@ -175,7 +175,7 @@ export default function Step4({
         <View style={{width: '85%'}}>
           <Text style={styles.title}>YOUR OFFERING</Text>
           <Text style={[styles.subTitle, {color: theme.color.titleGreenForm}]}>
-            {selectedSpecies.name}
+            {selectedSpecies?.name + ' ' + tripType?.name}
           </Text>
         </View>
 

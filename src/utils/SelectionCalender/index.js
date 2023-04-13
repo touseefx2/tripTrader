@@ -6,6 +6,8 @@ import utils from '../../utils';
 import moment from 'moment';
 import {Calendar} from 'react-native-calendars';
 import Bottom from './components/Bottom';
+// import * as RNLocalize from 'react-native-localize';
+// import {getCurrentDateTime, getCurrentTimeZone} from './fun';
 
 export default function SelectionCalender({
   modalObj,
@@ -24,7 +26,7 @@ export default function SelectionCalender({
   const startDate = availableFrom;
   const endDate = availableTo;
 
-  const all_unavailable_dates = unAvailableDays.all_unavailable_dates || [];
+  const all_unavailable_dates = unAvailableDays.allUnavailableDates || [];
   const start_date = moment(startDate).format('YYYY-MM-DD');
   const current_date = moment(new Date()).format('YYYY-MM-DD');
   let unavailableDays = {};
@@ -39,6 +41,14 @@ export default function SelectionCalender({
   const [minimumDate, setMinimumDate] = useState(minDate);
   const [maximumDate, setMaximumDate] = useState(maxDate);
   const [markedDates, setMarkedDates] = useState(selectedDates);
+
+  // console.log(
+  //   'all_unavailable_dates ',
+  //   moment(new Date(all_unavailable_dates[0])).format('YYYY-MM-DD'),
+  // );
+
+  // const timezone = RNLocalize.getTimeZone(); // set the desired time zone
+  // console.log(getCurrentDateTime(timezone, '2023-04-13T00:00:00.000+00:00'));
 
   all_unavailable_dates.map(item => {
     unavailableDays[moment(item).format('YYYY-MM-DD')] = {
@@ -96,7 +106,10 @@ export default function SelectionCalender({
       });
 
       datesList.push(selectedDate);
+
       for (let index = 0; index < numOfDays; index++) {
+        console.log('1 ', selectedDate > moment(endDate).format('YYYY-MM-DD'));
+
         if (selectedDate > moment(endDate).format('YYYY-MM-DD')) {
           break;
         }
@@ -104,15 +117,18 @@ export default function SelectionCalender({
         if (unavailableArr.length > 0) {
           let ind = 0;
           ind = unavailableArr.findIndex(element => element === selectedDate);
+          console.log('ind : ', ind);
+
           if (ind < 0) datesList.push(selectedDate);
           else numOfDays++;
         } else datesList.push(selectedDate);
 
-        selectedDate = moment(
-          moment(new Date(selectedDate)).add(1, 'day'),
-        ).format('YYYY-MM-DD');
+        selectedDate = moment(selectedDate).add(1, 'day').format('YYYY-MM-DD');
       }
-      datesList.forEach(item => {
+
+      const dates = [...new Set(datesList)];
+
+      dates.forEach(item => {
         datesArray[item] = theme.dayStyle.markeDateStyle;
       });
 
@@ -127,6 +143,7 @@ export default function SelectionCalender({
       <SafeAreaView style={styles.container}>
         <View style={styles.container2}>
           <Calendar
+            // current=""
             theme={theme.dayStyle.calenderTheme}
             hideDayNames={false}
             hideArrows={false}

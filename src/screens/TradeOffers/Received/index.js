@@ -600,7 +600,7 @@ function Received(props) {
       const totalReviews = user.reviews || 0;
 
       //offer by (host trip)
-      let title = ofer.species;
+      let title = ofer.species + ' ' + ofer.tradeType;
       let dur = ofer.duration.value;
       let t =
         dur <= 1
@@ -611,7 +611,7 @@ function Received(props) {
       let loc = ofer.location.city + ', ' + ofer.location.state;
 
       //ofer to (offer trip)
-      let titlet = trade.species;
+      let titlet = trade.species + ' ' + trade.tradeType;
       let durt = trade.duration.value;
       let tt =
         durt <= 1
@@ -1055,7 +1055,7 @@ function Received(props) {
             ? ofer.duration.title.substring(0, ofer.duration.title.length - 1)
             : ofer.duration.title;
         duration = duration + ' ' + t;
-        let spcs = ofer.species || '';
+        let spcs = ofer.species + ' ' + ofer.tradeType || '';
 
         const renderProfile = () => {
           return (
@@ -1416,7 +1416,7 @@ function Received(props) {
         let trade = item.offeredTrip;
 
         //offer by (host trip)
-        let title = ofer.species;
+        let title = ofer.species + ' ' + ofer.tradeType;
         let dur = ofer.duration.value;
         let t =
           dur <= 1
@@ -1443,7 +1443,7 @@ function Received(props) {
         let loc = ofer.location.city + ', ' + ofer.location.state;
 
         //ofer to (offer trip)
-        let titlet = trade.species;
+        let titlet = trade.species + ' ' + trade.tradeType;
         let durt = trade.duration.value;
         let tt =
           durt <= 1
@@ -2145,12 +2145,6 @@ function Received(props) {
       } else if (t == 'weeks') {
         totaldays = duration * 7;
         td = duration * 7;
-      } else if (t == 'months') {
-        totaldays = duration * 30;
-        td = duration * 30;
-      } else if (t == 'years') {
-        totaldays = duration * 365;
-        td = duration * 365;
       }
 
       if (isObjectEmpty(markedDatess)) {
@@ -2193,9 +2187,7 @@ function Received(props) {
                 totaldays++;
               }
 
-              sdu = moment(moment(new Date(sdu)).add(1, 'day')).format(
-                'YYYY-MM-DD',
-              );
+              sdu = moment(sdu).add(1, 'day').format('YYYY-MM-DD');
             }
           } else {
             for (let index = 0; index < totaldays; index++) {
@@ -2204,9 +2196,7 @@ function Received(props) {
               }
 
               ar.push(sdu);
-              sdu = moment(moment(new Date(sdu)).add(1, 'day')).format(
-                'YYYY-MM-DD',
-              );
+              sdu = moment(sdu).add(1, 'day').format('YYYY-MM-DD');
             }
           }
           if (ar.length > 0) {

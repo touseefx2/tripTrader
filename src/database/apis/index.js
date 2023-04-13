@@ -1,5 +1,5 @@
 const BASE_URL =
-  // 'http://192.168.100.8:3001/';
+  //  'http://192.168.100.10:3001/';
   // 'http://ec2-35-175-134-9.compute-1.amazonaws.com/';
   'https://api.trip-trader.com/';
 

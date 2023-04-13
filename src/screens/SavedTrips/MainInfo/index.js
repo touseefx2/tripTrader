@@ -10,7 +10,7 @@ function MainInfo({item, isActive}) {
   let usr = item.hostId;
 
   if (usr) {
-    let titlee = item.title || '';
+    let titlee = item.title + ' ' + item.tradeType || '';
     let locName = item.location.city + ', ' + item.location.state;
     let trade = item.returnActivity || '';
 

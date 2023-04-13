@@ -31,7 +31,7 @@ function ExpandAllMainInfo({
     //trip
 
     let tripPhotos = item.photos ? item.photos : [];
-    let titlee = item.title || '';
+    let titlee = item.title + ' ' + item.tradeType || '';
     let locName = item.location.city + ', ' + item.location.state;
     let trade = item.returnActivity || '';
     let sd = item.availableFrom;

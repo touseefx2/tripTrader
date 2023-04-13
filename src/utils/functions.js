@@ -10,7 +10,7 @@ function isObjectEmpty(value) {
 
 function CheckisAlreadySaveTrip(obj, saveTripData) {
   if (saveTripData.length > 0) {
-    let ind = saveTripData.findIndex(({tripId}) => tripId._id === obj._id);
+    let ind = saveTripData.findIndex(({tripId}) => tripId?._id === obj?._id);
     if (ind > -1) {
       return true;
     }

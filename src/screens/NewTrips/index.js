@@ -479,30 +479,53 @@ function NewTrips(props) {
     photos,
   ]);
 
-  useEffect(() => {
-    if (isSelDate1 != '' && isSelDate2 != '') {
-      const a = moment(isSelDate2);
-      const b = moment(isSelDate1);
-      const no_of_days = a.diff(b, 'days');
-      console.error('nod : ', no_of_days);
-      let totaldays = 0;
-      let t = dur.title;
-      if (t == 'days') {
-        totaldays = durNum;
-      } else if (t == 'weeks') {
-        totaldays = durNum * 7;
-      } else if (t == 'months') {
-        totaldays = durNum * 30;
-      } else if (t == 'years') {
-        totaldays = durNum * 365;
-      }
-      if (no_of_days < totaldays) {
-        clearFields('', '');
+  // useEffect(() => {
+  //   if (isSelDate1 != '' && isSelDate2 != '') {
+  //     const a = moment(isSelDate2);
+  //     const b = moment(isSelDate1);
+  //     const no_of_days = a.diff(b, 'days');
 
-        return;
+  //     let totalDays = 0;
+  //     let t = dur.title;
+  //     if (t == 'days') {
+  //       totalDays = durNum;
+  //     } else if (t == 'weeks') {
+  //       totalDays = durNum * 7;
+  //     } else if (t == 'months') {
+  //       totalDays = durNum * 30;
+  //     } else if (t == 'years') {
+  //       totalDays = durNum * 365;
+  //     }
+  //     if (no_of_days < totalDays) {
+  //       clearFields('', '');
+
+  //       return;
+  //     }
+  //   }
+  // }, [dur, durNum, isSelDate1, isSelDate2]);
+
+  useEffect(() => {
+    let totalDays = 0;
+    const t = dur.title;
+    if (t == 'days') {
+      totalDays = durNum;
+    } else if (t == 'weeks') {
+      totalDays = durNum * 7;
+    }
+
+    const availablityDates = selDates;
+    if (!isObjectEmpty(availablityDates)) {
+      let availablityDatesLength = Object.keys(availablityDates).length;
+      let unAvailableDaysLength = 0;
+      if (isSetUnavailable)
+        unAvailableDaysLength = isSetUnavailable.all_unavailable_dates.length;
+
+      availablityDatesLength = availablityDatesLength - unAvailableDaysLength;
+      if (availablityDatesLength < totalDays) {
+        clearFields('', '');
       }
     }
-  }, [dur, durNum, isSelDate1, isSelDate2]);
+  }, [dur, durNum, selDates, isSetUnavailable]);
 
   useEffect(() => {
     if (!isObjectEmpty(markedDates)) {
@@ -1343,18 +1366,14 @@ function NewTrips(props) {
           }
           const a = moment(mxd);
           const b = moment(mid);
-          const no_of_days = a.diff(b, 'days');
-          console.error('nod : ', no_of_days);
+          const no_of_days = a.diff(b, 'days') + 1;
+
           let totaldays = 0;
           let t = dur.title;
           if (t == 'days') {
             totaldays = durNum;
           } else if (t == 'weeks') {
             totaldays = durNum * 7;
-          } else if (t == 'months') {
-            totaldays = durNum * 30;
-          } else if (t == 'years') {
-            totaldays = durNum * 365;
           }
           if (no_of_days < totaldays) {
             Alert.alert(
@@ -1784,7 +1803,7 @@ function NewTrips(props) {
 
           unavailable_days_of_week: unw, //main
           exclude_specific_dates: exsd, //main
-          all_unavailable_dates: ad, //main
+          all_unavailable_dates: [...new Set(ad)], //main
         };
       }
 
@@ -1877,11 +1896,8 @@ function NewTrips(props) {
                 }}
                 activeOpacity={0.5}
                 onPress={() => {
-                  let c = dow.slice();
-                  if (c[i].isSel == false) {
-                    setunavlblSLCTmarkedDates({});
-                    setselunmarkedSLCTDates({});
-                  }
+                  const c = dow.slice();
+
                   c[i].isSel = !c[i].isSel;
 
                   setdow(c);
@@ -3242,50 +3258,6 @@ function NewTrips(props) {
           <Text style={styles.Field2Title}>Accept other trade offers</Text>
         </View>
 
-        {/* activites select */}
-        {/* <View style={[styles.fieldContainer, {marginTop: 17}]}>
-          <Text style={styles.fieldText}>Activities</Text>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={[
-              styles.inputConatiner,
-              {
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              },
-            ]}
-            onPress={() => {
-              setModalVisible(true);
-              Keyboard.dismiss();
-              closeAllDropDown();
-            }}>
-            <Image style={styles.dropDownIcon} source={actSrc} />
-            <View style={{width: '80%'}}>
-              <Text
-                style={[
-                  styles.BodyTitle,
-                  {
-                    color:
-                      actvtyListS.length > 1
-                        ? theme.color.title
-                        : theme.color.subTitleLight,
-                  },
-                ]}>
-                {actvtyListS.length > 1
-                  ? actvtyListS.length + ' activites selected'
-                  : 'Select activites'}
-              </Text>
-            </View>
-
-            <utils.vectorIcon.MaterialIcons
-              name="keyboard-arrow-right"
-              size={22}
-              color={theme.color.subTitle}
-            />
-          </TouchableOpacity>
-        </View> */}
-
         <View style={[styles.fieldContainer, {marginTop: 17}]}>
           <Text style={styles.fieldText}>Trip Duration</Text>
           <View
@@ -3897,7 +3869,7 @@ function NewTrips(props) {
     };
 
     const renderFields = () => {
-      let offer = species.name || '';
+      let offer = species?.name + ' ' + tripType?.name || '';
       let locationName =
         location == false
           ? 'Florida, Miami'

@@ -367,7 +367,7 @@ function Sent(props) {
       const totalReviews = user.reviews || 0;
 
       //offer by (host trip)
-      let title = ofer.species;
+      let title = ofer.species + ' ' + ofer.tradeType;
       let dur = ofer.duration.value;
       let t =
         dur <= 1
@@ -378,7 +378,7 @@ function Sent(props) {
       let loc = ofer.location.city + ', ' + ofer.location.state;
 
       //ofer to (offer trip)
-      let titlet = trade.species;
+      let titlet = trade.species + ' ' + trade.tradeType;
       let durt = trade.duration.value;
       let tt =
         durt <= 1
