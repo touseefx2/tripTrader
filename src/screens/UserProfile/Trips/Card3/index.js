@@ -283,7 +283,6 @@ function Card3({
           </View>
 
           <Pressable
-            disabled
             style={({pressed}) => [
               {opacity: pressed ? 0.8 : 1.0},
               styles.buttonContainer,
@@ -292,7 +291,7 @@ function Card3({
               if (store.User.user.subscriptionStatus == 'freemium') {
                 props.navigation.navigate('Plan');
               } else {
-                onClickMakeOffer(item, index);
+                onClickMakeOffer({item: item, selIndex: index}, 'offer');
               }
             }}>
             <Text style={styles.buttonText}>Make Offer</Text>
