@@ -32,8 +32,6 @@ function ContactUs(props) {
             screen={headerTitle}
             focusScreen={store.General.focusScreen}
           />
-
-          {store.Notifications.isShowNotifcation && <utils.ShowNotifications />}
         </SafeAreaView>
       </View>
     </>

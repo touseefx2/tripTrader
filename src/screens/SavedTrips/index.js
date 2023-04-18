@@ -28,7 +28,6 @@ function SavedTrips(props) {
   const {user, homeModalLoder} = store.User;
   const {deleteLoader, saveTrips} = store.Trips;
   const {activity, tripLocation, species} = store.Filters;
-  const {isShowNotifcation} = store.Notifications;
 
   const [modalObj, setModalObj] = useState(null);
   const [isOfferModal, setIsOfferModal] = useState(false);
@@ -170,7 +169,7 @@ function SavedTrips(props) {
               screen="SavedTrips"
               renderAsFlatList
               ref={scrollRef}
-              decelerationRate={'fast'}
+              decelerationRate={0.6}
               removeClippedSubviews
               initialNumToRender={limit}
               windowSize={windowSize}
@@ -285,7 +284,6 @@ function SavedTrips(props) {
           />
         )}
 
-        {isShowNotifcation && <utils.ShowNotifications />}
         <Toast ref={toast} position="bottom" />
       </View>
     </>

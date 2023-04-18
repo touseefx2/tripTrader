@@ -955,7 +955,7 @@ function MyProfile(props) {
           }}
         />
       )}
-      {store.Notifications.isShowNotifcation && <utils.ShowNotifications />}
+
       {isAddPhotoModal && renderAddPhotoModal()}
     </View>
   );

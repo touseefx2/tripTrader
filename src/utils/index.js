@@ -11,7 +11,6 @@ import Loader from './Loader';
 import navBarHeight from './navBarHeight';
 import OtpModal from './OtpModal';
 import Search from './Search';
-import ShowNotifications from './ShowNotifications';
 import StackHeader from './StackHeader';
 import vectorIcon from './vectorIcon';
 import WebViewModal from './WebViewModal';
@@ -38,7 +37,6 @@ const utils = {
   Search,
   Filters,
   DropDown,
-  ShowNotifications,
   ChatPhotoModal,
   AuthHeader,
   navBarHeight,
@@ -53,7 +51,7 @@ const utils = {
   SelectionCalender,
   unSaveTripModal,
   EmailPopupSheet,
-  deleteAccountModal
+  deleteAccountModal,
 };
 
 export default utils;

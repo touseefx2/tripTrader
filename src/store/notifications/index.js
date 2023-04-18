@@ -1,29 +1,13 @@
 import {observable, makeObservable, action} from 'mobx';
-import {AppState} from 'react-native';
 import {persist} from 'mobx-persist';
 import db from '../../database/index';
 import {Alert} from 'react-native';
 import store from '../index';
-import NetInfo from '@react-native-community/netinfo';
 
 class notifications {
   constructor() {
     makeObservable(this);
   }
-
-  //show ntfctn
-  @observable isShowNotifcation = false;
-  @action setisShowNotifcation = obj => {
-    this.isShowNotifcation = obj;
-  };
-  @observable NotifcationTitle = '';
-  @action setNotifcationTitle = obj => {
-    this.NotifcationTitle = obj;
-  };
-  @observable NotifcationData = false;
-  @action setNotifcationData = obj => {
-    this.NotifcationData = obj;
-  };
 
   //panle ntctn
   @observable Loader = false;
@@ -158,13 +142,6 @@ class notifications {
     this.setnotifications([]);
     this.setnotificationsTotal(0);
     this.setunRead(0);
-  };
-
-  //show ntctn clear
-  @action clearShowNotifications = () => {
-    this.setisShowNotifcation(false);
-    this.setNotifcationTitle('');
-    this.setNotifcationData(false);
   };
 }
 export const Notifications = new notifications();

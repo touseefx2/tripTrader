@@ -1484,7 +1484,6 @@ function UserProfile(props) {
           closModal={() => setpvm(!pvm)}
         />
       )}
-      {store.Notifications.isShowNotifcation && <utils.ShowNotifications />}
     </View>
   );
 }

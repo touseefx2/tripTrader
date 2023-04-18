@@ -171,7 +171,7 @@ function Trips(props) {
             screen="UserProfile"
             renderAsFlatList
             ref={scrollRef2}
-            decelerationRate={'fast'}
+            decelerationRate={0.6}
             removeClippedSubviews
             initialNumToRender={limit}
             windowSize={windowSize}

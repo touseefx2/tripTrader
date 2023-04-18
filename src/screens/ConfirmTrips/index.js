@@ -704,8 +704,6 @@ function ConfirmTrips(props) {
               props={props}
             />
           )}
-
-          {store.Notifications.isShowNotifcation && <utils.ShowNotifications />}
         </SafeAreaView>
       </View>
     </>

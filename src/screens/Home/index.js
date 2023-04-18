@@ -37,7 +37,7 @@ function Home(props) {
     setOfferGoTo,
   } = store.General;
   const {isApplySearch} = store.Search;
-  const {isShowNotifcation} = store.Notifications;
+
   const {
     activity,
     tripLocation,
@@ -854,6 +854,8 @@ function Home(props) {
         </SafeAreaView>
 
         {renderStatusBar()}
+        <utils.Loader load={saveLoader} />
+        <Toast ref={toast} position="bottom" />
 
         {isShowSearch && (
           <utils.Search
@@ -885,7 +887,6 @@ function Home(props) {
             }}
           />
         )}
-
         {isOfferModal && (
           <utils.MakeOffer
             isModal={isOfferModal}
@@ -938,10 +939,6 @@ function Home(props) {
             props={props}
           />
         )}
-
-        <utils.Loader load={saveLoader} />
-        <Toast ref={toast} position="bottom" />
-        {isShowNotifcation && <utils.ShowNotifications />}
         {isEmailPopup && (
           <utils.EmailPopupSheet
             isModal={isEmailPopup}

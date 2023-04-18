@@ -347,7 +347,6 @@ function Inbox(props) {
           />
 
           <utils.Loader load={loader} />
-          {store.Notifications.isShowNotifcation && <utils.ShowNotifications />}
         </SafeAreaView>
       </View>
     </>
