@@ -1,18 +1,10 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   SafeAreaView,
-  TouchableOpacity,
   Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
   Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Dimensions,
   Modal,
   FlatList,
   ActivityIndicator,
@@ -26,7 +18,6 @@ import store from '../../../store';
 import NetInfo from '@react-native-community/netinfo';
 import theme from '../../../theme';
 import utils from '../../../utils/index';
-import moment from 'moment';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
 
 export default observer(Photos);

@@ -9,13 +9,14 @@ class NotificationManager {
     PushNotification.configure({
       // (required) Called when a remote is received or opened, or local notification is opened
       onNotification: function (notification) {
-        store.General.setgoToo(notification);
+        if (notification) store.General.setgoToo(notification);
+
         notification.finish(PushNotificationIOS.FetchResult.NoData);
       },
 
       // (optional) Called when Registered Action is pressed and invokeApp is false, if true onNotification will be called (Android)
       onAction: function (notification) {
-        store.General.setgoToo(notification);
+        if (notification) store.General.setgoToo(notification);
       },
 
       // IOS ONLY (optional): default: all - Permissions to register.

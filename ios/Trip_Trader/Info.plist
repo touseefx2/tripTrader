@@ -27,7 +27,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.664935989773-kfb6h59d7lf0spjamngluais2l72vgri</string>
+				<string>app-1-491634645448-ios-89b978503d75608db548fd</string>
 			</array>
 		</dict>
 		<dict/>
@@ -100,9 +100,9 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>UIUserInterfaceStyle</key>
+	<string>Light</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>UIUserInterfaceStyle</key>
-    <string>Light</string>
 </dict>
 </plist>

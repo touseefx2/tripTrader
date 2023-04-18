@@ -661,7 +661,8 @@ function Signup(props) {
   const SucGetClientsecret = async (dt, obj) => {
     try {
       const {error, paymentIntent} = await confirmPayment(dt.cs, {
-        paymentMethodType: 'Card',
+        // paymentMethodType: 'Card', //strip >0.5.0
+        type: 'Card', //stripe <0.6.0
         billingDetails: {name: cn},
       });
 

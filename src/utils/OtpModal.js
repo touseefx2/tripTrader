@@ -81,6 +81,7 @@ export default function OtpModal(props) {
         setloader(true);
         setValue('');
         setConfirmResult(null);
+
         auth()
           .signInWithPhoneNumber(mobile)
           .then(res => {
@@ -347,7 +348,7 @@ export default function OtpModal(props) {
             {sendCodeOnce && isFinish && renderBottonButton11()}
 
             {/* //cancel */}
-            {!sendCodeOnce && renderBottonButton3()}
+            {(!sendCodeOnce || isFinish) && renderBottonButton3()}
           </View>
         </View>
       </Modal>

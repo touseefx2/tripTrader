@@ -13,7 +13,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		1C892862F3C6467C8B2D33A2 /* SuezOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7F3564FA21D14B3592BB3752 /* SuezOne-Regular.ttf */; };
 		4AE500328B37E9F4EC951F03 /* libPods-Trip_Trader-Trip_TraderTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DA60E47014478AFEC456C94 /* libPods-Trip_Trader-Trip_TraderTests.a */; };
-		762D6EC8293621DE00AEFA93 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 762D6EC7293621DD00AEFA93 /* GoogleService-Info.plist */; };
+		7610876029ED7D9D00FD6B04 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7610875F29ED7D9C00FD6B04 /* GoogleService-Info.plist */; };
 		763A53F72935E9B400A52BDB /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 763A53F62935E9B400A52BDB /* File.swift */; };
 		767E613628B6390C00F1125A /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8EA41802C5274FD290A0890B /* Poppins-Medium.ttf */; };
 		767E613728B6390C00F1125A /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5AD1917C7D1942A982406345 /* Poppins-Regular.ttf */; };
@@ -57,7 +57,7 @@
 		5AD1917C7D1942A982406345 /* Poppins-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Regular.ttf"; path = "../src/assets/fonts/Poppins-Regular.ttf"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-Trip_Trader-Trip_TraderTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Trip_Trader-Trip_TraderTests.debug.xcconfig"; path = "Target Support Files/Pods-Trip_Trader-Trip_TraderTests/Pods-Trip_Trader-Trip_TraderTests.debug.xcconfig"; sourceTree = "<group>"; };
 		6F17860BA24B4855AAEBD6ED /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = ../src/assets/fonts/FontAwesome5_Solid.ttf; sourceTree = "<group>"; };
-		762D6EC7293621DD00AEFA93 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		7610875F29ED7D9C00FD6B04 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		763A53F52935E9B300A52BDB /* Trip_Trader-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Trip_Trader-Bridging-Header.h"; sourceTree = "<group>"; };
 		763A53F62935E9B400A52BDB /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		76B5E11A28B634C10046B338 /* Trip_Trader.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Trip_Trader.entitlements; path = Trip_Trader/Trip_Trader.entitlements; sourceTree = "<group>"; };
@@ -123,7 +123,6 @@
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
-				762D6EC7293621DD00AEFA93 /* GoogleService-Info.plist */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
@@ -181,6 +180,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				7610875F29ED7D9C00FD6B04 /* GoogleService-Info.plist */,
 				763A53F62935E9B400A52BDB /* File.swift */,
 				13B07FAE1A68108700A75B9A /* Trip_Trader */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -317,7 +317,7 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				1C892862F3C6467C8B2D33A2 /* SuezOne-Regular.ttf in Resources */,
-				762D6EC8293621DE00AEFA93 /* GoogleService-Info.plist in Resources */,
+				7610876029ED7D9D00FD6B04 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

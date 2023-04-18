@@ -8,6 +8,7 @@ import {
   Alert,
   Pressable,
   RefreshControl,
+  FlatList,
 } from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
 import {styles} from './styles';
@@ -19,7 +20,7 @@ import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import moment from 'moment';
-import {FlashList} from '@shopify/flash-list';
+// import {FlashList} from '@shopify/flash-list';
 import PushNotification from 'react-native-push-notification';
 import firestore from '@react-native-firebase/firestore';
 
@@ -824,9 +825,9 @@ function Home(props) {
         {!isInternet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
-            <FlashList
+            <FlatList
               decelerationRate={0.6}
-              estimatedItemSize={530}
+              // estimatedItemSize={530}
               refreshControl={
                 <RefreshControl refreshing={HomeLoader} onRefresh={onRefresh} />
               }

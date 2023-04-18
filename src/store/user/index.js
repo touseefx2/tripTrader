@@ -2439,7 +2439,7 @@ class user {
       ?.then(resp => {
         this.setregLoader(false);
         console.log(
-          `response pan subscribe  ${db.apis.UPDATE_USER + uid} : `,
+          `response plan subscribe  ${db.apis.UPDATE_USER + uid} : `,
           resp.data,
         );
         let rsp = resp.data.data;
