@@ -21,6 +21,7 @@ export default function MakeOffer({
   setIsSuccessModal,
   setSuccessModalObj,
   setSuccessCheck,
+  screen,
 }) {
   const maxModalHeight = theme.window.Height - 70;
   const {item} = modalObj;
@@ -227,6 +228,7 @@ export default function MakeOffer({
               setSelectedDates={setSelectedDates}
               durationTitle={durationTitle}
               totalDays={totalDays}
+              screen={screen}
             />
           )}
           {step == 2 && (

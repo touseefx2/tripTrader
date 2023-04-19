@@ -900,6 +900,7 @@ function Home(props) {
             setIsSuccessModal={setIsSuccessModal}
             setSuccessModalObj={setSuccessModalObj}
             setSuccessCheck={setSuccessCheck}
+            screen={''}
           />
         )}
         {isMessageModal && (

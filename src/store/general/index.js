@@ -13,7 +13,7 @@ class general {
     'http://trip-trader.com.s3-website-us-east-1.amazonaws.com/termsandconditionsapp';
   @observable Privacy_and_Policy_Link =
     'http://trip-trader.com.s3-website-us-east-1.amazonaws.com/privacypolicyapp';
-
+  @observable NotificationChannel = 'NotifcationChannel1';
   @observable AppName = 'Trip Trader';
   @observable isServerError = false;
   @observable photoSelInd = 0;

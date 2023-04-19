@@ -16,15 +16,17 @@ async function requestUserPermission() {
 const createNotificationChannel = () => {
   PushNotification.createChannel(
     {
-      channelId: 'TripTradersX3',
-      channelName: 'TripTradersX3',
+      channelId: store.General.NotificationChannel,
+      channelName: store.General.NotificationChannel,
       channelDescription: 'A channel to categorise your notifications', // (optional) default: undefined.
       importance: Importance.HIGH,
-      soundName: 'notification.mp3',
       playSound: true,
       vibrate: true,
+      lockScreenVisibility: 1, // VISIBILITY_PUBLIC
+      fullScreenIntent: true,
+      // soundName: 'notification.mp3',
     },
-    created => console.log(`createChannel notification returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
+    created => console.log(`created NotificationChannel returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
   );
 };
 
@@ -32,7 +34,7 @@ const showNotificaton = (message, title, topic, bigIcon, rightIcon, data) => {
   const buttonsList = checkIsButton(topic, data);
   PushNotification.localNotification({
     /* Android Only Properties */
-    channelId: 'TripTradersX3', // (required) channelId, if the channel doesn't exist, notification will not trigger.
+    channelId: store.General.NotificationChannel, // (required) channelId, if the channel doesn't exist, notification will not trigger.
     actions: buttonsList, // (Android only) See the doc for notification actions to know more
     message: message,
     id: parseInt(Math.random() * 1000000),
@@ -45,6 +47,10 @@ const showNotificaton = (message, title, topic, bigIcon, rightIcon, data) => {
     bigPictureUrl: bigIcon,
     largeIconUrl: rightIcon,
     userInfo: data && data?.userData ? data.userData : {},
+    playSound: true,
+    vibrate: true,
+    importance: Importance.HIGH,
+    priority: 'high',
   });
 };
 

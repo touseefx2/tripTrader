@@ -244,6 +244,7 @@ function SavedTrips(props) {
             setIsSuccessModal={setIsSuccessModal}
             setSuccessModalObj={setSuccessModalObj}
             setSuccessCheck={setSuccessCheck}
+            screen={''}
           />
         )}
         {isMessageModal && (

@@ -2,9 +2,9 @@
   package="com.trip_trader">
 
     <uses-permission android:name="android.permission.INTERNET"    />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"   />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"  />
   <uses-permission android:name="android.permission.CAMERA"    />
-    <uses-feature android:name="android.hardware.camera"    />
+    <uses-feature android:name="android.hardware.camera"   />
     <uses-feature android:name="android.hardware.camera.front"    />
     <uses-feature android:name="android.hardware.camera.autofocus"   />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" /> 
@@ -12,8 +12,10 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"   />
     <uses-permission android:name="android.permission.INSTALL_GRANT_RUNTIME_PERMISSIONS"   />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"    />
-       <uses-permission android:name="android.permission.VIBRATE" android:autoRevokePermissions="disallowed"  />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" android:autoRevokePermissions="disallowed" />
+
+ <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"   /> 
+<uses-permission android:name="android.permission.VIBRATE" android:autoRevokePermissions="disallowed"  />
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" android:autoRevokePermissions="disallowed" />
 <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" android:autoRevokePermissions="disallowed"  />
 <uses-permission android:name="android.permission.POST_NOTIFICATIONS" android:autoRevokePermissions="disallowed" />
 <uses-permission android:name="android.permission.ACCESS_SURFACE_FLINGER"  android:autoRevokePermissions="disallowed"  />
@@ -27,16 +29,18 @@
       android:requestLegacyExternalStorage="true"
       android:allowBackup="false"
       android:usesCleartextTraffic="true"
-      android:theme="@style/AppTheme"
-       >
+      android:theme="@style/AppTheme">
 <!--  android:roundIcon="@mipmap/ic_launcher_round" -->
 
 
 <!-- push ntfctns -->
- <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_name"
-            android:value="TripTradersX3"/>
-    <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_description"
-                android:value='A channel to categorise your notifications'/>
+ <meta-data
+      android:name="com.dieam.reactnativepushnotification.default_notification_channel_id"
+      android:value="@string/default_notification_channel_id" />
+            <!-- <meta-data
+      android:name="com.google.firebase.messaging.default_notification_channel_id"
+      android:value="@string/default_notification_channel_id" />
+    -->
 
    <!-- Change the value to true to enable pop-up for in foreground on receiving remote notifications (for prevent duplicating while showing local notifications set this to false) -->
         <meta-data  android:name="com.dieam.reactnativepushnotification.notification_foreground"

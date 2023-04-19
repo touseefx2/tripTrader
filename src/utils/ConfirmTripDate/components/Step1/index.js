@@ -16,12 +16,13 @@ export default function Step1({
   setSelectedDates,
   durationTitle,
   totalDays,
+  closeModal,
   screen,
 }) {
   const {item} = modalObj;
-  const {value} = item.duration;
-  const {species, tradeType} = item;
-  const {image, firstName, lastName} = item.hostId;
+  const {value} = item.hostTrip.duration;
+  const {image, firstName, lastName} = item.offeredBy;
+  const {species, tradeType} = item.hostTrip;
   const photoSrc = image
     ? {uri: image}
     : require('../../../../assets/images/drawer/guest/img.png');
@@ -49,14 +50,6 @@ export default function Step1({
   const goNext = () => {
     setmodalHeight(0);
     setStep(2);
-  };
-
-  const renderTitle = () => {
-    return (
-      <Text style={styles.modalsubTitle}>
-        To get started, choose your preferred dates for this trip.
-      </Text>
-    );
   };
 
   const renderInfo = () => {
@@ -142,13 +135,11 @@ export default function Step1({
           contentContainerStyle={{paddingHorizontal: 15}}
           showsVerticalScrollIndicator={false}
           style={{flex: 1}}>
-          {renderTitle()}
           {renderInfo()}
           {renderField()}
         </ScrollView>
       ) : (
         <>
-          {renderTitle()}
           {renderInfo()}
           {renderField()}
         </>
@@ -158,6 +149,7 @@ export default function Step1({
         isMaxHeight={isMaxHeight}
         step={step}
         selectedDates={selectedDates}
+        closeModal={closeModal}
         goNext={goNext}
       />
       {isChooseDateCalender && (

@@ -19,9 +19,12 @@ export default function SelectionCalender({
   minDate,
   maxDate,
   totalDays,
+  screen,
 }) {
   const {item} = modalObj;
-  const {availableFrom, availableTo, unAvailableDays} = item;
+
+  const {availableFrom, availableTo, unAvailableDays} =
+    screen == '' ? item : item.hostTrip;
   let numOfDays = totalDays;
   const startDate = availableFrom;
   const endDate = availableTo;

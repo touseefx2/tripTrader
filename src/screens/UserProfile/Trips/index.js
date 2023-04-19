@@ -221,6 +221,7 @@ function Trips(props) {
           setIsSuccessModal={setIsSuccessModal}
           setSuccessModalObj={setSuccessModalObj}
           setSuccessCheck={setSuccessCheck}
+          screen={''}
         />
       )}
 
