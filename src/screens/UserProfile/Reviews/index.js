@@ -24,6 +24,7 @@ import utils from '../../../utils/index';
 import moment from 'moment';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
 import StarRating from 'react-native-star-rating';
+import {responsiveHeight} from 'react-native-responsive-dimensions';
 
 export default observer(Reviews);
 
@@ -32,6 +33,7 @@ function Reviews(props) {
   let maxModalHeight = theme.window.Height - 100;
 
   const scrollRef = useRef(null);
+  const {OtherProfileProps} = store.User;
 
   const [modalHeight, setmodalHeight] = useState(0);
 
@@ -49,11 +51,6 @@ function Reviews(props) {
   const [isAnyTrade, setisAnyTrade] = useState(false);
   const [loader, setloader] = useState(false);
   const totalData = data.length;
-
-  // let data = store.Userv.review;
-  // let loader = store.Userv.reviewLoader;
-  // const isAnyTrade = store.Userv.isAnyTrade;
-  // const isOneReview = store.Userv.isOneReview;
 
   let mloader = store.Userv.mLoader;
 
@@ -89,10 +86,14 @@ function Reviews(props) {
     setRefreshing(c);
   };
   const onRefresh = React.useCallback(() => {
-    console.warn('onrefresh cal');
+    console.log('onrefresh cal');
     setRefreshing(true);
     getDbData();
   }, []);
+
+  const goBackMain = () => {
+    OtherProfileProps.navigation.goBack();
+  };
 
   const getDbData = () => {
     NetInfo.fetch().then(state => {
@@ -127,7 +128,6 @@ function Reviews(props) {
       if (state.isConnected) {
         store.Userv.attemptToReplyComment(modalObj, comment, closeModal);
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -139,7 +139,6 @@ function Reviews(props) {
       if (state.isConnected) {
         store.Userv.attemptToDisputeComment(modalObj, closeModal);
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -151,7 +150,6 @@ function Reviews(props) {
       if (state.isConnected) {
         store.Userv.attemptToEditComment(modalObj, comment, closeModal);
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -159,13 +157,10 @@ function Reviews(props) {
   const actionDelete = () => {
     Keyboard.dismiss();
 
-    Keyboard.dismiss();
-
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         store.Userv.attemptToDeleteComment(modalObj, closeModal);
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -185,7 +180,7 @@ function Reviews(props) {
 
   const openReviewModal = c => {
     if (c) {
-      console.log('ccc : ', c);
+      // console.log('ccc : ', c);
       setisrObj(c);
       setrate(c.rate);
       setMessage(c.message);
@@ -208,8 +203,6 @@ function Reviews(props) {
       scrollRef?.current?.scrollToOffset({animated: true, offset: 0});
     }
   };
-
-  console.log('dt : ', data);
 
   const postReview = () => {
     Keyboard.dismiss();
@@ -243,13 +236,13 @@ function Reviews(props) {
         store.Userv.attemptToPostReview(
           body,
           closeReviewModal,
+          goBackMain,
           () => setisSendReview(true),
           data,
           c => setdata(c),
           c => setisOneReview(c),
         );
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -265,13 +258,14 @@ function Reviews(props) {
 
         store.Userv.attemptToEditReview(
           isrObj,
+          user._id,
           data,
           c => setdata(c),
           closeReviewModal,
+          goBackMain,
           () => setisSendReview(true),
         );
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -284,37 +278,17 @@ function Reviews(props) {
       if (state.isConnected) {
         store.Userv.attemptToDeleteReview(
           isdObj,
+          user._id,
           closeDeleteModal,
+          goBackMain,
           data,
           c => setdata(c),
           c => setisOneReview(c),
         );
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
-  };
-
-  const openModal = (obj, c) => {
-    if (c == 'edit') {
-      let d = obj.item;
-      let reply = '';
-      let msgs = d.messages || [];
-      if (msgs.length > 0) {
-        msgs.map((e, i, a) => {
-          if (e.role == 'host') {
-            reply = e.message;
-          }
-        });
-      }
-
-      setcomment(reply);
-    }
-
-    setmodalObj(obj);
-    setmodalChk(c);
-    setisModal(true);
   };
 
   const closeModal = () => {
@@ -374,26 +348,49 @@ function Reviews(props) {
   const renderShowData = ({item, index}) => {
     let isCurrentUserGuest = false;
 
-    let usr = item.guestId;
-    if (store.User.user._id == usr._id) {
+    let usr = item.guestId || null;
+    const hostId = item.hostId || null;
+    if (usr && store.User.user._id == usr._id) {
       isCurrentUserGuest = true;
     }
 
-    let rate = item.guestRating || 0;
+    const rate = item.guestRating || 0;
 
     //reviewer user
-    let photo = usr.image || '';
-    let isuVeirfy = usr.identityStatus == 'notVerified' ? false : true;
-    let userName = usr.firstName + ' ' + usr.lastName;
-    let avgRating = usr.rating || 0;
-    let totalReviews = usr.reviews || 0;
+
+    let photo = '';
+    let isuVeirfy = false;
+    let userName = 'trip trader user';
+    let avgRating = 0;
+    let totalReviews = 0;
+
+    if (usr) {
+      const blockArr = usr?.followers || [];
+      const isBlock = blockArr.find(
+        item =>
+          (item?.block == true && item?.userId == hostId?._id) ||
+          (item?.blockedBy == true && item?.userId == hostId?._id),
+      );
+      if (isBlock) {
+        usr = null;
+      }
+    }
+
+    if (usr) {
+      photo = usr.image || '';
+      isuVeirfy = usr.identityStatus == 'notVerified' ? false : true;
+      userName = usr.firstName + ' ' + usr.lastName;
+      avgRating = usr.rating || 0;
+      totalReviews = usr.reviews || 0;
+    }
+
     let userCommentid = '';
     let userComment = '';
     let postDate = '';
-    let msgs = item.messages || [];
+    const msgs = item.messages || [];
     let reply = '';
     if (msgs.length > 0) {
-      msgs.map((e, i, a) => {
+      msgs.map(e => {
         if (e.role == 'guest') {
           postDate = e.updatedAt;
           userComment = e.message;
@@ -404,7 +401,7 @@ function Reviews(props) {
       });
     }
 
-    let rusr = user;
+    const rusr = user;
     //host
     let ruserPhoto = '';
     let ruserName = '';
@@ -419,9 +416,9 @@ function Reviews(props) {
       rpostDate = reply.updatedAt;
     }
 
-    let status = item.status;
-    let dispute = status == 'dispute' ? true : false;
-    let disputeDate = dispute ? item.disputeOpenDate : '';
+    const status = item.status;
+    const dispute = status == 'dispute' ? true : false;
+    const disputeDate = dispute ? item.disputeOpenDate : '';
 
     const formatdisputeDate = date => {
       var dd = moment(date).format('MMM DD');
@@ -1868,17 +1865,17 @@ function Reviews(props) {
   return (
     <SafeAreaView style={styles.container}>
       {data.length > 0 && renderShowRes()}
-      <ScrollView
-        style={{marginTop: 3}}
-        nestedScrollEnabled
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }>
+      <View style={{marginTop: 3}}>
         {getDataOnce && data.length <= 0 && !loader && renderMessage('empty')}
 
         {data.length >= 0 && (
           <FlatList
+            contentContainerStyle={{
+              paddingBottom: responsiveHeight(5),
+            }}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
             ref={scrollRef}
             showsVerticalScrollIndicator={false}
             initialNumToRender={18}
@@ -1889,7 +1886,7 @@ function Reviews(props) {
             keyExtractor={(item, index) => index.toString()}
           />
         )}
-      </ScrollView>
+      </View>
       {!getDataOnce && loader && renderLoader()}
       {isModal && renderModal()}
       {isrModal && renderLeaveReviewModal()}

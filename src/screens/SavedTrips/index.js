@@ -70,10 +70,12 @@ function SavedTrips(props) {
     } else {
       BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
       saveTrips.forEach(({tripId}) => {
-        const title =
-          tripId?.hostId?.firstName + ' ' + tripId?.hostId?.lastName || '';
-        if (title.toLowerCase().includes(search.toLowerCase())) {
-          arr.push(tripId);
+        if (tripId) {
+          const title =
+            tripId?.hostId?.firstName + ' ' + tripId?.hostId?.lastName;
+          if (title.toLowerCase().includes(search.toLowerCase())) {
+            arr.push(tripId);
+          }
         }
       });
     }
@@ -85,7 +87,7 @@ function SavedTrips(props) {
         handleBackButtonClick,
       );
     };
-  }, [search]);
+  }, [search, saveTrips]);
 
   useEffect(() => {
     if (saveData.length > 0 && !isloadFirst) LoadFirst(saveData);
@@ -244,7 +246,8 @@ function SavedTrips(props) {
             setIsSuccessModal={setIsSuccessModal}
             setSuccessModalObj={setSuccessModalObj}
             setSuccessCheck={setSuccessCheck}
-            screen={''}
+            screen={'SavedTrips'}
+            props={props}
           />
         )}
         {isMessageModal && (

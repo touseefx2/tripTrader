@@ -57,7 +57,7 @@ class trips {
   };
 
   @action attemptToSaveTrip = (obj, i, suc) => {
-    const body = {tripId: obj._id};
+    const body = {tripId: obj._id, hostId: obj?.hostId?._id};
     console.log('Save Trip Body : ', body);
     this.setSaveLoader(true);
     const uid = store.User.user._id;
@@ -65,7 +65,13 @@ class trips {
     db.hitApi(db.apis.SAVE_TRIP + uid, 'put', body, token)
       ?.then(resp => {
         this.setSaveLoader(false);
-        console.log(`response Save Trip   ${db.apis.SAVE_TRIP} : `, resp.data);
+        console.log(`response Save Trip   ${db.apis.SAVE_TRIP} true : `);
+
+        if (resp.data && resp.data.check == 'reload') {
+          store.General.refreshAlert(resp.data.message);
+          return;
+        }
+
         const rsp = resp.data.data.savedTrips || [];
         this.setsaveTrips(rsp);
         suc(obj);
@@ -103,10 +109,12 @@ class trips {
     db.hitApi(db.apis.UNSAVE_TRIP + uid, 'put', body, token)
       ?.then(resp => {
         this.setDeleteLoader(false);
-        console.log(
-          `response unSave Trip   ${db.apis.UNSAVE_TRIP} : `,
-          resp.data,
-        );
+        console.log(`response unSave Trip ${db.apis.UNSAVE_TRIP} : true `);
+        if (resp.data && resp.data.check == 'reload') {
+          suc();
+          store.General.refreshAlert(resp.data.message);
+          return;
+        }
         const rsp = resp.data.data.savedTrips || [];
         this.setsaveTrips(rsp);
         if (screen == 'home') {

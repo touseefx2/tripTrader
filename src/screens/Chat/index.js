@@ -273,6 +273,11 @@ function Chat(props) {
     closeModal();
     setisSendReport(v);
   };
+
+  const goBackMain = () => {
+    props.navigation.goBack();
+  };
+
   const sendReport = () => {
     Keyboard.dismiss();
 
@@ -283,7 +288,7 @@ function Chat(props) {
           reportby: store.User.user._id,
           userId: rid,
         };
-        store.Userv.SendReportUser(bd, setIsSendRport);
+        store.Userv.SendReportUser(bd, setIsSendRport, goBackMain);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -299,6 +304,7 @@ function Chat(props) {
           () => () => {},
           () => () => {},
           c => setloader(c),
+          goBackMain,
         );
       } else {
         // seterrorMessage('Please connect internet');
@@ -315,6 +321,7 @@ function Chat(props) {
           () => () => {},
           () => () => {},
           c => setloader(c),
+          goBackMain,
         );
       } else {
         // seterrorMessage('Please connect internet');
@@ -332,6 +339,7 @@ function Chat(props) {
           () => () => {},
           () => () => {},
           c => setloader(c),
+          goBackMain,
         );
       } else {
         // seterrorMessage('Please connect internet');
@@ -349,6 +357,7 @@ function Chat(props) {
           () => () => {},
           () => () => {},
           c => setloader(c),
+          goBackMain,
         );
       } else {
         // seterrorMessage('Please connect internet');

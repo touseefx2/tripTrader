@@ -21,8 +21,6 @@ import {ActivityIndicator} from 'react-native-paper';
 export default observer(BlockUsers);
 
 function BlockUsers(props) {
-  const maxModalHeight = theme.window.Height - 100;
-  const [modalHeight, setmodalHeight] = useState(0);
   const toast = useRef(null);
   const toastduration = 700;
   let headerTitle = 'Blocked Users';
@@ -60,6 +58,8 @@ function BlockUsers(props) {
           user._id,
           setGetDataOnce,
           setrefeshing,
+          () => {},
+          '',
         );
       } else {
         setrefeshing(false);
@@ -77,12 +77,15 @@ function BlockUsers(props) {
     toast?.current?.show('User unblock', toastduration);
   };
 
+  const goBackMain = () => {
+    props.navigation.goBack();
+  };
+
   const unblokUser = (uid, i) => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToUnblockUser(uid, i, sucUnblock);
+        store.User.attemptToUnblockUser(uid, i, sucUnblock, goBackMain);
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -134,13 +137,11 @@ function BlockUsers(props) {
     );
   };
 
-  let src = require('../../assets/images/locationPin/img.png');
   const ItemView = ({item, index}) => {
-    let usrr = item.userId;
+    const usrr = item.userId || null;
     //user
-    let photo = usrr.image || '';
-    let userName = usrr.firstName + ' ' + usrr.lastName;
-    let location = usrr.location ? usrr.location : 'Pakistan';
+    const photo = usrr.image || '';
+    const userName = usrr.firstName + ' ' + usrr.lastName;
 
     const renderProfile = () => {
       return (
@@ -156,12 +157,6 @@ function BlockUsers(props) {
             loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
             blurRadius={5}
           />
-          {/* {isVeirfy && (
-            <Image
-              style={styles.miconVerify}
-              source={require('../../assets/images/verified/img.png')}
-            />
-          )} */}
         </View>
       );
     };
@@ -182,6 +177,8 @@ function BlockUsers(props) {
       );
     };
 
+    // if (item.blockedBy == true) return null;
+    // else {
     return (
       <View
         style={[styles.modalinfoConatiner, {marginTop: index == 0 ? 15 : 0}]}>
@@ -217,6 +214,7 @@ function BlockUsers(props) {
         </Pressable>
       </View>
     );
+    // }
   };
 
   const ListHeader = () => {

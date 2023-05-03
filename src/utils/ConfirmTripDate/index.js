@@ -18,12 +18,6 @@ export default function ConfirmTripDate({
   setSuccessCheck,
   screen,
 }) {
-  // const guest = require('../../assets/images/drawer/guest/img.png');
-  // const trnfericon = require('../../assets/images/transfer/img.png');
-  // const durtnicon = require('../../assets/images/confirmTrip/duration/img.png');
-  // const avlblicon = require('../../assets/images/confirmTrip/available/img.png');
-  // const locationicon = require('../../assets/images/confirmTrip/location/img.png');
-
   const maxModalHeight = theme.window.Height - 70;
   const {item} = modalObj;
 
@@ -43,10 +37,10 @@ export default function ConfirmTripDate({
     setIssMaxHeight(modalHeight >= maxModalHeight ? true : false);
   }, [modalHeight]);
 
-  const offerSuccefullySend = () => {
+  const offerSuccefullyConfirm = () => {
     closeModal();
     setSuccessModalObj(modalObj);
-    setSuccessCheck('OfferSend');
+    setSuccessCheck('OfferConfirm');
     setIsSuccessModal(true);
   };
 
@@ -107,10 +101,15 @@ export default function ConfirmTripDate({
           )}
           {step == 2 && (
             <Step2
+              modalObj={modalObj}
+              selectedDates={selectedDates}
               step={step}
               setStep={setStep}
               setmodalHeight={setmodalHeight}
               isMaxHeight={isMaxHeight}
+              loader={loader}
+              offerSuccefullyConfirm={offerSuccefullyConfirm}
+              closeModal={closeModal}
             />
           )}
         </View>

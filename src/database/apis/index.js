@@ -1,7 +1,7 @@
 const BASE_URL =
-  //  'http://192.168.100.10:3001/';
   // 'http://ec2-35-175-134-9.compute-1.amazonaws.com/';
-  'https://api.trip-trader.com/';
+  'http://192.168.100.3:3001/';
+// 'https://api.trip-trader.com/';
 
 //apis
 const GET_CITIES_AREAS = 'api/area/getAllAreas';
@@ -51,6 +51,8 @@ const GET_ACTIVITY = 'api/type?status=active';
 const GET_FOLLOWERS = 'api/user/followers/';
 const GET_FOLLOWING = 'api/user/following/';
 const GET_BLOCK_USER = 'api/user/blockedUsers/';
+const GET_BLOCK_ANOTHER_USER = 'api/user/blockedByUsers/';
+
 const BLOCK_USER = 'api/user/blockAUser/';
 const UNBLOCK_USER = 'api/user/unBlockAUser/';
 const FOLLOW_USER = 'api/user/followAUser/';
@@ -83,6 +85,7 @@ const GET_CONFIRM_OFFERS = 'api/offer/getConfirmedTrips/';
 const CANCEL_OFFER = 'api/offer/declineTrip/';
 const CONFIRM_OFFERS = 'api/offer/confirmTrip/';
 const RESEND_VERIFICATION_LINK = 'api/user/resendEmail';
+const LOGOUT_ACCOUNT = 'api/user/logout/';
 
 export default apis = {
   BASE_URL,
@@ -131,6 +134,7 @@ export default apis = {
   GET_FOLLOWERS,
   GET_FOLLOWING,
   GET_BLOCK_USER,
+  GET_BLOCK_ANOTHER_USER,
   FOLLOW_USER,
   UNFOLLOW_USER,
   BLOCK_USER,
@@ -161,4 +165,5 @@ export default apis = {
   BUY_PLAN,
   CARD_INFO,
   RESEND_VERIFICATION_LINK,
+  LOGOUT_ACCOUNT,
 };

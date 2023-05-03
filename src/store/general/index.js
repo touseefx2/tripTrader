@@ -1,6 +1,8 @@
 import {observable, makeObservable, action} from 'mobx';
 import {AppState, Alert} from 'react-native';
 import {persist} from 'mobx-persist';
+import NetInfo from '@react-native-community/netinfo';
+import store from '..';
 
 class general {
   constructor() {
@@ -47,6 +49,28 @@ class general {
       Alert.alert('Network Error', 'Server not responding');
       return;
     }
+  };
+
+  @action refreshAlert = msg => {
+    Alert.alert('', msg, [
+      {
+        text: 'Refresh',
+        onPress: () => {
+          NetInfo.fetch().then(state => {
+            if (state.isConnected) {
+              store.User.attemptToGetHomeTripsSearch(
+                () => {},
+                store.User.blockUsers,
+                'all',
+              );
+            } else {
+              Alert.alert('', 'Please connect internet');
+            }
+          });
+        },
+      },
+    ]);
+    return;
   };
 
   @action setphotoSelInd = obj => {

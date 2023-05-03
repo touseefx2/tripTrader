@@ -101,6 +101,7 @@ function UserProfile(props) {
   const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
+        store.Userv.getUserById(user._id, goBackMain);
         store.Userv.attemptToGetHome(
           user._id,
           setGetDataOnce,
@@ -139,6 +140,10 @@ function UserProfile(props) {
     }
   }, [store.User.user]);
 
+  const goBackMain = () => {
+    props.navigation.goBack();
+  };
+
   const setIsSendRport = v => {
     setsendObj(modalObj.item);
     closeModal();
@@ -154,7 +159,7 @@ function UserProfile(props) {
           reportby: store.User.user._id,
           userId: user._id,
         };
-        store.Userv.SendReportUser(bd, setIsSendRport);
+        store.Userv.SendReportUser(bd, setIsSendRport, goBackMain);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
@@ -170,6 +175,7 @@ function UserProfile(props) {
           c => setfollowers(c),
           c => setfollowing(c),
           c => setloader(c),
+          goBackMain,
         );
       } else {
         // seterrorMessage('Please connect internet');
@@ -186,6 +192,7 @@ function UserProfile(props) {
           c => setfollowers(c),
           c => setfollowing(c),
           c => setloader(c),
+          goBackMain,
         );
       } else {
         // seterrorMessage('Please connect internet');
@@ -204,6 +211,7 @@ function UserProfile(props) {
           c => setfollowers(c),
           c => setfollowing(c),
           c => setloader(c),
+          goBackMain,
         );
       } else {
         // seterrorMessage('Please connect internet');
@@ -222,6 +230,7 @@ function UserProfile(props) {
           c => setfollowers(c),
           c => setfollowing(c),
           c => setloader(c),
+          goBackMain,
         );
       } else {
         // seterrorMessage('Please connect internet');
@@ -242,12 +251,10 @@ function UserProfile(props) {
     trips: Trips,
     photos: Photos,
   });
-  // store.User.OtherProfileProps
+
   useEffect(() => {
     store.User.setOtherProfileProps(props);
-    return () => {
-      // store.Userv.clearUser();
-    };
+    return () => {};
   }, []);
 
   const setErrMessage = c => {

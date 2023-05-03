@@ -22,6 +22,7 @@ export default function MakeOffer({
   setSuccessModalObj,
   setSuccessCheck,
   screen,
+  props,
 }) {
   const maxModalHeight = theme.window.Height - 70;
   const {item} = modalObj;
@@ -300,6 +301,9 @@ export default function MakeOffer({
               unAvailable={unAvailable}
               offerSuccefullySend={offerSuccefullySend}
               loader={loader}
+              closeModal={closeModal}
+              screen={screen}
+              props={props}
             />
           )}
         </View>

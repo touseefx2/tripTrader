@@ -32,8 +32,8 @@ function Settings(props) {
   const headerTitle = 'Settings';
   const toast = useRef(null);
   const activeOpacity = 0.8;
-  const {isInternet, settingsGoTo, setSettingsGoTo} = store.General;
-  const {user, isNotification} = store.User;
+  const {isInternet, settingsGoTo, setSettingsGoTo, setgoto} = store.General;
+  const {user, isNotification, Logout, logoutLoader} = store.User;
 
   let phn = '';
   let phnCntr = '';
@@ -100,8 +100,8 @@ function Settings(props) {
   }, [user]);
 
   const JoinNow = () => {
-    store.General.setgoto('joinnow');
-    store.User.Logout();
+    setgoto('joinnow');
+    Logout();
   };
 
   const onClick = c => {
@@ -122,17 +122,20 @@ function Settings(props) {
     if (c == 'Delete Account') openDeleteAccountModal();
 
     if (c == 'logout') {
-      store.General.setgoto('home');
-      store.User.Logout();
+      logoutAccount();
     }
+  };
+
+  const logoutAccount = () => {
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.User.attemptToLogoutAccount();
+      } else Alert.alert('', 'Please connect internet');
+    });
   };
 
   const openDeleteAccountModal = () => {
     setIsDeletAccountModal(true);
-  };
-
-  const closeDeleteAccountModal = () => {
-    setIsDeletAccountModal(false);
   };
 
   const openWebView = () => {
@@ -519,6 +522,7 @@ function Settings(props) {
         />
       )}
       <Toast ref={toast} position="bottom" />
+      <utils.Loader load={logoutLoader} />
     </View>
   );
 }

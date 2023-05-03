@@ -12,7 +12,6 @@ const styles = {
 
 const Homeicon = {
   drawerLabel: 'Home',
-
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}
@@ -23,7 +22,6 @@ const Homeicon = {
 
 const Inboxicon = {
   drawerLabel: 'Inbox',
-
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}
@@ -45,7 +43,6 @@ const NewTripicon = {
 
 const MyProfileicon = {
   drawerLabel: 'My Profile',
-
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}
@@ -56,7 +53,6 @@ const MyProfileicon = {
 
 const EditProfileicon = {
   drawerLabel: 'Edit Profile',
-
   unmountOnBlur: true,
   drawerIcon: ({focused, size}) => (
     <Image
@@ -68,7 +64,6 @@ const EditProfileicon = {
 
 const TradeOffersicon = {
   drawerLabel: 'Trade Offers',
-
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}
@@ -79,7 +74,7 @@ const TradeOffersicon = {
 
 const ConfirmedTripsicon = {
   drawerLabel: 'Confirmed Trips',
-
+  unmountOnBlur: true,
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}
@@ -102,7 +97,6 @@ const SavedTripsicons = {
 
 const Supporticon = {
   drawerLabel: 'Support',
-
   unmountOnBlur: true,
   drawerIcon: ({focused, size}) => (
     <Image
@@ -114,6 +108,7 @@ const Supporticon = {
 
 const LatestNewsicon = {
   drawerLabel: 'Latest News',
+  unmountOnBlur: true,
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}
@@ -124,6 +119,7 @@ const LatestNewsicon = {
 
 const PrivacyPolicyicon = {
   drawerLabel: 'Privacy Policy',
+  unmountOnBlur: true,
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}
@@ -135,7 +131,6 @@ const PrivacyPolicyicon = {
 const Settingsicons = {
   drawerLabel: 'Settings',
   unmountOnBlur: true,
-
   drawerIcon: ({focused, size}) => (
     <Image
       style={styles.icon}
@@ -158,12 +153,13 @@ const Notificationsicons = {
 const icon = {
   Homeicon,
   Inboxicon,
-  NewTripicon,
   TradeOffersicon,
-  ConfirmedTripsicon,
   SavedTripsicons,
+
   MyProfileicon,
   EditProfileicon,
+  NewTripicon,
+  ConfirmedTripsicon,
 
   Supporticon,
   LatestNewsicon,

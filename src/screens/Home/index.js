@@ -165,11 +165,19 @@ function Home(props) {
           if (user == 'guest') {
             store.User.attemptToGetHomeTripsGuest(setGetDataOnce);
           } else {
-            store.User.attemptToGetHomeTripsSearch(
+            store.User.attemptToGetBloackUsers(
+              store.User.user._id,
+              () => {},
+              () => {},
               setGetDataOnce,
-              blockUsers,
               '',
             );
+
+            // store.User.attemptToGetHomeTripsSearch(
+            //   setGetDataOnce,
+            //   blockUsers,
+            //   '',
+            // );
           }
         }
       });
@@ -303,20 +311,27 @@ function Home(props) {
 
   const onRefresh = React.useCallback(() => {
     console.log('onrefresh cal');
-    getDbData(blockUsers);
-  }, [blockUsers]);
+    getDbData();
+  }, []);
 
-  const getDbData = blockUsers => {
+  const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         if (user == 'guest') {
           store.User.attemptToGetHomeTripsGuest(setGetDataOnce);
         } else {
-          store.User.attemptToGetHomeTripsSearch(
+          store.User.attemptToGetBloackUsers(
+            store.User.user._id,
+            () => {},
+            () => {},
             setGetDataOnce,
-            blockUsers,
             'all',
           );
+          // store.User.attemptToGetHomeTripsSearch(
+          //   setGetDataOnce,
+          //   blockUsers,
+          //   'all',
+          // );
         }
       }
     });
@@ -350,9 +365,16 @@ function Home(props) {
         if (user == 'guest') {
           store.User.attemptToGetHomeTripsGuest(setGetDataOnce);
         } else {
-          store.User.attemptToGetHomeTripsSearch(
+          // store.User.attemptToGetHomeTripsSearch(
+          //   setGetDataOnce,
+          //   blockUsers,
+          //   '',
+          // );
+          store.User.attemptToGetBloackUsers(
+            store.User.user._id,
+            () => {},
+            () => {},
             setGetDataOnce,
-            blockUsers,
             '',
           );
         }
@@ -862,7 +884,6 @@ function Home(props) {
             isVisible={isShowSearch}
             setisVisible={c => setisShowSearch(c)}
             setGetDataOnce={c => setGetDataOnce(c)}
-            blckUser={blockUsers}
           />
         )}
         {isShowFilters && (
@@ -870,7 +891,6 @@ function Home(props) {
             isVisible={isShowFilters}
             setisVisible={c => setisShowFilters(c)}
             setGetDataOnce={c => setGetDataOnce(c)}
-            blckUser={blockUsers}
           />
         )}
         {fullImageModal && (
@@ -900,7 +920,8 @@ function Home(props) {
             setIsSuccessModal={setIsSuccessModal}
             setSuccessModalObj={setSuccessModalObj}
             setSuccessCheck={setSuccessCheck}
-            screen={''}
+            screen={'Home'}
+            props={props}
           />
         )}
         {isMessageModal && (

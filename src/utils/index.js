@@ -25,6 +25,7 @@ import unSaveTripModal from './unSaveTripModal';
 import EmailPopupSheet from './EmailPopupSheet';
 import deleteAccountModal from './deleteAccountModal';
 import ConfirmTripDate from './ConfirmTripDate';
+import CancelOfferModal from './CancelOfferModal';
 
 const utils = {
   vectorIcon,
@@ -54,6 +55,7 @@ const utils = {
   EmailPopupSheet,
   deleteAccountModal,
   ConfirmTripDate,
+  CancelOfferModal,
 };
 
 export default utils;

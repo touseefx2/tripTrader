@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Platform,
   Image,
+  Alert,
 } from 'react-native';
 import {
   DrawerContentScrollView,
@@ -21,18 +22,24 @@ import {
 } from 'react-native-responsive-dimensions';
 import {ScrollView} from 'react-native-gesture-handler';
 import store from '../../store';
+import NetInfo from '@react-native-community/netinfo';
 
 export default observer(CustomDrawerContent);
 function CustomDrawerContent(props) {
-  let user = store.User.user;
+  const {user, logoutLoader} = store.User;
+  const {setFocusScreen} = store.General;
 
   const {routes, index} = props.state;
   const focusedRoute = routes[index].name; // this is the active route
-  store.General.setFocusScreen(focusedRoute);
+  setFocusScreen(focusedRoute);
   const [profileImageLoader, setprofileImageLoader] = useState(false);
 
   const goToLogout = () => {
-    store.User.Logout();
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.User.attemptToLogoutAccount();
+      } else Alert.alert('', 'Please connect internet');
+    });
   };
 
   const goToProfile = () => {
@@ -150,6 +157,7 @@ function CustomDrawerContent(props) {
       </DrawerContentScrollView>
       {renderBottom()}
       {Platform.OS == 'ios' && <utils.navBarHeight />}
+      <utils.Loader load={logoutLoader} />
     </View>
   );
 }

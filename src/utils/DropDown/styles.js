@@ -8,7 +8,6 @@ export const styles = StyleSheet.create({
   Container: {
     width: '100%',
     borderColor: bordercolor,
-    borderWidth: 1,
     alignSelf: 'center',
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
@@ -21,7 +20,6 @@ export const styles = StyleSheet.create({
     },
     shadowOpacity: 0.18,
     shadowRadius: 1.0,
-
     elevation: 1,
   },
   searchBarContainer: {

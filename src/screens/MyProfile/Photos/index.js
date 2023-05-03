@@ -1,23 +1,14 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   SafeAreaView,
-  TouchableOpacity,
   Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
   Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Dimensions,
   Modal,
   FlatList,
   ActivityIndicator,
   RefreshControl,
-  ScrollView,
   Pressable,
 } from 'react-native';
 import {styles} from './styles';
@@ -26,7 +17,6 @@ import store from '../../../store';
 import NetInfo from '@react-native-community/netinfo';
 import theme from '../../../theme';
 import utils from '../../../utils/index';
-import moment from 'moment';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
 
 export default observer(Photos);
@@ -328,25 +318,15 @@ function Photos(props) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* {data.length > 0 && renderShowRes()} */}
-      <ScrollView
-        style={{marginTop: 3}}
-        nestedScrollEnabled
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }>
+      <View style={{marginTop: 3}}>
         {getDataOnce && data.length <= 0 && !loader && renderMessage('empty')}
-        {/* {!getDataOnce &&
-          !internet &&
-          !loader &&
-          data.length <= 0 &&
-          renderMessage('internet')} */}
 
         {data.length >= 0 && (
           <FlatList
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
             showsVerticalScrollIndicator={false}
-            // columnWrapperStyle={{justifyContent: 'space-between'}}
             numColumns={3}
             initialNumToRender={18}
             maxToRenderPerBatch={6}
@@ -356,7 +336,7 @@ function Photos(props) {
             keyExtractor={(item, index) => index.toString()}
           />
         )}
-      </ScrollView>
+      </View>
       {!getDataOnce && loader && renderLoader()}
 
       {pvm && (

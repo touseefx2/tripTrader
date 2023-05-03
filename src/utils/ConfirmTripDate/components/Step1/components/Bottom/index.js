@@ -17,7 +17,7 @@ export default function Bottom({
         style={({pressed}) => [
           styles.ButtonContainer,
           {
-            opacity: pressed ? 0.9 : 1.0,
+            opacity: pressed ? 0.8 : 1.0,
             borderWidth: 1,
             borderColor: theme.color.fieldBorder,
             marginRight: 10,

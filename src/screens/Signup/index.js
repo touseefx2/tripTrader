@@ -496,11 +496,12 @@ function Signup(props) {
           phoneCountryCode: RNLocalize.getCountry(),
           image: '',
           identityProof: '',
-          registrationCode: store.User.notificationToken,
+          registrationCode: [store.User.notificationToken],
           subscriptionStatus: 'freemium',
           role: 'user',
           status: 'active',
           notificationEnabled: true,
+          mode: 'mobile',
         };
         store.User.registerUser(body, UserCreateSuccess);
       } else {
@@ -1437,7 +1438,9 @@ function Signup(props) {
       clearCard();
     };
 
-    const TermsnCndtnClickCard = () => {};
+    const TermsnCndtnClickCard = () => {
+      openWebView();
+    };
 
     // Render
 

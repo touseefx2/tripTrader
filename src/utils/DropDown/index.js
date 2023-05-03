@@ -68,7 +68,7 @@ function Footer({onClickItem}) {
 export default function DropDown(props) {
   const isSearchBar = props.search || false;
   const isFooter = props.footer || false;
-  const c = props.c;
+  const check = props.c;
   const absolute = props.absolute || false;
 
   const [modalHeight, setmodalHeight] = useState(0);
@@ -84,17 +84,17 @@ export default function DropDown(props) {
       if (props.data.length > 0) {
         d = props.data.filter(item => {
           let n =
-            c == 'loc' ||
-            c == 'actvty' ||
-            c == 'spcs' ||
-            c == 'tt' ||
-            c == 'state'
+            check == 'loc' ||
+            check == 'actvty' ||
+            check == 'spcs' ||
+            check == 'tt' ||
+            check == 'state'
               ? item.name
-              : c == 'topic'
+              : check == 'topic'
               ? item.title
-              : c == 'dur' || c == 'rdur'
+              : check == 'dur' || check == 'rdur'
               ? item.title
-              : c == 'trip'
+              : check == 'trip'
               ? item.species
               : '';
 
@@ -121,15 +121,15 @@ export default function DropDown(props) {
 
   const renderItems = ({item}) => {
     let title =
-      c == 'loc' || c == 'actvty' || c == 'spcs' || c == 'state'
+      check == 'loc' || check == 'actvty' || check == 'spcs' || check == 'state'
         ? item.name
-        : c == 'tt'
+        : check == 'tt'
         ? item.name
-        : c == 'topic'
+        : check == 'topic'
         ? item.title
-        : c == 'dur' || c == 'rdur'
+        : check == 'dur' || check == 'rdur'
         ? item.title
-        : c == 'trip'
+        : check == 'trip'
         ? item.species
         : '';
 
@@ -143,7 +143,7 @@ export default function DropDown(props) {
         <View style={styles.rowContainer}>
           <Text style={[styles.Text, ts]}>
             {title}
-            {c == 'tt' && ' Trip'}
+            {check == 'tt' && ' Trip'}
           </Text>
         </View>
       </TouchableHighlight>
@@ -171,7 +171,14 @@ export default function DropDown(props) {
             setmodalHeight(height);
           }
         }}
-        style={[styles.Container, style]}>
+        style={[
+          styles.Container,
+          {
+            borderWidth: check == 'trip' && props.data.length <= 0 ? 0 : 1,
+            maxHeight: maxModalHeight,
+          },
+          style,
+        ]}>
         <KeyboardAvoidingView enabled>
           <FlatList
             showsVerticalScrollIndicator={false}
@@ -180,7 +187,7 @@ export default function DropDown(props) {
             data={data}
             nestedScrollEnabled
             ListEmptyComponent={
-              c == 'trip' && props.data.length <= 0 ? null : (
+              check == 'trip' && props.data.length <= 0 ? null : (
                 <EmptyListMessage />
               )
             }

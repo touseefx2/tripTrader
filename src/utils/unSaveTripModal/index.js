@@ -24,7 +24,7 @@ export default function unSaveTripModal({
   const {item, selIndex} = modalObj;
   const {title, returnActivity} = item;
   const {firstName, lastName, image} = item.hostId;
-  const {unSaveTrip, attemptTounSaveTrip} = store.Trips;
+  const {attemptTounSaveTrip} = store.Trips;
 
   const [isMaxHeight, setIssMaxHeight] = useState(false);
   const [modalHeight, setmodalHeight] = useState(0);

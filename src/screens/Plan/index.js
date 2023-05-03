@@ -50,6 +50,9 @@ function Plan(props) {
 
   const [isPage, setisPage] = useState(1);
 
+  const [isShowTermsAndConditions, setIsShowTermsAndConditions] =
+    useState(false);
+
   const [cfn, setcfn] = useState('');
   const [Emptycfn, setEmptycfn] = useState(false);
   const [isValidCard, setisValidCard] = useState('null');
@@ -515,7 +518,15 @@ function Plan(props) {
       goBack();
     };
 
-    const TermsnCndtnClickCard = () => {};
+    const TermsnCndtnClickCard = () => {
+      NetInfo.fetch().then(state => {
+        if (state.isConnected) {
+          setIsShowTermsAndConditions(true);
+        } else {
+          Alert.alert('Network Error', 'Please connect internet.');
+        }
+      });
+    };
 
     // Render
 
@@ -1241,6 +1252,13 @@ function Plan(props) {
         <utils.Loader load={loader} />
 
         {renderStatusBar()}
+        {isShowTermsAndConditions && (
+          <utils.WebViewModal
+            link={store.General.Terms_and_Conditions_Link}
+            isVisible={isShowTermsAndConditions}
+            setisVisible={setIsShowTermsAndConditions}
+          />
+        )}
       </View>
     </StripeProvider>
   );

@@ -6,8 +6,6 @@ import utils from '../../utils';
 import moment from 'moment';
 import {Calendar} from 'react-native-calendars';
 import Bottom from './components/Bottom';
-// import * as RNLocalize from 'react-native-localize';
-// import {getCurrentDateTime, getCurrentTimeZone} from './fun';
 
 export default function SelectionCalender({
   modalObj,
@@ -24,7 +22,7 @@ export default function SelectionCalender({
   const {item} = modalObj;
 
   const {availableFrom, availableTo, unAvailableDays} =
-    screen == '' ? item : item.hostTrip;
+    screen == 'received' ? item.hostTrip : item;
   let numOfDays = totalDays;
   const startDate = availableFrom;
   const endDate = availableTo;
@@ -44,14 +42,6 @@ export default function SelectionCalender({
   const [minimumDate, setMinimumDate] = useState(minDate);
   const [maximumDate, setMaximumDate] = useState(maxDate);
   const [markedDates, setMarkedDates] = useState(selectedDates);
-
-  // console.log(
-  //   'all_unavailable_dates ',
-  //   moment(new Date(all_unavailable_dates[0])).format('YYYY-MM-DD'),
-  // );
-
-  // const timezone = RNLocalize.getTimeZone(); // set the desired time zone
-  // console.log(getCurrentDateTime(timezone, '2023-04-13T00:00:00.000+00:00'));
 
   all_unavailable_dates.map(item => {
     unavailableDays[moment(item).format('YYYY-MM-DD')] = {

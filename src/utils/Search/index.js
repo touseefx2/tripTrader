@@ -1,13 +1,11 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
-  SafeAreaView,
   TouchableOpacity,
   Image,
   StatusBar,
   ScrollView,
-  ActivityIndicator,
   Dimensions,
   TextInput,
   Pressable,
@@ -479,7 +477,6 @@ function Search(props) {
               isVisible={isShowFilters}
               setisVisible={c => setisShowFilters(c)}
               setGetDataOnce={c => props.setGetDataOnce(c)}
-              blckUser={props.blckUser}
             />
           )}
         </View>

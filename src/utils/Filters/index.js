@@ -179,11 +179,18 @@ function Filters(props) {
         if (user == 'guest') {
           store.User.attemptToGetHomeTripsGuest(c => props.setGetDataOnce(c));
         } else {
-          store.User.attemptToGetHomeTripsSearch(
+          store.User.attemptToGetBloackUsers(
+            store.User.user._id,
+            () => {},
+            () => {},
             c => props.setGetDataOnce(c),
-            props.blckUser,
             '',
           );
+          // store.User.attemptToGetHomeTripsSearch(
+          //   c => props.setGetDataOnce(c),
+          //   props.blckUser,
+          //   '',
+          // );
         }
       } else {
         Alert.alert('Please connect internet');

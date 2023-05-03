@@ -30,6 +30,9 @@ export default function Step4({
   unAvailable,
   offerSuccefullySend,
   loader,
+  closeModal,
+  screen,
+  props,
 }) {
   const {item} = modalObj;
   const {firstName, lastName, image, _id} = item.hostId;
@@ -39,6 +42,12 @@ export default function Step4({
     : require('../../../../assets/images/drawer/guest/img.png');
   const species = item.species + ' ' + item.tradeType || '';
   const locationName = city + ', ' + selectedState.name;
+
+  const goBackMain = () => {
+    if (screen == 'UserProfile') {
+      props.navigation.goBack();
+    }
+  };
 
   const goBack = () => {
     setStep(3);
@@ -104,7 +113,12 @@ export default function Step4({
           status: 'pending',
         };
 
-        store.User.attemptToOfferSend(object, offerSuccefullySend);
+        store.User.attemptToOfferSend(
+          object,
+          offerSuccefullySend,
+          closeModal,
+          goBackMain,
+        );
       } else {
         Alert.alert('', 'Please connect internet');
       }

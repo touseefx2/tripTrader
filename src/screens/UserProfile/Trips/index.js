@@ -3,28 +3,9 @@ import {
   View,
   Text,
   SafeAreaView,
-  TouchableOpacity,
-  Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
-  Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Dimensions,
-  Modal,
-  FlatList,
   ActivityIndicator,
   RefreshControl,
-  ScrollView,
-  Pressable,
-  TextInput,
-  Keyboard,
 } from 'react-native';
-import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-import {Calendar} from 'react-native-calendars';
-import moment from 'moment';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../../store';
@@ -35,7 +16,6 @@ import Accordion from 'react-native-collapsible/Accordion';
 import Card1 from './Card1';
 import Card2 from './Card2';
 import Card3 from './Card3';
-import EmptyListMessage from './Components/EmptyListMessage';
 import ItemSeparatorView from './Components/ItemSeparatorView';
 
 export default observer(Trips);
@@ -87,7 +67,7 @@ function Trips(props) {
   }, [getDataOnce, isInternet]);
 
   const onRefresh = React.useCallback(() => {
-    console.warn('onrefresh cal');
+    console.log('onrefresh cal');
     setrefreshing(true);
     getDbData();
   }, []);
@@ -108,7 +88,7 @@ function Trips(props) {
           c => setloader(c),
         );
       } else {
-        setrefeshing(false);
+        setrefreshing(false);
       }
     });
   };
@@ -157,17 +137,14 @@ function Trips(props) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
-        style={{marginTop: 3}}
-        nestedScrollEnabled
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }>
+      <View style={{marginTop: 3}}>
         {getDataOnce && data.length <= 0 && !loader && rendeEmptyrMessage()}
         {!getDataOnce && loader && renderLoader()}
         {data.length >= 0 && (
           <Accordion
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
             screen="UserProfile"
             renderAsFlatList
             ref={scrollRef2}
@@ -206,7 +183,7 @@ function Trips(props) {
             )}
           />
         )}
-      </ScrollView>
+      </View>
 
       {isOfferModal && (
         <utils.MakeOffer
@@ -221,7 +198,8 @@ function Trips(props) {
           setIsSuccessModal={setIsSuccessModal}
           setSuccessModalObj={setSuccessModalObj}
           setSuccessCheck={setSuccessCheck}
-          screen={''}
+          screen={'UserProfile'}
+          props={OtherProfileProps}
         />
       )}
 

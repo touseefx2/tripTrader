@@ -242,6 +242,61 @@ function capitalizeTheFirstLetterOfEachWord(words) {
   return separateWord.join(' ');
 }
 
+function FormatePreferDate(selectedDates) {
+  let text = '';
+  let datesArr = [];
+  if (selectedDates.length > 0) {
+    selectedDates.forEach(item => {
+      datesArr.push(moment(item).format('MMM DD, YYYY'));
+    });
+  }
+  if (datesArr.length > 0) {
+    const startDate = datesArr[0];
+    if (datesArr.length > 1) {
+      const endDate = datesArr[datesArr.length - 1];
+
+      const startDateYear = parseInt(new Date(startDate).getFullYear());
+
+      const endDateYear = parseInt(new Date(endDate).getFullYear());
+
+      if (startDateYear == endDateYear) {
+        text =
+          moment(startDate).format('MMM DD') +
+          ' - ' +
+          moment(endDate).format('MMM DD, YYYY');
+      } else {
+        text = startDate + ' - ' + endDate;
+      }
+    } else if (datesArr.length <= 1) {
+      text = startDate;
+    }
+  }
+
+  return text;
+}
+
+function FormateAvailableDate(startDate, endDate) {
+  let text = '';
+
+  const firstDate = startDate;
+  const firstDateYear = parseInt(new Date(firstDate).getFullYear());
+  const secondDate = endDate;
+  const secondDateYear = parseInt(new Date(secondDate).getFullYear());
+  if (firstDateYear == secondDateYear) {
+    text =
+      moment(firstDate).format('MMM DD') +
+      ' - ' +
+      moment(secondDate).format('MMM DD, YYYY');
+  } else {
+    text =
+      moment(firstDate).format('MMM DD, YYYY') +
+      ' - ' +
+      moment(secondDate).format('MMM DD, YYYY');
+  }
+
+  return text;
+}
+
 export const functions = {
   isObjectEmpty,
   findItem,
@@ -253,4 +308,6 @@ export const functions = {
   formatTitle,
   CheckisAlreadySaveTrip,
   capitalizeTheFirstLetterOfEachWord,
+  FormatePreferDate,
+  FormateAvailableDate,
 };

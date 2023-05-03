@@ -9,7 +9,6 @@ import {
   FlatList,
   ActivityIndicator,
   RefreshControl,
-  ScrollView,
   Pressable,
 } from 'react-native';
 import {styles} from './styles';
@@ -54,7 +53,7 @@ function Photos(props) {
   };
 
   const onRefresh = React.useCallback(() => {
-    console.warn('onrefresh cal');
+    console.log('onrefresh cal');
     setRefreshing(true);
     getDbData();
   }, []);
@@ -312,25 +311,15 @@ function Photos(props) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* {data.length > 0 && renderShowRes()} */}
-      <ScrollView
-        style={{marginTop: 3}}
-        nestedScrollEnabled
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }>
+      <View style={{marginTop: 3}}>
         {getDataOnce && data.length <= 0 && !loader && renderMessage('empty')}
-        {/* {!getDataOnce &&
-          !internet &&
-          !loader &&
-          data.length <= 0 &&
-          renderMessage('internet')} */}
 
         {data.length >= 0 && (
           <FlatList
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
             showsVerticalScrollIndicator={false}
-            // columnWrapperStyle={{justifyContent: 'space-between'}}
             numColumns={3}
             initialNumToRender={18}
             maxToRenderPerBatch={6}
@@ -340,7 +329,7 @@ function Photos(props) {
             keyExtractor={(item, index) => index.toString()}
           />
         )}
-      </ScrollView>
+      </View>
       {!getDataOnce && loader && renderLoader()}
 
       {pvm && (

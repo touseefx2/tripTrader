@@ -1,23 +1,11 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   SafeAreaView,
-  TouchableOpacity,
-  Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
-  Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Dimensions,
-  Modal,
   FlatList,
   ActivityIndicator,
   RefreshControl,
-  ScrollView,
   Pressable,
 } from 'react-native';
 import {styles} from './styles';
@@ -25,7 +13,6 @@ import {observer} from 'mobx-react';
 import store from '../../../store';
 import NetInfo from '@react-native-community/netinfo';
 import theme from '../../../theme';
-import utils from '../../../utils/index';
 import moment from 'moment';
 
 export default observer(Trips);
@@ -299,13 +286,7 @@ function Trips(props) {
   return (
     <SafeAreaView style={styles.container}>
       {/* {data.length > 0 && renderShowRes()} */}
-      <ScrollView
-        style={{marginTop: 3}}
-        nestedScrollEnabled
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }>
+      <View style={{marginTop: 3}}>
         {getDataOnce && data.length <= 0 && !loader && renderMessage('empty')}
         {/* {!getDataOnce &&
           !internet &&
@@ -315,6 +296,9 @@ function Trips(props) {
 
         {data.length >= 0 && (
           <FlatList
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
             showsVerticalScrollIndicator={false}
             initialNumToRender={18}
             maxToRenderPerBatch={6}
@@ -324,7 +308,7 @@ function Trips(props) {
             keyExtractor={(item, index) => index.toString()}
           />
         )}
-      </ScrollView>
+      </View>
       {!getDataOnce && loader && renderLoader()}
     </SafeAreaView>
   );

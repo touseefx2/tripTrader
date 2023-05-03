@@ -27,9 +27,6 @@ import moment from 'moment';
 export default observer(Sent);
 
 function Sent(props) {
-  let maxModalHeight = theme.window.Height - 100;
-  const [modalHeight, setmodalHeight] = useState(0);
-
   const guest = require('../../../assets/images/drawer/guest/img.png');
   const trnfericon = require('../../../assets/images/transfer/img.png');
   const durtnicon = require('../../../assets/images/confirmTrip/duration/img.png');
@@ -37,10 +34,10 @@ function Sent(props) {
   const locationicon = require('../../../assets/images/confirmTrip/location/img.png');
 
   const {isInternet, offerGoTo, setOfferGoTo} = store.General;
+  const {homeModalLoder} = store.User;
 
-  const [modalObj, setmodalObj] = useState(false);
-  const [modalChk, setmodalChk] = useState(false);
-  const [isModal, setisModal] = useState(false);
+  const [modalObj, setModalObj] = useState(false);
+  const [isCancelOfferModal, setIsCancelOfferModal] = useState(false);
 
   let data = store.Offers.sentOffers;
   let mloader = store.Offers.Loader;
@@ -64,7 +61,7 @@ function Sent(props) {
     setRefreshing(c);
   };
   const onRefresh = React.useCallback(() => {
-    console.warn('onrefresh cal');
+    console.log('onrefresh cal');
     setRefreshing(true);
     getDbData();
   }, []);
@@ -83,28 +80,6 @@ function Sent(props) {
     }
     return () => {};
   }, [getDataOnce, isInternet]);
-
-  const closeModal = () => {
-    if (!mmloader) {
-      setisModal(false);
-      setmodalObj(false);
-      setmodalChk(false);
-      setmodalHeight(0);
-    }
-  };
-
-  const cancelOffer = () => {
-    Keyboard.dismiss();
-
-    NetInfo.fetch().then(state => {
-      if (state.isConnected) {
-        store.Offers.attemptToCancelOffer(modalObj, closeModal);
-      } else {
-        // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
-      }
-    });
-  };
 
   const ItemSeparatorView = () => {
     return (
@@ -614,62 +589,6 @@ function Sent(props) {
         );
       };
 
-      // const renderBottom = () => {
-      //   let bc = {
-      //     width: '46%',
-      //     alignItems: 'center',
-      //     justifyContent: 'center',
-      //     borderRadius: 5,
-      //     height: 46,
-      //     borderWidth: 1,
-      //     borderColor: theme.color.fieldBorder,
-      //   };
-
-      //   let btS = {
-      //     color: '#3C6B49',
-      //     fontSize: 15,
-      //     fontFamily: theme.fonts.fontBold,
-      //   };
-
-      //   return (
-      //     <View
-      //       style={{
-      //         width: '100%',
-      //         marginTop: 20,
-      //         alignSelf: 'center',
-      //         flexDirection: 'row',
-      //         alignItems: 'center',
-      //         justifyContent: 'space-between',
-      //       }}>
-      //       <Pressable
-      //         style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc]}
-      //         onPress={() => {
-      //           setmodalObj({item: item, i: index});
-      //           setmodalChk('message');
-      //           setisModal(true);
-      //         }}>
-      //         <Text numberOfLines={1} ellipsizeMode="tail" style={btS}>
-      //           Message
-      //         </Text>
-      //       </Pressable>
-
-      //       <Pressable
-      //         onPress={() => {
-      //           store.User.clearOtherUser();
-      //           store.User.setfscreen('confirmedtrips');
-      //           store.User.setvUser(item.user);
-
-      //           props.navigation.navigate('UserProfile');
-      //         }}
-      //         style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc]}>
-      //         <Text numberOfLines={1} ellipsizeMode="tail" style={btS}>
-      //           View Profile
-      //         </Text>
-      //       </Pressable>
-      //     </View>
-      //   );
-      // };
-
       const renderBottom = () => {
         let bc = {
           width: '100%',
@@ -696,9 +615,7 @@ function Sent(props) {
             }}>
             <Pressable
               onPress={() => {
-                setmodalObj({item: item, i: index});
-                setmodalChk('cancelOffer');
-                setisModal(true);
+                openModal({item: item, selIndex: index}, 'cancelOffer');
               }}
               style={({pressed}) => [{opacity: pressed ? 0.8 : 1}, bc]}>
               <Text numberOfLines={1} ellipsizeMode="tail" style={btS}>
@@ -738,237 +655,15 @@ function Sent(props) {
     }
   };
 
-  const renderModal = () => {
-    let c = modalHeight >= maxModalHeight ? true : false;
-    let style = c ? [styles.modal, {height: maxModalHeight}] : styles.modal2;
-    let item = modalObj.item;
+  const openModal = (obj, check) => {
+    setModalObj(obj);
 
-    if (modalChk == 'cancelOffer') {
-      const renderHeader = () => {
-        let text = 'Cancel Offer?';
-
-        const renderCross = () => {
-          return (
-            <Pressable
-              disabled={mmloader}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.7 : 1.0},
-                [
-                  !c
-                    ? {
-                        position: 'absolute',
-                        bottom: 0,
-                        right: 0,
-                      }
-                    : {
-                        position: 'absolute',
-                        bottom: 7,
-                        right: 15,
-                      },
-                ],
-              ]}
-              onPress={closeModal}>
-              <utils.vectorIcon.Ionicons
-                name="ios-close-outline"
-                color={theme.color.title}
-                size={32}
-              />
-            </Pressable>
-          );
-        };
-
-        const renderTitle = () => {
-          return <Text style={styles.modalTitle}>{text}</Text>;
-        };
-
-        return (
-          <View
-            style={
-              c
-                ? {
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    paddingHorizontal: 15,
-                    paddingTop: 15,
-                    paddingBottom: 7,
-                    shadowColor: '#000000',
-                    shadowOffset: {width: 0, height: 1}, // change this for more shadow
-                    shadowOpacity: 0.1,
-                    elevation: 1,
-                    backgroundColor: theme.color.background,
-                    borderTopLeftRadius: 10,
-                    borderTopRightRadius: 10,
-                  }
-                : {
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }
-            }>
-            {renderTitle()}
-            {renderCross()}
-          </View>
-        );
-      };
-
-      const renderInfo = () => {
-        return (
-          <View style={{width: '100%', marginTop: 12}}>
-            <Text
-              style={{
-                fontSize: 17,
-                color: theme.color.title,
-                fontFamily: theme.fonts.fontNormal,
-                textAlign: 'center',
-              }}>
-              Are you sure you would like to cancel your offer?
-            </Text>
-          </View>
-        );
-      };
-
-      const renderBottom = () => {
-        const renderButton1 = () => {
-          return (
-            <>
-              <TouchableOpacity
-                disabled={mmloader}
-                onPress={cancelOffer}
-                activeOpacity={0.7}
-                style={{
-                  width: '100%',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: '#B93B3B',
-                  height: 50,
-                  borderRadius: 10,
-                  alignSelf: 'center',
-                }}>
-                {!mmloader && (
-                  <Text
-                    style={{
-                      color: theme.color.buttonText,
-                      fontSize: 16,
-                      fontFamily: theme.fonts.fontBold,
-                      textTransform: 'none',
-                    }}>
-                    Yes, cancel offer
-                  </Text>
-                )}
-                {mmloader && (
-                  <ActivityIndicator size={20} color={theme.color.buttonText} />
-                )}
-              </TouchableOpacity>
-            </>
-          );
-        };
-
-        const renderButton2 = () => {
-          return (
-            <>
-              <TouchableOpacity
-                disabled={mmloader}
-                onPress={closeModal}
-                activeOpacity={0.7}
-                style={{
-                  width: '100%',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: theme.color.button2,
-                  height: 50,
-                  borderRadius: 10,
-                  alignSelf: 'center',
-                  // borderWidth: 1,
-                  // borderColor: theme.color.fieldBorder,
-                  marginTop: 12,
-                }}>
-                <Text
-                  style={{
-                    color: '#30563A',
-                    textTransform: 'none',
-                    fontFamily: theme.fonts.fontBold,
-                    fontSize: 16,
-                  }}>
-                  No, keep it
-                </Text>
-              </TouchableOpacity>
-            </>
-          );
-        };
-
-        return (
-          <View
-            style={
-              c
-                ? {
-                    backgroundColor: theme.color.background,
-                    shadowColor: '#000000',
-                    shadowOffset: {width: 0, height: -1}, // change this for more shadow
-                    shadowOpacity: 0.1,
-                    elevation: 5,
-                    borderBottomLeftRadius: 10,
-                    borderBottomRightRadius: 10,
-                    marginTop: 5,
-                  }
-                : {marginTop: 40}
-            }>
-            <View
-              style={
-                c ? styles.modalBottomContainer : styles.modalBottomContainer2
-              }>
-              {renderButton1()}
-              {renderButton2()}
-            </View>
-          </View>
-        );
-      };
-
-      return (
-        <Modal visible={isModal} transparent onRequestClose={closeModal}>
-          <SafeAreaView style={styles.modalContainer}>
-            <View style={styles.modalContainer2}>
-              <View
-                onLayout={event => {
-                  if (!c) {
-                    let {height} = event.nativeEvent.layout;
-                    setmodalHeight(height);
-                  }
-                }}
-                style={style}>
-                {c && (
-                  <>
-                    {renderHeader()}
-                    <ScrollView
-                      contentContainerStyle={{paddingHorizontal: 15}}
-                      showsVerticalScrollIndicator={false}
-                      style={{flex: 1}}>
-                      {renderInfo()}
-                      {/* {renderField()} */}
-                    </ScrollView>
-                    {renderBottom()}
-                  </>
-                )}
-
-                {!c && (
-                  <>
-                    {renderHeader()}
-                    {renderInfo()}
-                    {/*    {renderField()} */}
-                    {renderBottom()}
-                  </>
-                )}
-              </View>
-            </View>
-          </SafeAreaView>
-        </Modal>
-      );
-    }
+    if (check == 'cancelOffer') setIsCancelOfferModal(true);
   };
 
   return (
     <>
       <View style={styles.container}>
-        {/* <utils.DrawerHeader props={props} headerTitle={headerTitle} /> */}
-        {/* {!internet && <utils.InternetMessage />} */}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <FlatList
@@ -988,7 +683,6 @@ function Sent(props) {
               ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
               ListHeaderComponent={data.length > 0 ? ListHeader : null}
-              // ListFooterComponent={data.length > 0 ? ListFooter : null}
             />
             {data.length > 0 && !getDataOnce && mloader && (
               <ActivityIndicator
@@ -1003,13 +697,16 @@ function Sent(props) {
             )}
           </View>
 
-          {/* <utils.Footer
-            nav={props.navigation}
-            screen={headerTitle}
-            focusScreen={store.General.focusScreen}
-          /> */}
-
-          {isModal && renderModal()}
+          {isCancelOfferModal && (
+            <utils.CancelOfferModal
+              isModal={isCancelOfferModal}
+              setIsModal={setIsCancelOfferModal}
+              modalObj={modalObj}
+              setModalObj={setModalObj}
+              loader={homeModalLoder}
+              check={'cancel'}
+            />
+          )}
         </SafeAreaView>
       </View>
     </>

@@ -51,14 +51,14 @@ class offers {
     this.setLoader(true);
 
     let token = store.User.authToken;
-    let params = store.User.user._id + '&status=pending';
+    let params = store.User.user._id + '&status=pending&type=sent';
     db.hitApi(db.apis.GET_SENT_OFFERS + params, 'get', {}, token)
       ?.then(resp => {
         this.setLoader(false);
         setrfrsh(false);
-        // console.log(
-        //   `response Get sent offers   ${db.apis.GET_SENT_OFFERS}${params} : `,
-        // );
+        console.log(
+          `response Get sent offers   ${db.apis.GET_SENT_OFFERS}${params} : true`,
+        );
         let dt = resp.data.data || [];
         // console.log(dt);
         setgetdata(true);
@@ -94,14 +94,14 @@ class offers {
     this.setLoader2(true);
 
     let token = store.User.authToken;
-    let params = store.User.user._id + '&status=pending';
+    let params = store.User.user._id + '&status=pending&type=received';
     db.hitApi(db.apis.GET_RECEIVED_OFFERS + params, 'get', {}, token)
       ?.then(resp => {
         this.setLoader2(false);
         setrfrsh(false);
-        // console.log(
-        //   `response Get receive offers   ${db.apis.GET_RECEIVED_OFFERS}${params} : `,
-        // );
+        console.log(
+          `response Get receive offers   ${db.apis.GET_RECEIVED_OFFERS}${params} true: `,
+        );
         let dt = resp.data.data || [];
         // console.log(dt);
         setgetdata(true);
@@ -143,9 +143,9 @@ class offers {
       ?.then(resp => {
         this.setLoader3(false);
         setrfrsh(false);
-        // console.log(
-        //   `response Get Confirm offers   ${db.apis.GET_CONFIRM_OFFERS}${params} : `,
-        // );
+        console.log(
+          `response Get Confirm offers   ${db.apis.GET_CONFIRM_OFFERS}${params} true: `,
+        );
         let dt = resp.data.data || [];
         setgetdata(true);
         this.setcnfrmOffers(dt);
@@ -176,11 +176,11 @@ class offers {
   };
 
   @action attemptToCancelOffer = (obj, suc) => {
-    console.warn('cancel offers true: ');
-    this.setmLoader(true);
+    console.log('cancel offers true: ');
+    store.User.setHomeModalLoder(true);
 
     let token = store.User.authToken;
-    let i = obj.i;
+    let i = obj.selIndex;
     let tid = obj.item._id;
     db.hitApi(
       db.apis.CANCEL_OFFER + tid,
@@ -193,10 +193,16 @@ class offers {
       token,
     )
       ?.then(resp => {
-        this.setmLoader(false);
+        store.User.setHomeModalLoder(false);
         console.log(
-          `response cancel offers   ${db.apis.CANCEL_OFFER}${tid}  : `,
+          `response cancel offers   ${db.apis.CANCEL_OFFER}${tid} true : `,
         );
+
+        if (resp.data && resp.data.check == 'reload') {
+          suc();
+          store.General.refreshAlert(resp.data.message);
+          return;
+        }
 
         let dt = [...this.sentOffers];
         dt.splice(i, 1);
@@ -206,7 +212,7 @@ class offers {
         return;
       })
       .catch(err => {
-        this.setmLoader(false);
+        store.User.setHomeModalLoder(false);
 
         let msg = err.response.data.message || err.response.status || err;
         console.log(
@@ -225,28 +231,30 @@ class offers {
   };
 
   @action attemptToDeclineOffer = (obj, suc) => {
-    console.warn('cancel offers true: ');
-    this.setmLoader(true);
+    console.log('deline offers true: ');
+    store.User.setHomeModalLoder(true);
 
     let token = store.User.authToken;
-    let i = obj.i;
+    let i = obj.selIndex;
     let tid = obj.item._id;
     db.hitApi(
       db.apis.CANCEL_OFFER + tid,
       'put',
       {isCanceled: false, isDeclined: true, received: true},
-      // {
-      //   received: true,
-      //   sent: false,
-      //   isDeclined: true,
-      // },
+
       token,
     )
       ?.then(resp => {
-        this.setmLoader(false);
+        store.User.setHomeModalLoder(false);
         console.log(
-          `response cancel offers   ${db.apis.CANCEL_OFFER}${tid}  : `,
+          `response decline offers   ${db.apis.CANCEL_OFFER}${tid}  : `,
         );
+
+        if (resp.data && resp.data.check == 'reload') {
+          suc();
+          store.General.refreshAlert(resp.data.message);
+          return;
+        }
 
         let dt = [...this.rcvOffers];
         dt.splice(i, 1);
@@ -256,11 +264,11 @@ class offers {
         return;
       })
       .catch(err => {
-        this.setmLoader(false);
+        store.User.setHomeModalLoder(false);
 
         let msg = err.response.data.message || err.response.status || err;
         console.log(
-          `Error in cancel offers ${db.apis.CANCEL_OFFER}${tid}   : `,
+          `Error in decline offers ${db.apis.CANCEL_OFFER}${tid}   : `,
           msg,
         );
         if (msg == 503 || msg == 500) {
@@ -274,19 +282,24 @@ class offers {
       });
   };
 
-  @action attemptToConfirmOffer = (obj, body, suc) => {
-    console.warn('confirm offers body : ', body);
-    this.setmLoader(true);
+  @action attemptToConfirmOffer = (obj, body, suc, closeModal) => {
+    console.log('confirm offers body : ', body);
+    store.User.setHomeModalLoder(true);
 
     let token = store.User.authToken;
-    let i = obj.i;
+    let i = obj.selIndex;
     let tid = obj.item._id;
     db.hitApi(db.apis.CONFIRM_OFFERS + tid, 'put', body, token)
       ?.then(resp => {
-        this.setmLoader(false);
+        store.User.setHomeModalLoder(false);
         console.log(
-          `response confirm offers   ${db.apis.CONFIRM_OFFERS}${tid}  : `,
+          `response confirm offers   ${db.apis.CONFIRM_OFFERS}${tid}  true : `,
         );
+        if (resp.data && resp.data.check == 'reload') {
+          closeModal();
+          store.General.refreshAlert(resp.data.message);
+          return;
+        }
 
         let dt = [...this.rcvOffers];
         dt.splice(i, 1);
@@ -299,9 +312,9 @@ class offers {
         return;
       })
       .catch(err => {
-        this.setmLoader(false);
+        store.User.setHomeModalLoder(false);
 
-        let msg = err.response.data.message || err.response.status || err;
+        const msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in confirm offers ${db.apis.CONFIRM_OFFERS}${tid}   : `,
           msg,

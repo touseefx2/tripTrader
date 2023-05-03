@@ -3,6 +3,7 @@ import {View, Modal, SafeAreaView} from 'react-native';
 import {styles} from './styles';
 import theme from '../../theme';
 import Offer from './components/Offer';
+import OfferConfirm from './components/OfferConfirm';
 import Message from './components/Message';
 import Trip from './components/Trip';
 
@@ -45,6 +46,15 @@ export default function SuccessModal({
           style={[styles.modal, isMaxHeight && {height: maxModalHeight}]}>
           {check == 'OfferSend' && (
             <Offer
+              modalObj={modalObj}
+              isMaxHeight={isMaxHeight}
+              closeModal={closeModal}
+              props={props}
+            />
+          )}
+
+          {check == 'OfferConfirm' && (
+            <OfferConfirm
               modalObj={modalObj}
               isMaxHeight={isMaxHeight}
               closeModal={closeModal}

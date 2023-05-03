@@ -1,18 +1,10 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   SafeAreaView,
-  TouchableOpacity,
   Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
   Alert,
-  Linking,
-  PermissionsAndroid,
-  Platform,
-  Dimensions,
   Modal,
   FlatList,
   ActivityIndicator,
@@ -99,59 +91,6 @@ function Reviews(props) {
   const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        // const dt = [
-        //   {
-        //     _id: 21,
-        //     user: {
-        //       _id: 2,
-        //       first_name: 'mike',
-        //       last_name: 'monuse',
-        //       // photo:"",
-        //       photo: '',
-        //       avg_rating: 3.8,
-        //       total_reviews: 190,
-        //     },
-        //     comment:
-        //       'John Thompson was a great host! I had an amazing time and killed a great duck.',
-        //     created_at: new Date(),
-        //   },
-        //   {
-        //     _id: 22,
-        //     user: {
-        //       _id: 3,
-        //       first_name: 'tom',
-        //       last_name: 'jerry',
-        //       photo: '',
-        //       avg_rating: 4.5,
-        //       total_reviews: 45,
-        //       isVerified: true,
-        //     },
-        //     comment: 'John Thompson was a great host! I had an amazing time.',
-        //     created_at: new Date(),
-        //     reply: {
-        //       user: store.User.user,
-        //       comment:
-        //         'Thank you, Jerry! I had a blast and hope to trade with you again soon. Highly recommend others to trade with you.',
-        //       created_at: new Date(),
-        //     },
-        //   },
-        //   {
-        //     _id: 23,
-        //     user: {
-        //       _id: 4,
-        //       first_name: 'Mano',
-        //       last_name: 'Twis',
-        //       // photo:"",
-        //       photo:
-        //         'https://t3.ftcdn.net/jpg/03/67/46/48/360_F_367464887_f0w1JrL8PddfuH3P2jSPlIGjKU2BI0rn.jpg',
-        //       avg_rating: 2.0,
-        //       total_reviews: 10,
-        //     },
-        //     comment:
-        //       'John Thompson Thank you so much for your careful planning, attention to detail, and flexible offerings when the tropical system blew through and changed our plans! We had a blast exploring Miami, and eating so much great food.\nDinner reservations the first night we arrived were perfect- after a long day of traveling, we enjoyed a delicious meal overlooking the water',
-        //     created_at: new Date(),
-        //   },
-        // ];
         store.User.attemptToGetReviews(user._id, setGetDataOnce, setrefeshing);
       } else {
         setrefeshing(false);
@@ -186,7 +125,6 @@ function Reviews(props) {
       if (state.isConnected) {
         store.User.attemptToReplyComment(modalObj, comment, closeModal);
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -211,7 +149,6 @@ function Reviews(props) {
       if (state.isConnected) {
         store.User.attemptToEditComment(modalObj, comment, closeModal);
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -223,7 +160,6 @@ function Reviews(props) {
       if (state.isConnected) {
         store.User.attemptToDeleteComment(modalObj, closeModal);
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -262,35 +198,41 @@ function Reviews(props) {
     }
   };
 
-  const renderShowRes = () => {
-    return (
-      <View style={{marginVertical: 5}}>
-        <Text
-          style={{
-            fontSize: 13,
-            color: theme.color.subTitleLight,
-            fontFamily: theme.fonts.fontMedium,
-          }}>
-          Showing {data.length} of {totalData}
-        </Text>
-      </View>
-    );
-  };
-
   const renderShowData = ({item, index}) => {
-    let usr = item.guestId;
+    let usr = item.guestId || null;
+    let isuVeirfy = false;
+    let userName = 'trip trader user';
+    let photo = '';
+    let avgRating = 0;
+    let totalReviews = 0;
     //reviewer user
-    let photo = usr.image || '';
-    let isuVeirfy = usr.identityStatus == 'verified' ? true : false;
-    let userName = usr.firstName + ' ' + usr.lastName;
-    let avgRating = usr.rating || 0;
-    let totalReviews = usr.reviews || 0;
+
+    if (usr) {
+      const blockArr = usr?.followers || [];
+      const isBlock = blockArr.find(
+        item =>
+          (item?.block == true && item?.userId == store.User.user._id) ||
+          (item?.blockedBy == true && item?.userId == store.User.user._id),
+      );
+      if (isBlock) {
+        usr = null;
+      }
+    }
+
+    if (usr) {
+      photo = usr.image || '';
+      isuVeirfy = usr.identityStatus == 'verified' ? true : false;
+      userName = usr.firstName + ' ' + usr.lastName;
+      avgRating = usr.rating || 0;
+      totalReviews = usr.reviews || 0;
+    }
+
     let userComment = '';
     let postDate = '';
     let msgs = item.messages || [];
     let reply = '';
     if (msgs.length > 0) {
-      msgs.map((e, i, a) => {
+      msgs.map(e => {
         if (e.role == 'guest') {
           postDate = e.updatedAt;
           userComment = e.message;
@@ -490,8 +432,8 @@ function Reviews(props) {
           <View style={styles.boxSection2}>{renderComment()}</View>
           {!dispute && (
             <>
-              {reply == '' && renderShowReplyButton()}
-              {reply != '' && renderShowDipsutebutton()}
+              {usr && reply == '' && renderShowReplyButton()}
+              {usr && reply != '' && renderShowDipsutebutton()}
             </>
           )}
 
@@ -568,7 +510,7 @@ function Reviews(props) {
               You replied on {formatDate(rpostDate)}:
             </Text>
             <Text style={styles.repBoxTitile2}>{ruserComment}</Text>
-            {renderShowActionButton()}
+            {usr && !dispute && renderShowActionButton()}
           </View>
         );
       };
@@ -587,7 +529,7 @@ function Reviews(props) {
       <>
         <View style={{marginBottom: 15, marginTop: index == 0 ? 12 : 0}}>
           {renderShowCommentBox()}
-          {reply != '' && !dispute && renderShowReplyBox()}
+          {reply != '' && renderShowReplyBox()}
         </View>
       </>
     );
@@ -1173,23 +1115,14 @@ function Reviews(props) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* {data.length > 0 && renderShowRes()} */}
-      <ScrollView
-        style={{marginTop: 3}}
-        nestedScrollEnabled
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }>
+      <View style={{marginTop: 3}}>
         {getDataOnce && data.length <= 0 && !loader && renderMessage('empty')}
-        {/* {!getDataOnce &&
-          !internet &&
-          !loader &&
-          data.length <= 0 &&
-          renderMessage('internet')} */}
 
         {data.length >= 0 && (
           <FlatList
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
             showsVerticalScrollIndicator={false}
             initialNumToRender={18}
             maxToRenderPerBatch={6}
@@ -1199,7 +1132,7 @@ function Reviews(props) {
             keyExtractor={(item, index) => index.toString()}
           />
         )}
-      </ScrollView>
+      </View>
       {!getDataOnce && loader && renderLoader()}
       {isModal && renderModal()}
     </SafeAreaView>

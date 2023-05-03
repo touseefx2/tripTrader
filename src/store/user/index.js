@@ -83,6 +83,11 @@ class user {
   @observable bl = false;
   @observable ibl = false;
 
+  @observable logoutLoader = false;
+  @action setLogoutLoader = obj => {
+    this.logoutLoader = obj;
+  };
+
   @observable sendMessageLoader = false;
   @action setSendMessageLoader = obj => {
     this.sendMessageLoader = obj;
@@ -214,79 +219,113 @@ class user {
           this.settotalfollowing(0);
           return;
         }
-        // seterror(msg.toString())
+
         Alert.alert('', msg.toString());
       });
   };
-  @action attemptToGetBloackUsers = (uid, setgetdata, setrfrsh, c) => {
+  @action attemptToGetBloackUsers = (
+    uid,
+    setgetdata,
+    setrfrsh,
+    setgetdatahome,
+    c,
+  ) => {
     console.log('GET BloackUsers : ', 'true');
     this.setfl(true);
-
+    this.setHomeLoader(true);
     db.hitApi(db.apis.GET_BLOCK_USER + uid, 'get', {}, this.authToken)
       ?.then(resp => {
-        this.setfl(false);
-        setrfrsh(false);
-        // console.log(
-        //   `response GET BloackUsers ${db.apis.GET_BLOCK_USER + uid} : `,
-        //   resp.data,
-        // );
-        let dt = resp.data.blocked || [];
-        setgetdata(true);
-
-        if (c == 'home') {
-          this.attemptToGetHomeTripsSearch(() => {}, dt, '');
-        }
-
-        this.setblockUsers(dt);
+        console.log(`response GET BloackUsers: `, resp.data);
+        const dt = resp.data.blocked || [];
+        this.attemptToGetBloackAnotherUsers(
+          uid,
+          dt,
+          setgetdata,
+          setrfrsh,
+          setgetdatahome,
+          c,
+        );
         this.settotalblockUsers(dt.length);
       })
       .catch(err => {
+        this.setHomeLoader(false);
         this.setfl(false);
         setrfrsh(false);
-        let msg = err.response.data.message || err.response.status || err;
+        const msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in GET BloackUsers ${db.apis.GET_BLOCK_USER + uid} : `,
           msg,
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
-        if (msg == 'No records found') {
-          this.setblockUsers([]);
-          this.settotalblockUsers(0);
-          return;
-        }
-        // seterror(msg.toString())
+
         Alert.alert('', msg.toString());
       });
   };
 
-  attemptToUnblockUser(uid, ind, suc) {
+  @action attemptToGetBloackAnotherUsers = (
+    uid,
+    data1,
+    setgetdata,
+    setrfrsh,
+    setgetdatahome,
+    c,
+  ) => {
+    console.log('GET  BloackAnotherUsers');
+    db.hitApi(db.apis.GET_BLOCK_ANOTHER_USER + uid, 'get', {}, this.authToken)
+      ?.then(resp => {
+        this.setfl(false);
+        setrfrsh(false);
+        console.log(`response GET BloackAnotherUsers: `, resp.data);
+        const data2 = resp.data.blockedBy || [];
+        const farr = data1.concat(data2);
+        setgetdata(true);
+
+        this.attemptToGetHomeTripsSearch(setgetdatahome, farr, c);
+
+        this.setblockUsers(farr);
+      })
+      .catch(err => {
+        this.setHomeLoader(false);
+        this.setfl(false);
+        setrfrsh(false);
+        const msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in GET   GetBloackAnotherUsers  
+            ${db.apis.GET_BLOCK_ANOTHER_USER + uid} : `,
+          msg,
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          return;
+        }
+
+        Alert.alert('', msg.toString());
+      });
+  };
+
+  attemptToUnblockUser(uid, ind, suc, goBack) {
     console.log('UnblockUser  true : ');
     this.setbl(true);
     let c = this.user._id + '/' + uid;
     db.hitApi(db.apis.UNBLOCK_USER + c, 'put', {}, this.authToken)
       ?.then(resp => {
         this.setbl(false);
+        if (resp.data && resp.data.check == 'reload') {
+          goBack();
+          store.General.refreshAlert(resp.data.message);
+          return;
+        }
         FireStore.updateUserinFirestoreOnlyRoom(this.user._id, resp.data.data);
-        // console.log(
-        //   `response UnblockUser  ${db.apis.UNBLOCK_USER + c} : `,
-        //   resp.data,
-        // );
-        // let rsp = resp.data.data;
+
         this.removeblockUsers(ind);
         this.getUserById1(this.user._id, this.authToken, '');
 
         let dt = [...this.blockUsers];
         dt.splice(ind, 1);
-        this.attemptToGetHomeTripsSearch(
-          () => {},
-          () => {},
-          dt,
-          '',
-        );
+        this.attemptToGetHomeTripsSearch(() => {}, dt, 'all');
 
         suc();
       })
@@ -299,10 +338,10 @@ class user {
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
+
           return;
         }
-        // seterror(msg.toString())image/pjpeg;base64,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
+
         Alert.alert('', msg.toString());
       });
   }
@@ -508,17 +547,16 @@ class user {
   };
 
   @action attemptToGetReviews = (uid, setgetdata, setrfrsh) => {
-    console.log('get all Reviews : ', 'true');
+    console.log('get all Reviews : ');
     this.setreviewLoader(true);
 
     db.hitApi(db.apis.GET_ALL_REVIEWS + uid, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setreviewLoader(false);
         setrfrsh(false);
-        // console.log(
-        //   `response GET_ALL_REVIEWS   ${db.apis.GET_ALL_REVIEWS + uid} : `,
-        //   resp.data,
-        // );
+        console.log(
+          `response GET_ALL_REVIEWS   ${db.apis.GET_ALL_REVIEWS + uid} : true `,
+        );
         let dt = resp.data.doc;
         let ar = [];
         if (dt.length > 0) {
@@ -561,17 +599,16 @@ class user {
   };
 
   @action attemptToGetTrips = (uid, setgetdata, setrfrsh) => {
-    console.log('GET_ALL_TRIP : ', 'true');
+    console.log('GET_ALL_TRIP : ');
     this.settripLoader(true);
 
     db.hitApi(db.apis.GET_ALL_TRIP + uid, 'get', {}, this.authToken)
       ?.then(resp => {
         this.settripLoader(false);
         setrfrsh(false);
-        // console.log(
-        //   `response GET_ALL_TRIP   ${db.apis.GET_ALL_TRIP + uid} : `,
-        //   resp.data,
-        // );
+        console.log(
+          `response GET_ALL_TRIP   ${db.apis.GET_ALL_TRIP + uid} : true `,
+        );
         let dt = resp.data.data;
         setgetdata(true);
         this.settrips(dt);
@@ -600,23 +637,22 @@ class user {
   };
 
   @action attemptToGetPhotos = (uid, setgetdata, setrfrsh, dt) => {
-    console.log('getPhotosData : ', 'true');
+    console.log('getPhotosData : ');
     this.setphotosLoader(true);
 
     db.hitApi(db.apis.GET_ALL_TRIP + uid, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setphotosLoader(false);
         setrfrsh(false);
-        // console.log(
-        //   `response getPhotosData  ${db.apis.GET_ALL_TRIP + uid} : `,
-        //   resp.data,
-        // );
+        console.log(
+          `response getPhotosData  ${db.apis.GET_ALL_TRIP + uid} : true `,
+        );
 
         let rp = resp.data.data;
         let dt = [];
 
         if (resp.data && rp.length > 0) {
-          rp.map((e, i, a) => {
+          rp.map(e => {
             if (e.photos && e.photos.length > 0) {
               e.photos.map((ee, i, a) => {
                 dt.push({uri: ee, tid: e._id});
@@ -668,51 +704,44 @@ class user {
     return splitStr.join(' ');
   }
 
-  @action attemptToGetHomeTripsSearch = (setgetdata, bu, c) => {
-    let isaps = store.Search.isApplySearch;
-    let isapf = store.Filters.isFilter;
-
-    let query = isaps ? this.titleCase(store.Search.search) : '';
-    let r = '';
-    let us = '';
-    let loc = '';
-    let spsc = '';
-    let act = '';
-    if (isapf) {
-      r = store.Filters.shostRating != 0 ? store.Filters.shostRating : '';
-
-      us = store.Filters.svu == true ? 'verified' : '';
-      loc =
+  @action attemptToGetHomeTripsSearch = (setgetdata, blocksUsersArr, c) => {
+    const isApplySearch = store.Search.isApplySearch;
+    const isApplyFilter = store.Filters.isFilter;
+    const query = isApplySearch ? this.titleCase(store.Search.search) : '';
+    let rate = '';
+    let userStatus = '';
+    let location = '';
+    let species = '';
+    let activity = '';
+    let blockUsers = this.user._id;
+    if (isApplyFilter) {
+      rate = store.Filters.shostRating != 0 ? store.Filters.shostRating : '';
+      userStatus = store.Filters.svu == true ? 'verified' : '';
+      location =
         store.Filters.stripLocation != false
           ? store.Filters.stripLocation.name
           : '';
-      spsc = store.Filters.sspecies != false ? store.Filters.sspecies : '';
-      act = store.Filters.sactivity != false ? store.Filters.sactivity : '';
+      species = store.Filters.sspecies != false ? store.Filters.sspecies : '';
+      activity =
+        store.Filters.sactivity != false ? store.Filters.sactivity : '';
     }
-
-    let b = this.user._id;
-    if (bu.length > 0) {
-      bu.map((e, i, a) => {
-        b = b + ',' + e.userId._id;
+    if (blocksUsersArr.length > 0) {
+      blocksUsersArr.forEach(item => {
+        if (item?.userId?._id) blockUsers = blockUsers + ',' + item.userId._id;
       });
     }
-
-    const params = `rating=${r}&userStatus=${us}&location=${loc}&species=${spsc}&query=${query}&activity=${act}&tradeType=${act}&blockedUsers=${b}&page=1&limit=10000`;
-
-    console.log('Get AllHomeTrip User : ', db.apis.GET_ALL_HOME_TRIPS + params);
+    const params = `rating=${rate}&userStatus=${userStatus}&location=${location}&species=${species}&query=${query}&activity=${activity}&tradeType=${activity}&blockedUsers=${blockUsers}&page=1&limit=10000`;
     this.setHomeLoader(true);
+    console.log('Get AllHomeTrip User : ', db.apis.GET_ALL_HOME_TRIPS + params);
     db.hitApi(db.apis.GET_ALL_HOME_TRIPS + params, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setHomeLoader(false);
-
-        // console.log(
-        //   `response Get AllHomeTrip User   ${db.apis.GET_ALL_HOME_TRIPS}  : `,
-        //   resp.data.data.length,
-        // );
-        let dt = resp.data.data;
+        console.log(
+          `response Get AllHomeTrip User   ${db.apis.GET_ALL_HOME_TRIPS}  true : `,
+        );
+        const dt = resp.data.data;
         this.setHomeTrips(dt);
         setgetdata(true);
-
         if (c == 'all') {
           this.allGetGeneralData();
           this.allGetGeneralUserData(this.user._id);
@@ -721,27 +750,26 @@ class user {
       .catch(err => {
         this.setHomeLoader(false);
 
-        let msg = err.response.data.message || err.response.status || err;
+        const msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS}${params} }: `,
           msg,
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
+
           return;
         }
         if (msg == 'No records found') {
           setgetdata(true);
           this.setHomeTrips([]);
-
           if (c == 'all') {
             this.allGetGeneralData();
             this.allGetGeneralUserData(this.user._id);
           }
           return;
         }
-        // seterror(msg.toString())
+
         Alert.alert('', msg.toString());
       });
   };
@@ -967,6 +995,7 @@ class user {
     let body = {
       message: cmnt,
       role: 'host',
+      guestId: obj.item.guestId._id,
     };
     let id = obj.item._id;
 
@@ -974,9 +1003,13 @@ class user {
       ?.then(resp => {
         this.setmLoader(false);
         console.log(
-          `response ReplyComment  ${db.apis.REPLY_REVIEW + id} : `,
-          resp.data,
+          `response ReplyComment  ${db.apis.REPLY_REVIEW + id} :  true `,
         );
+        if (resp.data && resp.data.check == 'reload') {
+          suc();
+          store.General.refreshAlert(resp.data.message);
+          return;
+        }
         let dt = resp.data.data;
 
         this.review[i] = dt;
@@ -1000,6 +1033,7 @@ class user {
         Alert.alert('', msg.toString());
       });
   };
+
   @action attemptToEditComment = (obj, cmnt, suc) => {
     console.log('edit comment  : ', 'true');
     this.setmLoader(true);
@@ -1010,7 +1044,7 @@ class user {
     let id = '';
     let msgs = d.messages || [];
     if (msgs.length > 0) {
-      msgs.map((e, i, a) => {
+      msgs.map(e => {
         if (e.role == 'host') {
           id = e._id;
         }
@@ -1020,15 +1054,18 @@ class user {
       message: cmnt,
       guestRating: 0,
       isReviewEdited: false,
+      guestId: obj.item.guestId._id,
     };
 
     db.hitApi(db.apis.EDIT_REPLY + idd + '/' + id, 'put', body, this.authToken)
       ?.then(resp => {
         this.setmLoader(false);
-        console.log(
-          `response EditComment  ${db.apis.EDIT_REPLY + id} : `,
-          resp.data,
-        );
+        console.log(`response EditComment  ${db.apis.EDIT_REPLY + id} :  true`);
+        if (resp.data && resp.data.check == 'reload') {
+          suc();
+          store.General.refreshAlert(resp.data.message);
+          return;
+        }
         let dt = resp.data.data;
         this.review[i] = dt;
         suc();
@@ -1058,19 +1095,32 @@ class user {
     let id = '';
     let msgs = d.messages || [];
     if (msgs.length > 0) {
-      msgs.map((e, i, a) => {
+      msgs.map(e => {
         if (e.role == 'host') {
           id = e._id;
         }
       });
     }
-    db.hitApi(db.apis.DELETE_REVIEW + idd + '/' + id, 'put', {}, this.authToken)
+    const body = {
+      guestId: obj.item.guestId._id,
+    };
+    db.hitApi(
+      db.apis.DELETE_REVIEW + idd + '/' + id,
+      'put',
+      body,
+      this.authToken,
+    )
       ?.then(resp => {
         this.setmLoader(false);
         console.log(
-          `response DeleteComment  ${db.apis.DELETE_REVIEW + id} : `,
-          resp.data,
+          `response DeleteComment  ${db.apis.DELETE_REVIEW + id} :  true`,
         );
+
+        if (resp.data && resp.data.check == 'reload') {
+          suc();
+          store.General.refreshAlert(resp.data.message);
+          return;
+        }
         let dt = resp.data.data;
         this.review[i] = dt;
 
@@ -1112,9 +1162,13 @@ class user {
       ?.then(resp => {
         this.setmLoader(false);
         console.log(
-          `response DisputeComment  ${db.apis.DISPUTE_REVIEW + id} : `,
-          resp.data,
+          `response DisputeComment  ${db.apis.DISPUTE_REVIEW + id} : true `,
         );
+        if (resp.data && resp.data.check == 'reload') {
+          suc();
+          store.General.refreshAlert(resp.data.message);
+          return;
+        }
         let dt = resp.data.data;
         this.review[i] = dt;
 
@@ -1144,12 +1198,23 @@ class user {
   @observable editTrip = false;
 
   @observable homeModalLoder = false;
-  @action attemptToOfferSend = (body, offerSuccefullySend) => {
+  @action attemptToOfferSend = (
+    body,
+    offerSuccefullySend,
+    closeModal,
+    goBack,
+  ) => {
     this.setHomeModalLoder(true);
     db.hitApi(db.apis.OFFER_SEND, 'post', body, this.authToken)
       ?.then(resp => {
         this.setHomeModalLoder(false);
         console.log(`response OfferSend  ${db.apis.OFFER_SEND} : `, resp.data);
+        if (resp.data && resp.data.check == 'reload') {
+          closeModal();
+          goBack();
+          store.General.refreshAlert(resp.data.message);
+          return;
+        }
         store.Offers.attemptToGetSentOffers(
           () => {},
           () => {},
@@ -1158,14 +1223,14 @@ class user {
       })
       .catch(err => {
         this.setHomeModalLoder(false);
-        let msg = err.response.data.message || err.response.status || err;
+        const msg = err.response.data.message || err.response.status || err;
         console.log(`Error in OfferSend ${db.apis.OFFER_SEND} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
+
           return;
         }
-        // seterror(msg.toString())
+
         Alert.alert('', msg.toString());
       });
   };
@@ -2072,18 +2137,19 @@ class user {
       () => {},
       () => {},
     );
-    this.attemptToGetBloackUsers(
-      uid,
-      () => {},
-      () => {},
-    );
+
     this.attemptToGetTrips(
       uid,
       () => {},
       () => {},
     );
-    this.getUserById1(uid, this.authToken, '');
+    this.attemptToGetReviews(
+      uid,
+      () => {},
+      () => {},
+    );
 
+    this.getUserById1(uid, this.authToken, '');
     this.attemptToGetInboxes(uid, () => {}, '');
     store.Offers.attemptToGetSentOffers(
       () => {},
@@ -2149,7 +2215,7 @@ class user {
 
   @action.bound
   reSendVerificationLink(email, user) {
-    const body = {userId: user._id, userEmail: email};
+    const body = {userId: user._id, userEmail: email, mode: 'mobile'};
     this.setResendLoader(true);
     console.log(`${db.apis.RESEND_VERIFICATION_LINK} : `, body);
     db.hitApi(db.apis.RESEND_VERIFICATION_LINK, 'post', body, null)
@@ -2759,6 +2825,35 @@ class user {
       });
   }
 
+  attemptToLogoutAccount() {
+    this.setLogoutLoader(true);
+    const body = {registrationCode: this.notificationToken};
+    console.log(`Logout ${db.apis.LOGOUT_ACCOUNT + this.user._id}`, body);
+    db.hitApi(
+      db.apis.LOGOUT_ACCOUNT + this.user._id,
+      'put',
+      body,
+      this.authToken,
+    )
+      ?.then(resp => {
+        console.log('Logout resp true');
+        this.setLogoutLoader(false);
+        store.General.setgoto('home');
+        this.Logout();
+      })
+      .catch(err => {
+        this.setLogoutLoader(false);
+        const msg = err.response.data.message || err.response.status || err;
+        console.log(`Error in Logout  ${db.apis.LOGOUT_ACCOUNT}: `, msg);
+        if (msg == 503 || msg == 500) {
+          Alert.alert('', 'Server not response');
+          return;
+        }
+
+        Alert.alert('', msg.toString());
+      });
+  }
+
   @action.bound
   attemptToVerifyCode(body, suc, suc2) {
     console.log('attemptToVerifyCode  body : ', body);
@@ -2864,6 +2959,8 @@ class user {
     this.settotalfollowing(0);
     this.setinbox([]);
     this.setunreadInbox(0);
+    this.setblockUsers([]);
+    this.settotalblockUsers(0);
     this.setisNotification(false);
   };
 
@@ -3386,7 +3483,7 @@ class user {
       })
       .catch(err => {
         this.setregLoader(false);
-        let msg = err.response.data.message || err.response.status || err;
+        const msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in CHANGE_PASSWORD ${db.apis.CHANGE_PASSWORD} : `,
           msg,
@@ -3416,7 +3513,7 @@ class user {
       })
       .catch(err => {
         setLoader(false);
-        const msg = err;
+        const msg = err.response.data.message || err.response.status || err;
         console.log(`Error in delete account: `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
