@@ -58,9 +58,16 @@ class general {
         onPress: () => {
           NetInfo.fetch().then(state => {
             if (state.isConnected) {
-              store.User.attemptToGetHomeTripsSearch(
+              // store.User.attemptToGetHomeTripsSearch(
+              //   () => {},
+              //   store.User.blockUsers,
+              //   'all',
+              // );
+              store.User.attemptToGetBloackUsers(
+                store.User.user._id,
                 () => {},
-                store.User.blockUsers,
+                () => {},
+                () => {},
                 'all',
               );
             } else {

@@ -38,12 +38,9 @@ function UserProfile(props) {
   const toast = useRef(null);
   const headerTitle = 'Profile';
 
-  const maxModalHeight = theme.window.Height - 100;
-  const [modalHeight, setmodalHeight] = useState(0);
-
   const {isInternet} = store.General;
   const {user} = store.Userv;
-  const homeModalLoder2 = store.Userv.homeModalLoder;
+
   const {homeModalLoder} = store.User;
 
   const [followers, setfollowers] = useState(0);
@@ -62,37 +59,19 @@ function UserProfile(props) {
 
   const [profileImageLoader, setprofileImageLoader] = useState(false);
 
-  const [isSHowChangePhoto, setisSHowChangePhoto] = useState(false);
-  const [cphoto, setcphoto] = useState(false);
-
-  const [errorMessage, seterrorMessage] = useState('');
-
   const [isFollow, setisFollow] = useState(false);
   const [isBlock, setisBlock] = useState(false);
 
   const [isOpenSheet, setisOpenSheet] = useState(false);
 
   const [isMessageModal, setIsMessageModal] = useState(false);
+  const [isReportModal, setIsReportModal] = useState(false);
 
   const [isSuccessModal, setIsSuccessModal] = useState(false);
   const [successModalObj, setSuccessModalObj] = useState(null);
   const [successCheck, setSuccessCheck] = useState('');
 
   const [modalObj, setModalObj] = useState(false);
-  const [modalChk, setmodalChk] = useState(false);
-  const [isModal, setisModal] = useState(false);
-  const [isSendReport, setisSendReport] = useState(false);
-  const [sendObj, setsendObj] = useState('');
-
-  const [message, setMessage] = useState('');
-  const closeModal = () => {
-    setisModal(false);
-    setmodalChk(false);
-    setModalObj(false);
-    setMessage('');
-    setmodalHeight(0);
-    setisSendReport(false);
-  };
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
@@ -144,28 +123,6 @@ function UserProfile(props) {
     props.navigation.goBack();
   };
 
-  const setIsSendRport = v => {
-    setsendObj(modalObj.item);
-    closeModal();
-    setisSendReport(v);
-  };
-  const sendReport = () => {
-    Keyboard.dismiss();
-
-    NetInfo.fetch().then(state => {
-      if (state.isConnected) {
-        let bd = {
-          reason: message,
-          reportby: store.User.user._id,
-          userId: user._id,
-        };
-        store.Userv.SendReportUser(bd, setIsSendRport, goBackMain);
-      } else {
-        // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
-      }
-    });
-  };
   const unFollowUser = () => {
     Keyboard.dismiss();
     NetInfo.fetch().then(state => {
@@ -257,79 +214,12 @@ function UserProfile(props) {
     return () => {};
   }, []);
 
-  const setErrMessage = c => {
-    seterrorMessage(c);
-  };
-
-  const MultipleImage = async button => {
-    let apiLevel = store.General.apiLevel;
-    try {
-      let options = {
-        mediaType: 'image',
-        isPreview: false,
-        singleSelectedMode: true,
-      };
-
-      const res = await MultipleImagePicker.openPicker(options);
-      if (res) {
-        console.log('mutipicker image res true  ');
-        const {path, fileName, mime} = res;
-        let uri = path;
-        if (Platform.OS == 'android' && apiLevel < 29) {
-          uri = 'file://' + uri;
-        }
-
-        ImageCompressor.compress(uri, {
-          compressionMethod: 'auto',
-        })
-          .then(async res => {
-            let imageObject = {
-              uri: res,
-              type: mime,
-              fileName: fileName,
-            };
-            console.log('Compress image  : ', imageObject);
-            if (button == 'photoChange') {
-              setisSHowChangePhoto(true);
-              setcphoto(imageObject);
-
-              return;
-            } else if (button == 'CNICFront') {
-              // setCnicFrontImage(imageObject);
-              return;
-            } else {
-              return;
-            }
-          })
-          .catch(err => {
-            console.log('Image compress error : ', err);
-          });
-      }
-    } catch (error) {
-      console.log('multi photo picker error : ', error);
-    }
-  };
-
   const changePhoto = c => {
     if (c == 'photoView') {
-      setpv([photo.uri ? photo.uri : photo]);
+      setpv([photo]);
       setpvm(true);
       return;
     }
-    if (c == 'photoViewC') {
-      setpv([cphoto.uri]);
-      setpvm(true);
-      return;
-    }
-
-    if (c == 'photoChange') {
-      MultipleImage(c);
-      return;
-    }
-  };
-
-  const setPhoto = c => {
-    setcphoto(c);
   };
 
   const onClickBottomItem = chk => {
@@ -341,9 +231,8 @@ function UserProfile(props) {
 
     if (chk == 'report') {
       closeBottomSheet();
-      setModalObj({item: user, i: 0});
-      setmodalChk(chk);
-      setisModal(true);
+      const obj = {item: user, selIndex: 0};
+      openModal(obj, chk);
     }
   };
 
@@ -357,34 +246,6 @@ function UserProfile(props) {
   const closeBottomSheet = () => {
     setisOpenSheet(false);
     refRBSheet?.current?.close();
-  };
-
-  const uploadPhoto = c => {
-    let imgArr = [];
-
-    if (c == 'Profile') {
-      cphoto.chk = 'Profile';
-      imgArr.push(cphoto);
-    }
-
-    // if (c == 'CNICFront') {
-    //   cnicFrontImage.chk = 'CnicF';
-    //   imgArr.push(cnicFrontImage);
-    // }
-
-    NetInfo.fetch().then(state => {
-      if (state.isConnected) {
-        store.User.attemptToUploadImage2(
-          imgArr,
-          setErrMessage,
-          setPhoto,
-          closePhotoModal,
-        );
-      } else {
-        // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
-      }
-    });
   };
 
   const ShowFollowersScreen = c => {
@@ -594,149 +455,6 @@ function UserProfile(props) {
     );
   };
 
-  const closePhotoModal = () => {
-    if (!loader) {
-      setisSHowChangePhoto(false);
-      setcphoto(false);
-    }
-  };
-
-  const renderShowCahngePhotoModal = () => {
-    const renderHeader = () => {
-      let text = 'review profile photo';
-
-      const renderCross = () => {
-        return (
-          <Pressable
-            style={({pressed}) => [
-              {opacity: pressed ? 0.5 : 1.0},
-              styles.modalCross,
-            ]}
-            onPress={closePhotoModal}>
-            <utils.vectorIcon.EvilIcons
-              name="close"
-              color={theme.color.title}
-              size={30}
-            />
-          </Pressable>
-        );
-      };
-
-      const renderTitle = () => {
-        return <Text style={styles.section2Title1}>{text}</Text>;
-      };
-
-      return (
-        <View style={{alignItems: 'center'}}>
-          {renderTitle()}
-          {renderCross()}
-        </View>
-      );
-    };
-
-    const renderButton = c => {
-      return (
-        <>
-          <TouchableOpacity
-            disabled={loader}
-            onPress={() => {
-              uploadPhoto(c);
-            }}
-            activeOpacity={0.7}
-            style={[styles.BottomButton, {marginTop: 40}]}>
-            {!loader ? (
-              <Text style={styles.buttonTextBottom}>Confirm & Continue</Text>
-            ) : (
-              <ActivityIndicator size={18} color={theme.color.buttonText} />
-            )}
-          </TouchableOpacity>
-        </>
-      );
-    };
-
-    const renderButtonSkip = () => {
-      return (
-        <>
-          <TouchableOpacity
-            disabled={loader}
-            onPress={() => {
-              closePhotoModal();
-            }}
-            activeOpacity={0.7}
-            style={[
-              styles.BottomButton,
-              {backgroundColor: theme.color.button2},
-            ]}>
-            <Text
-              style={[
-                styles.buttonTextBottom,
-                {
-                  color: theme.color.button2Text,
-                  textTransform: 'none',
-                  fontFamily: theme.fonts.fontBold,
-                  fontSize: 14,
-                },
-              ]}>
-              Skip for now
-            </Text>
-          </TouchableOpacity>
-        </>
-      );
-    };
-
-    let src =
-      cphoto != ''
-        ? {uri: cphoto.uri}
-        : require('../../assets/images/imgLoad/img.jpeg');
-    return (
-      <MModal
-        animationType="slide"
-        visible={isSHowChangePhoto}
-        transparent
-        onRequestClose={() => {
-          closePhotoModal();
-        }}>
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            padding: 15,
-          }}>
-          <View
-            style={{
-              backgroundColor: theme.color.background,
-              borderRadius: 15,
-              marginBottom: 15,
-              padding: 18,
-              width: '100%',
-            }}>
-            {renderHeader()}
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
-              <Text style={styles.section2LogoTitle}>
-                If you are happy with the result, click Confirm & Continue below
-                or try a different photo.
-              </Text>
-
-              <TouchableOpacity
-                style={styles.imageContainerP}
-                activeOpacity={0.7}
-                onPress={() =>
-                  Platform.OS == 'android' ? changePhoto('photoViewC') : null
-                }>
-                <Image source={src} style={styles.imageP} />
-              </TouchableOpacity>
-            </View>
-
-            {renderButton('Profile')}
-            {renderButtonSkip()}
-          </View>
-        </View>
-      </MModal>
-    );
-  };
-
   const renderBottomSheet = () => {
     const messageIcon = require('../../assets/images/bottomsheet/messages/img.png');
     const blockIcon = require('../../assets/images/bottomsheet/block/img.png');
@@ -894,544 +612,10 @@ function UserProfile(props) {
     );
   };
 
-  const renderModal = () => {
-    const c = modalHeight >= maxModalHeight ? true : false;
-    const style = c ? [styles.modal, {height: maxModalHeight}] : styles.modal2;
-
-    //report
-    if (modalChk == 'report') {
-      const renderHeader = () => {
-        let text = 'Report User';
-
-        const renderCross = () => {
-          return (
-            <Pressable
-              disabled={homeModalLoder2}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.7 : 1.0},
-                [
-                  !c
-                    ? {
-                        position: 'absolute',
-                        bottom: 0,
-                        right: 0,
-                      }
-                    : {
-                        position: 'absolute',
-                        bottom: 7,
-                        right: 15,
-                      },
-                ],
-              ]}
-              onPress={closeModal}>
-              <utils.vectorIcon.Ionicons
-                name="ios-close-outline"
-                color={theme.color.title}
-                size={32}
-              />
-            </Pressable>
-          );
-        };
-
-        const renderTitle = () => {
-          return <Text style={styles.modalTitle}>{text}</Text>;
-        };
-
-        return (
-          <View
-            style={
-              c
-                ? {
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    paddingHorizontal: 15,
-                    paddingTop: 15,
-                    paddingBottom: 7,
-                    shadowColor: '#000000',
-                    shadowOffset: {width: 0, height: 1}, // change this for more shadow
-                    shadowOpacity: 0.1,
-                    elevation: 1,
-                    backgroundColor: theme.color.background,
-                    borderTopLeftRadius: 10,
-                    borderTopRightRadius: 10,
-                  }
-                : {
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }
-            }>
-            {renderTitle()}
-            {renderCross()}
-          </View>
-        );
-      };
-
-      const renderCenter = () => {
-        let un = user.userName ? user.userName : 'uname';
-        const email = user.email;
-        return (
-          <View
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: 10,
-              width: '100%',
-            }}>
-            <View style={styles.mProfileImgContainerss}>
-              <ProgressiveFastImage
-                style={styles.mProfileImgss}
-                source={
-                  photo != ''
-                    ? {uri: photo}
-                    : require('../../assets/images/drawer/guest/img.png')
-                }
-                loadingImageStyle={styles.mimageLoader}
-                loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
-                blurRadius={5}
-              />
-            </View>
-
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={{
-                marginTop: 15,
-                fontFamily: theme.fonts.fontBold,
-                fontSize: 15,
-                color: '#101B10',
-                textTransform: 'capitalize',
-                lineHeight: 20,
-              }}>
-              {userName}
-            </Text>
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={{
-                fontFamily: theme.fonts.fontNormal,
-                fontSize: 13,
-                color: theme.color.subTitleLight,
-                lineHeight: 20,
-              }}>
-              {email}
-            </Text>
-
-            <View style={{width: '93%', alignSelf: 'center'}}>
-              <Text
-                style={{
-                  marginTop: 15,
-                  fontFamily: theme.fonts.fontNormal,
-                  fontSize: 14,
-                  color: '#101B10',
-                  lineHeight: 20,
-                  textAlign: 'center',
-                }}>
-                Tell us about the issues you are having or seeing with this
-                user.
-              </Text>
-            </View>
-
-            <View style={styles.textArea}>
-              <TextInput
-                value={message}
-                onChangeText={c => {
-                  setMessage(c);
-                }}
-                style={styles.mTextInpt}
-                placeholder="Describe your concerns"
-                multiline={true}
-                numberOfLines={10}
-              />
-            </View>
-          </View>
-        );
-      };
-
-      const renderBottom = () => {
-        let chk = message == '' ? true : false;
-        const renderButton1 = () => {
-          return (
-            <>
-              <TouchableOpacity
-                disabled={homeModalLoder2 || chk}
-                onPress={() => {
-                  sendReport();
-                }}
-                activeOpacity={0.7}
-                style={{
-                  width: '100%',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: '#B93B3B',
-                  height: 50,
-                  borderRadius: 10,
-                  alignSelf: 'center',
-                  opacity: chk ? 0.5 : 1,
-                }}>
-                {!homeModalLoder2 && (
-                  <Text
-                    style={{
-                      color: theme.color.buttonText,
-                      fontSize: 16,
-                      fontFamily: theme.fonts.fontBold,
-                      textTransform: 'none',
-                    }}>
-                    Report User
-                  </Text>
-                )}
-                {homeModalLoder2 && (
-                  <ActivityIndicator size={20} color={theme.color.buttonText} />
-                )}
-              </TouchableOpacity>
-            </>
-          );
-        };
-
-        const renderButton2 = () => {
-          return (
-            <>
-              <TouchableOpacity
-                disabled={homeModalLoder2}
-                onPress={closeModal}
-                activeOpacity={0.7}
-                style={{
-                  width: '100%',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: theme.color.button2,
-                  height: 50,
-                  borderRadius: 10,
-                  alignSelf: 'center',
-                  // borderWidth: 1,
-                  // borderColor: theme.color.fieldBorder,
-                  marginTop: 12,
-                }}>
-                <Text
-                  style={{
-                    color: '#30563A',
-                    textTransform: 'none',
-                    fontFamily: theme.fonts.fontBold,
-                    fontSize: 16,
-                  }}>
-                  Cancel
-                </Text>
-              </TouchableOpacity>
-            </>
-          );
-        };
-
-        return (
-          <View
-            style={
-              c
-                ? {
-                    backgroundColor: theme.color.background,
-                    shadowColor: '#000000',
-                    shadowOffset: {width: 0, height: -1}, // change this for more shadow
-                    shadowOpacity: 0.1,
-                    elevation: 5,
-                    borderBottomLeftRadius: 10,
-                    borderBottomRightRadius: 10,
-                    marginTop: 5,
-                  }
-                : {marginTop: 20}
-            }>
-            <View
-              style={
-                c ? styles.modalBottomContainer : styles.modalBottomContainer2
-              }>
-              {renderButton1()}
-              {renderButton2()}
-            </View>
-          </View>
-        );
-      };
-
-      return (
-        <MModal visible={isModal} transparent onRequestClose={closeModal}>
-          <SafeAreaView style={styles.modalContainer}>
-            <View style={styles.modalContainer2}>
-              <View
-                onLayout={event => {
-                  if (!c) {
-                    let {height} = event.nativeEvent.layout;
-                    setmodalHeight(height);
-                  }
-                }}
-                style={style}>
-                {c && (
-                  <>
-                    {renderHeader()}
-                    <ScrollView
-                      contentContainerStyle={{paddingHorizontal: 15}}
-                      showsVerticalScrollIndicator={false}
-                      style={{flex: 1}}>
-                      {renderCenter()}
-                    </ScrollView>
-                    {renderBottom()}
-                  </>
-                )}
-
-                {!c && (
-                  <>
-                    {renderHeader()}
-                    {renderCenter()}
-                    {renderBottom()}
-                  </>
-                )}
-              </View>
-            </View>
-          </SafeAreaView>
-        </MModal>
-      );
-    }
-  };
-
-  const renderRepoerSendModal = () => {
-    let c = modalHeight >= maxModalHeight ? true : false;
-    let style = c ? [styles.modal, {height: maxModalHeight}] : styles.modal2;
-
-    const renderHeader = () => {
-      let text = 'Report User';
-
-      const renderCross = () => {
-        return (
-          <Pressable
-            disabled={homeModalLoder2}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.7 : 1.0},
-              [
-                !c
-                  ? {
-                      position: 'absolute',
-                      bottom: 0,
-                      right: 0,
-                    }
-                  : {
-                      position: 'absolute',
-                      bottom: 7,
-                      right: 15,
-                    },
-              ],
-            ]}
-            onPress={closeModal}>
-            <utils.vectorIcon.Ionicons
-              name="ios-close-outline"
-              color={theme.color.title}
-              size={32}
-            />
-          </Pressable>
-        );
-      };
-
-      const renderTitle = () => {
-        return <Text style={styles.modalTitle}>{text}</Text>;
-      };
-
-      return (
-        <View
-          style={
-            c
-              ? {
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  paddingHorizontal: 15,
-                  paddingTop: 15,
-                  paddingBottom: 7,
-                  shadowColor: '#000000',
-                  shadowOffset: {width: 0, height: 1}, // change this for more shadow
-                  shadowOpacity: 0.1,
-                  elevation: 1,
-                  backgroundColor: theme.color.background,
-                  borderTopLeftRadius: 10,
-                  borderTopRightRadius: 10,
-                }
-              : {
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }
-          }>
-          {renderTitle()}
-          {renderCross()}
-        </View>
-      );
-    };
-
-    const closeModal = () => {
-      setmodalHeight(0);
-      setisSendReport(false);
-    };
-    const renderCenter = () => {
-      const email = sendObj.email;
-      let fn = sendObj.firstName;
-      let ln = sendObj.lastName;
-      let sendOfferUsername = fn + ' ' + ln;
-      let un = sendObj.userName || 'uname';
-      let src =
-        sendObj.image && sendObj.image != ''
-          ? {uri: sendObj.image}
-          : require('../../assets/images/drawer/guest/img.png');
-
-      return (
-        <View
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginTop: 10,
-            width: '100%',
-          }}>
-          <View style={styles.mProfileImgContainerss}>
-            <ProgressiveFastImage
-              style={styles.mProfileImgss}
-              source={src}
-              loadingImageStyle={styles.mimageLoader}
-              loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
-              blurRadius={5}
-            />
-          </View>
-
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={{
-              marginTop: 15,
-              fontFamily: theme.fonts.fontBold,
-              fontSize: 15,
-              color: '#101B10',
-              textTransform: 'capitalize',
-              lineHeight: 20,
-            }}>
-            {sendOfferUsername}
-          </Text>
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={{
-              fontFamily: theme.fonts.fontNormal,
-              fontSize: 13,
-              color: theme.color.subTitleLight,
-              lineHeight: 20,
-            }}>
-            {email}
-          </Text>
-
-          <View style={{width: '93%', alignSelf: 'center'}}>
-            <Text
-              style={{
-                marginTop: 15,
-                fontFamily: theme.fonts.fontNormal,
-                fontSize: 14,
-                color: '#101B10',
-                lineHeight: 20,
-                textAlign: 'center',
-              }}>
-              Thank You! We will review your comments and take any necessary
-              actions.
-            </Text>
-          </View>
-        </View>
-      );
-    };
-
-    const renderBottom = () => {
-      const renderButton1 = () => {
-        return (
-          <>
-            <TouchableOpacity
-              onPress={closeModal}
-              activeOpacity={0.7}
-              style={{
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: theme.color.button1,
-                height: 50,
-                borderRadius: 10,
-                alignSelf: 'center',
-                opacity: 1,
-              }}>
-              <Text
-                style={{
-                  color: theme.color.buttonText,
-                  fontSize: 16,
-                  fontFamily: theme.fonts.fontBold,
-                  textTransform: 'none',
-                }}>
-                Done
-              </Text>
-            </TouchableOpacity>
-          </>
-        );
-      };
-
-      return (
-        <View
-          style={
-            c
-              ? {
-                  backgroundColor: theme.color.background,
-                  shadowColor: '#000000',
-                  shadowOffset: {width: 0, height: -1}, // change this for more shadow
-                  shadowOpacity: 0.1,
-                  elevation: 5,
-                  borderBottomLeftRadius: 10,
-                  borderBottomRightRadius: 10,
-                  marginTop: 5,
-                }
-              : {marginTop: 20}
-          }>
-          <View
-            style={
-              c ? styles.modalBottomContainer : styles.modalBottomContainer2
-            }>
-            {renderButton1()}
-          </View>
-        </View>
-      );
-    };
-
-    return (
-      <MModal visible={isSendReport} transparent onRequestClose={closeModal}>
-        <SafeAreaView style={styles.modalContainer}>
-          <View style={styles.modalContainer2}>
-            <View
-              onLayout={event => {
-                if (!c) {
-                  let {height} = event.nativeEvent.layout;
-                  setmodalHeight(height);
-                }
-              }}
-              style={style}>
-              {c && (
-                <>
-                  {renderHeader()}
-                  <ScrollView
-                    contentContainerStyle={{paddingHorizontal: 15}}
-                    showsVerticalScrollIndicator={false}
-                    style={{flex: 1}}>
-                    {renderCenter()}
-                  </ScrollView>
-                  {renderBottom()}
-                </>
-              )}
-
-              {!c && (
-                <>
-                  {renderHeader()}
-                  {renderCenter()}
-                  {renderBottom()}
-                </>
-              )}
-            </View>
-          </View>
-        </SafeAreaView>
-      </MModal>
-    );
-  };
-
   const openModal = (obj, check) => {
     setModalObj(obj);
     if (check == 'message') setIsMessageModal(true);
+    if (check == 'report') setIsReportModal(true);
   };
 
   return (
@@ -1448,13 +632,9 @@ function UserProfile(props) {
           {renderProfileSection()}
           <View style={{flex: 1}}>{!isBlock && renderTabBar()}</View>
           <Toast ref={toast} position="bottom" />
-
-          {renderShowCahngePhotoModal()}
         </View>
       </SafeAreaView>
-      {isModal && renderModal()}
 
-      {isSendReport && renderRepoerSendModal()}
       <utils.Loader load={loader} />
       {isOpenSheet && renderBottomSheet()}
 
@@ -1465,6 +645,21 @@ function UserProfile(props) {
           modalObj={modalObj}
           setModalObj={setModalObj}
           loader={homeModalLoder}
+          setIsSuccessModal={setIsSuccessModal}
+          setSuccessModalObj={setSuccessModalObj}
+          setSuccessCheck={setSuccessCheck}
+        />
+      )}
+
+      {isReportModal && (
+        <utils.reportUserModal
+          isModal={isReportModal}
+          setIsModal={setIsReportModal}
+          modalObj={modalObj}
+          setModalObj={setModalObj}
+          loader={homeModalLoder}
+          user={user}
+          goBackMain={goBackMain}
           setIsSuccessModal={setIsSuccessModal}
           setSuccessModalObj={setSuccessModalObj}
           setSuccessCheck={setSuccessCheck}

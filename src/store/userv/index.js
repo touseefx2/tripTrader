@@ -1073,11 +1073,11 @@ class userv {
   };
 
   @action SendReportUser = (body, suc, goBack) => {
-    this.sethomeModalLoder(true);
+    store.User.setHomeModalLoder(true);
     console.log('SendReportUser body : ', body);
     db.hitApi(db.apis.SEND_REPORT_USER, 'post', body, store.User.authToken)
       ?.then(resp => {
-        this.sethomeModalLoder(false);
+        store.User.setHomeModalLoder(false);
         console.log(
           `response SendReportUser  ${db.apis.SEND_REPORT_USER} : `,
           resp.data,
@@ -1091,7 +1091,7 @@ class userv {
         suc(true);
       })
       .catch(err => {
-        this.sethomeModalLoder(false);
+        store.User.setHomeModalLoder(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in SendReportUser ${db.apis.SEND_REPORT_USER} : `,

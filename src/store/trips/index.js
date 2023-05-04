@@ -101,7 +101,7 @@ class trips {
     d,
     setd,
   ) => {
-    const body = {tripId: obj._id};
+    const body = {tripId: obj._id, hostId: obj?.hostId?._id};
     console.log('unSave Trip Body : ', body);
     this.setDeleteLoader(true);
     const uid = store.User.user._id;

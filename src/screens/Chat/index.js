@@ -79,12 +79,10 @@ function Chat(props) {
     flexDirection: 'row',
   };
 
-  const maxModalHeight = theme.window.Height - 100;
-  const [modalHeight, setmodalHeight] = useState(0);
   const toast = useRef(null);
   const scrollRef = useRef(null);
   const {isInternet} = store.General;
-  const {homeModalLoder} = store.Userv;
+  const {homeModalLoder} = store.User;
   const {pasObj, setpasObj, user, setSendMessageLoader, sendMessageLoader} =
     store.User;
   const obj = pasObj?.obj || false;
@@ -143,12 +141,14 @@ function Chat(props) {
     setisBlockOther(blk);
   }, [receiverBlockArr]);
 
-  const [modalObj, setmodalObj] = useState(false);
-  const [modalChk, setmodalChk] = useState(false);
-  const [isModal, setisModal] = useState(false);
-  const [rmessage, setrMessage] = useState('');
-  const [isSendReport, setisSendReport] = useState(false);
-  const [sendObj, setsendObj] = useState('');
+  const [isReportModal, setIsReportModal] = useState(false);
+
+  const [modalObj, setModalObj] = useState(false);
+
+  const [isSuccessModal, setIsSuccessModal] = useState(false);
+  const [successModalObj, setSuccessModalObj] = useState(null);
+  const [successCheck, setSuccessCheck] = useState('');
+
   const [loader, setloader] = useState(false);
 
   const [message, setmessage] = useState('');
@@ -268,33 +268,10 @@ function Chat(props) {
     if (isInternet) onRefresh();
   }, [isInternet]);
 
-  const setIsSendRport = v => {
-    setsendObj(modalObj.item);
-    closeModal();
-    setisSendReport(v);
-  };
-
   const goBackMain = () => {
     props.navigation.goBack();
   };
 
-  const sendReport = () => {
-    Keyboard.dismiss();
-
-    NetInfo.fetch().then(state => {
-      if (state.isConnected) {
-        let bd = {
-          reason: message,
-          reportby: store.User.user._id,
-          userId: rid,
-        };
-        store.Userv.SendReportUser(bd, setIsSendRport, goBackMain);
-      } else {
-        // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
-      }
-    });
-  };
   const unFollowUser = () => {
     Keyboard.dismiss();
     NetInfo.fetch().then(state => {
@@ -360,7 +337,6 @@ function Chat(props) {
           goBackMain,
         );
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -746,9 +722,8 @@ function Chat(props) {
   const onClickBottomItem = chk => {
     if (chk == 'report') {
       closeBottomSheet();
-      setmodalObj({item: ruser, i: 0});
-      setmodalChk('report');
-      setisModal(true);
+      const obj = {item: ruser, selIndex: 0};
+      openModal(obj, chk);
     }
   };
 
@@ -870,544 +845,10 @@ function Chat(props) {
     );
   };
 
-  const closeModal = () => {
-    setisModal(false);
-    setmodalChk(false);
-    setmodalObj(false);
-    setrMessage('');
-    setmodalHeight(0);
-    setisSendReport(false);
-  };
+  const openModal = (obj, check) => {
+    setModalObj(obj);
 
-  const renderModal = () => {
-    let c = modalHeight >= maxModalHeight ? true : false;
-    let style = c ? [styles.modal, {height: maxModalHeight}] : styles.modal2;
-
-    //report
-    if (modalChk == 'report') {
-      const renderHeader = () => {
-        let text = 'Report User';
-
-        const renderCross = () => {
-          return (
-            <Pressable
-              disabled={homeModalLoder}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.7 : 1.0},
-                [
-                  !c
-                    ? {
-                        position: 'absolute',
-                        bottom: 0,
-                        right: 0,
-                      }
-                    : {
-                        position: 'absolute',
-                        bottom: 7,
-                        right: 15,
-                      },
-                ],
-              ]}
-              onPress={closeModal}>
-              <utils.vectorIcon.Ionicons
-                name="ios-close-outline"
-                color={theme.color.title}
-                size={32}
-              />
-            </Pressable>
-          );
-        };
-
-        const renderTitle = () => {
-          return <Text style={styles.modalTitle}>{text}</Text>;
-        };
-
-        return (
-          <View
-            style={
-              c
-                ? {
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    paddingHorizontal: 15,
-                    paddingTop: 15,
-                    paddingBottom: 7,
-                    shadowColor: '#000000',
-                    shadowOffset: {width: 0, height: 1}, // change this for more shadow
-                    shadowOpacity: 0.1,
-                    elevation: 1,
-                    backgroundColor: theme.color.background,
-                    borderTopLeftRadius: 10,
-                    borderTopRightRadius: 10,
-                  }
-                : {
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }
-            }>
-            {renderTitle()}
-            {renderCross()}
-          </View>
-        );
-      };
-
-      const renderCenter = () => {
-        const photo = ruser.image || '';
-        const email = ruser.email || '';
-
-        return (
-          <View
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: 10,
-              width: '100%',
-            }}>
-            <View style={styles.mProfileImgContainerss}>
-              <ProgressiveFastImage
-                style={styles.mProfileImgss}
-                source={
-                  photo != ''
-                    ? {uri: photo}
-                    : require('../../assets/images/drawer/guest/img.png')
-                }
-                loadingImageStyle={styles.mimageLoader}
-                loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
-                blurRadius={5}
-              />
-            </View>
-
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={{
-                marginTop: 15,
-                fontFamily: theme.fonts.fontBold,
-                fontSize: 15,
-                color: '#101B10',
-                textTransform: 'capitalize',
-                lineHeight: 20,
-              }}>
-              {headerTitle}
-            </Text>
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={{
-                fontFamily: theme.fonts.fontNormal,
-                fontSize: 13,
-                color: theme.color.subTitleLight,
-                lineHeight: 20,
-              }}>
-              {email}
-            </Text>
-
-            <View style={{width: '93%', alignSelf: 'center'}}>
-              <Text
-                style={{
-                  marginTop: 15,
-                  fontFamily: theme.fonts.fontNormal,
-                  fontSize: 14,
-                  color: '#101B10',
-                  lineHeight: 20,
-                  textAlign: 'center',
-                }}>
-                Tell us about the issues you are having or seeing with this
-                user.
-              </Text>
-            </View>
-
-            <View style={styles.textArea}>
-              <TextInput
-                value={rmessage}
-                onChangeText={c => {
-                  setrMessage(c);
-                }}
-                style={styles.mTextInpt}
-                placeholder="Describe your concerns"
-                multiline={true}
-                numberOfLines={10}
-              />
-            </View>
-          </View>
-        );
-      };
-
-      const renderBottom = () => {
-        let chk = rmessage == '' ? true : false;
-        const renderButton1 = () => {
-          return (
-            <>
-              <TouchableOpacity
-                disabled={homeModalLoder || chk}
-                onPress={() => {
-                  sendReport();
-                }}
-                activeOpacity={0.7}
-                style={{
-                  width: '100%',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: '#B93B3B',
-                  height: 50,
-                  borderRadius: 10,
-                  alignSelf: 'center',
-                  opacity: chk ? 0.5 : 1,
-                }}>
-                {!homeModalLoder && (
-                  <Text
-                    style={{
-                      color: theme.color.buttonText,
-                      fontSize: 16,
-                      fontFamily: theme.fonts.fontBold,
-                      textTransform: 'none',
-                    }}>
-                    Report User
-                  </Text>
-                )}
-                {homeModalLoder && (
-                  <ActivityIndicator size={20} color={theme.color.buttonText} />
-                )}
-              </TouchableOpacity>
-            </>
-          );
-        };
-
-        const renderButton2 = () => {
-          return (
-            <>
-              <TouchableOpacity
-                disabled={homeModalLoder}
-                onPress={closeModal}
-                activeOpacity={0.7}
-                style={{
-                  width: '100%',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: theme.color.button2,
-                  height: 50,
-                  borderRadius: 10,
-                  alignSelf: 'center',
-                  // borderWidth: 1,
-                  // borderColor: theme.color.fieldBorder,
-                  marginTop: 12,
-                }}>
-                <Text
-                  style={{
-                    color: '#30563A',
-                    textTransform: 'none',
-                    fontFamily: theme.fonts.fontBold,
-                    fontSize: 16,
-                  }}>
-                  Cancel
-                </Text>
-              </TouchableOpacity>
-            </>
-          );
-        };
-
-        return (
-          <View
-            style={
-              c
-                ? {
-                    backgroundColor: theme.color.background,
-                    shadowColor: '#000000',
-                    shadowOffset: {width: 0, height: -1}, // change this for more shadow
-                    shadowOpacity: 0.1,
-                    elevation: 5,
-                    borderBottomLeftRadius: 10,
-                    borderBottomRightRadius: 10,
-                    marginTop: 5,
-                  }
-                : {marginTop: 20}
-            }>
-            <View
-              style={
-                c ? styles.modalBottomContainer : styles.modalBottomContainer2
-              }>
-              {renderButton1()}
-              {renderButton2()}
-            </View>
-          </View>
-        );
-      };
-
-      return (
-        <MModal visible={isModal} transparent onRequestClose={closeModal}>
-          <SafeAreaView style={styles.modalContainer}>
-            <View style={styles.modalContainer2}>
-              <View
-                onLayout={event => {
-                  if (!c) {
-                    let {height} = event.nativeEvent.layout;
-                    setmodalHeight(height);
-                  }
-                }}
-                style={style}>
-                {c && (
-                  <>
-                    {renderHeader()}
-                    <ScrollView
-                      contentContainerStyle={{paddingHorizontal: 15}}
-                      showsVerticalScrollIndicator={false}
-                      style={{flex: 1}}>
-                      {renderCenter()}
-                    </ScrollView>
-                    {renderBottom()}
-                  </>
-                )}
-
-                {!c && (
-                  <>
-                    {renderHeader()}
-                    {renderCenter()}
-                    {renderBottom()}
-                  </>
-                )}
-              </View>
-            </View>
-          </SafeAreaView>
-        </MModal>
-      );
-    }
-  };
-
-  const renderRepoerSendModal = () => {
-    const c = modalHeight >= maxModalHeight ? true : false;
-    const style = c ? [styles.modal, {height: maxModalHeight}] : styles.modal2;
-
-    const renderHeader = () => {
-      let text = 'Report User';
-
-      const renderCross = () => {
-        return (
-          <Pressable
-            disabled={homeModalLoder}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.7 : 1.0},
-              [
-                !c
-                  ? {
-                      position: 'absolute',
-                      bottom: 0,
-                      right: 0,
-                    }
-                  : {
-                      position: 'absolute',
-                      bottom: 7,
-                      right: 15,
-                    },
-              ],
-            ]}
-            onPress={closeModal}>
-            <utils.vectorIcon.Ionicons
-              name="ios-close-outline"
-              color={theme.color.title}
-              size={32}
-            />
-          </Pressable>
-        );
-      };
-
-      const renderTitle = () => {
-        return <Text style={styles.modalTitle}>{text}</Text>;
-      };
-
-      return (
-        <View
-          style={
-            c
-              ? {
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  paddingHorizontal: 15,
-                  paddingTop: 15,
-                  paddingBottom: 7,
-                  shadowColor: '#000000',
-                  shadowOffset: {width: 0, height: 1}, // change this for more shadow
-                  shadowOpacity: 0.1,
-                  elevation: 1,
-                  backgroundColor: theme.color.background,
-                  borderTopLeftRadius: 10,
-                  borderTopRightRadius: 10,
-                }
-              : {
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }
-          }>
-          {renderTitle()}
-          {renderCross()}
-        </View>
-      );
-    };
-
-    const renderCenter = () => {
-      const fn = sendObj.firstName;
-      const ln = sendObj.lastName;
-      const sendOfferUsername = fn + ' ' + ln;
-      const email = sendObj.email || '';
-      const src =
-        sendObj.image && sendObj.image != ''
-          ? {uri: sendObj.image}
-          : require('../../assets/images/drawer/guest/img.png');
-
-      return (
-        <View
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginTop: 10,
-            width: '100%',
-          }}>
-          <View style={styles.mProfileImgContainerss}>
-            <ProgressiveFastImage
-              style={styles.mProfileImgss}
-              source={src}
-              loadingImageStyle={styles.mimageLoader}
-              loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
-              blurRadius={5}
-            />
-          </View>
-
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={{
-              marginTop: 15,
-              fontFamily: theme.fonts.fontBold,
-              fontSize: 15,
-              color: '#101B10',
-              textTransform: 'capitalize',
-              lineHeight: 20,
-            }}>
-            {sendOfferUsername}
-          </Text>
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={{
-              fontFamily: theme.fonts.fontNormal,
-              fontSize: 13,
-              color: theme.color.subTitleLight,
-              lineHeight: 20,
-            }}>
-            {email}
-          </Text>
-
-          <View style={{width: '93%', alignSelf: 'center'}}>
-            <Text
-              style={{
-                marginTop: 15,
-                fontFamily: theme.fonts.fontNormal,
-                fontSize: 14,
-                color: '#101B10',
-                lineHeight: 20,
-                textAlign: 'center',
-              }}>
-              Thank You! We will review your comments and take any necessary
-              actions.
-            </Text>
-          </View>
-        </View>
-      );
-    };
-
-    const renderBottom = () => {
-      const renderButton1 = () => {
-        return (
-          <>
-            <TouchableOpacity
-              onPress={closeModal}
-              activeOpacity={0.7}
-              style={{
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: theme.color.button1,
-                height: 50,
-                borderRadius: 10,
-                alignSelf: 'center',
-                opacity: 1,
-              }}>
-              <Text
-                style={{
-                  color: theme.color.buttonText,
-                  fontSize: 16,
-                  fontFamily: theme.fonts.fontBold,
-                  textTransform: 'none',
-                }}>
-                Done
-              </Text>
-            </TouchableOpacity>
-          </>
-        );
-      };
-
-      return (
-        <View
-          style={
-            c
-              ? {
-                  backgroundColor: theme.color.background,
-                  shadowColor: '#000000',
-                  shadowOffset: {width: 0, height: -1}, // change this for more shadow
-                  shadowOpacity: 0.1,
-                  elevation: 5,
-                  borderBottomLeftRadius: 10,
-                  borderBottomRightRadius: 10,
-                  marginTop: 5,
-                }
-              : {marginTop: 20}
-          }>
-          <View
-            style={
-              c ? styles.modalBottomContainer : styles.modalBottomContainer2
-            }>
-            {renderButton1()}
-          </View>
-        </View>
-      );
-    };
-
-    return (
-      <MModal visible={isSendReport} transparent onRequestClose={closeModal}>
-        <SafeAreaView style={styles.modalContainer}>
-          <View style={styles.modalContainer2}>
-            <View
-              onLayout={event => {
-                if (!c) {
-                  let {height} = event.nativeEvent.layout;
-                  setmodalHeight(height);
-                }
-              }}
-              style={style}>
-              {c && (
-                <>
-                  {renderHeader()}
-                  <ScrollView
-                    contentContainerStyle={{paddingHorizontal: 15}}
-                    showsVerticalScrollIndicator={false}
-                    style={{flex: 1}}>
-                    {renderCenter()}
-                  </ScrollView>
-                  {renderBottom()}
-                </>
-              )}
-
-              {!c && (
-                <>
-                  {renderHeader()}
-                  {renderCenter()}
-                  {renderBottom()}
-                </>
-              )}
-            </View>
-          </View>
-        </SafeAreaView>
-      </MModal>
-    );
+    if (check == 'report') setIsReportModal(true);
   };
 
   const renderBottomSheet = () => {
@@ -1721,9 +1162,34 @@ function Chat(props) {
             }}
           />
         )}
-        {isModal && renderModal()}
+
         {isOpenSheet && renderBottomSheet()}
-        {isSendReport && renderRepoerSendModal()}
+        {isReportModal && (
+          <utils.reportUserModal
+            isModal={isReportModal}
+            setIsModal={setIsReportModal}
+            modalObj={modalObj}
+            setModalObj={setModalObj}
+            loader={homeModalLoder}
+            user={ruser}
+            goBackMain={goBackMain}
+            setIsSuccessModal={setIsSuccessModal}
+            setSuccessModalObj={setSuccessModalObj}
+            setSuccessCheck={setSuccessCheck}
+          />
+        )}
+
+        {isSuccessModal && (
+          <utils.SuccessModal
+            isModal={isSuccessModal}
+            setIsModal={setIsSuccessModal}
+            modalObj={successModalObj}
+            setModalObj={setSuccessModalObj}
+            check={successCheck}
+            setCheck={setSuccessCheck}
+            props={props}
+          />
+        )}
       </View>
     </>
   );

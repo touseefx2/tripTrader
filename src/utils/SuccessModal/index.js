@@ -6,6 +6,7 @@ import Offer from './components/Offer';
 import OfferConfirm from './components/OfferConfirm';
 import Message from './components/Message';
 import Trip from './components/Trip';
+import Report from './components/Report';
 
 export default function SuccessModal({
   isModal,
@@ -73,6 +74,14 @@ export default function SuccessModal({
 
           {check == 'TripSave' && (
             <Trip
+              modalObj={modalObj}
+              isMaxHeight={isMaxHeight}
+              closeModal={closeModal}
+            />
+          )}
+
+          {check == 'ReportSend' && (
+            <Report
               modalObj={modalObj}
               isMaxHeight={isMaxHeight}
               closeModal={closeModal}
