@@ -934,6 +934,7 @@ function Home(props) {
             setIsSuccessModal={setIsSuccessModal}
             setSuccessModalObj={setSuccessModalObj}
             setSuccessCheck={setSuccessCheck}
+            goBackMain={() => {}}
           />
         )}
         {isRemoveModal && (

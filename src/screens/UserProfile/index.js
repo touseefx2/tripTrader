@@ -648,6 +648,7 @@ function UserProfile(props) {
           setIsSuccessModal={setIsSuccessModal}
           setSuccessModalObj={setSuccessModalObj}
           setSuccessCheck={setSuccessCheck}
+          goBackMain={goBackMain}
         />
       )}
 

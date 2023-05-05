@@ -1231,21 +1231,20 @@ class userv {
         );
         setTimeout(() => {
           setl(false);
-        }, 1000);
+        }, 1500);
         if (resp.data && resp.data.check == 'reload') {
           goBack();
           store.General.refreshAlert(resp.data.message);
           return;
         }
-
         FireStore.updateUserinFirestoreOnlyRoom(uid1, resp.data.data);
+        this.myUserGetGeneral('b');
         this.attemptToGetHome(
           uid2,
           () => {},
           c => sflwrs(c),
           c => sflwng(c),
         );
-        this.myUserGetGeneral('b');
         suc();
       })
       .catch(err => {
@@ -1257,10 +1256,9 @@ class userv {
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
-        // seterror(msg.toString())
+
         Alert.alert('', msg.toString());
       });
   };
@@ -1277,21 +1275,20 @@ class userv {
         );
         setTimeout(() => {
           setl(false);
-        }, 1000);
+        }, 1500);
         if (resp.data && resp.data.check == 'reload') {
           goBack();
           store.General.refreshAlert(resp.data.message);
           return;
         }
-
         FireStore.updateUserinFirestoreOnlyRoom(uid1, resp.data.data);
+        this.myUserGetGeneral('b');
         this.attemptToGetHome(
           uid2,
           () => {},
           c => sflwrs(c),
           c => sflwng(c),
         );
-        this.myUserGetGeneral('b');
         suc();
       })
       .catch(err => {
@@ -1303,10 +1300,9 @@ class userv {
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
-        // seterror(msg.toString())
+
         Alert.alert('', msg.toString());
       });
   };

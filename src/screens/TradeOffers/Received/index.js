@@ -745,6 +745,7 @@ function Received(props) {
               setIsSuccessModal={setIsSuccessModal}
               setSuccessModalObj={setSuccessModalObj}
               setSuccessCheck={setSuccessCheck}
+              goBackMain={() => {}}
             />
           )}
 

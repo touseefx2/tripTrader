@@ -19,6 +19,7 @@ import {FireStore} from '../../services/FireStore';
 import NetInfo from '@react-native-community/netinfo';
 import {Notification} from '../../services/Notification';
 import utils from '..';
+import db from '../../database/index';
 
 export default function MessageModal({
   isModal,
@@ -29,6 +30,7 @@ export default function MessageModal({
   setIsSuccessModal,
   setSuccessModalObj,
   setSuccessCheck,
+  goBackMain,
 }) {
   const maxModalHeight = theme.window.Height - 70;
   const {item} = modalObj;
@@ -141,17 +143,52 @@ export default function MessageModal({
   };
 
   const sendMessage = () => {
+    const reciever = item?.hostId || item?.offeredBy;
     Keyboard.dismiss();
+
     NetInfo.fetch().then(async state => {
       if (state.isConnected) {
-        FireStore.sendMessage(
-          user, //senderUserObject
-          item.hostId || item.offeredBy, //reciverUserObject
-          message, //messageValue
-          'text', //messageType
-          [], //messageImage
-          messageSendSuccessfully, //messageSendSuccessfully
-        );
+        store.User.setHomeModalLoder(true);
+        db.hitApi(
+          db.apis.GET_USER_BY_ID + reciever._id,
+          'get',
+          {},
+          store.User.authToken,
+        )
+          ?.then(resp => {
+            const followerArr = resp?.data?.data[0]?.followers || [];
+            const uid = store.User.user._id; //current login user id
+            if (followerArr.length > 0) {
+              const arr1 = followerArr.find(
+                item => item.block == true && item?.userId == uid,
+              );
+              if (arr1) {
+                store.User.setHomeModalLoder(false);
+                closeModal();
+                goBackMain();
+                store.General.refreshAlert('This user has blocked you.');
+                return;
+              }
+            }
+            FireStore.sendMessage(
+              user, //senderUserObject
+              reciever, //reciverUserObject
+              message, //messageValue
+              'text', //messageType
+              [], //messageImage
+              messageSendSuccessfully, //messageSendSuccessfully
+            );
+          })
+          .catch(err => {
+            store.User.setHomeModalLoder(false);
+            const msg = err.response.data.message || err.response.status || err;
+            console.log(
+              `Error in get user  in sendMessage ${
+                db.apis.GET_USER_BY_ID + uid
+              } : `,
+              msg,
+            );
+          });
       } else {
         Alert.alert('', 'Please connect internet');
       }

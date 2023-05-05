@@ -733,6 +733,9 @@ class user {
     const params = `rating=${rate}&userStatus=${userStatus}&location=${location}&species=${species}&query=${query}&activity=${activity}&tradeType=${activity}&blockedUsers=${blockUsers}&page=1&limit=10000`;
     this.setHomeLoader(true);
     console.log('Get AllHomeTrip User : ', db.apis.GET_ALL_HOME_TRIPS + params);
+    if (c == 'all') {
+      this.getUserById1(this.user._id, this.authToken);
+    }
     db.hitApi(db.apis.GET_ALL_HOME_TRIPS + params, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setHomeLoader(false);
@@ -743,8 +746,8 @@ class user {
         this.setHomeTrips(dt);
         setgetdata(true);
         if (c == 'all') {
-          this.allGetGeneralData();
           this.allGetGeneralUserData(this.user._id);
+          this.allGetGeneralData();
         }
       })
       .catch(err => {
@@ -764,8 +767,8 @@ class user {
           setgetdata(true);
           this.setHomeTrips([]);
           if (c == 'all') {
-            this.allGetGeneralData();
             this.allGetGeneralUserData(this.user._id);
+            this.allGetGeneralData();
           }
           return;
         }
@@ -2149,7 +2152,6 @@ class user {
       () => {},
     );
 
-    this.getUserById1(uid, this.authToken, '');
     this.attemptToGetInboxes(uid, () => {}, '');
     store.Offers.attemptToGetSentOffers(
       () => {},
@@ -2655,15 +2657,14 @@ class user {
   }
 
   @action.bound
-  getUserById1(uid, token, c) {
+  getUserById1(uid, token) {
     console.log(' get user by id : ', uid);
     db.hitApi(db.apis.GET_USER_BY_ID + uid, 'get', {}, token)
       ?.then(resp => {
-        // console.log(
-        //   `response get user by id  ${db.apis.GET_USER_BY_ID + uid} : `,
-        //   resp.data,
-        // );
-        let rsp = resp.data.data[0];
+        console.log(
+          `response get user by id  ${db.apis.GET_USER_BY_ID + uid} : true `,
+        );
+        const rsp = resp.data.data[0];
 
         if (rsp.status == 'blocked') {
           Alert.alert(
@@ -2681,22 +2682,19 @@ class user {
         }
       })
       .catch(err => {
-        let msg = err.response.data.message || err.response.status || err;
+        const msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in get user by id ${db.apis.GET_USER_BY_ID + uid} : `,
           msg,
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
         if (msg == 'No records found') {
           this.Logout();
           return;
         }
-        // seterror(msg.toString())
-        Alert.alert('', msg.toString());
       });
   }
 
