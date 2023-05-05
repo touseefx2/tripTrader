@@ -1,7 +1,7 @@
 const BASE_URL =
   // 'http://ec2-35-175-134-9.compute-1.amazonaws.com/';
-  'http://192.168.100.3:3001/';
-// 'https://api.trip-trader.com/';
+  // 'http://192.168.100.3:3001/';
+  'https://api.trip-trader.com/';
 
 //apis
 const GET_CITIES_AREAS = 'api/area/getAllAreas';

@@ -32,40 +32,35 @@ class notifications {
   }
 
   @action attemptToGetNotifications = (uid, setgetdata) => {
-    console.log('GetNotifications true: ');
+    console.log('GetNotifications  : ');
     this.setLoader(true);
-
-    let route = uid + '?page=1&limit=10000';
-    let token = store.User.authToken;
+    const route = uid + '?page=1&limit=10000';
+    const token = store.User.authToken;
     db.hitApi(db.apis.GET_NOTIFICATIONS + route, 'get', {}, token)
       ?.then(resp => {
         this.setLoader(false);
-
-        // console.log(
-        //   `response GetNotifications   ${db.apis.GET_NOTIFICATIONS + route} : `,
-        //   resp.data,
-        // );
-        let dt = resp.data.data || [];
-        let count = resp.data.count[0].unRead || 0;
+        console.log(
+          `response GetNotifications   ${
+            db.apis.GET_NOTIFICATIONS + route
+          } : true `,
+        );
+        const dt = resp.data.data || [];
+        const count = resp.data.count[0].unRead || 0;
         setgetdata(true);
         // this.setnotificationsTotal();
         this.setnotifications(dt);
-
         this.setunRead(count);
         return;
       })
       .catch(err => {
         this.setLoader(false);
-
-        let msg = err.response.data.message || err.response.status || err;
-
+        const msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in GetNotifications ${db.apis.GET_NOTIFICATIONS + route} : `,
           msg,
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
         if (msg == 'No records found') {
@@ -75,7 +70,7 @@ class notifications {
           this.setunRead(0);
           return;
         }
-        // seterror(msg.toString())
+
         Alert.alert('', msg.toString());
       });
   };

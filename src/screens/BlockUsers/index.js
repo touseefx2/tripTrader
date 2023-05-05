@@ -177,44 +177,44 @@ function BlockUsers(props) {
       );
     };
 
-    // if (item.blockedBy == true) return null;
-    // else {
-    return (
-      <View
-        style={[styles.modalinfoConatiner, {marginTop: index == 0 ? 15 : 0}]}>
+    if (item.blockedBy == true) return null;
+    else {
+      return (
         <View
-          style={{
-            width: '78%',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}>
-          {renderProfile()}
-          {renderText()}
-        </View>
-
-        <Pressable
-          onPress={() => unblokUser(usrr._id, index)}
-          style={({pressed}) => [
-            {
-              opacity: pressed ? 0.7 : 1.0,
-              width: '20%',
-              alignItems: 'flex-end',
-            },
-          ]}>
-          <Text
+          style={[styles.modalinfoConatiner, {marginTop: index == 0 ? 15 : 0}]}>
+          <View
             style={{
-              top: 10,
-              color: '#3C6B49',
-              fontSize: 14,
-              fontFamily: theme.fonts.fontBold,
-              textTransform: 'capitalize',
+              width: '78%',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
             }}>
-            Unblock
-          </Text>
-        </Pressable>
-      </View>
-    );
-    // }
+            {renderProfile()}
+            {renderText()}
+          </View>
+
+          <Pressable
+            onPress={() => unblokUser(usrr._id, index)}
+            style={({pressed}) => [
+              {
+                opacity: pressed ? 0.7 : 1.0,
+                width: '20%',
+                alignItems: 'flex-end',
+              },
+            ]}>
+            <Text
+              style={{
+                top: 10,
+                color: '#3C6B49',
+                fontSize: 14,
+                fontFamily: theme.fonts.fontBold,
+                textTransform: 'capitalize',
+              }}>
+              Unblock
+            </Text>
+          </Pressable>
+        </View>
+      );
+    }
   };
 
   const ListHeader = () => {
