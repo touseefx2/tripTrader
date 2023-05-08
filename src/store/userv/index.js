@@ -102,7 +102,7 @@ class userv {
           `Error in GET Followers  ${db.apis.GET_FOLLOWERS + uid} : `,
           msg,
         );
-        if (msg == 503 || msg == 500) {
+        if (msg == 503 || msg == 500 || msg == 502) {
           Alert.alert('', 'Server not response');
           // store.General.setisServerError(true);
           return;
@@ -153,8 +153,8 @@ class userv {
           msg,
         );
         if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
+          // Alert.alert('', 'Server not response');
+
           return;
         }
         if (msg == 'No records found') {
@@ -423,8 +423,8 @@ class userv {
           msg,
         );
         if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
+          // Alert.alert('', 'Server not response');
+
           return;
         }
         if (msg == 'No records found') {
@@ -472,8 +472,8 @@ class userv {
           msg,
         );
         if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
+          // Alert.alert('', 'Server not response');
+
           return;
         }
 
@@ -573,7 +573,7 @@ class userv {
           msg,
         );
         if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
+          // Alert.alert('', 'Server not response');
           // store.General.setisServerError(true);
           return;
         }
@@ -631,8 +631,8 @@ class userv {
           msg,
         );
         if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
+          // Alert.alert('', 'Server not response');
+
           return;
         }
         if (msg == 'No records found') {

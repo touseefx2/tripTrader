@@ -59,8 +59,6 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
   [RNCPushNotificationIOS didReceiveNotificationResponse:response];
 }
 
-
-
  
 //end push ntfctn
 

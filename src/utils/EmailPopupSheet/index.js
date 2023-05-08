@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import {
   responsiveFontSize,
@@ -22,7 +23,7 @@ import {observer} from 'mobx-react';
 export default observer(EmailPopupSheet);
 function EmailPopupSheet({isModal, setIsModal, email, user}) {
   const maxModalHeight = theme.window.Height - 70;
-  const {reSendVerificationLink, resendLoder} = store.User;
+  const {reSendVerificationLink, resendLoder, logoutLoader} = store.User;
 
   const [isMaxHeight, setIssMaxHeight] = useState(false);
   const [modalHeight, setmodalHeight] = useState(0);
@@ -49,6 +50,14 @@ function EmailPopupSheet({isModal, setIsModal, email, user}) {
       } else {
         Alert.alert('', 'Please connect internet');
       }
+    });
+  };
+
+  const logoutAccount = () => {
+    NetInfo.fetch().then(state => {
+      if (state.isConnected) {
+        store.User.attemptToLogoutAccount();
+      } else Alert.alert('', 'Please connect internet');
     });
   };
 
@@ -100,6 +109,27 @@ function EmailPopupSheet({isModal, setIsModal, email, user}) {
           style={styles.button}>
           {!resendLoder ? (
             <Text style={styles.buttonText}>Resend Verification Email</Text>
+          ) : (
+            <ActivityIndicator
+              size={responsiveFontSize(3.2)}
+              color={theme.color.buttonText}
+            />
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          activeOpacity={0.7}
+          disabled={logoutLoader ? true : false}
+          onPress={logoutAccount}
+          style={[
+            styles.button,
+            {
+              marginTop: responsiveHeight(1.2),
+              backgroundColor: '#B93B3B',
+            },
+          ]}>
+          {!logoutLoader ? (
+            <Text style={styles.buttonText}>Logout</Text>
           ) : (
             <ActivityIndicator
               size={responsiveFontSize(3.2)}

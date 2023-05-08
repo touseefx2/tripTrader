@@ -60,7 +60,7 @@ class notifications {
           msg,
         );
         if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
+          // Alert.alert('', 'Server not response');
           return;
         }
         if (msg == 'No records found') {
@@ -71,7 +71,7 @@ class notifications {
           return;
         }
 
-        Alert.alert('', msg.toString());
+        // Alert.alert('', msg.toString());
       });
   };
 

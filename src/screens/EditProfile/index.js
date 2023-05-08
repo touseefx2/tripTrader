@@ -821,6 +821,7 @@ function EditProfile(props) {
         modal
         mode="date"
         format="MM-DD-YYYY"
+        // textColor={theme.color.title}
         open={pudshow}
         date={dob}
         onConfirm={date => {

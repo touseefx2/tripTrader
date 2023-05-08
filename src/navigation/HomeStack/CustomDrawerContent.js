@@ -27,7 +27,7 @@ import NetInfo from '@react-native-community/netinfo';
 export default observer(CustomDrawerContent);
 function CustomDrawerContent(props) {
   const {user, logoutLoader} = store.User;
-  const {setFocusScreen} = store.General;
+  const {setFocusScreen, isEmailPopup} = store.General;
 
   const {routes, index} = props.state;
   const focusedRoute = routes[index].name; // this is the active route
@@ -157,7 +157,7 @@ function CustomDrawerContent(props) {
       </DrawerContentScrollView>
       {renderBottom()}
       {Platform.OS == 'ios' && <utils.navBarHeight />}
-      <utils.Loader load={logoutLoader} />
+      {!isEmailPopup && <utils.Loader load={logoutLoader} />}
     </View>
   );
 }

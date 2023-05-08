@@ -44,7 +44,7 @@ import {Notification} from '../../services/Notification';
 export default observer(Signup);
 function Signup(props) {
   const {confirmPayment} = useStripe();
-  const {isEmailPopup, setIsEmailPopup} = store.General;
+
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
   const toast = useRef(null);
   const loader = store.User.regLoader;
@@ -510,10 +510,6 @@ function Signup(props) {
     });
   };
 
-  const openEmialPopupSheet = () => {
-    setIsEmailPopup(true);
-  };
-
   const uploadPhoto = c => {
     if (c == 'Profile' && photo == '') {
       setisPhotoUpload(false);
@@ -742,7 +738,6 @@ function Signup(props) {
     setuser(data);
     setplans(plans);
     setisUserCreate(true);
-    // openEmialPopupSheet();
   };
 
   function addMonths(date, months) {
@@ -2473,6 +2468,7 @@ function Signup(props) {
         mode="date"
         format="MM-DD-YYYY"
         open={pudshow}
+        // textColor={theme.color.title}
         date={dob == '' ? new Date() : dob}
         onConfirm={date => {
           console.log('data : ', date);
@@ -2534,14 +2530,7 @@ function Signup(props) {
 
         {renderStatusBar()}
         {renderDateShowModal()}
-        {isEmailPopup && (
-          <utils.EmailPopupSheet
-            isModal={isEmailPopup}
-            setIsModal={setIsEmailPopup}
-            email={email}
-            user={user}
-          />
-        )}
+
         {isShowTermsAndConditions && (
           <utils.WebViewModal
             link={store.General.Terms_and_Conditions_Link}

@@ -32,7 +32,8 @@ function Settings(props) {
   const headerTitle = 'Settings';
   const toast = useRef(null);
   const activeOpacity = 0.8;
-  const {isInternet, settingsGoTo, setSettingsGoTo, setgoto} = store.General;
+  const {isInternet, settingsGoTo, setSettingsGoTo, setgoto, isEmailPopup} =
+    store.General;
   const {user, isNotification, Logout, logoutLoader} = store.User;
 
   let phn = '';
@@ -522,7 +523,7 @@ function Settings(props) {
         />
       )}
       <Toast ref={toast} position="bottom" />
-      <utils.Loader load={logoutLoader} />
+      {!isEmailPopup && <utils.Loader load={logoutLoader} />}
     </View>
   );
 }
