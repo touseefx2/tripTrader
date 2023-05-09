@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Text, ScrollView} from 'react-native';
+import {Text, ScrollView, Platform} from 'react-native';
 import {styles} from './styles';
 import utils from '../../../../utils';
 import store from '../../../../store';
@@ -153,7 +153,7 @@ function Step3({
         onSelectItem={onclickSelect}
         setVisible={closeAllDropDown}
         c={check}
-        absolute={true}
+        absolute={Platform.OS == 'ios' ? false : true}
       />
     );
   };

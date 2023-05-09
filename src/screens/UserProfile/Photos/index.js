@@ -316,6 +316,7 @@ function Photos(props) {
 
         {data.length >= 0 && (
           <FlatList
+            decelerationRate={0.6}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }

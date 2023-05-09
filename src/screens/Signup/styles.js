@@ -244,7 +244,7 @@ export const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     alignSelf: 'center',
-    fontFamily: 'Inter-Regular',
+    fontFamily: theme.fonts.fontNormal,
   },
 
   uploadIndication: {
@@ -277,15 +277,6 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 110 / 2,
-    // resizeMode: 'contain',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-    elevation: 3,
   },
 
   imageContainer: {
@@ -300,15 +291,6 @@ export const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: theme.color.photoBorderColor,
     borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-
-    elevation: 3,
   },
 
   section2LogoC: {

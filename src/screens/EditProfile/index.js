@@ -314,14 +314,10 @@ function EditProfile(props) {
     setEmptydob(false);
   };
 
-  const setErrMessage = c => {
-    seterrorMessage(c);
-  };
-
   const MultipleImage = async button => {
     setisShowPrmsn(false);
     setisAddPhotoModal(false);
-    let apiLevel = store.General.apiLevel;
+    const apiLevel = store.General.apiLevel;
 
     setTimeout(async () => {
       try {
@@ -334,8 +330,9 @@ function EditProfile(props) {
         const resp = await MultipleImagePicker.openPicker(options);
         if (resp.length > 0) {
           const res = resp[0];
-          console.log('mutipicker image res true  ');
-          const {path, fileName, mine} = res;
+          console.log('mutipicker image res true  :  ');
+
+          const {path, mime, mine, filename, fileName} = res;
           let uri = path;
           if (Platform.OS == 'android' && apiLevel < 29) {
             uri = 'file://' + uri;
@@ -345,10 +342,10 @@ function EditProfile(props) {
             compressionMethod: 'auto',
           })
             .then(async res => {
-              let imageObject = {
+              const imageObject = {
                 uri: res,
-                type: mine,
-                fileName: fileName,
+                type: Platform.OS == 'ios' ? mime : mine,
+                fileName: Platform.OS == 'ios' ? filename : fileName,
               };
               console.log('Compress image  : ', imageObject);
               if (button == 'Profile') {
@@ -366,7 +363,7 @@ function EditProfile(props) {
             });
         }
 
-        console.log('multi photo picker res  : ', res);
+        console.log('multi photo picker res  : ', resp);
       } catch (error) {
         console.log('multi photo picker error : ', error);
       }

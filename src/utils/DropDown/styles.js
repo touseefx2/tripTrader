@@ -1,5 +1,6 @@
 import {StyleSheet, Platform} from 'react-native';
 import theme from '../../theme';
+import {responsiveFontSize} from 'react-native-responsive-dimensions';
 
 const bordercolor = '#D8E1DB';
 const paddingHorizontal = 15;
@@ -30,6 +31,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: paddingHorizontal,
+    paddingVertical: Platform.OS === 'ios' ? 10 : 0,
   },
   rowContainer: {
     width: '90%',
@@ -49,16 +51,14 @@ export const styles = StyleSheet.create({
   },
   Text: {
     color: theme.color.title,
-    fontSize: 13,
+    fontSize: responsiveFontSize(1.75),
     fontFamily: theme.fonts.fontNormal,
-    lineHeight: 19,
     textTransform: 'capitalize',
   },
   Textc: {
     color: theme.color.button1,
-    fontSize: 13,
+    fontSize: responsiveFontSize(1.75),
     fontFamily: theme.fonts.fontBold,
-    lineHeight: 19,
   },
   emptyMessageConatiner: {
     width: '100%',

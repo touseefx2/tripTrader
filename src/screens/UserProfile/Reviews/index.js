@@ -1870,6 +1870,7 @@ function Reviews(props) {
 
         {data.length >= 0 && (
           <FlatList
+            decelerationRate={0.6}
             contentContainerStyle={{
               paddingBottom: responsiveHeight(5),
             }}

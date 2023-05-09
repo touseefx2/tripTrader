@@ -83,7 +83,7 @@ export default function OtpModal(props) {
         setConfirmResult(null);
 
         auth()
-          .signInWithPhoneNumber(mobile)
+          .signInWithPhoneNumber(mobile, true)
           .then(res => {
             console.log('confirmation : ', res);
             setloader(false);
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: responsiveWidth(90),
     alignSelf: 'center',
-    fontFamily: 'Inter-Regular',
+    fontFamily: theme.fonts.fontNormal,
     marginVertical: responsiveHeight(3),
   },
   ButtonLeft: {
@@ -415,8 +415,8 @@ const styles = StyleSheet.create({
   buttonText: {
     color: theme.color.button1,
     fontSize: 16,
-    lineHeight: 19.36,
-    fontFamily: 'Inter-Bold',
+
+    fontFamily: theme.fonts.fontBold,
   },
   status: {
     backgroundColor: theme.color.background,
@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     alignSelf: 'center',
-    fontFamily: 'Inter-Regular',
+    fontFamily: theme.fonts.fontNormal,
     alignItems: 'center',
     marginTop: 10,
   },
@@ -476,7 +476,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     alignSelf: 'center',
-    fontFamily: 'Inter-Regular',
+    fontFamily: theme.fonts.fontNormal,
     alignItems: 'center',
     marginTop: 10,
     borderWidth: 0.7,
@@ -507,14 +507,12 @@ const styles = StyleSheet.create({
   TimerText: {
     fontSize: responsiveFontSize(1.8),
     color: theme.color.title,
-    fontFamily: 'Inter-Bold',
-    fontWeight: '600',
+    fontFamily: theme.fonts.fontBold,
   },
   TimerTextdisable: {
     fontSize: responsiveFontSize(1.8),
     color: theme.color.subTitle,
-    fontFamily: 'Inter-Regular',
-    fontWeight: '500',
+    fontFamily: theme.fonts.fontMedium,
   },
   root: {
     flex: 1,

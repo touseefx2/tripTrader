@@ -792,7 +792,7 @@ function Signup(props) {
   };
 
   const MultipleImage = async button => {
-    let apiLevel = store.General.apiLevel;
+    const apiLevel = store.General.apiLevel;
     if (button == 'Profile') {
       setisPhotoUpload(true);
     }
@@ -804,17 +804,17 @@ function Signup(props) {
 
     setTimeout(async () => {
       try {
-        let options = {
+        const options = {
           mediaType: 'image',
           isPreview: false,
           maxSelectedAssets: 1,
         };
         const resp = await MultipleImagePicker.openPicker(options);
-        console.log('mutipicker image res true  ', resp);
+        console.log('mutipicker image res true  ');
         if (resp.length > 0) {
           const res = resp[0];
 
-          const {path, fileName, mine} = res;
+          const {path, mime, mine, filename, fileName} = res;
           let uri = path;
           if (Platform.OS == 'android' && apiLevel < 29) {
             uri = 'file://' + uri;
@@ -824,10 +824,10 @@ function Signup(props) {
             compressionMethod: 'auto',
           })
             .then(async res => {
-              let imageObject = {
+              const imageObject = {
                 uri: res,
-                type: mine,
-                fileName: fileName,
+                type: Platform.OS == 'ios' ? mime : mine,
+                fileName: Platform.OS == 'ios' ? filename : fileName,
               };
               console.log('Compress image  : ', imageObject);
               if (button == 'Profile') {

@@ -525,7 +525,7 @@ export const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     alignSelf: 'center',
-    fontFamily: 'Inter-Regular',
+    fontFamily: theme.fonts.fontNormal,
   },
 
   uploadIndication: {

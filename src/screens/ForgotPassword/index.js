@@ -96,7 +96,7 @@ function ForgotPassword(props) {
       if (state.isConnected) {
         // store.User.setregLoader(true);
         auth()
-          .signInWithPhoneNumber(p)
+          .signInWithPhoneNumber(p,true)
           .then(res => {
             console.log('opt code send true: ');
             store.User.setregLoader(false);

@@ -8,6 +8,7 @@ import Step1 from './components/Step1';
 import Step2 from './components/Step2';
 import Step3 from './components/Step3';
 import Step4 from './components/Step4';
+import {responsiveHeight} from 'react-native-responsive-dimensions';
 
 export default function MakeOffer({
   isModal,
@@ -24,7 +25,7 @@ export default function MakeOffer({
   screen,
   props,
 }) {
-  const maxModalHeight = theme.window.Height - 70;
+  const maxModalHeight = theme.window.Height - responsiveHeight(9.8);
   const {item} = modalObj;
   const {value, title} = item.duration;
 

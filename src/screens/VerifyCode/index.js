@@ -179,7 +179,7 @@ function VerifyCode(props) {
       if (state.isConnected) {
         store.User.setregLoader(true);
         auth()
-          .signInWithPhoneNumber(value)
+          .signInWithPhoneNumber(value, true)
           .then(res => {
             console.log('opt code send true: ');
             store.User.setregLoader(false);

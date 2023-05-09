@@ -611,7 +611,7 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
           <SafeAreaView style={styles.container2}>
             <View style={styles.container3}>
               <FlatList
-                decelerationRate={0.5}
+                decelerationRate={0.6}
                 // estimatedItemSize={100}
                 refreshControl={
                   <RefreshControl refreshing={Loader} onRefresh={onRefresh} />

@@ -234,7 +234,6 @@ function Photos(props) {
       return (
         <View style={styles.modalImgContainer}>
           <ProgressiveFastImage
-            useNativeDriver
             style={styles.modalImg}
             source={{uri: deletePObj.uri}}
             loadingImageStyle={styles.modalImageLoader}
@@ -323,6 +322,7 @@ function Photos(props) {
 
         {data.length >= 0 && (
           <FlatList
+            decelerationRate={0.6}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }

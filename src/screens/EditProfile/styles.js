@@ -152,7 +152,6 @@ export const styles = StyleSheet.create({
   changeImg: {
     width: 45,
     height: 45,
-    elevation: 3,
   },
   editImgConatiner: {
     position: 'absolute',
@@ -539,7 +538,7 @@ export const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     alignSelf: 'center',
-    fontFamily: 'Inter-Regular',
+    fontFamily: theme.fonts.fontNormal,
   },
 
   uploadIndication: {
@@ -654,7 +653,6 @@ export const styles = StyleSheet.create({
   idCardContainer: {
     width: '100%',
     borderRadius: 10,
-    // height: 140,
     borderColor: '#0E2932',
     borderWidth: 1,
     borderStyle: 'dashed',
@@ -673,15 +671,15 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 1,
+    // },
+    // shadowOpacity: 0.22,
+    // shadowRadius: 2.22,
 
-    elevation: 3,
+    // elevation: 3,
   },
 
   idCardChangeText1: {

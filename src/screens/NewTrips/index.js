@@ -828,15 +828,16 @@ function NewTrips(props) {
         };
         const res = await MultipleImagePicker.openPicker(options);
         if (res) {
-          console.log('mutipicker image res true  ');
+          console.log('mutipicker image res true  ', res);
           let data = photos.slice();
           let ar = data;
 
           if (data.length > 0) {
             res.map((e, i, a) => {
               let uri = e.path;
-              let fileName = e.fileName;
-              let type = e.mine;
+              let fileName = Platform.OS == 'ios' ? e.filename : e.fileName;
+              let type = Platform.OS == 'ios' ? e.mime : e.mine;
+
               if (Platform.OS == 'android' && apiLevel < 29) {
                 uri = 'file://' + uri;
               }
@@ -869,8 +870,8 @@ function NewTrips(props) {
           } else {
             res.map((e, i, a) => {
               let uri = e.path;
-              let fileName = e.fileName;
-              let type = e.mine;
+              let fileName = Platform.OS == 'ios' ? e.filename : e.fileName;
+              let type = Platform.OS == 'ios' ? e.mime : e.mine;
               if (Platform.OS == 'android' && apiLevel < 29) {
                 uri = 'file://' + uri;
               }
@@ -894,6 +895,8 @@ function NewTrips(props) {
             });
           }
         }
+
+        console.log('mutipicker image res error  ', res);
       } catch (error) {
         console.log('multi photo picker error : ', error);
       }
@@ -916,11 +919,11 @@ function NewTrips(props) {
   const closeReviewModal = c => {
     if (!loader) {
       setmodalHeight(0);
+      setisReviewTrip(false);
+      setisTripCreate(false);
       if (isTripCreate) {
         clearFields('all', c);
       }
-      setisReviewTrip(false);
-      setisTripCreate(false);
     }
   };
 
@@ -1196,41 +1199,6 @@ function NewTrips(props) {
         Alert.alert('', 'Please connect internet');
       }
     });
-
-    // NetInfo.fetch().then(state => {
-    //   // if (state.isConnected) {
-    //   //   // const obj = {
-    //   //   //   _id: (Math.random() * 10).toFixed(0),
-    //   //   //   title: title,
-    //   //   //   user: store.User.user._id,
-    //   //   //   offer: trade,
-    //   //   //   return: Return,
-    //   //   //   loc: {
-    //   //   //     name: 'Miami, Florida',
-    //   //   //     coords: [],
-    //   //   //   },
-    //   //   //   status: 'activate',
-    //   //   //   acceptOtherTrades: acceptOther,
-    //   //   //   duration: {
-    //   //   //     number: durNum,
-    //   //   //     title: dur.title,
-    //   //   //   },
-    //   //   //   availablity: {
-    //   //   //     startDate: isSelDate1,
-    //   //   //     endDate: isSelDate2,
-    //   //   //   },
-    //   //   //   photos: photos,
-    //   //   //   unavailable: isSetUnavailable != false ? isSetUnavailable : {},
-    //   //   // };
-    //   //   let index = editTrip.index;
-    //   //   // console.warn('update trip obj : ', obj);
-    // store.Trips.attemptToDeleteTrip({}, index, goToProfile);
-    //   // } else {
-    //   //   // seterrorMessage('Please connect internet');
-    //   //   Alert.alert('', 'Please connect internet');
-    //   // }
-    //   closeModalg();
-    // });
   };
 
   const renderDropDown = c => {
@@ -3801,12 +3769,13 @@ function NewTrips(props) {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => {
+            setTimeout(
+              () => {
+                closeReviewModal('');
+              },
+              Platform.OS == 'ios' ? 0 : 1000,
+            );
             props.navigation.navigate('Plan');
-            setTimeout(() => {
-              closeReviewModal('');
-            }, 1000);
-            // setisReviewTrip(false);
-            // setisTripCreate(false);
           }}
           style={{
             marginTop: responsiveHeight(2),
@@ -4961,6 +4930,9 @@ function NewTrips(props) {
         />
       </SafeAreaView>
       {/* {isModalVisible && renderActivitesModal()} */}
+
+      <Toast ref={toast} position="bottom" />
+      {isReviewTrip && renderReviewTripModal()}
       {isModal && renderModal()}
       {showCalender && renderCalender()}
       {isShowUnavliableModal && renderUNavlblModal()}
@@ -4976,9 +4948,6 @@ function NewTrips(props) {
           closModal={() => setpvm(!pvm)}
         />
       )}
-
-      <Toast ref={toast} position="bottom" />
-      {isReviewTrip && renderReviewTripModal()}
     </View>
   );
 }

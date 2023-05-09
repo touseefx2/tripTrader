@@ -11,11 +11,16 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import theme from '../../theme/index';
 import {styles} from './styles';
+import {responsiveFontSize} from 'react-native-responsive-dimensions';
 
 function SearchBar({search, setsearch}) {
   return (
     <View style={styles.searchBarContainer}>
-      <AntDesign name="search1" color={'rgba(17, 17, 17, 0.6)'} size={18} />
+      <AntDesign
+        name="search1"
+        color={'rgba(17, 17, 17, 0.6)'}
+        size={responsiveFontSize(2.35)}
+      />
       <TextInput
         placeholder="Search"
         placeholderTextColor={'gray'}
@@ -133,7 +138,7 @@ export default function DropDown(props) {
         ? item.species
         : '';
 
-    let ts = props.style || {};
+    const ts = props.style || {};
     return (
       <TouchableHighlight
         underlayColor={'#EEF6EF'}

@@ -415,7 +415,7 @@ export const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     alignSelf: 'center',
-    fontFamily: 'Inter-Regular',
+    fontFamily: theme.fonts.fontNormal,
   },
 
   uploadIndication: {
@@ -699,7 +699,6 @@ export const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 22 / 2,
-
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',

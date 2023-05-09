@@ -148,10 +148,6 @@ function MyProfile(props) {
     }
   }, []);
 
-  const setErrMessage = c => {
-    seterrorMessage(c);
-  };
-
   const MultipleImage = async button => {
     setisShowPrmsn(false);
     setisAddPhotoModal(false);
@@ -159,7 +155,7 @@ function MyProfile(props) {
 
     setTimeout(async () => {
       try {
-        let options = {
+        const options = {
           mediaType: 'image',
           isPreview: false,
           maxSelectedAssets: 1,
@@ -169,7 +165,7 @@ function MyProfile(props) {
         if (resp.length > 0) {
           const res = resp[0];
           console.log('mutipicker image res true  ');
-          const {path, fileName, mine} = res;
+          const {path, mime, mine, filename, fileName} = res;
           let uri = path;
           if (Platform.OS == 'android' && apiLevel < 29) {
             uri = 'file://' + uri;
@@ -181,17 +177,18 @@ function MyProfile(props) {
             .then(async res => {
               const imageObject = {
                 uri: res,
-                type: mine,
-                fileName: fileName,
+                type: Platform.OS == 'ios' ? mime : mine,
+                fileName: Platform.OS == 'ios' ? filename : fileName,
               };
               console.log('Compress image  : ', imageObject);
               if (button == 'Profile') {
-                setisSHowChangePhoto(true);
-                setcphoto(imageObject);
+                setTimeout(() => {
+                  setisSHowChangePhoto(true);
+                  setcphoto(imageObject);
+                }, 500);
 
                 return;
               } else if (button == 'CNICFront') {
-                // setCnicFrontImage(imageObject);
                 return;
               } else {
                 return;

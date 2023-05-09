@@ -208,7 +208,7 @@ async function getAllCurrentUserRooms(userId, setGetdata, check) {
     console.log('Error getAllCurrentUserRooms: ' + error?.message || error);
   };
 
-  // console.log('GET Inboxes : ', userId);
+  console.log('GET Inboxes : ', userId);
   if (check !== 'n') setibl(true);
   try {
     chatroomsRef
@@ -221,7 +221,7 @@ async function getAllCurrentUserRooms(userId, setGetdata, check) {
         if (querySnapshot.size > 0) {
           data = querySnapshot.docs.map(doc => ({...doc.data(), _id: doc.id}));
         }
-        // console.log('getAllCurrentUserRooms resp: ', data.length);
+        console.log('getAllCurrentUserRooms resp : ', data.length);
 
         data.forEach(item => {
           let c = false;
