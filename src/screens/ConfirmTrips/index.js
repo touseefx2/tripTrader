@@ -144,26 +144,9 @@ function ConfirmTrips(props) {
 
     const renderInput = () => {
       return (
-        <View style={{width: '85%'}}>
-          <TextInput
-            editable={false}
-            style={styles.SerchBarInput}
-            placeholder="Search"
-          />
+        <View style={{width: '91%'}}>
+          <TextInput style={styles.SerchBarInput} placeholder="Search" />
         </View>
-      );
-    };
-
-    const renderFilter = () => {
-      const onclick = () => {};
-
-      return (
-        <TouchableOpacity style={styles.Baricon} onPress={onclick} disabled>
-          {/* <Image
-            source={require('../../assets/images/searchBar/filter/img.png')}
-            style={styles.Baricon}
-          /> */}
-        </TouchableOpacity>
       );
     };
 
@@ -177,7 +160,6 @@ function ConfirmTrips(props) {
           onPress={onclickSearchBar}>
           {renderSearch()}
           {renderInput()}
-          {renderFilter()}
         </Pressable>
         {data.length > 0 && renderResult()}
       </>

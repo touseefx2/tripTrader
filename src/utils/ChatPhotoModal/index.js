@@ -12,6 +12,7 @@ import {
   PermissionsAndroid,
   Keyboard,
   Alert,
+  Platform,
 } from 'react-native';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
@@ -24,6 +25,10 @@ import IntentLauncher from 'react-native-intent-launcher';
 import {request, PERMISSIONS, check} from 'react-native-permissions';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import {Image as ImageCompressor} from 'react-native-compressor';
+import {
+  responsiveFontSize,
+  responsiveHeight,
+} from 'react-native-responsive-dimensions';
 
 export default observer(ChatPhotoModal);
 
@@ -63,7 +68,7 @@ function ChatPhotoModal(props) {
 
   const MultipleImage = async chk => {
     setisShowPrmsn(false);
-    let apiLevel = store.General.apiLevel;
+    const apiLevel = store.General.apiLevel;
     Keyboard.dismiss();
 
     let d = photos.length;
@@ -91,8 +96,9 @@ function ChatPhotoModal(props) {
           if (data.length > 0) {
             res.map((e, i, a) => {
               let uri = e.path;
-              let fileName = e.fileName;
-              let type = e.mine;
+              let fileName = Platform.OS == 'ios' ? e.filename : e.fileName;
+              let type = Platform.OS == 'ios' ? e.mime : e.mine;
+
               if (Platform.OS == 'android' && apiLevel < 29) {
                 uri = 'file://' + uri;
               }
@@ -101,7 +107,7 @@ function ChatPhotoModal(props) {
                 compressionMethod: 'auto',
               })
                 .then(async res => {
-                  let imageObject = {uri: res, fileName, type};
+                  const imageObject = {uri: res, fileName, type};
                   console.log('Compress image  : ', imageObject);
                   let isAlreadySelectimage = data.find(
                     x => x.fileName == fileName,
@@ -124,8 +130,9 @@ function ChatPhotoModal(props) {
           } else {
             res.map((e, i, a) => {
               let uri = e.path;
-              let fileName = e.fileName;
-              let type = e.mine;
+              let fileName = Platform.OS == 'ios' ? e.filename : e.fileName;
+              let type = Platform.OS == 'ios' ? e.mime : e.mine;
+
               if (Platform.OS == 'android' && apiLevel < 29) {
                 uri = 'file://' + uri;
               }
@@ -587,7 +594,12 @@ function ChatPhotoModal(props) {
                             <TextInput
                               placeholder="Add a caption..."
                               value={pmessage}
-                              style={{width: '100%', borderRadius: 100}}
+                              style={{
+                                width: '100%',
+                                height: responsiveHeight(5.8),
+                                fontSize: responsiveFontSize(1.65),
+                                borderRadius: 100,
+                              }}
                               onChangeText={t => {
                                 setpmessage(t);
                               }}
@@ -599,8 +611,8 @@ function ChatPhotoModal(props) {
                             activeOpacity={0.8}>
                             <Image
                               style={{
-                                width: 47,
-                                height: 47,
+                                width: responsiveFontSize(5.5),
+                                height: responsiveFontSize(5.5),
                                 resizeMode: 'contain',
                               }}
                               source={require('../../assets/images/sendmessage/img.png')}
