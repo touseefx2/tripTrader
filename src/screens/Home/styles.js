@@ -1,6 +1,7 @@
 import {StyleSheet} from 'react-native';
 import theme from '../../theme/index';
 import {
+  responsiveFontSize,
   responsiveHeight,
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
@@ -61,12 +62,11 @@ export const styles = StyleSheet.create({
   },
   SerchBarContainer: {
     width: '100%',
-
     borderRadius: 100,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 18,
+    paddingHorizontal: 15,
     backgroundColor: theme.color.background,
     shadowColor: 'rgba(0, 0, 0, 0.2)',
     shadowOffset: {
@@ -78,6 +78,7 @@ export const styles = StyleSheet.create({
     elevation: 2,
     borderWidth: 1,
     borderColor: theme.color.fieldBorder,
+    paddingVertical: 9,
   },
   SerchBarInput: {
     width: '100%',
@@ -85,16 +86,15 @@ export const styles = StyleSheet.create({
     fontFamily: theme.fonts.fontNormal,
   },
   Baricon: {
-    width: 18,
-    height: 18,
-    resizeMode: 'contain',
+    width: responsiveFontSize(3.1),
+    height: responsiveFontSize(3.1),
   },
   resultContainer: {
     marginTop: 10,
     marginLeft: 5,
   },
   resultText: {
-    fontSize: 13,
+    fontSize: responsiveFontSize(1.7),
     color: theme.color.title,
     fontFamily: theme.fonts.fontMedium,
     opacity: 0.4,

@@ -23,6 +23,7 @@ import moment from 'moment';
 // import {FlashList} from '@shopify/flash-list';
 import PushNotification from 'react-native-push-notification';
 import firestore from '@react-native-firebase/firestore';
+import {responsiveFontSize} from 'react-native-responsive-dimensions';
 
 export default observer(Home);
 function Home(props) {
@@ -759,10 +760,10 @@ function Home(props) {
 
     const renderInput = () => {
       return (
-        <View style={{width: '88%'}}>
+        <View style={{width: '87%'}}>
           <Text
             style={{
-              fontSize: 14.5,
+              fontSize: responsiveFontSize(1.85),
               color: !isApplySearch
                 ? theme.color.subTitleLight
                 : theme.color.subTitle,
@@ -787,7 +788,7 @@ function Home(props) {
       return (
         <utils.vectorIcon.AntDesign
           name="close"
-          size={20}
+          size={responsiveFontSize(2.6)}
           color={theme.color.subTitle}
         />
       );
@@ -801,7 +802,6 @@ function Home(props) {
             style={({pressed}) => [
               {opacity: pressed ? 0.7 : 1},
               {
-                paddingVertical: 9,
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
@@ -816,7 +816,6 @@ function Home(props) {
             style={({pressed}) => [
               {
                 opacity: pressed ? 0.7 : 1,
-                paddingVertical: 9,
               },
             ]}
             onPress={!isApplySearch ? onclickFilter : onCrossSearchBar}>

@@ -23,7 +23,7 @@ export default function ListHeader({search, setsearch, data}) {
 
   const renderInput = () => {
     return (
-      <View style={{width: '92%'}}>
+      <View style={{width: '91%'}}>
         <TextInput
           onChangeText={c => {
             setsearch(c);

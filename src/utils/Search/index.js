@@ -19,6 +19,10 @@ import store from '../../store/index';
 import utils from '../index';
 import theme from '../../theme';
 import NetInfo from '@react-native-community/netinfo';
+import {
+  responsiveFontSize,
+  responsiveHeight,
+} from 'react-native-responsive-dimensions';
 
 export default observer(Search);
 
@@ -95,7 +99,7 @@ function Search(props) {
   const renderContent = () => {
     const renderHeder = () => {
       const render1 = () => {
-        let src = require('../../assets/images/back/imgg.png');
+        const src = require('../../assets/images/back/imgg.png');
         return (
           <TouchableOpacity activeOpacity={activeOpacity} onPress={closeModal}>
             <Image source={src} style={styles.headerIcon} />
@@ -147,13 +151,13 @@ function Search(props) {
 
     const renderSearchBar = () => {
       const renderSearchIcon = () => {
-        let src = require('../../assets/images/searchBar/search/img.png');
+        const src = require('../../assets/images/searchBar/search/img.png');
         return <Image source={src} style={styles.SerchBaricon} />;
       };
 
       const renderInput = () => {
         return (
-          <View style={{width: s == '' ? '93%' : '65%'}}>
+          <View style={{width: s == '' ? '91%' : '63%'}}>
             <TextInput
               onSubmitEditing={() => {
                 if (s != '') {
@@ -176,20 +180,20 @@ function Search(props) {
           <TouchableOpacity
             activeOpacity={0.7}
             style={{
-              width: '22%',
+              width: '21%',
               alignItems: 'center',
               justifyContent: 'center',
               backgroundColor: theme.color.button2,
               borderBottomRightRadius: 100,
               borderTopRightRadius: 100,
-              height: '100%',
+              height: responsiveHeight(6),
             }}
             onPress={() => {
               onClickSearch();
             }}>
             <Text
               style={{
-                fontSize: 13.5,
+                fontSize: responsiveFontSize(1.75),
                 color: theme.color.button1,
                 fontFamily: theme.fonts.fontMedium,
               }}>
@@ -208,12 +212,10 @@ function Search(props) {
               width: '6%',
               alignItems: 'center',
               justifyContent: 'center',
-
-              height: '100%',
             }}>
             <utils.vectorIcon.AntDesign
               name="close"
-              size={20}
+              size={responsiveFontSize(2.7)}
               color={theme.color.subTitle}
             />
           </TouchableOpacity>

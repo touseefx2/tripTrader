@@ -1,6 +1,7 @@
 import {StyleSheet, Platform} from 'react-native';
 import theme from '../../theme/index';
 import {
+  responsiveFontSize,
   responsiveHeight,
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
@@ -44,7 +45,6 @@ export const styles = StyleSheet.create({
   //search bar
   SerchBarContainer: {
     width: '100%',
-    height: 48,
     borderRadius: 100,
     flexDirection: 'row',
     alignItems: 'center',
@@ -63,17 +63,16 @@ export const styles = StyleSheet.create({
     borderColor: theme.color.fieldBorder,
   },
   SerchBaricon: {
-    width: 18,
-    height: 18,
-    resizeMode: 'contain',
+    width: responsiveFontSize(3.1),
+    height: responsiveFontSize(3.1),
+
     top: -1,
   },
   SerchBarInput: {
     width: '100%',
-    height: '100%',
+    height: responsiveHeight(6),
     fontFamily: theme.fonts.fontNormal,
-    fontSize: 16,
-    top: 2,
+    fontSize: responsiveFontSize(1.85),
     color: theme.color.title,
   },
 
