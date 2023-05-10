@@ -1,4 +1,4 @@
-package com.trip_trader.newarchitecture;
+package com.triptrader.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.EmptyReactNativeConfig;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.trip_trader.BuildConfig;
-import com.trip_trader.newarchitecture.components.MainComponentsRegistry;
-import com.trip_trader.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.triptrader.BuildConfig;
+import com.triptrader.newarchitecture.components.MainComponentsRegistry;
+import com.triptrader.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 

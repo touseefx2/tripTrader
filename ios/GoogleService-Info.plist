@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>491634645448-rv2cnu0o93li5fir8av5eddn02pl7agu.apps.googleusercontent.com</string>
+	<string>491634645448-3nhqg947u6f0huto8d90je39eamdnsbd.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.491634645448-rv2cnu0o93li5fir8av5eddn02pl7agu</string>
+	<string>com.googleusercontent.apps.491634645448-3nhqg947u6f0huto8d90je39eamdnsbd</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDYGP94NO7pDH_dTH1y8kooAgjxOQ2cz-E</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.TripTrader</string>
+	<string>com.triptrader</string>
 	<key>PROJECT_ID</key>
 	<string>triptrader-b86d5</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:491634645448:ios:89b978503d75608db548fd</string>
+	<string>1:491634645448:ios:cdd7f7c54119d0a1b548fd</string>
 </dict>
 </plist>

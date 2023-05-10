@@ -1,4 +1,4 @@
-package com.trip_trader;
+package com.triptrader;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

@@ -1,4 +1,4 @@
-package com.trip_trader.newarchitecture.modules;
+package com.triptrader.newarchitecture.modules;
 
 import com.facebook.jni.HybridData;
 import com.facebook.react.ReactPackage;

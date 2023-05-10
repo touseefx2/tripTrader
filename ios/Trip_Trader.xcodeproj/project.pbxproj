@@ -17,7 +17,7 @@
 		767E613628B6390C00F1125A /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8EA41802C5274FD290A0890B /* Poppins-Medium.ttf */; };
 		767E613728B6390C00F1125A /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5AD1917C7D1942A982406345 /* Poppins-Regular.ttf */; };
 		767E613828B6390C00F1125A /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3AF52DDE338840A6B3E64FCA /* Poppins-SemiBold.ttf */; };
-		76B3ABF32A0A46F2000ADE2E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76B3ABF22A0A46F2000ADE2E /* GoogleService-Info.plist */; };
+		7689573B2A0BC694009B3B04 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7689573A2A0BC694009B3B04 /* GoogleService-Info.plist */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		980E16EB5FE0728060AC385A /* libPods-Trip_Trader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E4FDAA636DD73BBF934060F /* libPods-Trip_Trader.a */; };
 /* End PBXBuildFile section */
@@ -59,7 +59,7 @@
 		6F17860BA24B4855AAEBD6ED /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = ../src/assets/fonts/FontAwesome5_Solid.ttf; sourceTree = "<group>"; };
 		763A53F52935E9B300A52BDB /* Trip_Trader-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Trip_Trader-Bridging-Header.h"; sourceTree = "<group>"; };
 		763A53F62935E9B400A52BDB /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
-		76B3ABF22A0A46F2000ADE2E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		7689573A2A0BC694009B3B04 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		76B5E11A28B634C10046B338 /* Trip_Trader.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Trip_Trader.entitlements; path = Trip_Trader/Trip_Trader.entitlements; sourceTree = "<group>"; };
 		7F3564FA21D14B3592BB3752 /* SuezOne-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SuezOne-Regular.ttf"; path = "../src/assets/fonts/SuezOne-Regular.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Trip_Trader/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -180,7 +180,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				76B3ABF22A0A46F2000ADE2E /* GoogleService-Info.plist */,
+				7689573A2A0BC694009B3B04 /* GoogleService-Info.plist */,
 				763A53F62935E9B400A52BDB /* File.swift */,
 				13B07FAE1A68108700A75B9A /* Trip_Trader */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -317,7 +317,7 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				1C892862F3C6467C8B2D33A2 /* SuezOne-Regular.ttf in Resources */,
-				76B3ABF32A0A46F2000ADE2E /* GoogleService-Info.plist in Resources */,
+				7689573B2A0BC694009B3B04 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -586,7 +586,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.TripTrader;
+				PRODUCT_BUNDLE_IDENTIFIER = com.triptrader;
 				PRODUCT_NAME = Trip_Trader;
 				SWIFT_OBJC_BRIDGING_HEADER = "Trip_Trader-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -613,7 +613,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.TripTrader;
+				PRODUCT_BUNDLE_IDENTIFIER = com.triptrader;
 				PRODUCT_NAME = Trip_Trader;
 				SWIFT_OBJC_BRIDGING_HEADER = "Trip_Trader-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
