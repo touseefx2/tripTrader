@@ -36,7 +36,6 @@ export default function OtpModal(props) {
   };
 
   const mobile = props.phone || '';
-  console.log('mobiel :  ', mobile);
 
   let resendTime = 60; //second
 

@@ -128,16 +128,20 @@ function Home(props) {
 
   useEffect(() => {
     if (notify) {
-      const topic = notify?.tag || '';
-      let action = notify?.action || '';
-      if (action == '') {
-        const arr = JSON.parse(notify?.actions) || [];
-        if (arr.length > 0) action = arr[0];
-      }
+      try {
+        const topic = notify?.tag || '';
+        let action = notify?.action || '';
+        if (action == '') {
+          const arr = JSON.parse(notify?.actions) || [];
+          if (arr.length > 0) action = arr[0];
+        }
 
-      if (action != '') onClickNotificationAction(action, notify);
-      else onOpenNotification(topic, action, notify);
-      store.General.setgoToo(null);
+        if (action != '') onClickNotificationAction(action, notify);
+        else onOpenNotification(topic, action, notify);
+        store.General.setgoToo(null);
+      } catch (error) {
+        console.log('home error notify ', error);
+      }
     }
   }, [notify]);
 
