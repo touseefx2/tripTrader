@@ -33,14 +33,7 @@ export default function Step1({
   const [isChooseDateCalender, setIsChooseDateCalender] = useState(false);
 
   if (selectedDates) {
-    const size = Object.keys(selectedDates).length;
-    firstDate = moment(Object.keys(selectedDates)[0]).format('MMM DD, YYYY');
-    secondDate =
-      size > 1
-        ? moment(Object.keys(selectedDates)[size - 1]).format('MMM DD, YYYY')
-        : '';
-    if (secondDate != '') fieldText = firstDate + '  -  ' + secondDate;
-    else fieldText = firstDate;
+    fieldText = utils.functions.formatSelectedDates(selectedDates, '');
   } else {
     fieldText =
       value <= 1 ? 'Choose a trip date' : 'Choose a trip date or date range';
@@ -119,7 +112,7 @@ export default function Step1({
             styles.mFieldContainer,
           ]}>
           <Text
-            numberOfLines={1}
+            numberOfLines={2}
             ellipsizeMode="tail"
             style={[styles.mfT2, {opacity: !selectedDates ? 0.4 : 1}]}>
             {fieldText}

@@ -303,7 +303,8 @@ function Received(props) {
           : trade.duration.title;
       durt = durt + ' ' + tt;
       let preferdates = item.preferredDates;
-      const avlblt = utils.functions.FormatePreferDate(preferdates);
+      const avlblt = utils.functions.formatSelectedDates(preferdates, 'arr');
+      // utils.functions.FormatePreferDate(preferdates);
       let loct = trade.location.city + ', ' + trade.location.state;
 
       const renderProfile = () => {

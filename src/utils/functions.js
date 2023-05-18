@@ -297,6 +297,48 @@ function FormateAvailableDate(startDate, endDate) {
   return text;
 }
 
+function formatSelectedDates(selectedDates, c) {
+  let text = '';
+  let arr = [];
+  if (c != 'arr') {
+    const size = Object.keys(selectedDates).length;
+    for (let index = 0; index < size; index++) {
+      const element = moment(Object.keys(selectedDates)[index]).format(
+        'MMM DD, YYYY',
+      );
+      arr.push(element);
+    }
+  } else {
+    selectedDates.forEach(item => {
+      arr.push(moment(item).format('MMM DD, YYYY'));
+    });
+  }
+
+  if (arr.length <= 1) {
+    text = arr[0];
+  } else {
+    text = arr[0];
+    arr.forEach((item, index) => {
+      if (index > 0 && index < arr.length) {
+        const prevDate = moment(arr[index - 1]).add(1, 'days');
+        const mapDate = item;
+        const mapDate2 = moment(item).add(1, 'days');
+        const nextDate = moment(arr[index + 1]);
+
+        if (moment(mapDate).isSame(prevDate)) {
+          if (!moment(mapDate2).isSame(nextDate)) {
+            text = text + ' - ' + item;
+          }
+        } else {
+          text = text + ', ' + item;
+        }
+      }
+    });
+  }
+
+  return text;
+}
+
 export const functions = {
   isObjectEmpty,
   findItem,
@@ -310,4 +352,5 @@ export const functions = {
   capitalizeTheFirstLetterOfEachWord,
   FormatePreferDate,
   FormateAvailableDate,
+  formatSelectedDates,
 };

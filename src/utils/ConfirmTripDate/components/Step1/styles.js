@@ -42,7 +42,7 @@ export const styles = StyleSheet.create({
   mFieldContainer: {
     marginTop: 5,
     width: '100%',
-    height: 42,
+    // height: 42,
     padding: 10,
     borderRadius: 8,
     borderColor: theme.color.fieldBorder,

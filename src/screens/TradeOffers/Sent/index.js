@@ -361,7 +361,8 @@ function Sent(props) {
           : trade.duration.title;
       durt = durt + ' ' + tt;
       let preferdates = item.preferredDates;
-      let avlblt = FormatPrfrDate(preferdates);
+      let avlblt = utils.functions.formatSelectedDates(preferdates, 'arr');
+      // FormatPrfrDate(preferdates);
       let loct = trade.location.city + ', ' + trade.location.state;
 
       const renderProfile = () => {

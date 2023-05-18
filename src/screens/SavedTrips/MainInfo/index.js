@@ -40,11 +40,12 @@ function MainInfo({item, isActive}) {
                   style={{
                     width: 20,
                     height: 20,
-                    resizeMode: 'contain',
+                    marginLeft: -3,
+                    // resizeMode: 'contain',
                   }}
                   source={require('../../../assets/images/location/img.png')}
                 />
-                <View style={{width: '95%'}}>
+                <View style={{width: '94%'}}>
                   <Text
                     numberOfLines={1}
                     ellipsizeMode="tail"

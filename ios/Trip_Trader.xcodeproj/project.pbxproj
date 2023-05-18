@@ -580,6 +580,7 @@
 				DEVELOPMENT_TEAM = 8ZZVMMHC89;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Trip_Trader/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -591,7 +592,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.triptrader;
 				PRODUCT_NAME = Trip_Trader;
-				PROVISIONING_PROFILE_SPECIFIER = TTDistProfile;
+				PROVISIONING_PROFILE_SPECIFIER = TTAdHocProfile;
 				SWIFT_OBJC_BRIDGING_HEADER = "Trip_Trader-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -611,6 +612,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8ZZVMMHC89;
 				INFOPLIST_FILE = Trip_Trader/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -622,7 +624,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.triptrader;
 				PRODUCT_NAME = Trip_Trader;
-				PROVISIONING_PROFILE_SPECIFIER = TTDistProfile;
+				PROVISIONING_PROFILE_SPECIFIER = TTAdHocProfile;
 				SWIFT_OBJC_BRIDGING_HEADER = "Trip_Trader-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

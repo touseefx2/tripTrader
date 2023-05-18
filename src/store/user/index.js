@@ -2837,6 +2837,7 @@ class user {
       ?.then(resp => {
         console.log('Logout resp true');
         this.setLogoutLoader(false);
+        store.General.setIsEmailPopup(false);
         store.General.setgoto('home');
         this.Logout();
       })

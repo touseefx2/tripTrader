@@ -141,7 +141,8 @@ function ExpandAllMainInfo({
               style={{
                 width: 20,
                 height: 20,
-                resizeMode: 'contain',
+                marginLeft: -3,
+                // resizeMode: 'contain',
               }}
               duration={animtntime}
               easing="ease-out"
@@ -149,7 +150,7 @@ function ExpandAllMainInfo({
               source={require('../../../assets/images/location/img.png')}
             />
 
-            <View style={{width: '95%'}}>
+            <View style={{width: '94%'}}>
               <Animatable.Text
                 style={styles.sec3T2}
                 duration={animtntime}
