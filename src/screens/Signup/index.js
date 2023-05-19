@@ -1161,199 +1161,201 @@ function Signup(props) {
 
     return (
       <View style={styles.section2}>
-        <Text style={styles.section2Title1}>create account</Text>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Text style={styles.section2Title1}>create account</Text>
 
-        <View
-          style={[
-            styles.joinFieldContainer,
-            {marginTop: responsiveHeight(2.1)},
-          ]}>
-          <View style={[styles.Field, {width: '48%'}]}>
-            <Text style={styles.FieldTitle1}>first name</Text>
-            <TextInput
-              placeholder=""
-              value={fn}
-              onChangeText={enterFn}
-              style={[
-                styles.FieldInput,
-                {
-                  borderColor:
-                    invalidfn || Emptyfn
-                      ? theme.color.fieldBordeError
-                      : theme.color.fieldBorder,
-                },
-              ]}
-            />
-            {(invalidfn || Emptyfn) && renderShowFieldError('fn')}
-          </View>
-
-          <View style={[styles.Field, {width: '48%'}]}>
-            <Text style={styles.FieldTitle1}>last name</Text>
-            <TextInput
-              value={ln}
-              placeholder=""
-              onChangeText={enterLn}
-              style={[
-                styles.FieldInput,
-                {
-                  borderColor:
-                    invalidln || Emptyln
-                      ? theme.color.fieldBordeError
-                      : theme.color.fieldBorder,
-                },
-              ]}
-            />
-            {(invalidln || Emptyln) && renderShowFieldError('ln')}
-          </View>
-        </View>
-
-        <View style={styles.Field}>
-          <Text style={styles.FieldTitle1}>email address</Text>
-          <TextInput
-            value={email}
-            placeholder=""
-            onChangeText={enterEmail}
+          <View
             style={[
-              styles.FieldInput,
-              {
-                borderColor:
-                  invalidemail || Emptyemail
+              styles.joinFieldContainer,
+              {marginTop: responsiveHeight(2.1)},
+            ]}>
+            <View style={[styles.Field, {width: '48%'}]}>
+              <Text style={styles.FieldTitle1}>first name</Text>
+              <TextInput
+                placeholder=""
+                value={fn}
+                onChangeText={enterFn}
+                style={[
+                  styles.FieldInput,
+                  {
+                    borderColor:
+                      invalidfn || Emptyfn
+                        ? theme.color.fieldBordeError
+                        : theme.color.fieldBorder,
+                  },
+                ]}
+              />
+              {(invalidfn || Emptyfn) && renderShowFieldError('fn')}
+            </View>
+
+            <View style={[styles.Field, {width: '48%'}]}>
+              <Text style={styles.FieldTitle1}>last name</Text>
+              <TextInput
+                value={ln}
+                placeholder=""
+                onChangeText={enterLn}
+                style={[
+                  styles.FieldInput,
+                  {
+                    borderColor:
+                      invalidln || Emptyln
+                        ? theme.color.fieldBordeError
+                        : theme.color.fieldBorder,
+                  },
+                ]}
+              />
+              {(invalidln || Emptyln) && renderShowFieldError('ln')}
+            </View>
+          </View>
+
+          <View style={styles.Field}>
+            <Text style={styles.FieldTitle1}>email address</Text>
+            <TextInput
+              value={email}
+              placeholder=""
+              onChangeText={enterEmail}
+              style={[
+                styles.FieldInput,
+                {
+                  borderColor:
+                    invalidemail || Emptyemail
+                      ? theme.color.fieldBordeError
+                      : theme.color.fieldBorder,
+                },
+              ]}
+            />
+            {(invalidemail || Emptyemail) && renderShowFieldError('email')}
+          </View>
+
+          <View style={styles.Field}>
+            <Text style={[styles.FieldTitle1, {textTransform: 'none'}]}>
+              Date of Birth
+            </Text>
+            <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={showPUDatepicker}
+              style={[
+                styles.FieldInput,
+                {
+                  borderColor: Emptydob
                     ? theme.color.fieldBordeError
                     : theme.color.fieldBorder,
-              },
-            ]}
-          />
-          {(invalidemail || Emptyemail) && renderShowFieldError('email')}
-        </View>
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                },
+              ]}>
+              <View style={{width: '85%'}}>
+                {dob == '' && (
+                  <Text style={styles.DateTextPlaceholder}>mm / dd / yyyy</Text>
+                )}
+                {dob != '' && (
+                  <Text style={styles.DateText}>{formatDate(dob)}</Text>
+                )}
+              </View>
 
-        <View style={styles.Field}>
-          <Text style={[styles.FieldTitle1, {textTransform: 'none'}]}>
-            Date of Birth
-          </Text>
-          <TouchableOpacity
-            activeOpacity={0.5}
-            onPress={showPUDatepicker}
-            style={[
-              styles.FieldInput,
-              {
-                borderColor: Emptydob
-                  ? theme.color.fieldBordeError
-                  : theme.color.fieldBorder,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              },
-            ]}>
-            <View style={{width: '85%'}}>
-              {dob == '' && (
-                <Text style={styles.DateTextPlaceholder}>mm / dd / yyyy</Text>
-              )}
-              {dob != '' && (
-                <Text style={styles.DateText}>{formatDate(dob)}</Text>
+              <utils.vectorIcon.AntDesign
+                name={'calendar'}
+                color={'#30563A'}
+                size={20}
+              />
+            </TouchableOpacity>
+
+            {Emptydob && renderShowFieldError('dob')}
+          </View>
+
+          <View style={styles.Field}>
+            <Text style={styles.FieldTitle1}>Password</Text>
+            <View
+              style={[
+                styles.FieldInput,
+                {
+                  borderColor:
+                    invalidpswd || Emptypswd
+                      ? theme.color.fieldBordeError
+                      : theme.color.fieldBorder,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                },
+              ]}>
+              <TextInput
+                value={pswd}
+                onChangeText={enterPaswd}
+                secureTextEntry={!showPaswd}
+                placeholder=""
+                style={{width: '85%'}}
+              />
+
+              {pswd.length > 0 && (
+                <TouchableOpacity activeOpacity={0.5} onPress={showPasswd}>
+                  {!showPaswd && (
+                    <Image
+                      style={{width: 20, height: 12, resizeMode: 'contain'}}
+                      source={require('../../assets/images/sp/img.png')}
+                    />
+                  )}
+                  {showPaswd && (
+                    <utils.vectorIcon.Ionicons
+                      name={'eye-off-outline'}
+                      color={theme.color.button1}
+                      size={20}
+                    />
+                  )}
+                </TouchableOpacity>
               )}
             </View>
 
-            <utils.vectorIcon.AntDesign
-              name={'calendar'}
-              color={'#30563A'}
-              size={20}
-            />
-          </TouchableOpacity>
+            {(invalidpswd || Emptypswd) && renderShowFieldError('pswd')}
+          </View>
 
-          {Emptydob && renderShowFieldError('dob')}
-        </View>
-
-        <View style={styles.Field}>
-          <Text style={styles.FieldTitle1}>Password</Text>
-          <View
-            style={[
-              styles.FieldInput,
-              {
-                borderColor:
-                  invalidpswd || Emptypswd
-                    ? theme.color.fieldBordeError
-                    : theme.color.fieldBorder,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              },
-            ]}>
-            <TextInput
-              value={pswd}
-              onChangeText={enterPaswd}
-              secureTextEntry={!showPaswd}
-              placeholder=""
-              style={{width: '85%'}}
-            />
-
-            {pswd.length > 0 && (
-              <TouchableOpacity activeOpacity={0.5} onPress={showPasswd}>
-                {!showPaswd && (
-                  <Image
-                    style={{width: 20, height: 12, resizeMode: 'contain'}}
-                    source={require('../../assets/images/sp/img.png')}
-                  />
-                )}
-                {showPaswd && (
-                  <utils.vectorIcon.Ionicons
-                    name={'eye-off-outline'}
-                    color={theme.color.button1}
-                    size={20}
+          <View style={styles.Field}>
+            <View style={styles.Field2}>
+              <TouchableOpacity
+                style={[
+                  styles.checkBoxContainer,
+                  {
+                    backgroundColor: !isTerms ? 'white' : theme.color.button1,
+                    borderColor: !EmptyTerms
+                      ? theme.color.fieldBorder
+                      : theme.color.fieldBordeError,
+                  },
+                ]}
+                activeOpacity={0.5}
+                onPress={changeTerms}>
+                {isTerms && (
+                  <utils.vectorIcon.FontAwesome5
+                    name={'check'}
+                    color={theme.color.buttonText}
+                    size={responsiveFontSize(1.4)}
                   />
                 )}
               </TouchableOpacity>
-            )}
+
+              <Text style={styles.Field2Title}>I agree to the </Text>
+              <TouchableOpacity activeOpacity={0.7} onPress={TermsnCndtnClick}>
+                <Text
+                  style={[
+                    styles.Field2Title,
+                    {textDecorationLine: 'underline', marginLeft: 0},
+                  ]}>
+                  Terms & Conditions
+                </Text>
+              </TouchableOpacity>
+            </View>
+            {EmptyTerms && renderShowFieldError('terms')}
           </View>
 
-          {(invalidpswd || Emptypswd) && renderShowFieldError('pswd')}
-        </View>
-
-        <View style={styles.Field}>
-          <View style={styles.Field2}>
-            <TouchableOpacity
-              style={[
-                styles.checkBoxContainer,
-                {
-                  backgroundColor: !isTerms ? 'white' : theme.color.button1,
-                  borderColor: !EmptyTerms
-                    ? theme.color.fieldBorder
-                    : theme.color.fieldBordeError,
-                },
-              ]}
-              activeOpacity={0.5}
-              onPress={changeTerms}>
-              {isTerms && (
-                <utils.vectorIcon.FontAwesome5
-                  name={'check'}
-                  color={theme.color.buttonText}
-                  size={responsiveFontSize(1.4)}
-                />
-              )}
-            </TouchableOpacity>
-
-            <Text style={styles.Field2Title}>I agree to the </Text>
-            <TouchableOpacity activeOpacity={0.7} onPress={TermsnCndtnClick}>
-              <Text
-                style={[
-                  styles.Field2Title,
-                  {textDecorationLine: 'underline', marginLeft: 0},
-                ]}>
-                Terms & Conditions
-              </Text>
-            </TouchableOpacity>
+          {renderButton()}
+          <View style={styles.Field3}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={styles.Field31Title1}>Already a member?</Text>
+              <TouchableOpacity activeOpacity={0.7} onPress={goToSignin}>
+                <Text style={styles.Field31Title2}>Sign in</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-          {EmptyTerms && renderShowFieldError('terms')}
-        </View>
-
-        {renderButton()}
-        <View style={styles.Field3}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={styles.Field31Title1}>Already a member?</Text>
-            <TouchableOpacity activeOpacity={0.7} onPress={goToSignin}>
-              <Text style={styles.Field31Title2}>Sign in</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        </ScrollView>
       </View>
     );
   };
@@ -1686,139 +1688,143 @@ function Signup(props) {
         {/* profile  0*/}
         {isPhoto1Upload == 0 && !isShowCameraPrmsn && !isShowGalleryPrmsn && (
           <View style={styles.section2}>
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
-              <Text style={styles.section2Title1}>
-                {photo == '' ? 'add' : 'review'} profile photo
-              </Text>
-              {photo == '' && (
-                <Image
-                  source={require('../../assets/images/addphoto/img.png')}
-                  style={styles.section2Logo}
-                />
-              )}
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                <Text style={styles.section2Title1}>
+                  {photo == '' ? 'add' : 'review'} profile photo
+                </Text>
+                {photo == '' && (
+                  <Image
+                    source={require('../../assets/images/addphoto/img.png')}
+                    style={styles.section2Logo}
+                  />
+                )}
 
-              {!isPhotoUpload && renderShowError2('Profile')}
-              <Text style={styles.section2LogoTitle}>
-                {photo == ''
-                  ? 'Upload a photo to help the community recognize and promote your account.'
-                  : 'If you are happy with the result, click Confirm & Continue below or try a different photo.'}
-              </Text>
+                {!isPhotoUpload && renderShowError2('Profile')}
+                <Text style={styles.section2LogoTitle}>
+                  {photo == ''
+                    ? 'Upload a photo to help the community recognize and promote your account.'
+                    : 'If you are happy with the result, click Confirm & Continue below or try a different photo.'}
+                </Text>
 
-              {photo == '' && (
-                <View style={styles.uploadIndication}>
+                {photo == '' && (
+                  <View style={styles.uploadIndication}>
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() => {
+                        checkPermsn('gallery', 'Profile');
+                      }}>
+                      <Image
+                        source={require('../../assets/images/uploadphoto/img.png')}
+                        style={styles.uploadIndicationLogo}
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() => {
+                        checkPermsn('camera', 'Profile');
+                      }}>
+                      <Image
+                        source={require('../../assets/images/takephoto/img.png')}
+                        style={styles.uploadIndicationLogo}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                )}
+
+                {photo != '' && (
                   <TouchableOpacity
+                    style={styles.imageContainerP}
                     activeOpacity={0.7}
-                    onPress={() => {
-                      checkPermsn('gallery', 'Profile');
-                    }}>
-                    <Image
-                      source={require('../../assets/images/uploadphoto/img.png')}
-                      style={styles.uploadIndicationLogo}
-                    />
+                    onPress={() => onclickImage('profileV')}>
+                    <Image source={{uri: photo.uri}} style={styles.imageP} />
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => {
-                      checkPermsn('camera', 'Profile');
-                    }}>
-                    <Image
-                      source={require('../../assets/images/takephoto/img.png')}
-                      style={styles.uploadIndicationLogo}
-                    />
-                  </TouchableOpacity>
-                </View>
-              )}
+                )}
+              </View>
 
-              {photo != '' && (
-                <TouchableOpacity
-                  style={styles.imageContainerP}
-                  activeOpacity={0.7}
-                  onPress={() => onclickImage('profileV')}>
-                  <Image source={{uri: photo.uri}} style={styles.imageP} />
+              {renderButton('Profile')}
+              {photo != '' && renderButtonCP('Profile')}
+
+              {photo == '' && (
+                <TouchableOpacity activeOpacity={0.7} onPress={Skip}>
+                  <Text style={styles.section2bottomTitle}>Skip for now</Text>
                 </TouchableOpacity>
               )}
-            </View>
-
-            {renderButton('Profile')}
-            {photo != '' && renderButtonCP('Profile')}
-
-            {photo == '' && (
-              <TouchableOpacity activeOpacity={0.7} onPress={Skip}>
-                <Text style={styles.section2bottomTitle}>Skip for now</Text>
-              </TouchableOpacity>
-            )}
+            </ScrollView>
           </View>
         )}
 
         {/* Cnic 1 */}
         {isPhoto1Upload == 1 && !isShowCameraPrmsn && !isShowGalleryPrmsn && (
           <View style={styles.section2}>
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
-              <Text style={styles.section2Title1}>
-                {cnicFrontImage == ''
-                  ? 'verify identity'
-                  : 'review your id card'}
-              </Text>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                <Text style={styles.section2Title1}>
+                  {cnicFrontImage == ''
+                    ? 'verify identity'
+                    : 'review your id card'}
+                </Text>
+                {cnicFrontImage == '' && (
+                  <Image
+                    source={require('../../assets/images/addcnic/img.png')}
+                    style={styles.section2Logo}
+                  />
+                )}
+
+                {!isCnicFrontUplaod && renderShowError2('Profile')}
+                <Text style={[styles.section2LogoTitle]}>
+                  {cnicFrontImage == ''
+                    ? 'Trip Trader is committed to community trust and security. Providing a valid government-issued ID to confirm your identity helps us keep the community safe and creates trust between you and other traders.'
+                    : 'Make sure you are only submitting a valid government issued  ID and that your picture and all information is clearly visible.'}
+                </Text>
+
+                {cnicFrontImage == '' && (
+                  <View style={styles.uploadIndication}>
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() => {
+                        checkPermsn('gallery', 'CNICFront');
+                      }}>
+                      <Image
+                        source={require('../../assets/images/uploadphoto/imgg.png')}
+                        style={styles.uploadIndicationLogo}
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() => {
+                        checkPermsn('camera', 'CNICFront');
+                      }}>
+                      <Image
+                        source={require('../../assets/images/takephoto/img.png')}
+                        style={styles.uploadIndicationLogo}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                )}
+
+                {cnicFrontImage != '' && (
+                  <View style={styles.imageContainer}>
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() => onclickImage('cnicFV')}>
+                      <Image
+                        source={{uri: cnicFrontImage.uri}}
+                        style={styles.image}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+
+              {renderButton('CNICFront')}
+              {cnicFrontImage != '' && renderButtonCP('CNICFront')}
               {cnicFrontImage == '' && (
-                <Image
-                  source={require('../../assets/images/addcnic/img.png')}
-                  style={styles.section2Logo}
-                />
+                <TouchableOpacity activeOpacity={0.7} onPress={Skip}>
+                  <Text style={styles.section2bottomTitle}>Skip for now</Text>
+                </TouchableOpacity>
               )}
-
-              {!isCnicFrontUplaod && renderShowError2('Profile')}
-              <Text style={[styles.section2LogoTitle]}>
-                {cnicFrontImage == ''
-                  ? 'Trip Trader is committed to community trust and security. Providing a valid government-issued ID to confirm your identity helps us keep the community safe and creates trust between you and other traders.'
-                  : 'Make sure you are only submitting a valid government issued  ID and that your picture and all information is clearly visible.'}
-              </Text>
-
-              {cnicFrontImage == '' && (
-                <View style={styles.uploadIndication}>
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => {
-                      checkPermsn('gallery', 'CNICFront');
-                    }}>
-                    <Image
-                      source={require('../../assets/images/uploadphoto/imgg.png')}
-                      style={styles.uploadIndicationLogo}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => {
-                      checkPermsn('camera', 'CNICFront');
-                    }}>
-                    <Image
-                      source={require('../../assets/images/takephoto/img.png')}
-                      style={styles.uploadIndicationLogo}
-                    />
-                  </TouchableOpacity>
-                </View>
-              )}
-
-              {cnicFrontImage != '' && (
-                <View style={styles.imageContainer}>
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => onclickImage('cnicFV')}>
-                    <Image
-                      source={{uri: cnicFrontImage.uri}}
-                      style={styles.image}
-                    />
-                  </TouchableOpacity>
-                </View>
-              )}
-            </View>
-
-            {renderButton('CNICFront')}
-            {cnicFrontImage != '' && renderButtonCP('CNICFront')}
-            {cnicFrontImage == '' && (
-              <TouchableOpacity activeOpacity={0.7} onPress={Skip}>
-                <Text style={styles.section2bottomTitle}>Skip for now</Text>
-              </TouchableOpacity>
-            )}
+            </ScrollView>
           </View>
         )}
 
@@ -1826,33 +1832,35 @@ function Signup(props) {
 
         {(isShowCameraPrmsn || isShowGalleryPrmsn) && (
           <View style={styles.section2}>
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
-              <Text style={styles.section2Title1}>
-                {isShowCameraPrmsn ? 'Camera Access' : 'Storage Access'}
-              </Text>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                <Text style={styles.section2Title1}>
+                  {isShowCameraPrmsn ? 'Camera Access' : 'Storage Access'}
+                </Text>
 
-              <Image
-                source={
-                  isShowCameraPrmsn
-                    ? require('../../assets/images/ca/img.png')
-                    : require('../../assets/images/ca/img.png')
-                }
-                style={styles.section2Logo}
-              />
+                <Image
+                  source={
+                    isShowCameraPrmsn
+                      ? require('../../assets/images/ca/img.png')
+                      : require('../../assets/images/ca/img.png')
+                  }
+                  style={styles.section2Logo}
+                />
 
-              <Text
-                style={[
-                  styles.section2LogoTitle,
-                  {textAlign: 'center', width: '90%', alignSelf: 'center'},
-                ]}>
-                {isShowCameraPrmsn
-                  ? 'Trip Trader wants permission to access your camera.'
-                  : 'Trip Trader wants permission to access your storage.'}
-              </Text>
-              <Text style={styles.section2LogoTitlee}>Grant access?</Text>
-            </View>
+                <Text
+                  style={[
+                    styles.section2LogoTitle,
+                    {textAlign: 'center', width: '90%', alignSelf: 'center'},
+                  ]}>
+                  {isShowCameraPrmsn
+                    ? 'Trip Trader wants permission to access your camera.'
+                    : 'Trip Trader wants permission to access your storage.'}
+                </Text>
+                <Text style={styles.section2LogoTitlee}>Grant access?</Text>
+              </View>
 
-            {renderButtonPermission()}
+              {renderButtonPermission()}
+            </ScrollView>
           </View>
         )}
 
@@ -1860,246 +1868,130 @@ function Signup(props) {
 
         {isPhoto1Upload == 2 && (
           <View style={styles.section2}>
-            <View>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={[
-                  styles.section2Title1,
-                  {textTransform: 'none', alignSelf: 'flex-start'},
-                ]}>
-                Choose a plan
-              </Text>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <View>
+                <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  style={[
+                    styles.section2Title1,
+                    {textTransform: 'none', alignSelf: 'flex-start'},
+                  ]}>
+                  Choose a plan
+                </Text>
 
-              <Text
-                style={[styles.section2LogoTitle2c, {alignSelf: 'flex-start'}]}>
-                Unlock all features with a subscription.
-              </Text>
-            </View>
+                <Text
+                  style={[
+                    styles.section2LogoTitle2c,
+                    {alignSelf: 'flex-start'},
+                  ]}>
+                  Unlock all features with a subscription.
+                </Text>
+              </View>
 
-            <View
-              style={{
-                width: '100%',
-                alignSelf: 'center',
-                height: 0.6,
-                backgroundColor: theme.color.subTitleLight,
-                marginVertical: 15,
-                opacity: 0.5,
-              }}
-            />
+              <View
+                style={{
+                  width: '100%',
+                  alignSelf: 'center',
+                  height: 0.6,
+                  backgroundColor: theme.color.subTitleLight,
+                  marginVertical: 15,
+                  opacity: 0.5,
+                }}
+              />
 
-            <View style={{marginTop: 7}}>
-              {plans && plans.data && (
-                <>
-                  <View
-                    style={{
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                    }}>
-                    {renderPlanBar()}
-                  </View>
-                </>
-              )}
-
-              {plan && (
-                <>
-                  <View style={{marginTop: 20}}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                      <Text
-                        style={{
-                          fontSize: 26,
-                          color: theme.color.title,
-                          fontFamily: theme.fonts.fontBold,
-                        }}>
-                        ${plan.type == 'annual' ? annualy.toFixed(2) : monthly}
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: 12,
-                          color: theme.color.subTitleAuth,
-                          fontFamily: theme.fonts.fontBold,
-                          opacity: 0.6,
-                          marginLeft: 5,
-                        }}>
-                        /month{' '}
-                        {plan.type == 'annual' ? '(Billed annually)' : ''}
-                      </Text>
+              <View style={{marginTop: 7}}>
+                {plans && plans.data && (
+                  <>
+                    <View
+                      style={{
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                      }}>
+                      {renderPlanBar()}
                     </View>
-                    {plan.type == 'annual' && (
-                      <Text
-                        style={{
-                          fontSize: 12,
-                          color: '#16953A',
-                          fontFamily: theme.fonts.fontMedium,
-                          textTransform: 'capitalize',
-                          top: -5,
-                        }}>
-                        Best Value • ${toFixed(save, 0)} savings
-                      </Text>
-                    )}
-                    {plan.type == 'monthly' && (
-                      <>
-                        {save > 0 && (
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              alignItems: 'center',
-                              top: -5,
-                            }}>
-                            <Text
+                  </>
+                )}
+
+                {plan && (
+                  <>
+                    <View style={{marginTop: 20}}>
+                      <View
+                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <Text
+                          style={{
+                            fontSize: 26,
+                            color: theme.color.title,
+                            fontFamily: theme.fonts.fontBold,
+                          }}>
+                          $
+                          {plan.type == 'annual' ? annualy.toFixed(2) : monthly}
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 12,
+                            color: theme.color.subTitleAuth,
+                            fontFamily: theme.fonts.fontBold,
+                            opacity: 0.6,
+                            marginLeft: 5,
+                          }}>
+                          /month{' '}
+                          {plan.type == 'annual' ? '(Billed annually)' : ''}
+                        </Text>
+                      </View>
+                      {plan.type == 'annual' && (
+                        <Text
+                          style={{
+                            fontSize: 12,
+                            color: '#16953A',
+                            fontFamily: theme.fonts.fontMedium,
+                            textTransform: 'capitalize',
+                            top: -5,
+                          }}>
+                          Best Value • ${toFixed(save, 0)} savings
+                        </Text>
+                      )}
+                      {plan.type == 'monthly' && (
+                        <>
+                          {save > 0 && (
+                            <View
                               style={{
-                                fontSize: 12,
-                                color: '#767676',
-                                fontFamily: theme.fonts.fontMedium,
-                              }}>
-                              Save ${toFixed(save, 0)} with an
-                            </Text>
-                            <TouchableOpacity
-                              activeOpacity={0.6}
-                              onPress={() => {
-                                setPlan(plans.data[0]);
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                top: -5,
                               }}>
                               <Text
                                 style={{
                                   fontSize: 12,
-                                  color: 'green',
+                                  color: '#767676',
                                   fontFamily: theme.fonts.fontMedium,
-                                  marginLeft: 5,
                                 }}>
-                                Annual Plan
+                                Save ${toFixed(save, 0)} with an
                               </Text>
-                            </TouchableOpacity>
-                          </View>
-                        )}
-                      </>
+                              <TouchableOpacity
+                                activeOpacity={0.6}
+                                onPress={() => {
+                                  setPlan(plans.data[0]);
+                                }}>
+                                <Text
+                                  style={{
+                                    fontSize: 12,
+                                    color: 'green',
+                                    fontFamily: theme.fonts.fontMedium,
+                                    marginLeft: 5,
+                                  }}>
+                                  Annual Plan
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+                          )}
+                        </>
+                      )}
+                    </View>
+                    {plan.features.length > 0 && (
+                      <View style={{marginTop: 20}}>{renderPlanDetails()}</View>
                     )}
-                  </View>
-                  {plan.features.length > 0 && (
-                    <View style={{marginTop: 20}}>{renderPlanDetails()}</View>
-                  )}
-                </>
-              )}
-            </View>
-
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: 25,
-              }}>
-              {renderButtonPlan()}
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  // setPlan('free');
-                  setsPlan('free');
-                  setisPhoto1Upload(4);
-                }}>
-                <Text
-                  style={[
-                    styles.section2bottomTitle,
-                    {
-                      marginTop: 0,
-                      marginLeft: 25,
-                      fontSize: 14,
-                      color: 'rgba(17, 17, 17, 0.6)',
-                    },
-                  ]}>
-                  Try for free
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-
-        {/* Payment 3 */}
-
-        {isPhoto1Upload == 3 && (
-          <View style={styles.section2}>
-            <View style={{}}>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={[
-                  styles.section2Title1,
-                  {textTransform: 'none', alignSelf: 'flex-start'},
-                ]}>
-                Payment Information
-              </Text>
-
-              <Text
-                style={[
-                  styles.section2LogoTitle2c,
-                  {alignSelf: 'flex-start', marginTop: 5},
-                ]}>
-                Your subscription will start after you make your first payment
-                below.
-              </Text>
-            </View>
-            <View
-              style={{
-                width: '100%',
-                height: 0.6,
-                alignSelf: 'center',
-                marginVertical: 12,
-                backgroundColor: theme.color.subTitleLight,
-                opacity: 0.5,
-              }}
-            />
-            <View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  width: '100%',
-                }}>
-                <Text style={styles.paymenttitle1}>total due Now :</Text>
-                {!isPromoApply && (
-                  <Text
-                    style={[
-                      styles.paymenttitle1,
-                      {
-                        color: theme.color.title,
-                        width: '65%',
-                        marginLeft: 5,
-                        textTransform: 'none',
-                      },
-                    ]}>
-                    {plan.type == 'annual'
-                      ? `$${toFixed(totalAnually, 2)} ($${annualy.toFixed(
-                          2,
-                        )} /mo)`
-                      : `$${monthly} /mo`}
-                  </Text>
-                )}
-
-                {isPromoApply && (
-                  <View
-                    style={{flexDirection: 'row', marginLeft: 5, width: '65%'}}>
-                    <Text
-                      style={{
-                        color: theme.color.title,
-                        fontSize: 11,
-
-                        fontFamily: theme.fonts.fontBold,
-                        textTransform: 'capitalize',
-                        textDecorationLine: 'line-through',
-                      }}>
-                      {plan.type == 'annual'
-                        ? `$${toFixed(totalAnually, 2)}`
-                        : `$${monthly}`}
-                      {'  '}
-                    </Text>
-
-                    <Text
-                      style={{
-                        color: theme.color.titleGreen,
-                        fontSize: 11,
-                        fontFamily: theme.fonts.fontBold,
-                        textTransform: 'capitalize',
-                      }}>
-                      ${promoValue} ({isPromoApply.discount}% discount)
-                    </Text>
-                  </View>
+                  </>
                 )}
               </View>
 
@@ -2107,94 +1999,222 @@ function Signup(props) {
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
+                  marginTop: 25,
                 }}>
-                <Text style={styles.paymenttitle2}>your plan :</Text>
+                {renderButtonPlan()}
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    // setPlan('free');
+                    setsPlan('free');
+                    setisPhoto1Upload(4);
+                  }}>
+                  <Text
+                    style={[
+                      styles.section2bottomTitle,
+                      {
+                        marginTop: 0,
+                        marginLeft: 25,
+                        fontSize: 14,
+                        color: 'rgba(17, 17, 17, 0.6)',
+                      },
+                    ]}>
+                    Try for free
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        )}
+
+        {/* Payment 3 */}
+
+        {isPhoto1Upload == 3 && (
+          <View style={styles.section2}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <View style={{}}>
+                <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  style={[
+                    styles.section2Title1,
+                    {textTransform: 'none', alignSelf: 'flex-start'},
+                  ]}>
+                  Payment Information
+                </Text>
+
                 <Text
                   style={[
-                    styles.paymenttitle2,
-                    {
-                      color: theme.color.title,
-                      marginLeft: 5,
-                    },
+                    styles.section2LogoTitle2c,
+                    {alignSelf: 'flex-start', marginTop: 5},
                   ]}>
-                  {plan.type}
+                  Your subscription will start after you make your first payment
+                  below.
                 </Text>
-                <TouchableOpacity activeOpacity={0.6} onPress={changePlan}>
+              </View>
+              <View
+                style={{
+                  width: '100%',
+                  height: 0.6,
+                  alignSelf: 'center',
+                  marginVertical: 12,
+                  backgroundColor: theme.color.subTitleLight,
+                  opacity: 0.5,
+                }}
+              />
+              <View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    width: '100%',
+                  }}>
+                  <Text style={styles.paymenttitle1}>total due Now :</Text>
+                  {!isPromoApply && (
+                    <Text
+                      style={[
+                        styles.paymenttitle1,
+                        {
+                          color: theme.color.title,
+                          width: '65%',
+                          marginLeft: 5,
+                          textTransform: 'none',
+                        },
+                      ]}>
+                      {plan.type == 'annual'
+                        ? `$${toFixed(totalAnually, 2)} ($${annualy.toFixed(
+                            2,
+                          )} /mo)`
+                        : `$${monthly} /mo`}
+                    </Text>
+                  )}
+
+                  {isPromoApply && (
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        marginLeft: 5,
+                        width: '65%',
+                      }}>
+                      <Text
+                        style={{
+                          color: theme.color.title,
+                          fontSize: 11,
+
+                          fontFamily: theme.fonts.fontBold,
+                          textTransform: 'capitalize',
+                          textDecorationLine: 'line-through',
+                        }}>
+                        {plan.type == 'annual'
+                          ? `$${toFixed(totalAnually, 2)}`
+                          : `$${monthly}`}
+                        {'  '}
+                      </Text>
+
+                      <Text
+                        style={{
+                          color: theme.color.titleGreen,
+                          fontSize: 11,
+                          fontFamily: theme.fonts.fontBold,
+                          textTransform: 'capitalize',
+                        }}>
+                        ${promoValue} ({isPromoApply.discount}% discount)
+                      </Text>
+                    </View>
+                  )}
+                </View>
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <Text style={styles.paymenttitle2}>your plan :</Text>
                   <Text
                     style={[
                       styles.paymenttitle2,
                       {
-                        color: theme.color.titleGreen,
-                        marginLeft: 10,
-                        fontFamily: theme.fonts.fontNormal,
-                        textDecorationLine: 'underline',
+                        color: theme.color.title,
+                        marginLeft: 5,
                       },
                     ]}>
-                    change
+                    {plan.type}
                   </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <View>
-              <View style={styles.Field}>
-                <Text style={styles.FieldTitle1}>full name</Text>
-                <TextInput
-                  placeholder="Card holder’s first and last name"
-                  value={cfn}
-                  onChangeText={entercFn}
-                  style={[
-                    styles.FieldInput,
-                    {
-                      borderColor: Emptycfn
-                        ? theme.color.fieldBordeError
-                        : theme.color.fieldBorder,
-                      fontSize: 12,
-                      color: 'black',
-                    },
-                  ]}
-                />
-                {Emptycfn && renderShowFieldError('cfn')}
+                  <TouchableOpacity activeOpacity={0.6} onPress={changePlan}>
+                    <Text
+                      style={[
+                        styles.paymenttitle2,
+                        {
+                          color: theme.color.titleGreen,
+                          marginLeft: 10,
+                          fontFamily: theme.fonts.fontNormal,
+                          textDecorationLine: 'underline',
+                        },
+                      ]}>
+                      change
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
 
-              <View style={styles.Field}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <Text style={styles.FieldTitle1}>card</Text>
+              <View>
+                <View style={styles.Field}>
+                  <Text style={styles.FieldTitle1}>full name</Text>
+                  <TextInput
+                    placeholder="Card holder’s first and last name"
+                    value={cfn}
+                    onChangeText={entercFn}
+                    style={[
+                      styles.FieldInput,
+                      {
+                        borderColor: Emptycfn
+                          ? theme.color.fieldBordeError
+                          : theme.color.fieldBorder,
+                        fontSize: 12,
+                        color: 'black',
+                      },
+                    ]}
+                  />
+                  {Emptycfn && renderShowFieldError('cfn')}
                 </View>
 
-                <CardField
-                  postalCodeEnabled={false}
-                  placeholders={{
-                    number: 'Card number',
-                  }}
-                  cardStyle={{
-                    textColor: theme.color.title,
-                    fontSize: responsiveFontSize(1.5),
-                    borderColor: theme.color.fieldBorder,
-                    borderWidth: 1,
-                    borderRadius: 8,
-                    fontFamily: theme.fonts.fontNormal,
-                  }}
-                  style={{
-                    width: '100%',
-                    height: 45,
+                <View style={styles.Field}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Text style={styles.FieldTitle1}>card</Text>
+                  </View>
 
-                    // marginVertical: 30,
-                  }}
-                  onCardChange={cardDetails => {
-                    onChangeCard(cardDetails);
-                  }}
-                  onFocus={focusedField => {
-                    console.log('focusField', focusedField);
-                  }}
-                />
-                {isValidCard == false && renderShowFieldError('card')}
+                  <CardField
+                    postalCodeEnabled={false}
+                    placeholders={{
+                      number: 'Card number',
+                    }}
+                    cardStyle={{
+                      textColor: theme.color.title,
+                      fontSize: responsiveFontSize(1.5),
+                      borderColor: theme.color.fieldBorder,
+                      borderWidth: 1,
+                      borderRadius: 8,
+                      fontFamily: theme.fonts.fontNormal,
+                    }}
+                    style={{
+                      width: '100%',
+                      height: 45,
 
-                {/* <View
+                      // marginVertical: 30,
+                    }}
+                    onCardChange={cardDetails => {
+                      onChangeCard(cardDetails);
+                    }}
+                    onFocus={focusedField => {
+                      console.log('focusField', focusedField);
+                    }}
+                  />
+                  {isValidCard == false && renderShowFieldError('card')}
+
+                  {/* <View
                   style={[
                     [
                       styles.FieldInputCard,
@@ -2211,227 +2231,230 @@ function Signup(props) {
                   <LiteCreditCardInput onChange={onChangeCard} />
                 </View>
                 {isValidCard == false && renderShowFieldError('card')} */}
-              </View>
+                </View>
 
-              {isShowPromoFiled && (
-                <View style={styles.Field}>
-                  <Text style={styles.FieldTitle1}>promo code</Text>
+                {isShowPromoFiled && (
+                  <View style={styles.Field}>
+                    <Text style={styles.FieldTitle1}>promo code</Text>
 
-                  {!isPromoApply && (
-                    <View
-                      style={[
-                        styles.FieldInput,
-                        {
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          paddingHorizontal: 0,
-                          borderWidth: 1,
-                          borderColor: theme.color.fieldBorder,
-                        },
-                      ]}>
-                      <TextInput
-                        placeholder="Add a promo code"
-                        value={pc}
-                        onChangeText={enterpc}
-                        style={{
-                          fontSize: 13,
-
-                          color: 'black',
-                          width: '70%',
-                          height: '100%',
-                          paddingLeft: 10,
-                        }}
-                      />
-
-                      {pc != '' && (
-                        <TouchableOpacity
-                          activeOpacity={0.7}
-                          onPress={applyPromo}
-                          style={{
-                            width: 60,
-                            height: '100%',
-                            borderTopRightRadius: 8,
-                            borderBottomRightRadius: 8,
+                    {!isPromoApply && (
+                      <View
+                        style={[
+                          styles.FieldInput,
+                          {
+                            flexDirection: 'row',
                             alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: theme.color.button1,
-                            paddingHorizontal: 3,
-                          }}>
-                          <Text
-                            style={{
-                              color: theme.color.buttonText,
-                              fontSize: 13,
-                              fontFamily: theme.fonts.fontMedium,
-                            }}>
-                            Apply
-                          </Text>
-                        </TouchableOpacity>
-                      )}
-                    </View>
-                  )}
-
-                  {isPromoApply && (
-                    <View
-                      style={{
-                        marginTop: 5,
-                        alignItems: 'center',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                      }}>
-                      <Text
-                        numberOfLines={1}
-                        ellipsizeMode="tail"
-                        style={{
-                          width: '50%',
-                          color: theme.color.title,
-                          fontSize: 12,
-                          fontFamily: theme.fonts.fontMedium,
-                          textTransform: 'uppercase',
-                        }}>
-                        {isPromoApply.code}
-                      </Text>
-
-                      <TouchableOpacity
-                        activeOpacity={0.7}
-                        onPress={() => setisPromoApply(false)}>
-                        <Text
+                            justifyContent: 'space-between',
+                            paddingHorizontal: 0,
+                            borderWidth: 1,
+                            borderColor: theme.color.fieldBorder,
+                          },
+                        ]}>
+                        <TextInput
+                          placeholder="Add a promo code"
+                          value={pc}
+                          onChangeText={enterpc}
                           style={{
-                            color: theme.color.titleGreen,
+                            fontSize: 13,
+
+                            color: 'black',
+                            width: '70%',
+                            height: '100%',
+                            paddingLeft: 10,
+                          }}
+                        />
+
+                        {pc != '' && (
+                          <TouchableOpacity
+                            activeOpacity={0.7}
+                            onPress={applyPromo}
+                            style={{
+                              width: 60,
+                              height: '100%',
+                              borderTopRightRadius: 8,
+                              borderBottomRightRadius: 8,
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              backgroundColor: theme.color.button1,
+                              paddingHorizontal: 3,
+                            }}>
+                            <Text
+                              style={{
+                                color: theme.color.buttonText,
+                                fontSize: 13,
+                                fontFamily: theme.fonts.fontMedium,
+                              }}>
+                              Apply
+                            </Text>
+                          </TouchableOpacity>
+                        )}
+                      </View>
+                    )}
+
+                    {isPromoApply && (
+                      <View
+                        style={{
+                          marginTop: 5,
+                          alignItems: 'center',
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                        }}>
+                        <Text
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                          style={{
+                            width: '50%',
+                            color: theme.color.title,
                             fontSize: 12,
                             fontFamily: theme.fonts.fontMedium,
-                            textDecorationLine: 'underline',
+                            textTransform: 'uppercase',
                           }}>
-                          Remove
+                          {isPromoApply.code}
+                        </Text>
+
+                        <TouchableOpacity
+                          activeOpacity={0.7}
+                          onPress={() => setisPromoApply(false)}>
+                          <Text
+                            style={{
+                              color: theme.color.titleGreen,
+                              fontSize: 12,
+                              fontFamily: theme.fonts.fontMedium,
+                              textDecorationLine: 'underline',
+                            }}>
+                            Remove
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                  </View>
+                )}
+
+                {!isShowPromoFiled && (
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => setisShowPromoFiled(true)}
+                    style={{marginTop: 20}}>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        color: theme.color.titleGreen,
+                        fontFamily: theme.fonts.fontMedium,
+                        textDecorationLine: 'underline',
+                      }}>
+                      I have a promo code
+                    </Text>
+                  </TouchableOpacity>
+                )}
+
+                <View style={{marginTop: 20}}>
+                  <View
+                    style={[styles.Field2, {justifyContent: 'space-between'}]}>
+                    <TouchableOpacity
+                      style={{
+                        width: 20,
+                        height: 20,
+                        borderRadius: 4,
+                        backgroundColor: !iscTerms
+                          ? 'white'
+                          : theme.color.button1,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderWidth: 1,
+                        borderColor: theme.color.fieldBorder,
+                      }}
+                      activeOpacity={0.5}
+                      onPress={() => {
+                        setiscTerms(!iscTerms);
+                        setEmptycTerms(false);
+                      }}>
+                      {iscTerms && (
+                        <utils.vectorIcon.FontAwesome5
+                          name={'check'}
+                          color={theme.color.buttonText}
+                          size={11}
+                        />
+                      )}
+                    </TouchableOpacity>
+
+                    <View style={{width: '90%'}}>
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={TermsnCndtnClickCard}>
+                        <Text style={styles.Field2Titlec}>
+                          I agree to Trip Trader’s{' '}
+                          <Text style={styles.Field2Titlecc}>
+                            Terms & Conditions
+                          </Text>
                         </Text>
                       </TouchableOpacity>
-                    </View>
-                  )}
-                </View>
-              )}
-
-              {!isShowPromoFiled && (
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  onPress={() => setisShowPromoFiled(true)}
-                  style={{marginTop: 20}}>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      color: theme.color.titleGreen,
-                      fontFamily: theme.fonts.fontMedium,
-                      textDecorationLine: 'underline',
-                    }}>
-                    I have a promo code
-                  </Text>
-                </TouchableOpacity>
-              )}
-
-              <View style={{marginTop: 20}}>
-                <View
-                  style={[styles.Field2, {justifyContent: 'space-between'}]}>
-                  <TouchableOpacity
-                    style={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: 4,
-                      backgroundColor: !iscTerms
-                        ? 'white'
-                        : theme.color.button1,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderWidth: 1,
-                      borderColor: theme.color.fieldBorder,
-                    }}
-                    activeOpacity={0.5}
-                    onPress={() => {
-                      setiscTerms(!iscTerms);
-                      setEmptycTerms(false);
-                    }}>
-                    {iscTerms && (
-                      <utils.vectorIcon.FontAwesome5
-                        name={'check'}
-                        color={theme.color.buttonText}
-                        size={11}
-                      />
-                    )}
-                  </TouchableOpacity>
-
-                  <View style={{width: '90%'}}>
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      onPress={TermsnCndtnClickCard}>
-                      <Text style={styles.Field2Titlec}>
-                        I agree to Trip Trader’s{' '}
-                        <Text style={styles.Field2Titlecc}>
-                          Terms & Conditions
-                        </Text>
+                      <Text style={[styles.Field2Titlec, {top: -3}]}>
+                        and understand that upon clicking “Subscribe” below, I
+                        will be charged{' '}
+                        {plan.type == 'annual'
+                          ? `$${toFixed(totalAnually, 2)}`
+                          : `$${monthly}`}{' '}
+                        {plan.type == 'annual' ? plan.type + 'y' : plan.type}.
                       </Text>
-                    </TouchableOpacity>
-                    <Text style={[styles.Field2Titlec, {top: -3}]}>
-                      and understand that upon clicking “Subscribe” below, I
-                      will be charged{' '}
-                      {plan.type == 'annual'
-                        ? `$${toFixed(totalAnually, 2)}`
-                        : `$${monthly}`}{' '}
-                      {plan.type == 'annual' ? plan.type + 'y' : plan.type}.
-                    </Text>
+                    </View>
                   </View>
+                  {EmptycTerms && renderShowFieldError('cterms')}
                 </View>
-                {EmptycTerms && renderShowFieldError('cterms')}
               </View>
-            </View>
 
-            {renderButtonSubscribe()}
+              {renderButtonSubscribe()}
 
-            <TouchableOpacity activeOpacity={0.7} onPress={changePlan}>
-              <Text
-                style={[
-                  styles.section2bottomTitle,
-                  {color: 'rgba(17, 17, 17, 0.6)'},
-                ]}>
-                Cancel and go back
-              </Text>
-            </TouchableOpacity>
+              <TouchableOpacity activeOpacity={0.7} onPress={changePlan}>
+                <Text
+                  style={[
+                    styles.section2bottomTitle,
+                    {color: 'rgba(17, 17, 17, 0.6)'},
+                  ]}>
+                  Cancel and go back
+                </Text>
+              </TouchableOpacity>
+            </ScrollView>
           </View>
         )}
 
         {/* Ready 4 */}
         {isPhoto1Upload == 4 && (
           <View style={styles.section2}>
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={styles.section2Title1}>
-                welcome, {user.firstName}!
-              </Text>
-              <View style={styles.section2LogoC}>
-                <Image
-                  source={require('../../assets/images/accountReady/img1.png')}
-                  style={styles.section2LogoCImg1}
-                />
-                <Image
-                  source={require('../../assets/images/accountReady/img2.png')}
-                  style={styles.section2LogoCImg2}
-                />
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  style={styles.section2Title1}>
+                  welcome, {user.firstName}!
+                </Text>
+                <View style={styles.section2LogoC}>
+                  <Image
+                    source={require('../../assets/images/accountReady/img1.png')}
+                    style={styles.section2LogoCImg1}
+                  />
+                  <Image
+                    source={require('../../assets/images/accountReady/img2.png')}
+                    style={styles.section2LogoCImg2}
+                  />
+                </View>
+
+                <Text style={styles.section2LogoTitle1c}>
+                  Your account is ready.
+                </Text>
+
+                <Text
+                  style={[
+                    styles.section2LogoTitle2c,
+                    {color: theme.color.subTitleAuth, textAlign: 'center'},
+                  ]}>
+                  Good luck on your trips and trades!
+                </Text>
               </View>
 
-              <Text style={styles.section2LogoTitle1c}>
-                Your account is ready.
-              </Text>
-
-              <Text
-                style={[
-                  styles.section2LogoTitle2c,
-                  {color: theme.color.subTitleAuth, textAlign: 'center'},
-                ]}>
-                Good luck on your trips and trades!
-              </Text>
-            </View>
-
-            {renderButton('FindTrips')}
-            {renderButton2()}
+              {renderButton('FindTrips')}
+              {renderButton2()}
+            </ScrollView>
           </View>
         )}
       </>
@@ -2506,15 +2529,16 @@ function Signup(props) {
             screen="signup"
             goBack={() => goBack()}
           />
-
-          <ScrollView
-            style={{paddingHorizontal: 15, marginTop: responsiveHeight(3)}}
-            showsVerticalScrollIndicator={false}>
-            <KeyboardAvoidingView style={{flex: 1}} enabled>
-              {!isUserCreate && renderSection2()}
-              {isUserCreate && renderSection2User()}
-            </KeyboardAvoidingView>
-          </ScrollView>
+          <KeyboardAvoidingView
+            style={{
+              flex: 1,
+              paddingHorizontal: 15,
+              marginTop: responsiveHeight(3),
+            }}
+            behavior={Platform.OS == 'ios' ? 'padding' : undefined}>
+            {!isUserCreate && renderSection2()}
+            {isUserCreate && renderSection2User()}
+          </KeyboardAvoidingView>
         </SafeAreaView>
 
         {pvm && (

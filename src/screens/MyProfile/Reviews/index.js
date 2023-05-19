@@ -13,6 +13,8 @@ import {
   Pressable,
   TextInput,
   Keyboard,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
@@ -719,7 +721,9 @@ function Reviews(props) {
 
       return (
         <Modal visible={isModal} transparent onRequestClose={closeModal}>
-          <SafeAreaView style={styles.modalContainer}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS == 'ios' ? 'height' : undefined}
+            style={styles.modalContainer}>
             <View style={styles.modalContainer2}>
               <View style={styles.modal}>
                 {renderHeader()}
@@ -727,7 +731,7 @@ function Reviews(props) {
                 {renderBottom()}
               </View>
             </View>
-          </SafeAreaView>
+          </KeyboardAvoidingView>
         </Modal>
       );
     }

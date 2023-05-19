@@ -47,7 +47,8 @@ export default function Fields({modalObj, selectedDates, goBack}) {
       preferDate.push(moment(e).format('MMM DD, YYYY'));
     });
   }
-  const avlbl = utils.functions.FormatePreferDate(preferDate);
+  const avlbl = utils.functions.formatSelectedDates(preferDate, 'arr');
+  // utils.functions.FormatePreferDate(preferDate);
   const loc = ofer.location.city + ', ' + ofer.location.state;
 
   //ofer to (offer trip)
@@ -59,7 +60,8 @@ export default function Fields({modalObj, selectedDates, goBack}) {
       : trade.duration.title;
   durt = durt + ' ' + tt;
   let preferdates = item.preferredDates;
-  let avlblt = utils.functions.FormatePreferDate(preferdates);
+  let avlblt = utils.functions.formatSelectedDates(preferdates, 'arr');
+  // utils.functions.FormatePreferDate(preferdates);
   let loct = trade.location.city + ', ' + trade.location.state;
 
   const titleS = {

@@ -14,6 +14,7 @@ import {
   Modal as MModal,
   Keyboard,
   Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
@@ -4908,7 +4909,9 @@ function NewTrips(props) {
       <utils.DrawerHeader props={props} headerTitle={headerTitle} />
       {!internet && <utils.InternetMessage />}
 
-      <SafeAreaView style={styles.container2}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS == 'ios' ? 'height' : undefined}
+        style={styles.container2}>
         <View style={styles.container3}>
           <ScrollView
             showsVerticalScrollIndicator={false}
@@ -4928,9 +4931,8 @@ function NewTrips(props) {
           screen={headerTitle}
           focusScreen={store.General.focusScreen}
         />
-      </SafeAreaView>
-      {/* {isModalVisible && renderActivitesModal()} */}
-
+      </KeyboardAvoidingView>
+     
       <Toast ref={toast} position="bottom" />
       {isReviewTrip && renderReviewTripModal()}
       {isModal && renderModal()}

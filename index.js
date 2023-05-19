@@ -24,7 +24,13 @@ const onReceiveNotification = remoteMessage => {
   const topic = data?.topic || '';
   const bigIcon = data?.icon || data?.bigIcon || undefined;
   const rightIcon = data?.rightIcon || undefined;
-  if (topic == 'newMessagePush' && store.General.appState == 'active') {
+
+  if (
+    data &&
+    topic == 'newMessagePush' &&
+    store.General.appState == 'active' &&
+    store.General.isCurrentCahtId == data.senderId
+  ) {
   } else {
     Notification.showNotificaton(
       message,

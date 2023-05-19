@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
@@ -79,39 +81,41 @@ function GuestAccess(props) {
     return (
       <>
         <View style={styles.section2}>
-          <View style={{alignItems: 'center', justifyContent: 'center'}}>
-            <Image
-              source={require('../../assets/images/guestacs/img.png')}
-              style={styles.section2Logo}
-            />
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={{alignItems: 'center', justifyContent: 'center'}}>
+              <Image
+                source={require('../../assets/images/guestacs/img.png')}
+                style={styles.section2Logo}
+              />
 
-            {/* {errorMessage !== '' && renderShowError()} */}
+              {/* {errorMessage !== '' && renderShowError()} */}
 
-            <Text style={styles.section2Title1}>Limited Guest Access</Text>
+              <Text style={styles.section2Title1}>Limited Guest Access</Text>
 
-            <View
-              style={{
-                width: '98%',
+              <View
+                style={{
+                  width: '98%',
 
-                alignSelf: 'center',
-              }}>
-              <Text style={styles.section2LogoTitle}>
-                You may use Trip Trader as a guest, but some features will not
-                be available. For the best experience, we recommend creating an
-                account or signing in.
-              </Text>
+                  alignSelf: 'center',
+                }}>
+                <Text style={styles.section2LogoTitle}>
+                  You may use Trip Trader as a guest, but some features will not
+                  be available. For the best experience, we recommend creating
+                  an account or signing in.
+                </Text>
+              </View>
             </View>
-          </View>
-          {renderButton1()}
-          {renderButton2()}
+            {renderButton1()}
+            {renderButton2()}
 
-          <View style={styles.Field3}>
-            <TouchableOpacity activeOpacity={0.7} onPress={continueGuest}>
-              <Text style={styles.Field3Title1}>
-                I want to continue as a guest
-              </Text>
-            </TouchableOpacity>
-          </View>
+            <View style={styles.Field3}>
+              <TouchableOpacity activeOpacity={0.7} onPress={continueGuest}>
+                <Text style={styles.Field3Title1}>
+                  I want to continue as a guest
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
         </View>
       </>
     );
@@ -126,11 +130,15 @@ function GuestAccess(props) {
       <SafeAreaView style={styles.container3}>
         <utils.AuthHeader props={props} />
 
-        <ScrollView
-          style={{paddingHorizontal: 15, marginTop: responsiveHeight(3)}}
-          showsVerticalScrollIndicator={false}>
+        <KeyboardAvoidingView
+          style={{
+            flex: 1,
+            paddingHorizontal: 15,
+            marginTop: responsiveHeight(3),
+          }}
+          behavior={Platform.OS == 'ios' ? 'padding' : undefined}>
           {renderSection2()}
-        </ScrollView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
 
       <Toast ref={toast} position="bottom" />

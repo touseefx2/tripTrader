@@ -1201,26 +1201,26 @@ function EditProfile(props) {
       <utils.DrawerHeader props={props} headerTitle={headerTitle} />
       {!internet && <utils.InternetMessage />}
 
-      <SafeAreaView style={styles.container2}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS == 'ios' ? 'height' : undefined}
+        style={styles.container2}>
         <View style={styles.container3}>
-          <KeyboardAvoidingView style={{flex: 1}} enabled>
-            <ScrollView
-              contentContainerStyle={{
-                paddingHorizontal: 20,
-                paddingBottom: 20,
-              }}>
-              {renderProfileSection()}
-              {renderFields()}
-              {rendermainButton2()}
-            </ScrollView>
-          </KeyboardAvoidingView>
+          <ScrollView
+            contentContainerStyle={{
+              paddingHorizontal: 20,
+              paddingBottom: 20,
+            }}>
+            {renderProfileSection()}
+            {renderFields()}
+            {rendermainButton2()}
+          </ScrollView>
         </View>
         <utils.Footer
           nav={props.navigation}
           screen={headerTitle}
           focusScreen={store.General.focusScreen}
         />
-      </SafeAreaView>
+      </KeyboardAvoidingView>
 
       <Toast ref={toast} position="bottom" />
 

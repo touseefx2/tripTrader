@@ -278,14 +278,6 @@ function VerifyCode(props) {
       );
     };
 
-    const renderShowError = () => {
-      return (
-        <View style={styles.errorMessageContainer}>
-          <Text style={styles.errorMessageText}>{errorMessage}</Text>
-        </View>
-      );
-    };
-
     const renderShowFieldError = c => {
       let text = '';
 
@@ -343,51 +335,53 @@ function VerifyCode(props) {
 
     return (
       <View style={styles.section2}>
-        <View>
-          <Text style={styles.section2Title1}>Verify PIN Code</Text>
-          {/* {errorMessage !== '' && renderShowError()} */}
-          <Text style={styles.section2LogoTitle}>
-            {chk == 'phone'
-              ? `Enter the 6-digit verification code we sent to your device at  ${value}`
-              : `Enter the 6-digit verification code we sent to your email at ${value}`}
-          </Text>
-        </View>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View>
+            <Text style={styles.section2Title1}>Verify PIN Code</Text>
+            {/* {errorMessage !== '' && renderShowError()} */}
+            <Text style={styles.section2LogoTitle}>
+              {chk == 'phone'
+                ? `Enter the 6-digit verification code we sent to your device at  ${value}`
+                : `Enter the 6-digit verification code we sent to your email at ${value}`}
+            </Text>
+          </View>
 
-        <View style={[styles.Field, {marginTop: 10}]}>
-          <CodeInput
-            ref={codeInputRef2}
-            activeColor="rgba(49, 180, 4, 1)"
-            inactiveColor="rgba(49, 180, 4, 1.3)"
-            autoFocus={false}
-            inputPosition="center"
-            codeLength={6}
-            size={Platform.OS == 'android' ? 43 : 48}
-            onValue={c => {
-              setcode(c);
-            }}
-            onFulfill={onFinishCheckingCode}
-            codeInputStyle={{
-              borderWidth: 1,
-              borderColor:
-                isVerifyCode == false || isEmptyCode
-                  ? theme.color.fieldBordeError
-                  : theme.color.fieldBorder,
-              borderRadius: 8,
-              color: theme.color.title,
-              fontSize: 17,
-            }}
-          />
-          {(isEmptyCode || isVerifyCode == false) &&
-            renderShowFieldError('code')}
-        </View>
+          <View style={[styles.Field, {marginTop: 10}]}>
+            <CodeInput
+              ref={codeInputRef2}
+              activeColor="rgba(49, 180, 4, 1)"
+              inactiveColor="rgba(49, 180, 4, 1.3)"
+              autoFocus={false}
+              inputPosition="center"
+              codeLength={6}
+              size={Platform.OS == 'android' ? 43 : 43}
+              onValue={c => {
+                setcode(c);
+              }}
+              onFulfill={onFinishCheckingCode}
+              codeInputStyle={{
+                borderWidth: 1,
+                borderColor:
+                  isVerifyCode == false || isEmptyCode
+                    ? theme.color.fieldBordeError
+                    : theme.color.fieldBorder,
+                borderRadius: 8,
+                color: theme.color.title,
+                fontSize: 17,
+              }}
+            />
+            {(isEmptyCode || isVerifyCode == false) &&
+              renderShowFieldError('code')}
+          </View>
 
-        {renderButton()}
+          {renderButton()}
 
-        <View style={styles.Field3}>
-          <TouchableOpacity disabled activeOpacity={0.7}>
-            {renderTimer()}
-          </TouchableOpacity>
-        </View>
+          <View style={styles.Field3}>
+            <TouchableOpacity disabled activeOpacity={0.7}>
+              {renderTimer()}
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       </View>
     );
   };
@@ -400,13 +394,16 @@ function VerifyCode(props) {
       />
       <SafeAreaView style={styles.container3}>
         <utils.AuthHeader props={props} />
-        <ScrollView
-          style={{paddingHorizontal: 15, marginTop: responsiveHeight(3)}}
-          showsVerticalScrollIndicator={false}>
-          <KeyboardAvoidingView style={{flex: 1}} enabled>
-            {renderSection2()}
-          </KeyboardAvoidingView>
-        </ScrollView>
+
+        <KeyboardAvoidingView
+          style={{
+            flex: 1,
+            paddingHorizontal: 15,
+            marginTop: responsiveHeight(3),
+          }}
+          behavior={Platform.OS == 'ios' ? 'padding' : undefined}>
+          {renderSection2()}
+        </KeyboardAvoidingView>
       </SafeAreaView>
 
       {Platform.OS == 'ios' && <utils.Loader load={loader} />}

@@ -2924,6 +2924,7 @@ class user {
     store.Search.clearSearches();
     store.Notifications.clearNotifications();
     store.Offers.clearOffers();
+    store.General.setIsCurrentCahtId('');
 
     this.setchk('');
     this.setfuser('');

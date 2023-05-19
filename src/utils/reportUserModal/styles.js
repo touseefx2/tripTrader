@@ -55,7 +55,7 @@ export const styles = StyleSheet.create({
 
   textArea: {
     width: '100%',
-    height: 200,
+    height: 150,
     backgroundColor: '#FAFAFA',
     borderRadius: 4,
     marginTop: 12,

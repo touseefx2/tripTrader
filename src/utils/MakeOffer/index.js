@@ -1,5 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {View, Modal, SafeAreaView} from 'react-native';
+import {
+  View,
+  Modal,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+} from 'react-native';
 import {styles} from './styles';
 import theme from '../../theme';
 import utils from '../../utils';
@@ -204,7 +210,9 @@ export default function MakeOffer({
 
   return (
     <Modal visible={isModal} transparent onRequestClose={goBack}>
-      <SafeAreaView style={styles.modalContainer}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS == 'ios' ? 'height' : undefined}
+        style={styles.modalContainer}>
         <View
           onLayout={onViewLayout}
           style={[
@@ -308,7 +316,7 @@ export default function MakeOffer({
             />
           )}
         </View>
-      </SafeAreaView>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
