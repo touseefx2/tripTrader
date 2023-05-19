@@ -7,42 +7,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:491634645448:android:e63aff259679164fb548fd",
-        "android_client_info": {
-          "package_name": "com.trip_trader"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "491634645448-p59n00oba0arjs3qv6fks038aktmfj4r.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBtx-OrQyXyVN2ZPJ4rM8zta79p8aaUIIg"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "491634645448-p59n00oba0arjs3qv6fks038aktmfj4r.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "491634645448-3nhqg947u6f0huto8d90je39eamdnsbd.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.triptrader"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:491634645448:android:e384aaa4cf2432adb548fd",
         "android_client_info": {
           "package_name": "com.triptrader"
