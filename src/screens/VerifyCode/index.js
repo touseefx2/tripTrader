@@ -52,10 +52,6 @@ function VerifyCode(props) {
 
   const [errorMessage, seterrorMessage] = useState('');
 
-  const goBack = () => {
-    props.navigation.goBack();
-  };
-
   useEffect(() => {
     const Subscribe = auth().onAuthStateChanged(async user => {
       if (user) {
@@ -87,10 +83,7 @@ function VerifyCode(props) {
     setisVerifyCode('a');
     setisEmptyCode(false);
     seterrorMessage('');
-  };
-
-  const setErrMessage = c => {
-    seterrorMessage(c);
+    codeInputRef2?.current?.clear();
   };
 
   const showResentToast = c => {
@@ -103,28 +96,29 @@ function VerifyCode(props) {
   };
 
   const goToResetPassword = v => {
-    // setisVerifyCode(true);
     props.navigation.navigate('ResetPassword', {screen, value: v, chk: chk});
   };
 
-  async function verfyCode(c) {
+  const verfyCode = async c => {
     try {
       Keyboard.dismiss();
       store.User.setregLoader(true);
       await confirmResult.confirm(c);
       setisVerifyCode(true);
     } catch (error) {
-      console.log('Verifyication Code  error: ', error);
       store.User.setregLoader(false);
       setcode('');
+      codeInputRef2?.current?.clear();
+      console.log('Verifyication Code  error: ', error.code);
       let errorMessage = '';
       if (error.code == 'auth/unknown') {
         errorMessage =
           'Cannot create PhoneAuthCredential without either verificationProof, sessionInfo, temporary proof, or enrollment ID !';
       } else if (error.code == 'auth/invalid-verification-code') {
+        setisVerifyCode(false);
         errorMessage =
           'Invalid verification code, Please enter correct confirmation code !';
-        setisVerifyCode(false);
+
         return;
       } else if (error.code == 'auth/session-expired') {
         errorMessage =
@@ -139,10 +133,6 @@ function VerifyCode(props) {
       }
       Alert.alert('Failed', errorMessage);
     }
-  }
-
-  const SETisVerifycode = c => {
-    setisVerifyCode(c);
   };
 
   const SubmitCode = () => {
@@ -163,7 +153,7 @@ function VerifyCode(props) {
           store.User.attemptToVerifyCode(
             body,
             goToResetPassword,
-            SETisVerifycode,
+            setisVerifyCode,
           );
         } else {
           verfyCode(code);
@@ -177,7 +167,10 @@ function VerifyCode(props) {
   async function SendOtpCode() {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
+        clearAllField();
         store.User.setregLoader(true);
+        codeInputRef2?.current?.clear();
+
         auth()
           .signInWithPhoneNumber(value, true)
           .then(res => {
@@ -226,42 +219,6 @@ function VerifyCode(props) {
 
   const onFinishCheckingCode = cd => {
     setcode(cd);
-  };
-
-  const renderHeader = () => {
-    const renderLogo = () => {
-      return (
-        <View style={styles.section1}>
-          <Image
-            style={styles.logo}
-            source={require('../../assets/images/logo/img.png')}
-          />
-          <Text style={styles.title1}>{store.General.AppName}</Text>
-        </View>
-      );
-    };
-
-    const renderBack = () => {
-      return (
-        <TouchableOpacity
-          activeOpacity={0.7}
-          onPress={goBack}
-          style={{position: 'absolute', left: 20}}>
-          <utils.vectorIcon.Ionicons
-            name={'chevron-back-outline'}
-            color={theme.color.buttonText}
-            size={27}
-          />
-        </TouchableOpacity>
-      );
-    };
-
-    return (
-      <View style={styles.Header}>
-        {renderLogo()}
-        {renderBack()}
-      </View>
-    );
   };
 
   const renderSection2 = () => {
@@ -338,7 +295,7 @@ function VerifyCode(props) {
         <ScrollView showsVerticalScrollIndicator={false}>
           <View>
             <Text style={styles.section2Title1}>Verify PIN Code</Text>
-            {/* {errorMessage !== '' && renderShowError()} */}
+
             <Text style={styles.section2LogoTitle}>
               {chk == 'phone'
                 ? `Enter the 6-digit verification code we sent to your device at  ${value}`
@@ -352,12 +309,10 @@ function VerifyCode(props) {
               activeColor="rgba(49, 180, 4, 1)"
               inactiveColor="rgba(49, 180, 4, 1.3)"
               autoFocus={false}
+              keyboardType="numeric"
               inputPosition="center"
               codeLength={6}
-              size={Platform.OS == 'android' ? 43 : 43}
-              onValue={c => {
-                setcode(c);
-              }}
+              size={43}
               onFulfill={onFinishCheckingCode}
               codeInputStyle={{
                 borderWidth: 1,

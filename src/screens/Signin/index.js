@@ -183,14 +183,6 @@ function Signin(props) {
       );
     };
 
-    const renderShowError = () => {
-      return (
-        <View style={styles.errorMessageContainer}>
-          <Text style={styles.errorMessageText}>{errorMessage}</Text>
-        </View>
-      );
-    };
-
     const renderShowFieldError = c => {
       let text = '';
 
