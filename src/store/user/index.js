@@ -2883,6 +2883,7 @@ class user {
         }
         if (msg == 'Pin Code is incorrect.') {
           suc2(false);
+
           return;
         }
         // seterror(msg.toString())
