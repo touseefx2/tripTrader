@@ -470,12 +470,14 @@ function Support(props) {
   };
   return (
     <View style={styles.container}>
-      {/* {tagLine != '' && <utils.TagLine tagLine={tagLine} />} */}
       <utils.DrawerHeader props={props} headerTitle={headerTitle} />
       {!internet && <utils.InternetMessage />}
       <SafeAreaView style={styles.container2}>
         <View style={styles.container3}>
-          <KeyboardAvoidingView style={{flex: 1}} enabled>
+          <KeyboardAvoidingView
+            style={{flex: 1}}
+            behavior={Platform.OS == 'ios' ? 'height' : undefined}
+            enabled>
             <ScrollView
               contentContainerStyle={{
                 paddingHorizontal: 15,

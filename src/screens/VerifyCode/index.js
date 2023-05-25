@@ -52,10 +52,6 @@ function VerifyCode(props) {
 
   const [errorMessage, seterrorMessage] = useState('');
 
-  const goBack = () => {
-    props.navigation.goBack();
-  };
-
   useEffect(() => {
     const Subscribe = auth().onAuthStateChanged(async user => {
       if (user) {
@@ -87,10 +83,7 @@ function VerifyCode(props) {
     setisVerifyCode('a');
     setisEmptyCode(false);
     seterrorMessage('');
-  };
-
-  const setErrMessage = c => {
-    seterrorMessage(c);
+    codeInputRef2?.current?.clear();
   };
 
   const showResentToast = c => {
@@ -103,28 +96,29 @@ function VerifyCode(props) {
   };
 
   const goToResetPassword = v => {
-    // setisVerifyCode(true);
     props.navigation.navigate('ResetPassword', {screen, value: v, chk: chk});
   };
 
-  async function verfyCode(c) {
+  const verfyCode = async c => {
     try {
       Keyboard.dismiss();
       store.User.setregLoader(true);
       await confirmResult.confirm(c);
       setisVerifyCode(true);
     } catch (error) {
-      console.log('Verifyication Code  error: ', error);
       store.User.setregLoader(false);
       setcode('');
+      codeInputRef2?.current?.clear();
+      console.log('Verifyication Code  error: ', error.code);
       let errorMessage = '';
       if (error.code == 'auth/unknown') {
         errorMessage =
           'Cannot create PhoneAuthCredential without either verificationProof, sessionInfo, temporary proof, or enrollment ID !';
       } else if (error.code == 'auth/invalid-verification-code') {
+        setisVerifyCode(false);
         errorMessage =
           'Invalid verification code, Please enter correct confirmation code !';
-        setisVerifyCode(false);
+
         return;
       } else if (error.code == 'auth/session-expired') {
         errorMessage =
@@ -139,10 +133,6 @@ function VerifyCode(props) {
       }
       Alert.alert('Failed', errorMessage);
     }
-  }
-
-  const SETisVerifycode = c => {
-    setisVerifyCode(c);
   };
 
   const SubmitCode = () => {
@@ -163,7 +153,7 @@ function VerifyCode(props) {
           store.User.attemptToVerifyCode(
             body,
             goToResetPassword,
-            SETisVerifycode,
+            setisVerifyCode,
           );
         } else {
           verfyCode(code);
@@ -177,7 +167,10 @@ function VerifyCode(props) {
   async function SendOtpCode() {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
+        clearAllField();
         store.User.setregLoader(true);
+        codeInputRef2?.current?.clear();
+
         auth()
           .signInWithPhoneNumber(value, true)
           .then(res => {
@@ -228,42 +221,6 @@ function VerifyCode(props) {
     setcode(cd);
   };
 
-  const renderHeader = () => {
-    const renderLogo = () => {
-      return (
-        <View style={styles.section1}>
-          <Image
-            style={styles.logo}
-            source={require('../../assets/images/logo/img.png')}
-          />
-          <Text style={styles.title1}>{store.General.AppName}</Text>
-        </View>
-      );
-    };
-
-    const renderBack = () => {
-      return (
-        <TouchableOpacity
-          activeOpacity={0.7}
-          onPress={goBack}
-          style={{position: 'absolute', left: 20}}>
-          <utils.vectorIcon.Ionicons
-            name={'chevron-back-outline'}
-            color={theme.color.buttonText}
-            size={27}
-          />
-        </TouchableOpacity>
-      );
-    };
-
-    return (
-      <View style={styles.Header}>
-        {renderLogo()}
-        {renderBack()}
-      </View>
-    );
-  };
-
   const renderSection2 = () => {
     const renderButton = () => {
       return (
@@ -275,14 +232,6 @@ function VerifyCode(props) {
             <Text style={styles.buttonTextBottom}>submit code</Text>
           </TouchableOpacity>
         </>
-      );
-    };
-
-    const renderShowError = () => {
-      return (
-        <View style={styles.errorMessageContainer}>
-          <Text style={styles.errorMessageText}>{errorMessage}</Text>
-        </View>
       );
     };
 
@@ -343,51 +292,51 @@ function VerifyCode(props) {
 
     return (
       <View style={styles.section2}>
-        <View>
-          <Text style={styles.section2Title1}>Verify PIN Code</Text>
-          {/* {errorMessage !== '' && renderShowError()} */}
-          <Text style={styles.section2LogoTitle}>
-            {chk == 'phone'
-              ? `Enter the 6-digit verification code we sent to your device at  ${value}`
-              : `Enter the 6-digit verification code we sent to your email at ${value}`}
-          </Text>
-        </View>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View>
+            <Text style={styles.section2Title1}>Verify PIN Code</Text>
 
-        <View style={[styles.Field, {marginTop: 10}]}>
-          <CodeInput
-            ref={codeInputRef2}
-            activeColor="rgba(49, 180, 4, 1)"
-            inactiveColor="rgba(49, 180, 4, 1.3)"
-            autoFocus={false}
-            inputPosition="center"
-            codeLength={6}
-            size={Platform.OS == 'android' ? 43 : 48}
-            onValue={c => {
-              setcode(c);
-            }}
-            onFulfill={onFinishCheckingCode}
-            codeInputStyle={{
-              borderWidth: 1,
-              borderColor:
-                isVerifyCode == false || isEmptyCode
-                  ? theme.color.fieldBordeError
-                  : theme.color.fieldBorder,
-              borderRadius: 8,
-              color: theme.color.title,
-              fontSize: 17,
-            }}
-          />
-          {(isEmptyCode || isVerifyCode == false) &&
-            renderShowFieldError('code')}
-        </View>
+            <Text style={styles.section2LogoTitle}>
+              {chk == 'phone'
+                ? `Enter the 6-digit verification code we sent to your device at  ${value}`
+                : `Enter the 6-digit verification code we sent to your email at ${value}`}
+            </Text>
+          </View>
 
-        {renderButton()}
+          <View style={[styles.Field, {marginTop: 10}]}>
+            <CodeInput
+              ref={codeInputRef2}
+              activeColor="rgba(49, 180, 4, 1)"
+              inactiveColor="rgba(49, 180, 4, 1.3)"
+              autoFocus={false}
+              keyboardType="numeric"
+              inputPosition="center"
+              codeLength={6}
+              size={43}
+              onFulfill={onFinishCheckingCode}
+              codeInputStyle={{
+                borderWidth: 1,
+                borderColor:
+                  isVerifyCode == false || isEmptyCode
+                    ? theme.color.fieldBordeError
+                    : theme.color.fieldBorder,
+                borderRadius: 8,
+                color: theme.color.title,
+                fontSize: 17,
+              }}
+            />
+            {(isEmptyCode || isVerifyCode == false) &&
+              renderShowFieldError('code')}
+          </View>
 
-        <View style={styles.Field3}>
-          <TouchableOpacity disabled activeOpacity={0.7}>
-            {renderTimer()}
-          </TouchableOpacity>
-        </View>
+          {renderButton()}
+
+          <View style={styles.Field3}>
+            <TouchableOpacity disabled activeOpacity={0.7}>
+              {renderTimer()}
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       </View>
     );
   };
@@ -400,13 +349,16 @@ function VerifyCode(props) {
       />
       <SafeAreaView style={styles.container3}>
         <utils.AuthHeader props={props} />
-        <ScrollView
-          style={{paddingHorizontal: 15, marginTop: responsiveHeight(3)}}
-          showsVerticalScrollIndicator={false}>
-          <KeyboardAvoidingView style={{flex: 1}} enabled>
-            {renderSection2()}
-          </KeyboardAvoidingView>
-        </ScrollView>
+
+        <KeyboardAvoidingView
+          style={{
+            flex: 1,
+            paddingHorizontal: 15,
+            marginTop: responsiveHeight(3),
+          }}
+          behavior={Platform.OS == 'ios' ? 'padding' : undefined}>
+          {renderSection2()}
+        </KeyboardAvoidingView>
       </SafeAreaView>
 
       {Platform.OS == 'ios' && <utils.Loader load={loader} />}

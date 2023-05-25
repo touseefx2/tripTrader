@@ -2,12 +2,13 @@ import React, {useState, useEffect} from 'react';
 import {
   View,
   Modal,
-  SafeAreaView,
   ScrollView,
   Text,
   Alert,
   Keyboard,
   TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import {styles} from './styles';
 import theme from '../../theme';
@@ -133,7 +134,9 @@ export default function reportUserModal({
 
   return (
     <Modal visible={isModal} transparent onRequestClose={closeModal}>
-      <SafeAreaView style={styles.modalContainer}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS == 'ios' ? 'height' : undefined}
+        style={styles.modalContainer}>
         <View
           onLayout={onViewLayout}
           style={[
@@ -168,7 +171,7 @@ export default function reportUserModal({
             message={message}
           />
         </View>
-      </SafeAreaView>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }

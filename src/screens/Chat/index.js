@@ -14,6 +14,7 @@ import {
   Modal as MModal,
   RefreshControl,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
 import {styles} from './styles';
@@ -30,6 +31,7 @@ import {responsiveHeight} from 'react-native-responsive-dimensions';
 import {FireStore} from '../../services/FireStore';
 import firestore from '@react-native-firebase/firestore';
 import {Notification} from '../../services/Notification';
+import KeyboardAvoidingView from 'react-native/Libraries/Components/Keyboard/KeyboardAvoidingView';
 
 export default observer(Chat);
 
@@ -200,6 +202,7 @@ function Chat(props) {
   };
 
   useEffect(() => {
+    store.General.setIsCurrentCahtId(rid);
     var initState = true;
     var initState2 = true;
     const curentUserId = user._id;
@@ -262,6 +265,7 @@ function Chat(props) {
       observer();
       observer2();
       setpasObj(false);
+      store.General.setIsCurrentCahtId('');
     };
   }, []);
   useEffect(() => {
@@ -662,7 +666,7 @@ function Chat(props) {
         userId: rid,
         message: message,
         icon: user?.image || '',
-        data: {topic: 'newMessagePush'},
+        data: {topic: 'newMessagePush', senderId: user._id},
       };
 
       Notification.sendMessageNotificationPush(notificationBody);
@@ -817,7 +821,8 @@ function Chat(props) {
           backgroundColor: theme.color.background,
           borderTopWidth: 1,
           borderTopColor: theme.color.fieldBorder,
-          padding: 20,
+          paddingHorizontal: 20,
+          paddingVertical: Platform.OS == 'ios' ? 25 : 20,
         }}>
         {!isBlock && !isBlockOther && (
           <>
@@ -1102,7 +1107,9 @@ function Chat(props) {
         />
 
         {!isInternet && <utils.InternetMessage />}
-        <SafeAreaView style={styles.container2}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS == 'ios' ? 'height' : undefined}
+          style={styles.container2}>
           <View style={styles.container3}>
             <FlatList
               onContentSizeChange={() =>
@@ -1147,7 +1154,7 @@ function Chat(props) {
           )}
 
           {renderFooter()}
-        </SafeAreaView>
+        </KeyboardAvoidingView>
 
         <Toast ref={toast} position="bottom" />
         <utils.Loader load={loader} />

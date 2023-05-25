@@ -28,6 +28,7 @@ function Splash() {
   const {setLoading} = store.General;
 
   useEffect(() => {
+    store.General.setIsCurrentCahtId('');
     store.User.setmessages([]);
     hydrateStores();
     setTimeout(() => {

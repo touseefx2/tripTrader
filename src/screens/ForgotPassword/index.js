@@ -96,7 +96,7 @@ function ForgotPassword(props) {
       if (state.isConnected) {
         // store.User.setregLoader(true);
         auth()
-          .signInWithPhoneNumber(p,true)
+          .signInWithPhoneNumber(p, true)
           .then(res => {
             console.log('opt code send true: ');
             store.User.setregLoader(false);
@@ -271,102 +271,104 @@ function ForgotPassword(props) {
 
     return (
       <View style={styles.section2}>
-        <View>
-          <Text style={styles.section2Title1}>forgot password</Text>
-          {/* {errorMessage !== '' && renderShowError()} */}
-          <Text style={styles.section2LogoTitle}>
-            {isEmailField
-              ? `Enter your email below and we’ll send you a 6 digit verification code`
-              : `Enter your number below and we’ll send you a 6 digit verification code`}
-          </Text>
-        </View>
-
-        <View style={[styles.Field, {marginTop: 20}]}>
-          {isEmailField && (
-            <>
-              <Text style={styles.FieldTitle1}>email address</Text>
-              <TextInput
-                placeholder=""
-                value={email}
-                onChangeText={enterEmail}
-                style={[
-                  styles.FieldInput,
-                  {
-                    borderColor:
-                      invalidemail || Emptyemail
-                        ? theme.color.fieldBordeError
-                        : theme.color.fieldBorder,
-                  },
-                ]}
-              />
-              {(invalidemail || Emptyemail) && renderShowFieldError('email')}
-            </>
-          )}
-
-          {!isEmailField && (
-            <>
-              <Text style={styles.FieldTitle1}>phone number</Text>
-
-              <View
-                style={[
-                  styles.phoneInputContainer,
-                  {
-                    borderColor:
-                      isVerifyPhone == false
-                        ? theme.color.fieldBordeError
-                        : theme.color.fieldBorder,
-                  },
-                ]}>
-                <IntlPhoneInput
-                  clearPhone={() => {
-                    setphone('');
-                    setinvalidphone(false);
-                    setisVerifyPhone('a');
-                  }}
-                  onChangeText={p => {
-                    setPhoneNumber(p);
-                  }}
-                  phone={pwc}
-                  defaultCountry={cntry}
-                  lang="EN"
-                  renderAction={() => (
-                    <>
-                      {!isVerifyPhone && phone != '' && (
-                        <utils.vectorIcon.Entypo
-                          name="cross"
-                          color={theme.color.subTitle}
-                          size={18}
-                        />
-                      )}
-
-                      {isVerifyPhone == true && (
-                        <utils.vectorIcon.Entypo
-                          name="check"
-                          color={'green'}
-                          size={18}
-                        />
-                      )}
-                    </>
-                  )}
-                />
-              </View>
-
-              {invalidphone && renderShowFieldError('phone')}
-            </>
-          )}
-        </View>
-
-        {renderButton()}
-
-        <View style={styles.Field3}>
-          <TouchableOpacity activeOpacity={0.7} onPress={changeField}>
-            <Text style={styles.Field31Title2}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View>
+            <Text style={styles.section2Title1}>forgot password</Text>
+            {/* {errorMessage !== '' && renderShowError()} */}
+            <Text style={styles.section2LogoTitle}>
               {isEmailField
-                ? 'Use Phone Number Instead'
-                : 'Use Email Address Instead'}
+                ? `Enter your email below and we’ll send you a 6 digit verification code`
+                : `Enter your number below and we’ll send you a 6 digit verification code`}
             </Text>
-          </TouchableOpacity>
-        </View>
+          </View>
+
+          <View style={[styles.Field, {marginTop: 20}]}>
+            {isEmailField && (
+              <>
+                <Text style={styles.FieldTitle1}>email address</Text>
+                <TextInput
+                  placeholder=""
+                  value={email}
+                  onChangeText={enterEmail}
+                  style={[
+                    styles.FieldInput,
+                    {
+                      borderColor:
+                        invalidemail || Emptyemail
+                          ? theme.color.fieldBordeError
+                          : theme.color.fieldBorder,
+                    },
+                  ]}
+                />
+                {(invalidemail || Emptyemail) && renderShowFieldError('email')}
+              </>
+            )}
+
+            {!isEmailField && (
+              <>
+                <Text style={styles.FieldTitle1}>phone number</Text>
+
+                <View
+                  style={[
+                    styles.phoneInputContainer,
+                    {
+                      borderColor:
+                        isVerifyPhone == false
+                          ? theme.color.fieldBordeError
+                          : theme.color.fieldBorder,
+                    },
+                  ]}>
+                  <IntlPhoneInput
+                    clearPhone={() => {
+                      setphone('');
+                      setinvalidphone(false);
+                      setisVerifyPhone('a');
+                    }}
+                    onChangeText={p => {
+                      setPhoneNumber(p);
+                    }}
+                    phone={pwc}
+                    defaultCountry={cntry}
+                    lang="EN"
+                    renderAction={() => (
+                      <>
+                        {!isVerifyPhone && phone != '' && (
+                          <utils.vectorIcon.Entypo
+                            name="cross"
+                            color={theme.color.subTitle}
+                            size={18}
+                          />
+                        )}
+
+                        {isVerifyPhone == true && (
+                          <utils.vectorIcon.Entypo
+                            name="check"
+                            color={'green'}
+                            size={18}
+                          />
+                        )}
+                      </>
+                    )}
+                  />
+                </View>
+
+                {invalidphone && renderShowFieldError('phone')}
+              </>
+            )}
+          </View>
+
+          {renderButton()}
+
+          <View style={styles.Field3}>
+            <TouchableOpacity activeOpacity={0.7} onPress={changeField}>
+              <Text style={styles.Field31Title2}>
+                {isEmailField
+                  ? 'Use Phone Number Instead'
+                  : 'Use Email Address Instead'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       </View>
     );
   };
@@ -380,13 +382,15 @@ function ForgotPassword(props) {
       <SafeAreaView style={styles.container3}>
         <utils.AuthHeader props={props} />
 
-        <ScrollView
-          style={{paddingHorizontal: 15, marginTop: responsiveHeight(3)}}
-          showsVerticalScrollIndicator={false}>
-          <KeyboardAvoidingView style={{flex: 1}} enabled>
-            {renderSection2()}
-          </KeyboardAvoidingView>
-        </ScrollView>
+        <KeyboardAvoidingView
+          style={{
+            flex: 1,
+            paddingHorizontal: 15,
+            marginTop: responsiveHeight(3),
+          }}
+          behavior={Platform.OS == 'ios' ? 'padding' : undefined}>
+          {renderSection2()}
+        </KeyboardAvoidingView>
       </SafeAreaView>
 
       <Toast ref={toast} position="center" />

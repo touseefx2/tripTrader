@@ -309,7 +309,8 @@ function ConfirmTrips(props) {
           : ofer.duration.title;
       dur = dur + ' ' + t;
       let tripDates = isMyTrip ? item.tripDates : item.preferredDates;
-      let avlbl = FormatPrfrDate(tripDates);
+      let avlbl = utils.functions.formatSelectedDates(tripDates, 'arr');
+      // FormatPrfrDate(tripDates);
       let loc = ofer.location.city + ', ' + ofer.location.state;
 
       //ofer to (offer trip)
@@ -321,7 +322,8 @@ function ConfirmTrips(props) {
           : trade.duration.title;
       durt = durt + ' ' + tt;
       let preferdates = isMyTrip ? item.preferredDates : item.tripDates;
-      let avlblt = FormatPrfrDate(preferdates);
+      let avlblt = utils.functions.formatSelectedDates(preferdates, 'arr');
+      //  FormatPrfrDate(preferdates);
       let loct = trade.location.city + ', ' + trade.location.state;
 
       const renderProfile = () => {

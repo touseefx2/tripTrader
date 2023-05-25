@@ -2837,6 +2837,7 @@ class user {
       ?.then(resp => {
         console.log('Logout resp true');
         this.setLogoutLoader(false);
+        store.General.setIsEmailPopup(false);
         store.General.setgoto('home');
         this.Logout();
       })
@@ -2882,6 +2883,7 @@ class user {
         }
         if (msg == 'Pin Code is incorrect.') {
           suc2(false);
+
           return;
         }
         // seterror(msg.toString())
@@ -2923,6 +2925,7 @@ class user {
     store.Search.clearSearches();
     store.Notifications.clearNotifications();
     store.Offers.clearOffers();
+    store.General.setIsCurrentCahtId('');
 
     this.setchk('');
     this.setfuser('');

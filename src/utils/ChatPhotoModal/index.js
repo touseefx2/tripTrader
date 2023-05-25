@@ -13,6 +13,7 @@ import {
   Keyboard,
   Alert,
   Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
@@ -499,7 +500,9 @@ function ChatPhotoModal(props) {
       deviceHeight={theme.window.Height}
       style={{padding: 0, margin: 0}}
       onBackButtonPress={closeAddPhotoModal}>
-      <SafeAreaView style={styles.modalContainerp}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS == 'ios' ? 'height' : undefined}
+        style={styles.modalContainerp}>
         <View style={styles.modalp}>
           {!isShowPrmsn && (
             <>
@@ -701,9 +704,8 @@ function ChatPhotoModal(props) {
               {renderButtonPermission()}
             </>
           )}
-          {/* {renderCross()} */}
         </View>
-      </SafeAreaView>
+      </KeyboardAvoidingView>
 
       {pvm && (
         <utils.FullimageModal

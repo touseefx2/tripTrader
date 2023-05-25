@@ -10,6 +10,8 @@ import {
   FlatList,
   Pressable,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
@@ -706,20 +708,24 @@ function Filters(props) {
 
     return (
       <>
-        {renderHeder()}
-        <Sep />
-        <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}}>
-          {renderVerifedchk()}
+        <KeyboardAvoidingView
+          style={{flex: 1}}
+          behavior={Platform.OS == 'ios' ? 'height' : undefined}>
+          {renderHeder()}
           <Sep />
-          {/* {trptype.length > 0 && renderTripTypes()} */}
-          <Sep />
-          {renderDropDownFields()}
-          <Sep />
-          {renderHosting()}
-          <Sep height={30} />
-          {renderBottom()}
-          <Sep />
-        </ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {renderVerifedchk()}
+            <Sep />
+            {/* {trptype.length > 0 && renderTripTypes()} */}
+            <Sep />
+            {renderDropDownFields()}
+            <Sep />
+            {renderHosting()}
+            <Sep height={30} />
+            {renderBottom()}
+            <Sep />
+          </ScrollView>
+        </KeyboardAvoidingView>
       </>
     );
   };

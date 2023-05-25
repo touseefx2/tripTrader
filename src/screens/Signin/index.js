@@ -183,14 +183,6 @@ function Signin(props) {
       );
     };
 
-    const renderShowError = () => {
-      return (
-        <View style={styles.errorMessageContainer}>
-          <Text style={styles.errorMessageText}>{errorMessage}</Text>
-        </View>
-      );
-    };
-
     const renderShowFieldError = c => {
       let text = '';
 
@@ -217,119 +209,115 @@ function Signin(props) {
       );
     };
 
-    // const securePasswordEntry = value => {
-    //   return value && value.replace(/./g, '*');
-    // };
-
     return (
       <View style={styles.section2}>
-        <Text style={styles.section2Title1}>Sign in</Text>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Text style={styles.section2Title1}>Sign in</Text>
 
-        {/* {errorMessage !== '' && renderShowError()} */}
-
-        <View style={[styles.Field, {marginTop: 25}]}>
-          <Text style={styles.FieldTitle1}>email address</Text>
-          <TextInput
-            placeholder=""
-            value={email}
-            onChangeText={enterEmail}
-            style={[
-              styles.FieldInput,
-              {
-                borderColor:
-                  invalidemail || Emptyemail
-                    ? theme.color.fieldBordeError
-                    : theme.color.fieldBorder,
-              },
-            ]}
-          />
-          {(invalidemail || Emptyemail) && renderShowFieldError('email')}
-        </View>
-
-        <View style={styles.Field}>
-          <Text style={styles.FieldTitle1}>Password</Text>
-          <View
-            style={[
-              styles.FieldInput,
-              {
-                borderColor:
-                  invalidpswd || Emptypswd
-                    ? theme.color.fieldBordeError
-                    : theme.color.fieldBorder,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              },
-            ]}>
+          <View style={[styles.Field, {marginTop: 25}]}>
+            <Text style={styles.FieldTitle1}>email address</Text>
             <TextInput
-              onChangeText={enterPaswd}
-              secureTextEntry={!showPaswd}
               placeholder=""
-              value={pswd}
-              style={{width: '85%'}}
+              value={email}
+              onChangeText={enterEmail}
+              style={[
+                styles.FieldInput,
+                {
+                  borderColor:
+                    invalidemail || Emptyemail
+                      ? theme.color.fieldBordeError
+                      : theme.color.fieldBorder,
+                },
+              ]}
             />
-
-            {pswd.length > 0 && (
-              <TouchableOpacity activeOpacity={0.5} onPress={showPasswd}>
-                {!showPaswd && (
-                  <Image
-                    style={{width: 20, height: 12, resizeMode: 'contain'}}
-                    source={require('../../assets/images/sp/img.png')}
-                  />
-                )}
-                {showPaswd && (
-                  <utils.vectorIcon.Ionicons
-                    name={'eye-off-outline'}
-                    color={theme.color.button1}
-                    size={20}
-                  />
-                )}
-              </TouchableOpacity>
-            )}
+            {(invalidemail || Emptyemail) && renderShowFieldError('email')}
           </View>
 
-          {(invalidpswd || Emptypswd) && renderShowFieldError('pswd')}
-        </View>
-
-        <View style={styles.Field2}>
-          <TouchableOpacity
-            style={{
-              width: 20,
-              height: 20,
-              borderRadius: 4,
-              backgroundColor: !savePswd ? 'white' : theme.color.button1,
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderWidth: 1,
-              borderColor: theme.color.fieldBorder,
-            }}
-            activeOpacity={0.5}
-            onPress={savePaswd}>
-            {savePswd && (
-              <utils.vectorIcon.FontAwesome5
-                name={'check'}
-                color={theme.color.buttonText}
-                size={11}
+          <View style={styles.Field}>
+            <Text style={styles.FieldTitle1}>Password</Text>
+            <View
+              style={[
+                styles.FieldInput,
+                {
+                  borderColor:
+                    invalidpswd || Emptypswd
+                      ? theme.color.fieldBordeError
+                      : theme.color.fieldBorder,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                },
+              ]}>
+              <TextInput
+                onChangeText={enterPaswd}
+                secureTextEntry={!showPaswd}
+                placeholder=""
+                value={pswd}
+                style={{width: '85%'}}
               />
-            )}
-          </TouchableOpacity>
-          <Text style={styles.Field2Title}>Save password</Text>
-        </View>
 
-        {renderButton()}
+              {pswd.length > 0 && (
+                <TouchableOpacity activeOpacity={0.5} onPress={showPasswd}>
+                  {!showPaswd && (
+                    <Image
+                      style={{width: 20, height: 12, resizeMode: 'contain'}}
+                      source={require('../../assets/images/sp/img.png')}
+                    />
+                  )}
+                  {showPaswd && (
+                    <utils.vectorIcon.Ionicons
+                      name={'eye-off-outline'}
+                      color={theme.color.button1}
+                      size={20}
+                    />
+                  )}
+                </TouchableOpacity>
+              )}
+            </View>
 
-        <View style={styles.Field3}>
-          <TouchableOpacity activeOpacity={0.7} onPress={forgotPswd}>
-            <Text style={styles.Field3Title1}>forgot password?</Text>
-          </TouchableOpacity>
-
-          <View style={styles.Field31}>
-            <Text style={styles.Field31Title1}>Not a member?</Text>
-            <TouchableOpacity activeOpacity={0.7} onPress={goToSignup}>
-              <Text style={styles.Field31Title2}>Join now</Text>
-            </TouchableOpacity>
+            {(invalidpswd || Emptypswd) && renderShowFieldError('pswd')}
           </View>
-        </View>
+
+          <View style={styles.Field2}>
+            <TouchableOpacity
+              style={{
+                width: 20,
+                height: 20,
+                borderRadius: 4,
+                backgroundColor: !savePswd ? 'white' : theme.color.button1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderWidth: 1,
+                borderColor: theme.color.fieldBorder,
+              }}
+              activeOpacity={0.5}
+              onPress={savePaswd}>
+              {savePswd && (
+                <utils.vectorIcon.FontAwesome5
+                  name={'check'}
+                  color={theme.color.buttonText}
+                  size={11}
+                />
+              )}
+            </TouchableOpacity>
+            <Text style={styles.Field2Title}>Save password</Text>
+          </View>
+
+          {renderButton()}
+
+          <View style={styles.Field3}>
+            <TouchableOpacity activeOpacity={0.7} onPress={forgotPswd}>
+              <Text style={styles.Field3Title1}>forgot password?</Text>
+            </TouchableOpacity>
+
+            <View style={styles.Field31}>
+              <Text style={styles.Field31Title1}>Not a member?</Text>
+              <TouchableOpacity activeOpacity={0.7} onPress={goToSignup}>
+                <Text style={styles.Field31Title2}>Join now</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
       </View>
     );
   };
@@ -343,13 +331,15 @@ function Signin(props) {
       <SafeAreaView style={styles.container3}>
         <utils.AuthHeader props={props} />
 
-        <ScrollView
-          style={{paddingHorizontal: 15, marginTop: responsiveHeight(3)}}
-          showsVerticalScrollIndicator={false}>
-          <KeyboardAvoidingView style={{flex: 1}} enabled>
-            {renderSection2()}
-          </KeyboardAvoidingView>
-        </ScrollView>
+        <KeyboardAvoidingView
+          style={{
+            flex: 1,
+            paddingHorizontal: 15,
+            marginTop: responsiveHeight(3),
+          }}
+          behavior={Platform.OS == 'ios' ? 'padding' : undefined}>
+          {renderSection2()}
+        </KeyboardAvoidingView>
       </SafeAreaView>
 
       <Toast ref={toast} position="bottom" />

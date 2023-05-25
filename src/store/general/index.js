@@ -26,6 +26,7 @@ class general {
   @observable selectedFilter = [];
   @observable isUpdateNeeded = false;
   @observable isEmailPopup = false;
+  @observable isCurrentCahtId = '';
 
   @persist('object') @observable isGLocation = false;
   @persist('object') @observable apiLevel = '';
@@ -42,6 +43,10 @@ class general {
   @observable goToo = null;
   @action setgoToo = obj => {
     this.goToo = obj;
+  };
+
+  @action setIsCurrentCahtId = obj => {
+    this.isCurrentCahtId = obj;
   };
 
   @action checkServer = err => {

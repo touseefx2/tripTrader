@@ -191,14 +191,6 @@ function ResetPassword(props) {
       );
     };
 
-    const renderShowError = () => {
-      return (
-        <View style={styles.errorMessageContainer}>
-          <Text style={styles.errorMessageText}>{errorMessage}</Text>
-        </View>
-      );
-    };
-
     const renderShowFieldError = c => {
       let text = '';
 
@@ -227,108 +219,110 @@ function ResetPassword(props) {
 
     return (
       <View style={styles.section2}>
-        <View>
-          <Text style={styles.section2Title1}>password reset</Text>
-          {/* {errorMessage !== '' && renderShowError()} */}
-        </View>
-
-        <View style={[styles.Field, {marginTop: 20}]}>
-          <Text style={styles.FieldTitle1}>new password</Text>
-          <View
-            style={[
-              styles.FieldInput,
-              {
-                borderColor:
-                  invalidnp || Emptynp
-                    ? theme.color.fieldBordeError
-                    : theme.color.fieldBorder,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              },
-            ]}>
-            <TextInput
-              placeholder=""
-              secureTextEntry={!snp}
-              onChangeText={enterNp}
-              style={{width: '85%'}}
-            />
-
-            {np.length > 0 && (
-              <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={() => {
-                  setsnp(!snp);
-                }}>
-                {!snp && (
-                  <Image
-                    style={{width: 20, height: 12, resizeMode: 'contain'}}
-                    source={require('../../assets/images/sp/img.png')}
-                  />
-                )}
-                {snp && (
-                  <utils.vectorIcon.Ionicons
-                    name={'eye-off-outline'}
-                    color={theme.color.button1}
-                    size={20}
-                  />
-                )}
-              </TouchableOpacity>
-            )}
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View>
+            <Text style={styles.section2Title1}>password reset</Text>
+            {/* {errorMessage !== '' && renderShowError()} */}
           </View>
-          {(invalidnp || Emptynp) && renderShowFieldError('np')}
-        </View>
 
-        <View style={[styles.Field, {marginTop: 20}]}>
-          <Text style={[styles.FieldTitle1, {textTransform: 'none'}]}>
-            Confirm Password
-          </Text>
-          <View
-            style={[
-              styles.FieldInput,
-              {
-                borderColor:
-                  invalidCP || Emptycp
-                    ? theme.color.fieldBordeError
-                    : theme.color.fieldBorder,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              },
-            ]}>
-            <TextInput
-              placeholder=""
-              secureTextEntry={!scp}
-              onChangeText={enterCp}
-              style={{width: '85%'}}
-            />
+          <View style={[styles.Field, {marginTop: 20}]}>
+            <Text style={styles.FieldTitle1}>new password</Text>
+            <View
+              style={[
+                styles.FieldInput,
+                {
+                  borderColor:
+                    invalidnp || Emptynp
+                      ? theme.color.fieldBordeError
+                      : theme.color.fieldBorder,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                },
+              ]}>
+              <TextInput
+                placeholder=""
+                secureTextEntry={!snp}
+                onChangeText={enterNp}
+                style={{width: '85%'}}
+              />
 
-            {cp.length > 0 && (
-              <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={() => {
-                  setscp(!scp);
-                }}>
-                {!scp && (
-                  <Image
-                    style={{width: 20, height: 12, resizeMode: 'contain'}}
-                    source={require('../../assets/images/sp/img.png')}
-                  />
-                )}
-                {scp && (
-                  <utils.vectorIcon.Ionicons
-                    name={'eye-off-outline'}
-                    color={theme.color.button1}
-                    size={20}
-                  />
-                )}
-              </TouchableOpacity>
-            )}
+              {np.length > 0 && (
+                <TouchableOpacity
+                  activeOpacity={0.5}
+                  onPress={() => {
+                    setsnp(!snp);
+                  }}>
+                  {!snp && (
+                    <Image
+                      style={{width: 20, height: 12, resizeMode: 'contain'}}
+                      source={require('../../assets/images/sp/img.png')}
+                    />
+                  )}
+                  {snp && (
+                    <utils.vectorIcon.Ionicons
+                      name={'eye-off-outline'}
+                      color={theme.color.button1}
+                      size={20}
+                    />
+                  )}
+                </TouchableOpacity>
+              )}
+            </View>
+            {(invalidnp || Emptynp) && renderShowFieldError('np')}
           </View>
-          {(invalidCP || Emptycp) && renderShowFieldError('cp')}
-        </View>
 
-        {renderButton()}
+          <View style={[styles.Field, {marginTop: 20}]}>
+            <Text style={[styles.FieldTitle1, {textTransform: 'none'}]}>
+              Confirm Password
+            </Text>
+            <View
+              style={[
+                styles.FieldInput,
+                {
+                  borderColor:
+                    invalidCP || Emptycp
+                      ? theme.color.fieldBordeError
+                      : theme.color.fieldBorder,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                },
+              ]}>
+              <TextInput
+                placeholder=""
+                secureTextEntry={!scp}
+                onChangeText={enterCp}
+                style={{width: '85%'}}
+              />
+
+              {cp.length > 0 && (
+                <TouchableOpacity
+                  activeOpacity={0.5}
+                  onPress={() => {
+                    setscp(!scp);
+                  }}>
+                  {!scp && (
+                    <Image
+                      style={{width: 20, height: 12, resizeMode: 'contain'}}
+                      source={require('../../assets/images/sp/img.png')}
+                    />
+                  )}
+                  {scp && (
+                    <utils.vectorIcon.Ionicons
+                      name={'eye-off-outline'}
+                      color={theme.color.button1}
+                      size={20}
+                    />
+                  )}
+                </TouchableOpacity>
+              )}
+            </View>
+            {(invalidCP || Emptycp) && renderShowFieldError('cp')}
+          </View>
+
+          {renderButton()}
+        </ScrollView>
       </View>
     );
   };
@@ -342,13 +336,15 @@ function ResetPassword(props) {
       <SafeAreaView style={styles.container3}>
         <utils.AuthHeader props={props} />
 
-        <ScrollView
-          style={{paddingHorizontal: 15, marginTop: responsiveHeight(3)}}
-          showsVerticalScrollIndicator={false}>
-          <KeyboardAvoidingView style={{flex: 1}} enabled>
-            {renderSection2()}
-          </KeyboardAvoidingView>
-        </ScrollView>
+        <KeyboardAvoidingView
+          style={{
+            flex: 1,
+            paddingHorizontal: 15,
+            marginTop: responsiveHeight(3),
+          }}
+          behavior={Platform.OS == 'ios' ? 'padding' : undefined}>
+          {renderSection2()}
+        </KeyboardAvoidingView>
       </SafeAreaView>
 
       <Toast ref={toast} position="bottom" />

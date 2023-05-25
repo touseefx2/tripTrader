@@ -279,7 +279,8 @@ export const styles = StyleSheet.create({
   sec3Icon: {
     width: 20,
     height: 20,
-    resizeMode: 'contain',
+    marginLeft: -3,
+    // resizeMode: 'contain',
   },
   sec3T2: {
     color: theme.color.button1,

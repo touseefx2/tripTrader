@@ -56,9 +56,11 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Application would like permission to access your current location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Food delivery would like permission to access your current location</string>
+	<string>App would like permission to access your current location</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>App would like permission to access your Gallery for photos and camera</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>App would like permission to access your media library for profile information</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

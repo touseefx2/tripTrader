@@ -2,12 +2,13 @@ import React, {useState, useEffect} from 'react';
 import {
   View,
   Modal,
-  SafeAreaView,
   ScrollView,
   TextInput,
   Text,
   Keyboard,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import {styles} from './styles';
 import theme from '../../theme';
@@ -133,7 +134,10 @@ export default function MessageModal({
       userId: item.hostId._id || item.offeredBy._id,
       message: message,
       icon: user?.image || '',
-      data: {topic: check == 'first' ? 'newMessage' : 'newMessagePush'},
+      data:
+        check == 'first'
+          ? {topic: 'newMessage'}
+          : {topic: 'newMessagePush', senderId: user._id},
     };
     if (check == 'first') {
       Notification.sendMessageNotification(notificationBody);
@@ -197,7 +201,9 @@ export default function MessageModal({
 
   return (
     <Modal visible={isModal} transparent onRequestClose={closeModal}>
-      <SafeAreaView style={styles.modalContainer}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS == 'ios' ? 'height' : undefined}
+        style={styles.modalContainer}>
         <View
           onLayout={onViewLayout}
           style={[
@@ -231,7 +237,7 @@ export default function MessageModal({
             sendMessage={sendMessage}
           />
         </View>
-      </SafeAreaView>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
