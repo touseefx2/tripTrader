@@ -377,24 +377,31 @@ function ChangePassword(props) {
     <View style={styles.container}>
       <utils.StackHeader bell={true} props={props} headerTitle={headerTitle} />
       {!internet && <utils.InternetMessage />}
+
       <KeyboardAvoidingView
         behavior={Platform.OS == 'ios' ? 'height' : undefined}
         style={styles.container2}>
-        <View style={styles.container3}>
-          <ScrollView
-            contentContainerStyle={{
-              paddingHorizontal: 15,
-              paddingVertical: 15,
-            }}>
-            {renderMain()}
-          </ScrollView>
-        </View>
-        <utils.Footer
-          nav={props.navigation}
-          screen={headerTitle}
-          focusScreen={store.General.focusScreen}
-        />
+        <SafeAreaView
+          style={{
+            flex: 1,
+          }}>
+          <View style={styles.container3}>
+            <ScrollView
+              contentContainerStyle={{
+                paddingHorizontal: 15,
+                paddingVertical: 15,
+              }}>
+              {renderMain()}
+            </ScrollView>
+          </View>
+          <utils.Footer
+            nav={props.navigation}
+            screen={headerTitle}
+            focusScreen={store.General.focusScreen}
+          />
+        </SafeAreaView>
       </KeyboardAvoidingView>
+
       <utils.Loader load={loader} />
       <Toast ref={toast} position="bottom" />
     </View>

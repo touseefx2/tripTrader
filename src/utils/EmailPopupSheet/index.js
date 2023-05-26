@@ -104,7 +104,7 @@ function EmailPopupSheet({isModal, setIsModal, email, user}) {
       <View style={isMaxHeight ? styles.bottomMax : styles.bottom}>
         <TouchableOpacity
           activeOpacity={0.7}
-          disabled={resendLoder ? true : false}
+          disabled={resendLoder || logoutLoader}
           onPress={reSendLink}
           style={styles.button}>
           {!resendLoder ? (
@@ -119,7 +119,7 @@ function EmailPopupSheet({isModal, setIsModal, email, user}) {
 
         <TouchableOpacity
           activeOpacity={0.7}
-          disabled={logoutLoader ? true : false}
+          disabled={resendLoder || logoutLoader}
           onPress={logoutAccount}
           style={[
             styles.button,

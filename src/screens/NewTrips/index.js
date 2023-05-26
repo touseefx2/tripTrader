@@ -807,7 +807,7 @@ function NewTrips(props) {
   };
 
   const MultipleImage = async chk => {
-    let apiLevel = store.General.apiLevel;
+    const apiLevel = store.General.apiLevel;
     Keyboard.dismiss();
     closeAllDropDown();
     setisShowPrmsn(false);
@@ -836,8 +836,8 @@ function NewTrips(props) {
           if (data.length > 0) {
             res.map((e, i, a) => {
               let uri = e.path;
-              let fileName = Platform.OS == 'ios' ? e.filename : e.fileName;
-              let type = Platform.OS == 'ios' ? e.mime : e.mine;
+              let fileName = e.fileName;
+              let type = e.mime;
 
               if (Platform.OS == 'android' && apiLevel < 29) {
                 uri = 'file://' + uri;
@@ -870,9 +870,10 @@ function NewTrips(props) {
             });
           } else {
             res.map((e, i, a) => {
+              console.log('e : ', e);
               let uri = e.path;
-              let fileName = Platform.OS == 'ios' ? e.filename : e.fileName;
-              let type = Platform.OS == 'ios' ? e.mime : e.mine;
+              let fileName = e.fileName;
+              let type = e.mime;
               if (Platform.OS == 'android' && apiLevel < 29) {
                 uri = 'file://' + uri;
               }
@@ -4912,27 +4913,29 @@ function NewTrips(props) {
       <KeyboardAvoidingView
         behavior={Platform.OS == 'ios' ? 'height' : undefined}
         style={styles.container2}>
-        <View style={styles.container3}>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingVertical: 15,
-              paddingHorizontal: 15,
-            }}>
-            {renderSec1()}
-            {renderSec2()}
-            {isEdit && renderSec3()}
-            {renderButton()}
-          </ScrollView>
-        </View>
+        <SafeAreaView style={{flex: 1}}>
+          <View style={styles.container3}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{
+                paddingVertical: 15,
+                paddingHorizontal: 15,
+              }}>
+              {renderSec1()}
+              {renderSec2()}
+              {isEdit && renderSec3()}
+              {renderButton()}
+            </ScrollView>
+          </View>
 
-        <utils.Footer
-          nav={props.navigation}
-          screen={headerTitle}
-          focusScreen={store.General.focusScreen}
-        />
+          <utils.Footer
+            nav={props.navigation}
+            screen={headerTitle}
+            focusScreen={store.General.focusScreen}
+          />
+        </SafeAreaView>
       </KeyboardAvoidingView>
-     
+
       <Toast ref={toast} position="bottom" />
       {isReviewTrip && renderReviewTripModal()}
       {isModal && renderModal()}
