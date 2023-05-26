@@ -165,7 +165,7 @@ function MyProfile(props) {
         if (resp.length > 0) {
           const res = resp[0];
           console.log('mutipicker image res true  ');
-          const {path, mime, mine, filename, fileName} = res;
+          const {path, mime, fileName} = res;
           let uri = path;
           if (Platform.OS == 'android' && apiLevel < 29) {
             uri = 'file://' + uri;
@@ -177,8 +177,8 @@ function MyProfile(props) {
             .then(async res => {
               const imageObject = {
                 uri: res,
-                type: Platform.OS == 'ios' ? mime : mine,
-                fileName: Platform.OS == 'ios' ? filename : fileName,
+                type: mime,
+                fileName: fileName,
               };
               console.log('Compress image  : ', imageObject);
               if (button == 'Profile') {
