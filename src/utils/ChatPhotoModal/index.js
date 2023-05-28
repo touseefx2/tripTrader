@@ -97,8 +97,8 @@ function ChatPhotoModal(props) {
           if (data.length > 0) {
             res.map((e, i, a) => {
               let uri = e.path;
-              let fileName = Platform.OS == 'ios' ? e.filename : e.fileName;
-              let type = Platform.OS == 'ios' ? e.mime : e.mine;
+              let fileName = e.fileName;
+              let type = e.mime;
 
               if (Platform.OS == 'android' && apiLevel < 29) {
                 uri = 'file://' + uri;
@@ -131,8 +131,8 @@ function ChatPhotoModal(props) {
           } else {
             res.map((e, i, a) => {
               let uri = e.path;
-              let fileName = Platform.OS == 'ios' ? e.filename : e.fileName;
-              let type = Platform.OS == 'ios' ? e.mime : e.mine;
+              let fileName = e.fileName;
+              let type = e.mime;
 
               if (Platform.OS == 'android' && apiLevel < 29) {
                 uri = 'file://' + uri;

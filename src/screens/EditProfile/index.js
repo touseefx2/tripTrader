@@ -332,7 +332,7 @@ function EditProfile(props) {
           const res = resp[0];
           console.log('mutipicker image res true  :  ');
 
-          const {path, mime, mine, filename, fileName} = res;
+          const {path, mime, fileName} = res;
           let uri = path;
           if (Platform.OS == 'android' && apiLevel < 29) {
             uri = 'file://' + uri;
@@ -344,8 +344,8 @@ function EditProfile(props) {
             .then(async res => {
               const imageObject = {
                 uri: res,
-                type: Platform.OS == 'ios' ? mime : mine,
-                fileName: Platform.OS == 'ios' ? filename : fileName,
+                type: mime,
+                fileName: fileName,
               };
               console.log('Compress image  : ', imageObject);
               if (button == 'Profile') {
@@ -1204,22 +1204,24 @@ function EditProfile(props) {
       <KeyboardAvoidingView
         behavior={Platform.OS == 'ios' ? 'height' : undefined}
         style={styles.container2}>
-        <View style={styles.container3}>
-          <ScrollView
-            contentContainerStyle={{
-              paddingHorizontal: 20,
-              paddingBottom: 20,
-            }}>
-            {renderProfileSection()}
-            {renderFields()}
-            {rendermainButton2()}
-          </ScrollView>
-        </View>
-        <utils.Footer
-          nav={props.navigation}
-          screen={headerTitle}
-          focusScreen={store.General.focusScreen}
-        />
+        <SafeAreaView style={{flex: 1}}>
+          <View style={styles.container3}>
+            <ScrollView
+              contentContainerStyle={{
+                paddingHorizontal: 20,
+                paddingBottom: 20,
+              }}>
+              {renderProfileSection()}
+              {renderFields()}
+              {rendermainButton2()}
+            </ScrollView>
+          </View>
+          <utils.Footer
+            nav={props.navigation}
+            screen={headerTitle}
+            focusScreen={store.General.focusScreen}
+          />
+        </SafeAreaView>
       </KeyboardAvoidingView>
 
       <Toast ref={toast} position="bottom" />

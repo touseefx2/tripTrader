@@ -757,9 +757,9 @@ PODS:
     - React-Core
   - react-native-date-picker (4.2.13):
     - React-Core
-  - react-native-multiple-image-picker (0.2.10):
+  - react-native-multiple-image-picker (0.4.9):
     - React-Core
-    - TLPhotoPicker
+    - TLPhotoPicker (= 2.1.4)
   - react-native-netinfo (9.3.0):
     - React-Core
   - react-native-pager-view (6.0.0):
@@ -1256,7 +1256,7 @@ SPEC CHECKSUMS:
   React-logger: a0833912d93b36b791b7a521672d8ee89107aff1
   react-native-compressor: 2b33a85a50fddb4587165df3d4a79f9d9b8e13ef
   react-native-date-picker: 04e866ba4e7857f83abd504ad42e787f0f02ae00
-  react-native-multiple-image-picker: 1bf3daea720df4b8679226cfccef5539585f2255
+  react-native-multiple-image-picker: 7bb8ea15451284be33496b9b7aaf3ad6ba3f4139
   react-native-netinfo: 129bd99f607a2dc5bb096168f3e5c150fd1f1c95
   react-native-pager-view: e76d64a5114a152e942caa09136e4e250709378c
   react-native-safe-area-context: b456e1c40ec86f5593d58b275bd0e9603169daca
@@ -1305,4 +1305,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 4b7e534ad85d667dcc0fedc4d4ed2cde1c59b2b7
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.1

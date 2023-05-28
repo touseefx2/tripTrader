@@ -658,8 +658,8 @@ function Signup(props) {
   const SucGetClientsecret = async (dt, obj) => {
     try {
       const {error, paymentIntent} = await confirmPayment(dt.cs, {
-        // paymentMethodType: 'Card', //strip >0.5.0
-        type: 'Card', //stripe <0.6.0
+        // paymentMethodType: 'Card', //strip > 0.5.0
+        type: 'Card', //stripe <= 0.5.0
         billingDetails: {name: cn},
       });
 
@@ -814,7 +814,7 @@ function Signup(props) {
         if (resp.length > 0) {
           const res = resp[0];
 
-          const {path, mime, mine, filename, fileName} = res;
+          const {path, mime, fileName} = res;
           let uri = path;
           if (Platform.OS == 'android' && apiLevel < 29) {
             uri = 'file://' + uri;
@@ -826,8 +826,8 @@ function Signup(props) {
             .then(async res => {
               const imageObject = {
                 uri: res,
-                type: Platform.OS == 'ios' ? mime : mine,
-                fileName: Platform.OS == 'ios' ? filename : fileName,
+                type: mime,
+                fileName: fileName,
               };
               console.log('Compress image  : ', imageObject);
               if (button == 'Profile') {

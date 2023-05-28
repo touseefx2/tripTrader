@@ -21,6 +21,9 @@
 <uses-permission android:name="android.permission.ACCESS_SURFACE_FLINGER"  android:autoRevokePermissions="disallowed"  />
 <uses-permission android:name="android.permission.BROADCAST_CLOSE_SYSTEM_DIALOGS"  android:autoRevokePermissions="disallowed" /> 
 <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" android:autoRevokePermissions="disallowed"  />
+
+
+ 
  
     <application
       android:name=".MainApplication"
