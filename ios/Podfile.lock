@@ -943,7 +943,7 @@ PODS:
     - StripeUICore (= 23.3.4)
   - StripeUICore (23.3.4):
     - StripeCore (= 23.3.4)
-  - TLPhotoPicker (2.1.9)
+  - TLPhotoPicker (2.1.4)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -1299,10 +1299,10 @@ SPEC CHECKSUMS:
   StripePaymentSheet: 722ea7bea092c243d771122fe3572a9c84512704
   StripePaymentsUI: fd08081c4be73c16322dc76a1878140520a9df2e
   StripeUICore: ed68cbd5ad0626e0760e772f8c82d96cae9b829b
-  TLPhotoPicker: 939c40eaad130b69f9571e61e021e8120fa76329
+  TLPhotoPicker: f486e8499e1c3f464d0e886697635e25a72a52b8
   Yoga: 99652481fcd320aefa4a7ef90095b95acd181952
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
 PODFILE CHECKSUM: 4b7e534ad85d667dcc0fedc4d4ed2cde1c59b2b7
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.11.3
