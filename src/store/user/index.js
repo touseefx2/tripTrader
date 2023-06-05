@@ -2396,7 +2396,6 @@ class user {
           }
         : {
             identityProof: body.cnic_front_image,
-            // identityStatus: 'pending',
             identityStatus: 'appliedFor',
           };
     console.log('Update user photo body : ', bd);
