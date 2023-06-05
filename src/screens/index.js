@@ -17,7 +17,6 @@ import VerifyCode from './VerifyCode';
 import Inbox from './Inbox';
 import NewTrips from './NewTrips';
 import UserProfile from './UserProfile';
-import ContactUs from './ContactUs';
 import MyProfile from './MyProfile';
 import EditProfile from './EditProfile';
 import TradeOffers from './TradeOffers';
@@ -38,7 +37,6 @@ export default screens = {
   VerifyCode,
   ResetPassword,
   GuestAccess,
-  ContactUs,
   Home,
   Notifications,
   NotificationsGuest,

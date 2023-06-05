@@ -60,6 +60,11 @@ function Support(props) {
 
       title: 'Trips & Trades',
     },
+    {
+      _id: 5,
+
+      title: 'General Inquiry',
+    },
   ];
 
   const toast = useRef(null);
