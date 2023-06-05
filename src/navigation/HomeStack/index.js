@@ -428,17 +428,6 @@ let SettingsStack = () => {
           });
         }}
       />
-
-      <Stack.Screen
-        name="ContactUs"
-        component={screens.ContactUs}
-        options={props => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-      />
     </Stack.Navigator>
   );
 };

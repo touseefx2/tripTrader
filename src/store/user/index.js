@@ -741,6 +741,7 @@ class user {
         this.setHomeLoader(false);
         console.log(
           `response Get AllHomeTrip User   ${db.apis.GET_ALL_HOME_TRIPS}  true : `,
+          resp.data.data,
         );
         const dt = resp.data.data;
         this.setHomeTrips(dt);

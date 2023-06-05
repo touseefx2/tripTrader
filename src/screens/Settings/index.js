@@ -116,8 +116,6 @@ function Settings(props) {
 
     if (c == 'Manage Subscription') goToManageSubscription();
 
-    if (c == 'contact us') props.navigation.navigate('ContactUs');
-
     if (c == 'privacy') openWebView();
 
     if (c == 'Delete Account') openDeleteAccountModal();
@@ -315,33 +313,6 @@ function Settings(props) {
       );
     };
 
-    const renderContactus = () => {
-      let title = 'contact us';
-      return (
-        <TouchableOpacity
-          activeOpacity={activeOpacity}
-          onPress={() => {
-            onClick(title);
-          }}
-          style={styles.mainContainer}>
-          <View style={styles.sec1Container}>
-            <View style={styles.iconConatiner}>
-              <Image source={contactusIcon} style={styles.icon} />
-            </View>
-          </View>
-
-          <View style={styles.sec2Container}>
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={styles.sec2Title}>
-              {title}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      );
-    };
-
     const renderPrivacy = () => {
       let title = 'privacy';
       return (
@@ -437,19 +408,14 @@ function Settings(props) {
               {renderNotifications()}
               {renderBlockUser()}
               {renderManageSubscription()}
-              {renderContactus()}
+
               {renderPrivacy()}
               {renderDeleteAccount()}
               {renderLogout()}
             </>
           )}
 
-          {user && user == 'guest' && (
-            <>
-              {renderContactus()}
-              {renderPrivacy()}
-            </>
-          )}
+          {user && user == 'guest' && <>{renderPrivacy()}</>}
         </View>
       </>
     );
