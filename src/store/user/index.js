@@ -2396,7 +2396,8 @@ class user {
           }
         : {
             identityProof: body.cnic_front_image,
-            identityStatus: 'pending',
+            // identityStatus: 'pending',
+            identityStatus: 'appliedFor',
           };
     console.log('Update user photo body : ', bd);
     db.hitApi(db.apis.UPDATE_USER + uid, 'put', bd, token)
@@ -3087,6 +3088,7 @@ class user {
 
           if (e.chk == 'CnicF') {
             body.identityProof = rsp;
+            body.identityStatus = 'appliedFor';
           }
           ii++;
           if (ii == a.length) {
