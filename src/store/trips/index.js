@@ -57,17 +57,17 @@ class trips {
   };
 
   @action attemptToSaveTrip = (obj, i, suc) => {
+    this.setSaveLoader(true);
     const body = {tripId: obj._id, hostId: obj?.hostId?._id};
     console.log('Save Trip Body : ', body);
-    this.setSaveLoader(true);
     const uid = store.User.user._id;
     const token = store.User.authToken;
     db.hitApi(db.apis.SAVE_TRIP + uid, 'put', body, token)
       ?.then(resp => {
-        this.setSaveLoader(false);
         console.log(`response Save Trip   ${db.apis.SAVE_TRIP} true : `);
 
         if (resp.data && resp.data.check == 'reload') {
+          this.setSaveLoader(false);
           store.General.refreshAlert(resp.data.message);
           return;
         }
