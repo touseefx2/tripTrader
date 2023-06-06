@@ -19,10 +19,10 @@ class search {
   @observable popularSearch = [
     'Fishing',
     'Hunting',
-    'Stays',
-    'Bear',
-    'Deer',
-    'Birds',
+    // 'Stays',
+    // 'Bear',
+    // 'Deer',
+    // 'Birds',
   ];
   @action setpopularSearch = obj => {
     this.popularSearch = obj;
