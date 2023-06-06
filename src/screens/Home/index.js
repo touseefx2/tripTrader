@@ -56,8 +56,14 @@ function Home(props) {
     HomeLoader,
     attemptToGetInboxes,
   } = store.User;
-  const {deleteLoader, saveTrips, saveLoader, setsaveTrips, attemptToSaveTrip} =
-    store.Trips;
+  const {
+    deleteLoader,
+    saveTrips,
+    saveLoader,
+    setsaveTrips,
+    attemptToSaveTrip,
+    setSaveLoader,
+  } = store.Trips;
 
   const [modalObj, setModalObj] = useState(null);
   const [isOfferModal, setIsOfferModal] = useState(false);
@@ -343,6 +349,7 @@ function Home(props) {
   };
 
   const saveTripSuccess = item => {
+    setSaveLoader(false);
     setSuccessModalObj({item: item});
     setSuccessCheck('TripSave');
     setIsSuccessModal(true);
@@ -553,6 +560,7 @@ function Home(props) {
       const rendericon = () => {
         return (
           <Pressable
+            disabled={saveLoader}
             onPress={() => {
               if (user == 'guest') {
                 store.General.setgoto('guestaccess');
