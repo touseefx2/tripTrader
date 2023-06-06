@@ -43,8 +43,7 @@ const DELETE_REVIEW = 'api/review/deleteAReview/';
 const DELETE_MY_REVIEW = 'api/review/';
 const DISPUTE_REVIEW = 'api/review/';
 const SUBMIT_SUPPORT = 'api/support';
-const GET_ALL_HOME_TRIPS = 'api/trip/search?';
-const GET_ALL_HOME_TRIPS_GUEST = 'api/trip?status=active';
+const GET_ALL_HOME_TRIPS = 'api/trip/mob/search?';
 const GET_STATE = 'api/state?status=active';
 const GET_SPECIES = 'api/species?status=active';
 const GET_ACTIVITY = 'api/type?status=active';
@@ -65,20 +64,18 @@ const SEND_FIRST_MESSAGE = 'api/chat/sendFirstMessage';
 const SEND_SECOND_MESSAGE = 'api/chat/replyToChat/';
 const SEND_REPORT_USER = 'api/report';
 const GET_INBOXES_BY_UID = 'api/chat/myAllChats?userId=';
-// const GET_All_Meesages = 'api/chat/messages/';
 const GET_All_Meesages = 'api/chat/messages/';
 const READ_All_Meesages = 'api/chat/readMessages/';
-// const DELETE_CHAT = 'api/chat/deleteAChat/';
 const DELETE_CHAT = 'api/chat/deleteAChat/';
 const DELETE_TRIP_PHOTO = 'api/trip/deleteImage/';
 const CHECK_REVIEW = 'api/review/checkIfAlreadyReviewed/';
 const LEAVE_REVIEW = 'api/review';
-// const UPDATE_LEAVE_REVIEW = 'api/review/updateAReview/';
 const UPDATE_LEAVE_REVIEW = 'api/review/editAReply/';
 const GET_LATEST_TRIP = 'api/review/getLatestTrip/v2/';
-// const GET_NOTIFICATIONS = 'api/notification/count/app?userId=';
+
 const GET_NOTIFICATIONS = 'api/notification/app/';
 const READ_NOTIFICATIONS = 'api/notification/markRead/';
+const READ_ALL_NOTIFICATIONS = 'api/notification/markAllRead/';
 const GET_SENT_OFFERS = 'api/offer?offeredBy=';
 const GET_RECEIVED_OFFERS = 'api/offer?offeredTo=';
 const GET_CONFIRM_OFFERS = 'api/offer/getConfirmedTrips/';
@@ -126,7 +123,6 @@ export default apis = {
   DISPUTE_REVIEW,
   SUBMIT_SUPPORT,
   DELETE_TRIP,
-  GET_ALL_HOME_TRIPS_GUEST,
   GET_ALL_HOME_TRIPS,
   GET_STATE,
   GET_SPECIES,
@@ -166,4 +162,5 @@ export default apis = {
   CARD_INFO,
   RESEND_VERIFICATION_LINK,
   LOGOUT_ACCOUNT,
+  READ_ALL_NOTIFICATIONS,
 };

@@ -27,14 +27,35 @@ function ItemSeparatorView() {
   return <View style={styles.separator} />;
 }
 
-function ListHeaders({search, setsearch, data}) {
+function ListHeaders({
+  search,
+  setsearch,
+  data,
+  LoaderRead,
+  attemptToReadAllNotifications,
+  onRefresh,
+  unread,
+}) {
   const renderResult = () => {
     const length = data.length || 0;
     return (
-      <View style={styles.resultContainer}>
-        <Text style={styles.resultText}>
-          {length} notifications, {store.Notifications.unread} unread
-        </Text>
+      <View style={styles.resultMainContainer}>
+        <View style={styles.resultContainer}>
+          <Text style={styles.resultText}>
+            {length} notifications, {unread} unread
+          </Text>
+        </View>
+        {unread > 0 && (
+          <TouchableOpacity
+            disabled={LoaderRead}
+            activeOpacity={0.7}
+            onPress={() => {
+              attemptToReadAllNotifications(onRefresh);
+            }}
+            style={styles.resultContainer2}>
+            <Text style={styles.resultText2}>Mark all as read</Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
   };
@@ -71,9 +92,7 @@ function ListHeaders({search, setsearch, data}) {
         style={({pressed}) => [
           {opacity: pressed ? 0.9 : 1},
           [styles.SerchBarContainer],
-        ]}
-        // onPress={onclickSearchBar}
-      >
+        ]}>
         {renderSearch()}
         {renderInput()}
       </Pressable>
@@ -97,6 +116,9 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
     Loader,
     notificationsTotal,
     attemptToReadNotifications,
+    attemptToReadAllNotifications,
+    LoaderRead,
+    unread,
   } = store.Notifications;
 
   const [loadFirst, setloadFirst] = useState(false);
@@ -615,6 +637,12 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
                     search={search}
                     setsearch={c => setsearch(c)}
                     data={notifications}
+                    LoaderRead={LoaderRead}
+                    attemptToReadAllNotifications={
+                      attemptToReadAllNotifications
+                    }
+                    onRefresh={onRefresh}
+                    unread={unread}
                   />
                 }
                 ListEmptyComponent={
@@ -633,6 +661,7 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
               focusScreen={store.General.focusScreen}
             />
           </SafeAreaView>
+          <utils.Loader load={LoaderRead} />
         </View>
       </Modal>
     </>

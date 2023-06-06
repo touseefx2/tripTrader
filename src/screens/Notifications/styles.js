@@ -55,15 +55,33 @@ export const styles = StyleSheet.create({
     height: responsiveFontSize(3.1),
     top: -1,
   },
-  resultContainer: {
+
+  resultMainContainer: {
+    width: '100%',
+    paddingHorizontal: 5,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
     marginTop: 10,
-    marginLeft: 5,
+  },
+
+  resultContainer: {
+    width: '57%',
   },
   resultText: {
-    fontSize: responsiveFontSize(1.7),
+    fontSize: responsiveFontSize(1.65),
     color: theme.color.title,
     fontFamily: theme.fonts.fontMedium,
     opacity: 0.4,
+  },
+  resultContainer2: {
+    width: '38%',
+  },
+  resultText2: {
+    fontSize: responsiveFontSize(1.65),
+    color: theme.color.titleGreen,
+    fontFamily: theme.fonts.fontMedium,
+    opacity: 0.8,
+    textAlign: 'right',
   },
 
   mtextContainer: {

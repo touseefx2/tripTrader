@@ -15,6 +15,11 @@ class notifications {
     this.Loader = obj;
   };
 
+  @observable LoaderRead = false;
+  @action setLoaderRead = obj => {
+    this.LoaderRead = obj;
+  };
+
   @persist('object') @observable notifications = [];
   @action setnotifications = obj => {
     this.notifications = obj;
@@ -77,7 +82,6 @@ class notifications {
 
   @action attemptToReadNotifications = nid => {
     console.log('Read Notification true: ');
-    this.setLoader(true);
     let token = store.User.authToken;
     let route = store.User.user._id + '/' + nid;
     db.hitApi(db.apis.READ_NOTIFICATIONS + route, 'put', {}, token)
@@ -101,6 +105,33 @@ class notifications {
         const msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in Read Notification ${db.apis.READ_NOTIFICATIONS + route} : `,
+          msg,
+        );
+      });
+  };
+
+  @action attemptToReadAllNotifications = onRefresh => {
+    console.log('attemptToReadAllNotifications true: ');
+    this.setLoaderRead(true);
+    let token = store.User.authToken;
+    let route = store.User.user._id;
+    db.hitApi(db.apis.READ_ALL_NOTIFICATIONS + route, 'put', {}, token)
+      ?.then(resp => {
+        this.setLoaderRead(false);
+        console.log(
+          `response attemptToReadAllNotifications   ${
+            db.apis.READ_ALL_NOTIFICATIONS + route
+          } : true`,
+        );
+        onRefresh();
+      })
+      .catch(err => {
+        this.setLoaderRead(false);
+        const msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in attemptToReadAllNotifications ${
+            db.apis.READ_ALL_NOTIFICATIONS + route
+          } : `,
           msg,
         );
       });
