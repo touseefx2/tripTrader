@@ -572,7 +572,7 @@ function Home(props) {
               else openModal({item: item, selIndex: index}, 'tripRemove');
             }}
             style={({pressed}) => [
-              {opacity: pressed ? 0.7 : 1.0},
+              {opacity: pressed ? 0.6 : 1.0},
               styles.iconContainer,
             ]}>
             <Image
