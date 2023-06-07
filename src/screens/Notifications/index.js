@@ -366,7 +366,8 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
         : title == 'A saved trip is expiring soon' ||
           title.includes(`You’re hosting a trip in`) ||
           title.includes(`Your trip starts in`)
-        ? 'square'
+        ? // ? 'square'
+          'circle'
         : 'normal';
     return shape;
   };
