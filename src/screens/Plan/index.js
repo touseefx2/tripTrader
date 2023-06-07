@@ -309,7 +309,7 @@ function Plan(props) {
         store.User.setregLoader(false);
         Notification.sendPaymentFailedNotification(store.User.user._id);
         console.log(`confirmPayment error: `, error);
-        Alert.alert(`Paymment ${error.code}`, error.message);
+        Alert.alert(`Payment ${error.code}`, error.message);
       } else if (paymentIntent) {
         console.log(`confirmPayment response: true`);
         // paymentIntent
