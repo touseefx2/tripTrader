@@ -136,9 +136,9 @@ function Inbox(props) {
   const [search, setsearch] = useState('');
   const [sdata, setsdata] = useState([]);
 
-  let loader = store.User.dlc;
+  const loader = store.User.dlc;
   const data = search == '' ? inbox : sdata;
-  let totalUnread = store.User.unreadInbox;
+  const totalUnread = store.User.unreadInbox;
 
   useEffect(() => {
     if (search != '') {

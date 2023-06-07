@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, StyleSheet, Text, TouchableOpacity, Image} from 'react-native';
 import theme from '../theme/index';
+import store from '../store/index';
 import {observer} from 'mobx-react';
 import {
   responsiveFontSize,
@@ -15,6 +16,7 @@ function Footer(props) {
   const focusTextColor = theme.color.button1;
   const unfocusTextColor = 'rgba(30, 54, 37, 0.4)';
   const activeOpacity = 0.7;
+  const unreadInbox = store.User.unreadInbox;
 
   const goBack = () => {
     if (screen == 'Notifications') props.closeModal();
@@ -97,6 +99,7 @@ function Footer(props) {
           ]}>
           Inbox
         </Text>
+        {unreadInbox > 0 && <View style={styles.dot} />}
       </TouchableOpacity>
     );
   };
@@ -214,5 +217,14 @@ const styles = StyleSheet.create({
     marginTop: responsiveHeight(0.7),
     textAlign: 'center',
     textTransform: 'uppercase',
+  },
+  dot: {
+    width: 7,
+    height: 7,
+    borderRadius: 7 / 2,
+    backgroundColor: 'red',
+    position: 'absolute',
+    right: 5,
+    top: 2,
   },
 });
