@@ -221,14 +221,12 @@ export const styles = StyleSheet.create({
 
   iconContainer: {
     width: '12%',
+    paddingVertical: 5,
     alignItems: 'flex-end',
   },
   iconSave: {
-    position: 'absolute',
-    // flex: 1,
     width: 19,
     height: 21,
-    bottom: -14,
     resizeMode: 'contain',
   },
 
