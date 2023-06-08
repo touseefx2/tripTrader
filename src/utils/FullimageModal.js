@@ -116,7 +116,7 @@ function FullimageModal(props) {
                 ];
                 const opacity = scrollX.interpolate({
                   inputRange,
-                  outputRange: [0, 1, 0],
+                  outputRange: [0, 0, 0],
                 });
                 return (
                   <Animated.Image
