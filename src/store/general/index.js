@@ -36,7 +36,7 @@ class general {
 
   @observable isSheetOpen = false;
   @observable focusScreen = '';
-  @observable goto = 'home';
+  @observable goToScreen = 'home';
   @observable settingsGoTo = '';
   @observable offerGoTo = '';
 
@@ -93,8 +93,8 @@ class general {
     this.isEmailPopup = obj;
   };
 
-  @action setgoto = obj => {
-    this.goto = obj;
+  @action setgoToScreen = obj => {
+    this.goToScreen = obj;
   };
 
   @action setSettingsGoTo = obj => {

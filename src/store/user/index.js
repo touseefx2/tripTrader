@@ -1782,7 +1782,7 @@ class user {
 
   addUser(token, user, c) {
     const chk = c || '';
-    store.General.setgoto(chk == '' ? 'home' : chk);
+    store.General.setgoToScreen(chk == '' ? 'home' : chk);
     this.addauthToken(token);
     this.setUser(user);
     store.Trips.setsaveTrips(user.savedTrips || []);
@@ -2838,7 +2838,7 @@ class user {
         console.log('Logout resp true');
         this.setLogoutLoader(false);
         store.General.setIsEmailPopup(false);
-        store.General.setgoto('home');
+        store.General.setgoToScreen('home');
         this.Logout();
       })
       .catch(err => {

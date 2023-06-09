@@ -32,8 +32,13 @@ function Settings(props) {
   const headerTitle = 'Settings';
   const toast = useRef(null);
   const activeOpacity = 0.8;
-  const {isInternet, settingsGoTo, setSettingsGoTo, setgoto, isEmailPopup} =
-    store.General;
+  const {
+    isInternet,
+    settingsGoTo,
+    setSettingsGoTo,
+    setgoToScreen,
+    isEmailPopup,
+  } = store.General;
   const {user, isNotification, Logout, logoutLoader} = store.User;
 
   let phn = '';
@@ -101,7 +106,7 @@ function Settings(props) {
   }, [user]);
 
   const JoinNow = () => {
-    setgoto('joinnow');
+    setgoToScreen('joinnow');
     Logout();
   };
 

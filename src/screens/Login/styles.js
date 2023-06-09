@@ -25,6 +25,7 @@ export const styles = StyleSheet.create({
   container3: {
     flex: 1,
   },
+  scrollContainer: {flex: 1, paddingHorizontal: 20},
   section1: {
     marginTop: appBarHeight,
   },

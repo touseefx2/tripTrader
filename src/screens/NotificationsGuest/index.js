@@ -103,7 +103,7 @@ function NotificationsGuest({
   const [search, setsearch] = useState('');
 
   const JoinNow = () => {
-    store.General.setgoto('joinnow');
+    store.General.setgoToScreen('joinnow');
     store.User.Logout();
   };
 

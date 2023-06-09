@@ -96,7 +96,7 @@ function Support(props) {
   };
   useEffect(() => {
     if (user == 'guest') {
-      store.General.setgoto('guestaccess');
+      store.General.setgoToScreen('guestaccess');
       store.User.Logout();
       return;
     }

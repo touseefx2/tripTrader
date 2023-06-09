@@ -23,7 +23,7 @@ function GuestAccess(props) {
   const loader = store.User.regLoader;
 
   const continueGuest = () => {
-    store.General.setgoto('home');
+    store.General.setgoToScreen('home');
     store.User.addUser('', 'guest', '');
   };
 

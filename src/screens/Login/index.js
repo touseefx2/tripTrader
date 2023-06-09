@@ -18,16 +18,16 @@ import {styles} from './styles';
 export default observer(Login);
 function Login(props) {
   const toast = useRef(null);
-  let goto = store.General.goto;
+  const {goToScreen, setgoToScreen} = store.General;
 
   useEffect(() => {
-    if (goto == 'joinnow') {
+    if (goToScreen == 'joinnow') {
       props.navigation.navigate('Signup');
-      store.General.setgoto('');
+      setgoToScreen('');
     }
-    if (goto == 'guestaccess') {
+    if (goToScreen == 'guestaccess') {
       goToGuestAccess();
-      store.General.setgoto('');
+      setgoToScreen('');
     }
   }, []);
 
@@ -154,13 +154,11 @@ function Login(props) {
 
   const renderStatusBar = () => {
     return (
-      <>
-        <StatusBar
-          translucent={true}
-          backgroundColor={'transparent'}
-          barStyle={'light-content'}
-        />
-      </>
+      <StatusBar
+        translucent={true}
+        backgroundColor={'transparent'}
+        barStyle={'light-content'}
+      />
     );
   };
 
@@ -174,7 +172,7 @@ function Login(props) {
       />
       <SafeAreaView style={styles.container3}>
         <ScrollView
-          style={{flex: 1, paddingHorizontal: 20}}
+          style={styles.scrollContainer}
           showsVerticalScrollIndicator={false}>
           {renderSection1()}
         </ScrollView>
