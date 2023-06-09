@@ -219,7 +219,7 @@ function Card({
       // disabled={userObj ? false : true}
       onPress={() => {
         closeSwipe();
-        store.User.setmessages([]);
+        store.User.setMessages([]);
         store.User.setpasObj({
           obj: item,
           title: title,

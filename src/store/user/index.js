@@ -137,7 +137,7 @@ class user {
 
   @observable messages = [];
   @observable messagesLoader = false;
-  @action setmessages = obj => {
+  @action setMessages = obj => {
     this.messages = obj;
   };
   @action setmessagesLoader = obj => {
@@ -1776,7 +1776,7 @@ class user {
   }
 
   @action.bound
-  addnotificationToken(n) {
+  addNotificationToken(n) {
     this.notificationToken = n;
   }
 
@@ -2919,7 +2919,7 @@ class user {
   @action.bound
   Logout() {
     this.clearUser();
-    this.setmessages([]);
+    this.setMessages([]);
     store.Trips.clearTrips();
     store.Filters.clearAllFilters();
     store.Search.clearSearches();

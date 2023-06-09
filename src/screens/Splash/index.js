@@ -10,14 +10,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const getToken = async () => {
   const token = await messaging().getToken();
-  console.log('token ios :::: ', token);
-  store.User.addnotificationToken(token);
+  store.User.addNotificationToken(token);
 };
 Platform.OS === 'android'
   ? PushNotification.configure({
       onRegister: function (token) {
-        console.log('token android :::: ', token.token);
-        store.User.addnotificationToken(token.token);
+        store.User.addNotificationToken(token.token);
       },
     })
   : getToken();
@@ -25,12 +23,13 @@ Platform.OS === 'android'
 export default observer(Splash);
 
 function Splash() {
-  const {setLoading} = store.General;
+  const {setLoading, setIsCurrentCahtId} = store.General;
+  const {setMessages} = store.User;
 
   useEffect(() => {
-    store.General.setIsCurrentCahtId('');
-    store.User.setmessages([]);
     hydrateStores();
+    setIsCurrentCahtId('');
+    setMessages([]);
     setTimeout(() => {
       setLoading(false);
     }, 1000);
