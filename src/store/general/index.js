@@ -11,6 +11,7 @@ class general {
 
   @observable Stripe_Publish_Key =
     'pk_test_51M9HIuBmhbfqULZ4IstWDtc73GFl6mVRnA4jUcOR9BVRkndz1Ou2FSlOeP4WjGgYqlH4LflMtgUY8foGkY58lHAq00OGfQUjlR';
+    // pk_live_51M9HIuBmhbfqULZ4zLBVSrEMd8hpXSfnEcUQvRnZHdPfkzKy5mXtLINeAaglb9ZoIg3muBImsh2X6Q01b8nylFXU00SiTzkpZp
   @observable Terms_and_Conditions_Link =
     'http://trip-trader.com.s3-website-us-east-1.amazonaws.com/termsandconditionsapp';
   @observable Privacy_and_Policy_Link =
