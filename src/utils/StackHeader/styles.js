@@ -18,10 +18,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.6,
-    shadowRadius: 1,
+
     marginTop: Platform.OS == 'ios' ? theme.window.APPBAR_HEIGHT : 0,
     // shadowColor: '#000',
     // shadowOffset: {
