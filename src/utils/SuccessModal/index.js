@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Modal, SafeAreaView} from 'react-native';
+import {View, SafeAreaView} from 'react-native';
 import {styles} from './styles';
 import theme from '../../theme';
 import Offer from './components/Offer';
@@ -7,6 +7,7 @@ import OfferConfirm from './components/OfferConfirm';
 import Message from './components/Message';
 import Trip from './components/Trip';
 import Report from './components/Report';
+import Modal from 'react-native-modal';
 
 export default function SuccessModal({
   isModal,
@@ -40,11 +41,25 @@ export default function SuccessModal({
   };
 
   return (
-    <Modal visible={isModal} transparent onRequestClose={closeModal}>
+    <Modal
+      isVisible={isModal}
+      hasBackdrop
+      backdropOpacity={0.7}
+      onRequestClose={closeModal}
+      deviceHeight={theme.window.Height}
+      deviceWidth={theme.window.Width}>
       <SafeAreaView style={styles.modalContainer}>
         <View
           onLayout={onViewLayout}
           style={[styles.modal, isMaxHeight && {height: maxModalHeight}]}>
+          {check == 'TripSave' && (
+            <Trip
+              modalObj={modalObj}
+              isMaxHeight={isMaxHeight}
+              closeModal={closeModal}
+            />
+          )}
+
           {check == 'OfferSend' && (
             <Offer
               modalObj={modalObj}
@@ -69,14 +84,6 @@ export default function SuccessModal({
               isMaxHeight={isMaxHeight}
               closeModal={closeModal}
               props={props}
-            />
-          )}
-
-          {check == 'TripSave' && (
-            <Trip
-              modalObj={modalObj}
-              isMaxHeight={isMaxHeight}
-              closeModal={closeModal}
             />
           )}
 
