@@ -72,9 +72,10 @@ class trips {
           return;
         }
 
+        this.setSaveLoader(false);
+        suc(obj);
         const rsp = resp.data.data.savedTrips || [];
         this.setsaveTrips(rsp);
-        suc(obj);
         return;
       })
       .catch(err => {
