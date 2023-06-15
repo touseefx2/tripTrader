@@ -60,7 +60,6 @@ class trips {
     this.setSaveLoader(true);
     const body = {tripId: obj._id, hostId: obj?.hostId?._id};
     console.log('Save Trip Body : ', body);
-
     const uid = store.User.user._id;
     const token = store.User.authToken;
     db.hitApi(db.apis.SAVE_TRIP + uid, 'put', body, token)
@@ -73,9 +72,10 @@ class trips {
           return;
         }
 
+        this.setSaveLoader(false);
+        suc(obj);
         const rsp = resp.data.data.savedTrips || [];
         this.setsaveTrips(rsp);
-        suc(obj);
         return;
       })
       .catch(err => {
@@ -84,7 +84,6 @@ class trips {
         console.log(`Error in Save Trip ${db.apis.SAVE_TRIP} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-
           return;
         }
 

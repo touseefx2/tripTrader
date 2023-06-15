@@ -56,14 +56,8 @@ function Home(props) {
     HomeLoader,
     attemptToGetInboxes,
   } = store.User;
-  const {
-    deleteLoader,
-    saveTrips,
-    saveLoader,
-    setsaveTrips,
-    attemptToSaveTrip,
-    setSaveLoader,
-  } = store.Trips;
+  const {deleteLoader, saveTrips, saveLoader, setsaveTrips, attemptToSaveTrip} =
+    store.Trips;
 
   const [modalObj, setModalObj] = useState(null);
   const [isOfferModal, setIsOfferModal] = useState(false);
@@ -349,7 +343,6 @@ function Home(props) {
   };
 
   const saveTripSuccess = item => {
-    setSaveLoader(false);
     setSuccessModalObj({item: item});
     setSuccessCheck('TripSave');
     setIsSuccessModal(true);
@@ -856,6 +849,8 @@ function Home(props) {
       <View style={styles.container}>
         <utils.DrawerHeader props={props} headerTitle={headerTitle} />
         {!isInternet && <utils.InternetMessage />}
+        {renderStatusBar()}
+        <utils.Loader load={saveLoader} />
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <FlatList
@@ -886,10 +881,17 @@ function Home(props) {
           />
         </SafeAreaView>
 
-        {renderStatusBar()}
-        <utils.Loader load={saveLoader} />
-        <Toast ref={toast} position="bottom" />
-
+        {isSuccessModal && (
+          <utils.SuccessModal
+            isModal={isSuccessModal}
+            setIsModal={setIsSuccessModal}
+            modalObj={successModalObj}
+            setModalObj={setSuccessModalObj}
+            check={successCheck}
+            setCheck={setSuccessCheck}
+            props={props}
+          />
+        )}
         {isShowSearch && (
           <utils.Search
             isVisible={isShowSearch}
@@ -962,17 +964,6 @@ function Home(props) {
             setSaveData={() => {}}
           />
         )}
-        {isSuccessModal && (
-          <utils.SuccessModal
-            isModal={isSuccessModal}
-            setIsModal={setIsSuccessModal}
-            modalObj={successModalObj}
-            setModalObj={setSuccessModalObj}
-            check={successCheck}
-            setCheck={setSuccessCheck}
-            props={props}
-          />
-        )}
         {isEmailPopup && (
           <utils.EmailPopupSheet
             isModal={isEmailPopup}
@@ -981,6 +972,7 @@ function Home(props) {
             user={user || null}
           />
         )}
+        <Toast ref={toast} position="bottom" />
       </View>
     </>
   );
