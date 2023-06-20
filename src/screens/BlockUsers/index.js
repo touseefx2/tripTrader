@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {
   View,
   Text,
@@ -23,57 +23,44 @@ export default observer(BlockUsers);
 function BlockUsers(props) {
   const toast = useRef(null);
   const toastduration = 700;
-  let headerTitle = 'Blocked Users';
+  const headerTitle = 'Blocked Users';
 
-  let fscreen = store.User.fscreen || '';
-  let db = false;
-  if (fscreen == 'confirmedtrips' || fscreen == 'home') {
-    db = true;
-  }
-
-  let internet = store.General.isInternet;
-  let user = store.User.user;
-  const data = store.User.blockUsers;
-  let mloader = store.User.fl;
-  let loader = store.User.bl;
-  let total = store.User.totalblockUsers;
+  const {isInternet, focusScreen} = store.General;
+  const {user, blockUsers, totalblockUsers, followerLoader, blockLoader} =
+    store.User;
 
   const [getDataOnce, setgetDataOnce] = useState(false);
-  const setGetDataOnce = C => {
-    setgetDataOnce(C);
-  };
-  const [refreshing, setRefreshing] = React.useState(false);
-  const setrefeshing = c => {
-    setRefreshing(c);
-  };
-  const onRefresh = React.useCallback(() => {
+  const [refreshing, setRefreshing] = useState(false);
+
+  useEffect(() => {
+    if (!getDataOnce && isInternet) {
+      getDbData();
+    }
+    return () => {};
+  }, [getDataOnce, isInternet]);
+
+  const onRefresh = useCallback(() => {
     console.log('onrefresh cal');
     setRefreshing(true);
     getDbData();
   }, []);
+
   const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
         store.User.attemptToGetBloackUsers(
           user._id,
-          setGetDataOnce,
-          setrefeshing,
-          () => {},
+          setgetDataOnce,
+          setRefreshing,
           '',
         );
       } else {
-        setrefeshing(false);
+        setRefreshing(false);
       }
     });
   };
-  useEffect(() => {
-    if (!getDataOnce && internet) {
-      getDbData();
-    }
-    return () => {};
-  }, [getDataOnce, internet]);
 
-  const sucUnblock = () => {
+  const successUnblock = () => {
     toast?.current?.show('User unblock', toastduration);
   };
 
@@ -81,10 +68,15 @@ function BlockUsers(props) {
     props.navigation.goBack();
   };
 
-  const unblokUser = (uid, i) => {
+  const unBlockUser = (userId, index) => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToUnblockUser(uid, i, sucUnblock, goBackMain);
+        store.User.attemptToUnblockUser(
+          userId,
+          index,
+          successUnblock,
+          goBackMain,
+        );
       } else {
         Alert.alert('', 'Please connect internet');
       }
@@ -103,34 +95,18 @@ function BlockUsers(props) {
 
   const EmptyListMessage = () => {
     return (
-      // Flat List Item
       <>
-        {!mloader && getDataOnce && (
-          <Text
-            style={{
-              marginTop: '80%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              alignSelf: 'center',
-              fontSize: 13,
-              color: theme.color.title,
-              fontFamily: theme.fonts.fontMedium,
-              opacity: 0.4,
-            }}
-            onPress={() => getItem(item)}>
+        {!followerLoader && getDataOnce && (
+          <Text style={styles.emptyTitle} onPress={() => getItem(item)}>
             No users found
           </Text>
         )}
 
-        {mloader && !getDataOnce && (
+        {followerLoader && !getDataOnce && (
           <ActivityIndicator
             size={30}
             color={theme.color.button1}
-            style={{
-              marginTop: '80%',
-
-              alignSelf: 'center',
-            }}
+            style={styles.emptyLoader}
           />
         )}
       </>
@@ -139,7 +115,6 @@ function BlockUsers(props) {
 
   const ItemView = ({item, index}) => {
     const usrr = item.userId || null;
-    //user
     const photo = usrr.image || '';
     const userName = usrr.firstName + ' ' + usrr.lastName;
 
@@ -164,15 +139,7 @@ function BlockUsers(props) {
     const renderText = () => {
       return (
         <View style={styles.mtextContainer}>
-          <Text
-            style={{
-              color: theme.color.title,
-              fontSize: 14,
-              fontFamily: theme.fonts.fontNormal,
-              textTransform: 'capitalize',
-            }}>
-            {userName}
-          </Text>
+          <Text style={styles.title}>{userName}</Text>
         </View>
       );
     };
@@ -182,35 +149,20 @@ function BlockUsers(props) {
       return (
         <View
           style={[styles.modalinfoConatiner, {marginTop: index == 0 ? 15 : 0}]}>
-          <View
-            style={{
-              width: '78%',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
+          <View style={styles.section1}>
             {renderProfile()}
             {renderText()}
           </View>
 
           <Pressable
-            onPress={() => unblokUser(usrr._id, index)}
+            onPress={() => unBlockUser(usrr._id, index)}
             style={({pressed}) => [
               {
                 opacity: pressed ? 0.7 : 1.0,
-                width: '20%',
-                alignItems: 'flex-end',
               },
+              styles.section2,
             ]}>
-            <Text
-              style={{
-                top: 10,
-                color: '#3C6B49',
-                fontSize: 14,
-                fontFamily: theme.fonts.fontBold,
-                textTransform: 'capitalize',
-              }}>
-              Unblock
-            </Text>
+            <Text style={styles.title2}>Unblock</Text>
           </Pressable>
         </View>
       );
@@ -218,31 +170,13 @@ function BlockUsers(props) {
   };
 
   const ListHeader = () => {
-    let num = total;
-    let t = `You have ${num} ${num > 1 ? 'users' : 'user'} blocked`;
+    const total = `You have ${totalblockUsers} ${
+      totalblockUsers > 1 ? 'users' : 'user'
+    } blocked`;
     return (
       <View style={{width: '100%'}}>
-        <Text
-          style={{
-            color: theme.color.subTitle,
-            fontSize: 13,
-            fontFamily: theme.fonts.fontNormal,
-          }}>
-          {t}
-        </Text>
+        <Text style={styles.headerTitle}>{total}</Text>
       </View>
-    );
-  };
-
-  const ListFooter = () => {
-    return (
-      <>
-        <View>
-          <View style={styles.listFooter}>
-            <Text style={styles.listFooterT}>End of results</Text>
-          </View>
-        </View>
-      </>
     );
   };
 
@@ -255,7 +189,7 @@ function BlockUsers(props) {
           headerTitle={headerTitle}
           screen={headerTitle}
         />
-        {!internet && <utils.InternetMessage />}
+        {!isInternet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <FlatList
@@ -266,35 +200,29 @@ function BlockUsers(props) {
                 paddingVertical: 15,
                 paddingHorizontal: 15,
               }}
-              data={data}
+              data={blockUsers}
               renderItem={ItemView}
               keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
-              ListHeaderComponent={data.length > 0 ? ListHeader : null}
-              // ListFooterComponent={data.length > 0 ? ListFooter : null}
+              ListHeaderComponent={blockUsers.length > 0 ? ListHeader : null}
             />
-            {data.length > 0 && !getDataOnce && mloader && (
+            {blockUsers.length > 0 && !getDataOnce && followerLoader && (
               <ActivityIndicator
                 size={30}
                 color={theme.color.button1}
-                style={{
-                  top: '50%',
-                  position: 'absolute',
-                  alignSelf: 'center',
-                }}
+                style={styles.loader}
               />
             )}
           </View>
 
           <utils.Footer
-            doubleBack={db}
             nav={props.navigation}
             screen={headerTitle}
-            focusScreen={store.General.focusScreen}
+            focusScreen={focusScreen}
           />
         </SafeAreaView>
-        <utils.Loader load={loader} />
+        <utils.Loader load={blockLoader} />
         <Toast ref={toast} position="bottom" />
       </View>
     </>

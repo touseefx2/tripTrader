@@ -32,7 +32,7 @@ function ShowFollowers(props) {
 
   const data = chk == 'followers' ? store.User.followers : store.User.following;
 
-  const mloader = store.User.fl;
+  const mloader = store.User.followerLoader;
 
   const total =
     chk == 'followers' ? store.User.totalfollowers : store.User.totalfollowing;
@@ -135,6 +135,7 @@ function ShowFollowers(props) {
       photo = usrr.image || '';
       userName = usrr.firstName + ' ' + usrr.lastName;
     }
+    const isDisable = store.User.user._id == usrr?._id || !usrr ? true : false;
 
     const renderProfile = () => {
       return (
@@ -179,8 +180,6 @@ function ShowFollowers(props) {
       );
     };
 
-    const isDisable = store.User.user._id == usrr?._id || !usrr ? true : false;
-
     return (
       <Pressable
         disabled={isDisable}
@@ -197,37 +196,6 @@ function ShowFollowers(props) {
         {renderProfile()}
         {renderText()}
       </Pressable>
-    );
-  };
-
-  const ListHeader = () => {
-    let t = chk == 'followers' ? 'Followers' : 'Following';
-    let num = total;
-    return (
-      <View style={{width: '100%'}}>
-        <Text
-          style={{
-            color: '#101B10',
-            fontSize: 16,
-            fontFamily: theme.fonts.fontBold,
-
-            textTransform: 'capitalize',
-          }}>
-          {t} ({num})
-        </Text>
-      </View>
-    );
-  };
-
-  const ListFooter = () => {
-    return (
-      <>
-        <View>
-          <View style={styles.listFooter}>
-            <Text style={styles.listFooterT}>End of results</Text>
-          </View>
-        </View>
-      </>
     );
   };
 
@@ -256,8 +224,6 @@ function ShowFollowers(props) {
               keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
-              // ListHeaderComponent={data.length > 0 ? ListHeader : null}
-              // ListFooterComponent={data.length > 0 ? ListFooter : null}
             />
             {data.length > 0 && !getDataOnce && mloader && (
               <ActivityIndicator
