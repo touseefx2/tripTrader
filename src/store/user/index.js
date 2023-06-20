@@ -152,10 +152,10 @@ class user {
       ?.then(resp => {
         this.setFollowerLoader(false);
         setrfrsh(false);
-        // console.log(
-        //   `response GET Followers   ${db.apis.GET_FOLLOWERS + uid} : `,
-        //   resp.data,
-        // );
+        console.log(
+          `response GET Followers   ${db.apis.GET_FOLLOWERS + uid} : `,
+          resp.data,
+        );
         let dt = resp.data.follower || [];
         setgetdata(true);
         this.setfollowers(dt);
@@ -306,7 +306,7 @@ class user {
       });
   };
 
-  attemptToUnblockUser(uid, ind, suc, goBack) {
+  @action attemptToUnblockUser(uid, ind, suc, goBack) {
     console.log('UnblockUser  true : ');
     this.setBlockLoader(true);
     let c = this.user._id + '/' + uid;

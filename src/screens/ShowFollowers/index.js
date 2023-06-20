@@ -32,7 +32,7 @@ function ShowFollowers(props) {
 
   const data = chk == 'followers' ? store.User.followers : store.User.following;
 
-  const mloader = store.User.fl;
+  const mloader = store.User.followerLoader;
 
   const total =
     chk == 'followers' ? store.User.totalfollowers : store.User.totalfollowing;
@@ -135,6 +135,7 @@ function ShowFollowers(props) {
       photo = usrr.image || '';
       userName = usrr.firstName + ' ' + usrr.lastName;
     }
+    const isDisable = store.User.user._id == usrr?._id || !usrr ? true : false;
 
     const renderProfile = () => {
       return (
@@ -178,8 +179,6 @@ function ShowFollowers(props) {
         </View>
       );
     };
-
-    const isDisable = store.User.user._id == usrr?._id || !usrr ? true : false;
 
     return (
       <Pressable
