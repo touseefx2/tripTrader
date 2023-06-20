@@ -23,29 +23,15 @@ export default observer(BlockUsers);
 function BlockUsers(props) {
   const toast = useRef(null);
   const toastduration = 700;
-  let headerTitle = 'Blocked Users';
+  const headerTitle = 'Blocked Users';
 
-  let fscreen = store.User.fscreen || '';
-  let db = false;
-  if (fscreen == 'confirmedtrips' || fscreen == 'home') {
-    db = true;
-  }
-
-  let internet = store.General.isInternet;
-  let user = store.User.user;
-  const data = store.User.blockUsers;
-  let mloader = store.User.fl;
-  let loader = store.User.bl;
-  let total = store.User.totalblockUsers;
+  const {isInternet} = store.General;
+  const {user, blockUsers, totalblockUsers, followerLoader, blockLoader} =
+    store.User;
 
   const [getDataOnce, setgetDataOnce] = useState(false);
-  const setGetDataOnce = C => {
-    setgetDataOnce(C);
-  };
   const [refreshing, setRefreshing] = React.useState(false);
-  const setrefeshing = c => {
-    setRefreshing(c);
-  };
+
   const onRefresh = React.useCallback(() => {
     console.log('onrefresh cal');
     setRefreshing(true);
@@ -56,22 +42,21 @@ function BlockUsers(props) {
       if (state.isConnected) {
         store.User.attemptToGetBloackUsers(
           user._id,
-          setGetDataOnce,
-          setrefeshing,
-          () => {},
+          setgetDataOnce,
+          setRefreshing,
           '',
         );
       } else {
-        setrefeshing(false);
+        setRefreshing(false);
       }
     });
   };
   useEffect(() => {
-    if (!getDataOnce && internet) {
+    if (!getDataOnce && isInternet) {
       getDbData();
     }
     return () => {};
-  }, [getDataOnce, internet]);
+  }, [getDataOnce, isInternet]);
 
   const sucUnblock = () => {
     toast?.current?.show('User unblock', toastduration);
@@ -105,7 +90,7 @@ function BlockUsers(props) {
     return (
       // Flat List Item
       <>
-        {!mloader && getDataOnce && (
+        {!followerLoader && getDataOnce && (
           <Text
             style={{
               marginTop: '80%',
@@ -122,7 +107,7 @@ function BlockUsers(props) {
           </Text>
         )}
 
-        {mloader && !getDataOnce && (
+        {followerLoader && !getDataOnce && (
           <ActivityIndicator
             size={30}
             color={theme.color.button1}
@@ -218,7 +203,7 @@ function BlockUsers(props) {
   };
 
   const ListHeader = () => {
-    let num = total;
+    let num = totalblockUsers;
     let t = `You have ${num} ${num > 1 ? 'users' : 'user'} blocked`;
     return (
       <View style={{width: '100%'}}>
@@ -255,7 +240,7 @@ function BlockUsers(props) {
           headerTitle={headerTitle}
           screen={headerTitle}
         />
-        {!internet && <utils.InternetMessage />}
+        {!isInternet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <FlatList
@@ -266,15 +251,15 @@ function BlockUsers(props) {
                 paddingVertical: 15,
                 paddingHorizontal: 15,
               }}
-              data={data}
+              data={blockUsers}
               renderItem={ItemView}
               keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
-              ListHeaderComponent={data.length > 0 ? ListHeader : null}
+              ListHeaderComponent={blockUsers.length > 0 ? ListHeader : null}
               // ListFooterComponent={data.length > 0 ? ListFooter : null}
             />
-            {data.length > 0 && !getDataOnce && mloader && (
+            {blockUsers.length > 0 && !getDataOnce && followerLoader && (
               <ActivityIndicator
                 size={30}
                 color={theme.color.button1}
@@ -288,13 +273,12 @@ function BlockUsers(props) {
           </View>
 
           <utils.Footer
-            doubleBack={db}
             nav={props.navigation}
             screen={headerTitle}
             focusScreen={store.General.focusScreen}
           />
         </SafeAreaView>
-        <utils.Loader load={loader} />
+        <utils.Loader load={blockLoader} />
         <Toast ref={toast} position="bottom" />
       </View>
     </>

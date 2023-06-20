@@ -79,8 +79,8 @@ class user {
   @persist('object') @observable totalblockUsers = 0;
   @persist('object') @observable inbox = [];
   @persist('object') @observable unreadInbox = 0;
-  @observable fl = false;
-  @observable bl = false;
+  @observable followerLoader = false;
+  @observable blockLoader = false;
   @observable ibl = false;
 
   @observable logoutLoader = false;
@@ -122,11 +122,11 @@ class user {
   @action setinbox = obj => {
     this.inbox = obj;
   };
-  @action setfl = obj => {
-    this.fl = obj;
+  @action setFollowerLoader = obj => {
+    this.followerLoader = obj;
   };
-  @action setbl = obj => {
-    this.bl = obj;
+  @action setBlockLoader = obj => {
+    this.blockLoader = obj;
   };
   @action setibl = obj => {
     this.ibl = obj;
@@ -146,11 +146,11 @@ class user {
 
   @action attemptToGetFollowers = (uid, setgetdata, setrfrsh) => {
     console.log('GET Followers  : ', 'true');
-    this.setfl(true);
+    this.setFollowerLoader(true);
 
     db.hitApi(db.apis.GET_FOLLOWERS + uid, 'get', {}, this.authToken)
       ?.then(resp => {
-        this.setfl(false);
+        this.setFollowerLoader(false);
         setrfrsh(false);
         // console.log(
         //   `response GET Followers   ${db.apis.GET_FOLLOWERS + uid} : `,
@@ -162,7 +162,7 @@ class user {
         this.settotalfollowers(dt.length);
       })
       .catch(err => {
-        this.setfl(false);
+        this.setFollowerLoader(false);
         setrfrsh(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(
@@ -185,11 +185,11 @@ class user {
   };
   @action attemptToGetFollowing = (uid, setgetdata, setrfrsh) => {
     console.log('GET Followers  : ', 'true');
-    this.setfl(true);
+    this.setFollowerLoader(true);
 
     db.hitApi(db.apis.GET_FOLLOWING + uid, 'get', {}, this.authToken)
       ?.then(resp => {
-        this.setfl(false);
+        this.setFollowerLoader(false);
         setrfrsh(false);
         // console.log(
         //   `response GET FOLLOWING  ${db.apis.GET_FOLLOWING + uid} : `,
@@ -202,7 +202,7 @@ class user {
         this.settotalfollowing(dt.length);
       })
       .catch(err => {
-        this.setfl(false);
+        this.setFollowerLoader(false);
         setrfrsh(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(
@@ -231,7 +231,7 @@ class user {
     c,
   ) => {
     console.log('GET BloackUsers : ', 'true');
-    this.setfl(true);
+    this.setFollowerLoader(true);
     this.setHomeLoader(true);
     db.hitApi(db.apis.GET_BLOCK_USER + uid, 'get', {}, this.authToken)
       ?.then(resp => {
@@ -249,7 +249,7 @@ class user {
       })
       .catch(err => {
         this.setHomeLoader(false);
-        this.setfl(false);
+        this.setFollowerLoader(false);
         setrfrsh(false);
         const msg = err.response.data.message || err.response.status || err;
         console.log(
@@ -276,7 +276,7 @@ class user {
     console.log('GET  BloackAnotherUsers');
     db.hitApi(db.apis.GET_BLOCK_ANOTHER_USER + uid, 'get', {}, this.authToken)
       ?.then(resp => {
-        this.setfl(false);
+        this.setFollowerLoader(false);
         setrfrsh(false);
         console.log(`response GET BloackAnotherUsers: `, resp.data);
         const data2 = resp.data.blockedBy || [];
@@ -289,7 +289,7 @@ class user {
       })
       .catch(err => {
         this.setHomeLoader(false);
-        this.setfl(false);
+        this.setFollowerLoader(false);
         setrfrsh(false);
         const msg = err.response.data.message || err.response.status || err;
         console.log(
@@ -308,11 +308,11 @@ class user {
 
   attemptToUnblockUser(uid, ind, suc, goBack) {
     console.log('UnblockUser  true : ');
-    this.setbl(true);
+    this.setBlockLoader(true);
     let c = this.user._id + '/' + uid;
     db.hitApi(db.apis.UNBLOCK_USER + c, 'put', {}, this.authToken)
       ?.then(resp => {
-        this.setbl(false);
+        this.setBlockLoader(false);
         if (resp.data && resp.data.check == 'reload') {
           goBack();
           store.General.refreshAlert(resp.data.message);
@@ -330,7 +330,7 @@ class user {
         suc();
       })
       .catch(err => {
-        this.setbl(false);
+        this.setBlockLoader(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in UnblockUser  ${db.apis.UNBLOCK_USER} ${c}  : `,
@@ -348,11 +348,11 @@ class user {
 
   attemptToBlockUser(uid, ind, suc) {
     console.log('blockUser  true : ');
-    this.setbl(true);
+    this.setBlockLoader(true);
     let c = this.user._id + '/' + uid;
     db.hitApi(db.apis.BLOCK_USER + c, 'put', {}, this.authToken)
       ?.then(resp => {
-        this.setbl(false);
+        this.setBlockLoader(false);
         // console.log(
         //   `response blockUser  ${db.apis.BLOCK_USER + c} : `,
         //   resp.data,
@@ -362,7 +362,7 @@ class user {
         suc();
       })
       .catch(err => {
-        this.setbl(false);
+        this.setBlockLoader(false);
         let msg = err.response.data.message || err.response.status || err;
         console.log(`Error in blockUser  ${db.apis.BLOCK_USER} ${c}  : `, msg);
         if (msg == 503 || msg == 500) {
