@@ -11,9 +11,10 @@ import NetInfo from '@react-native-community/netinfo';
 import store from './src/store/index';
 import {observer} from 'mobx-react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 export default observer(App);
-function App(props) {
+function App() {
   const Stack = createNativeStackNavigator();
   const {user} = store.User;
 
@@ -46,6 +47,11 @@ function App(props) {
       unsubscribeNetinfo();
     };
   }, []);
+
+  // useEffect(() => {
+  //   crashlytics().log('App mounted.');
+  //   crashlytics().crash();
+  // }, []);
 
   const setDeviceInfo = () => {
     store.General.setapiLevel(DeviceInfo.getApiLevel());
