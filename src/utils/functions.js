@@ -72,7 +72,9 @@ function getDaysBetweenDate(start, end) {
   ) {
     arr.push(new Date(date));
   }
-  return arr;
+  const arrr = arr.map(e => e.toISOString().slice(0, 10));
+
+  return arrr;
 }
 
 function getDateWithFormat(unavlblmarkedDates) {

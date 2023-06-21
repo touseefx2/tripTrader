@@ -106,7 +106,10 @@ function NewTrips(props) {
     ) {
       arr.push(new Date(dt));
     }
-    return arr;
+
+    const arrr = arr.map(e => e.toISOString().slice(0, 10));
+
+    return arrr;
   };
 
   let cs = {
@@ -389,10 +392,12 @@ function NewTrips(props) {
         setmindd(sd);
       }
       var daylist = getDaysArray(new Date(sd), new Date(ed));
+
       let mdd = {};
       if (daylist.length > 0) {
         daylist.map((e, i, a) => {
           let d = moment(e).format('YYYY-MM-DD');
+
           if (i == 0) {
             mdd[d] = {
               customStyles: cs,
@@ -1275,7 +1280,9 @@ function NewTrips(props) {
           disabled: false,
           disableTouchEvent: false,
         };
+
         setmarkedDates(markedDates);
+
         return;
       } else {
         let md = {...markedDates};
@@ -1354,10 +1361,12 @@ function NewTrips(props) {
           }
 
           var daylist = getDaysArray(new Date(mid), new Date(mxd));
+
           let mdd = {};
           if (daylist.length > 0) {
             daylist.map((e, i, a) => {
-              let d = moment(e).format('YYYY-MM-DD');
+              const d = moment(e).format('YYYY-MM-DD');
+
               if (i == 0) {
                 mdd[d] = {
                   customStyles: cs,

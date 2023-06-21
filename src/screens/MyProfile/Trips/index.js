@@ -149,9 +149,10 @@ function Trips(props) {
     let title = item.tradeType || '';
     let offer = item.title || '';
     let trade = item.returnActivity || '';
-    let sd = item.availableFrom;
+    let sd = new Date(item.availableFrom).toISOString().slice(0, 10);
+    console.log('sd : ', sd);
     let sdy = parseInt(new Date(sd).getFullYear());
-    let ed = item.availableTo;
+    let ed = new Date(item.availableTo).toISOString().slice(0, 10);
     let edy = parseInt(new Date(ed).getFullYear());
     let availability = '';
     if (sdy == edy) {

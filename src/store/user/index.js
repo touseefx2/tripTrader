@@ -2366,12 +2366,18 @@ class user {
           `response check promo  ${db.apis.CHECK_PROMO} : `,
           resp.data,
         );
-        let rsp = resp.data.data[0];
-        suc(rsp);
+        const rsp = resp.data.data[0];
+        if (rsp.status == 'disabled') {
+          Alert.alert('', 'Promo code disbaled!');
+          return;
+        }
+        if (rsp.status == 'active') {
+          suc(rsp);
+        }
       })
       .catch(err => {
         this.setregLoader(false);
-        let msg = err.response.data.message || err.response.status || err;
+        const msg = err.response.data.message || err.response.status || err;
         console.log(`Error in check promo  ${db.apis.CHECK_PROMO} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');

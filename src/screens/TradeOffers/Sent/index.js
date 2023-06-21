@@ -5,13 +5,9 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
-  Alert,
   Pressable,
   TextInput,
   FlatList,
-  ScrollView,
-  Keyboard,
-  Modal,
   RefreshControl,
 } from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
