@@ -308,7 +308,9 @@ function ConfirmTrips(props) {
           ? ofer.duration.title.substring(0, ofer.duration.title.length - 1)
           : ofer.duration.title;
       dur = dur + ' ' + t;
-      let tripDates = isMyTrip ? item.tripDates : item.preferredDates;
+      const tripDates = isMyTrip
+        ? item.tripDates.map(e => utils.functions.DateWithoutFormat(e))
+        : item.preferredDates.map(e => utils.functions.DateWithoutFormat(e));
       let avlbl = utils.functions.formatSelectedDates(tripDates, 'arr');
       // FormatPrfrDate(tripDates);
       let loc = ofer.location.city + ', ' + ofer.location.state;
@@ -321,7 +323,10 @@ function ConfirmTrips(props) {
           ? trade.duration.title.substring(0, trade.duration.title.length - 1)
           : trade.duration.title;
       durt = durt + ' ' + tt;
-      let preferdates = isMyTrip ? item.preferredDates : item.tripDates;
+      let preferdates = isMyTrip
+        ? item.preferredDates.map(e => utils.functions.DateWithoutFormat(e))
+        : item.tripDates.map(e => utils.functions.DateWithoutFormat(e));
+
       let avlblt = utils.functions.formatSelectedDates(preferdates, 'arr');
       //  FormatPrfrDate(preferdates);
       let loct = trade.location.city + ', ' + trade.location.state;

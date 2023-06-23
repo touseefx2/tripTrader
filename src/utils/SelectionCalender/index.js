@@ -26,7 +26,10 @@ export default function SelectionCalender({
   let numOfDays = totalDays;
   const startDate = utils.functions.DateWithoutFormat(availableFrom);
   const endDate = utils.functions.DateWithoutFormat(availableTo);
-  const all_unavailable_dates = unAvailableDays.allUnavailableDates || [];
+  let all_unavailable_dates = unAvailableDays.allUnavailableDates || [];
+  all_unavailable_dates = all_unavailable_dates.map(e =>
+    utils.functions.DateWithoutFormat(e),
+  );
   const start_date = moment(startDate).format('YYYY-MM-DD');
   const current_date = moment(new Date()).format('YYYY-MM-DD');
   let unavailableDays = {};

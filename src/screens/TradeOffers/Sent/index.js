@@ -345,7 +345,10 @@ function Sent(props) {
           ? ofer.duration.title.substring(0, ofer.duration.title.length - 1)
           : ofer.duration.title;
       dur = dur + ' ' + t;
-      let avlbl = FormatAvlblDate(ofer.availableFrom, ofer.availableTo);
+      let avlbl = FormatAvlblDate(
+        utils.functions.DateWithoutFormat(ofer.availableFrom),
+        utils.functions.DateWithoutFormat(ofer.availableTo),
+      );
       let loc = ofer.location.city + ', ' + ofer.location.state;
 
       //ofer to (offer trip)
@@ -356,7 +359,9 @@ function Sent(props) {
           ? trade.duration.title.substring(0, trade.duration.title.length - 1)
           : trade.duration.title;
       durt = durt + ' ' + tt;
-      let preferdates = item.preferredDates;
+      const preferdates = item.preferredDates.map(e =>
+        utils.functions.DateWithoutFormat(e),
+      );
       let avlblt = utils.functions.formatSelectedDates(preferdates, 'arr');
       // FormatPrfrDate(preferdates);
       let loct = trade.location.city + ', ' + trade.location.state;

@@ -13,6 +13,7 @@ import {observer} from 'mobx-react';
 import store from '../../../store';
 import NetInfo from '@react-native-community/netinfo';
 import theme from '../../../theme';
+import utils from '../../../utils';
 import moment from 'moment';
 
 export default observer(Trips);

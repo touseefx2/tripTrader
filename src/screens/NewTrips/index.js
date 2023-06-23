@@ -354,6 +354,7 @@ function NewTrips(props) {
       let acceptOtherTrades = d.acceptTradeOffers;
       let durNo = d.duration.value;
       let durt = findItm(d.duration.title || '', durtn, 't');
+
       let objct = {...d.unAvailableDays};
       if (!isObjectEmpty(objct)) {
         let ar = objct.allUnavailableDates || [];
@@ -370,10 +371,14 @@ function NewTrips(props) {
           unavailable_days_of_week: objct.unavailableDaysOfWeek,
         })['unavailableDaysOfWeek'];
         delete Object.assign(objct, {
-          exclude_specific_dates: objct.excludeSpecificDates,
+          exclude_specific_dates: objct.excludeSpecificDates.map(e =>
+            utils.functions.DateWithoutFormat(e),
+          ),
         })['excludeSpecificDates'];
         delete Object.assign(objct, {
-          all_unavailable_dates: objct.allUnavailableDates,
+          all_unavailable_dates: objct.allUnavailableDates.map(e =>
+            utils.functions.DateWithoutFormat(e),
+          ),
         })['allUnavailableDates'];
         delete Object.assign(objct, {wtxt: objct.dayWeekText})['dayWeekText'];
         delete Object.assign(objct, {esd_text: objct.excludeDateText})[

@@ -3,6 +3,7 @@ import {View, Text} from 'react-native';
 import {styles} from './styles';
 import theme from '../../../../theme';
 import moment from 'moment';
+import utils from '../../../../utils';
 
 export default memo(Card1);
 

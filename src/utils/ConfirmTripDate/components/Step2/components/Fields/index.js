@@ -59,9 +59,11 @@ export default function Fields({modalObj, selectedDates, goBack}) {
       ? trade.duration.title.substring(0, trade.duration.title.length - 1)
       : trade.duration.title;
   durt = durt + ' ' + tt;
-  let preferdates = item.preferredDates;
+  const preferdates = item.preferredDates.map(e =>
+    utils.functions.DateWithoutFormat(e),
+  );
   let avlblt = utils.functions.formatSelectedDates(preferdates, 'arr');
-  // utils.functions.FormatePreferDate(preferdates);
+
   let loct = trade.location.city + ', ' + trade.location.state;
 
   const titleS = {

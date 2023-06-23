@@ -129,58 +129,7 @@ function Received(props) {
       );
     };
 
-    const renderSearch = () => {
-      return (
-        <TouchableOpacity disabled>
-          <Image
-            source={require('../../../assets/images/searchBar/search/img.png')}
-            style={styles.Baricon}
-          />
-        </TouchableOpacity>
-      );
-    };
-
-    const renderInput = () => {
-      return (
-        <View style={{width: '85%'}}>
-          <TextInput
-            editable={false}
-            style={styles.SerchBarInput}
-            placeholder="Search"
-          />
-        </View>
-      );
-    };
-
-    const renderFilter = () => {
-      const onclick = () => {};
-
-      return (
-        <TouchableOpacity style={styles.Baricon} onPress={onclick} disabled>
-          {/* <Image
-            source={require('../../../assets/images/searchBar/filter/img.png')}
-            style={styles.Baricon}
-          /> */}
-        </TouchableOpacity>
-      );
-    };
-
-    return (
-      <>
-        {/* <Pressable
-          style={({pressed}) => [
-            {opacity: pressed ? 0.9 : 1},
-            [styles.SerchBarContainer],
-          ]}
-          onPress={onclickSearchBar}>
-          {renderSearch()}
-          {renderInput()}
-          {renderFilter()}
-        </Pressable> */}
-
-        {data.length > 0 && renderResult()}
-      </>
-    );
+    return <>{data.length > 0 && renderResult()}</>;
   };
 
   function compare(d, dd) {
@@ -289,8 +238,8 @@ function Received(props) {
           : ofer.duration.title;
       dur = dur + ' ' + t;
       const avlbl = utils.functions.FormateAvailableDate(
-        ofer.availableFrom,
-        ofer.availableTo,
+        utils.functions.DateWithoutFormat(ofer.availableFrom),
+        utils.functions.DateWithoutFormat(ofer.availableTo),
       );
       let loc = ofer.location.city + ', ' + ofer.location.state;
 
@@ -302,9 +251,10 @@ function Received(props) {
           ? trade.duration.title.substring(0, trade.duration.title.length - 1)
           : trade.duration.title;
       durt = durt + ' ' + tt;
-      let preferdates = item.preferredDates;
+      const preferdates = item.preferredDates.map(e =>
+        utils.functions.DateWithoutFormat(e),
+      );
       const avlblt = utils.functions.formatSelectedDates(preferdates, 'arr');
-      // utils.functions.FormatePreferDate(preferdates);
       let loct = trade.location.city + ', ' + trade.location.state;
 
       const renderProfile = () => {

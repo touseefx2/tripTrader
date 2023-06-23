@@ -864,7 +864,6 @@ function Home(props) {
                 paddingHorizontal: 15,
               }}
               data={Hometrips}
-              extraData={saveTrips}
               renderItem={ItemView}
               keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={EmptyListMessage}
