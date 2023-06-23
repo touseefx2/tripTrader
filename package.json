@@ -29,7 +29,7 @@
     "@react-navigation/drawer": "^6.6.3",
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/native-stack": "^6.9.13",
-    "@stripe/stripe-react-native": "^0.23.0",
+    "@stripe/stripe-react-native": "^0.23.3",
     "axios": "^0.27.2",
     "mobx": "^6.9.0",
     "mobx-persist": "^0.4.1",
