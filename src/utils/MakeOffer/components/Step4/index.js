@@ -95,8 +95,8 @@ export default function Step4({
           title: item.title,
           location: item.location,
           duration: item.duration,
-          availableFrom: item.availableFrom,
-          availableTo: item.availableTo,
+          availableFrom: utils.functions.DateWithoutFormat(item.availableFrom),
+          availableTo: utils.functions.DateWithoutFormat(item.availableTo),
           location: item.location,
         };
         if (item.unAvailableDays) {

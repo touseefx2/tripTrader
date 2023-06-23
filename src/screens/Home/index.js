@@ -463,9 +463,9 @@ function Home(props) {
     let titlee = item.title + ' ' + item.tradeType || '';
     let locName = item.location.city + ', ' + item.location.state;
     let trade = item.returnActivity || '';
-    let sd = item.availableFrom;
+    let sd = utils.functions.DateWithoutFormat(item.availableFrom);
     let sdy = parseInt(new Date(sd).getFullYear());
-    let ed = item.availableTo;
+    let ed = utils.functions.DateWithoutFormat(item.availableTo);
     let edy = parseInt(new Date(ed).getFullYear());
     let favlbl = '';
 

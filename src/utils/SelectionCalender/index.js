@@ -24,9 +24,8 @@ export default function SelectionCalender({
   const {availableFrom, availableTo, unAvailableDays} =
     screen == 'received' ? item.hostTrip : item;
   let numOfDays = totalDays;
-  const startDate = availableFrom;
-  const endDate = availableTo;
-
+  const startDate = utils.functions.DateWithoutFormat(availableFrom);
+  const endDate = utils.functions.DateWithoutFormat(availableTo);
   const all_unavailable_dates = unAvailableDays.allUnavailableDates || [];
   const start_date = moment(startDate).format('YYYY-MM-DD');
   const current_date = moment(new Date()).format('YYYY-MM-DD');

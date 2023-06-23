@@ -14,10 +14,9 @@ function Card1({item, index, isActive, props}) {
   let status = item.status || '';
   let c = status == 'suspended' ? true : false;
   let tc = theme.color.boxTitle;
-
-  let sd = item.availableFrom;
+  let sd = utils.functions.DateWithoutFormat(item.availableFrom);
   let sdy = parseInt(new Date(sd).getFullYear());
-  let ed = item.availableTo;
+  let ed = utils.functions.DateWithoutFormat(item.availableTo);
   let edy = parseInt(new Date(ed).getFullYear());
   let availability = '';
   if (sdy == edy) {

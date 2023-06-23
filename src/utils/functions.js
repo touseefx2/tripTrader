@@ -72,7 +72,7 @@ function getDaysBetweenDate(start, end) {
   ) {
     arr.push(new Date(date));
   }
-  const arrr = arr.map(e => e.toISOString().slice(0, 10));
+  const arrr = arr.map(e => DateWithoutFormat(e));
 
   return arrr;
 }
@@ -300,6 +300,10 @@ function FormateAvailableDate(startDate, endDate) {
   return text;
 }
 
+function DateWithoutFormat(date) {
+  return new Date(date).toISOString().slice(0, 10);
+}
+
 function formatSelectedDates(selectedDates, c) {
   let text = '';
   let arr = [];
@@ -356,4 +360,5 @@ export const functions = {
   FormatePreferDate,
   FormateAvailableDate,
   formatSelectedDates,
+  DateWithoutFormat,
 };

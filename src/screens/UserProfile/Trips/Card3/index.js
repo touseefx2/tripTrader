@@ -33,9 +33,9 @@ function Card3({
   let titlee = item.title || ''; //ofering
   let locName = item.location.city + ', ' + item.location.state;
   let trade = item.returnActivity || ''; //for trade
-  let sd = item.availableFrom;
+  let sd = utils.functions.DateWithoutFormat(item.availableFrom);
   let sdy = parseInt(new Date(sd).getFullYear());
-  let ed = item.availableTo;
+  let ed = utils.functions.DateWithoutFormat(item.availableTo);
   let edy = parseInt(new Date(ed).getFullYear());
   let favlbl = '';
   if (sdy == edy) {

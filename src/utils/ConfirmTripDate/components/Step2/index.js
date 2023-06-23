@@ -40,6 +40,7 @@ export default function Step2({
         let body = {
           tripDates: preferDate,
         };
+
         store.Offers.attemptToConfirmOffer(
           modalObj,
           body,

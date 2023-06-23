@@ -42,14 +42,13 @@ function isObjectEmpty(value) {
     JSON.stringify(value) === '{}'
   );
 }
-
-export default observer(NewTrips);
-
 const actSrc = require('../../assets/images/filters/activity/img.png');
 const spcSrc = require('../../assets/images/filters/species/img.png');
 
+export default observer(NewTrips);
+
 function NewTrips(props) {
-  let activeOpacity = 0.8;
+  const activeOpacity = 0.8;
   let css2f = {
     container: {
       backgroundColor: 'transparent',
@@ -107,7 +106,7 @@ function NewTrips(props) {
       arr.push(new Date(dt));
     }
 
-    const arrr = arr.map(e => e.toISOString().slice(0, 10));
+    const arrr = arr.map(e => utils.functions.DateWithoutFormat(e));
 
     return arrr;
   };
@@ -289,7 +288,7 @@ function NewTrips(props) {
     if (tripType != '') {
       let aa = [];
       if (spcsDt.length > 0) {
-        spcsDt.map((e, i, a) => {
+        spcsDt.map(e => {
           if (e.type) {
             if (e.type.name == tripType.name) {
               aa.push(e);
@@ -350,9 +349,8 @@ function NewTrips(props) {
         setlocation(false);
       }
       let spcs = findItm(d.species || '', spcsDt, 'n');
-
-      let sd = d.availableFrom;
-      let ed = d.availableTo;
+      let sd = utils.functions.DateWithoutFormat(d.availableFrom);
+      let ed = utils.functions.DateWithoutFormat(d.availableTo);
       let acceptOtherTrades = d.acceptTradeOffers;
       let durNo = d.duration.value;
       let durt = findItm(d.duration.title || '', durtn, 't');
@@ -484,31 +482,6 @@ function NewTrips(props) {
     durNum,
     photos,
   ]);
-
-  // useEffect(() => {
-  //   if (isSelDate1 != '' && isSelDate2 != '') {
-  //     const a = moment(isSelDate2);
-  //     const b = moment(isSelDate1);
-  //     const no_of_days = a.diff(b, 'days');
-
-  //     let totalDays = 0;
-  //     let t = dur.title;
-  //     if (t == 'days') {
-  //       totalDays = durNum;
-  //     } else if (t == 'weeks') {
-  //       totalDays = durNum * 7;
-  //     } else if (t == 'months') {
-  //       totalDays = durNum * 30;
-  //     } else if (t == 'years') {
-  //       totalDays = durNum * 365;
-  //     }
-  //     if (no_of_days < totalDays) {
-  //       clearFields('', '');
-
-  //       return;
-  //     }
-  //   }
-  // }, [dur, durNum, isSelDate1, isSelDate2]);
 
   useEffect(() => {
     let totalDays = 0;
@@ -3602,7 +3575,6 @@ function NewTrips(props) {
       status = dt.status;
       ch = status == 'suspended' ? true : false;
     }
-    console.log('dttt status  : ', status);
 
     return (
       <View
