@@ -176,7 +176,7 @@ function Home(props) {
           if (user == 'guest') {
             store.User.attemptToGetHomeTripsGuest(setGetDataOnce);
           } else {
-            store.User.attemptToGetBloackUsers(
+            store.User.attemptToGetBlockUsers(
               store.User.user._id,
               () => {},
               () => {},
@@ -331,7 +331,7 @@ function Home(props) {
         if (user == 'guest') {
           store.User.attemptToGetHomeTripsGuest(setGetDataOnce);
         } else {
-          store.User.attemptToGetBloackUsers(
+          store.User.attemptToGetBlockUsers(
             store.User.user._id,
             () => {},
             () => {},
@@ -382,7 +382,7 @@ function Home(props) {
           //   blockUsers,
           //   '',
           // );
-          store.User.attemptToGetBloackUsers(
+          store.User.attemptToGetBlockUsers(
             store.User.user._id,
             () => {},
             () => {},

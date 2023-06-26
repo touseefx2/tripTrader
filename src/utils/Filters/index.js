@@ -181,7 +181,7 @@ function Filters(props) {
         if (user == 'guest') {
           store.User.attemptToGetHomeTripsGuest(c => props.setGetDataOnce(c));
         } else {
-          store.User.attemptToGetBloackUsers(
+          store.User.attemptToGetBlockUsers(
             store.User.user._id,
             () => {},
             () => {},

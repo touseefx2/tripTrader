@@ -76,7 +76,7 @@ class user {
   @persist('object') @observable following = [];
   @persist('object') @observable totalfollowing = 0;
   @persist('object') @observable blockUsers = [];
-  @persist('object') @observable totalblockUsers = 0;
+  @persist('object') @observable totalBlockUsers = 0;
   @persist('object') @observable inbox = [];
   @persist('object') @observable unreadInbox = 0;
   @observable followerLoader = false;
@@ -116,8 +116,8 @@ class user {
   @action removeblockUsers = ind => {
     this.blockUsers.splice(ind, 1);
   };
-  @action settotalblockUsers = obj => {
-    this.totalblockUsers = obj;
+  @action setTotalBlockUsers = obj => {
+    this.totalBlockUsers = obj;
   };
   @action setinbox = obj => {
     this.inbox = obj;
@@ -223,94 +223,80 @@ class user {
         // Alert.alert('', msg.toString());
       });
   };
-  @action attemptToGetBloackUsers = (
-    uid,
-    setgetdata,
-    setrfrsh,
-    setgetdatahome,
-    c,
+  @action attemptToGetBlockUsers = (
+    userId,
+    setGetData,
+    setReferesh,
+    setGetHomeData,
+    check,
   ) => {
-    console.log('GET BloackUsers : ', 'true');
     this.setFollowerLoader(true);
     this.setHomeLoader(true);
-    db.hitApi(db.apis.GET_BLOCK_USER + uid, 'get', {}, this.authToken)
+    db.hitApi(db.apis.GET_BLOCK_USER + userId, 'get', {}, this.authToken)
       ?.then(resp => {
-        console.log(`response GET BloackUsers: `, resp.data);
-        const dt = resp.data.blocked || [];
+        const data = resp.data.blocked || [];
         this.attemptToGetBloackAnotherUsers(
-          uid,
-          dt,
-          setgetdata,
-          setrfrsh,
-          setgetdatahome,
-          c,
+          userId,
+          data,
+          setGetData,
+          setReferesh,
+          setGetHomeData,
+          check,
         );
-        this.settotalblockUsers(dt.length);
+        this.setTotalBlockUsers(data.length);
       })
       .catch(err => {
         this.setHomeLoader(false);
         this.setFollowerLoader(false);
-        setrfrsh(false);
+        setReferesh(false);
         const msg = err.response.data.message || err.response.status || err;
         console.log(
-          `Error in GET BloackUsers ${db.apis.GET_BLOCK_USER + uid} : `,
+          `Error in GET BloackUsers ${db.apis.GET_BLOCK_USER + userId} : `,
           msg,
         );
-        if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
-          return;
-        }
-
-        // Alert.alert('', msg.toString());
       });
   };
 
   @action attemptToGetBloackAnotherUsers = (
-    uid,
+    userId,
     data1,
-    setgetdata,
-    setrfrsh,
-    setgetdatahome,
-    c,
+    setGetData,
+    setReferesh,
+    setGetHomeData,
+    check,
   ) => {
-    console.log('GET  BloackAnotherUsers');
-    db.hitApi(db.apis.GET_BLOCK_ANOTHER_USER + uid, 'get', {}, this.authToken)
+    db.hitApi(
+      db.apis.GET_BLOCK_ANOTHER_USER + userId,
+      'get',
+      {},
+      this.authToken,
+    )
       ?.then(resp => {
         this.setFollowerLoader(false);
-        setrfrsh(false);
-        console.log(`response GET BloackAnotherUsers: `, resp.data);
-        const data2 = resp.data.blockedBy || [];
-        const farr = data1.concat(data2);
-        setgetdata(true);
-
-        this.attemptToGetHomeTripsSearch(setgetdatahome, farr, c);
-
-        this.setblockUsers(farr);
+        setReferesh(false);
+        const data = resp.data.blockedBy || [];
+        const finalData = data1.concat(data);
+        setGetData(true);
+        this.attemptToGetHomeTripsSearch(setGetHomeData, finalData, check);
+        this.setblockUsers(finalData);
       })
       .catch(err => {
         this.setHomeLoader(false);
         this.setFollowerLoader(false);
-        setrfrsh(false);
+        setReferesh(false);
         const msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in GET   GetBloackAnotherUsers  
-            ${db.apis.GET_BLOCK_ANOTHER_USER + uid} : `,
+            ${db.apis.GET_BLOCK_ANOTHER_USER + userId} : `,
           msg,
         );
-        if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
-          return;
-        }
-
-        // Alert.alert('', msg.toString());
       });
   };
 
-  attemptToUnblockUser(uid, ind, suc, goBack) {
-    console.log('UnblockUser  true : ');
+  @action attemptToUnBlockUser(userId, index, success, goBack) {
     this.setBlockLoader(true);
-    let c = this.user._id + '/' + uid;
-    db.hitApi(db.apis.UNBLOCK_USER + c, 'put', {}, this.authToken)
+    const params = this.user._id + '/' + userId;
+    db.hitApi(db.apis.UNBLOCK_USER + params, 'put', {}, this.authToken)
       ?.then(resp => {
         this.setBlockLoader(false);
         if (resp.data && resp.data.check == 'reload') {
@@ -319,26 +305,23 @@ class user {
           return;
         }
         FireStore.updateUserinFirestoreOnlyRoom(this.user._id, resp.data.data);
-
-        this.removeblockUsers(ind);
+        this.removeblockUsers(index);
         this.getUserById1(this.user._id, this.authToken, '');
 
-        let dt = [...this.blockUsers];
-        dt.splice(ind, 1);
+        const dt = [...this.blockUsers];
+        dt.splice(index, 1);
         this.attemptToGetHomeTripsSearch(() => {}, dt, 'all');
-
-        suc();
+        success();
       })
       .catch(err => {
         this.setBlockLoader(false);
-        let msg = err.response.data.message || err.response.status || err;
+        const msg = err.response.data.message || err.response.status || err;
         console.log(
-          `Error in UnblockUser  ${db.apis.UNBLOCK_USER} ${c}  : `,
+          `Error in UnblockUser  ${db.apis.UNBLOCK_USER} ${params}  : `,
           msg,
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-
           return;
         }
 
@@ -704,7 +687,11 @@ class user {
     return splitStr.join(' ');
   }
 
-  @action attemptToGetHomeTripsSearch = (setgetdata, blocksUsersArr, c) => {
+  @action attemptToGetHomeTripsSearch = (
+    setGetData,
+    blockedUsersArr,
+    check,
+  ) => {
     const isApplySearch = store.Search.isApplySearch;
     const isApplyFilter = store.Filters.isFilter;
     const query = isApplySearch ? this.titleCase(store.Search.search) : '';
@@ -725,15 +712,15 @@ class user {
       activity =
         store.Filters.sactivity != false ? store.Filters.sactivity : '';
     }
-    if (blocksUsersArr.length > 0) {
-      blocksUsersArr.forEach(item => {
+    if (blockedUsersArr.length > 0) {
+      blockedUsersArr.forEach(item => {
         if (item?.userId?._id) blockUsers = blockUsers + ',' + item.userId._id;
       });
     }
     const params = `rating=${rate}&userStatus=${userStatus}&location=${location}&species=${species}&query=${query}&activity=${activity}&tradeType=${activity}&blockedUsers=${blockUsers}&page=1&limit=10000`;
     this.setHomeLoader(true);
     console.log('Get AllHomeTrip User : ', db.apis.GET_ALL_HOME_TRIPS + params);
-    if (c == 'all') {
+    if (check == 'all') {
       this.getUserById1(this.user._id, this.authToken);
     }
     db.hitApi(db.apis.GET_ALL_HOME_TRIPS + params, 'get', {}, this.authToken)
@@ -742,17 +729,16 @@ class user {
         console.log(
           `response Get AllHomeTrip User   ${db.apis.GET_ALL_HOME_TRIPS}  true : `,
         );
-        const dt = resp.data.data;
-        this.setHomeTrips(dt);
-        setgetdata(true);
-        if (c == 'all') {
+        const data = resp.data.data;
+        this.setHomeTrips(data);
+        setGetData(true);
+        if (check == 'all') {
           this.allGetGeneralUserData(this.user._id);
           this.allGetGeneralData();
         }
       })
       .catch(err => {
         this.setHomeLoader(false);
-
         const msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS}${params} }: `,
@@ -760,13 +746,12 @@ class user {
         );
         if (msg == 503 || msg == 500 || msg == 502) {
           Alert.alert('', 'Server not response');
-
           return;
         }
         if (msg == 'No records found') {
-          setgetdata(true);
+          setGetData(true);
           this.setHomeTrips([]);
-          if (c == 'all') {
+          if (check == 'all') {
             this.allGetGeneralUserData(this.user._id);
             this.allGetGeneralData();
           }
@@ -2963,7 +2948,7 @@ class user {
     this.setinbox([]);
     this.setunreadInbox(0);
     this.setblockUsers([]);
-    this.settotalblockUsers(0);
+    this.setTotalBlockUsers(0);
     this.setisNotification(false);
   };
 

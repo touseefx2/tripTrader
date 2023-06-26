@@ -68,7 +68,7 @@ class general {
               //   store.User.blockUsers,
               //   'all',
               // );
-              store.User.attemptToGetBloackUsers(
+              store.User.attemptToGetBlockUsers(
                 store.User.user._id,
                 () => {},
                 () => {},

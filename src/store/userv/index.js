@@ -1110,7 +1110,7 @@ class userv {
   @action myUserGetGeneral = c => {
     const uid = store.User.user._id;
     if (c == 'b') {
-      store.User.attemptToGetBloackUsers(
+      store.User.attemptToGetBlockUsers(
         uid,
         () => {},
         () => {},

@@ -26,21 +26,17 @@ function BlockUsers(props) {
   const headerTitle = 'Blocked Users';
 
   const {isInternet, focusScreen} = store.General;
-  const {user, blockUsers, totalblockUsers, followerLoader, blockLoader} =
+  const {user, blockUsers, totalBlockUsers, followerLoader, blockLoader} =
     store.User;
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    if (!getDataOnce && isInternet) {
-      getDbData();
-    }
-    return () => {};
+    if (!getDataOnce && isInternet) getDbData();
   }, [getDataOnce, isInternet]);
 
   const onRefresh = useCallback(() => {
-    console.log('onrefresh cal');
     setRefreshing(true);
     getDbData();
   }, []);
@@ -48,10 +44,11 @@ function BlockUsers(props) {
   const getDbData = () => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToGetBloackUsers(
+        store.User.attemptToGetBlockUsers(
           user._id,
           setgetDataOnce,
           setRefreshing,
+          () => {},
           '',
         );
       } else {
@@ -60,7 +57,7 @@ function BlockUsers(props) {
     });
   };
 
-  const successUnblock = () => {
+  const successUnBlock = () => {
     toast?.current?.show('User unblock', toastduration);
   };
 
@@ -71,10 +68,10 @@ function BlockUsers(props) {
   const unBlockUser = (userId, index) => {
     NetInfo.fetch().then(state => {
       if (state.isConnected) {
-        store.User.attemptToUnblockUser(
+        store.User.attemptToUnBlockUser(
           userId,
           index,
-          successUnblock,
+          successUnBlock,
           goBackMain,
         );
       } else {
@@ -114,9 +111,9 @@ function BlockUsers(props) {
   };
 
   const ItemView = ({item, index}) => {
-    const usrr = item.userId || null;
-    const photo = usrr.image || '';
-    const userName = usrr.firstName + ' ' + usrr.lastName;
+    const user = item.userId || null;
+    const photo = user.image || '';
+    const userName = user.firstName + ' ' + user.lastName;
 
     const renderProfile = () => {
       return (
@@ -155,7 +152,7 @@ function BlockUsers(props) {
           </View>
 
           <Pressable
-            onPress={() => unBlockUser(usrr._id, index)}
+            onPress={() => unBlockUser(user._id, index)}
             style={({pressed}) => [
               {
                 opacity: pressed ? 0.7 : 1.0,
@@ -170,8 +167,8 @@ function BlockUsers(props) {
   };
 
   const ListHeader = () => {
-    const total = `You have ${totalblockUsers} ${
-      totalblockUsers > 1 ? 'users' : 'user'
+    const total = `You have ${totalBlockUsers} ${
+      totalBlockUsers > 1 ? 'users' : 'user'
     } blocked`;
     return (
       <View style={{width: '100%'}}>
