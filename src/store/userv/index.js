@@ -1730,7 +1730,7 @@ class userv {
 
   addUser(token, user, c) {
     let chk = c || '';
-    store.General.setgoToScreen(chk == '' ? 'home' : chk);
+    store.General.setGoToScreen(chk == '' ? 'home' : chk);
     console.log('token : ', token);
     console.log('user : ', user);
     this.addauthToken(token);

@@ -23,12 +23,12 @@ Platform.OS === 'android'
 export default observer(Splash);
 
 function Splash() {
-  const {setLoading, setIsCurrentCahtId} = store.General;
+  const {setLoading, setIsCurrentChatId} = store.General;
   const {setMessages} = store.User;
 
   useEffect(() => {
     hydrateStores();
-    setIsCurrentCahtId('');
+    setIsCurrentChatId('');
     setMessages([]);
     setTimeout(() => {
       setLoading(false);

@@ -26,7 +26,7 @@ class general {
   @observable selectedFilter = [];
   @observable isUpdateNeeded = false;
   @observable isEmailPopup = false;
-  @observable isCurrentCahtId = '';
+  @observable isCurrentChatId = '';
 
   @persist('object') @observable isGLocation = false;
   @persist('object') @observable apiLevel = '';
@@ -45,8 +45,8 @@ class general {
     this.goToo = obj;
   };
 
-  @action setIsCurrentCahtId = obj => {
-    this.isCurrentCahtId = obj;
+  @action setIsCurrentChatId = obj => {
+    this.isCurrentChatId = obj;
   };
 
   @action checkServer = err => {
@@ -93,7 +93,7 @@ class general {
     this.isEmailPopup = obj;
   };
 
-  @action setgoToScreen = obj => {
+  @action setGoToScreen = obj => {
     this.goToScreen = obj;
   };
 

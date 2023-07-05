@@ -10,14 +10,13 @@ export default observer(LatestNews);
 
 function LatestNews(props) {
   let headerTitle = 'Latest News';
-  let internet = store.General.isInternet;
-  let user = store.User.user;
+  const {isInternet, setGoToScreen} = store.General;
+  const {user, Logout} = store.User;
 
   useEffect(() => {
     if (user == 'guest') {
-      store.General.setgoToScreen('guestaccess');
-      store.User.Logout();
-      return;
+      setGoToScreen('guestaccess');
+      Logout();
     }
   }, []);
 
@@ -25,7 +24,7 @@ function LatestNews(props) {
     <>
       <View style={styles.container}>
         <utils.DrawerHeader props={props} headerTitle={headerTitle} />
-        {!internet && <utils.InternetMessage />}
+        {!isInternet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}></View>
 

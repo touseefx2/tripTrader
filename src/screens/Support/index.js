@@ -17,8 +17,6 @@ import {
   TextInput,
   Keyboard,
 } from 'react-native';
-// import Geolocation from 'react-native-geolocation-service';
-// import Geocoder from 'react-native-geocoding';
 import {styles} from './styles';
 import {observer} from 'mobx-react';
 import store from '../../store/index';
@@ -68,13 +66,10 @@ function Support(props) {
   ];
 
   const toast = useRef(null);
-  const toastduration = 700;
-  let headerTitle = 'Support';
+  const headerTitle = 'Support';
 
-  let internet = store.General.isInternet;
-  let user = store.User.user;
-
-  const loader = store.User.regLoader;
+  const {isInternet, setGoToScreen} = store.General;
+  const {user, regLoader, Logout} = store.User;
 
   const [subject, setsubject] = useState('');
   const [Emptysubject, setEmptysubject] = useState(false);
@@ -90,14 +85,10 @@ function Support(props) {
 
   const [isSubmit, setisSubmit] = useState(false);
 
-  const [errorMessage, seterrorMessage] = useState('');
-  const setErrMessage = c => {
-    seterrorMessage(c);
-  };
   useEffect(() => {
     if (user == 'guest') {
-      store.General.setgoToScreen('guestaccess');
-      store.User.Logout();
+      setGoToScreen('guestaccess');
+      Logout();
       return;
     }
   }, []);
@@ -129,7 +120,6 @@ function Support(props) {
 
         store.User.submitSupport(body, Suc);
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -156,12 +146,12 @@ function Support(props) {
       const renderB1 = () => {
         return (
           <TouchableOpacity
-            disabled={loader}
+            disabled={regLoader}
             onPress={submit}
             activeOpacity={0.7}
             style={styles.BottomButton}>
-            {!loader && <Text style={styles.buttonTextBottom}>Submit</Text>}
-            {loader && (
+            {!regLoader && <Text style={styles.buttonTextBottom}>Submit</Text>}
+            {regLoader && (
               <ActivityIndicator size={18} color={theme.color.buttonText} />
             )}
           </TouchableOpacity>
@@ -171,7 +161,7 @@ function Support(props) {
       const renderB2 = () => {
         return (
           <TouchableOpacity
-            disabled={loader}
+            disabled={regLoader}
             onPress={goBack}
             activeOpacity={0.7}
             style={styles.BottomButton2}>
@@ -226,8 +216,7 @@ function Support(props) {
         }
       };
 
-      // console.log('drop down data : ', data);
-      let abs = Platform.OS == 'ios' ? false : true;
+      const abs = Platform.OS == 'ios' ? false : true;
       return (
         <utils.DropDown
           data={data}
@@ -468,7 +457,7 @@ function Support(props) {
   return (
     <View style={styles.container}>
       <utils.DrawerHeader props={props} headerTitle={headerTitle} />
-      {!internet && <utils.InternetMessage />}
+      {!isInternet && <utils.InternetMessage />}
       <SafeAreaView style={styles.container2}>
         <View style={styles.container3}>
           <KeyboardAvoidingView
@@ -491,7 +480,7 @@ function Support(props) {
           focusScreen={store.General.focusScreen}
         />
       </SafeAreaView>
-      <utils.Loader load={loader} />
+      <utils.Loader load={regLoader} />
       <Toast ref={toast} position="bottom" />
     </View>
   );

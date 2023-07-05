@@ -130,15 +130,16 @@ function Inbox(props) {
   };
 
   const headerTitle = 'Inbox';
-  const {isInternet} = store.General;
-  const {user, attemptToGetInboxes, inbox} = store.User;
+  const {isInternet, setGoToScreen, focusScreen} = store.General;
+  const {user, attemptToGetInboxes, Logout, dlc, unreadInbox, inbox, ibl} =
+    store.User;
 
   const [search, setsearch] = useState('');
   const [sdata, setsdata] = useState([]);
 
-  const loader = store.User.dlc;
+  const loader = dlc;
   const data = search == '' ? inbox : sdata;
-  const totalUnread = store.User.unreadInbox;
+  const totalUnread = unreadInbox;
 
   useEffect(() => {
     if (search != '') {
@@ -177,7 +178,7 @@ function Inbox(props) {
   }
 
   useEffect(() => {
-    let data = [...store.User.inbox];
+    let data = [...inbox];
     if (search != '') {
       if (data.length > 0) {
         let uid = user._id;
@@ -201,13 +202,13 @@ function Inbox(props) {
     } else {
       setsdata([]);
     }
-  }, [search, store.User.inbox]);
+  }, [search, inbox]);
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const setGetDataOnce = C => {
     setgetDataOnce(C);
   };
-  const refreshing = store.User.ibl;
+  const refreshing = ibl;
   const onRefresh = React.useCallback(() => {
     console.log('onrefresh cal');
     if (user !== 'guest') {
@@ -231,8 +232,8 @@ function Inbox(props) {
 
   useEffect(() => {
     if (user == 'guest') {
-      store.General.setgoToScreen('guestaccess');
-      store.User.Logout();
+      setGoToScreen('guestaccess');
+      Logout();
       return;
     }
   }, []);
@@ -307,7 +308,7 @@ function Inbox(props) {
                   index={index}
                   refreshing={refreshing}
                   data={data}
-                  user={store.User.user}
+                  user={user}
                   props={props}
                   setsearch={c => setsearch(c)}
                   closeSwipe={closeSwipe}
@@ -328,7 +329,7 @@ function Inbox(props) {
             nav={props.navigation}
             screen={headerTitle}
             setsearch={() => setsearch('')}
-            focusScreen={store.General.focusScreen}
+            focusScreen={focusScreen}
             closeSwipe={() => closeSwipe()}
           />
 

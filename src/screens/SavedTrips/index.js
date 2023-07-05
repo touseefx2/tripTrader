@@ -24,8 +24,8 @@ function SavedTrips(props) {
   const scrollRef = useRef(null);
   const toast = useRef(null);
 
-  const {isInternet} = store.General;
-  const {user, homeModalLoder} = store.User;
+  const {isInternet, setGoToScreen} = store.General;
+  const {user, homeModalLoder, Logout} = store.User;
   const {deleteLoader, saveTrips} = store.Trips;
   const {activity, tripLocation, species} = store.Filters;
 
@@ -47,8 +47,8 @@ function SavedTrips(props) {
 
   useEffect(() => {
     if (user == 'guest') {
-      store.General.setgoToScreen('guestaccess');
-      store.User.Logout();
+      setGoToScreen('guestaccess');
+      Logout();
       return;
     }
   }, []);

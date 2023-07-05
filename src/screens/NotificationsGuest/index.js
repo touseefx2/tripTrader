@@ -94,7 +94,8 @@ function NotificationsGuest({
   setIsShowModal,
 }) {
   const headerTitle = 'Notifications';
-  const {isInternet} = store.General;
+  const {isInternet, setGoToScreen} = store.General;
+  const {Logout} = store.User;
   const data = store.Notifications.notifications;
 
   const [getDataOnce, setgetDataOnce] = useState(true);
@@ -103,8 +104,8 @@ function NotificationsGuest({
   const [search, setsearch] = useState('');
 
   const JoinNow = () => {
-    store.General.setgoToScreen('joinnow');
-    store.User.Logout();
+    setGoToScreen('joinnow');
+    Logout();
   };
 
   const ItemSeparatorView = () => {

@@ -1,7 +1,6 @@
 import React, {memo} from 'react';
 import {View, Text, Pressable} from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-// import ImageSlider from 'react-native-image-slider';
 import {styles} from './styles';
 
 import store from '../../../store/index';
@@ -30,22 +29,18 @@ function diff_minutes(dt2, dt1) {
 
 function CheckDate(d) {
   let t = '';
-  let ud = new Date(d); //update date
-  let cd = new Date(); //current date
+  let ud = new Date(d);
+  let cd = new Date();
 
-  let udcy = false; //is update date  current year
+  let udcy = false;
   let udy = parseInt(ud.getFullYear());
   let cdy = parseInt(cd.getFullYear());
   if (udy == cdy) {
     udcy = true;
   }
-  // && min < 1440 // 1 daya minure
-  let sd = ud; //start date
-  let ed = cd; //end date
-  let ics = compare(sd, ed); //is check date
-  // console.log('updated date : ', moment(ud).format('YYYY-MM-DD hh:mm:ss a'));
-  // console.log('currentdate : ', moment(cd).format('YYYY-MM-DD hh:mm:ss a'));
-  // console.log('ics ', ics);
+  let sd = ud;
+  let ed = cd;
+  let ics = compare(sd, ed);
 
   if (ics == 'greater') {
     if (udcy) {
@@ -55,12 +50,7 @@ function CheckDate(d) {
     }
   } else {
     let min = diff_minutes(ed, sd);
-    // console.log('minutes: ', min);
-    // if (min >= 0 && min <= 1) {
-    // t = 'Just now';
-    // } else if (min > 1) {
     t = moment(ud).format('hh:mm a');
-    // }
   }
 
   return t;
@@ -75,7 +65,6 @@ function dateConvert(timestamp) {
 }
 
 export default memo(Card);
-
 function Card({
   item,
   index,
@@ -86,6 +75,7 @@ function Card({
   setsearch,
   closeSwipe,
 }) {
+  const {setMessages, setpasObj} = store.User;
   const guest = require('../../../assets/images/drawer/guest/img.png');
   const currentUserId = user._id;
   let userObj = null;
@@ -216,11 +206,10 @@ function Card({
 
   return (
     <Pressable
-      // disabled={userObj ? false : true}
       onPress={() => {
         closeSwipe();
-        store.User.setMessages([]);
-        store.User.setpasObj({
+        setMessages([]);
+        setpasObj({
           obj: item,
           title: title,
           rid: userObj?._id || '',

@@ -56,7 +56,7 @@ class user {
   @observable vuser = false;
   @observable fscreen = '';
 
-  @observable dlc = false; //feletechat loader
+  @observable dlc = false;
   @action setdlc = obj => {
     this.dlc = obj;
   };
@@ -152,10 +152,6 @@ class user {
       ?.then(resp => {
         this.setFollowerLoader(false);
         setrfrsh(false);
-        // console.log(
-        //   `response GET Followers   ${db.apis.GET_FOLLOWERS + uid} : `,
-        //   resp.data,
-        // );
         let dt = resp.data.follower || [];
         setgetdata(true);
         this.setfollowers(dt);
@@ -170,8 +166,6 @@ class user {
           msg,
         );
         if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
         if (msg == 'No records found') {
@@ -179,8 +173,6 @@ class user {
           this.settotalfollowers(0);
           return;
         }
-
-        // Alert.alert('', msg.toString());
       });
   };
   @action attemptToGetFollowing = (uid, setgetdata, setrfrsh) => {
@@ -191,12 +183,7 @@ class user {
       ?.then(resp => {
         this.setFollowerLoader(false);
         setrfrsh(false);
-        // console.log(
-        //   `response GET FOLLOWING  ${db.apis.GET_FOLLOWING + uid} : `,
-        //   resp.data,
-        // );
         let dt = resp.data.following || [];
-        // console.log('dttt flwng : ', dt);
         setgetdata(true);
         this.setfollowing(dt);
         this.settotalfollowing(dt.length);
@@ -210,8 +197,6 @@ class user {
           msg,
         );
         if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
-
           return;
         }
         if (msg == 'No records found') {
@@ -219,8 +204,6 @@ class user {
           this.settotalfollowing(0);
           return;
         }
-
-        // Alert.alert('', msg.toString());
       });
   };
   @action attemptToGetBlockUsers = (
@@ -336,12 +319,6 @@ class user {
     db.hitApi(db.apis.BLOCK_USER + c, 'put', {}, this.authToken)
       ?.then(resp => {
         this.setBlockLoader(false);
-        // console.log(
-        //   `response blockUser  ${db.apis.BLOCK_USER + c} : `,
-        //   resp.data,
-        // );
-        // let rsp = resp.data.data;
-        // this.removeblockUsers(ind);
         suc();
       })
       .catch(err => {
@@ -350,10 +327,8 @@ class user {
         console.log(`Error in blockUser  ${db.apis.BLOCK_USER} ${c}  : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   }
@@ -371,10 +346,6 @@ class user {
     db.hitApi(db.apis.GET_All_Meesages + params, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setmessagesLoader(false);
-        // console.log(
-        //   `response GetAllMessages ${db.apis.GET_All_Meesages + params} : `,
-        //   resp.data.data,
-        // );
         let dt = resp.data.data || [];
         setgetdata(true);
         setData(dt);
@@ -391,8 +362,6 @@ class user {
           msg,
         );
         if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
-
           return;
         }
         if (msg == 'No records found') {
@@ -400,8 +369,6 @@ class user {
           setgetdata(true);
           return;
         }
-
-        // Alert.alert('', msg.toString());
       });
   };
 
@@ -409,12 +376,7 @@ class user {
     console.log('ReadAllMessages: ', 'true');
 
     db.hitApi(db.apis.READ_All_Meesages + params, 'put', {}, this.authToken)
-      ?.then(resp => {
-        // console.log(
-        //   `response ReadAllMessages ${db.apis.READ_All_Meesages + params} : `,
-        //   resp.data,
-        // );
-      })
+      ?.then(resp => {})
       .catch(err => {
         let msg = err.response.data.message || err.response.status || err;
         console.log(
@@ -423,7 +385,6 @@ class user {
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
       });
@@ -448,7 +409,6 @@ class user {
   @persist('object') @observable pswd = '';
   @persist('object') @observable sp = false;
 
-  //other users
   @observable reviewLoader = false;
   @observable tripsLoader = false;
   @observable photosLoader = false;
@@ -510,7 +470,6 @@ class user {
     this.trips = obj;
   };
   @action addtrips = obj => {
-    // this.trips.unshift(obj);
     this.trips.push(obj);
   };
   @action updatetrips = (obj, ind) => {
@@ -567,8 +526,6 @@ class user {
           msg,
         );
         if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
-
           return;
         }
         if (msg == 'No records found') {
@@ -576,8 +533,6 @@ class user {
           this.setreview([]);
           return;
         }
-        // seterror(msg.toString())
-        // Alert.alert('', msg.toString());
       });
   };
 
@@ -605,8 +560,6 @@ class user {
           msg,
         );
         if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
-
           return;
         }
         if (msg == 'No records found') {
@@ -614,8 +567,6 @@ class user {
           this.settrips([]);
           return;
         }
-
-        // Alert.alert('', msg.toString());
       });
   };
 
@@ -662,7 +613,6 @@ class user {
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
         if (msg == 'No records found') {
@@ -670,7 +620,6 @@ class user {
           this.setphotos([]);
           return;
         }
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   };
@@ -678,12 +627,9 @@ class user {
   @action titleCase(str) {
     var splitStr = str.toLowerCase().split(' ');
     for (var i = 0; i < splitStr.length; i++) {
-      // You do not need to check if i is larger than splitStr length, as your for does that for you
-      // Assign it back to the array
       splitStr[i] =
         splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
     }
-    // Directly return the joined string
     return splitStr.join(' ');
   }
 
@@ -795,10 +741,6 @@ class user {
     db.hitApi(db.apis.GET_ALL_HOME_TRIPS + params, 'get', {}, this.authToken)
       ?.then(resp => {
         this.setHomeLoader(false);
-        // console.log(
-        //   `response Get AllHomeTrip Guest  ${db.apis.GET_ALL_HOME_TRIPS}  : `,
-        //   resp.data.data.length,
-        // );
         let dt = resp.data.data;
 
         this.setHomeTrips(dt);
@@ -829,53 +771,8 @@ class user {
 
         Alert.alert('', msg.toString());
       });
-
-    // console.log('Get AllHomeTrip : ', 'true');
-    // this.setHomeLoader(true);
-
-    // db.hitApi(db.apis.GET_ALL_HOME_TRIPS_GUEST, 'get', {}, this.authToken)
-    //   ?.then(resp => {
-    //     this.setHomeLoader(false);
-
-    //     console.log(
-    //       `response Get AllHomeTrip   ${db.apis.GET_ALL_HOME_TRIPS} : `,
-    //       resp.data,
-    //     );
-    //     let dt = resp.data.data;
-
-    //     this.setHomeTrips(dt);
-    //     setgetdata(true);
-
-    //     this.allGetGeneralData();
-    //     store.Notifications.attemptToGetNotificationsGuest();
-    //   })
-    //   .catch(err => {
-    //     this.setHomeLoader(false);
-
-    //     let msg = err.response.data.message || err.response.status || err;
-    //     console.log(
-    //       `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS} : `,
-    //       msg,
-    //     );
-    //     if (msg == 503 || msg == 500) {
-    //       Alert.alert('', 'Server not response');
-    //       // store.General.setisServerError(true);
-    //       return;
-    //     }
-    //     if (msg == 'No records found') {
-    //       setgetdata(true);
-    //       this.setHomeTrips([]);
-
-    //       this.allGetGeneralData();
-
-    //       return;
-    //     }
-    //     // seterror(msg.toString())
-    //     Alert.alert('', msg.toString());
-    //   });
   };
 
-  //
   @action setphotoso = obj => {
     this.photoso = obj;
   };
@@ -931,7 +828,6 @@ class user {
     }, 1000);
   };
 
-  //modal actions
   @action attemptToDeletePhotos = (obj, suc) => {
     console.log('deletePhoto  : ', 'true');
 
@@ -967,11 +863,9 @@ class user {
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
 
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   };
@@ -1013,11 +907,9 @@ class user {
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
 
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   };
@@ -1065,11 +957,9 @@ class user {
         console.log(`Error in EditComment ${db.apis.EDIT_REPLY + id} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
 
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   };
@@ -1124,11 +1014,9 @@ class user {
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
 
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   };
@@ -1172,11 +1060,9 @@ class user {
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
 
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   };
@@ -1242,7 +1128,6 @@ class user {
             type: 'text',
             chatRoomId: dt.roomName,
           };
-          // dt._id
           this.SendSecodMessage(body, dt.roomName, suc);
         }
       })
@@ -1259,7 +1144,6 @@ class user {
         this.setHomeModalLoder(false);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
         Alert.alert('', msg.toString());
@@ -1318,7 +1202,6 @@ class user {
 
     db.hitApi(db.apis.CREATE_TRIP, 'post', body, this.authToken)
       ?.then(resp => {
-        // this.setctripLoader(false);
         console.log(
           `response create trip  ${db.apis.CREATE_TRIP} : `,
           resp.data,
@@ -1340,15 +1223,12 @@ class user {
       .catch(err => {
         this.setctripLoader(false);
 
-        // err.response.data.message || err.response.status ||
         let msg = err;
         console.log(`Error in create trip ${db.apis.CREATE_TRIP} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   };
@@ -1389,7 +1269,6 @@ class user {
         .catch(err => {
           this.setctripLoader(false);
 
-          // err.response.data.message || err.response.status ||
           let msg = err;
           console.log(
             `Error in upload trips photo ${db.apis.IMAGE_UPLOAD} : `,
@@ -1397,10 +1276,8 @@ class user {
           );
           if (msg == 503 || msg == 500) {
             Alert.alert('', 'Server not response');
-            // store.General.setisServerError(true);
             return;
           }
-          // seterror(msg.toString())
           Alert.alert('', msg.toString());
         });
     });
@@ -1446,10 +1323,8 @@ class user {
           );
           if (msg == 503 || msg == 500) {
             Alert.alert('', 'Server not response');
-            // store.General.setisServerError(true);
             return;
           }
-          // seterror(msg.toString())
           Alert.alert('', msg.toString());
         });
     });
@@ -1481,22 +1356,11 @@ class user {
         console.log(`Error in UPDATE_TRIP ${db.apis.UPDATE_TRIP} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   };
-
-  // @action attemptToDeleteTrip = (item, ind, suc) => {
-  //   console.log('delete  save trip  : ', 'true');
-  //   this.setdLoader(true);
-  //   setTimeout(() => {
-  //     this.setdLoader(false);
-  // /    this.deletesetsaveTrips(ind, suc);
-  //   }, 1000);
-  // };
 
   @action attemptToDeleteTrip = (body, tid, index, suc) => {
     console.log('delete trip body  : ', body);
@@ -1523,10 +1387,8 @@ class user {
         console.log(`Error in delete trip ${db.apis.DELETE_TRIP} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   };
@@ -1591,10 +1453,8 @@ class user {
           );
           if (msg == 503 || msg == 500) {
             Alert.alert('', 'Server not response');
-            // store.General.setisServerError(true);
             return;
           }
-          // seterror(msg.toString())
           Alert.alert('', msg.toString());
         });
     });
@@ -1612,11 +1472,9 @@ class user {
   @observable loginLoader = false;
   @observable regLoader = false;
 
-  @persist('object') @observable location = false; //set  delivery adress location
-  @observable cl = false; //curemt location
-  @observable rd = false; //curemt resturant detail
-  // @persist('object')
-  // @persist('object')
+  @persist('object') @observable location = false;
+  @observable cl = false;
+  @observable rd = false;
 
   @persist('object') @observable polygons = [];
 
@@ -1631,8 +1489,8 @@ class user {
   @persist @observable authToken = '';
 
   @observable isGetAllDatainSplash = false;
-  @observable total = 0; //total uploaded image length
-  @observable done = 0; //done uloaded image counter
+  @observable total = 0;
+  @observable done = 0;
   @observable isAllImageUploadDone = false;
 
   @action setemail = obj => {
@@ -1767,7 +1625,7 @@ class user {
 
   addUser(token, user, c) {
     const chk = c || '';
-    store.General.setgoToScreen(chk == '' ? 'home' : chk);
+    store.General.setGoToScreen(chk == '' ? 'home' : chk);
     this.addauthToken(token);
     this.setUser(user);
     store.Trips.setsaveTrips(user.savedTrips || []);
@@ -1785,18 +1643,9 @@ class user {
         console.log('get all  data  : ', c);
 
         if (c == 'user') {
-          // this.attemptToGetUser();
-          // store.Orders.getOrderById();
-          // this.attemptToGetFavtList();
-          // this.attemptToGetAdressList()
         }
         if (store.User.location) {
-          // let city = store.User.location.city;
-          // store.Food.getSliderImages(city);
-          // store.Promos.getPromoById();
         }
-        // this.attemptToSubTopic();
-        // this.getCitiesandAreas();
       }
     });
   };
@@ -1810,11 +1659,6 @@ class user {
         this.setCityAreaData(resp.data.data);
         this.setCityAreaLoader(false);
         this.setisGetAllDatainSplash(true);
-        // this.user = resp.data.data[0];
-        // this.user.clear_account = resp.data.data[0].clear_account;
-        // this.user.status = resp.data.data[0].status;
-        // this.user.profile_image = resp.data.data[0].profile_image;
-        // this.user.rating = resp.data.data[0].rating;
       })
       .catch(err => {
         this.setCityAreaLoader(false);
@@ -1840,11 +1684,6 @@ class user {
         console.log(`response  ${db.apis.GET_USER_BY_ID} : `, resp.data);
         let u = resp.data.data[0];
         this.setUser(u);
-        // if (u.isActive) {
-        //   this.setUser(u);
-        // } else {
-        //   alert('block');
-        // }
       })
       .catch(err => {
         console.log(
@@ -1869,7 +1708,6 @@ class user {
           `response  ${db.apis.GET_FAVRT_FOOD_LIST_BY_USER_ID} : `,
           resp.data,
         );
-        // this.setfvrtList(resp.data.data[0]);
       })
       .catch(err => {
         this.setfvrtloader(false);
@@ -1883,7 +1721,6 @@ class user {
           return;
         }
         if (msg == 'No records found') {
-          // this.setfvrtList([]);
           return;
         }
         Alert.alert('', msg);
@@ -1905,7 +1742,6 @@ class user {
           `response  ${db.apis.GET_ADDRESS_BY_USER_ID} : `,
           resp.data,
         );
-        // this.setadrsList(resp.data.data[0]);
       })
       .catch(err => {
         this.setadrsloader(false);
@@ -1916,7 +1752,6 @@ class user {
           return;
         }
         if (msg == 'No records found') {
-          // this.setfvrtList([]);
           return;
         }
         Alert.alert('', msg);
@@ -1940,7 +1775,6 @@ class user {
           `response  ${db.apis.SET_FAVRT_FOOD_LIST_BY_USER_ID} : `,
           resp.data,
         );
-        // this.setfvrtList(resp.data.data[0]);
       })
       .catch(err => {
         this.setfvrtloader(false);
@@ -1974,7 +1808,6 @@ class user {
           `response  ${db.apis.REMOVE_FAVRT_FOOD_LIST_BY_USER_ID} : `,
           resp.data,
         );
-        // this.setfvrtList(resp.data.data[0]);
       })
       .catch(err => {
         this.setfvrtloader(false);
@@ -2007,7 +1840,6 @@ class user {
           `response  ${db.apis.ADD_ADDRESS_BY_USER_ID} : `,
           resp.data,
         );
-        // this.setadrsList(resp.data.data[0]);
       })
       .catch(err => {
         this.setadrsloader(false);
@@ -2037,7 +1869,6 @@ class user {
           `response  ${db.apis.REMOVE_ADDRESS_BY_USER_ID} : `,
           resp.data,
         );
-        // this.adrsList(resp.data.data[0]);
       })
       .catch(err => {
         this.setadrsloader(false);
@@ -2060,7 +1891,6 @@ class user {
 
     db.hitApi(db.apis.LOGIN_USER, 'post', body, null)
       ?.then((resp: any) => {
-        // console.log(`response  ${db.apis.LOGIN_USER} : `, resp.data);
         this.setloginLoader(false);
         this.addUser(resp.data.token, resp.data.doc);
         store.Orders.getOrderById();
@@ -2182,8 +2012,6 @@ class user {
         } else {
           this.setpswd('');
         }
-        // this.allGetGeneralData();
-        // this.allGetGeneralUserData(rsp._id);
       })
       .catch(err => {
         this.setregLoader(false);
@@ -2330,12 +2158,8 @@ class user {
         const msg = err.response.data.message || err.response.status;
         console.log(`Error in get all plan ${db.apis.GET_All_Plan} : `, msg);
         if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
-
-        // Alert.alert('', msg.toString());
       });
   }
 
@@ -2360,14 +2184,12 @@ class user {
         console.log(`Error in check promo  ${db.apis.CHECK_PROMO} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
         if (msg == 'No records found') {
           Alert.alert('', 'Promo code not exist!');
           return;
         }
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   }
@@ -2407,10 +2229,8 @@ class user {
         console.log(`Error in update user ${db.apis.UPDATE_USER} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   }
@@ -2471,15 +2291,12 @@ class user {
       })
       .catch(err => {
         this.setregLoader(false);
-        // console.log(`Error in upload image ${db.apis.IMAGE_UPLOAD} : `, err);
         let msg = err.response.data.message || err.response.status || err;
         console.log(`Error in upload image ${db.apis.IMAGE_UPLOAD} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   }
@@ -2508,10 +2325,8 @@ class user {
         console.log(`Error in update user ${db.apis.UPDATE_USER} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   }
@@ -2527,10 +2342,6 @@ class user {
           ?.then(resp => {
             this.setucRef(false);
 
-            // console.log(
-            //   `response get card info  ${db.apis.CARD_INFO + email} : `,
-            //   resp.data.data.data[0].card,
-            // );
             let rsp = resp.data.data;
             this.setuserCardInfo(rsp.data);
           })
@@ -2545,10 +2356,6 @@ class user {
     } else {
       db.hitApi(db.apis.CARD_INFO + email, 'get', {}, token)
         ?.then(resp => {
-          // console.log(
-          //   `response get card info  ${db.apis.CARD_INFO + email} : `,
-          //   resp.data.data.data[0].card,
-          // );
           let rsp = resp.data.data;
           this.setuserCardInfo(rsp.data);
         })
@@ -2574,11 +2381,10 @@ class user {
         },
         body: JSON.stringify(body),
       });
-      // this.setregLoader(false);
       console.log(`response Buy Plan   ${db.apis.BUY_PLAN} : `, resp.data);
       let rsp = resp?.data;
-      let cid = rsp?.customerId; //customer id
-      let cs = rsp?.clientSecret; //client secret
+      let cid = rsp?.customerId;
+      let cs = rsp?.clientSecret;
       suc({cid, cs}, obj);
     } catch (err) {
       this.setregLoader(false);
@@ -2588,10 +2394,8 @@ class user {
       console.log(`Error in Buy Plan ${db.apis.BUY_PLAN} : `, msg);
       if (msg == 503 || msg == 500) {
         Alert.alert('', 'Server not response');
-        // store.General.setisServerError(true);
         return;
       }
-      // seterror(msg.toString())
       Alert.alert('', msg.toString());
     }
   }
@@ -2603,10 +2407,6 @@ class user {
     db.hitApi(db.apis.GET_USER_BY_ID + uid, 'get', {}, token)
       ?.then(resp => {
         this.setregLoader(false);
-        // console.log(
-        //   `response get user by id  ${db.apis.GET_USER_BY_ID + uid} : `,
-        //   resp.data,
-        // );
         let rsp = resp.data.data[0];
 
         if (rsp.status == 'blocked') {
@@ -2630,14 +2430,12 @@ class user {
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
         if (msg == 'No records found') {
           this.Logout();
           return;
         }
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   }
@@ -2674,7 +2472,6 @@ class user {
           msg,
         );
         if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
           return;
         }
         if (msg == 'No records found') {
@@ -2701,10 +2498,8 @@ class user {
         console.log(`Error in update user ${db.apis.UPDATE_USER} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   }
@@ -2726,10 +2521,8 @@ class user {
         console.log(`Error in update user ${db.apis.UPDATE_USER} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   }
@@ -2742,7 +2535,6 @@ class user {
 
     db.hitApi(db.apis.IS_PHONE_EXIST + phone, 'get', {}, null)
       ?.then(resp => {
-        // this.setregLoader(false);
         console.log(
           `isPhoneExist res :  ${db.apis.IS_PHONE_EXIST}${phone} : `,
           resp.data,
@@ -2758,10 +2550,8 @@ class user {
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   }
@@ -2823,7 +2613,7 @@ class user {
         console.log('Logout resp true');
         this.setLogoutLoader(false);
         store.General.setIsEmailPopup(false);
-        store.General.setgoToScreen('home');
+        store.General.setGoToScreen('home');
         this.Logout();
       })
       .catch(err => {
@@ -2863,7 +2653,6 @@ class user {
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
         if (msg == 'Pin Code is incorrect.') {
@@ -2871,7 +2660,6 @@ class user {
 
           return;
         }
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   }
@@ -2893,10 +2681,8 @@ class user {
         console.log(`Error in Update Psswd ${db.apis.UPD_PSWD} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   }
@@ -2910,7 +2696,7 @@ class user {
     store.Search.clearSearches();
     store.Notifications.clearNotifications();
     store.Offers.clearOffers();
-    store.General.setIsCurrentCahtId('');
+    store.General.setIsCurrentChatId('');
 
     this.setchk('');
     this.setfuser('');
@@ -3009,7 +2795,6 @@ class user {
   }
 
   attemptToCancelSub(body, uid) {
-    // let body = {...this.user, ...body};
     console.log('cancel sub   body : ', body);
     this.setregLoader(true);
     db.hitApi(db.apis.UPDATE_USER + uid, 'put', body, this.authToken)
@@ -3022,11 +2807,6 @@ class user {
 
         let rsp = resp.data.data;
         this.setUser(rsp);
-
-        // store.Notifications.attemptToGetNotifications(
-        //   store.User.user._id,
-        //   () => {},
-        // );
       })
       .catch(err => {
         this.setregLoader(false);
@@ -3034,10 +2814,8 @@ class user {
         console.log(`Error in cancel sub  ${db.apis.UPDATE_USER} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   }
@@ -3109,16 +2887,12 @@ class user {
         let msg = err.response.data.message || err.response.status;
         console.log(`Error in get all plan ${db.apis.GET_STATE} : `, msg);
         if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
-
           return;
         }
         if (msg == 'No records found') {
           store.Filters.settripLocation([]);
           return;
         }
-
-        // Alert.alert('', msg.toString());
       });
   }
 
@@ -3135,16 +2909,12 @@ class user {
         const msg = err.response.data.message || err.response.status;
         console.log(`Error in get  activity ${db.apis.GET_ACTIVITY} : `, msg);
         if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
-
           return;
         }
         if (msg == 'No records found') {
           store.Filters.setactivity([]);
           return;
         }
-
-        // Alert.alert('', msg.toString());
       });
   }
 
@@ -3162,16 +2932,12 @@ class user {
         const msg = err.response.data.message || err.response.status;
         console.log(`Error in get  Species ${db.apis.GET_SPECIES} : `, msg);
         if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
-
           return;
         }
         if (msg == 'No records found') {
           store.Filters.setspecies([]);
           return;
         }
-        // seterror(msg.toString())
-        // Alert.alert('', msg.toString());
       });
   }
 
@@ -3199,10 +2965,8 @@ class user {
         );
         if (msg == 503 || msg == 500) {
           Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
           return;
         }
-        // seterror(msg.toString())
         Alert.alert('', msg.toString());
       });
   }
@@ -3258,77 +3022,6 @@ class user {
 
       this.updateUser2(body, seterror, sp, cpm);
     }, 2000);
-
-    // if (imgArr.length > 0) {
-    //   let ra = [];
-    //   this.setregLoader(true);
-    //   try {
-    //     imgArr.map((e, i, a) => {
-    //       const data = new FormData();
-    //       const newFile = {
-    //         uri: e.uri,
-    //         type: e.type,
-    //         name: e.fileName,
-    //       };
-    //       data.append('files', newFile);
-    //       fetch(db.apis.BASE_URL + db.apis.IMAGE_UPLOAD, {
-    //         method: 'post',
-    //         body: data,
-    //         headers: {
-    //           'Content-Type': 'multipart/form-data',
-    //         },
-    //       })
-    //         .then(response => response.json())
-    //         .then(responseData => {
-    //           let c = responseData.data[0].imgrUrl;
-    //           if (e.chk == 'Profile') {
-    //             ra.push({c: e.chk, uri: c});
-    //           }
-    //           if (i == a.length - 1) {
-    //             if (ra.length > 0) {
-    //               if (ra[0].c == 'Profile') {
-    //                 const body = {
-    //                   photo: ra[0].uri,
-    //                 };
-    //                 this.updateUser(body, ra[0].c,seterror,setPhoto1Upload, setup,setuc);
-    //                 return;
-    //               }
-
-    //               if (ra[0].c == 'CnicF') {
-    //                 const body = {
-    //                 cnic_front_image: ra[0].uri,
-    //                 };
-    //                 this.updateUser(body, ra[0].c,,seterror,setPhoto1Upload);
-    //                 return;
-    //               }
-
-    //             }
-    //           }
-    //         })
-    //         .catch(err => {
-    //           this.setregLoader(false);
-    //           let msg = err.response.data.message || err.response.status;
-    //           console.log('Error in Upload Images arr', msg);
-    //           if (msg == 503 || msg == 500) {
-    //             store.General.setisServerError(true);
-    //             return;
-    //           }
-    //           // seterror(msg.toString())
-    //           Alert.alert('', msg.toString());
-    //         });
-    //     });
-    //   } catch (err) {
-    //     this.setregLoader(false);
-    //     let msg = err.response.data.message || err.response.status;
-    //     console.log('Error in Upload Images arr', msg);
-    //     if (msg == 503 || msg == 500) {
-    //       store.General.setisServerError(true);
-    //       return;
-    //     }
-    //     // seterror(msg.toString())
-    //     Alert.alert('', msg.toString());
-    //   }
-    // }
   }
 
   @action.bound
@@ -3342,110 +3035,7 @@ class user {
     this.setUser(myObject);
     cpm();
     sp(false);
-    // hitApi('user/' + this.user._id, 'put', body, this.authToken)
-    //   ?.then((resp: any) => {
-    //     console.log('Update user  resp : ', resp.data.data);
-    //     this.setregLoader(false);
-    //     // this.setUser(resp.data.data);
-    //   })
-    //   .catch(err => {
-    //     // this.setregLoader(false);
-    //     //     let msg = err.response.data.message || err.response.status;
-    //     //     console.log(`Error in ${db.apis.REGISTER_USER} : `, msg);
-    //     //     if (msg == 503 || msg == 500) {
-    //     //       store.General.setisServerError(true);
-    //     //       return;
-    //     //     }
-    //     //     seterror(msg.toString())
-    //     //     // Alert.alert('', msg.toString());
-    //   });
   }
-
-  // attemptToUploadImageEP(body, imgArr, seterror, suc) {
-  //   this.setregLoader(true);
-
-  //   // if (imgArr.length > 0) {
-
-  //   // } else {
-  //   setTimeout(() => {
-  //     let myObject = {...this.user, ...body};
-
-  //     this.setUser(myObject);
-  //     this.setregLoader(false);
-  //     suc();
-  //   }, 1000);
-  //   }
-
-  // if (imgArr.length > 0) {
-  //   let ra = [];
-  //   this.setregLoader(true);
-  //   try {
-  //     imgArr.map((e, i, a) => {
-  //       const data = new FormData();
-  //       const newFile = {
-  //         uri: e.uri,
-  //         type: e.type,
-  //         name: e.fileName,
-  //       };
-  //       data.append('files', newFile);
-  //       fetch(db.apis.BASE_URL + db.apis.IMAGE_UPLOAD, {
-  //         method: 'post',
-  //         body: data,
-  //         headers: {
-  //           'Content-Type': 'multipart/form-data',
-  //         },
-  //       })
-  //         .then(response => response.json())
-  //         .then(responseData => {
-  //           let c = responseData.data[0].imgrUrl;
-  //           if (e.chk == 'Profile') {
-  //             ra.push({c: e.chk, uri: c});
-  //           }
-  //           if (i == a.length - 1) {
-  //             if (ra.length > 0) {
-  //               if (ra[0].c == 'Profile') {
-  //                 const body = {
-  //                   photo: ra[0].uri,
-  //                 };
-  //                 this.updateUser(body, ra[0].c,seterror,setPhoto1Upload, setup,setuc);
-  //                 return;
-  //               }
-
-  //               if (ra[0].c == 'CnicF') {
-  //                 const body = {
-  //                 cnic_front_image: ra[0].uri,
-  //                 };
-  //                 this.updateUser(body, ra[0].c,,seterror,setPhoto1Upload);
-  //                 return;
-  //               }
-
-  //             }
-  //           }
-  //         })
-  //         .catch(err => {
-  //           this.setregLoader(false);
-  //           let msg = err.response.data.message || err.response.status;
-  //           console.log('Error in Upload Images arr', msg);
-  //           if (msg == 503 || msg == 500) {
-  //             store.General.setisServerError(true);
-  //             return;
-  //           }
-  //           // seterror(msg.toString())
-  //           Alert.alert('', msg.toString());
-  //         });
-  //     });
-  //   } catch (err) {
-  //     this.setregLoader(false);
-  //     let msg = err.response.data.message || err.response.status;
-  //     console.log('Error in Upload Images arr', msg);
-  //     if (msg == 503 || msg == 500) {
-  //       store.General.setisServerError(true);
-  //       return;
-  //     }
-  //     // seterror(msg.toString())
-  //     Alert.alert('', msg.toString());
-  //   }
-  // }
 
   changePasword(body, sucs, invldcp) {
     console.log('CHANGE_PASSWORD user body : ', body);
@@ -3453,10 +3043,6 @@ class user {
 
     db.hitApi(db.apis.CHANGE_PASSWORD, 'put', body, store.User.authToken)
       ?.then(resp => {
-        // console.log(
-        //   `response CHANGE_PASSWORD  ${db.apis.CHANGE_PASSWORD} : `,
-        //   resp.data,
-        // );
         this.setregLoader(false);
         sucs();
         store.Notifications.attemptToGetNotifications(
@@ -3508,35 +3094,9 @@ class user {
   };
 
   getData(seterror) {
-    // console.log('get home data');
-    // this.setregLoader(true);
-
-    // setTimeout(() => {
-    //   this.setregLoader(false);
     let token = '';
     let rslt = 'guest';
     this.addUser(token, rslt);
-    // Alert.alert('', msg.toString());
-    // seterror('asa as');
-    // }, 1200);
-
-    // db.hitApi(db.apis.REGISTER_USER, 'post', body, null)
-    //   ?.then(resp => {
-    //     console.log(`response  ${db.apis.REGISTER_USER} : `, resp.data);
-    //     this.setregLoader(false);
-    //     this.addUser(resp.data.token, resp.data.data);
-    //   })
-    //   .catch(err => {
-    //     this.setregLoader(false);
-    //     let msg = err.response.data.message || err.response.status;
-    //     console.log(`Error in ${db.apis.REGISTER_USER} : `, msg);
-    //     if (msg == 503 || msg == 500) {
-    //       store.General.setisServerError(true);
-    //       return;
-    //     }
-    //     seterror(msg.toString())
-    //     // Alert.alert('', msg.toString());
-    //   });
   }
 }
 

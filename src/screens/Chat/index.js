@@ -2,18 +2,14 @@ import React, {useEffect, useState, useRef} from 'react';
 import {
   View,
   Text,
-  SafeAreaView,
   TouchableOpacity,
   Image,
   Alert,
   Pressable,
   TextInput,
   FlatList,
-  ScrollView,
   Keyboard,
-  Modal as MModal,
   RefreshControl,
-  ActivityIndicator,
   Platform,
 } from 'react-native';
 import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
@@ -83,10 +79,16 @@ function Chat(props) {
 
   const toast = useRef(null);
   const scrollRef = useRef(null);
-  const {isInternet} = store.General;
-  const {homeModalLoder} = store.User;
-  const {pasObj, setpasObj, user, setSendMessageLoader, sendMessageLoader} =
-    store.User;
+  const {isInternet, setIsCurrentChatId} = store.General;
+  const {
+    pasObj,
+    setpasObj,
+    user,
+    setSendMessageLoader,
+    sendMessageLoader,
+    homeModalLoder,
+  } = store.User;
+
   const obj = pasObj?.obj || false;
   const headerTitle = pasObj?.title || '';
   const rid = pasObj?.rid || '';
@@ -202,7 +204,7 @@ function Chat(props) {
   };
 
   useEffect(() => {
-    store.General.setIsCurrentCahtId(rid);
+    setIsCurrentChatId(rid);
     var initState = true;
     var initState2 = true;
     const curentUserId = user._id;
@@ -265,7 +267,7 @@ function Chat(props) {
       observer();
       observer2();
       setpasObj(false);
-      store.General.setIsCurrentCahtId('');
+      setIsCurrentChatId('');
     };
   }, []);
   useEffect(() => {

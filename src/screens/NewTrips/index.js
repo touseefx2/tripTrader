@@ -193,23 +193,25 @@ function NewTrips(props) {
   ];
 
   const toast = useRef(null);
-  const toastduration = 700;
-  let editTrip = store.User.editTripObj;
-  let isEdit = store.User.editTrip ? true : false;
 
   const [isDisableToday2, setisDisableToday2] = useState(false);
 
-  let headerTitle = !isEdit ? 'New Trip' : 'Edit Trip';
-  let internet = store.General.isInternet;
-  let user = store.User.user;
-
-  let maxModalHeight = theme.window.Height - 100;
+  const {isInternet, setGoToScreen} = store.General;
+  const {
+    user,
+    Logout,
+    seteditTrip,
+    seteditTripObj,
+    ctripsLoader,
+    editTripObj,
+    editTrip,
+  } = store.User;
+  const headerTitle = !editTrip ? 'New Trip' : 'Edit Trip';
+  const maxModalHeight = theme.window.Height - 100;
   const [modalHeight, setmodalHeight] = useState(0);
 
   const [location, setlocation] = useState(false);
   const [title, settitle] = useState('');
-
-  const typeData = [...store.Filters.activity];
 
   const {activityList} = store.Filters;
   const [tripType, settripType] = useState('');
@@ -275,7 +277,7 @@ function NewTrips(props) {
   const [modalChk, setmodalChk] = useState(false);
   const [isModal, setisModal] = useState(false);
   const closeModalg = () => {
-    if (!loader) {
+    if (!ctripsLoader) {
       setmodalChk(false);
       setisModal(false);
       setmodalHeight(0);
@@ -301,18 +303,16 @@ function NewTrips(props) {
 
   useEffect(() => {
     if (user == 'guest') {
-      store.General.setgoToScreen('guestaccess');
-      store.User.Logout();
+      setGoToScreen('guestaccess');
+      Logout();
       return;
     }
   }, []);
 
-  const loader = store.User.ctripsLoader;
-
   useEffect(() => {
     return () => {
-      store.User.seteditTrip(false);
-      store.User.seteditTripObj(false);
+      seteditTrip(false);
+      seteditTripObj(false);
     };
   }, []);
 
@@ -332,9 +332,9 @@ function NewTrips(props) {
     return obj;
   }
   useEffect(() => {
-    if (isEdit == true) {
-      let d = editTrip.data;
-      let index = editTrip.index;
+    if (editTrip == true) {
+      let d = editTripObj.data;
+      let index = editTripObj.index;
 
       let tt = findItm(d.tradeType || '', activityList, 'n');
       let loc = d.location ? d.location : {};
@@ -444,7 +444,7 @@ function NewTrips(props) {
       setisSetUnavailable(objct);
       setstatus(d.status);
     }
-  }, [isEdit]);
+  }, [editTrip]);
 
   useEffect(() => {
     if (city != '' && State != '') {
@@ -829,7 +829,6 @@ function NewTrips(props) {
         };
         const res = await MultipleImagePicker.openPicker(options);
         if (res) {
-          console.log('mutipicker image res true  ', res);
           let data = photos.slice();
           let ar = data;
 
@@ -848,7 +847,7 @@ function NewTrips(props) {
               })
                 .then(async res => {
                   let imageObject = {uri: res, fileName, type};
-                  console.log('Compress image  : ', imageObject);
+
                   let isAlreadySelectimage = data.find(
                     x => x.fileName == fileName,
                   )
@@ -870,7 +869,6 @@ function NewTrips(props) {
             });
           } else {
             res.map((e, i, a) => {
-              console.log('e : ', e);
               let uri = e.path;
               let fileName = e.fileName;
               let type = e.mime;
@@ -882,7 +880,7 @@ function NewTrips(props) {
               })
                 .then(async res => {
                   let imageObject = {uri: res, fileName, type};
-                  console.log('Compress image  : ', imageObject);
+
                   if (chk == 'photo') {
                     ar.push(imageObject);
                   }
@@ -919,7 +917,7 @@ function NewTrips(props) {
   };
 
   const closeReviewModal = c => {
-    if (!loader) {
+    if (!ctripsLoader) {
       setmodalHeight(0);
       setisReviewTrip(false);
       setisTripCreate(false);
@@ -1114,15 +1112,15 @@ function NewTrips(props) {
           store.User.attemptToUpdateTripUploadImage(
             obj,
             p2,
-            editTrip.data._id,
-            editTrip.index,
+            editTripObj.data._id,
+            editTripObj.index,
             setIsTripCreatSuc,
           );
         } else {
           store.User.attemptToUpdateTrip(
             obj,
-            editTrip.data._id,
-            editTrip.index,
+            editTripObj.data._id,
+            editTripObj.index,
             setIsTripCreatSuc,
           );
         }
@@ -1147,11 +1145,11 @@ function NewTrips(props) {
           status: 'suspended',
         };
         store.User.setctripLoader(true);
-        console.warn('update trip obj : ', obj);
+
         store.User.attemptToUpdateTrip(
           obj,
-          editTrip.data._id,
-          editTrip.index,
+          editTripObj.data._id,
+          editTripObj.index,
           goToProfile,
         );
       } else {
@@ -1170,11 +1168,11 @@ function NewTrips(props) {
           status: 'active',
         };
         store.User.setctripLoader(true);
-        console.warn('update trip obj : ', obj);
+
         store.User.attemptToUpdateTrip(
           obj,
-          editTrip.data._id,
-          editTrip.index,
+          editTripObj.data._id,
+          editTripObj.index,
           goToProfile,
         );
       } else {
@@ -1192,8 +1190,8 @@ function NewTrips(props) {
         store.User.setctripLoader(true);
         store.User.attemptToDeleteTrip(
           {},
-          editTrip.data._id,
-          editTrip.index,
+          editTripObj.data._id,
+          editTripObj.index,
           goToProfile,
         );
       } else {
@@ -1222,8 +1220,7 @@ function NewTrips(props) {
       }
     };
 
-    // console.log('drop down data : ', data);
-    let abs = Platform.OS == 'ios' ? false : true;
+    const abs = Platform.OS == 'ios' ? false : true;
     return (
       <utils.DropDown
         data={data}
@@ -1283,8 +1280,6 @@ function NewTrips(props) {
         let o = md[date];
 
         if (o !== undefined) {
-          console.warn('The key exists.');
-
           if (size < 2) {
             delete md[date];
             setmarkedDates(md);
@@ -1317,7 +1312,6 @@ function NewTrips(props) {
             return;
           }
         } else {
-          console.warn('The key does not exist.');
           let md = {...markedDates};
           if (size >= 2) {
             return;
@@ -2305,10 +2299,8 @@ function NewTrips(props) {
         } else {
           let o = md[date];
           if (o !== undefined) {
-            console.warn('The key exists.');
             delete md[date];
           } else {
-            console.warn('The key does not exist.');
             md[date] = {
               marked: false,
               selected: true,
@@ -3586,14 +3578,13 @@ function NewTrips(props) {
       paddingVertical: 12,
       width: '47%',
     };
-    let dt = editTrip.data || [];
+    let dt = editTripObj.data || [];
     let status = '';
     let ch = false;
     if (dt) {
       status = dt.status;
       ch = status == 'suspended' ? true : false;
     }
-    console.log('dttt status  : ', status);
 
     return (
       <View
@@ -3660,7 +3651,7 @@ function NewTrips(props) {
           activeOpacity={0.7}
           style={[styles.BottomButton, {opacity: isButtonDisable ? 0.5 : 1}]}>
           <Text style={styles.buttonTextBottom}>
-            {!isEdit ? 'Create Trip' : 'Save Changes'}
+            {!editTrip ? 'Create Trip' : 'Save Changes'}
           </Text>
         </TouchableOpacity>
       </>
@@ -3675,7 +3666,7 @@ function NewTrips(props) {
 
     const renderHeader = () => {
       let text = '';
-      if (!isEdit) {
+      if (!editTrip) {
         if (!isTripCreate) {
           text = 'Review Trip Details';
         } else {
@@ -3683,7 +3674,7 @@ function NewTrips(props) {
         }
       }
 
-      if (isEdit) {
+      if (editTrip) {
         if (!isTripCreate) {
           text = 'Review Trip Details';
         } else {
@@ -3694,7 +3685,7 @@ function NewTrips(props) {
       const renderCross = () => {
         return (
           <Pressable
-            disabled={loader}
+            disabled={ctripsLoader}
             style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
             onPress={() => {
               closeReviewModal('');
@@ -3755,12 +3746,8 @@ function NewTrips(props) {
                 styles.rmodalsubTitle,
                 {fontFamily: theme.fonts.fontBold},
               ]}>
-              {!isEdit ? 'Create Trip' : 'Update Trip'}
+              {!editTrip ? 'Create Trip' : 'Update Trip'}
             </Text>
-            {/*  {' '}
-            {!isEdit
-              ? 'to make the trip available for trade offers.'
-              : 'to update the trip available for trade offers'} */}
           </Text>
         </View>
       );
@@ -3945,7 +3932,7 @@ function NewTrips(props) {
       const renderButton1 = () => {
         return (
           <Pressable
-            disabled={loader}
+            disabled={ctripsLoader}
             onPress={() => {
               closeReviewModal('');
             }}
@@ -3967,20 +3954,20 @@ function NewTrips(props) {
       const renderButton2 = () => {
         return (
           <Pressable
-            disabled={loader}
-            onPress={!isEdit ? CreateTrip : UpdateTrip}
+            disabled={ctripsLoader}
+            onPress={!editTrip ? CreateTrip : UpdateTrip}
             style={({pressed}) => [
               {opacity: pressed ? 0.8 : 1.0},
               styles.ButtonContainer,
               {backgroundColor: theme.color.button1},
             ]}>
-            {loader && (
+            {ctripsLoader && (
               <ActivityIndicator size={20} color={theme.color.buttonText} />
             )}
-            {!loader && (
+            {!ctripsLoader && (
               <Text
                 style={[styles.ButtonText, {color: theme.color.buttonText}]}>
-                {!isEdit ? 'Create Trip' : 'Save Changes'}
+                {!editTrip ? 'Create Trip' : 'Save Changes'}
               </Text>
             )}
           </Pressable>
@@ -4102,7 +4089,7 @@ function NewTrips(props) {
             style={
               c ? styles.rmodalBottomContainer : styles.rmodalBottomContainer2
             }>
-            {!isEdit ? renderButton1() : renderButton11()}
+            {!editTrip ? renderButton1() : renderButton11()}
             {renderButton2()}
           </View>
         </View>
@@ -4176,7 +4163,7 @@ function NewTrips(props) {
         const renderCross = () => {
           return (
             <Pressable
-              disabled={loader}
+              disabled={ctripsLoader}
               style={({pressed}) => [
                 {opacity: pressed ? 0.7 : 1.0},
                 [
@@ -4284,7 +4271,7 @@ function NewTrips(props) {
           return (
             <>
               <TouchableOpacity
-                disabled={loader}
+                disabled={ctripsLoader}
                 onPress={SuspendTrip}
                 activeOpacity={0.7}
                 style={{
@@ -4296,7 +4283,7 @@ function NewTrips(props) {
                   borderRadius: 10,
                   alignSelf: 'center',
                 }}>
-                {!loader && (
+                {!ctripsLoader && (
                   <Text
                     style={{
                       color: theme.color.buttonText,
@@ -4307,7 +4294,9 @@ function NewTrips(props) {
                     {t}
                   </Text>
                 )}
-                {loader && <ActivityIndicator size={20} color={'white'} />}
+                {ctripsLoader && (
+                  <ActivityIndicator size={20} color={'white'} />
+                )}
               </TouchableOpacity>
             </>
           );
@@ -4319,7 +4308,7 @@ function NewTrips(props) {
           return (
             <>
               <TouchableOpacity
-                disabled={loader}
+                disabled={ctripsLoader}
                 onPress={closeModalg}
                 activeOpacity={0.7}
                 style={{
@@ -4421,7 +4410,7 @@ function NewTrips(props) {
         const renderCross = () => {
           return (
             <Pressable
-              disabled={loader}
+              disabled={ctripsLoader}
               style={({pressed}) => [
                 {opacity: pressed ? 0.7 : 1.0},
                 [
@@ -4529,7 +4518,7 @@ function NewTrips(props) {
           return (
             <>
               <TouchableOpacity
-                disabled={loader}
+                disabled={ctripsLoader}
                 onPress={DeleteTrip}
                 activeOpacity={0.7}
                 style={{
@@ -4541,7 +4530,7 @@ function NewTrips(props) {
                   borderRadius: 10,
                   alignSelf: 'center',
                 }}>
-                {!loader && (
+                {!ctripsLoader && (
                   <Text
                     style={{
                       color: theme.color.buttonText,
@@ -4552,7 +4541,9 @@ function NewTrips(props) {
                     {t}
                   </Text>
                 )}
-                {loader && <ActivityIndicator size={20} color={'white'} />}
+                {ctripsLoader && (
+                  <ActivityIndicator size={20} color={'white'} />
+                )}
               </TouchableOpacity>
             </>
           );
@@ -4564,7 +4555,7 @@ function NewTrips(props) {
           return (
             <>
               <TouchableOpacity
-                disabled={loader}
+                disabled={ctripsLoader}
                 onPress={closeModalg}
                 activeOpacity={0.7}
                 style={{
@@ -4666,7 +4657,7 @@ function NewTrips(props) {
         const renderCross = () => {
           return (
             <Pressable
-              disabled={loader}
+              disabled={ctripsLoader}
               style={({pressed}) => [
                 {opacity: pressed ? 0.7 : 1.0},
                 [
@@ -4774,7 +4765,7 @@ function NewTrips(props) {
           return (
             <>
               <TouchableOpacity
-                disabled={loader}
+                disabled={ctripsLoader}
                 onPress={ActivateTrip}
                 activeOpacity={0.7}
                 style={{
@@ -4786,7 +4777,7 @@ function NewTrips(props) {
                   borderRadius: 10,
                   alignSelf: 'center',
                 }}>
-                {!loader && (
+                {!ctripsLoader && (
                   <Text
                     style={{
                       color: theme.color.buttonText,
@@ -4797,7 +4788,9 @@ function NewTrips(props) {
                     {t}
                   </Text>
                 )}
-                {loader && <ActivityIndicator size={20} color={'white'} />}
+                {ctripsLoader && (
+                  <ActivityIndicator size={20} color={'white'} />
+                )}
               </TouchableOpacity>
             </>
           );
@@ -4809,7 +4802,7 @@ function NewTrips(props) {
           return (
             <>
               <TouchableOpacity
-                disabled={loader}
+                disabled={ctripsLoader}
                 onPress={closeModalg}
                 activeOpacity={0.7}
                 style={{
@@ -4908,7 +4901,7 @@ function NewTrips(props) {
   return (
     <View style={styles.container}>
       <utils.DrawerHeader props={props} headerTitle={headerTitle} />
-      {!internet && <utils.InternetMessage />}
+      {!isInternet && <utils.InternetMessage />}
 
       <KeyboardAvoidingView
         behavior={Platform.OS == 'ios' ? 'height' : undefined}
@@ -4923,7 +4916,7 @@ function NewTrips(props) {
               }}>
               {renderSec1()}
               {renderSec2()}
-              {isEdit && renderSec3()}
+              {editTrip && renderSec3()}
               {renderButton()}
             </ScrollView>
           </View>

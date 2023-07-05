@@ -20,11 +20,12 @@ import Toast from 'react-native-easy-toast';
 export default observer(GuestAccess);
 function GuestAccess(props) {
   const toast = useRef(null);
-  const loader = store.User.regLoader;
+  const {regLoader, addUser} = store.User;
+  const {setGoToScreen} = store.General;
 
   const continueGuest = () => {
-    store.General.setgoToScreen('home');
-    store.User.addUser('', 'guest', '');
+    setGoToScreen('home');
+    addUser('', 'guest', '');
   };
 
   const renderSection2 = () => {
@@ -142,7 +143,7 @@ function GuestAccess(props) {
       </SafeAreaView>
 
       <Toast ref={toast} position="bottom" />
-      <utils.Loader load={loader} />
+      <utils.Loader load={regLoader} />
     </View>
   );
 }

@@ -36,6 +36,7 @@ function Home(props) {
     setIsEmailPopup,
     setSettingsGoTo,
     setOfferGoTo,
+    setGoToScreen,
   } = store.General;
   const {isApplySearch} = store.Search;
 
@@ -55,6 +56,7 @@ function Home(props) {
     blockUsers,
     HomeLoader,
     attemptToGetInboxes,
+    Logout,
   } = store.User;
   const {
     deleteLoader,
@@ -563,8 +565,8 @@ function Home(props) {
             disabled={saveLoader}
             onPress={() => {
               if (user == 'guest') {
-                store.General.setgoToScreen('guestaccess');
-                store.User.Logout();
+                setGoToScreen('guestaccess');
+                Logout();
                 return;
               }
 
@@ -695,8 +697,8 @@ function Home(props) {
           <Pressable
             onPress={() => {
               if (user == 'guest') {
-                store.General.setgoToScreen('guestaccess');
-                store.User.Logout();
+                setGoToScreen('guestaccess');
+                Logout();
                 return;
               }
 
@@ -714,8 +716,8 @@ function Home(props) {
           <Pressable
             onPress={() => {
               if (user == 'guest') {
-                store.General.setgoToScreen('guestaccess');
-                store.User.Logout();
+                setGoToScreen('guestaccess');
+                Logout();
                 return;
               }
               if (user.subscriptionStatus == 'freemium') {

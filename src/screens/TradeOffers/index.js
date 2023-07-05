@@ -14,8 +14,8 @@ export default observer(TradeOffers);
 function TradeOffers(props) {
   const toast = useRef(null);
   const headerTitle = 'Trade Offers';
-  const internet = store.General.isInternet;
-  const user = store.User.user;
+  const {isInternet, setGoToScreen} = store.General;
+  const {user, Logout, setOfferProfileProps} = store.User;
 
   const [isTabBarShow, setisTabBarShow] = useState(false);
   const [index, setIndex] = useState(0);
@@ -31,14 +31,14 @@ function TradeOffers(props) {
 
   useEffect(() => {
     if (user == 'guest') {
-      store.General.setgoToScreen('guestaccess');
-      store.User.Logout();
+      setGoToScreen('guestaccess');
+      Logout();
       return;
     }
   }, []);
 
   useEffect(() => {
-    store.User.setOfferProfileProps(props);
+    setOfferProfileProps(props);
     if (user && user !== 'guest') {
       setTimeout(() => {
         setisTabBarShow(true);
@@ -74,7 +74,7 @@ function TradeOffers(props) {
   return (
     <View style={styles.container}>
       <utils.DrawerHeader props={props} headerTitle={headerTitle} />
-      {!internet && <utils.InternetMessage />}
+      {!isInternet && <utils.InternetMessage />}
       <SafeAreaView style={styles.container2}>
         <View style={styles.container3}>
           <View style={{flex: 1}}>{isTabBarShow && renderTabBar()}</View>

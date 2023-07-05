@@ -29,7 +29,7 @@ const onReceiveNotification = remoteMessage => {
     data &&
     topic == 'newMessagePush' &&
     store.General.appState == 'active' &&
-    store.General.isCurrentCahtId == data.senderId
+    store.General.isCurrentChatId == data.senderId
   ) {
   } else {
     Notification.showNotificaton(
