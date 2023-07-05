@@ -7,6 +7,7 @@ import db from '../../database/index';
 import store from '../index';
 import {Notification} from '../../services/Notification';
 import {FireStore} from '../../services/FireStore';
+import utils from '../../utils';
 
 class user {
   constructor() {
@@ -2371,8 +2372,27 @@ class user {
           Alert.alert('', 'Promo code disbaled!');
           return;
         }
-        if (rsp.status == 'active') {
+        if (
+          rsp.status == 'active' &&
+          new Date() >=
+            new Date(utils.functions.DateWithoutFormat(rsp.startDate)) &&
+          new Date() <= new Date(utils.functions.DateWithoutFormat(rsp.endDate))
+        ) {
           suc(rsp);
+        } else if (
+          rsp.status == 'active' &&
+          new Date() <
+            new Date(utils.functions.DateWithoutFormat(rsp.startDate)) &&
+          new Date() <= new Date(utils.functions.DateWithoutFormat(rsp.endDate))
+        ) {
+          Alert.alert('', 'Promo code not active!');
+        } else if (
+          rsp.status == 'active' &&
+          new Date() >=
+            new Date(utils.functions.DateWithoutFormat(rsp.startDate)) &&
+          new Date() > new Date(utils.functions.DateWithoutFormat(rsp.endDate))
+        ) {
+          Alert.alert('', 'Promo code expired!');
         }
       })
       .catch(err => {
