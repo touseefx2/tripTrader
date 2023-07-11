@@ -44,7 +44,7 @@ export default function Fields({modalObj, selectedDates, goBack}) {
       return Number(new Date(a)) - Number(new Date(b));
     });
     esd.map(e => {
-      preferDate.push(moment(e).format('MMM DD, YYYY'));
+      preferDate.push(moment(e).format('YYYY-MM-DD'));
     });
   }
   const avlbl = utils.functions.formatSelectedDates(preferDate, 'arr');

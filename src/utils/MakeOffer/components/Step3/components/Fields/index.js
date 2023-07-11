@@ -12,6 +12,10 @@ import theme from '../../../../../../theme';
 import utils from '../../../../../../utils';
 
 export default function Fields({
+  availablityDates,
+  unAvailable,
+  setAvailablityDates,
+  setUnAvailble,
   unavailableText,
   tripType,
   isDropDownTripType,
@@ -186,7 +190,16 @@ export default function Fields({
               value={durationNum.toString()}
               onChangeText={d => {
                 if (durationNum.length == 0 && d < parseInt(1)) return;
-                setDurationNum(d.replace(/[^0-9]/, ''));
+                const num = d.replace(/[^0-9]/, '');
+                setDurationNum(num);
+                utils.functions.checkAvailability(
+                  availablityDates,
+                  unAvailable,
+                  setAvailablityDates,
+                  setUnAvailble,
+                  duration.title,
+                  num,
+                );
               }}
               style={styles.input}
             />

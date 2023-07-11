@@ -122,7 +122,8 @@ export default function RangeCalender({
             hideExtraDays={false}
             disableMonthChange={true}
             initialDate={minDate}
-            minDate={minDate}
+            minDate={new Date()}
+            // minDate={minDate}
             onDayPress={getSelectedDayEvents}
             monthFormat={'MMMM yyyy'}
             firstDay={7}

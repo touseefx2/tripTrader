@@ -51,11 +51,11 @@ function checkSameYearFormate(statDate, endDate) {
 }
 
 function findItem(value, data, check) {
-  let obj = check == 'n' ? {name: value} : {title: value};
+  let obj = check === 'n' ? {name: value} : {title: value};
 
   if (data.length > 0) {
     const findIndex =
-      check == 'n'
+      check === 'n'
         ? data.findIndex(x => x.name === value)
         : data.findIndex(x => x.title === value);
     if (findIndex > -1) obj = data[findIndex];
@@ -120,15 +120,18 @@ function getDateWithFormat(unavlblmarkedDates) {
 
   arr.forEach(item => {
     if (item.length > 1) {
-      text =
-        text +
-        moment(item[0].d).format('MMM D') +
-        '-' +
-        moment(item[item.length - 1].d)
-          .format('MMM D')
-          .slice(4, 6) +
-        ', ';
-    } else text = text + moment(item[0].d).format('MMM D') + ', ';
+      //   text =
+      //     text +
+      //     moment(item[0].d).format('MMM DD') +
+      //     '-' +
+      //     moment(item[item.length - 1].d)
+      //       .format('MMM DD')
+      //       .slice(4, 6) +
+      //     ', ';
+      // } else text = text + moment(item[0].d).format('MMM DD') + ', ';
+
+      text = text + item[0].d + '-' + item[item.length - 1].d + ', ';
+    } else text = text + item[0].d + ', ';
   });
 
   return text.replace(/, *$/, '');
@@ -311,33 +314,36 @@ function formatSelectedDates(selectedDates, c) {
     const size = Object.keys(selectedDates).length;
     for (let index = 0; index < size; index++) {
       const element = moment(Object.keys(selectedDates)[index]).format(
-        'MMM DD, YYYY',
+        'YYYY-MM-DD',
       );
       arr.push(element);
     }
   } else {
     selectedDates.forEach(item => {
-      arr.push(moment(item).format('MMM DD, YYYY'));
+      arr.push(moment(item).format('YYYY-MM-DD'));
     });
   }
 
   if (arr.length <= 1) {
-    text = arr[0];
+    text = moment(arr[0]).format('MMM DD, YYYY');
   } else {
-    text = arr[0];
+    text = moment(arr[0]).format('MMM DD, YYYY');
     arr.forEach((item, index) => {
       if (index > 0 && index < arr.length) {
-        const prevDate = moment(arr[index - 1]).add(1, 'days');
+        const prevDate = moment(arr[index - 1])
+          .add(1, 'day')
+          .format('YYYY-MM-DD');
+
         const mapDate = item;
-        const mapDate2 = moment(item).add(1, 'days');
+        const mapDate2 = moment(item).add(1, 'day').format('YYYY-MM-DD');
         const nextDate = moment(arr[index + 1]);
 
         if (moment(mapDate).isSame(prevDate)) {
           if (!moment(mapDate2).isSame(nextDate)) {
-            text = text + ' - ' + item;
+            text = text + ' - ' + moment(item).format('MMM DD, YYYY');
           }
         } else {
-          text = text + ', ' + item;
+          text = text + ', ' + moment(item).format('MMM DD, YYYY');
         }
       }
     });
@@ -345,6 +351,33 @@ function formatSelectedDates(selectedDates, c) {
 
   return text;
 }
+
+const checkAvailability = (
+  availablityDates,
+  unAvailable,
+  setAvailablityDates,
+  setUnAvailble,
+  title,
+  durNum,
+) => {
+  if (availablityDates && durNum !== '') {
+    let totalDays = 0;
+    if (title === 'days') totalDays = durNum;
+    else if (title === 'weeks') totalDays = durNum * 7;
+
+    let availablityDatesLength = Object.keys(availablityDates).length;
+    let unAvailableDaysLength = 0;
+    if (unAvailable) {
+      unAvailableDaysLength = unAvailable.allUnavailableDates.length;
+    }
+
+    availablityDatesLength = availablityDatesLength - unAvailableDaysLength;
+    if (availablityDatesLength < totalDays) {
+      setAvailablityDates(null);
+      setUnAvailble(null);
+    }
+  }
+};
 
 export const functions = {
   isObjectEmpty,
@@ -361,4 +394,5 @@ export const functions = {
   FormateAvailableDate,
   formatSelectedDates,
   DateWithoutFormat,
+  checkAvailability,
 };

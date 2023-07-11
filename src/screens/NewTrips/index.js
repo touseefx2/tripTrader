@@ -33,731 +33,251 @@ import NetInfo from '@react-native-community/netinfo';
 import Toast from 'react-native-easy-toast';
 import IntentLauncher from 'react-native-intent-launcher';
 import {ScrollView} from 'react-native-gesture-handler';
-import {Calendar} from 'react-native-calendars';
 import moment from 'moment';
 
-function isObjectEmpty(value) {
-  return (
-    Object.prototype.toString.call(value) === '[object Object]' &&
-    JSON.stringify(value) === '{}'
-  );
-}
-const actSrc = require('../../assets/images/filters/activity/img.png');
-const spcSrc = require('../../assets/images/filters/species/img.png');
+const activityIconSrc = require('../../assets/images/filters/activity/img.png');
+const speciesIconSrc = require('../../assets/images/filters/species/img.png');
 
 export default observer(NewTrips);
 
 function NewTrips(props) {
+  const maxPhotos = 6;
+  const headerTitle = !editTrip ? 'New Trip' : 'Edit Trip';
   const activeOpacity = 0.8;
-  let css2f = {
-    container: {
-      backgroundColor: 'transparent',
-      // borderWidth: 1.5,
-      // borderColor: '#cccccc',
-      // borderStyle: 'dashed',
-    },
-    text: {
-      color: theme.color.subTitleLight,
-      fontFamily: theme.fonts.fontMedium,
-    },
-  };
-
-  let td = {
-    [moment().format('YYYY-MM-DD')]: {
-      marked: false,
-      selected: true,
-      customStyles: {
-        container: {
-          backgroundColor: 'transparent',
-          // borderWidth: 1.5,
-          // borderColor: '#cccccc',
-          // borderStyle: 'dashed',
-        },
-        text: {
-          color: theme.color.title,
-          fontFamily: theme.fonts.fontMedium,
-        },
-      },
-
-      disabled: false,
-      disableTouchEvent: false,
-    },
-  };
-
-  let dtd = {
-    [moment().format('YYYY-MM-DD')]: {
-      marked: false,
-      selected: true,
-      customStyles: css2f,
-      // selectedColor: 'red',
-      disabled: true,
-      disableTouchEvent: true,
-    },
-  };
-
-  let anmtnTime = 1500;
-
-  var getDaysArray = function (start, end) {
-    for (
-      var arr = [], dt = new Date(start);
-      dt <= new Date(end);
-      dt.setDate(dt.getDate() + 1)
-    ) {
-      arr.push(new Date(dt));
-    }
-
-    const arrr = arr.map(e => utils.functions.DateWithoutFormat(e));
-
-    return arrr;
-  };
-
-  let cs = {
-    container: {
-      backgroundColor: theme.color.button1,
-    },
-    text: {
-      color: theme.color.buttonText,
-      fontFamily: theme.fonts.fontMedium,
-      top: 2,
-    },
-  };
-
-  let css = {
-    container: {
-      backgroundColor: 'transparent',
-      borderWidth: 1.5,
-      borderColor: '#cccccc',
-      borderStyle: 'dashed',
-    },
-    text: {
-      color: theme.color.subTitleLight,
-      fontFamily: theme.fonts.fontMedium,
-    },
-  };
-
-  const dw = [
-    {_id: 1, name: 'Sun', num: 0, isSel: false},
-    {_id: 2, name: 'Mon', num: 1, isSel: false},
-    {_id: 3, name: 'Tue', num: 2, isSel: false},
-    {_id: 4, name: 'Wed', num: 3, isSel: false},
-    {_id: 5, name: 'Thu', num: 4, isSel: false},
-    {_id: 6, name: 'Fri', num: 5, isSel: false},
-    {_id: 7, name: 'Sat', num: 6, isSel: false},
-  ];
-
-  const durtn = [
-    {
-      _id: 0,
-      is_active: true,
-      title: 'days',
-
-      type: 'durType',
-    },
-    {
-      _id: 1,
-      is_active: true,
-      title: 'weeks',
-      type: 'durType',
-    },
-    // {
-    //   _id: 2,
-    //   is_active: true,
-    //   title: 'months',
-    //   type: 'durType',
-    // },
-    // {
-    //   _id: 2,
-    //   is_active: true,
-    //   title: 'years',
-    //   type: 'durType',
-    // },
-  ];
-
-  const rdurtn = [
-    {
-      _id: 0,
-      is_active: true,
-      title: 'weeks',
-      type: 'durType',
-    },
-    {
-      _id: 1,
-      is_active: true,
-      title: 'days',
-      type: 'durType',
-    },
-    {
-      _id: 2,
-      is_active: true,
-      title: 'months',
-      type: 'durType',
-    },
-  ];
-
   const toast = useRef(null);
-  const toastduration = 700;
-  let editTrip = store.User.editTripObj;
-  let isEdit = store.User.editTrip ? true : false;
+  const maxModalHeight = theme.window.Height - 100;
 
-  const [isDisableToday2, setisDisableToday2] = useState(false);
-
-  let headerTitle = !isEdit ? 'New Trip' : 'Edit Trip';
-  let internet = store.General.isInternet;
-  let user = store.User.user;
-
-  let maxModalHeight = theme.window.Height - 100;
-  const [modalHeight, setmodalHeight] = useState(0);
-
-  const [location, setlocation] = useState(false);
-  const [title, settitle] = useState('');
-
-  const typeData = [...store.Filters.activity];
-
+  const {isInternet, setgoto} = store.General;
   const {activityList} = store.Filters;
+  const {
+    user,
+    ctripsLoader,
+    editTripObj,
+    editTrip,
+    seteditTrip,
+    seteditTripObj,
+    Logout,
+    setctripLoader,
+  } = store.User;
+  const stateDataList = [...store.Filters.tripLocation];
+  const speciesDataList = [...store.Filters.species];
+  const durationDataList = [
+    {
+      _id: 0,
+      is_active: true,
+      title: 'days',
+      type: 'durType',
+    },
+    {
+      _id: 1,
+      is_active: true,
+      title: 'weeks',
+      type: 'durType',
+    },
+  ];
+
+  const [modalHeight, setmodalHeight] = useState(0);
+  const [isDropDownTripType, setIsDropDownTripType] = useState(false);
+  const [isDropDownDuration, setIsDropDownDuration] = useState(false);
+  const [isDropDownSpecies, setIsDropDownSpecies] = useState(false);
+  const [isDropDownState, setIsDropDownState] = useState(false);
+  const [isShowCalender, setIsShowCalender] = useState(false);
+  const [isShowUnAvailable, setIsShowUnAvailable] = useState(false);
+  const [availablityDates, setAvailablityDates] = useState(null);
+  const [unAvailable, setUnAvailble] = useState(null);
+  const [title, settitle] = useState('');
   const [tripType, settripType] = useState('');
-  const [isDropDownTT, setisDropDownTT] = useState(false);
-
-  const stateData = [...store.Filters.tripLocation];
   const [city, setcity] = useState('');
-  const [State, setState] = useState('');
-  const [isDropDownState, setisDropDownState] = useState(false);
-
-  const spcsDt = [...store.Filters.species];
-  const [spcsData, setspcsData] = useState([]);
+  const [state, setState] = useState(null);
+  const [durationNumber, setDurationNumber] = useState(1);
+  const [duration, setDuration] = useState(durationDataList[0]);
+  const [speciesData, setSpeciesData] = useState([]);
   const [species, setspecies] = useState('');
-  const [isDropDownSpcs, setisDropDownSpcs] = useState(false);
-
   const [status, setstatus] = useState('active');
-  const [isDropDownDur, setisDropDownDur] = useState(false);
-  const [dur, setdur] = useState(durtn[0]); //time solts
-  const [rdur, setrdur] = useState(rdurtn[0]);
-  const [isDropDownrDur, setisDropDownrDur] = useState(false);
-  const [trade, settrader] = useState('');
   const [Return, setReturn] = useState('');
   const [acceptOther, setacceptOther] = useState(false);
-  const [durNum, setdurNum] = useState(1);
-  const [showCalender, setshowCalender] = useState(false);
-  const [iDate, setiDate] = useState(new Date());
-  const [minDate, setminDate] = useState(new Date());
 
-  const [month, setmonth] = useState(new Date());
-  const [markedDates, setmarkedDates] = useState({});
-  const [isSelDate, setisSelDate] = useState(false);
-  const [selDates, setselDates] = useState({});
-  const [isSelDate1, setisSelDate1] = useState('');
-  const [isSelDate2, setisSelDate2] = useState('');
-  const [mind, setmind] = useState(undefined);
-  const [mindd, setmindd] = useState(undefined);
-  const [maxd, setmaxd] = useState(undefined);
-  const [isShowUnavliableModal, setisShowUnavliableModal] = useState(false);
-  const [dow, setdow] = useState(dw); //days of week
-  const [rdurNum, setrdurNum] = useState(1);
-  const [endRepOn, setendRepOn] = useState('');
-  const [endRepOnM, setendRepOnM] = useState({});
-  const [endRepOnS, setendRepOnS] = useState({});
-  const [isShowUnavliabledaysCal, setisShowUnavliabledaysCal] = useState(false);
-  const [ischk, setischk] = useState('');
-  const [unavlblmarkedDates, setunavlblmarkedDates] = useState({});
-  const [unavlblSLCTmarkedDates, setunavlblSLCTmarkedDates] = useState({});
-  const [selunmarkeSLCTdDates, setselunmarkedSLCTDates] = useState({});
-  const [isSetUnavailable, setisSetUnavailable] = useState(false);
   const [isShowPrmsn, setisShowPrmsn] = useState(false);
   const [prmsnChk, setprmsnChk] = useState('');
   const [DT, setDT] = useState(false);
   const [isAddPhotoModal, setisAddPhotoModal] = useState(false);
-  let maxPhotos = 6;
+
   const [photos, setPhotos] = useState([]);
   const [pvm, setpvm] = useState(false);
   const [si, setsi] = useState('');
   const [deletePObj, setdeletePObj] = useState(false);
   const [deleteModal, setdeleteModal] = useState(false);
-  const [isButtonDisable, setisButtonDisable] = useState(false);
   const [isReviewTrip, setisReviewTrip] = useState(false);
   const [isTripCreate, setisTripCreate] = useState(false);
   const [modalChk, setmodalChk] = useState(false);
   const [isModal, setisModal] = useState(false);
+
+  let minDate;
+  let maxDate;
+  let rangeValue = 'Select a date range';
+  let totalDays = 0;
+  let unavailableText;
+  if (availablityDates) {
+    const size = Object.keys(availablityDates).length;
+    const startDate = Object.keys(availablityDates)[0];
+    const endDate = Object.keys(availablityDates)[size - 1];
+    if (startDate > endDate) {
+      minDate = endDate;
+      maxDate = startDate;
+    } else {
+      minDate = startDate;
+      maxDate = endDate;
+    }
+    rangeValue = utils.functions.checkSameYearFormate(minDate, maxDate);
+  } else {
+    minDate = '';
+    maxDate = '';
+  }
+  if (duration.title === 'days') totalDays = durationNumber;
+  else if (duration.title === 'weeks') totalDays = durationNumber * 7;
+  if (unAvailable) {
+    const text1 = unAvailable.dayWeekText;
+    const text2 = unAvailable.excludeDateText;
+    if (text1 != '' && text2 != '') unavailableText = text1 + ', ' + text2;
+
+    if (text1 == '' && text2 != '') unavailableText = text2;
+    else if (text1 != '' && text2 == '') unavailableText = text1;
+  } else unavailableText = '';
+
+  useEffect(() => {
+    if (tripType != '') {
+      let arr = [];
+      speciesDataList.forEach(item => {
+        if (item.type && item.type.name == tripType.name) arr.push(item);
+      });
+      setSpeciesData(arr);
+    }
+  }, [tripType]);
+
+  useEffect(() => {
+    if (user === 'guest') {
+      setgoto('guestaccess');
+      Logout();
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      seteditTrip(false);
+      seteditTripObj(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (editTrip === true) {
+      const data = editTripObj.data;
+      const index = editTripObj.index;
+
+      const tripType = utils.functions.findItem(
+        data.tradeType || '',
+        activityList,
+        'n',
+      );
+      const location = data.location ? data.location : null;
+
+      if (location) {
+        setcity(location.city);
+        setState(
+          utils.functions.findItem(location.state || '', stateDataList, 'n'),
+        );
+      } else {
+        setcity('');
+        setState('');
+      }
+      const species = utils.functions.findItem(
+        data.species || '',
+        speciesDataList,
+        'n',
+      );
+      let dateList = {};
+      const dayList = utils.functions.getDaysBetweenDate(
+        new Date(utils.functions.DateWithoutFormat(data.availableFrom)),
+        new Date(utils.functions.DateWithoutFormat(data.availableTo)),
+      );
+      if (dayList.length > 0) {
+        dayList.map((item, index, arr) => {
+          const date = moment(item).format('YYYY-MM-DD');
+          if (index == 0) dateList[date] = theme.dayStyle.markeDateStyle;
+
+          if (index > 0 && index < arr.length - 1)
+            dateList[date] = theme.dayStyle.markeDateStyle;
+
+          if (index == arr.length - 1)
+            dateList[date] = theme.dayStyle.markeDateStyle;
+        });
+      }
+
+      const acceptOtherTrades = data.acceptTradeOffers;
+      const durNo = data.duration.value;
+      const durt = utils.functions.findItem(
+        data.duration.title || '',
+        durationDataList,
+        't',
+      );
+      const unavailable = data.unAvailableDays ? data.unAvailableDays : null;
+
+      setDuration(durt);
+      setDurationNumber(durNo);
+      settitle(data.title || '');
+      settripType(tripType);
+      setspecies(species);
+      setReturn(data.returnActivity);
+      setacceptOther(acceptOtherTrades);
+      setPhotos(data.photos || []);
+      setstatus(data.status);
+      setAvailablityDates(dateList);
+      setUnAvailble(
+        unavailable?.allUnavailableDates.length > 0 ? unavailable : null,
+      );
+    }
+  }, [editTrip]);
+
+  const clearFields = (c, c2) => {
+    if (c == 'all') {
+      setReturn('');
+      setacceptOther(false);
+      setisAddPhotoModal(false);
+      setAvailablityDates(null);
+      setUnAvailble(null);
+      setPhotos([]);
+      setpvm(false);
+      setsi('');
+      setdeleteModal(false);
+      setdeletePObj(false);
+      setstatus('active');
+      settripType('');
+      setcity('');
+      setState(null);
+      setspecies('');
+      settitle('');
+      if (c2 != 'nill') {
+        seteditTrip(false);
+        seteditTripObj(false);
+      } else {
+        seteditTrip(true);
+      }
+    }
+  };
+
+  const openCalender = () => {
+    setIsShowCalender(true);
+  };
+
   const closeModalg = () => {
-    if (!loader) {
+    if (!ctripsLoader) {
       setmodalChk(false);
       setisModal(false);
       setmodalHeight(0);
     }
   };
 
-  useEffect(() => {
-    if (tripType != '') {
-      let aa = [];
-      if (spcsDt.length > 0) {
-        spcsDt.map(e => {
-          if (e.type) {
-            if (e.type.name == tripType.name) {
-              aa.push(e);
-            }
-          }
-        });
-      }
-
-      setspcsData(aa);
-    }
-  }, [tripType]);
-
-  useEffect(() => {
-    if (user == 'guest') {
-      store.General.setgoto('guestaccess');
-      store.User.Logout();
-      return;
-    }
-  }, []);
-
-  const loader = store.User.ctripsLoader;
-
-  useEffect(() => {
-    return () => {
-      store.User.seteditTrip(false);
-      store.User.seteditTripObj(false);
-    };
-  }, []);
-
-  function findItm(v, data, c) {
-    let obj = c == 'n' ? {name: v} : {title: v};
-
-    if (data.length > 0) {
-      let fi =
-        c == 'n'
-          ? data.findIndex(x => x.name === v)
-          : data.findIndex(x => x.title === v);
-      if (fi > -1) {
-        obj = data[fi];
-      }
-    }
-
-    return obj;
-  }
-  useEffect(() => {
-    if (isEdit == true) {
-      let d = editTrip.data;
-      let index = editTrip.index;
-
-      let tt = findItm(d.tradeType || '', activityList, 'n');
-      let loc = d.location ? d.location : {};
-      if (!isObjectEmpty(loc)) {
-        setcity(loc.city);
-        setState(findItm(loc.state || '', stateData, 'n'));
-      } else {
-        setcity('');
-        setState('');
-        setlocation(false);
-      }
-      let spcs = findItm(d.species || '', spcsDt, 'n');
-      let sd = utils.functions.DateWithoutFormat(d.availableFrom);
-      let ed = utils.functions.DateWithoutFormat(d.availableTo);
-      let acceptOtherTrades = d.acceptTradeOffers;
-      let durNo = d.duration.value;
-      let durt = findItm(d.duration.title || '', durtn, 't');
-
-      let objct = {...d.unAvailableDays};
-      if (!isObjectEmpty(objct)) {
-        let ar = objct.allUnavailableDates || [];
-        let ar2 = objct.daysOfWeek || [];
-        if (ar.length <= 0 && ar2.length <= 0) {
-          objct = false;
-        }
-      }
-      if (objct != false) {
-        delete Object.assign(objct, {
-          days_of_week: objct.daysOfWeek,
-        })['daysOfWeek'];
-        delete Object.assign(objct, {
-          unavailable_days_of_week: objct.unavailableDaysOfWeek,
-        })['unavailableDaysOfWeek'];
-        delete Object.assign(objct, {
-          exclude_specific_dates: objct.excludeSpecificDates.map(e =>
-            utils.functions.DateWithoutFormat(e),
-          ),
-        })['excludeSpecificDates'];
-        delete Object.assign(objct, {
-          all_unavailable_dates: objct.allUnavailableDates.map(e =>
-            utils.functions.DateWithoutFormat(e),
-          ),
-        })['allUnavailableDates'];
-        delete Object.assign(objct, {wtxt: objct.dayWeekText})['dayWeekText'];
-        delete Object.assign(objct, {esd_text: objct.excludeDateText})[
-          'excludeDateText'
-        ];
-        let ra = {...objct.repeatEvery};
-        delete Object.assign(ra, {num: ra.value})['value'];
-        delete objct.repeatEvery;
-        objct.repeat_every = ra;
-      }
-      if (sd >= moment().format('YYYY-MM-DD')) {
-        setmindd(undefined);
-      } else {
-        setmindd(sd);
-      }
-      var daylist = getDaysArray(new Date(sd), new Date(ed));
-
-      let mdd = {};
-      if (daylist.length > 0) {
-        daylist.map((e, i, a) => {
-          let d = moment(e).format('YYYY-MM-DD');
-
-          if (i == 0) {
-            mdd[d] = {
-              customStyles: cs,
-              marked: false,
-              selected: true,
-              selectedColor: theme.color.button1,
-              disabled: false,
-              disableTouchEvent: false,
-            };
-          }
-          if (i > 0 && i < a.length - 1) {
-            mdd[d] = {
-              customStyles: cs,
-              marked: false,
-              selected: true,
-              selectedColor: theme.color.button1,
-              disabled: true,
-              disableTouchEvent: true,
-            };
-          }
-          if (i == a.length - 1) {
-            mdd[d] = {
-              customStyles: cs,
-              marked: false,
-              selected: true,
-              selectedColor: theme.color.button1,
-              disabled: false,
-              disableTouchEvent: false,
-            };
-          }
-        });
-      }
-
-      settitle(d.title || '');
-      settripType(tt);
-      setlocation(loc);
-      setspecies(spcs);
-      setReturn(d.returnActivity);
-      setacceptOther(acceptOtherTrades);
-      setdurNum(durNo);
-      setdur(durt);
-      setPhotos(d.photos || []);
-      setisSelDate1(sd);
-      setisSelDate2(ed);
-      setisSelDate(true);
-      setmind(sd);
-      setmarkedDates(mdd);
-      setselDates(mdd);
-      setisSetUnavailable(objct);
-      setstatus(d.status);
-    }
-  }, [isEdit]);
-
-  useEffect(() => {
-    if (city != '' && State != '') {
-      setlocation({city: titleCase(city), state: State.name});
-    } else {
-      setlocation(false);
-    }
-  }, [city, State]);
-
-  useEffect(() => {
-    if (
-      isSelDate1 != '' &&
-      isSelDate2 != '' &&
-      Return != '' &&
-      durNum != '' &&
-      tripType != '' &&
-      species != '' &&
-      location != false &&
-      photos.length > 0
-    ) {
-      setisButtonDisable(false);
-    } else {
-      setisButtonDisable(true);
-    }
-  }, [
-    tripType,
-    location,
-    species,
-    isSelDate1,
-    isSelDate2,
-    Return,
-    durNum,
-    photos,
-  ]);
-
-  useEffect(() => {
-    let totalDays = 0;
-    const t = dur.title;
-    if (t == 'days') {
-      totalDays = durNum;
-    } else if (t == 'weeks') {
-      totalDays = durNum * 7;
-    }
-
-    const availablityDates = selDates;
-    if (!isObjectEmpty(availablityDates)) {
-      let availablityDatesLength = Object.keys(availablityDates).length;
-      let unAvailableDaysLength = 0;
-      if (isSetUnavailable)
-        unAvailableDaysLength = isSetUnavailable.all_unavailable_dates.length;
-
-      availablityDatesLength = availablityDatesLength - unAvailableDaysLength;
-      if (availablityDatesLength < totalDays) {
-        clearFields('', '');
-      }
-    }
-  }, [dur, durNum, selDates, isSetUnavailable]);
-
-  useEffect(() => {
-    if (!isObjectEmpty(markedDates)) {
-      const size = Object.keys(markedDates).length;
-      if (size > 1) {
-        setisSelDate(true);
-      } else {
-        setisSelDate(false);
-      }
-    } else {
-      setisSelDate(false);
-    }
-  }, [markedDates]);
-
-  useEffect(() => {
-    if (!isObjectEmpty(selDates)) {
-      const size = Object.keys(selDates).length;
-      let pd1 = Object.keys(selDates)[0];
-      let pd2 = Object.keys(selDates)[size - 1];
-
-      if (pd1 > pd2) {
-        setisSelDate1(pd2);
-        setisSelDate2(pd1);
-      } else {
-        setisSelDate1(pd1);
-        setisSelDate2(pd2);
-      }
-    }
-  }, [selDates]);
-
-  const clearFields = (c, c2) => {
-    setmarkedDates({});
-    setisSelDate(false);
-    setselDates({});
-    setisSelDate1('');
-    setisSelDate2('');
-    setmind(undefined);
-    setmindd(undefined);
-    setmaxd(undefined);
-    setendRepOn('');
-    setendRepOnM({});
-    setendRepOnS({});
-    setisSetUnavailable(false);
-    setdow(dw);
-    setrdurNum(1);
-    setunavlblmarkedDates({});
-    setunavlblSLCTmarkedDates({});
-    setselunmarkedSLCTDates({});
-    setisDisableToday2(false);
-    if (c == 'all') {
-      settrader('');
-      setReturn('');
-      setdurNum(1);
-      setrdurNum(1);
-      setdur(durtn[0]);
-      setrdur(rdurtn[0]);
-      setacceptOther(false);
-      setisAddPhotoModal(false);
-      setisSetUnavailable(false);
-      setPhotos([]);
-      setpvm(false);
-      setsi('');
-      setdeleteModal(false);
-      setdeletePObj(false);
-      setisButtonDisable(false);
-
-      setstatus('active');
-      settripType('');
-      setmind(undefined);
-      setmindd(undefined);
-      setmaxd(undefined);
-      setlocation(false);
-      settripType('');
-      setcity('');
-      setState('');
-      setspecies('');
-      settitle('');
-      // setactvtyList([]);
-      // setactvtyListS([]);
-      if (c2 != 'nill') {
-        store.User.seteditTrip(false);
-        store.User.seteditTripObj(false);
-      } else {
-        store.User.seteditTrip(true);
-      }
-    }
-  };
-
-  const siERpOn = d => {
-    let md = {};
-    md[moment(d).format('YYYY-MM-DD')] = {
-      customStyles: cs,
-      marked: false,
-      selected: true,
-      selectedColor: theme.color.button1,
-      disabled: true,
-      disableTouchEvent: true,
-    };
-    setendRepOn(d);
-    setendRepOnM(md);
-    setendRepOnS(md);
-  };
-
-  useEffect(() => {
-    if (isSelDate1 != '') {
-      setmind(isSelDate1);
-      let sd = isSelDate1;
-      if (sd >= moment().format('YYYY-MM-DD')) {
-        setmindd(undefined);
-      } else {
-        setmindd(sd);
-      }
-    }
-    if (isSelDate2 != '') {
-      setmaxd(isSelDate2);
-      if (!isSetUnavailable) {
-        siERpOn(isSelDate2);
-      }
-    }
-  }, [isSelDate1, isSelDate2, isSetUnavailable]);
-
-  useEffect(() => {
-    if (rdurNum == '') {
-      setunavlblmarkedDates({});
-      return;
-    }
-
-    let ar = [];
-    if (dow.length > 0) {
-      dow.map((e, i, a) => {
-        if (e.isSel) {
-          ar.push(e);
-        }
-      });
-    }
-    if (ar.length > 0) {
-      var rweekNum = rdurNum;
-      var start = moment(isSelDate1);
-      var end = moment(endRepOn);
-      let mm = {};
-
-      ar.map((e, i, a) => {
-        var day = e.num; // Sunday=0
-        var result = [];
-        let tmp = start.clone().day(day);
-        if (tmp.isAfter(start, 'd')) {
-          result.push(tmp.format('YYYY-MM-DD'));
-        }
-        while (tmp.isBefore(end)) {
-          tmp.add(7, 'days');
-          result.push(tmp.format('YYYY-MM-DD'));
-        }
-        result.pop();
-        if (result.length > 0) {
-          result.map((e, i, a) => {
-            let d = moment(e).format('YYYY-MM-DD');
-            mm[d] = {
-              marked: false,
-              selected: true,
-              customStyles: css,
-              selectedColor: 'red',
-              disabled: true,
-              disableTouchEvent: true,
-            };
-          });
-        }
-      });
-      setunavlblmarkedDates(mm);
-    } else {
-      setunavlblmarkedDates({});
-    }
-  }, [dow, endRepOn, rdurNum]);
-
-  useEffect(() => {
-    if (maxd != undefined && mind != undefined) {
-      let c1 = maxd;
-      let c2 = mind;
-      const todayy = moment().format('YYYY-MM-DD');
-      if (c1 > todayy && c2 > todayy) {
-        setisDisableToday2(true);
-      } else {
-        setisDisableToday2(false);
-      }
-    }
-  }, [maxd, mind]);
-
-  useEffect(() => {
-    if (ischk == 'endrepeat' && isShowUnavliabledaysCal) {
-    }
-  }, [isShowUnavliabledaysCal, ischk]);
-
-  const onClickCal = () => {
-    setshowCalender(!showCalender);
-  };
-
-  const onClickUnavailableDays = () => {
-    if (isSelDate1 != '' && isSelDate2 != '') {
-      if (isSetUnavailable) {
-        let d = isSetUnavailable;
-        let ar = d.days_of_week;
-        let ind = [];
-        if (ar.length > 0) {
-          ar.map((e, i, a) => {
-            if (dw.length > 0) {
-              ind.push(dw.findIndex(x => x.name === e));
-            }
-          });
-        }
-        let dw2 = dw.slice();
-        if (ind.length > 0) {
-          ind.map((e, i, a) => {
-            dw2[e].isSel = true;
-          });
-        }
-        setdow(dw2);
-        setrdurNum(d.repeat_every.num);
-        let tt = d.repeat_every.title;
-        let index = rdurtn.findIndex(x => x.title === tt);
-        setrdur(rdurtn[index]);
-        siERpOn(d.repeat_every.endRepeatOn);
-        let dt = d.exclude_specific_dates;
-
-        let md = {};
-        if (dt.length > 0) {
-          dt.map((e, i, a) => {
-            md[moment(e).format('YYYY-MM-DD')] = {
-              customStyles: cs,
-              marked: false,
-              selected: true,
-              selectedColor: theme.color.button1,
-              disabled: false,
-              disableTouchEvent: false,
-            };
-          });
-        }
-        setselunmarkedSLCTDates(md);
-        setunavlblSLCTmarkedDates(md);
-      }
-
-      setisShowUnavliableModal(true);
-    } else {
-      Alert.alert('', 'Please select Trip Availability first');
-    }
-  };
-
-  const onClickrCal = c => {
-    setischk(c);
-    setisShowUnavliabledaysCal(!isShowUnavliabledaysCal);
+  const openUnAvailabaleDaysModal = () => {
+    setIsShowUnAvailable(true);
   };
 
   const onclickImage = c => {
@@ -853,7 +373,6 @@ function NewTrips(props) {
             });
           } else {
             res.map((e, i, a) => {
-              console.log('e : ', e);
               let uri = e.path;
               let fileName = e.fileName;
               let type = e.mime;
@@ -889,11 +408,10 @@ function NewTrips(props) {
   };
 
   const closeAllDropDown = () => {
-    setisDropDownDur(false);
-    setisDropDownrDur(false);
-    setisDropDownTT(false);
-    setisDropDownState(false);
-    setisDropDownSpcs(false);
+    setIsDropDownDuration(false);
+    setIsDropDownTripType(false);
+    setIsDropDownState(false);
+    setIsDropDownSpecies(false);
   };
 
   const photoClick = i => {
@@ -902,7 +420,7 @@ function NewTrips(props) {
   };
 
   const closeReviewModal = c => {
-    if (!loader) {
+    if (!ctripsLoader) {
       setmodalHeight(0);
       setisReviewTrip(false);
       setisTripCreate(false);
@@ -921,56 +439,28 @@ function NewTrips(props) {
   function titleCase(str) {
     var splitStr = str.toLowerCase().split(' ');
     for (var i = 0; i < splitStr.length; i++) {
-      // You do not need to check if i is larger than splitStr length, as your for does that for you
-      // Assign it back to the array
       splitStr[i] =
         splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
     }
-    // Directly return the joined string
     return splitStr.join(' ');
   }
 
   const CreateTrip = () => {
     Keyboard.dismiss();
 
-    NetInfo.fetch().then(state => {
-      if (state.isConnected) {
+    NetInfo.fetch().then(states => {
+      if (states.isConnected) {
         let title = '';
-        let isSetUn = isSetUnavailable != false ? isSetUnavailable : {};
-        let objct = isSetUn != false ? {...isSetUn} : false;
-        if (objct !== false && !isObjectEmpty(objct)) {
-          delete Object.assign(objct, {
-            daysOfWeek: objct.days_of_week,
-          })['days_of_week'];
-          delete Object.assign(objct, {
-            unavailableDaysOfWeek: objct.unavailable_days_of_week,
-          })['unavailable_days_of_week'];
-          delete Object.assign(objct, {
-            excludeSpecificDates: objct.exclude_specific_dates,
-          })['exclude_specific_dates'];
-          delete Object.assign(objct, {
-            allUnavailableDates: objct.all_unavailable_dates,
-          })['all_unavailable_dates'];
-          delete Object.assign(objct, {dayWeekText: objct.wtxt})['wtxt'];
-          delete Object.assign(objct, {excludeDateText: objct.esd_text})[
-            'esd_text'
-          ];
-          let ra = {...objct.repeat_every};
-          delete Object.assign(ra, {value: ra.num})['num'];
-          delete objct.repeat_every;
-          objct.repeatEvery = ra;
+        let durationTitle = '';
+        let durTitle = duration.title;
+        if (durationNumber <= 1) {
+          durTitle = duration.title.substring(0, duration.title.length - 1);
         }
-
-        let dt = '';
-        let dtitle = dur.title;
-        if (durNum <= 1) {
-          dtitle = dur.title.substring(0, dur.title.length - 1);
-        }
-        dt = durNum + ' ' + titleCase(dtitle);
-        title = dt + ' ' + species.name;
+        durationTitle = durationNumber + ' ' + titleCase(durTitle);
+        title = durationTitle + ' ' + species.name;
 
         const obj = {
-          hostId: store.User.user._id,
+          hostId: user._id,
           tradeType: tripType.name,
           species: species.name,
           featuredDate: new Date(),
@@ -978,36 +468,26 @@ function NewTrips(props) {
           title: title,
           acceptTradeOffers: acceptOther,
           duration: {
-            value: durNum,
-            title: dur.title,
+            value: durationNumber,
+            title: duration.title,
           },
-          availableFrom: isSelDate1,
-          availableTo: isSelDate2,
-          status:
-            store.User.user.subscriptionStatus == 'freemium'
-              ? 'suspended'
-              : status,
+          availableFrom: moment(minDate).format('MMM DD, YYYY'),
+          availableTo: moment(maxDate).format('MMM DD, YYYY'),
+          status: user.subscriptionStatus === 'freemium' ? 'suspended' : status,
           photos: photos,
-          unAvailableDays: objct,
-          location: location == false ? {} : location,
+          unAvailableDays: unAvailable,
+          location: {city: city, state: state?.name || ''},
         };
-
         if (species.category) {
           obj.category = species.category.name;
         }
-
-        if (objct == false) {
-          delete obj.unAvailableDays;
-        }
-
-        store.User.setctripLoader(true);
+        setctripLoader(true);
         if (photos.length <= 0) {
           store.User.attemptToCreateTrip(obj, setIsTripCreatSuc);
         } else {
           store.User.attemptToCreateTripUploadImage(obj, setIsTripCreatSuc);
         }
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -1015,102 +495,67 @@ function NewTrips(props) {
 
   const UpdateTrip = () => {
     Keyboard.dismiss();
-
-    NetInfo.fetch().then(state => {
-      if (state.isConnected) {
-        let dt = '';
-        let dtitle = dur.title;
-        if (durNum <= 1) {
-          dtitle = dur.title.substring(0, dur.title.length - 1);
+    NetInfo.fetch().then(states => {
+      if (states.isConnected) {
+        let title = '';
+        let durationTitle = '';
+        let durTitle = duration.title;
+        if (durationNumber <= 1) {
+          durTitle = duration.title.substring(0, duration.title.length - 1);
         }
-        dt = durNum + ' ' + titleCase(dtitle);
-        let title = dt + ' ' + species.name;
+        durationTitle = durationNumber + ' ' + titleCase(durTitle);
+        title = durationTitle + ' ' + species.name;
 
-        let pht = [...photos];
-        let p = [];
-        let p2 = [];
-        if (pht.length > 0) {
-          pht.map((e, i, a) => {
-            if (e.uri) {
-              p2.push(e);
-            } else {
-              p.push(e);
-            }
+        const photoArr = [...photos];
+        let photoArr1 = [];
+        let photoArr2 = [];
+        if (photoArr.length > 0) {
+          photoArr.forEach(item => {
+            if (item.uri) photoArr2.push(item);
+            else photoArr1.push(item);
           });
-        }
-        let isSetUn = isSetUnavailable != false ? isSetUnavailable : {};
-        let objct = isSetUn != false ? {...isSetUn} : false;
-        if (objct && !isObjectEmpty(objct)) {
-          delete Object.assign(objct, {
-            daysOfWeek: objct.days_of_week,
-          })['days_of_week'];
-          delete Object.assign(objct, {
-            unavailableDaysOfWeek: objct.unavailable_days_of_week,
-          })['unavailable_days_of_week'];
-          delete Object.assign(objct, {
-            excludeSpecificDates: objct.exclude_specific_dates,
-          })['exclude_specific_dates'];
-          delete Object.assign(objct, {
-            allUnavailableDates: objct.all_unavailable_dates,
-          })['all_unavailable_dates'];
-          delete Object.assign(objct, {dayWeekText: objct.wtxt})['wtxt'];
-          delete Object.assign(objct, {excludeDateText: objct.esd_text})[
-            'esd_text'
-          ];
-          let ra = {...objct.repeat_every};
-          delete Object.assign(ra, {value: ra.num})['num'];
-          delete objct.repeat_every;
-          objct.repeatEvery = ra;
         }
 
         const obj = {
-          hostId: store.User.user._id,
+          hostId: user._id,
           tradeType: tripType.name,
           species: species.name,
           returnActivity: titleCase(Return),
           title: title,
           acceptTradeOffers: acceptOther,
           duration: {
-            value: durNum,
-            title: dur.title,
+            value: durationNumber,
+            title: duration.title,
           },
-          availableFrom: isSelDate1,
-          availableTo: isSelDate2,
-          status:
-            store.User.user.subscriptionStatus == 'freemium'
-              ? 'suspended'
-              : status,
-          photos: p,
-          unAvailableDays: objct,
-          location: location == false ? {} : location,
+          availableFrom: moment(minDate).format('MMM DD, YYYY'),
+          availableTo: moment(maxDate).format('MMM DD, YYYY'),
+          status: user.subscriptionStatus === 'freemium' ? 'suspended' : status,
+          photos: photoArr1,
+          unAvailableDays: unAvailable,
+          location: {city: city, state: state?.name || ''},
         };
-
         if (species.category) {
           obj.category = species.category.name;
         }
-        if (objct == false) {
-          delete obj.unAvailableDays;
-        }
 
-        store.User.setctripLoader(true);
-        if (p2.length > 0) {
+        setctripLoader(true);
+        if (photoArr2.length > 0) {
           store.User.attemptToUpdateTripUploadImage(
             obj,
-            p2,
-            editTrip.data._id,
-            editTrip.index,
+            photoArr2,
+            editTripObj.data._id,
+            editTripObj.index,
             setIsTripCreatSuc,
           );
         } else {
           store.User.attemptToUpdateTrip(
             obj,
-            editTrip.data._id,
-            editTrip.index,
+            editTripObj.data._id,
+            editTripObj.index,
             setIsTripCreatSuc,
           );
         }
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -1130,15 +575,14 @@ function NewTrips(props) {
           status: 'suspended',
         };
         store.User.setctripLoader(true);
-        console.warn('update trip obj : ', obj);
+
         store.User.attemptToUpdateTrip(
           obj,
-          editTrip.data._id,
-          editTrip.index,
+          editTripObj.data._id,
+          editTripObj.index,
           goToProfile,
         );
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -1153,15 +597,14 @@ function NewTrips(props) {
           status: 'active',
         };
         store.User.setctripLoader(true);
-        console.warn('update trip obj : ', obj);
+
         store.User.attemptToUpdateTrip(
           obj,
-          editTrip.data._id,
-          editTrip.index,
+          editTripObj.data._id,
+          editTripObj.index,
           goToProfile,
         );
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -1175,12 +618,11 @@ function NewTrips(props) {
         store.User.setctripLoader(true);
         store.User.attemptToDeleteTrip(
           {},
-          editTrip.data._id,
-          editTrip.index,
+          editTripObj.data._id,
+          editTripObj.index,
           goToProfile,
         );
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert('', 'Please connect internet');
       }
     });
@@ -1189,24 +631,23 @@ function NewTrips(props) {
   const renderDropDown = c => {
     let data = [];
 
-    if (c == 'dur') {
-      data = durtn;
-    }
-    if (c == 'rdur') {
-      data = rdurtn;
-    }
+    if (c === 'dur') data = durationDataList;
 
     const onclickSelect = d => {
-      if (c == 'dur') {
-        setdur(d);
-      }
-      if (c == 'rdur') {
-        setrdur(d);
+      if (c === 'dur') {
+        setDuration(d);
+        utils.functions.checkAvailability(
+          availablityDates,
+          unAvailable,
+          setAvailablityDates,
+          setUnAvailble,
+          d.title,
+          durationNumber,
+        );
       }
     };
 
-    // console.log('drop down data : ', data);
-    let abs = Platform.OS == 'ios' ? false : true;
+    const abs = Platform.OS == 'ios' ? false : true;
     return (
       <utils.DropDown
         data={data}
@@ -1219,1256 +660,6 @@ function NewTrips(props) {
         c={c}
         absolute={abs}
       />
-    );
-  };
-
-  const renderCalender = () => {
-    const closeCalModal = () => {
-      setshowCalender(false);
-      setmarkedDates(selDates);
-    };
-    const ApplyCalModal = () => {
-      setisSetUnavailable(false);
-      setunavlblmarkedDates({});
-      setunavlblSLCTmarkedDates({});
-      setselunmarkedSLCTDates({});
-
-      setdow(dw);
-      setrdurNum(1);
-      setrdur(rdurtn[0]);
-
-      setselDates(markedDates);
-      setmarkedDates(markedDates);
-      setshowCalender(false);
-    };
-
-    const formatDate = date => {
-      var dd = moment(date).format('MMMM YYYY');
-      return dd;
-    };
-
-    const getSelectedDayEvents = date => {
-      if (isObjectEmpty(markedDates)) {
-        let markedDates = {};
-        markedDates[date] = {
-          customStyles: cs,
-          marked: false,
-          selected: true,
-          selectedColor: theme.color.button1,
-          disabled: false,
-          disableTouchEvent: false,
-        };
-
-        setmarkedDates(markedDates);
-
-        return;
-      } else {
-        let md = {...markedDates};
-        const size = Object.keys(md).length;
-        let o = md[date];
-
-        if (o !== undefined) {
-          console.warn('The key exists.');
-
-          if (size < 2) {
-            delete md[date];
-            setmarkedDates(md);
-            return;
-          } else {
-            let c1 = Object.keys(md)[0];
-            let c2 = Object.keys(md)[size - 1];
-
-            let m = {};
-            if (c1 < date) {
-              m[c1] = {
-                customStyles: cs,
-                marked: false,
-                selected: true,
-                selectedColor: theme.color.button1,
-                disabled: false,
-                disableTouchEvent: false,
-              };
-            } else {
-              m[c2] = {
-                customStyles: cs,
-                marked: false,
-                selected: true,
-                selectedColor: theme.color.button1,
-                disabled: false,
-                disableTouchEvent: false,
-              };
-            }
-            setmarkedDates(m);
-            return;
-          }
-        } else {
-          console.warn('The key does not exist.');
-          let md = {...markedDates};
-          if (size >= 2) {
-            return;
-          }
-
-          let pd1 = Object.keys(md)[0];
-          let pd2 = date;
-          let mid = '';
-          let mxd = '';
-          if (pd1 > pd2) {
-            mxd = pd1;
-            mid = date;
-          } else {
-            mxd = date;
-            mid = pd1;
-          }
-          const a = moment(mxd);
-          const b = moment(mid);
-          const no_of_days = a.diff(b, 'days') + 1;
-
-          let totaldays = 0;
-          let t = dur.title;
-          if (t == 'days') {
-            totaldays = durNum;
-          } else if (t == 'weeks') {
-            totaldays = durNum * 7;
-          }
-          if (no_of_days < totaldays) {
-            Alert.alert(
-              '',
-              'Date range must be greater or equal than trip duration',
-            );
-            return;
-          }
-
-          var daylist = getDaysArray(new Date(mid), new Date(mxd));
-
-          let mdd = {};
-          if (daylist.length > 0) {
-            daylist.map((e, i, a) => {
-              const d = moment(e).format('YYYY-MM-DD');
-
-              if (i == 0) {
-                mdd[d] = {
-                  customStyles: cs,
-                  marked: false,
-                  selected: true,
-                  selectedColor: theme.color.button1,
-                  disabled: false,
-                  disableTouchEvent: false,
-                };
-              }
-              if (i > 0 && i < a.length - 1) {
-                mdd[d] = {
-                  customStyles: cs,
-                  marked: false,
-                  selected: true,
-                  selectedColor: theme.color.button1,
-                  disabled: true,
-                  disableTouchEvent: true,
-                };
-              }
-              if (i == a.length - 1) {
-                mdd[d] = {
-                  customStyles: cs,
-                  marked: false,
-                  selected: true,
-                  selectedColor: theme.color.button1,
-                  disabled: false,
-                  disableTouchEvent: false,
-                };
-              }
-            });
-          }
-
-          setmarkedDates(mdd);
-          return;
-        }
-      }
-    };
-
-    const renderBottom = () => {
-      let c = isSelDate ? false : true;
-      let dn = durNum;
-      let t = dn < 1 ? dur.title.substring(0, dur.title.length - 1) : dur.title;
-      t = dn + ' ' + t;
-      return (
-        <View
-          style={{
-            marginTop: 10,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            width: '100%',
-            alignItems: 'center',
-          }}>
-          <View
-            style={{
-              width: '40%',
-            }}>
-            <Text
-              style={{
-                fontSize: 11,
-                fontFamily: theme.fonts.fontNormal,
-                color: theme.color.subTitleLight,
-                paddingLeft: 10,
-              }}>
-              Duration : {t}
-            </Text>
-          </View>
-
-          <View
-            style={{
-              width: '55%',
-
-              alignItems: 'flex-end',
-              paddingRight: 10,
-            }}>
-            <View
-              style={{
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexDirection: 'row',
-              }}>
-              <Pressable
-                onPress={closeCalModal}
-                style={({pressed}) => [
-                  {
-                    opacity: pressed ? 0.9 : 1.0,
-                    paddingHorizontal: 15,
-                    paddingVertical: 8,
-                    borderRadius: 8,
-                    borderWidth: 1,
-                    borderColor: theme.color.fieldBorder,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginRight: 10,
-                  },
-                ]}>
-                <Text
-                  style={{
-                    fontSize: 13,
-                    fontFamily: theme.fonts.fontBold,
-                    color: '#30563A',
-                  }}>
-                  Cancel
-                </Text>
-              </Pressable>
-
-              <Pressable
-                onPress={ApplyCalModal}
-                disabled={!isSelDate ? true : false}
-                style={({pressed}) => [
-                  {
-                    opacity: pressed ? 0.9 : c ? 0.5 : 1.0,
-                    paddingHorizontal: 15,
-                    paddingVertical: 8,
-                    borderRadius: 8,
-                    backgroundColor: theme.color.button1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  },
-                ]}>
-                <Text
-                  style={{
-                    fontSize: 13,
-                    fontFamily: theme.fonts.fontBold,
-                    color: theme.color.buttonText,
-                  }}>
-                  Apply
-                </Text>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      );
-    };
-
-    let cusTheme = {
-      textDisabledColor: theme.color.subTitleLight,
-      dayTextColor: theme.color.title,
-      textDayFontSize: 13,
-      textDayFontFamily: theme.fonts.fontMedium,
-      textDayHeaderFontSize: 13,
-      textSectionTitleColor: theme.color.title,
-      textDayHeaderFontFamily: theme.fonts.fontMedium,
-    };
-    return (
-      <MModal visible={showCalender} transparent onRequestClose={closeCalModal}>
-        <SafeAreaView
-          style={[
-            {
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-
-              backgroundColor: 'rgba(0,0,0,0.5)',
-            },
-          ]}>
-          <View
-            style={{
-              width: '90%',
-              alignSelf: 'center',
-              paddingBottom: 20,
-              backgroundColor: theme.color.background,
-              borderRadius: 10,
-              paddingTop: 5,
-              paddingHorizontal: 5,
-            }}>
-            <Calendar
-              theme={cusTheme}
-              hideDayNames={false}
-              hideArrows={false}
-              hideExtraDays={false}
-              disableMonthChange={true} // If hideArrows = false and hideExtraDays = false do not switch month when tapping on greyed out
-              initialDate={mind || iDate}
-              // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
-              minDate={mindd || iDate}
-              // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
-              // maxDate={maxDate}
-              // Handler which gets executed on day press. Default = undefined
-              onDayPress={day => {
-                getSelectedDayEvents(day.dateString);
-              }}
-              // Handler which gets executed on day long press. Default = undefined
-              onDayLongPress={day => {
-                console.log('selected long press day', day);
-              }}
-              // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
-              monthFormat={'yyyy MM'}
-              // Handler which gets executed when visible month changes in calendar. Default = undefined
-              onMonthChange={month => {
-                setmonth(new Date(month.dateString));
-              }}
-              // If firstDay=1 week starts from Monday. Note that dayNames and dayNamesShort should still start from Sunday
-              firstDay={7}
-              onPressArrowLeft={subtractMonth => subtractMonth()}
-              onPressArrowRight={addMonth => addMonth()}
-              renderHeader={date => {
-                return (
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      fontFamily: theme.fonts.fontBold,
-                      color: '#111111',
-                    }}>
-                    {formatDate(month)}
-                  </Text>
-                );
-              }}
-              enableSwipeMonths={true}
-              disableAllTouchEventsForDisabledDays={false}
-              disableAllTouchEventsForInactiveDays={false}
-              markingType="custom"
-              // markingType="period"
-              markedDates={{...td, ...markedDates}}
-            />
-            {renderBottom()}
-          </View>
-        </SafeAreaView>
-      </MModal>
-    );
-  };
-
-  const renderUNavlblModal = () => {
-    let c = modalHeight >= maxModalHeight ? true : false;
-    let style = c
-      ? [styles.umodal, {paddingTop: 0, height: maxModalHeight, width: '90%'}]
-      : [styles.umodal2, {width: '90%'}];
-
-    let tt = '';
-
-    let esd = [];
-    if (!isObjectEmpty(selunmarkeSLCTdDates)) {
-      var myObject = selunmarkeSLCTdDates;
-      Object.keys(myObject).forEach(function (key, index) {
-        esd.push(key);
-      });
-    }
-    let arset = []; //for sort and set format
-    if (esd.length > 0) {
-      esd.sort(function (a, b) {
-        return Number(new Date(a)) - Number(new Date(b));
-      });
-      esd.map((e, i, a) => {
-        arset.push(moment(e).format('MMM DD'));
-      });
-    }
-
-    let arr = []; //for amse sequece date separate
-    if (arset.length > 0) {
-      let arset2 = arset.slice();
-
-      arset.map((e, i, a) => {
-        let d = [];
-        let chkd = e;
-        let chki = i;
-
-        d.push({d: chkd});
-        delete arset[chki];
-
-        let id = 0;
-        for (let index = ++chki; index < arset2.length; index++) {
-          const ee = arset2[index];
-          if (chkd.slice(0, 3) == ee.slice(0, 3)) {
-            let n1 = chkd.slice(4, 6);
-            let n2 = ee.slice(4, 6);
-            id++;
-            if (Number(n1) + id == Number(n2)) {
-              d.push({d: ee});
-              delete arset[index];
-            } else {
-              break;
-            }
-          }
-        }
-
-        arr.push(d);
-      });
-    }
-
-    if (arr.length > 0) {
-      arr.map((e, i, a) => {
-        let aa = e;
-        if (aa.length > 1) {
-          tt =
-            tt +
-            moment(aa[0].d).format('MMM D') +
-            '-' +
-            moment(aa[aa.length - 1].d)
-              .format('MMM D')
-              .slice(4, 6) +
-            ', ';
-        } else {
-          tt = tt + moment(aa[0].d).format('MMM D') + ', ';
-        }
-      });
-    }
-    tt = tt.replace(/, *$/, '');
-
-    const closeModal = () => {
-      setisShowUnavliableModal(false);
-      setmodalHeight(0);
-      if (!isSetUnavailable) {
-        setdow(dw);
-        setrdur(rdurtn[0]);
-        setrdurNum(1);
-        siERpOn(isSelDate2);
-        setunavlblmarkedDates({});
-        setselunmarkedSLCTDates({});
-        setunavlblSLCTmarkedDates({});
-      }
-    };
-
-    const ApplyModal = () => {
-      let doweeks = dow.slice();
-
-      let dw = [];
-
-      if (doweeks.length > 0) {
-        doweeks.map((e, i, a) => {
-          if (e.isSel) {
-            dw.push(e.name);
-          }
-        });
-      }
-
-      let wtxt = '';
-      if (dw.length > 0) {
-        dw.map((e, i, a) => {
-          let sep = a[i + 2] == undefined ? ' and ' : ', ';
-
-          if (sep == ' and ' && i == a.length - 1) {
-            sep = '';
-          }
-          wtxt = wtxt + e + sep;
-        });
-      }
-      if (wtxt != '') {
-        wtxt = wtxt + ` (${rdur.title == 'weeks' ? 'weekly' : rdur.title})`;
-      }
-
-      let unw = [];
-      let exsd = [];
-
-      let ad = [];
-      if (!isObjectEmpty(selunmarkeSLCTdDates)) {
-        var myObject = selunmarkeSLCTdDates;
-        Object.keys(myObject).forEach(function (key, index) {
-          ad.push(key);
-          exsd.push(key);
-        });
-      }
-      if (!isObjectEmpty(unavlblmarkedDates)) {
-        var myObject = unavlblmarkedDates;
-        Object.keys(myObject).forEach(function (key, index) {
-          ad.push(key);
-          unw.push(key);
-        });
-      }
-
-      if (unw.length > 0) {
-        unw.sort(function (a, b) {
-          return Number(new Date(a)) - Number(new Date(b));
-        });
-      }
-      if (exsd.length > 0) {
-        exsd.sort(function (a, b) {
-          return Number(new Date(a)) - Number(new Date(b));
-        });
-      }
-      if (ad.length > 0) {
-        ad.sort(function (a, b) {
-          return Number(new Date(a)) - Number(new Date(b));
-        });
-
-        let l = ad.length;
-        const a = moment(isSelDate2);
-        const b = moment(isSelDate1);
-        let td = a.diff(b, 'days');
-        td++;
-        let fl = td - l;
-        let totaldays = 0;
-        let t = dur.title;
-        if (t == 'days') {
-          totaldays = durNum;
-        } else if (t == 'weeks') {
-          totaldays = durNum * 7;
-        } else if (t == 'months') {
-          totaldays = durNum * 30;
-        } else if (t == 'years') {
-          totaldays = durNum * 365;
-        }
-
-        if (fl < totaldays) {
-          Alert.alert(
-            '',
-            'Total available dates is less then duration number days',
-          );
-          return;
-        }
-      }
-
-      let obj = false;
-      if (dw.length > 0 || ad.length > 0) {
-        obj = {
-          days_of_week: dw, //main
-          repeat_every: {
-            //main
-            num: rdurNum,
-            title: rdur.title.toLowerCase(),
-            endRepeatOn: endRepOn,
-          },
-          wtxt: wtxt,
-          esd_text: tt,
-
-          unavailable_days_of_week: unw, //main
-          exclude_specific_dates: exsd, //main
-          all_unavailable_dates: [...new Set(ad)], //main
-        };
-      }
-
-      setisSetUnavailable(obj);
-      setisShowUnavliableModal(false);
-    };
-
-    const renderHeader = () => {
-      let text = 'Set Unavailable Days';
-
-      const renderCross = () => {
-        return (
-          <Pressable
-            style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
-            onPress={closeModal}>
-            <utils.vectorIcon.Ionicons
-              name="ios-close-outline"
-              color={theme.color.title}
-              size={32}
-            />
-          </Pressable>
-        );
-      };
-
-      const renderTitle = () => {
-        return <Text style={styles.modalTitle}>{text}</Text>;
-      };
-
-      return (
-        <View
-          style={
-            c
-              ? {
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  paddingHorizontal: 15,
-                  paddingTop: 15,
-                  paddingBottom: 7,
-                  shadowColor: '#000000',
-                  shadowOffset: {width: 0, height: 1}, // change this for more shadow
-                  shadowOpacity: 0.1,
-                  elevation: 1,
-                  backgroundColor: theme.color.background,
-                  borderTopLeftRadius: 10,
-                  borderTopRightRadius: 10,
-                }
-              : {
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }
-          }>
-          <View style={{width: '80%'}}>{renderTitle()}</View>
-          {renderCross()}
-        </View>
-      );
-    };
-
-    const renderTitle = () => {
-      let text =
-        'Choose the days when this trip is not available. The days you specify here will be unavailable to the host.';
-
-      return (
-        <View style={{marginTop: 10}}>
-          <Text style={styles.modalsubTitle}>{text}</Text>
-        </View>
-      );
-    };
-
-    const renderWeek = () => {
-      const renderShowData = () => {
-        const d = dow.map((e, i, a) => {
-          return (
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginRight: i <= a.length - 1 ? 15 : 0,
-                marginTop: 12,
-              }}>
-              <TouchableOpacity
-                style={{
-                  width: 20,
-                  height: 20,
-                  borderRadius: 4,
-                  backgroundColor: !e.isSel ? 'white' : theme.color.button1,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderWidth: 1,
-                  borderColor: theme.color.fieldBorder,
-                }}
-                activeOpacity={0.5}
-                onPress={() => {
-                  const c = dow.slice();
-
-                  c[i].isSel = !c[i].isSel;
-
-                  setdow(c);
-                }}>
-                {e.isSel && (
-                  <utils.vectorIcon.FontAwesome5
-                    name={'check'}
-                    color={theme.color.buttonText}
-                    size={11}
-                  />
-                )}
-              </TouchableOpacity>
-              <Text
-                style={{
-                  color: '#0E2932',
-                  fontSize: 12,
-                  fontFamily: theme.fonts.fontNormal,
-                  textTransform: 'capitalize',
-                  marginLeft: 7,
-                }}>
-                {e.name}
-              </Text>
-            </View>
-          );
-        });
-
-        return d;
-      };
-
-      return (
-        <View style={{marginTop: 15, width: '100%'}}>
-          <Text
-            style={{
-              fontSize: 13,
-              color: theme.color.title,
-              fontFamily: theme.fonts.fontBold,
-            }}>
-            Days of Week
-          </Text>
-          <View
-            style={{
-              width: '100%',
-              flexDirection: 'row',
-              alignItems: 'center',
-              flexShrink: 1,
-              flexWrap: 'wrap',
-            }}>
-            {renderShowData()}
-          </View>
-        </View>
-      );
-    };
-
-    const renderRepeat = () => {
-      let t = '';
-      if (endRepOn != '') {
-        t = moment(endRepOn).format('MMM DD, YYYY');
-      }
-
-      return (
-        <>
-          <View style={[styles.fieldContainer, {marginTop: 15}]}>
-            <Text style={styles.fieldText}>Repeat for</Text>
-            <View
-              style={[
-                styles.fieldContainer,
-                {marginTop: 5, flexDirection: 'row'},
-              ]}>
-              <View style={[styles.inputConatiner, {width: '20%'}]}>
-                <TextInput
-                  keyboardType="number-pad"
-                  maxLength={5}
-                  defaultValue={rdurNum.toString()}
-                  value={rdurNum.toString()}
-                  onChangeText={d => {
-                    if (rdurNum.length == 0) {
-                      if (d < parseInt(1)) {
-                        return;
-                      }
-                    }
-
-                    setrdurNum(d.replace(/[^0-9]/, ''));
-                  }}
-                  style={[styles.input, {fontSize: 12.5}]}
-                />
-              </View>
-
-              <View style={{width: '40%', marginLeft: 10}}>
-                <TouchableOpacity
-                  onPress={() => {
-                    closeAllDropDown();
-                    setisDropDownrDur(!isDropDownrDur);
-                  }}
-                  activeOpacity={0.6}
-                  style={[
-                    styles.inputConatiner,
-                    {
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      paddingHorizontal: 15,
-                    },
-                  ]}>
-                  <View style={{width: '70%'}}>
-                    <Text
-                      numberOfLines={1}
-                      ellipsizeMode="tail"
-                      style={[
-                        styles.dropDownText,
-                        {fontSize: 12.5, textTransform: 'none'},
-                      ]}>
-                      {rdur.title
-                        ? rdur.title == 'weeks'
-                          ? 'Week(s)'
-                          : rdur.title
-                        : ''}
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      width: '27%',
-                      alignItems: 'flex-end',
-                    }}>
-                    <utils.vectorIcon.Fontisto
-                      name="angle-down"
-                      color={theme.color.title}
-                      size={13}
-                    />
-                  </View>
-                </TouchableOpacity>
-
-                {isDropDownrDur && renderDropDown('rdur')}
-              </View>
-            </View>
-          </View>
-
-          <View style={[styles.fieldContainer, {marginTop: 15}]}>
-            <Text style={styles.fieldText}>End Repeat On</Text>
-            <View style={[styles.fieldContainer, {marginTop: 5}]}>
-              <Pressable
-                onPress={() => {
-                  onClickrCal('endrepeat');
-                }}
-                style={({pressed}) => [
-                  {opacity: pressed ? 0.8 : 1.0},
-                  [
-                    styles.inputConatiner,
-                    {
-                      width: '63%',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    },
-                  ],
-                ]}>
-                <Text
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                  style={[
-                    styles.fieldText,
-                    {
-                      color:
-                        t == '' ? theme.color.subTitleLight : theme.color.title,
-                      fontFamily: theme.fonts.fontNormal,
-                      width: '85%',
-                      fontSize: 12.5,
-                    },
-                  ]}>
-                  {t == '' ? 'Select a date' : t}
-                </Text>
-                <View
-                  style={{
-                    width: '13%',
-                    alignItems: 'flex-end',
-                  }}>
-                  <Image
-                    source={require('../../assets/images/cal/img.png')}
-                    style={styles.inputIcon}
-                  />
-                </View>
-              </Pressable>
-            </View>
-          </View>
-        </>
-      );
-    };
-
-    const renderOtherDates = () => {
-      return (
-        <>
-          <View style={[styles.fieldContainer, {marginTop: 15}]}>
-            <Text style={styles.fieldText}>Exclude Specific Dates</Text>
-            <View style={[styles.fieldContainer, {marginTop: 5}]}>
-              <Pressable
-                onPress={() => {
-                  onClickrCal('otherdates');
-                }}
-                style={({pressed}) => [
-                  {opacity: pressed ? 0.8 : 1.0},
-                  [
-                    styles.inputConatiner,
-                    {
-                      width: '100%',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    },
-                  ],
-                ]}>
-                <Text
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                  style={[
-                    styles.fieldText,
-                    {
-                      color:
-                        tt == ''
-                          ? theme.color.subTitleLight
-                          : theme.color.title,
-                      fontFamily: theme.fonts.fontNormal,
-                      width: '85%',
-                      fontSize: 12.5,
-                    },
-                  ]}>
-                  {tt == '' ? 'Select dates this trip is not available' : tt}
-                </Text>
-                <View
-                  style={{
-                    width: '13%',
-                    alignItems: 'flex-end',
-                  }}>
-                  <Image
-                    source={require('../../assets/images/cal/img.png')}
-                    style={styles.inputIcon}
-                  />
-                </View>
-              </Pressable>
-            </View>
-          </View>
-        </>
-      );
-    };
-
-    const renderBottom = () => {
-      const renderButton1 = () => {
-        return (
-          <Pressable
-            onPress={closeModal}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.8 : 1.0},
-              styles.ButtonContainer,
-              {
-                backgroundColor: 'transparent',
-                borderWidth: 1,
-                borderColor: theme.color.fieldBorder,
-                marginRight: 15,
-              },
-            ]}>
-            <Text style={[styles.ButtonText, {color: '#30563A'}]}>Back</Text>
-          </Pressable>
-        );
-      };
-
-      const renderButton2 = () => {
-        return (
-          <Pressable
-            onPress={() => ApplyModal()}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.8 : 1.0},
-              styles.ButtonContainer,
-              {backgroundColor: theme.color.button1},
-            ]}>
-            <Text style={[styles.ButtonText, {color: theme.color.buttonText}]}>
-              Save and Continue
-            </Text>
-          </Pressable>
-        );
-      };
-
-      return (
-        <View
-          style={
-            c
-              ? {
-                  alignItems: 'flex-end',
-                  backgroundColor: theme.color.background,
-                  shadowColor: '#000000',
-                  shadowOffset: {width: 0, height: -1}, // change this for more shadow
-                  shadowOpacity: 0.1,
-                  elevation: 15,
-                  borderBottomLeftRadius: 10,
-                  borderBottomRightRadius: 10,
-                  marginTop: 5,
-                }
-              : {
-                  alignItems: 'flex-end',
-                  marginTop: 30,
-                }
-          }>
-          <View
-            style={
-              c ? styles.rmodalBottomContainer : styles.rmodalBottomContainer2
-            }>
-            {renderButton1()}
-            {renderButton2()}
-          </View>
-        </View>
-      );
-    };
-
-    return (
-      <MModal
-        visible={isShowUnavliableModal}
-        transparent
-        onRequestClose={closeModal}>
-        <SafeAreaView style={styles.modalContainer}>
-          <View style={styles.modalContainer2}>
-            <View
-              onLayout={event => {
-                if (!c) {
-                  let {height} = event.nativeEvent.layout;
-                  setmodalHeight(height);
-                }
-              }}
-              style={style}>
-              {c && (
-                <>
-                  {renderHeader()}
-                  <ScrollView
-                    contentContainerStyle={{paddingHorizontal: 15}}
-                    showsVerticalScrollIndicator={false}
-                    style={{flex: 1}}>
-                    {renderTitle()}
-                    {renderWeek()}
-                    {/* {renderRepeat()} */}
-                    {renderOtherDates()}
-                  </ScrollView>
-                  {renderBottom()}
-                </>
-              )}
-
-              {!c && (
-                <>
-                  {renderHeader()}
-                  {renderTitle()}
-                  {renderWeek()}
-                  {/* {renderRepeat()} */}
-                  {renderOtherDates()}
-                  {renderBottom()}
-                </>
-              )}
-            </View>
-          </View>
-          {isShowUnavliabledaysCal && renderCalender2()}
-        </SafeAreaView>
-      </MModal>
-    );
-  };
-
-  const renderCalender2 = () => {
-    const closeCalModal = () => {
-      setisShowUnavliabledaysCal(false);
-
-      setischk('');
-      let d = Object.keys(endRepOnS)[0];
-      siERpOn(d);
-      setunavlblSLCTmarkedDates(selunmarkeSLCTdDates);
-    };
-    const ApplyCalModal = () => {
-      if (ischk == 'endrepeat') {
-        setisShowUnavliabledaysCal(false);
-        let d = Object.keys(endRepOnM)[0];
-        siERpOn(d);
-
-        let esd = [];
-        if (!isObjectEmpty(selunmarkeSLCTdDates)) {
-          var myObject = selunmarkeSLCTdDates;
-          Object.keys(myObject).forEach(function (key, index) {
-            esd.push(key);
-          });
-        }
-        if (esd.length > 0) {
-          esd.sort(function (a, b) {
-            return Number(new Date(a)) - Number(new Date(b));
-          });
-        }
-
-        if (esd.length > 0) {
-          if (d >= esd[0]) {
-            setunavlblSLCTmarkedDates({});
-            setselunmarkedSLCTDates({});
-          }
-        }
-
-        return;
-      } else {
-        setisShowUnavliabledaysCal(false);
-        setselunmarkedSLCTDates(unavlblSLCTmarkedDates);
-        return;
-      }
-    };
-
-    const formatDate = date => {
-      var dd = moment(date).format('MMMM YYYY');
-      return dd;
-    };
-
-    const getSelectedDayEvents = date => {
-      if (ischk == 'endrepeat') {
-        let md = {};
-        md[date] = {
-          customStyles: cs,
-          marked: false,
-          selected: true,
-          selectedColor: theme.color.button1,
-          disabled: true,
-          disableTouchEvent: true,
-        };
-        setendRepOnM(md);
-        return;
-      } else {
-        let md = {...unavlblSLCTmarkedDates};
-        if (isObjectEmpty(md)) {
-          let markedDates = {};
-          markedDates[date] = {
-            customStyles: cs,
-            marked: false,
-            selected: true,
-            selectedColor: theme.color.button1,
-            disabled: false,
-            disableTouchEvent: false,
-          };
-          setunavlblSLCTmarkedDates(markedDates);
-          return;
-        } else {
-          let o = md[date];
-          if (o !== undefined) {
-            console.warn('The key exists.');
-            delete md[date];
-          } else {
-            console.warn('The key does not exist.');
-            md[date] = {
-              marked: false,
-              selected: true,
-              customStyles: cs,
-              selectedColor: theme.color.button1,
-              disabled: false,
-              disableTouchEvent: false,
-            };
-          }
-          setunavlblSLCTmarkedDates(md);
-          return;
-        }
-      }
-    };
-
-    const renderBottom = () => {
-      let c = isSelDate ? false : true;
-      return (
-        <View style={{marginTop: 10, alignItems: 'flex-end', width: '100%'}}>
-          <View
-            style={{
-              width: '55%',
-              paddingRight: 10,
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              flexDirection: 'row',
-            }}>
-            <Pressable
-              onPress={closeCalModal}
-              style={({pressed}) => [
-                {
-                  opacity: pressed ? 0.9 : 1.0,
-                  paddingHorizontal: 15,
-                  paddingVertical: 8,
-                  borderRadius: 8,
-                  borderWidth: 1,
-                  borderColor: theme.color.fieldBorder,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                },
-              ]}>
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontFamily: theme.fonts.fontBold,
-                  color: '#30563A',
-                }}>
-                Cancel
-              </Text>
-            </Pressable>
-
-            <Pressable
-              onPress={ApplyCalModal}
-              disabled={!isSelDate ? true : false}
-              style={({pressed}) => [
-                {
-                  opacity: pressed ? 0.9 : c ? 0.5 : 1.0,
-                  paddingHorizontal: 15,
-                  paddingVertical: 8,
-                  borderRadius: 8,
-                  backgroundColor: theme.color.button1,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                },
-              ]}>
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontFamily: theme.fonts.fontBold,
-                  color: theme.color.buttonText,
-                }}>
-                Apply
-              </Text>
-            </Pressable>
-          </View>
-        </View>
-      );
-    };
-
-    let cusTheme = {
-      textDisabledColor: theme.color.subTitleLight,
-      dayTextColor: theme.color.title,
-      textDayFontSize: 13,
-      textDayFontFamily: theme.fonts.fontMedium,
-      textDayHeaderFontSize: 13,
-      textSectionTitleColor: theme.color.title,
-      textDayHeaderFontFamily: theme.fonts.fontMedium,
-    };
-    let todaymark = isDisableToday2 ? dtd : td;
-
-    return (
-      <MModal
-        visible={isShowUnavliabledaysCal}
-        transparent
-        onRequestClose={closeCalModal}>
-        <SafeAreaView
-          style={[
-            {
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-
-              backgroundColor: 'rgba(0,0,0,0.5)',
-            },
-          ]}>
-          <View
-            style={{
-              width: '90%',
-              alignSelf: 'center',
-              paddingBottom: 20,
-              backgroundColor: theme.color.background,
-              borderRadius: 10,
-              paddingTop: 5,
-              paddingHorizontal: 5,
-            }}>
-            <Calendar
-              theme={cusTheme}
-              hideDayNames={false}
-              hideArrows={false}
-              hideExtraDays={false}
-              disableMonthChange={true} // If hideArrows = false and hideExtraDays = false do not switch month when tapping on greyed out
-              initialDate={ischk == 'endrepeat' ? endRepOn : mind}
-              // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
-              minDate={mind}
-              // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
-              maxDate={maxd}
-              // Handler which gets executed on day press. Default = undefined
-              onDayPress={day => {
-                getSelectedDayEvents(day.dateString);
-              }}
-              // Handler which gets executed on day long press. Default = undefined
-              onDayLongPress={day => {
-                console.log('selected long press day', day);
-              }}
-              // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
-              monthFormat={'yyyy MM'}
-              // Handler which gets executed when visible month changes in calendar. Default = undefined
-              onMonthChange={month => {
-                setmonth(new Date(month.dateString));
-              }}
-              // If firstDay=1 week starts from Monday. Note that dayNames and dayNamesShort should still start from Sunday
-              firstDay={7}
-              onPressArrowLeft={subtractMonth => subtractMonth()}
-              onPressArrowRight={addMonth => addMonth()}
-              renderHeader={date => {
-                return (
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      fontFamily: theme.fonts.fontBold,
-                      color: '#111111',
-                    }}>
-                    {formatDate(month)}
-                  </Text>
-                );
-              }}
-              enableSwipeMonths={true}
-              disableAllTouchEventsForDisabledDays={false}
-              markingType="custom"
-              markedDates={
-                ischk == 'endrepeat'
-                  ? {...todaymark, ...endRepOnM}
-                  : {
-                      ...todaymark,
-                      ...unavlblmarkedDates,
-                      ...unavlblSLCTmarkedDates,
-                    }
-              }
-            />
-            {renderBottom()}
-          </View>
-        </SafeAreaView>
-      </MModal>
     );
   };
 
@@ -2584,7 +775,6 @@ function NewTrips(props) {
               text: 'Open Settings',
               onPress: () => {
                 Linking.openURL('app-settings:');
-                //react-native-permissions // openSettings('App-Prefs:root=Photos');
               },
             },
           ]);
@@ -2630,13 +820,6 @@ function NewTrips(props) {
           if (permissionIos != 'granted' || permissionIos2 != 'granted') {
             setisShowPrmsn(true);
             setprmsnChk(c);
-            // if (c == 'camera') {
-            //   setisShowGalleryPrmsn(false);
-            //   setisShowCameraPrmsn(true);
-            // } else {
-            //   setisShowCameraPrmsn(false);
-            //   setisShowGalleryPrmsn(true);
-            // }
           } else {
             onclickImage(dt);
           }
@@ -2968,34 +1151,30 @@ function NewTrips(props) {
       data = activityList;
     }
     if (c == 'state') {
-      data = stateData;
+      data = stateDataList;
     }
     if (c == 'spcs') {
-      data = spcsData;
+      data = speciesData;
     }
 
     const onclickSelect = d => {
-      if (c == 'tt') {
+      if (c === 'tt') {
         settripType(d);
         if (tripType !== '') {
           if (tripType.name !== d.name) {
             setspecies('');
           }
         }
-
-        return;
       }
-      if (c == 'state') {
+      if (c === 'state') {
         setState(d);
-        return;
       }
-      if (c == 'spcs') {
+      if (c === 'spcs') {
         setspecies(d);
-        return;
       }
     };
 
-    let abs = Platform.OS == 'ios' ? false : true;
+    const abs = Platform.OS == 'ios' ? false : true;
     return (
       <utils.DropDown
         search={true}
@@ -3007,51 +1186,24 @@ function NewTrips(props) {
           closeAllDropDown();
         }}
         c={c}
-        // absolute={abs}
       />
     );
   };
 
   const renderSec1 = () => {
-    let t = '';
-    if (isSelDate1 != '' && isSelDate2 != '') {
-      t =
-        moment(isSelDate1).format('MMM DD, YYYY') +
-        '  -  ' +
-        moment(isSelDate2).format('MMM DD, YYYY');
-    }
-
-    let unavailableText = '';
-    let t1 = '';
-    let t2 = '';
-    if (isSetUnavailable) {
-      t1 = isSetUnavailable.wtxt;
-      t2 = isSetUnavailable.esd_text;
-
-      if (t1 != '' && t2 != '') {
-        unavailableText = t1 + ', ' + t2;
-      }
-      if (t1 == '' && t2 != '') {
-        unavailableText = t2;
-      } else if (t1 != '' && t2 == '') {
-        unavailableText = t1;
-      }
-    }
-
     return (
       <View style={styles.Sec}>
         <View style={styles.fieldContainer}>
           <Text style={styles.fieldText}>I want to trade a...</Text>
-          {/* trip type */}
           <View style={{width: '100%'}}>
             <TouchableOpacity
               onPress={() => {
                 closeAllDropDown();
-                setisDropDownTT(!isDropDownTT);
+                setIsDropDownTripType(!isDropDownTripType);
               }}
               activeOpacity={activeOpacity}
               style={[styles.dropDowninputConatiner]}>
-              <Image style={styles.dropDownIcon} source={actSrc} />
+              <Image style={styles.dropDownIcon} source={activityIconSrc} />
 
               <View style={{width: '82%'}}>
                 <Text
@@ -3073,7 +1225,7 @@ function NewTrips(props) {
                 size={11}
               />
             </TouchableOpacity>
-            {isDropDownTT && renderShowDropDown('tt')}
+            {isDropDownTripType && renderShowDropDown('tt')}
           </View>
         </View>
 
@@ -3096,12 +1248,12 @@ function NewTrips(props) {
                 style={[styles.input, {fontSize: 13}]}
               />
             </View>
-            {/* location */}
+
             <View style={{width: '42%'}}>
               <TouchableOpacity
                 onPress={() => {
                   closeAllDropDown();
-                  setisDropDownState(!isDropDownState);
+                  setIsDropDownState(!isDropDownState);
                 }}
                 activeOpacity={activeOpacity}
                 style={[styles.dropDowninputConatiner]}>
@@ -3112,11 +1264,11 @@ function NewTrips(props) {
                     style={[
                       styles.dropDownText2,
                       {
-                        opacity: State == '' ? 0.4 : 1,
-                        textTransform: State == '' ? 'none' : 'capitalize',
+                        opacity: state ? 1 : 0.4,
+                        textTransform: state ? 'capitalize' : 'none',
                       },
                     ]}>
-                    {State == '' ? 'State' : State.name}
+                    {state ? state.name : 'State'}
                   </Text>
                 </View>
                 <utils.vectorIcon.Fontisto
@@ -3133,20 +1285,19 @@ function NewTrips(props) {
         <View style={[styles.fieldContainer, {marginTop: 17}]}>
           <Text style={styles.fieldText}>Please enter the species</Text>
 
-          {/* species */}
           <View style={{width: '100%'}}>
             <TouchableOpacity
               disabled={tripType == '' ? true : false}
               onPress={() => {
                 closeAllDropDown();
-                setisDropDownSpcs(!isDropDownSpcs);
+                setIsDropDownSpecies(!isDropDownSpecies);
               }}
               activeOpacity={activeOpacity}
               style={[
                 styles.dropDowninputConatiner,
                 {opacity: tripType == '' ? 0.5 : 1},
               ]}>
-              <Image style={styles.dropDownIcon} source={spcSrc} />
+              <Image style={styles.dropDownIcon} source={speciesIconSrc} />
               <View style={{width: '83%'}}>
                 <Text
                   numberOfLines={1}
@@ -3168,7 +1319,7 @@ function NewTrips(props) {
                 size={11}
               />
             </TouchableOpacity>
-            {isDropDownSpcs && renderShowDropDown('spcs')}
+            {isDropDownSpecies && renderShowDropDown('spcs')}
           </View>
         </View>
 
@@ -3226,16 +1377,24 @@ function NewTrips(props) {
               <TextInput
                 keyboardType="number-pad"
                 maxLength={5}
-                defaultValue={durNum.toString()}
-                value={durNum.toString()}
+                defaultValue={durationNumber.toString()}
+                value={durationNumber.toString()}
                 onChangeText={d => {
-                  if (durNum.length == 0) {
+                  if (durationNumber.length == 0) {
                     if (d < parseInt(1)) {
                       return;
                     }
                   }
-
-                  setdurNum(d.replace(/[^0-9]/, ''));
+                  const num = d.replace(/[^0-9]/, '');
+                  setDurationNumber(num);
+                  utils.functions.checkAvailability(
+                    availablityDates,
+                    unAvailable,
+                    setAvailablityDates,
+                    setUnAvailble,
+                    duration.title,
+                    num,
+                  );
                 }}
                 style={styles.input}
               />
@@ -3245,7 +1404,7 @@ function NewTrips(props) {
               <TouchableOpacity
                 onPress={() => {
                   closeAllDropDown();
-                  setisDropDownDur(!isDropDownDur);
+                  setIsDropDownDuration(!isDropDownDuration);
                 }}
                 activeOpacity={0.6}
                 style={[
@@ -3262,7 +1421,7 @@ function NewTrips(props) {
                     numberOfLines={1}
                     ellipsizeMode="tail"
                     style={[styles.dropDownText]}>
-                    {dur.title ? dur.title : ''}
+                    {duration.title ? duration.title : ''}
                   </Text>
                 </View>
                 <View
@@ -3278,7 +1437,7 @@ function NewTrips(props) {
                 </View>
               </TouchableOpacity>
 
-              {isDropDownDur && renderDropDown('dur')}
+              {isDropDownDuration && renderDropDown('dur')}
             </View>
           </View>
         </View>
@@ -3298,7 +1457,7 @@ function NewTrips(props) {
           </Text>
 
           <Pressable
-            onPress={onClickCal}
+            onPress={openCalender}
             style={({pressed}) => [
               {opacity: pressed ? 0.8 : 1.0},
               [
@@ -3318,12 +1477,14 @@ function NewTrips(props) {
                 styles.fieldText,
                 {
                   color:
-                    t == '' ? theme.color.subTitleLight : theme.color.title,
+                    rangeValue === 'Select a date range'
+                      ? theme.color.subTitleLight
+                      : theme.color.title,
                   fontFamily: theme.fonts.fontNormal,
                   width: '85%',
                 },
               ]}>
-              {t == '' ? 'Select a date range' : t}
+              {rangeValue}
             </Text>
             <View
               style={{
@@ -3338,17 +1499,17 @@ function NewTrips(props) {
           </Pressable>
         </View>
 
-        {!isSetUnavailable && (
+        {availablityDates && !unAvailable && (
           <View style={[styles.fieldContainer, {marginTop: 17}]}>
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={onClickUnavailableDays}>
+              onPress={openUnAvailabaleDaysModal}>
               <Text style={styles.bottomText}>Set unavailable days</Text>
             </TouchableOpacity>
           </View>
         )}
 
-        {isSetUnavailable && (
+        {unAvailable && (
           <View style={styles.fieldContainer}>
             <View
               style={{
@@ -3360,7 +1521,7 @@ function NewTrips(props) {
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={{marginLeft: 15}}
-                onPress={onClickUnavailableDays}>
+                onPress={openUnAvailabaleDaysModal}>
                 <Text style={[styles.bottomText, {fontSize: 14}]}>Edit</Text>
               </TouchableOpacity>
             </View>
@@ -3573,7 +1734,7 @@ function NewTrips(props) {
       paddingVertical: 12,
       width: '47%',
     };
-    let dt = editTrip.data || [];
+    let dt = editTripObj.data || [];
     let status = '';
     let ch = false;
     if (dt) {
@@ -3636,6 +1797,17 @@ function NewTrips(props) {
   };
 
   const renderButton = () => {
+    const isButtonDisable =
+      availablityDates &&
+      Return != '' &&
+      durationNumber != '' &&
+      tripType != '' &&
+      species != '' &&
+      city != '' &&
+      state &&
+      photos.length > 0
+        ? false
+        : true;
     return (
       <>
         <TouchableOpacity
@@ -3646,7 +1818,7 @@ function NewTrips(props) {
           activeOpacity={0.7}
           style={[styles.BottomButton, {opacity: isButtonDisable ? 0.5 : 1}]}>
           <Text style={styles.buttonTextBottom}>
-            {!isEdit ? 'Create Trip' : 'Save Changes'}
+            {!editTrip ? 'Create Trip' : 'Save Changes'}
           </Text>
         </TouchableOpacity>
       </>
@@ -3661,7 +1833,7 @@ function NewTrips(props) {
 
     const renderHeader = () => {
       let text = '';
-      if (!isEdit) {
+      if (!editTrip) {
         if (!isTripCreate) {
           text = 'Review Trip Details';
         } else {
@@ -3669,7 +1841,7 @@ function NewTrips(props) {
         }
       }
 
-      if (isEdit) {
+      if (editTrip) {
         if (!isTripCreate) {
           text = 'Review Trip Details';
         } else {
@@ -3680,7 +1852,7 @@ function NewTrips(props) {
       const renderCross = () => {
         return (
           <Pressable
-            disabled={loader}
+            disabled={ctripsLoader}
             style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
             onPress={() => {
               closeReviewModal('');
@@ -3710,7 +1882,7 @@ function NewTrips(props) {
                   paddingTop: 15,
                   paddingBottom: 7,
                   shadowColor: '#000000',
-                  shadowOffset: {width: 0, height: 1}, // change this for more shadow
+                  shadowOffset: {width: 0, height: 1},
                   shadowOpacity: 0.1,
                   elevation: 1,
                   backgroundColor: theme.color.background,
@@ -3722,11 +1894,11 @@ function NewTrips(props) {
                   justifyContent: 'space-between',
                 }
           }>
-          {/* <View style={{width: '80%'}}> */}
+          {}
           {renderTitle()}
-          {/* </View> */}
+          {}
 
-          {/* {renderCross()} */}
+          {}
         </View>
       );
     };
@@ -3741,12 +1913,9 @@ function NewTrips(props) {
                 styles.rmodalsubTitle,
                 {fontFamily: theme.fonts.fontBold},
               ]}>
-              {!isEdit ? 'Create Trip' : 'Update Trip'}
+              {!editTrip ? 'Create Trip' : 'Update Trip'}
             </Text>
-            {/*  {' '}
-            {!isEdit
-              ? 'to make the trip available for trade offers.'
-              : 'to update the trip available for trade offers'} */}
+            {}
           </Text>
         </View>
       );
@@ -3826,41 +1995,16 @@ function NewTrips(props) {
     };
 
     const renderFields = () => {
-      let offer = species?.name + ' ' + tripType?.name || '';
-      let locationName =
-        location == false
-          ? 'Florida, Miami'
-          : location.city + ', ' + location.state;
-      let duration = durNum + ' ' + dur.title;
-      let availablity =
-        moment(isSelDate1).format('MMM DD') +
-        '  -  ' +
-        moment(isSelDate2).format('MMM DD');
-      let unavailable = '';
-      let t1 = '';
-      let t2 = '';
-      if (isSetUnavailable) {
-        t1 = isSetUnavailable.wtxt;
-        t2 = isSetUnavailable.esd_text;
-
-        if (t1 != '' && t2 != '') {
-          unavailable = t1 + ', ' + t2;
-        }
-        if (t1 == '' && t2 != '') {
-          unavailable = t2;
-        } else if (t1 != '' && t2 == '') {
-          unavailable = t1;
-        }
-      }
+      const offer = species?.name + ' ' + tripType?.name || '';
+      const locationName =
+        city === '' || !state ? 'Florida, Miami' : city + ', ' + state.name;
+      const durationTitle = durationNumber + ' ' + duration.title;
 
       return (
         <View style={{marginTop: 20}}>
           <View style={[styles.rField, {width: '85%'}]}>
             <Text style={styles.rTitle}>YOUR OFFERING</Text>
-            <Text
-              // numberOfLines={2}
-              // ellipsizeMode="tail"
-              style={[styles.rTitle2, {color: theme.color.titleGreenForm}]}>
+            <Text style={[styles.rTitle2, {color: theme.color.titleGreenForm}]}>
               {offer}
             </Text>
           </View>
@@ -3868,21 +2012,15 @@ function NewTrips(props) {
           <View style={styles.rField2}>
             <View style={[styles.rField, {width: '49%'}]}>
               <Text style={styles.rTitle}>TRIP LOCATION</Text>
-              <Text
-                // numberOfLines={2}
-                // ellipsizeMode="tail"
-                style={[styles.rTitle2, {textTransform: 'none'}]}>
+              <Text style={[styles.rTitle2, {textTransform: 'none'}]}>
                 {locationName}
               </Text>
             </View>
 
             <View style={[styles.rField, {width: '49%'}]}>
               <Text style={styles.rTitle}>TRIP DURATION</Text>
-              <Text
-                // numberOfLines={2}
-                // ellipsizeMode="tail"
-                style={[styles.rTitle2, {textTransform: 'none'}]}>
-                {duration}
+              <Text style={[styles.rTitle2, {textTransform: 'none'}]}>
+                {durationTitle}
               </Text>
             </View>
           </View>
@@ -3890,21 +2028,13 @@ function NewTrips(props) {
           <View style={styles.rField2}>
             <View style={[styles.rField, {width: '49%'}]}>
               <Text style={styles.rTitle}>TRIP Availability</Text>
-              <Text
-                // numberOfLines={2}
-                // ellipsizeMode="tail"
-                style={styles.rTitle2}>
-                {availablity}
-              </Text>
+              <Text style={styles.rTitle2}>{rangeValue}</Text>
             </View>
 
             <View style={[styles.rField, {width: '49%'}]}>
               <Text style={styles.rTitle}>UNAVAILABLE DAYS</Text>
-              <Text
-                // numberOfLines={4}
-                // ellipsizeMode="tail"
-                style={[styles.rTitle2, {textTransform: 'none'}]}>
-                {unavailable == '' ? 'None' : unavailable}
+              <Text style={[styles.rTitle2, {textTransform: 'none'}]}>
+                {unAvailable ? unavailableText : 'None'}
               </Text>
             </View>
           </View>
@@ -3931,7 +2061,7 @@ function NewTrips(props) {
       const renderButton1 = () => {
         return (
           <Pressable
-            disabled={loader}
+            disabled={ctripsLoader}
             onPress={() => {
               closeReviewModal('');
             }}
@@ -3953,20 +2083,20 @@ function NewTrips(props) {
       const renderButton2 = () => {
         return (
           <Pressable
-            disabled={loader}
-            onPress={!isEdit ? CreateTrip : UpdateTrip}
+            disabled={ctripsLoader}
+            onPress={!editTrip ? CreateTrip : UpdateTrip}
             style={({pressed}) => [
               {opacity: pressed ? 0.8 : 1.0},
               styles.ButtonContainer,
               {backgroundColor: theme.color.button1},
             ]}>
-            {loader && (
+            {ctripsLoader && (
               <ActivityIndicator size={20} color={theme.color.buttonText} />
             )}
-            {!loader && (
+            {!ctripsLoader && (
               <Text
                 style={[styles.ButtonText, {color: theme.color.buttonText}]}>
-                {!isEdit ? 'Create Trip' : 'Save Changes'}
+                {!editTrip ? 'Create Trip' : 'Save Changes'}
               </Text>
             )}
           </Pressable>
@@ -3981,7 +2111,7 @@ function NewTrips(props) {
                   alignItems: 'flex-end',
                   backgroundColor: theme.color.background,
                   shadowColor: '#000000',
-                  shadowOffset: {width: 0, height: -1}, // change this for more shadow
+                  shadowOffset: {width: 0, height: -1},
                   shadowOpacity: 0.1,
                   elevation: 15,
                   borderBottomLeftRadius: 10,
@@ -4073,7 +2203,7 @@ function NewTrips(props) {
                   alignItems: 'flex-end',
                   backgroundColor: theme.color.background,
                   shadowColor: '#000000',
-                  shadowOffset: {width: 0, height: -1}, // change this for more shadow
+                  shadowOffset: {width: 0, height: -1},
                   shadowOpacity: 0.1,
                   elevation: 15,
                   borderBottomLeftRadius: 10,
@@ -4088,7 +2218,7 @@ function NewTrips(props) {
             style={
               c ? styles.rmodalBottomContainer : styles.rmodalBottomContainer2
             }>
-            {!isEdit ? renderButton1() : renderButton11()}
+            {!editTrip ? renderButton1() : renderButton11()}
             {renderButton2()}
           </View>
         </View>
@@ -4162,7 +2292,7 @@ function NewTrips(props) {
         const renderCross = () => {
           return (
             <Pressable
-              disabled={loader}
+              disabled={ctripsLoader}
               style={({pressed}) => [
                 {opacity: pressed ? 0.7 : 1.0},
                 [
@@ -4204,7 +2334,7 @@ function NewTrips(props) {
                     paddingTop: 15,
                     paddingBottom: 7,
                     shadowColor: '#000000',
-                    shadowOffset: {width: 0, height: 1}, // change this for more shadow
+                    shadowOffset: {width: 0, height: 1},
                     shadowOpacity: 0.1,
                     elevation: 1,
                     backgroundColor: theme.color.background,
@@ -4270,7 +2400,7 @@ function NewTrips(props) {
           return (
             <>
               <TouchableOpacity
-                disabled={loader}
+                disabled={ctripsLoader}
                 onPress={SuspendTrip}
                 activeOpacity={0.7}
                 style={{
@@ -4282,7 +2412,7 @@ function NewTrips(props) {
                   borderRadius: 10,
                   alignSelf: 'center',
                 }}>
-                {!loader && (
+                {!ctripsLoader && (
                   <Text
                     style={{
                       color: theme.color.buttonText,
@@ -4293,7 +2423,9 @@ function NewTrips(props) {
                     {t}
                   </Text>
                 )}
-                {loader && <ActivityIndicator size={20} color={'white'} />}
+                {ctripsLoader && (
+                  <ActivityIndicator size={20} color={'white'} />
+                )}
               </TouchableOpacity>
             </>
           );
@@ -4305,7 +2437,7 @@ function NewTrips(props) {
           return (
             <>
               <TouchableOpacity
-                disabled={loader}
+                disabled={ctripsLoader}
                 onPress={closeModalg}
                 activeOpacity={0.7}
                 style={{
@@ -4341,7 +2473,7 @@ function NewTrips(props) {
                 ? {
                     backgroundColor: theme.color.background,
                     shadowColor: '#000000',
-                    shadowOffset: {width: 0, height: -1}, // change this for more shadow
+                    shadowOffset: {width: 0, height: -1},
                     shadowOpacity: 0.1,
                     elevation: 5,
                     borderBottomLeftRadius: 10,
@@ -4407,7 +2539,7 @@ function NewTrips(props) {
         const renderCross = () => {
           return (
             <Pressable
-              disabled={loader}
+              disabled={ctripsLoader}
               style={({pressed}) => [
                 {opacity: pressed ? 0.7 : 1.0},
                 [
@@ -4449,7 +2581,7 @@ function NewTrips(props) {
                     paddingTop: 15,
                     paddingBottom: 7,
                     shadowColor: '#000000',
-                    shadowOffset: {width: 0, height: 1}, // change this for more shadow
+                    shadowOffset: {width: 0, height: 1},
                     shadowOpacity: 0.1,
                     elevation: 1,
                     backgroundColor: theme.color.background,
@@ -4515,7 +2647,7 @@ function NewTrips(props) {
           return (
             <>
               <TouchableOpacity
-                disabled={loader}
+                disabled={ctripsLoader}
                 onPress={DeleteTrip}
                 activeOpacity={0.7}
                 style={{
@@ -4527,7 +2659,7 @@ function NewTrips(props) {
                   borderRadius: 10,
                   alignSelf: 'center',
                 }}>
-                {!loader && (
+                {!ctripsLoader && (
                   <Text
                     style={{
                       color: theme.color.buttonText,
@@ -4538,7 +2670,9 @@ function NewTrips(props) {
                     {t}
                   </Text>
                 )}
-                {loader && <ActivityIndicator size={20} color={'white'} />}
+                {ctripsLoader && (
+                  <ActivityIndicator size={20} color={'white'} />
+                )}
               </TouchableOpacity>
             </>
           );
@@ -4550,7 +2684,7 @@ function NewTrips(props) {
           return (
             <>
               <TouchableOpacity
-                disabled={loader}
+                disabled={ctripsLoader}
                 onPress={closeModalg}
                 activeOpacity={0.7}
                 style={{
@@ -4586,7 +2720,7 @@ function NewTrips(props) {
                 ? {
                     backgroundColor: theme.color.background,
                     shadowColor: '#000000',
-                    shadowOffset: {width: 0, height: -1}, // change this for more shadow
+                    shadowOffset: {width: 0, height: -1},
                     shadowOpacity: 0.1,
                     elevation: 5,
                     borderBottomLeftRadius: 10,
@@ -4652,7 +2786,7 @@ function NewTrips(props) {
         const renderCross = () => {
           return (
             <Pressable
-              disabled={loader}
+              disabled={ctripsLoader}
               style={({pressed}) => [
                 {opacity: pressed ? 0.7 : 1.0},
                 [
@@ -4694,7 +2828,7 @@ function NewTrips(props) {
                     paddingTop: 15,
                     paddingBottom: 7,
                     shadowColor: '#000000',
-                    shadowOffset: {width: 0, height: 1}, // change this for more shadow
+                    shadowOffset: {width: 0, height: 1},
                     shadowOpacity: 0.1,
                     elevation: 1,
                     backgroundColor: theme.color.background,
@@ -4760,7 +2894,7 @@ function NewTrips(props) {
           return (
             <>
               <TouchableOpacity
-                disabled={loader}
+                disabled={ctripsLoader}
                 onPress={ActivateTrip}
                 activeOpacity={0.7}
                 style={{
@@ -4772,7 +2906,7 @@ function NewTrips(props) {
                   borderRadius: 10,
                   alignSelf: 'center',
                 }}>
-                {!loader && (
+                {!ctripsLoader && (
                   <Text
                     style={{
                       color: theme.color.buttonText,
@@ -4783,7 +2917,9 @@ function NewTrips(props) {
                     {t}
                   </Text>
                 )}
-                {loader && <ActivityIndicator size={20} color={'white'} />}
+                {ctripsLoader && (
+                  <ActivityIndicator size={20} color={'white'} />
+                )}
               </TouchableOpacity>
             </>
           );
@@ -4795,7 +2931,7 @@ function NewTrips(props) {
           return (
             <>
               <TouchableOpacity
-                disabled={loader}
+                disabled={ctripsLoader}
                 onPress={closeModalg}
                 activeOpacity={0.7}
                 style={{
@@ -4831,7 +2967,7 @@ function NewTrips(props) {
                 ? {
                     backgroundColor: theme.color.background,
                     shadowColor: '#000000',
-                    shadowOffset: {width: 0, height: -1}, // change this for more shadow
+                    shadowOffset: {width: 0, height: -1},
                     shadowOpacity: 0.1,
                     elevation: 5,
                     borderBottomLeftRadius: 10,
@@ -4894,7 +3030,7 @@ function NewTrips(props) {
   return (
     <View style={styles.container}>
       <utils.DrawerHeader props={props} headerTitle={headerTitle} />
-      {!internet && <utils.InternetMessage />}
+      {!isInternet && <utils.InternetMessage />}
 
       <KeyboardAvoidingView
         behavior={Platform.OS == 'ios' ? 'height' : undefined}
@@ -4909,7 +3045,7 @@ function NewTrips(props) {
               }}>
               {renderSec1()}
               {renderSec2()}
-              {isEdit && renderSec3()}
+              {editTrip && renderSec3()}
               {renderButton()}
             </ScrollView>
           </View>
@@ -4922,11 +3058,34 @@ function NewTrips(props) {
         </SafeAreaView>
       </KeyboardAvoidingView>
 
-      <Toast ref={toast} position="bottom" />
+      {isShowCalender && (
+        <utils.RangeCalender
+          isShowCalender={isShowCalender}
+          setIsShowCalender={setIsShowCalender}
+          availablityDates={availablityDates}
+          setAvailablityDates={setAvailablityDates}
+          setUnAvailble={setUnAvailble}
+          title={duration.title}
+          durationNum={durationNumber}
+          minDate={minDate != '' ? minDate : new Date()}
+          totalDays={totalDays}
+        />
+      )}
+
+      {isShowUnAvailable && (
+        <utils.UnAvailableModal
+          isModal={isShowUnAvailable}
+          setIsModal={setIsShowUnAvailable}
+          unAvailable={unAvailable}
+          setUnAvailble={setUnAvailble}
+          minDate={minDate}
+          maxDate={maxDate}
+          totalDays={totalDays}
+        />
+      )}
+
       {isReviewTrip && renderReviewTripModal()}
       {isModal && renderModal()}
-      {showCalender && renderCalender()}
-      {isShowUnavliableModal && renderUNavlblModal()}
 
       {isAddPhotoModal && renderAddPhotoModal()}
       {deleteModal && renderDeleteModal()}
@@ -4939,6 +3098,8 @@ function NewTrips(props) {
           closModal={() => setpvm(!pvm)}
         />
       )}
+
+      <Toast ref={toast} position="bottom" />
     </View>
   );
 }

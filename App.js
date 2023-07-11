@@ -13,9 +13,10 @@ import {observer} from 'mobx-react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 export default observer(App);
-function App(props) {
-  const Stack = createNativeStackNavigator();
+function App() {
   const {user} = store.User;
+  const {Loading} = store.General;
+  const Stack = createNativeStackNavigator();
 
   useEffect(() => {
     if (Platform.OS === 'android') {
@@ -58,15 +59,13 @@ function App(props) {
     <SafeAreaProvider>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{headerShown: false}}>
-          {store.General.Loading && (
-            <Stack.Screen name="Splash" component={screens.Splash} />
-          )}
+          {Loading && <Stack.Screen name="Splash" component={screens.Splash} />}
 
-          {!store.General.Loading && !user && (
+          {!Loading && !user && (
             <Stack.Screen name="AuthStack" component={stack.AuthStack} />
           )}
 
-          {!store.General.Loading && user && (
+          {!Loading && user && (
             <Stack.Screen name="HomeStack" component={stack.HomeStack} />
           )}
         </Stack.Navigator>

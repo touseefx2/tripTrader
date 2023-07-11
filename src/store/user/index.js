@@ -1644,7 +1644,7 @@ class user {
 
   @observable online = false;
   @observable notificationToken = '';
-  @persist @observable authToken = '';
+  @persist('object') @observable authToken = '';
 
   @observable isGetAllDatainSplash = false;
   @observable total = 0; //total uploaded image length

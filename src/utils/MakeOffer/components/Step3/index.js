@@ -48,8 +48,13 @@ function Step3({
   const [isDropDownSpecies, setIsDropDownSpecies] = useState(false);
   const [isDropDownDuration, setIsDropDownDuration] = useState(false);
 
-  const [totalDays, setTotalDays] = useState(0);
   const [isDisable, setIsDisable] = useState(true);
+
+  let totalDays = 0;
+  if (duration) {
+    if (duration.title === 'days') totalDays = durationNum;
+    else if (duration.title === 'weeks') totalDays = durationNum * 7;
+  }
 
   useEffect(() => {
     if (
@@ -70,30 +75,6 @@ function Step3({
     city,
     selectedState,
   ]);
-
-  useEffect(() => {
-    let num = 0;
-    if (duration) {
-      if (duration.title == 'days') num = durationNum;
-      else if (duration.title == 'weeks') num = durationNum * 7;
-      setTotalDays(num);
-    }
-  }, [duration, durationNum]);
-
-  useEffect(() => {
-    if (availablityDates) {
-      let availablityDatesLength = Object.keys(availablityDates).length;
-      let unAvailableDaysLength = 0;
-      if (unAvailable)
-        unAvailableDaysLength = unAvailable.allUnavailableDates.length;
-
-      availablityDatesLength = availablityDatesLength - unAvailableDaysLength;
-      if (availablityDatesLength < totalDays) {
-        setUnAvailble(null);
-        setAvailablityDates(null);
-      }
-    }
-  }, [totalDays, availablityDates, unAvailable]);
 
   const closeAllDropDown = () => {
     setIsDropDownSpecies(false);
@@ -135,15 +116,25 @@ function Step3({
         : [];
 
     const onclickSelect = obj => {
-      if (check == 'tt') {
+      if (check === 'tt') {
         setTripType(obj);
         if (tripType && tripType.name !== obj.name) setSelectedSpecies(null);
       }
-      if (check == 'state') setSelectedState(obj);
+      if (check === 'state') setSelectedState(obj);
 
-      if (check == 'spcs') setSelectedSpecies(obj);
+      if (check === 'spcs') setSelectedSpecies(obj);
 
-      if (check == 'dur') setDuration(obj);
+      if (check === 'dur') {
+        setDuration(obj);
+        utils.functions.checkAvailability(
+          availablityDates,
+          unAvailable,
+          setAvailablityDates,
+          setUnAvailble,
+          obj.title,
+          durationNum,
+        );
+      }
     };
 
     return (
@@ -153,7 +144,7 @@ function Step3({
         onSelectItem={onclickSelect}
         setVisible={closeAllDropDown}
         c={check}
-        absolute={Platform.OS == 'ios' ? false : true}
+        absolute={Platform.OS === 'ios' ? false : true}
       />
     );
   };
@@ -169,6 +160,10 @@ function Step3({
   const renderField = () => {
     return (
       <Fields
+        availablityDates={availablityDates}
+        unAvailable={unAvailable}
+        setAvailablityDates={setAvailablityDates}
+        setUnAvailble={setUnAvailble}
         unavailableText={unavailableText}
         tripType={tripType}
         isDropDownTripType={isDropDownTripType}
