@@ -4,7 +4,8 @@ import {
   Modal,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {styles} from './styles';
 import theme from '../../theme';
@@ -210,113 +211,117 @@ export default function MakeOffer({
 
   return (
     <Modal visible={isModal} transparent onRequestClose={goBack}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS == 'ios' ? 'height' : undefined}
-        style={styles.modalContainer}>
-        <View
-          onLayout={onViewLayout}
-          style={[
-            styles.modal,
-            isMaxHeight
-              ? {height: maxModalHeight, paddingTop: 0}
-              : {padding: 15},
-          ]}>
-          <Header
-            title={'Make Offer'}
-            loader={loader}
-            closeModal={closeModal}
-            isMaxHeight={isMaxHeight}
-          />
-          {step == 1 && (
-            <Step1
-              modalObj={modalObj}
-              step={step}
-              setStep={setStep}
-              setmodalHeight={setmodalHeight}
-              isMaxHeight={isMaxHeight}
-              selectedDates={selectedDates}
-              setSelectedDates={setSelectedDates}
-              durationTitle={durationTitle}
-              totalDays={totalDays}
-              screen={screen}
-            />
-          )}
-          {step == 2 && (
-            <Step2
-              step={step}
-              setStep={setStep}
-              setmodalHeight={setmodalHeight}
-              isMaxHeight={isMaxHeight}
-              selectedTrip={selectedTrip}
-              setSelectedTrip={setSelectedTrip}
-              isTripRefresh={isTripRefresh}
-              setIsTripRefresh={setIsTripRefresh}
-            />
-          )}
-          {step == 3 && (
-            <Step3
-              step={step}
-              setStep={setStep}
-              setmodalHeight={setmodalHeight}
-              isMaxHeight={isMaxHeight}
-              speciesList={speciesList}
-              durationList={durationList}
-              tripType={tripType}
-              setTripType={setTripType}
-              city={city}
-              setCity={setCity}
-              selectedState={selectedState}
-              setSelectedState={setSelectedState}
-              selectedSpecies={selectedSpecies}
-              setSelectedSpecies={setSelectedSpecies}
-              durationNum={durationNum}
-              setDurationNum={setDurationNum}
-              duration={duration}
-              setDuration={setDuration}
-              availablityDates={availablityDates}
-              setAvailablityDates={setAvailablityDates}
-              minDate={minDate}
-              maxDate={maxDate}
-              rangeValue={rangeValue}
-              unAvailable={unAvailable}
-              setUnAvailble={setUnAvailble}
-              unavailableText={unavailableText}
-              note={note}
-              setNote={setNote}
-              clearStep3Fields={clearStep3Fields}
-            />
-          )}
-
-          {step == 4 && (
-            <Step4
-              modalObj={modalObj}
-              durationTitle={durationTitle}
-              step={step}
-              setStep={setStep}
-              setmodalHeight={setmodalHeight}
-              isMaxHeight={isMaxHeight}
-              city={city}
-              selectedState={selectedState}
-              selectedSpecies={selectedSpecies}
-              durationNum={durationNum}
-              duration={duration}
-              rangeValue={rangeValue}
-              unavailableText={unavailableText}
-              note={note}
-              tripType={tripType}
-              selectedDates={selectedDates}
-              minDate={minDate}
-              maxDate={maxDate}
-              unAvailable={unAvailable}
-              offerSuccefullySend={offerSuccefullySend}
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : null}
+          keyboardVerticalOffset={Platform.select({ios: 0, android: 500})}
+          // behavior={Platform.OS == 'ios' ? 'height' : undefined}
+          style={styles.modalContainer}>
+          <View
+            onLayout={onViewLayout}
+            style={[
+              styles.modal,
+              isMaxHeight
+                ? {height: maxModalHeight, paddingTop: 0}
+                : {padding: 15},
+            ]}>
+            <Header
+              title={'Make Offer'}
               loader={loader}
               closeModal={closeModal}
-              screen={screen}
-              props={props}
+              isMaxHeight={isMaxHeight}
             />
-          )}
-        </View>
-      </KeyboardAvoidingView>
+            {step == 1 && (
+              <Step1
+                modalObj={modalObj}
+                step={step}
+                setStep={setStep}
+                setmodalHeight={setmodalHeight}
+                isMaxHeight={isMaxHeight}
+                selectedDates={selectedDates}
+                setSelectedDates={setSelectedDates}
+                durationTitle={durationTitle}
+                totalDays={totalDays}
+                screen={screen}
+              />
+            )}
+            {step == 2 && (
+              <Step2
+                step={step}
+                setStep={setStep}
+                setmodalHeight={setmodalHeight}
+                isMaxHeight={isMaxHeight}
+                selectedTrip={selectedTrip}
+                setSelectedTrip={setSelectedTrip}
+                isTripRefresh={isTripRefresh}
+                setIsTripRefresh={setIsTripRefresh}
+              />
+            )}
+            {step == 3 && (
+              <Step3
+                step={step}
+                setStep={setStep}
+                setmodalHeight={setmodalHeight}
+                isMaxHeight={isMaxHeight}
+                speciesList={speciesList}
+                durationList={durationList}
+                tripType={tripType}
+                setTripType={setTripType}
+                city={city}
+                setCity={setCity}
+                selectedState={selectedState}
+                setSelectedState={setSelectedState}
+                selectedSpecies={selectedSpecies}
+                setSelectedSpecies={setSelectedSpecies}
+                durationNum={durationNum}
+                setDurationNum={setDurationNum}
+                duration={duration}
+                setDuration={setDuration}
+                availablityDates={availablityDates}
+                setAvailablityDates={setAvailablityDates}
+                minDate={minDate}
+                maxDate={maxDate}
+                rangeValue={rangeValue}
+                unAvailable={unAvailable}
+                setUnAvailble={setUnAvailble}
+                unavailableText={unavailableText}
+                note={note}
+                setNote={setNote}
+                clearStep3Fields={clearStep3Fields}
+              />
+            )}
+
+            {step == 4 && (
+              <Step4
+                modalObj={modalObj}
+                durationTitle={durationTitle}
+                step={step}
+                setStep={setStep}
+                setmodalHeight={setmodalHeight}
+                isMaxHeight={isMaxHeight}
+                city={city}
+                selectedState={selectedState}
+                selectedSpecies={selectedSpecies}
+                durationNum={durationNum}
+                duration={duration}
+                rangeValue={rangeValue}
+                unavailableText={unavailableText}
+                note={note}
+                tripType={tripType}
+                selectedDates={selectedDates}
+                minDate={minDate}
+                maxDate={maxDate}
+                unAvailable={unAvailable}
+                offerSuccefullySend={offerSuccefullySend}
+                loader={loader}
+                closeModal={closeModal}
+                screen={screen}
+                props={props}
+              />
+            )}
+          </View>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 }

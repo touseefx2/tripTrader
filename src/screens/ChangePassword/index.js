@@ -392,6 +392,7 @@ function ChangePassword(props) {
                 paddingVertical: 15,
               }}>
               {renderMain()}
+            
             </ScrollView>
           </View>
           <utils.Footer

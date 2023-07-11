@@ -9,6 +9,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {styles} from './styles';
 import theme from '../../theme';
@@ -201,43 +202,47 @@ export default function MessageModal({
 
   return (
     <Modal visible={isModal} transparent onRequestClose={closeModal}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS == 'ios' ? 'height' : undefined}
-        style={styles.modalContainer}>
-        <View
-          onLayout={onViewLayout}
-          style={[
-            styles.modal,
-            isMaxHeight
-              ? {height: maxModalHeight, paddingTop: 0}
-              : {padding: 15},
-          ]}>
-          <Header
-            title={'Message User'}
-            loader={loader}
-            closeModal={closeModal}
-            isMaxHeight={isMaxHeight}
-          />
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : null}
+          keyboardVerticalOffset={Platform.select({ios: 0, android: 500})}
+          // behavior={Platform.OS == 'ios' ? 'height' : undefined}
+          style={styles.modalContainer}>
+          <View
+            onLayout={onViewLayout}
+            style={[
+              styles.modal,
+              isMaxHeight
+                ? {height: maxModalHeight, paddingTop: 0}
+                : {padding: 15},
+            ]}>
+            <Header
+              title={'Message User'}
+              loader={loader}
+              closeModal={closeModal}
+              isMaxHeight={isMaxHeight}
+            />
 
-          {isMaxHeight ? (
-            <ScrollView
-              contentContainerStyle={{paddingHorizontal: 15}}
-              showsVerticalScrollIndicator={false}
-              style={{flex: 1}}>
-              {renderFields()}
-            </ScrollView>
-          ) : (
-            <>{renderFields()}</>
-          )}
+            {isMaxHeight ? (
+              <ScrollView
+                contentContainerStyle={{paddingHorizontal: 15}}
+                showsVerticalScrollIndicator={false}
+                style={{flex: 1}}>
+                {renderFields()}
+              </ScrollView>
+            ) : (
+              <>{renderFields()}</>
+            )}
 
-          <Bottom
-            isMaxHeight={isMaxHeight}
-            loader={loader}
-            message={message}
-            sendMessage={sendMessage}
-          />
-        </View>
-      </KeyboardAvoidingView>
+            <Bottom
+              isMaxHeight={isMaxHeight}
+              loader={loader}
+              message={message}
+              sendMessage={sendMessage}
+            />
+          </View>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 }
