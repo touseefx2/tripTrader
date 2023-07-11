@@ -63,15 +63,15 @@ function Step2({
   };
 
   const renderShowDropDown = check => {
-    let data = check == 'trip' ? trips : [];
+    const data = check == 'trip' ? trips : [];
 
     const onclickSelect = obj => {
-      if (obj == 'customOffer') {
+      if (obj === 'customOffer') {
         setSelectedTrip(null);
         goNext();
         return;
       }
-      if (check == 'trip') {
+      if (check === 'trip') {
         setSelectedTrip(obj);
         return;
       }

@@ -175,7 +175,7 @@ export const styles = StyleSheet.create({
     lineHeight: 22.8,
     textTransform: 'capitalize',
   },
-  section2: {},
+  section2: {marginTop: 15},
   section2Title1: {
     color: theme.color.titleGreenForm,
     fontSize: 20,

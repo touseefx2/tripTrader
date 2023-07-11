@@ -47,7 +47,6 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.color.background,
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
-    marginTop: 2,
   },
   Text: {
     color: theme.color.title,

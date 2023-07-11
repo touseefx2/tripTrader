@@ -43,7 +43,7 @@ function SearchBar({search, setsearch}) {
   );
 }
 
-function EmptyListMessage() {
+function EmptyListMessage({isMaxHeight, maxModalHeight}) {
   return (
     <>
       <Text
@@ -55,7 +55,8 @@ function EmptyListMessage() {
           color: theme.color.title,
           fontFamily: theme.fonts.fontMedium,
           opacity: 0.4,
-          marginVertical: 25,
+          marginTop: !isMaxHeight ? 20 : maxModalHeight / 3,
+          marginBottom: !isMaxHeight ? 20 : maxModalHeight / 3,
         }}>
         No record found
       </Text>
@@ -80,18 +81,17 @@ export default function DropDown(props) {
   const absolute = props.absolute || false;
 
   const [modalHeight, setmodalHeight] = useState(0);
-  const maxModalHeight = 220;
+  const maxModalHeight = 200;
 
   const [data, setData] = useState(props.data);
-
   const [search, setsearch] = useState('');
 
   useEffect(() => {
     if (search != '') {
-      let d = [];
+      let result = [];
       if (props.data.length > 0) {
-        d = props.data.filter(item => {
-          let n =
+        result = props.data.filter(item => {
+          const name =
             check == 'loc' ||
             check == 'actvty' ||
             check == 'spcs' ||
@@ -106,10 +106,10 @@ export default function DropDown(props) {
               ? item.species
               : '';
 
-          return n.toLowerCase().includes(search.toLowerCase());
+          return name.toLowerCase().includes(search.toLowerCase());
         });
       }
-      setData(d);
+      setData(result);
     } else {
       setData(props.data);
     }
@@ -128,16 +128,19 @@ export default function DropDown(props) {
   };
 
   const renderItems = ({item}) => {
-    let title =
-      check == 'loc' || check == 'actvty' || check == 'spcs' || check == 'state'
+    const title =
+      check === 'loc' ||
+      check == 'actvty' ||
+      check == 'spcs' ||
+      check == 'state'
         ? item.name
-        : check == 'tt'
+        : check === 'tt'
         ? item.name
-        : check == 'topic'
+        : check === 'topic'
         ? item.title
-        : check == 'dur' || check == 'rdur'
+        : check === 'dur' || check === 'rdur'
         ? item.title
-        : check == 'trip'
+        : check === 'trip'
         ? item.species
         : '';
 
@@ -199,7 +202,10 @@ export default function DropDown(props) {
               nestedScrollEnabled
               ListEmptyComponent={
                 check == 'trip' && props.data.length <= 0 ? null : (
-                  <EmptyListMessage />
+                  <EmptyListMessage
+                    isMaxHeight={isMaxHeight}
+                    maxModalHeight={maxModalHeight}
+                  />
                 )
               }
               ListHeaderComponent={
@@ -223,14 +229,14 @@ export default function DropDown(props) {
             />
           </KeyboardAvoidingView>
         </TouchableWithoutFeedback>
-        {isFooter && (
-          <Footer
-            onClickItem={() => {
-              onClickItem('customOffer');
-            }}
-          />
-        )}
       </SafeAreaView>
+      {isFooter && (
+        <Footer
+          onClickItem={() => {
+            onClickItem('customOffer');
+          }}
+        />
+      )}
     </>
   );
 }

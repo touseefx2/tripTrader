@@ -469,30 +469,29 @@ function Support(props) {
     <View style={styles.container}>
       <utils.DrawerHeader props={props} headerTitle={headerTitle} />
       {!internet && <utils.InternetMessage />}
-      <SafeAreaView style={styles.container2}>
-        <KeyboardAvoidingView
-          style={styles.container3}
-          behavior={Platform.OS === 'ios' ? 'padding' : null}
-          keyboardVerticalOffset={Platform.select({ios: 0, android: 500})}
-          enabled
-          // behavior={Platform.OS == 'ios' ? 'height' : undefined}
-        >
-          <ScrollView
-            contentContainerStyle={{
-              paddingHorizontal: 15,
-              paddingVertical: 15,
-            }}>
-            {!isSubmit && renderMain()}
-            {isSubmit && renderMain2()}
-          </ScrollView>
-        </KeyboardAvoidingView>
-        <utils.Footer
-          nav={props.navigation}
-          screen={headerTitle}
-          focusScreen={store.General.focusScreen}
-        />
-      </SafeAreaView>
 
+      <KeyboardAvoidingView
+        style={styles.container2}
+        behavior={Platform.OS === 'ios' ? 'padding' : null}
+        keyboardVerticalOffset={Platform.select({ios: 0, android: 500})}>
+        <SafeAreaView style={{flex: 1}}>
+          <View style={styles.container3}>
+            <ScrollView
+              contentContainerStyle={{
+                paddingHorizontal: 15,
+                paddingBottom: 15,
+              }}>
+              {!isSubmit && renderMain()}
+              {isSubmit && renderMain2()}
+            </ScrollView>
+          </View>
+          <utils.Footer
+            nav={props.navigation}
+            screen={headerTitle}
+            focusScreen={store.General.focusScreen}
+          />
+        </SafeAreaView>
+      </KeyboardAvoidingView>
       <utils.Loader load={loader} />
       <Toast ref={toast} position="bottom" />
     </View>

@@ -188,11 +188,6 @@ function Filters(props) {
             c => props.setGetDataOnce(c),
             '',
           );
-          // store.User.attemptToGetHomeTripsSearch(
-          //   c => props.setGetDataOnce(c),
-          //   props.blckUser,
-          //   '',
-          // );
         }
       } else {
         Alert.alert('Please connect internet');
@@ -203,22 +198,6 @@ function Filters(props) {
   const onClickApplyFilters = () => {
     if (isInternet) {
       let chk = false;
-      // let tt = [];
-      // const dt = [...trptype];
-      // if (dt.length > 0) {
-      //   dt.map((e, i, a) => {
-      //     if (e.isSel == true) {
-      //       tt.push(e.name);
-      //     }
-      //   });
-      // }
-
-      // if (tt.length > 0) {
-      //   chk = true;
-      //   setstripType(tt);
-      // } else {
-      //   setstripType(false);
-      // }
 
       if (loc) {
         chk = true;
@@ -709,8 +688,9 @@ function Filters(props) {
     return (
       <>
         <KeyboardAvoidingView
-          style={{flex: 1}}
-          behavior={Platform.OS == 'ios' ? 'height' : undefined}>
+          behavior={Platform.OS === 'ios' ? 'padding' : null}
+          keyboardVerticalOffset={Platform.select({ios: 0, android: 500})}
+          style={{flex: 1}}>
           {renderHeder()}
           <Sep />
           <ScrollView showsVerticalScrollIndicator={false}>
@@ -721,6 +701,7 @@ function Filters(props) {
             {renderDropDownFields()}
             <Sep />
             {renderHosting()}
+
             <Sep height={30} />
             {renderBottom()}
             <Sep />

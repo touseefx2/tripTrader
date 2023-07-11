@@ -1202,8 +1202,9 @@ function EditProfile(props) {
       {!internet && <utils.InternetMessage />}
 
       <KeyboardAvoidingView
-        behavior={Platform.OS == 'ios' ? 'height' : undefined}
-        style={styles.container2}>
+        style={styles.container2}
+        behavior={Platform.OS === 'ios' ? 'padding' : null}
+        keyboardVerticalOffset={Platform.select({ios: 0, android: 500})}>
         <SafeAreaView style={{flex: 1}}>
           <View style={styles.container3}>
             <ScrollView
