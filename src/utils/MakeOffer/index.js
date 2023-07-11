@@ -32,7 +32,7 @@ export default function MakeOffer({
   screen,
   props,
 }) {
-  const maxModalHeight = theme.window.Height - responsiveHeight(9.8);
+  const maxModalHeight = theme.window.Height - responsiveHeight(10);
   const {item} = modalObj;
   const {value, title} = item.duration;
 
@@ -215,7 +215,6 @@ export default function MakeOffer({
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : null}
           keyboardVerticalOffset={Platform.select({ios: 0, android: 500})}
-          // behavior={Platform.OS == 'ios' ? 'height' : undefined}
           style={styles.modalContainer}>
           <View
             onLayout={onViewLayout}

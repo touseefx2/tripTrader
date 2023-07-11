@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {Text, ScrollView, Platform} from 'react-native';
 import {styles} from './styles';
 import utils from '../../../../utils';
@@ -48,33 +48,23 @@ function Step3({
   const [isDropDownSpecies, setIsDropDownSpecies] = useState(false);
   const [isDropDownDuration, setIsDropDownDuration] = useState(false);
 
-  const [isDisable, setIsDisable] = useState(true);
-
   let totalDays = 0;
   if (duration) {
     if (duration.title === 'days') totalDays = durationNum;
     else if (duration.title === 'weeks') totalDays = durationNum * 7;
   }
 
-  useEffect(() => {
-    if (
-      availablityDates &&
-      durationNum != '' &&
-      tripType != '' &&
-      selectedSpecies != null &&
-      city != '' &&
-      selectedState
-    )
-      setIsDisable(false);
-    else setIsDisable(true);
-  }, [
-    availablityDates,
-    durationNum,
-    tripType,
-    selectedSpecies,
-    city,
-    selectedState,
-  ]);
+  let isDisable;
+  if (
+    availablityDates &&
+    durationNum != '' &&
+    tripType != '' &&
+    selectedSpecies != null &&
+    city != '' &&
+    selectedState
+  )
+    isDisable = false;
+  else isDisable = true;
 
   const closeAllDropDown = () => {
     setIsDropDownSpecies(false);
@@ -105,13 +95,13 @@ function Step3({
 
   const renderShowDropDown = check => {
     const data =
-      check == 'tt'
+      check === 'tt'
         ? activityList
-        : check == 'state'
+        : check === 'state'
         ? tripLocation
-        : check == 'spcs'
+        : check === 'spcs'
         ? speciesList
-        : check == 'dur'
+        : check === 'dur'
         ? durationList
         : [];
 
