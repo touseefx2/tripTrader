@@ -6,10 +6,6 @@ import {
   SafeAreaView,
   TouchableHighlight,
   FlatList,
-  KeyboardAvoidingView,
-  Platform,
-  Keyboard,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import theme from '../../theme/index';
@@ -190,45 +186,39 @@ export default function DropDown(props) {
           },
           style,
         ]}>
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-          <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : null}
-            keyboardVerticalOffset={Platform.select({ios: 0, android: 500})}>
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              initialNumToRender={24}
-              maxToRenderPerBatch={10}
-              data={data}
-              nestedScrollEnabled
-              ListEmptyComponent={
-                check == 'trip' && props.data.length <= 0 ? null : (
-                  <EmptyListMessage
-                    isMaxHeight={isMaxHeight}
-                    maxModalHeight={maxModalHeight}
-                  />
-                )
-              }
-              ListHeaderComponent={
-                isSearchBar && props.data.length > 0 ? (
-                  <SearchBar search={search} setsearch={c => setsearch(c)} />
-                ) : null
-              }
-              renderItem={renderItems}
-              keyExtractor={(item, index) => index.toString()}
-              ItemSeparatorComponent={() => {
-                return (
-                  <View
-                    style={{
-                      height: 1,
-                      backgroundColor: '#D8E1DB',
-                      width: '100%',
-                    }}
-                  />
-                );
-              }}
-            />
-          </KeyboardAvoidingView>
-        </TouchableWithoutFeedback>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          initialNumToRender={24}
+          maxToRenderPerBatch={10}
+          data={data}
+          nestedScrollEnabled
+          ListEmptyComponent={
+            check == 'trip' && props.data.length <= 0 ? null : (
+              <EmptyListMessage
+                isMaxHeight={isMaxHeight}
+                maxModalHeight={maxModalHeight}
+              />
+            )
+          }
+          ListHeaderComponent={
+            isSearchBar && props.data.length > 0 ? (
+              <SearchBar search={search} setsearch={c => setsearch(c)} />
+            ) : null
+          }
+          renderItem={renderItems}
+          keyExtractor={(item, index) => index.toString()}
+          ItemSeparatorComponent={() => {
+            return (
+              <View
+                style={{
+                  height: 1,
+                  backgroundColor: '#D8E1DB',
+                  width: '100%',
+                }}
+              />
+            );
+          }}
+        />
       </SafeAreaView>
       {isFooter && (
         <Footer

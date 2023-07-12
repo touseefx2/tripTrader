@@ -6,22 +6,7 @@ import utils from '../../../../utils';
 import store from '../../../../store';
 import {observer} from 'mobx-react';
 import Bottom from './components/Bottom';
-
-const durationList = [
-  {
-    _id: 0,
-    is_active: true,
-    title: 'days',
-
-    type: 'durType',
-  },
-  {
-    _id: 1,
-    is_active: true,
-    title: 'weeks',
-    type: 'durType',
-  },
-];
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 export default observer(Step2);
 function Step2({
@@ -138,21 +123,22 @@ function Step2({
 
   return (
     <>
-      {isMaxHeight ? (
-        <ScrollView
-          contentContainerStyle={{paddingHorizontal: 15}}
-          showsVerticalScrollIndicator={false}
-          style={{flex: 1}}>
-          {renderTitle()}
-          {renderDropDown()}
-        </ScrollView>
-      ) : (
-        <>
-          {renderTitle()}
-          {renderDropDown()}
-        </>
-      )}
-
+      <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
+        {isMaxHeight ? (
+          <ScrollView
+            contentContainerStyle={{paddingHorizontal: 15}}
+            showsVerticalScrollIndicator={false}
+            style={{flex: 1}}>
+            {renderTitle()}
+            {renderDropDown()}
+          </ScrollView>
+        ) : (
+          <>
+            {renderTitle()}
+            {renderDropDown()}
+          </>
+        )}
+      </KeyboardAwareScrollView>
       <Bottom
         isMaxHeight={isMaxHeight}
         step={step}

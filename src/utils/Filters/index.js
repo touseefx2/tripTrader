@@ -10,7 +10,6 @@ import {
   FlatList,
   Pressable,
   Alert,
-  KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import {styles} from './styles';
@@ -21,6 +20,7 @@ import utils from '../index';
 import theme from '../../theme';
 import StarRating from 'react-native-star-rating';
 import NetInfo from '@react-native-community/netinfo';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 function Sep(props) {
   return <View style={{height: props.height || 20}} />;
@@ -296,8 +296,6 @@ function Filters(props) {
     );
   };
 
-  console.log('isFilter : ', isFilter);
-
   const renderContent = () => {
     const renderHeder = () => {
       const render1 = () => {
@@ -492,7 +490,7 @@ function Filters(props) {
           }
         };
 
-        let abs = Platform.OS == 'ios' ? false : true;
+        const abs = Platform.OS == 'ios' ? false : true;
         return (
           <utils.DropDown
             search={true}
@@ -585,6 +583,7 @@ function Filters(props) {
             </View>
           </View>
           <Sep />
+
           {/* Species*/}
           <View style={styles.dropDownMainConatiner}>
             <Text style={styles.dropdownFieldTitle}>Species</Text>
@@ -687,10 +686,7 @@ function Filters(props) {
 
     return (
       <>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : null}
-          keyboardVerticalOffset={Platform.select({ios: 0, android: 500})}
-          style={{flex: 1}}>
+        <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
           {renderHeder()}
           <Sep />
           <ScrollView showsVerticalScrollIndicator={false}>
@@ -706,7 +702,7 @@ function Filters(props) {
             {renderBottom()}
             <Sep />
           </ScrollView>
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
       </>
     );
   };

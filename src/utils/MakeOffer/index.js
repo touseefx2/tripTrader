@@ -1,12 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {
-  View,
-  Modal,
-  KeyboardAvoidingView,
-  Platform,
-  Keyboard,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import {View, Modal} from 'react-native';
 import {styles} from './styles';
 import theme from '../../theme';
 import utils from '../../utils';
@@ -32,7 +25,7 @@ export default function MakeOffer({
   screen,
   props,
 }) {
-  const maxModalHeight = theme.window.Height - responsiveHeight(10);
+  const maxModalHeight = theme.window.Height - responsiveHeight(9.5);
   const {item} = modalObj;
   const {value, title} = item.duration;
 
@@ -211,116 +204,111 @@ export default function MakeOffer({
 
   return (
     <Modal visible={isModal} transparent onRequestClose={goBack}>
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : null}
-          keyboardVerticalOffset={Platform.select({ios: 0, android: 500})}
-          style={styles.modalContainer}>
-          <View
-            onLayout={onViewLayout}
-            style={[
-              styles.modal,
-              isMaxHeight
-                ? {height: maxModalHeight, paddingTop: 0}
-                : {padding: 15},
-            ]}>
-            <Header
-              title={'Make Offer'}
+      <View style={styles.modalContainer}>
+        <View
+          onLayout={onViewLayout}
+          style={[
+            styles.modal,
+            isMaxHeight
+              ? {height: maxModalHeight, paddingTop: 0}
+              : {padding: 15},
+          ]}>
+          <Header
+            title={'Make Offer'}
+            loader={loader}
+            closeModal={closeModal}
+            isMaxHeight={isMaxHeight}
+          />
+          {step == 1 && (
+            <Step1
+              modalObj={modalObj}
+              step={step}
+              setStep={setStep}
+              setmodalHeight={setmodalHeight}
+              isMaxHeight={isMaxHeight}
+              selectedDates={selectedDates}
+              setSelectedDates={setSelectedDates}
+              durationTitle={durationTitle}
+              totalDays={totalDays}
+              screen={screen}
+            />
+          )}
+          {step == 2 && (
+            <Step2
+              step={step}
+              setStep={setStep}
+              setmodalHeight={setmodalHeight}
+              isMaxHeight={isMaxHeight}
+              selectedTrip={selectedTrip}
+              setSelectedTrip={setSelectedTrip}
+              isTripRefresh={isTripRefresh}
+              setIsTripRefresh={setIsTripRefresh}
+            />
+          )}
+          {step == 3 && (
+            <Step3
+              step={step}
+              setStep={setStep}
+              setmodalHeight={setmodalHeight}
+              isMaxHeight={isMaxHeight}
+              speciesList={speciesList}
+              durationList={durationList}
+              tripType={tripType}
+              setTripType={setTripType}
+              city={city}
+              setCity={setCity}
+              selectedState={selectedState}
+              setSelectedState={setSelectedState}
+              selectedSpecies={selectedSpecies}
+              setSelectedSpecies={setSelectedSpecies}
+              durationNum={durationNum}
+              setDurationNum={setDurationNum}
+              duration={duration}
+              setDuration={setDuration}
+              availablityDates={availablityDates}
+              setAvailablityDates={setAvailablityDates}
+              minDate={minDate}
+              maxDate={maxDate}
+              rangeValue={rangeValue}
+              unAvailable={unAvailable}
+              setUnAvailble={setUnAvailble}
+              unavailableText={unavailableText}
+              note={note}
+              setNote={setNote}
+              clearStep3Fields={clearStep3Fields}
+            />
+          )}
+
+          {step == 4 && (
+            <Step4
+              modalObj={modalObj}
+              durationTitle={durationTitle}
+              step={step}
+              setStep={setStep}
+              setmodalHeight={setmodalHeight}
+              isMaxHeight={isMaxHeight}
+              city={city}
+              selectedState={selectedState}
+              selectedSpecies={selectedSpecies}
+              durationNum={durationNum}
+              duration={duration}
+              rangeValue={rangeValue}
+              unavailableText={unavailableText}
+              note={note}
+              tripType={tripType}
+              selectedDates={selectedDates}
+              minDate={minDate}
+              maxDate={maxDate}
+              unAvailable={unAvailable}
+              offerSuccefullySend={offerSuccefullySend}
               loader={loader}
               closeModal={closeModal}
-              isMaxHeight={isMaxHeight}
+              screen={screen}
+              props={props}
             />
-            {step == 1 && (
-              <Step1
-                modalObj={modalObj}
-                step={step}
-                setStep={setStep}
-                setmodalHeight={setmodalHeight}
-                isMaxHeight={isMaxHeight}
-                selectedDates={selectedDates}
-                setSelectedDates={setSelectedDates}
-                durationTitle={durationTitle}
-                totalDays={totalDays}
-                screen={screen}
-              />
-            )}
-            {step == 2 && (
-              <Step2
-                step={step}
-                setStep={setStep}
-                setmodalHeight={setmodalHeight}
-                isMaxHeight={isMaxHeight}
-                selectedTrip={selectedTrip}
-                setSelectedTrip={setSelectedTrip}
-                isTripRefresh={isTripRefresh}
-                setIsTripRefresh={setIsTripRefresh}
-              />
-            )}
-            {step == 3 && (
-              <Step3
-                step={step}
-                setStep={setStep}
-                setmodalHeight={setmodalHeight}
-                isMaxHeight={isMaxHeight}
-                speciesList={speciesList}
-                durationList={durationList}
-                tripType={tripType}
-                setTripType={setTripType}
-                city={city}
-                setCity={setCity}
-                selectedState={selectedState}
-                setSelectedState={setSelectedState}
-                selectedSpecies={selectedSpecies}
-                setSelectedSpecies={setSelectedSpecies}
-                durationNum={durationNum}
-                setDurationNum={setDurationNum}
-                duration={duration}
-                setDuration={setDuration}
-                availablityDates={availablityDates}
-                setAvailablityDates={setAvailablityDates}
-                minDate={minDate}
-                maxDate={maxDate}
-                rangeValue={rangeValue}
-                unAvailable={unAvailable}
-                setUnAvailble={setUnAvailble}
-                unavailableText={unavailableText}
-                note={note}
-                setNote={setNote}
-                clearStep3Fields={clearStep3Fields}
-              />
-            )}
-
-            {step == 4 && (
-              <Step4
-                modalObj={modalObj}
-                durationTitle={durationTitle}
-                step={step}
-                setStep={setStep}
-                setmodalHeight={setmodalHeight}
-                isMaxHeight={isMaxHeight}
-                city={city}
-                selectedState={selectedState}
-                selectedSpecies={selectedSpecies}
-                durationNum={durationNum}
-                duration={duration}
-                rangeValue={rangeValue}
-                unavailableText={unavailableText}
-                note={note}
-                tripType={tripType}
-                selectedDates={selectedDates}
-                minDate={minDate}
-                maxDate={maxDate}
-                unAvailable={unAvailable}
-                offerSuccefullySend={offerSuccefullySend}
-                loader={loader}
-                closeModal={closeModal}
-                screen={screen}
-                props={props}
-              />
-            )}
-          </View>
-        </KeyboardAvoidingView>
-      </TouchableWithoutFeedback>
+          )}
+        </View>
+      </View>
     </Modal>
   );
 }

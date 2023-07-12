@@ -6,6 +6,7 @@ import store from '../../../../store';
 import {observer} from 'mobx-react';
 import Bottom from './components/Bottom';
 import Fields from './components/Fields';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 export default observer(Step3);
 function Step3({
@@ -185,21 +186,22 @@ function Step3({
 
   return (
     <>
-      {isMaxHeight ? (
-        <ScrollView
-          contentContainerStyle={{paddingHorizontal: 15}}
-          showsVerticalScrollIndicator={false}
-          style={{flex: 1}}>
-          {renderTitle()}
-          {renderField()}
-        </ScrollView>
-      ) : (
-        <>
-          {renderTitle()}
-          {renderField()}
-        </>
-      )}
-
+      <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
+        {isMaxHeight ? (
+          <ScrollView
+            contentContainerStyle={{paddingHorizontal: 15}}
+            showsVerticalScrollIndicator={false}
+            style={{flex: 1}}>
+            {renderTitle()}
+            {renderField()}
+          </ScrollView>
+        ) : (
+          <>
+            {renderTitle()}
+            {renderField()}
+          </>
+        )}
+      </KeyboardAwareScrollView>
       <Bottom
         isMaxHeight={isMaxHeight}
         step={step}
