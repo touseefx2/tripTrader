@@ -10,9 +10,17 @@ import DeviceInfo from 'react-native-device-info';
 import NetInfo from '@react-native-community/netinfo';
 import store from './src/store/index';
 import {observer} from 'mobx-react';
-// import crashlytics from '@react-native-firebase/crashlytics';
+import crashlytics from '@react-native-firebase/crashlytics';
+import * as Sentry from '@sentry/react-native';
 
-export default observer(App);
+Sentry.init({
+  dsn: 'https://8f2c307cb0e547088a57b23622928be6@o4505512458452992.ingest.sentry.io/4505517120487424',
+  // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+  // We recommend adjusting this value in production.
+  tracesSampleRate: 1.0,
+});
+
+export default Sentry.wrap(observer(App));
 function App() {
   const Stack = createNativeStackNavigator();
   const {user} = store.User;
@@ -43,8 +51,8 @@ function App() {
   }, []);
 
   // useEffect(() => {
-  //   crashlytics().log('App mounted.');
-  //   crashlytics().crash();
+  //   // Sentry.nativeCrash();
+  //   // crashlytics().crash();
   // }, []);
 
   const setDeviceInfo = () => {

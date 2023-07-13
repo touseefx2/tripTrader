@@ -912,6 +912,9 @@ PODS:
   - RNScreens (3.14.1):
     - React-Core
     - React-RCTImage
+  - RNSentry (4.14.0):
+    - React-Core
+    - Sentry/HybridSDK (= 7.31.5)
   - RNVectorIcons (9.2.0):
     - React-Core
   - SDWebImage (5.11.1):
@@ -920,6 +923,7 @@ PODS:
   - SDWebImageWebPCoder (0.8.5):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
+  - Sentry/HybridSDK (7.31.5)
   - SocketRocket (0.6.1)
   - Stripe (21.13.0):
     - Stripe/Stripe3DS2 (= 21.13.0)
@@ -1024,6 +1028,7 @@ DEPENDENCIES:
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - "stripe-react-native (from `../node_modules/@stripe/stripe-react-native`)"
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -1065,6 +1070,7 @@ SPEC REPOS:
     - PromisesObjC
     - SDWebImage
     - SDWebImageWebPCoder
+    - Sentry
     - SocketRocket
     - Stripe
     - StripeApplePay
@@ -1186,6 +1192,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSentry:
+    :path: "../node_modules/@sentry/react-native"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   stripe-react-native:
@@ -1283,9 +1291,11 @@ SPEC CHECKSUMS:
   RNPermissions: dcdb7b99796bbeda6975a6e79ad519c41b251b1c
   RNReanimated: 5bdcbcc3a72aedeee7bb099604262403aa75a1e5
   RNScreens: aa9a97835afbbdc18a4757870b2b59b7d9fae16a
+  RNSentry: 7e90aec2633d2fdad8aeb839c9915e4376fd27d1
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
+  Sentry: 4c9babff9034785067c896fd580b1f7de44da020
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Stripe: 1c350569f719f194d1a58a9564279d236d72c942
   stripe-react-native: 7a5bd43160b0a2a4a5dbcffc542e6ab4074adf49

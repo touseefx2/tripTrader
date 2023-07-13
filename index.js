@@ -9,7 +9,6 @@ import store from './src/store/index';
 import messaging from '@react-native-firebase/messaging';
 import {notificationManager} from './src/services/NotificationManager';
 import {Notification} from './src/services/Notification';
-configure({useProxies: 'never'});
 LogBox.ignoreAllLogs(true);
 
 Notification.requestUserPermission();
