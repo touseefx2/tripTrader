@@ -360,6 +360,9 @@ PODS:
     - FirebaseAuth (~> 8.8.0)
   - Firebase/CoreOnly (8.8.0):
     - FirebaseCore (= 8.8.0)
+  - Firebase/Crashlytics (8.8.0):
+    - Firebase/CoreOnly
+    - FirebaseCrashlytics (~> 8.8.0)
   - Firebase/Firestore (8.8.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 8.8.0)
@@ -380,6 +383,13 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/Logger (~> 7.7)
     - nanopb (~> 2.30908.0)
+  - FirebaseCrashlytics (8.8.0):
+    - FirebaseCore (~> 8.0)
+    - FirebaseInstallations (~> 8.0)
+    - GoogleDataTransport (~> 9.0)
+    - GoogleUtilities/Environment (~> 7.4)
+    - nanopb (~> 2.30908.0)
+    - PromisesObjC (< 3.0, >= 1.2)
   - FirebaseFirestore (8.8.0):
     - abseil/algorithm (= 0.20200225.0)
     - abseil/base (= 0.20200225.0)
@@ -839,7 +849,7 @@ PODS:
     - React-perflogger (= 0.68.2)
   - RNCAsyncStorage (1.18.2):
     - React-Core
-  - RNCPushNotificationIOS (1.11.0):
+  - RNCPushNotificationIOS (1.10.1):
     - React-Core
   - RNDeviceInfo (9.0.2):
     - React-Core
@@ -852,6 +862,10 @@ PODS:
     - React-Core
   - RNFBAuth (12.9.3):
     - Firebase/Auth (= 8.8.0)
+    - React-Core
+    - RNFBApp
+  - RNFBCrashlytics (12.9.3):
+    - Firebase/Crashlytics (= 8.8.0)
     - React-Core
     - RNFBApp
   - RNFBFirestore (12.9.3):
@@ -898,6 +912,9 @@ PODS:
   - RNScreens (3.14.1):
     - React-Core
     - React-RCTImage
+  - RNSentry (5.7.1):
+    - React-Core
+    - Sentry/HybridSDK (= 8.8.0)
   - RNVectorIcons (9.2.0):
     - React-Core
   - SDWebImage (5.11.1):
@@ -906,43 +923,27 @@ PODS:
   - SDWebImageWebPCoder (0.8.5):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
-  - SocketRocket (0.6.0)
-  - Stripe (23.3.4):
-    - StripeApplePay (= 23.3.4)
-    - StripeCore (= 23.3.4)
-    - StripePayments (= 23.3.4)
-    - StripePaymentsUI (= 23.3.4)
-    - StripeUICore (= 23.3.4)
-  - stripe-react-native (0.23.3):
+  - Sentry/HybridSDK (8.8.0):
+    - SentryPrivate (= 8.8.0)
+  - SentryPrivate (8.8.0)
+  - SocketRocket (0.6.1)
+  - Stripe (21.13.0):
+    - Stripe/Stripe3DS2 (= 21.13.0)
+    - StripeApplePay (= 21.13.0)
+    - StripeCore (= 21.13.0)
+    - StripeUICore (= 21.13.0)
+  - stripe-react-native (0.5.0):
     - React-Core
-    - Stripe (~> 23.3.0)
-    - StripeApplePay (~> 23.3.0)
-    - StripeFinancialConnections (~> 23.3.0)
-    - StripePayments (~> 23.3.0)
-    - StripePaymentSheet (~> 23.3.0)
-    - StripePaymentsUI (~> 23.3.0)
-  - StripeApplePay (23.3.4):
-    - StripeCore (= 23.3.4)
-  - StripeCore (23.3.4)
-  - StripeFinancialConnections (23.3.4):
-    - StripeCore (= 23.3.4)
-    - StripeUICore (= 23.3.4)
-  - StripePayments (23.3.4):
-    - StripeCore (= 23.3.4)
-    - StripePayments/Stripe3DS2 (= 23.3.4)
-  - StripePayments/Stripe3DS2 (23.3.4):
-    - StripeCore (= 23.3.4)
-  - StripePaymentSheet (23.3.4):
-    - StripeApplePay (= 23.3.4)
-    - StripeCore (= 23.3.4)
-    - StripePayments (= 23.3.4)
-    - StripePaymentsUI (= 23.3.4)
-  - StripePaymentsUI (23.3.4):
-    - StripeCore (= 23.3.4)
-    - StripePayments (= 23.3.4)
-    - StripeUICore (= 23.3.4)
-  - StripeUICore (23.3.4):
-    - StripeCore (= 23.3.4)
+    - Stripe (~> 21.13.0)
+  - Stripe/Stripe3DS2 (21.13.0):
+    - StripeApplePay (= 21.13.0)
+    - StripeCore (= 21.13.0)
+    - StripeUICore (= 21.13.0)
+  - StripeApplePay (21.13.0):
+    - StripeCore (= 21.13.0)
+  - StripeCore (21.13.0)
+  - StripeUICore (21.13.0):
+    - StripeCore (= 21.13.0)
   - TLPhotoPicker (2.1.4)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -1021,6 +1022,7 @@ DEPENDENCIES:
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
+  - "RNFBCrashlytics (from `../node_modules/@react-native-firebase/crashlytics`)"
   - "RNFBFirestore (from `../node_modules/@react-native-firebase/firestore`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
@@ -1028,6 +1030,7 @@ DEPENDENCIES:
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - "stripe-react-native (from `../node_modules/@stripe/stripe-react-native`)"
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -1041,6 +1044,7 @@ SPEC REPOS:
     - FirebaseAuth
     - FirebaseCore
     - FirebaseCoreDiagnostics
+    - FirebaseCrashlytics
     - FirebaseFirestore
     - FirebaseInstallations
     - FirebaseMessaging
@@ -1068,14 +1072,12 @@ SPEC REPOS:
     - PromisesObjC
     - SDWebImage
     - SDWebImageWebPCoder
+    - Sentry
+    - SentryPrivate
     - SocketRocket
     - Stripe
     - StripeApplePay
     - StripeCore
-    - StripeFinancialConnections
-    - StripePayments
-    - StripePaymentSheet
-    - StripePaymentsUI
     - StripeUICore
     - TLPhotoPicker
     - YogaKit
@@ -1177,6 +1179,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBAuth:
     :path: "../node_modules/@react-native-firebase/auth"
+  RNFBCrashlytics:
+    :path: "../node_modules/@react-native-firebase/crashlytics"
   RNFBFirestore:
     :path: "../node_modules/@react-native-firebase/firestore"
   RNFBMessaging:
@@ -1191,6 +1195,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSentry:
+    :path: "../node_modules/@sentry/react-native"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   stripe-react-native:
@@ -1210,6 +1216,7 @@ SPEC CHECKSUMS:
   FirebaseAuth: bcf0adeff88bda5dcb3beeabe5760f1226ab7b2f
   FirebaseCore: 98b29e3828f0a53651c363937a7f7d92a19f1ba2
   FirebaseCoreDiagnostics: 92e07a649aeb66352b319d43bdd2ee3942af84cb
+  FirebaseCrashlytics: 3660c045c8e45cc4276110562a0ef44cf43c8157
   FirebaseFirestore: 29baf05d5e7e0d5003eb34e5805d92b9858b36d4
   FirebaseInstallations: 40bd9054049b2eae9a2c38ef1c3dd213df3605cd
   FirebaseMessaging: 419b5c9d84f294a753c6501d8cfb9ced1ce37304
@@ -1274,11 +1281,12 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: b960b687d2dfef0d3761fbb187e01812ebab8b23
   ReactCommon: 095366164a276d91ea704ce53cb03825c487a3f2
   RNCAsyncStorage: ddc4ee162bfd41b0d2c68bf2d95acd81dd7f1f93
-  RNCPushNotificationIOS: 64218f3c776c03d7408284a819b2abfda1834bc8
+  RNCPushNotificationIOS: 87b8d16d3ede4532745e05b03c42cff33a36cc45
   RNDeviceInfo: 1e3f62b9ec32f7754fac60bd06b8f8a27124e7f0
   RNFastImage: 5c9c9fed9c076e521b3f509fe79e790418a544e8
   RNFBApp: 729c0666395b1953198dc4a1ec6deb8fbe1c302e
   RNFBAuth: 7718be1152f5d1d0bb970a8d33094d010f1ac21c
+  RNFBCrashlytics: 2061ca863e8e2fa1aae9b12477d7dfa8e88ca0f9
   RNFBFirestore: eef5fd4cfbe35316af559631db06a34b8391628a
   RNFBMessaging: 8415ec196e5c1196caa26ec0742cdb48ed4d0f97
   RNGestureHandler: dec4645026e7401a0899f2846d864403478ff6a5
@@ -1286,23 +1294,22 @@ SPEC CHECKSUMS:
   RNPermissions: b471c990fd2bc1c5550af807d9f4e0313ee0b081
   RNReanimated: 1f117be601c59177816351a965bc57320b766c15
   RNScreens: aa9a97835afbbdc18a4757870b2b59b7d9fae16a
+  RNSentry: 4e4fc87b53002c015f644cb7207d4b598bc3703f
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
-  SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
-  Stripe: 7393b16fe555d4a68e6555044e7b57eff11ae547
-  stripe-react-native: 333a6c66a256412fcb353b7e8585564fe2407095
-  StripeApplePay: 174b09c0211134417e340c68af199a3dd34f3cd6
-  StripeCore: babb08ec2b961f7cde8663dad3b4cbb77e0ae63b
-  StripeFinancialConnections: 484096f2dc5d3c20cc24a5ad4d261953ba806ef0
-  StripePayments: 71bf62ccdacefc4b68b46a02a7f2492aeba252b3
-  StripePaymentSheet: 722ea7bea092c243d771122fe3572a9c84512704
-  StripePaymentsUI: fd08081c4be73c16322dc76a1878140520a9df2e
-  StripeUICore: ed68cbd5ad0626e0760e772f8c82d96cae9b829b
+  Sentry: 927dfb29d18a14d924229a59cc2ad149f43349f2
+  SentryPrivate: 4350d865f898224ab9fa02b37d6ee7fbb623f47e
+  SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
+  Stripe: 1c350569f719f194d1a58a9564279d236d72c942
+  stripe-react-native: 7a5bd43160b0a2a4a5dbcffc542e6ab4074adf49
+  StripeApplePay: 2ec807acb7f95e948d430e50aa49b6b04475f1a5
+  StripeCore: a855a2f0d2d478afd9c2a3daccfbe6df6708fcc0
+  StripeUICore: a7e450146986fab95293b0164dd37dda7994982b
   TLPhotoPicker: f486e8499e1c3f464d0e886697635e25a72a52b8
   Yoga: 99652481fcd320aefa4a7ef90095b95acd181952
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
 PODFILE CHECKSUM: 4b7e534ad85d667dcc0fedc4d4ed2cde1c59b2b7
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.1

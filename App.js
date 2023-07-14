@@ -10,8 +10,19 @@ import DeviceInfo from 'react-native-device-info';
 import NetInfo from '@react-native-community/netinfo';
 import store from './src/store/index';
 import {observer} from 'mobx-react';
+import crashlytics from '@react-native-firebase/crashlytics';
+import * as Sentry from '@sentry/react-native';
+Sentry.init({
+  dsn: store.General.sentryDsn,
+  debug: true,
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+});
 
-export default observer(App);
+export default Sentry.wrap(observer(App));
+
 function App() {
   const {user} = store.User;
   const {
@@ -24,6 +35,11 @@ function App() {
     setInternet,
   } = store.General;
   const Stack = createNativeStackNavigator();
+
+  useEffect(() => {
+    // crashlytics().crash();
+    // Sentry.nativeCrash();
+  }, []);
 
   useEffect(() => {
     GlobalFont.applyGlobal(theme.fonts.fontNormal);

@@ -9,14 +9,16 @@ class general {
     makeObservable(this);
   }
 
-  @observable Stripe_Publish_Key =
+  sentryDsn =
+    'https://8f2c307cb0e547088a57b23622928be6@o4505512458452992.ingest.sentry.io/4505517120487424';
+  Stripe_Publish_Key =
     'pk_test_51M9HIuBmhbfqULZ4IstWDtc73GFl6mVRnA4jUcOR9BVRkndz1Ou2FSlOeP4WjGgYqlH4LflMtgUY8foGkY58lHAq00OGfQUjlR';
-    // pk_live_51M9HIuBmhbfqULZ4zLBVSrEMd8hpXSfnEcUQvRnZHdPfkzKy5mXtLINeAaglb9ZoIg3muBImsh2X6Q01b8nylFXU00SiTzkpZp
-  @observable Terms_and_Conditions_Link =
+  // pk_live_51M9HIuBmhbfqULZ4zLBVSrEMd8hpXSfnEcUQvRnZHdPfkzKy5mXtLINeAaglb9ZoIg3muBImsh2X6Q01b8nylFXU00SiTzkpZp
+  Terms_and_Conditions_Link =
     'http://trip-trader.com.s3-website-us-east-1.amazonaws.com/termsandconditionsapp';
-  @observable Privacy_and_Policy_Link =
+  Privacy_and_Policy_Link =
     'http://trip-trader.com.s3-website-us-east-1.amazonaws.com/privacypolicyapp';
-  @observable NotificationChannel = 'NotifcationChannel1';
+  NotificationChannel = 'NotifcationChannel1';
   @observable AppName = 'Trip Trader';
   @observable isServerError = false;
   @observable photoSelInd = 0;

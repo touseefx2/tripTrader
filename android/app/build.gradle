@@ -1,5 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: 'com.google.gms.google-services' //firebase or push ntfctn
+apply plugin: 'com.google.firebase.crashlytics'
 
 import com.android.build.OutputFile
 import org.apache.tools.ant.taskdefs.condition.Os
@@ -133,6 +134,7 @@ def reactNativeArchitectures() {
     return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
 }
 
+apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
 android {
     ndkVersion rootProject.ext.ndkVersion
 
@@ -243,6 +245,16 @@ android {
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+
+            /* Add the firebaseCrashlytics extension (by default,
+            * it's disabled to improve build speeds) and set
+            * nativeSymbolUploadEnabled to true along with a pointer to native libs. */
+
+            firebaseCrashlytics {
+                nativeSymbolUploadEnabled true
+                unstrippedNativeLibsDir 'build/intermediates/merged_native_libs/release/out/lib'
+            }
+
         }
     }
 
