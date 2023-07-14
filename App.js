@@ -10,7 +10,7 @@ import DeviceInfo from 'react-native-device-info';
 import NetInfo from '@react-native-community/netinfo';
 import store from './src/store/index';
 import {observer} from 'mobx-react';
-import crashlytics from '@react-native-firebase/crashlytics';
+// import crashlytics from '@react-native-firebase/crashlytics';
 import * as Sentry from '@sentry/react-native';
 Sentry.init({
   dsn: store.General.sentryDsn,
@@ -36,10 +36,10 @@ function App() {
   } = store.General;
   const Stack = createNativeStackNavigator();
 
-  useEffect(() => {
-    // crashlytics().crash();
-    // Sentry.nativeCrash();
-  }, []);
+  // useEffect(() => {
+  // // crashlytics().crash();
+  // // Sentry.nativeCrash();
+  // }, []);
 
   useEffect(() => {
     GlobalFont.applyGlobal(theme.fonts.fontNormal);
