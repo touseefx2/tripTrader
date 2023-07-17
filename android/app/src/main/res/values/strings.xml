@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Trip Trader</string>
+    <string name="default_notification_channel_id">NotifcationChannel1</string>
+</resources>

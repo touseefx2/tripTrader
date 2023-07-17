@@ -1,0 +1,6 @@
+module Pods_Trip_Trader_Trip_TraderTests {
+  umbrella header "Pods-Trip_Trader-Trip_TraderTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
