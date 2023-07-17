@@ -20,7 +20,6 @@ Sentry.init({
   // We recommend adjusting this value in production
   tracesSampleRate: 1.0,
 });
-
 export default Sentry.wrap(observer(App));
 
 function App() {
