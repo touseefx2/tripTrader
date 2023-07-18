@@ -121,79 +121,7 @@ export const ImageSlider = ({
     }
   };
 
-  // const previewImage = () => {
-  //     return (
-  //         <Modal
-  //             visible={imageViewer}
-  //             onDismiss={() => setImageViewer(!imageViewer)}
-  //             onRequestClose={() => setImageViewer(!imageViewer)}
-  //         >
-  //             <View style={StyleSheet.absoluteFillObject}>
-  //                 {data.map((val, ind) => {
-  //                     const inputRange = [
-  //                         (ind - 1) * width,
-  //                         ind * width,
-  //                         (ind + 1) * width,
-  //                     ]
-  //                     const opacity = scrollX.interpolate({
-  //                         inputRange,
-  //                         outputRange: [0, 1, 0]
-  //                     })
-  //                     return (
-  //                         <Animated.Image
-  //                             key={`image-${ind}`}
-  //                             // @ts-ignore
-  //                             source={ { uri: val }}
-  //                             style={[StyleSheet.absoluteFillObject, { opacity }]}
-  //                             blurRadius={0}
-
-  //                         />
-  //                     )
-  //                 })}
-  //             </View>
-
-  //             <Animated.FlatList
-  //                 data={data}
-  //                 keyExtractor={(_, index) => index.toString()}
-  //                 onScroll={Animated.event(
-  //                     [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-  //                     { useNativeDriver: true }
-  //                 )}
-  //                 horizontal
-  //                 pagingEnabled
-  //                 initialScrollIndex={selectedIndex}
-  //                 pinchGestureEnabled={true}
-  //                 onScrollToIndexFailed={info => {
-  //                     const wait = new Promise(resolve => setTimeout(resolve, 500));
-  //                     wait.then(() => {
-  //                         // @ts-ignore
-  //                         slider.current?.scrollToIndex({ index: info.index, animated: true });
-  //                     });
-  //                 }}
-  //                 showsHorizontalScrollIndicator={false}
-  //                 renderItem={({ item, index }) => {
-  //                     return (
-  //                         <View
-  //                             style={[styles.previewImageContainerStyle, previewImageContainerStyle]}>
-  //                             <TouchableOpacity onPress={() => {
-  //                                 setSelectedIndex(index)
-  //                                 setImageViewer(!imageViewer)
-  //                             }} style={{ position: 'absolute', top: Os == "ios" ? 30 : 5, left: 5 }}>
-  //                                 <Icon onPress={() => setImageViewer(!imageViewer)} name="close" size={34} color={closeIconColor} />
-  //                             </TouchableOpacity>
-  //                             <Image
-  //                                 // @ts-ignore
-  //                                 source={localImg ? item.img : { uri: item.img }}
-  //                                 style={[styles.previewImageStyle, previewImageStyle]}
-  //                             />
-  //                         </View>
-  //                     )
-  //                 }}
-  //             />
-  //         </Modal>
-
-  //     )
-  // }
+  
 
   return (
     <View>
@@ -260,11 +188,7 @@ export const ImageSlider = ({
                     loadingSource={require('../../../src/assets/images/imgLoad/img.jpeg')}
                     blurRadius={10}
                   />
-                  {/* <Image
-                                        // @ts-ignore
-                                        source={localImg ? item.img : { uri: item.img }}
-                                        style={[styles.caroselImageStyle, caroselImageStyle,]}
-                                    /> */}
+                 
                 </TouchableOpacity>
                 {children}
               </>

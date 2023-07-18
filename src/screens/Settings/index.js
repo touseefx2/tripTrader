@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -6,66 +6,66 @@ import {
   TouchableOpacity,
   Image,
   Alert,
-} from 'react-native';
-import {styles} from './styles';
-import {observer} from 'mobx-react';
-import store from '../../store/index';
-import utils from '../../utils/index';
-import theme from '../../theme';
-import NetInfo from '@react-native-community/netinfo';
-import Toast from 'react-native-easy-toast';
-import ToggleSwitch from 'toggle-switch-react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+} from "react-native";
+import { styles } from "./styles";
+import { observer } from "mobx-react";
+import store from "../../store/index";
+import utils from "../../utils/index";
+import theme from "../../theme";
+import NetInfo from "@react-native-community/netinfo";
+import Toast from "react-native-easy-toast";
+import ToggleSwitch from "toggle-switch-react-native";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default observer(Settings);
 
 function Settings(props) {
-  const editprofileIcon = require('../../assets/images/settings/editprofile/img.png');
-  const cpIcon = require('../../assets/images/settings/cp/img.png');
-  const notificationsIcon = require('../../assets/images/settings/notifications/img.png');
-  const blockUserIcon = require('../../assets/images/settings/blockuser/img.png');
-  const subIcon = require('../../assets/images/settings/subscription/img.png');
-  const contactusIcon = require('../../assets/images/settings/contactus/img.png');
-  const newsIcon = require('../../assets/images/settings/news/img.png');
-  const privacyIcon = require('../../assets/images/settings/privacy/img.png');
-  const logoutIcon = require('../../assets/images/settings/logout/img.png');
-  const headerTitle = 'Settings';
+  const editprofileIcon = require("../../assets/images/settings/editprofile/img.png");
+  const cpIcon = require("../../assets/images/settings/cp/img.png");
+  const notificationsIcon = require("../../assets/images/settings/notifications/img.png");
+  const blockUserIcon = require("../../assets/images/settings/blockuser/img.png");
+  const subIcon = require("../../assets/images/settings/subscription/img.png");
+  const contactusIcon = require("../../assets/images/settings/contactus/img.png");
+  const newsIcon = require("../../assets/images/settings/news/img.png");
+  const privacyIcon = require("../../assets/images/settings/privacy/img.png");
+  const logoutIcon = require("../../assets/images/settings/logout/img.png");
+  const headerTitle = "Settings";
   const toast = useRef(null);
   const activeOpacity = 0.8;
-  const {isInternet, settingsGoTo, setSettingsGoTo, setgoto, isEmailPopup} =
+  const { isInternet, settingsGoTo, setSettingsGoTo, setgoto, isEmailPopup } =
     store.General;
-  const {user, isNotification, Logout, logoutLoader} = store.User;
+  const { user, isNotification, Logout, logoutLoader } = store.User;
 
-  let phn = '';
-  let phnCntr = '';
-  if (user != 'guest' && user) {
-    phn = user.phone && user.phone !== null ? '+' + user.phone : '';
+  let phn = "";
+  let phnCntr = "";
+  if (user != "guest" && user) {
+    phn = user.phone && user.phone !== null ? "+" + user.phone : "";
     phnCntr =
       user.phoneCountryCode && user.phoneCountryCode !== null
         ? user.phoneCountryCode
-        : '';
+        : "";
   }
 
   const [phone, setPhone] = useState(phn);
   const [cntry, setcntry] = useState(phnCntr);
-  const [pwc, setpwc] = useState('');
+  const [pwc, setpwc] = useState("");
 
   const [isShowPrivacy, setIsShowPrivacy] = useState(false);
   const [isDeletAccountModal, setIsDeletAccountModal] = useState(false);
 
   const goToManageSubscription = () => {
-    props.navigation.navigate('ManageSubscription');
-    setSettingsGoTo('');
+    props.navigation.navigate("ManageSubscription");
+    setSettingsGoTo("");
   };
 
   useEffect(() => {
-    if (settingsGoTo != '') {
-      if (settingsGoTo == 'Manage Subscription') goToManageSubscription();
+    if (settingsGoTo != "") {
+      if (settingsGoTo == "Manage Subscription") goToManageSubscription();
     }
   }, []);
 
   useEffect(() => {
-    if (phone != '' && cntry != '') {
+    if (phone != "" && cntry != "") {
       setTimeout(() => {
         let Countries = utils.Countries;
         for (let index = 0; index < Countries.length; index++) {
@@ -79,7 +79,7 @@ function Settings(props) {
         }
       }, 1000);
     } else {
-      setpwc('');
+      setpwc("");
     }
   }, [phone, cntry]);
 
@@ -90,46 +90,46 @@ function Settings(props) {
   }, [phone, cntry, pwc]);
 
   useEffect(() => {
-    if (user && user !== 'guest') {
-      setPhone(user.phone && user.phone !== null ? '+' + user.phone : '');
+    if (user && user !== "guest") {
+      setPhone(user.phone && user.phone !== null ? "+" + user.phone : "");
       setcntry(
         user.phoneCountryCode && user.phoneCountryCode !== null
           ? user.phoneCountryCode
-          : '',
+          : ""
       );
     }
   }, [user]);
 
   const JoinNow = () => {
-    setgoto('joinnow');
+    setgoto("joinnow");
     Logout();
   };
 
-  const onClick = c => {
-    if (c == 'edit profile') props.navigation.navigate('EditProfile');
+  const onClick = (c) => {
+    if (c == "edit profile") props.navigation.navigate("EditProfile");
 
-    if (c == 'change password') props.navigation.navigate('ChangePassword');
+    if (c == "change password") props.navigation.navigate("ChangePassword");
 
-    if (c == 'notifications') {
+    if (c == "notifications") {
     }
-    if (c == 'Blocked Users') props.navigation.navigate('BlockUsers');
+    if (c == "Blocked Users") props.navigation.navigate("BlockUsers");
 
-    if (c == 'Manage Subscription') goToManageSubscription();
+    if (c == "Manage Subscription") goToManageSubscription();
 
-    if (c == 'privacy') openWebView();
+    if (c == "privacy") openWebView();
 
-    if (c == 'Delete Account') openDeleteAccountModal();
+    if (c == "Delete Account") openDeleteAccountModal();
 
-    if (c == 'logout') {
+    if (c == "logout") {
       logoutAccount();
     }
   };
 
   const logoutAccount = () => {
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.User.attemptToLogoutAccount();
-      } else Alert.alert('', 'Please connect internet');
+      } else Alert.alert("", "Please connect internet");
     });
   };
 
@@ -138,16 +138,16 @@ function Settings(props) {
   };
 
   const openWebView = () => {
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         setIsShowPrivacy(true);
       } else {
-        Alert.alert('Network Error', 'Please connect internet.');
+        Alert.alert("Network Error", "Please connect internet.");
       }
     });
   };
 
-  const onclickNot = isOn => {
+  const onclickNot = (isOn) => {
     store.User.setisNotification(isOn);
     let body = {
       notificationEnabled: isOn,
@@ -157,14 +157,15 @@ function Settings(props) {
 
   const renderMain = () => {
     const renderEditProfile = () => {
-      let title = 'edit profile';
+      let title = "edit profile";
       return (
         <TouchableOpacity
           activeOpacity={activeOpacity}
           onPress={() => {
             onClick(title);
           }}
-          style={styles.mainContainer}>
+          style={styles.mainContainer}
+        >
           <View style={styles.sec1Container}>
             <View style={styles.iconConatiner}>
               <Image source={editprofileIcon} style={styles.icon} />
@@ -175,7 +176,8 @@ function Settings(props) {
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={styles.sec2Title}>
+              style={styles.sec2Title}
+            >
               {title}
             </Text>
           </View>
@@ -184,14 +186,15 @@ function Settings(props) {
     };
 
     const renderCp = () => {
-      let title = 'change password';
+      let title = "change password";
       return (
         <TouchableOpacity
           activeOpacity={activeOpacity}
           onPress={() => {
             onClick(title);
           }}
-          style={styles.mainContainer}>
+          style={styles.mainContainer}
+        >
           <View style={styles.sec1Container}>
             <View style={styles.iconConatiner}>
               <Image source={cpIcon} style={styles.icon} />
@@ -202,7 +205,8 @@ function Settings(props) {
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={styles.sec2Title}>
+              style={styles.sec2Title}
+            >
               {title}
             </Text>
           </View>
@@ -211,7 +215,7 @@ function Settings(props) {
     };
 
     const renderNotifications = () => {
-      const title = 'notifications';
+      const title = "notifications";
       return (
         <TouchableOpacity
           disabled
@@ -219,40 +223,44 @@ function Settings(props) {
           onPress={() => {
             onClick(title);
           }}
-          style={styles.mainContainer}>
+          style={styles.mainContainer}
+        >
           <View style={styles.sec1Container}>
             <View style={styles.iconConatiner}>
               <Image source={notificationsIcon} style={styles.icon} />
             </View>
           </View>
 
-          <View style={[styles.sec2Container, {width: '41.5%'}]}>
+          <View style={[styles.sec2Container, { width: "41.5%" }]}>
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={styles.sec2Title}>
+              style={styles.sec2Title}
+            >
               {title}
             </Text>
           </View>
 
           <View
             style={{
-              width: '41.5%',
-              alignItems: 'flex-end',
-            }}>
+              width: "41.5%",
+              alignItems: "flex-end",
+            }}
+          >
             <ToggleSwitch
               isOn={isNotification}
               onColor={theme.color.button2}
               offColor={theme.color.button2}
-              label={isNotification ? 'Enabled' : 'Disabled'}
+              label={isNotification ? "Enabled" : "Disabled"}
               labelStyle={{
-                color: '#50555C',
+                color: "#50555C",
                 fontFamily: theme.fonts.fontNormal,
                 fontSize: 12.5,
                 opacity: 0.5,
               }}
               size="small"
-              onToggle={isOn => onclickNot(isOn)}
+              onToggle={(isOn) => onclickNot(isOn)}
+              animationSpeed={50}
             />
           </View>
         </TouchableOpacity>
@@ -260,14 +268,15 @@ function Settings(props) {
     };
 
     const renderBlockUser = () => {
-      let title = 'Blocked Users';
+      let title = "Blocked Users";
       return (
         <TouchableOpacity
           activeOpacity={activeOpacity}
           onPress={() => {
             onClick(title);
           }}
-          style={styles.mainContainer}>
+          style={styles.mainContainer}
+        >
           <View style={styles.sec1Container}>
             <View style={styles.iconConatiner2}>
               <Image source={blockUserIcon} style={styles.icon2} />
@@ -278,7 +287,8 @@ function Settings(props) {
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={styles.sec2Title}>
+              style={styles.sec2Title}
+            >
               {title}
             </Text>
           </View>
@@ -287,14 +297,15 @@ function Settings(props) {
     };
 
     const renderManageSubscription = () => {
-      let title = 'Manage Subscription';
+      let title = "Manage Subscription";
       return (
         <TouchableOpacity
           activeOpacity={activeOpacity}
           onPress={() => {
             onClick(title);
           }}
-          style={styles.mainContainer}>
+          style={styles.mainContainer}
+        >
           <View style={styles.sec1Container}>
             <View style={styles.iconConatiner}>
               <Image source={subIcon} style={styles.icon} />
@@ -305,7 +316,8 @@ function Settings(props) {
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={styles.sec2Title}>
+              style={styles.sec2Title}
+            >
               {title}
             </Text>
           </View>
@@ -314,14 +326,15 @@ function Settings(props) {
     };
 
     const renderPrivacy = () => {
-      let title = 'privacy';
+      let title = "privacy";
       return (
         <TouchableOpacity
           activeOpacity={activeOpacity}
           onPress={() => {
             onClick(title);
           }}
-          style={styles.mainContainer}>
+          style={styles.mainContainer}
+        >
           <View style={styles.sec1Container}>
             <View style={styles.iconConatiner}>
               <Image source={privacyIcon} style={styles.icon} />
@@ -332,7 +345,8 @@ function Settings(props) {
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={styles.sec2Title}>
+              style={styles.sec2Title}
+            >
               {title}
             </Text>
           </View>
@@ -341,14 +355,15 @@ function Settings(props) {
     };
 
     const renderDeleteAccount = () => {
-      const title = 'Delete Account';
+      const title = "Delete Account";
       return (
         <TouchableOpacity
           activeOpacity={activeOpacity}
           onPress={() => {
             onClick(title);
           }}
-          style={styles.mainContainer}>
+          style={styles.mainContainer}
+        >
           <View style={styles.sec1Container}>
             <View style={styles.iconConatiner}>
               <utils.vectorIcon.AntDesign
@@ -363,7 +378,8 @@ function Settings(props) {
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={styles.sec2Title}>
+              style={styles.sec2Title}
+            >
               {title}
             </Text>
           </View>
@@ -372,14 +388,15 @@ function Settings(props) {
     };
 
     const renderLogout = () => {
-      let title = 'logout';
+      let title = "logout";
       return (
         <TouchableOpacity
           activeOpacity={activeOpacity}
           onPress={() => {
             onClick(title);
           }}
-          style={styles.mainContainer}>
+          style={styles.mainContainer}
+        >
           <View style={styles.sec1Container}>
             <View style={styles.iconConatiner}>
               <Image source={logoutIcon} style={styles.icon} />
@@ -390,7 +407,8 @@ function Settings(props) {
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={styles.sec2Title}>
+              style={styles.sec2Title}
+            >
               {title}
             </Text>
           </View>
@@ -401,7 +419,7 @@ function Settings(props) {
     return (
       <>
         <View>
-          {user && user !== 'guest' && (
+          {user && user !== "guest" && (
             <>
               {renderEditProfile()}
               {renderCp()}
@@ -414,7 +432,7 @@ function Settings(props) {
             </>
           )}
 
-          {user && user == 'guest' && <>{renderPrivacy()}</>}
+          {user && user == "guest" && <>{renderPrivacy()}</>}
         </View>
       </>
     );
@@ -427,8 +445,9 @@ function Settings(props) {
           <TouchableOpacity
             onPress={JoinNow}
             activeOpacity={0.7}
-            style={styles.BottomButton}>
-            <View style={{flexDirection: 'row'}}>
+            style={styles.BottomButton}
+          >
+            <View style={{ flexDirection: "row" }}>
               <Text style={styles.buttonTextBottom}>Join now</Text>
               <utils.vectorIcon.AntDesign
                 size={22}
@@ -462,11 +481,12 @@ function Settings(props) {
             contentContainerStyle={{
               paddingHorizontal: 15,
               paddingTop: 15,
-            }}>
+            }}
+          >
             {renderMain()}
           </ScrollView>
         </View>
-        {user && user == 'guest' && renderBottom()}
+        {user && user == "guest" && renderBottom()}
         <utils.Footer
           nav={props.navigation}
           screen={headerTitle}

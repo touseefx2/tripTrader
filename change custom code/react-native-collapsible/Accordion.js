@@ -1,22 +1,22 @@
-import React, {Component} from 'react';
-import {View, TouchableHighlight, FlatList} from 'react-native';
-import Collapsible from './Collapsible';
+import React, { Component } from "react";
+import { View, TouchableHighlight, FlatList } from "react-native";
+import Collapsible from "./Collapsible";
 
 const COLLAPSIBLE_PROPS = [
-  'align',
-  'collapsed',
-  'collapsedHeight',
-  'renderChildrenCollapsed',
-  'enablePointerEvents',
-  'duration',
-  'easing',
-  'style',
-  'onAnimationEnd',
+  "align",
+  "collapsed",
+  "collapsedHeight",
+  "renderChildrenCollapsed",
+  "enablePointerEvents",
+  "duration",
+  "easing",
+  "style",
+  "onAnimationEnd",
 ];
 
 export default class Accordion extends Component {
   static defaultProps = {
-    underlayColor: 'black',
+    underlayColor: "black",
     disabled: false,
     expandFromBottom: false,
     expandMultiple: false,
@@ -30,12 +30,12 @@ export default class Accordion extends Component {
 
   _toggleSection(section) {
     if (!this.props.disabled) {
-      const {activeSections, expandMultiple, onChange} = this.props;
+      const { activeSections, expandMultiple, onChange } = this.props;
 
       let updatedSections = [];
 
       if (activeSections.includes(section)) {
-        updatedSections = activeSections.filter(a => a !== section);
+        updatedSections = activeSections.filter((a) => a !== section);
       } else if (expandMultiple) {
         updatedSections = [...activeSections, section];
       } else {
@@ -63,7 +63,7 @@ export default class Accordion extends Component {
       boxContainer,
     } = this.props;
     return (
-      <View key={key} style={[boxContainer, {marginTop: index == 0 ? 7 : 0}]}>
+      <View key={key} style={[boxContainer, { marginTop: index == 0 ? 7 : 0 }]}>
         {renderSectionTitle(section, key, activeSections.includes(key))}
 
         {expandFromBottom && renderCollapsible(section, key)}
@@ -74,7 +74,8 @@ export default class Accordion extends Component {
           {...touchableProps}
           accessibilityState={{
             expanded: activeSections.includes(key),
-          }}>
+          }}
+        >
           {renderHeader(section, key, activeSections.includes(key), sections)}
         </Touchable>
 
@@ -110,15 +111,14 @@ export default class Accordion extends Component {
       emptyMessage,
       boxContainer,
       ItemSeparatorView,
-
-      screen,
+      paddingHorizontal,
       ...restProps
     } = this.props;
 
     const viewProps = {};
     const collapsibleProps = {};
 
-    Object.keys(restProps).forEach(key => {
+    Object.keys(restProps).forEach((key) => {
       if (COLLAPSIBLE_PROPS.includes(key)) {
         collapsibleProps[key] = restProps[key];
       } else {
@@ -130,7 +130,8 @@ export default class Accordion extends Component {
       <Collapsible
         collapsed={!activeSections.includes(key)}
         {...collapsibleProps}
-        onAnimationEnd={() => onAnimationEnd(section, key)}>
+        onAnimationEnd={() => onAnimationEnd(section, key)}
+      >
         {renderContent(section, key, activeSections.includes(key), sections)}
       </Collapsible>
     );
@@ -142,7 +143,7 @@ export default class Accordion extends Component {
 
           contentContainerStyle={{
             paddingVertical: 12,
-            paddingHorizontal: screen == 'UserProfile' ? 0 : 15,
+            paddingHorizontal: paddingHorizontal,
           }}
           style={containerStyle}
           data={sections}
@@ -152,14 +153,14 @@ export default class Accordion extends Component {
           ListHeaderComponent={listHeader}
           ListEmptyComponent={emptyMessage}
           ItemSeparatorComponent={ItemSeparatorView}
-          renderItem={({item, index}) => {
+          renderItem={({ item, index }) => {
             const section = item;
             const key = keyExtractor(item, index);
             return this._renderContainer(
               section,
               key,
               renderCollapsible,
-              index,
+              index
             );
           }}
           {...viewProps}

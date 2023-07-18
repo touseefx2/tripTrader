@@ -57,11 +57,31 @@ export default class ToggleSwitch extends React.Component {
     onColor: PropTypes.string,
     offColor: PropTypes.string,
     size: PropTypes.string,
-    labelStyle: PropTypes.oneOfType([PropTypes.array, PropTypes.object, PropTypes.number]),
-    thumbOnStyle: PropTypes.oneOfType([PropTypes.array, PropTypes.object, PropTypes.number]),
-    thumbOffStyle: PropTypes.oneOfType([PropTypes.array, PropTypes.object, PropTypes.number]),
-    trackOnStyle: PropTypes.oneOfType([PropTypes.array, PropTypes.object, PropTypes.number]),
-    trackOffStyle: PropTypes.oneOfType([PropTypes.array, PropTypes.object, PropTypes.number]),
+    labelStyle: PropTypes.oneOfType([
+      PropTypes.array,
+      PropTypes.object,
+      PropTypes.number,
+    ]),
+    thumbOnStyle: PropTypes.oneOfType([
+      PropTypes.array,
+      PropTypes.object,
+      PropTypes.number,
+    ]),
+    thumbOffStyle: PropTypes.oneOfType([
+      PropTypes.array,
+      PropTypes.object,
+      PropTypes.number,
+    ]),
+    trackOnStyle: PropTypes.oneOfType([
+      PropTypes.array,
+      PropTypes.object,
+      PropTypes.number,
+    ]),
+    trackOffStyle: PropTypes.oneOfType([
+      PropTypes.array,
+      PropTypes.object,
+      PropTypes.number,
+    ]),
     onToggle: PropTypes.func,
     icon: PropTypes.object,
     disabled: PropTypes.bool,
@@ -73,9 +93,9 @@ export default class ToggleSwitch extends React.Component {
         top: PropTypes.number,
         bottom: PropTypes.number,
         left: PropTypes.number,
-        right: PropTypes.number
-      }), 
-      PropTypes.number
+        right: PropTypes.number,
+      }),
+      PropTypes.number,
     ]),
   };
 
@@ -85,7 +105,7 @@ export default class ToggleSwitch extends React.Component {
     offColor: "#ecf0f1",
     size: "medium",
     labelStyle: {},
-    labelPosition: 'left',
+    labelPosition: "left",
     thumbOnStyle: {},
     thumbOffStyle: {},
     trackOnStyle: {},
@@ -122,12 +142,10 @@ export default class ToggleSwitch extends React.Component {
       position: "absolute",
       backgroundColor: "#63896D",
       transform: [{ translateX: this.offsetX }],
-      width: this.dimensions.circleWidth+7,
-      height: this.dimensions.circleHeight+7,
-      borderRadius: (this.dimensions.circleWidth+7) / 2,
-      // width: this.dimensions.circleWidth+5,
-      // height: this.dimensions.circleHeight+5,
-      // borderRadius: (this.dimensions.circleWidth+5) / 2,
+      width: this.dimensions.circleWidth + 7,
+      height: this.dimensions.circleHeight + 7,
+      borderRadius: (this.dimensions.circleWidth + 7) / 2,
+
       shadowColor: "#000",
       shadowOffset: {
         width: 0,
@@ -171,7 +189,7 @@ export default class ToggleSwitch extends React.Component {
 
     return (
       <View style={styles.container} {...this.props}>
-        {label && labelPosition === 'left' ? (
+        {label && labelPosition === "left" ? (
           <Text style={[styles.labelStyle, labelStyle]}>{label}</Text>
         ) : null}
         <TouchableOpacity
@@ -184,7 +202,7 @@ export default class ToggleSwitch extends React.Component {
             {icon}
           </Animated.View>
         </TouchableOpacity>
-        {label && labelPosition === 'right' ? (
+        {label && labelPosition === "right" ? (
           <Text style={[styles.labelStyle, labelStyle]}>{label}</Text>
         ) : null}
       </View>

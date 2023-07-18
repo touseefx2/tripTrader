@@ -1,0 +1,109 @@
+com.triptrader.app-jetified-play-services-auth-19.2.0-0 /Users/x2/.gradle/caches/transforms-3/00a0d1c3404a3767c342ecb061fa7ee2/transformed/jetified-play-services-auth-19.2.0/res
+com.triptrader.app-jetified-flipper-0.125.0-1 /Users/x2/.gradle/caches/transforms-3/00bc2caad3617d17c41cb51b1ae2d75e/transformed/jetified-flipper-0.125.0/res
+com.triptrader.app-jetified-core-ktx-1.7.0-2 /Users/x2/.gradle/caches/transforms-3/00e628cb2edf85f84a8909a3bacc920a/transformed/jetified-core-ktx-1.7.0/res
+com.triptrader.app-jetified-firebase-messaging-23.0.7-3 /Users/x2/.gradle/caches/transforms-3/03b2fa7cfcc623f2f2dbeb7c309a4599/transformed/jetified-firebase-messaging-23.0.7/res
+com.triptrader.app-jetified-numberpickerview-v1.1.5-4 /Users/x2/.gradle/caches/transforms-3/053b354bf4b074f6548a68e9322358c3/transformed/jetified-numberpickerview-v1.1.5/res
+com.triptrader.app-jetified-camera-view-1.0.0-alpha28-5 /Users/x2/.gradle/caches/transforms-3/05b31326f356a41c0d56281fdb3cd143/transformed/jetified-camera-view-1.0.0-alpha28/res
+com.triptrader.app-constraintlayout-2.1.3-6 /Users/x2/.gradle/caches/transforms-3/104a16f2d6a434f87ddeea7ec9e03ebc/transformed/constraintlayout-2.1.3/res
+com.triptrader.app-jetified-startup-runtime-1.0.0-7 /Users/x2/.gradle/caches/transforms-3/1121df434ef874691c2a7f378afec6a1/transformed/jetified-startup-runtime-1.0.0/res
+com.triptrader.app-jetified-paymentsheet-19.3.1-8 /Users/x2/.gradle/caches/transforms-3/13943ede20d2ab129600fcf3de0d89e1/transformed/jetified-paymentsheet-19.3.1/res
+com.triptrader.app-jetified-ui-util-1.1.1-9 /Users/x2/.gradle/caches/transforms-3/1623c248df9befc51165bfb2bd55789b/transformed/jetified-ui-util-1.1.1/res
+com.triptrader.app-jetified-appcompat-resources-1.4.1-10 /Users/x2/.gradle/caches/transforms-3/1c2ee6fefa11c52b4b1d9c94af9f02a3/transformed/jetified-appcompat-resources-1.4.1/res
+com.triptrader.app-jetified-foundation-1.1.1-11 /Users/x2/.gradle/caches/transforms-3/1dc06cccd315e4593e4b4e1121f0c85c/transformed/jetified-foundation-1.1.1/res
+com.triptrader.app-jetified-ui-unit-1.1.1-12 /Users/x2/.gradle/caches/transforms-3/1eb53fd61b57fea37174bfd1e7711ca9/transformed/jetified-ui-unit-1.1.1/res
+com.triptrader.app-lifecycle-viewmodel-2.4.1-13 /Users/x2/.gradle/caches/transforms-3/300836fd2f5ad78c14b70c367ecb9341/transformed/lifecycle-viewmodel-2.4.1/res
+com.triptrader.app-jetified-fragment-ktx-1.4.1-14 /Users/x2/.gradle/caches/transforms-3/3323b9b31ce1c5d42a723d9aafbf60d3/transformed/jetified-fragment-ktx-1.4.1/res
+com.triptrader.app-appcompat-1.4.1-15 /Users/x2/.gradle/caches/transforms-3/387e247a3d1bc4117aa257fcf4086253/transformed/appcompat-1.4.1/res
+com.triptrader.app-jetified-savedstate-1.1.0-16 /Users/x2/.gradle/caches/transforms-3/3918ec40464de88e3f7dcd6ea1e47e71/transformed/jetified-savedstate-1.1.0/res
+com.triptrader.app-jetified-material-1.1.1-17 /Users/x2/.gradle/caches/transforms-3/3b1c04a0920cf901a893be0c73968f19/transformed/jetified-material-1.1.1/res
+com.triptrader.app-browser-1.4.0-18 /Users/x2/.gradle/caches/transforms-3/3ba4256875b5760e3fcfe92bd78f01a4/transformed/browser-1.4.0/res
+com.triptrader.app-jetified-payments-ui-core-19.3.1-19 /Users/x2/.gradle/caches/transforms-3/403a05c442574164879c3e189dc8722d/transformed/jetified-payments-ui-core-19.3.1/res
+com.triptrader.app-jetified-play-services-wallet-19.1.0-20 /Users/x2/.gradle/caches/transforms-3/419458771fe826f1d1a381b27f14c158/transformed/jetified-play-services-wallet-19.1.0/res
+com.triptrader.app-jetified-play-services-maps-18.0.2-21 /Users/x2/.gradle/caches/transforms-3/4247f21fb2cd59f15fccf0ae2d43859b/transformed/jetified-play-services-maps-18.0.2/res
+com.triptrader.app-jetified-runtime-saveable-1.1.1-22 /Users/x2/.gradle/caches/transforms-3/4dba3b51b6f45a51e15b79a12885f271/transformed/jetified-runtime-saveable-1.1.1/res
+com.triptrader.app-jetified-ui-text-1.1.1-23 /Users/x2/.gradle/caches/transforms-3/4e1be551881b9db07d37b704c4c0cacf/transformed/jetified-ui-text-1.1.1/res
+com.triptrader.app-jetified-animation-1.1.1-24 /Users/x2/.gradle/caches/transforms-3/50055e068f1d341794aff9092e1e9963/transformed/jetified-animation-1.1.1/res
+com.triptrader.app-drawerlayout-1.1.1-25 /Users/x2/.gradle/caches/transforms-3/5256b7def9125f02e2e5d0fd2fcf5493/transformed/drawerlayout-1.1.1/res
+com.triptrader.app-jetified-play-services-base-18.0.1-26 /Users/x2/.gradle/caches/transforms-3/56845f84dc60648d8a9b1e3aecb7ac5f/transformed/jetified-play-services-base-18.0.1/res
+com.triptrader.app-material-1.5.0-27 /Users/x2/.gradle/caches/transforms-3/5accdddeae1e31d88ceb3437201b2474/transformed/material-1.5.0/res
+com.triptrader.app-jetified-camera-lifecycle-1.1.0-alpha08-28 /Users/x2/.gradle/caches/transforms-3/5cae133d9167453085770a4c1f114a2f/transformed/jetified-camera-lifecycle-1.1.0-alpha08/res
+com.triptrader.app-jetified-stripe-3ds2-android-6.1.5-29 /Users/x2/.gradle/caches/transforms-3/5db5f15c55fe435271f9ced8bf669330/transformed/jetified-stripe-3ds2-android-6.1.5/res
+com.triptrader.app-jetified-profileinstaller-1.1.0-30 /Users/x2/.gradle/caches/transforms-3/62c040fcf57347ed3ec773545101036a/transformed/jetified-profileinstaller-1.1.0/res
+com.triptrader.app-jetified-activity-1.4.0-31 /Users/x2/.gradle/caches/transforms-3/6333ef9b35710b4cffae828500c24009/transformed/jetified-activity-1.4.0/res
+com.triptrader.app-jetified-pictureselector-v2.7.3-rc08-32 /Users/x2/.gradle/caches/transforms-3/652669f5d1b33283a4f338366e08120a/transformed/jetified-pictureselector-v2.7.3-rc08/res
+com.triptrader.app-jetified-viewpager2-1.0.0-33 /Users/x2/.gradle/caches/transforms-3/7336f1767924dc1eba08df97fe23fd35/transformed/jetified-viewpager2-1.0.0/res
+com.triptrader.app-jetified-firebase-common-20.1.1-34 /Users/x2/.gradle/caches/transforms-3/7aca5d0c93927f5cd47f3e83bcbbfe1b/transformed/jetified-firebase-common-20.1.1/res
+com.triptrader.app-fragment-1.4.1-35 /Users/x2/.gradle/caches/transforms-3/7b84e77b682829f1fe701df98dc04171/transformed/fragment-1.4.1/res
+com.triptrader.app-jetified-material-icons-core-1.1.1-36 /Users/x2/.gradle/caches/transforms-3/820117c8d600479d1578f3ea969b7024/transformed/jetified-material-icons-core-1.1.1/res
+com.triptrader.app-jetified-foundation-layout-1.1.1-37 /Users/x2/.gradle/caches/transforms-3/895850ce0b4478c6fb3e1325f195efe4/transformed/jetified-foundation-layout-1.1.1/res
+com.triptrader.app-jetified-glide-4.12.0-38 /Users/x2/.gradle/caches/transforms-3/896ce8bd6b6afdb858a67e42578b7869/transformed/jetified-glide-4.12.0/res
+com.triptrader.app-jetified-drawee-2.6.0-39 /Users/x2/.gradle/caches/transforms-3/8da21f8f3b0cb4a0921adc7fe12b5cb0/transformed/jetified-drawee-2.6.0/res
+com.triptrader.app-jetified-lifecycle-livedata-core-ktx-2.4.1-40 /Users/x2/.gradle/caches/transforms-3/945e4ab8d739d712b85d8f1884ef9281/transformed/jetified-lifecycle-livedata-core-ktx-2.4.1/res
+com.triptrader.app-jetified-ui-1.1.1-41 /Users/x2/.gradle/caches/transforms-3/9693fe5e8a1d56bc72fda5260957a464/transformed/jetified-ui-1.1.1/res
+com.triptrader.app-jetified-camera-core-1.1.0-alpha08-42 /Users/x2/.gradle/caches/transforms-3/9797c05323178dbc262b34fab5417cb5/transformed/jetified-camera-core-1.1.0-alpha08/res
+com.triptrader.app-jetified-react-native-0.68.2-43 /Users/x2/.gradle/caches/transforms-3/97e1cc0982c56650578af8efc049ca86/transformed/jetified-react-native-0.68.2/res
+com.triptrader.app-jetified-activity-ktx-1.4.0-44 /Users/x2/.gradle/caches/transforms-3/982c481b141fd528dee11b954e374a76/transformed/jetified-activity-ktx-1.4.0/res
+com.triptrader.app-jetified-stripe-core-19.3.1-45 /Users/x2/.gradle/caches/transforms-3/9937ef6bb94b2fdc94d4be9ce10f4682/transformed/jetified-stripe-core-19.3.1/res
+com.triptrader.app-jetified-autofill-1.1.0-46 /Users/x2/.gradle/caches/transforms-3/a3e19527891ed933a0cdbdf2b27ac0f2/transformed/jetified-autofill-1.1.0/res
+com.triptrader.app-jetified-lifecycle-livedata-ktx-2.4.1-47 /Users/x2/.gradle/caches/transforms-3/a4d81a581616e90d659bc2838ea45547/transformed/jetified-lifecycle-livedata-ktx-2.4.1/res
+com.triptrader.app-transition-1.4.1-48 /Users/x2/.gradle/caches/transforms-3/a57fe49aa7f550bb92323b640088be4e/transformed/transition-1.4.1/res
+com.triptrader.app-lifecycle-livedata-2.4.1-49 /Users/x2/.gradle/caches/transforms-3/a662a35e2f4740fa83c0a611c128e1a8/transformed/lifecycle-livedata-2.4.1/res
+com.triptrader.app-jetified-activity-compose-1.4.0-50 /Users/x2/.gradle/caches/transforms-3/aa54ad02aba0c038eca7635bde1c8887/transformed/jetified-activity-compose-1.4.0/res
+com.triptrader.app-jetified-runtime-livedata-1.1.1-51 /Users/x2/.gradle/caches/transforms-3/aca6931afbb215ff5fd77c11d85bc7fb/transformed/jetified-runtime-livedata-1.1.1/res
+com.triptrader.app-jetified-animation-core-1.1.1-52 /Users/x2/.gradle/caches/transforms-3/ae7c3dbe292821bf18fd898d65748a35/transformed/jetified-animation-core-1.1.1/res
+com.triptrader.app-cardview-1.0.0-53 /Users/x2/.gradle/caches/transforms-3/c05e87c26da30e568c88b6828be29bef/transformed/cardview-1.0.0/res
+com.triptrader.app-jetified-ui-geometry-1.1.1-54 /Users/x2/.gradle/caches/transforms-3/c07555e963fc718b19ca32a8cd5796f9/transformed/jetified-ui-geometry-1.1.1/res
+com.triptrader.app-jetified-runtime-1.1.1-55 /Users/x2/.gradle/caches/transforms-3/c2fa215b3152d7b434c43f44aaf535c1/transformed/jetified-runtime-1.1.1/res
+com.triptrader.app-jetified-emoji2-views-helper-1.0.0-56 /Users/x2/.gradle/caches/transforms-3/c425aeb011c810d1ae5c2263ceba2998/transformed/jetified-emoji2-views-helper-1.0.0/res
+com.triptrader.app-jetified-lifecycle-viewmodel-ktx-2.4.1-57 /Users/x2/.gradle/caches/transforms-3/c55b5010a922aa97706e7df60edebb7c/transformed/jetified-lifecycle-viewmodel-ktx-2.4.1/res
+com.triptrader.app-jetified-VideoCompressor-715bcc16e9-58 /Users/x2/.gradle/caches/transforms-3/c8a9ab5352988de81186a766bfa6b16c/transformed/jetified-VideoCompressor-715bcc16e9/res
+com.triptrader.app-lifecycle-runtime-2.4.0-59 /Users/x2/.gradle/caches/transforms-3/cd4278a57050ffd9c891a47c313d53a9/transformed/lifecycle-runtime-2.4.0/res
+com.triptrader.app-coordinatorlayout-1.1.0-60 /Users/x2/.gradle/caches/transforms-3/d26ade10cb6a7cc06c8f8dcab5596bca/transformed/coordinatorlayout-1.1.0/res
+com.triptrader.app-jetified-emoji2-1.0.0-61 /Users/x2/.gradle/caches/transforms-3/dea866481567045befb67387a0481ccd/transformed/jetified-emoji2-1.0.0/res
+com.triptrader.app-jetified-material-ripple-1.1.1-62 /Users/x2/.gradle/caches/transforms-3/dfc56f058b63face69c0fa31ce04982a/transformed/jetified-material-ripple-1.1.1/res
+com.triptrader.app-lifecycle-livedata-core-2.4.1-63 /Users/x2/.gradle/caches/transforms-3/e030184e0b3ad2ceffe2f6044b571505/transformed/lifecycle-livedata-core-2.4.1/res
+com.triptrader.app-jetified-ui-graphics-1.1.1-64 /Users/x2/.gradle/caches/transforms-3/e0315d991fc974a0046e3b2525347d7a/transformed/jetified-ui-graphics-1.1.1/res
+com.triptrader.app-jetified-lifecycle-viewmodel-savedstate-2.4.1-65 /Users/x2/.gradle/caches/transforms-3/e2479084dd2c6b1ce3391708e9da82ec/transformed/jetified-lifecycle-viewmodel-savedstate-2.4.1/res
+com.triptrader.app-jetified-payments-core-19.3.1-66 /Users/x2/.gradle/caches/transforms-3/e425c8e6b21ac3e8fc6a31b595a9dd0c/transformed/jetified-payments-core-19.3.1/res
+com.triptrader.app-jetified-lifecycle-process-2.4.0-67 /Users/x2/.gradle/caches/transforms-3/e602f109ac13e8c338ce677db5a12157/transformed/jetified-lifecycle-process-2.4.0/res
+com.triptrader.app-core-1.7.0-68 /Users/x2/.gradle/caches/transforms-3/e7a7bb354e0f465604a7d7874f7e9f0b/transformed/core-1.7.0/res
+com.triptrader.app-media-1.0.0-69 /Users/x2/.gradle/caches/transforms-3/e9f7bdeec7a28999390738d4ae56938f/transformed/media-1.0.0/res
+com.triptrader.app-jetified-annotation-experimental-1.1.0-70 /Users/x2/.gradle/caches/transforms-3/ebe96ba4d4e7281efc65fd487d500cb4/transformed/jetified-annotation-experimental-1.1.0/res
+com.triptrader.app-recyclerview-1.2.1-71 /Users/x2/.gradle/caches/transforms-3/fe745f486f3b361cdb78bfb565afbb9a/transformed/recyclerview-1.2.1/res
+com.triptrader.app-jetified-play-services-basement-18.0.0-72 /Users/x2/.gradle/caches/transforms-3/ffa28ce41561a77be7d855469da68714/transformed/jetified-play-services-basement-18.0.0/res
+com.triptrader.app-res-73 /Users/x2/Desktop/untitled folder/tripTrader/android/app/build/generated/crashlytics/res/debug
+com.triptrader.app-google-services-74 /Users/x2/Desktop/untitled folder/tripTrader/android/app/build/generated/res/google-services/debug
+com.triptrader.app-pngs-75 /Users/x2/Desktop/untitled folder/tripTrader/android/app/build/generated/res/pngs/debug
+com.triptrader.app-react-76 /Users/x2/Desktop/untitled folder/tripTrader/android/app/build/generated/res/react/debug
+com.triptrader.app-resValues-77 /Users/x2/Desktop/untitled folder/tripTrader/android/app/build/generated/res/resValues/debug
+com.triptrader.app-rs-78 /Users/x2/Desktop/untitled folder/tripTrader/android/app/build/generated/res/rs/debug
+com.triptrader.app-mergeDebugResources-79 /Users/x2/Desktop/untitled folder/tripTrader/android/app/build/intermediates/incremental/debug/mergeDebugResources/merged.dir
+com.triptrader.app-mergeDebugResources-80 /Users/x2/Desktop/untitled folder/tripTrader/android/app/build/intermediates/incremental/debug/mergeDebugResources/stripped.dir
+com.triptrader.app-merged_res-81 /Users/x2/Desktop/untitled folder/tripTrader/android/app/build/intermediates/merged_res/debug
+com.triptrader.app-debug-82 /Users/x2/Desktop/untitled folder/tripTrader/android/app/src/debug/res
+com.triptrader.app-main-83 /Users/x2/Desktop/untitled folder/tripTrader/android/app/src/main/res
+com.triptrader.app-packaged_res-84 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/@baronha/react-native-multiple-image-picker/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-85 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/@react-native-async-storage/async-storage/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-86 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/@react-native-community/netinfo/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-87 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/@react-native-firebase/analytics/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-88 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/@react-native-firebase/app/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-89 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/@react-native-firebase/auth/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-90 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/@react-native-firebase/crashlytics/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-91 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/@react-native-firebase/firestore/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-92 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/@react-native-firebase/messaging/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-93 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/@sentry/react-native/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-94 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/@stripe/stripe-react-native/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-95 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/react-native-compressor/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-96 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/react-native-date-picker/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-97 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/react-native-device-info/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-98 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/react-native-fast-image/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-99 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/react-native-gesture-handler/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-100 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/react-native-intent-launcher/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-101 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/react-native-localize/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-102 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/react-native-pager-view/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-103 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/react-native-permissions/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-104 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/react-native-push-notification/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-105 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/react-native-safe-area-context/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-106 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/react-native-screens/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-107 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/react-native-vector-icons/android/build/intermediates/packaged_res/debug
+com.triptrader.app-packaged_res-108 /Users/x2/Desktop/untitled folder/tripTrader/node_modules/react-native-webview/android/build/intermediates/packaged_res/debug

@@ -1,33 +1,33 @@
-import React, {useEffect, useState, useRef} from 'react';
-import {View, SafeAreaView, BackHandler} from 'react-native';
-import {styles} from './styles';
-import {observer} from 'mobx-react';
-import store from '../../store/index';
-import utils from '../../utils/index';
-import Toast from 'react-native-easy-toast';
-import Accordion from 'react-native-collapsible/Accordion';
-import MainInfo from './MainInfo';
-import UserInfo from './UserInfo';
-import ExpandAllMainInfo from './ExpandAllMainInfo';
-import ListHeader from './Components/ListHeader';
-import EmptyListMessage from '../UserProfile/Trips/Components/EmptyListMessage';
-import ItemSeparatorView from '../UserProfile/Trips/Components/ItemSeparatorView';
-import ListFooter from './Components/ListFooter';
+import React, { useEffect, useState, useRef } from "react";
+import { View, SafeAreaView, BackHandler } from "react-native";
+import { styles } from "./styles";
+import { observer } from "mobx-react";
+import store from "../../store/index";
+import utils from "../../utils/index";
+import Toast from "react-native-easy-toast";
+import Accordion from "react-native-collapsible/Accordion";
+import MainInfo from "./MainInfo";
+import UserInfo from "./UserInfo";
+import ExpandAllMainInfo from "./ExpandAllMainInfo";
+import ListHeader from "./Components/ListHeader";
+import EmptyListMessage from "../UserProfile/Trips/Components/EmptyListMessage";
+import ItemSeparatorView from "../UserProfile/Trips/Components/ItemSeparatorView";
+import ListFooter from "./Components/ListFooter";
 
 export default observer(SavedTrips);
 
 function SavedTrips(props) {
-  const headerTitle = 'Saved Trips';
+  const headerTitle = "Saved Trips";
   const windowSize = 21;
   const limit = 10;
   const animtntime = 1000;
   const scrollRef = useRef(null);
   const toast = useRef(null);
 
-  const {isInternet} = store.General;
-  const {user, homeModalLoder} = store.User;
-  const {deleteLoader, saveTrips} = store.Trips;
-  const {activity, tripLocation, species} = store.Filters;
+  const { isInternet } = store.General;
+  const { user, homeModalLoder } = store.User;
+  const { deleteLoader, saveTrips } = store.Trips;
+  const { activity, tripLocation, species } = store.Filters;
 
   const [modalObj, setModalObj] = useState(null);
   const [isOfferModal, setIsOfferModal] = useState(false);
@@ -35,8 +35,8 @@ function SavedTrips(props) {
   const [isRemoveModal, setIsRemoveModal] = useState(false);
   const [isSuccessModal, setIsSuccessModal] = useState(false);
   const [successModalObj, setSuccessModalObj] = useState(null);
-  const [successCheck, setSuccessCheck] = useState('');
-  const [search, setSearch] = useState('');
+  const [successCheck, setSuccessCheck] = useState("");
+  const [search, setSearch] = useState("");
   const [page, setpage] = useState(1);
   const [loadMore, setloadMore] = useState(false);
   const [saveData, setSaveData] = useState([]);
@@ -46,8 +46,8 @@ function SavedTrips(props) {
   const [showpic, setshowpic] = useState(true);
 
   useEffect(() => {
-    if (user == 'guest') {
-      store.General.setgoto('guestaccess');
+    if (user == "guest") {
+      store.General.setgoto("guestaccess");
       store.User.Logout();
       return;
     }
@@ -57,22 +57,22 @@ function SavedTrips(props) {
     let arr = [];
     setisloadFirst(false);
     setpage(1);
-    if (search == '') {
+    if (search == "") {
       scrollToTop();
       BackHandler.removeEventListener(
-        'hardwareBackPress',
-        handleBackButtonClick,
+        "hardwareBackPress",
+        handleBackButtonClick
       );
 
-      saveTrips.forEach(({tripId}) => {
+      saveTrips.forEach(({ tripId }) => {
         if (tripId) arr.push(tripId);
       });
     } else {
-      BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
-      saveTrips.forEach(({tripId}) => {
+      BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
+      saveTrips.forEach(({ tripId }) => {
         if (tripId) {
           const title =
-            tripId?.hostId?.firstName + ' ' + tripId?.hostId?.lastName;
+            tripId?.hostId?.firstName + " " + tripId?.hostId?.lastName;
           if (title.toLowerCase().includes(search.toLowerCase())) {
             arr.push(tripId);
           }
@@ -83,8 +83,8 @@ function SavedTrips(props) {
 
     return () => {
       BackHandler.removeEventListener(
-        'hardwareBackPress',
-        handleBackButtonClick,
+        "hardwareBackPress",
+        handleBackButtonClick
       );
     };
   }, [search, saveTrips]);
@@ -112,18 +112,18 @@ function SavedTrips(props) {
     if (!props.navigation.isFocused()) {
       return false;
     } else {
-      setSearch('');
+      setSearch("");
       return true;
     }
   }
 
-  const LoadFirst = data => {
+  const LoadFirst = (data) => {
     let page = 0;
     let p = page + 1;
     let ar = [...data];
     const dt = ar.slice(page * limit, limit * p);
     let dd = [...dt];
-    console.log('----> Load First : ', page * limit, limit * p);
+    console.log("----> Load First : ", page * limit, limit * p);
     setdata(dd);
     setisloadFirst(true);
   };
@@ -136,7 +136,7 @@ function SavedTrips(props) {
       let ar = [...saveData];
       const dt = ar.slice(page * limit, limit * p);
       let dd = [...data, ...dt];
-      console.log('---> Load More : ', page * limit, limit * p);
+      console.log("---> Load More : ", page * limit, limit * p);
       setdata(dd);
       setpage(p);
     }, 1);
@@ -146,18 +146,18 @@ function SavedTrips(props) {
     // scrollRef2?.current?.scrollToOffset({animated: false, offset: 0});
   };
 
-  const updateSections = activeSections => {
+  const updateSections = (activeSections) => {
     setactiveSections(activeSections);
     setshowpic(true);
   };
 
   const openModal = (obj, check) => {
     setModalObj(obj);
-    if (check == 'offer') setIsOfferModal(true);
+    if (check == "offer") setIsOfferModal(true);
 
-    if (check == 'message') setIsMessageModal(true);
+    if (check == "message") setIsMessageModal(true);
 
-    if (check == 'tripRemove') setIsRemoveModal(true);
+    if (check == "tripRemove") setIsRemoveModal(true);
   };
 
   return (
@@ -168,7 +168,7 @@ function SavedTrips(props) {
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <Accordion
-              screen="SavedTrips"
+              paddingHorizontal={15}
               renderAsFlatList
               ref={scrollRef}
               decelerationRate={0.6}
@@ -176,7 +176,7 @@ function SavedTrips(props) {
               initialNumToRender={limit}
               windowSize={windowSize}
               maxToRenderPerBatch={windowSize}
-              underlayColor={'rgba(245,252,255,1)'}
+              underlayColor={"rgba(245,252,255,1)"}
               boxContainer={styles.boxContainer}
               sections={data}
               activeSections={activeSections}
@@ -186,7 +186,7 @@ function SavedTrips(props) {
               listHeader={
                 <ListHeader
                   search={search}
-                  setsearch={c => setSearch(c)}
+                  setsearch={(c) => setSearch(c)}
                   data={saveData}
                 />
               }
@@ -246,7 +246,7 @@ function SavedTrips(props) {
             setIsSuccessModal={setIsSuccessModal}
             setSuccessModalObj={setSuccessModalObj}
             setSuccessCheck={setSuccessCheck}
-            screen={'SavedTrips'}
+            screen={"SavedTrips"}
             props={props}
           />
         )}
