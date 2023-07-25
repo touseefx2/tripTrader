@@ -1,17 +1,17 @@
-import React, {useEffect} from 'react';
-import {AppState} from 'react-native';
-import stack from './src/navigation/index';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import GlobalFont from 'react-native-global-font';
-import theme from './src/theme';
-import screens from './src/screens/index';
-import DeviceInfo from 'react-native-device-info';
-import NetInfo from '@react-native-community/netinfo';
-import store from './src/store/index';
-import {observer} from 'mobx-react';
+import React, { useEffect } from "react";
+import { AppState } from "react-native";
+import stack from "./src/navigation/index";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import GlobalFont from "react-native-global-font";
+import theme from "./src/theme";
+import screens from "./src/screens/index";
+import DeviceInfo from "react-native-device-info";
+import NetInfo from "@react-native-community/netinfo";
+import store from "./src/store/index";
+import { observer } from "mobx-react";
 // import crashlytics from '@react-native-firebase/crashlytics';
-import * as Sentry from '@sentry/react-native';
+import * as Sentry from "@sentry/react-native";
 Sentry.init({
   dsn: store.General.sentryDsn,
   debug: true,
@@ -20,11 +20,10 @@ Sentry.init({
   // We recommend adjusting this value in production
   tracesSampleRate: 1.0,
 });
-
 export default Sentry.wrap(observer(App));
 
 function App() {
-  const {user} = store.User;
+  const { user } = store.User;
   const {
     Loading,
     setapiLevel,
@@ -44,18 +43,18 @@ function App() {
   useEffect(() => {
     GlobalFont.applyGlobal(theme.fonts.fontNormal);
     const unsubscribeAppState = AppState.addEventListener(
-      'change',
-      appState => {
+      "change",
+      (appState) => {
         setappState(appState);
-        if (appState === 'active') {
-          NetInfo.fetch().then(state => {
+        if (appState === "active") {
+          NetInfo.fetch().then((state) => {
             setInternet(state.isConnected ? true : false);
           });
         }
-      },
+      }
     );
 
-    const unsubscribeNetinfo = NetInfo.addEventListener(state => {
+    const unsubscribeNetinfo = NetInfo.addEventListener((state) => {
       setInternet(state.isConnected);
     });
     setDeviceInfo();
@@ -75,7 +74,7 @@ function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         {Loading && <Stack.Screen name="Splash" component={screens.Splash} />}
 
         {!Loading && !user && (

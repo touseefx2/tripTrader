@@ -1,59 +1,38 @@
-# OSX
-#
+# OS-generated files
 .DS_Store
+Thumbs.db
 
-# Xcode
-#
-build/
-*.pbxuser
-!default.pbxuser
-*.mode1v3
-!default.mode1v3
-*.mode2v3
-!default.mode2v3
-*.perspectivev3
-!default.perspectivev3
-xcuserdata
-*.xccheckout
-*.moved-aside
-DerivedData
-*.hmap
-*.ipa
-*.xcuserstate
-
-# Android/IntelliJ
-#
-build/
-.idea
-.gradle
-local.properties
-*.iml
-
-# node.js
-#
+# Node.js and NPM
 node_modules/
 npm-debug.log
 yarn-error.log
 
-# BUCK
-buck-out/
-\.buckd/
-# *.keystore
-# !debug.keystore
+# React Native generated files
+android/build/
+android/app/build/
+ios/Pods/
+ios/Podfile.lock
+ios/build/
+*.apk
+*.aab
 
-# fastlane
-#
-# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
-# screenshots whenever they are needed.
-# For more information about the recommended setup visit:
-# https://docs.fastlane.tools/best-practices/source-control/
+# React Native debugger
+.packager/
 
-*/fastlane/report.xml
-*/fastlane/Preview.html
-*/fastlane/screenshots
+# IDE and editor files
+.idea/
+.vscode/
 
-# Bundle artifact
-*.jsbundle
+# Miscellaneous
+*.log
+*.tmp
+*.temp
 
-# CocoaPods
-/ios/Pods/
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Dependency lock files
+yarn.lock
+package-lock.json

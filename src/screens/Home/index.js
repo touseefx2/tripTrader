@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef, useCallback} from 'react';
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -9,22 +9,22 @@ import {
   Pressable,
   RefreshControl,
   FlatList,
-} from 'react-native';
-import {styles} from './styles';
-import {observer} from 'mobx-react';
-import store from '../../store/index';
-import utils from '../../utils/index';
-import theme from '../../theme';
-import NetInfo from '@react-native-community/netinfo';
-import Toast from 'react-native-easy-toast';
-import PushNotification from 'react-native-push-notification';
-import firestore from '@react-native-firebase/firestore';
-import {responsiveFontSize} from 'react-native-responsive-dimensions';
-import TripCard from './component/TripCard';
+} from "react-native";
+import { styles } from "./styles";
+import { observer } from "mobx-react";
+import store from "../../store/index";
+import utils from "../../utils/index";
+import theme from "../../theme";
+import NetInfo from "@react-native-community/netinfo";
+import Toast from "react-native-easy-toast";
+import PushNotification from "react-native-push-notification";
+import firestore from "@react-native-firebase/firestore";
+import { responsiveFontSize } from "react-native-responsive-dimensions";
+import TripCard from "./component/TripCard";
 
 export default observer(Home);
 function Home(props) {
-  const headerTitle = 'Home';
+  const headerTitle = "Home";
   const toast = useRef(null);
   const {
     isInternet,
@@ -34,7 +34,7 @@ function Home(props) {
     setSettingsGoTo,
     setOfferGoTo,
   } = store.General;
-  const {isApplySearch} = store.Search;
+  const { isApplySearch } = store.Search;
 
   const {
     activity,
@@ -53,8 +53,13 @@ function Home(props) {
     HomeLoader,
     attemptToGetInboxes,
   } = store.User;
-  const {deleteLoader, saveTrips, saveLoader, setsaveTrips, attemptToSaveTrip} =
-    store.Trips;
+  const {
+    deleteLoader,
+    saveTrips,
+    saveLoader,
+    setsaveTrips,
+    attemptToSaveTrip,
+  } = store.Trips;
 
   const [modalObj, setModalObj] = useState(null);
   const [isOfferModal, setIsOfferModal] = useState(false);
@@ -63,7 +68,7 @@ function Home(props) {
 
   const [isSuccessModal, setIsSuccessModal] = useState(false);
   const [successModalObj, setSuccessModalObj] = useState(null);
-  const [successCheck, setSuccessCheck] = useState('');
+  const [successCheck, setSuccessCheck] = useState("");
 
   const [getDataOnce, setgetDataOnce] = useState(false);
   const [isShowSearch, setisShowSearch] = useState(false);
@@ -71,9 +76,9 @@ function Home(props) {
 
   const [fullImageModal, setFullImageModal] = useState(false);
   const [fullImageArr, setFullImageArr] = useState([]);
-  const [fullImageIndication, setFullImageIndication] = useState('');
+  const [fullImageIndication, setFullImageIndication] = useState("");
 
-  const setGetDataOnce = C => {
+  const setGetDataOnce = (C) => {
     setgetDataOnce(C);
   };
 
@@ -85,14 +90,14 @@ function Home(props) {
   }, [getDataOnce, isInternet]);
 
   useEffect(() => {
-    if (user && user !== 'guest') {
+    if (user && user !== "guest") {
       setsaveTrips(user.savedTrips || []);
       setisNotification(user.notificationEnabled);
     }
   }, [user]);
 
   useEffect(() => {
-    if (user && user !== 'guest' && getDataOnce) {
+    if (user && user !== "guest" && getDataOnce) {
       setTimeout(() => {
         setIsEmailPopup(user?.isEmailVerified == false ? true : false);
       }, 3000);
@@ -116,8 +121,8 @@ function Home(props) {
   }, [species, activity, activityList]);
 
   useEffect(() => {
-    if (goto == 'profile') {
-      props.navigation.navigate('MyProfile');
+    if (goto == "profile") {
+      props.navigation.navigate("MyProfile");
     }
   }, []);
 
@@ -126,33 +131,33 @@ function Home(props) {
   useEffect(() => {
     if (notify) {
       try {
-        const topic = notify?.tag || '';
-        let action = notify?.action || '';
-        if (action == '') {
+        const topic = notify?.tag || "";
+        let action = notify?.action || "";
+        if (action == "") {
           const arr = JSON.parse(notify?.actions) || [];
           if (arr.length > 0) action = arr[0];
         }
 
-        if (action != '') onClickNotificationAction(action, notify);
+        if (action != "") onClickNotificationAction(action, notify);
         else onOpenNotification(topic, action, notify);
         store.General.setgoToo(null);
       } catch (error) {
-        console.log('home error notify ', error);
+        console.log("home error notify ", error);
       }
     }
   }, [notify]);
 
   useEffect(() => {
-    const chatroomsRef = firestore().collection('chatrooms');
+    const chatroomsRef = firestore().collection("chatrooms");
     var initState = true;
     const observer = chatroomsRef
-      .where(`user.${user._id}`, '==', true)
-      .onSnapshot(documentSnapshot => {
+      .where(`user.${user._id}`, "==", true)
+      .onSnapshot((documentSnapshot) => {
         if (initState) {
           initState = false;
         } else {
-          console.log('---> onSnapshot Call Home <----');
-          attemptToGetInboxes(user._id, () => {}, '');
+          console.log("---> onSnapshot Call Home <----");
+          attemptToGetInboxes(user._id, () => {}, "");
         }
       });
 
@@ -162,9 +167,9 @@ function Home(props) {
 
   useEffect(() => {
     if (isApplySearch) {
-      NetInfo.fetch().then(state => {
+      NetInfo.fetch().then((state) => {
         if (state.isConnected) {
-          if (user == 'guest') {
+          if (user == "guest") {
             store.User.attemptToGetHomeTripsGuest(setGetDataOnce);
           } else {
             store.User.attemptToGetBloackUsers(
@@ -172,99 +177,93 @@ function Home(props) {
               () => {},
               () => {},
               setGetDataOnce,
-              '',
+              ""
             );
-
-            // store.User.attemptToGetHomeTripsSearch(
-            //   setGetDataOnce,
-            //   blockUsers,
-            //   '',
-            // );
           }
         }
       });
     }
   }, [isApplySearch]);
 
-  const goToEditProfile = props => {
-    props.navigation.navigate('EditProfile');
+  const goToEditProfile = (props) => {
+    props.navigation.navigate("EditProfile");
   };
 
-  const goToMyProfile = props => {
-    props.navigation.navigate('MyProfile');
+  const goToMyProfile = (props) => {
+    props.navigation.navigate("MyProfile");
   };
 
-  const goToInbox = props => {
-    props.navigation.navigate('Inbox');
+  const goToInbox = (props) => {
+    props.navigation.navigate("Inbox");
   };
 
-  const goToTradeOffer = props => {
-    props.navigation.navigate('TradeOffers');
+  const goToTradeOffer = (props) => {
+    props.navigation.navigate("TradeOffers");
   };
 
-  const goToConfirmTrips = props => {
-    props.navigation.navigate('ConfirmedTrips');
+  const goToConfirmTrips = (props) => {
+    props.navigation.navigate("ConfirmedTrips");
   };
 
   const goToUserProfile = (props, senderUser) => {
-    store.Userv.setfscreen(headerTitle || '');
+    store.Userv.setfscreen(headerTitle || "");
     store.Userv.setUser(senderUser);
     store.Userv.addauthToken(store.User.authToken);
-    props.navigation.navigate('UserProfile');
+    props.navigation.navigate("UserProfile");
   };
 
-  const goToSavedTrips = props => {
-    props.navigation.navigate('SavedTrips');
+  const goToSavedTrips = (props) => {
+    props.navigation.navigate("SavedTrips");
   };
 
   const onOpenNotification = (topic, actions, notify) => {
-    console.log('onOpenNotification:', notify);
+    console.log("onOpenNotification:", notify);
 
-    if (topic == 'followUser' || topic == 'dispute') {
+    if (topic == "followUser" || topic == "dispute") {
       onClickNotificationAction(topic, notify);
-    } else if (actions != '') {
+    } else if (actions != "") {
       onClickNotificationAction(actions, notify);
       return;
     }
 
-    if (topic === 'id-verified' || topic === 'id-notVerified') {
+    if (topic === "id-verified" || topic === "id-notVerified") {
       goToEditProfile(props);
     }
 
     if (
-      topic == 'newReview' ||
-      topic == 'updateInReview' ||
-      topic == 'emailVerified'
+      topic == "newReview" ||
+      topic == "updateInReview" ||
+      topic == "emailVerified"
     ) {
       goToMyProfile(props);
     }
 
-    if (topic == 'offerDecline' || topic == 'offerCancel') {
+    if (topic == "offerDecline" || topic == "offerCancel") {
       goToTradeOffer(props);
-      setOfferGoTo('sent');
+      setOfferGoTo("sent");
     }
 
-    if (topic == 'offerConfirm') {
+    if (topic == "offerConfirm") {
       goToConfirmTrips(props);
     }
 
-    if (topic == 'subscriptionStatus') {
-      props.navigation.navigate('Plan');
+    if (topic == "subscriptionStatus") {
+      props.navigation.navigate("Plan");
     }
 
-    if (topic == 'subscriptionStatus') {
-      props.navigation.navigate('Plan');
+    if (topic == "subscriptionStatus") {
+      props.navigation.navigate("Plan");
     }
 
-    if (topic == 'paymentFailed') {
-      setSettingsGoTo('Manage Subscription');
-      props.navigation.navigate('Settings');
+    if (topic == "paymentFailed") {
+      setSettingsGoTo("Manage Subscription");
+      props.navigation.navigate("Settings");
     }
   };
 
   const onClickNotificationAction = (action, notify) => {
-    if (action != 'followUser' && action != 'dispute') {
-      console.log('onClickNotificationAction:', notify);
+    if (action != "followUser" && action != "dispute") {
+      console.log("onClickNotificationAction:", notify);
     }
 
     let senderId = {};
@@ -272,39 +271,39 @@ function Home(props) {
     senderId = notify?.data ? notify.data : {};
     // else senderId = notify?.userInfo ? notify.userInfo : {};
 
-    if (action == 'Dismiss' || action == 'No Thanks') {
+    if (action == "Dismiss" || action == "No Thanks") {
       PushNotification.cancelLocalNotification(notify.id);
     }
 
-    if (action == 'Apply for Verification') {
+    if (action == "Apply for Verification") {
       goToEditProfile(props);
     }
-    if (action == 'Respond') {
+    if (action == "Respond") {
       //new message
       goToInbox(props);
     }
 
-    if (action == 'Review Offer Details') {
+    if (action == "Review Offer Details") {
       //offer recieve
       goToTradeOffer(props);
-      setOfferGoTo('received');
+      setOfferGoTo("received");
     }
-    if (action.includes('Message')) {
+    if (action.includes("Message")) {
       goToUserProfile(props, senderId);
     }
-    if (action == 'Review Trip Details') {
+    if (action == "Review Trip Details") {
       //  offerAccepted tripStarts tripHosting
       goToConfirmTrips(props);
     }
-    if (action == 'Make Offer') {
+    if (action == "Make Offer") {
       //save trip expire
       goToSavedTrips(props);
     }
     if (
-      action == 'Leave Review' ||
-      action == 'See Trip Details' ||
-      action == 'followUser' ||
-      action == 'dispute'
+      action == "Leave Review" ||
+      action == "See Trip Details" ||
+      action == "followUser" ||
+      action == "dispute"
     ) {
       //newTripAdded  reviewReminder userFollow disputeReview
       goToUserProfile(props, senderId);
@@ -312,14 +311,14 @@ function Home(props) {
   };
 
   const onRefresh = React.useCallback(() => {
-    console.log('onrefresh cal');
+    console.log("onrefresh cal");
     getDbData();
   }, []);
 
   const getDbData = () => {
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
-        if (user == 'guest') {
+        if (user == "guest") {
           store.User.attemptToGetHomeTripsGuest(setGetDataOnce);
         } else {
           store.User.attemptToGetBloackUsers(
@@ -327,7 +326,7 @@ function Home(props) {
             () => {},
             () => {},
             setGetDataOnce,
-            'all',
+            "all"
           );
           // store.User.attemptToGetHomeTripsSearch(
           //   setGetDataOnce,
@@ -339,19 +338,19 @@ function Home(props) {
     });
   };
 
-  const saveTripSuccess = item => {
-    toast?.current?.show('Trip Saved', 1000);
+  const saveTripSuccess = (item) => {
+    toast?.current?.show("Trip Saved", 1000);
     // setSuccessModalObj({item: item});
     // setSuccessCheck('TripSave');
     // setIsSuccessModal(true);
   };
 
   const saveTrip = (item, index) => {
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         attemptToSaveTrip(item, index, saveTripSuccess);
       } else {
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
@@ -363,9 +362,9 @@ function Home(props) {
   const onCrossSearchBar = () => {
     store.Search.clearSelSearches();
 
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
-        if (user == 'guest') {
+        if (user == "guest") {
           store.User.attemptToGetHomeTripsGuest(setGetDataOnce);
         } else {
           // store.User.attemptToGetHomeTripsSearch(
@@ -378,11 +377,11 @@ function Home(props) {
             () => {},
             () => {},
             setGetDataOnce,
-            '',
+            ""
           );
         }
       } else {
-        Alert.alert('Please Connect internet');
+        Alert.alert("Please Connect internet");
       }
     });
   };
@@ -393,11 +392,11 @@ function Home(props) {
 
   const openModal = (obj, check) => {
     setModalObj(obj);
-    if (check == 'offer') setIsOfferModal(true);
+    if (check == "offer") setIsOfferModal(true);
 
-    if (check == 'message') setIsMessageModal(true);
+    if (check == "message") setIsMessageModal(true);
 
-    if (check == 'tripRemove') setIsRemoveModal(true);
+    if (check == "tripRemove") setIsRemoveModal(true);
   };
 
   const renderStatusBar = () => {
@@ -406,7 +405,7 @@ function Home(props) {
         <StatusBar
           translucent={false}
           backgroundColor={theme.color.backgroundGreen}
-          barStyle={'light-content'}
+          barStyle={"light-content"}
         />
       </>
     );
@@ -447,7 +446,7 @@ function Home(props) {
   };
 
   const ItemView = useCallback(
-    ({item, index}) => (
+    ({ item, index }) => (
       <TripCard
         item={item}
         index={index}
@@ -462,7 +461,7 @@ function Home(props) {
         user={user}
       />
     ),
-    [saveTrips],
+    [saveTrips]
   );
 
   const ListHeader = () => {
@@ -472,9 +471,9 @@ function Home(props) {
       return (
         <View style={styles.resultContainer}>
           <Text style={styles.resultText}>
-            {length} {isApplySearch ? 'search' : isFilter ? 'filter' : ''}{' '}
+            {length} {isApplySearch ? "search" : isFilter ? "filter" : ""}{" "}
             result
-            {length > 1 ? 's' : ''}
+            {length > 1 ? "s" : ""}
           </Text>
         </View>
       );
@@ -483,7 +482,7 @@ function Home(props) {
     const renderSearch = () => {
       return (
         <Image
-          source={require('../../assets/images/searchBar/search/img.png')}
+          source={require("../../assets/images/searchBar/search/img.png")}
           style={styles.Baricon}
         />
       );
@@ -491,7 +490,7 @@ function Home(props) {
 
     const renderInput = () => {
       return (
-        <View style={{width: '87%'}}>
+        <View style={{ width: "87%" }}>
           <Text
             style={{
               fontSize: responsiveFontSize(1.85),
@@ -499,8 +498,9 @@ function Home(props) {
                 ? theme.color.subTitleLight
                 : theme.color.subTitle,
               fontFamily: theme.fonts.fontNormal,
-            }}>
-            {!isApplySearch ? 'Search' : store.Search.search}
+            }}
+          >
+            {!isApplySearch ? "Search" : store.Search.search}
           </Text>
         </View>
       );
@@ -509,7 +509,7 @@ function Home(props) {
     const renderFilter = () => {
       return (
         <Image
-          source={require('../../assets/images/searchBar/filter/img.png')}
+          source={require("../../assets/images/searchBar/filter/img.png")}
           style={styles.Baricon}
         />
       );
@@ -530,26 +530,28 @@ function Home(props) {
         <View style={styles.SerchBarContainer}>
           <Pressable
             disabled={isApplySearch}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.7 : 1},
+            style={({ pressed }) => [
+              { opacity: pressed ? 0.7 : 1 },
               {
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                width: '80%',
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: "80%",
               },
             ]}
-            onPress={onclickSearchBar}>
+            onPress={onclickSearchBar}
+          >
             {renderSearch()}
             {renderInput()}
           </Pressable>
           <Pressable
-            style={({pressed}) => [
+            style={({ pressed }) => [
               {
                 opacity: pressed ? 0.7 : 1,
               },
             ]}
-            onPress={!isApplySearch ? onclickFilter : onCrossSearchBar}>
+            onPress={!isApplySearch ? onclickFilter : onCrossSearchBar}
+          >
             {!isApplySearch ? renderFilter() : renderCross()}
           </Pressable>
         </View>
@@ -619,15 +621,15 @@ function Home(props) {
         {isShowSearch && (
           <utils.Search
             isVisible={isShowSearch}
-            setisVisible={c => setisShowSearch(c)}
-            setGetDataOnce={c => setGetDataOnce(c)}
+            setisVisible={(c) => setisShowSearch(c)}
+            setGetDataOnce={(c) => setGetDataOnce(c)}
           />
         )}
         {isShowFilters && (
           <utils.Filters
             isVisible={isShowFilters}
-            setisVisible={c => setisShowFilters(c)}
-            setGetDataOnce={c => setGetDataOnce(c)}
+            setisVisible={(c) => setisShowFilters(c)}
+            setGetDataOnce={(c) => setGetDataOnce(c)}
           />
         )}
         {fullImageModal && (
@@ -639,8 +641,8 @@ function Home(props) {
             pdc={fullImageIndication}
             closModal={() => {
               setFullImageModal(!fullImageModal);
-              setFullImageArr('');
-              setFullImageIndication('');
+              setFullImageArr("");
+              setFullImageIndication("");
             }}
           />
         )}
@@ -657,7 +659,7 @@ function Home(props) {
             setIsSuccessModal={setIsSuccessModal}
             setSuccessModalObj={setSuccessModalObj}
             setSuccessCheck={setSuccessCheck}
-            screen={'Home'}
+            screen={"Home"}
             props={props}
           />
         )}
@@ -692,7 +694,7 @@ function Home(props) {
           <utils.EmailPopupSheet
             isModal={isEmailPopup}
             setIsModal={setIsEmailPopup}
-            email={user?.email || ''}
+            email={user?.email || ""}
             user={user || null}
           />
         )}
