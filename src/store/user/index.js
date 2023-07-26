@@ -248,7 +248,7 @@ class user {
         );
         this.settotalblockUsers(dt.length);
       })
-      .catch((error) => {
+      .catch((err) => {
         this.setHomeLoader(false);
         this.setfl(false);
         setrfrsh(false);
