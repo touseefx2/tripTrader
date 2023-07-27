@@ -1,17 +1,17 @@
-import React from 'react';
-import {View, Text, Image, ScrollView} from 'react-native';
-import {styles} from './styles';
-import Bottom from './components/Bottom';
+import React from "react";
+import { View, Text, Image, ScrollView } from "react-native";
+import { styles } from "./styles";
+import Bottom from "./components/Bottom";
 
-export default function Message({modalObj, isMaxHeight, closeModal, props}) {
-  const {item} = modalObj;
-  const {firstName, lastName, email} = item.hostId || item.offeredBy;
-  const userName = firstName + ' ' + lastName;
-  const imageSrc = require('../../../../assets/images/msgSentDone/img.png');
+export default function Message({ modalObj, isMaxHeight, closeModal, props }) {
+  const { item } = modalObj;
+  const { firstName, lastName } = item.hostId || item.offeredBy;
+  const userName = firstName + " " + lastName;
+  const imageSrc = require("../../../../assets/images/msgSentDone/img.png");
 
   const goToInbox = () => {
     closeModal();
-    props.navigation.navigate('Inbox');
+    props.navigation.navigate("Inbox");
   };
 
   const renderMain = () => {
@@ -29,9 +29,6 @@ export default function Message({modalObj, isMaxHeight, closeModal, props}) {
           <Text numberOfLines={1} ellipsizeMode="tail" style={styles.subTitle}>
             {userName}
           </Text>
-          <Text numberOfLines={1} ellipsizeMode="tail" style={styles.subTitle2}>
-            {email}
-          </Text>
         </View>
       </>
     );
@@ -40,7 +37,7 @@ export default function Message({modalObj, isMaxHeight, closeModal, props}) {
   return (
     <>
       {isMaxHeight ? (
-        <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}}>
+        <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
           {renderMain()}
         </ScrollView>
       ) : (

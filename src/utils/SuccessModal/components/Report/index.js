@@ -1,20 +1,18 @@
-import React from 'react';
-import {View, Text, ScrollView} from 'react-native';
-import {styles} from './styles';
-import Bottom from './components/Bottom';
-import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
+import React from "react";
+import { View, Text, ScrollView } from "react-native";
+import { styles } from "./styles";
+import Bottom from "./components/Bottom";
+import ProgressiveFastImage from "@freakycoder/react-native-progressive-fast-image";
 
-export default function Report({modalObj, isMaxHeight, closeModal}) {
-  const {item} = modalObj;
+export default function Report({ modalObj, isMaxHeight, closeModal }) {
+  const { item } = modalObj;
 
   const renderMain = () => {
-    let email = '';
-    let userName = '';
-    let photo = '';
+    let userName = "";
+    let photo = "";
     if (item) {
-      email = item.email;
-      userName = item.firstName + ' ' + item.lastName;
-      photo = item.image ? item.image : '';
+      userName = item.firstName + " " + item.lastName;
+      photo = item.image ? item.image : "";
     }
     return (
       <>
@@ -29,12 +27,12 @@ export default function Report({modalObj, isMaxHeight, closeModal}) {
             <ProgressiveFastImage
               style={styles.mProfileImgss}
               source={
-                photo != ''
-                  ? {uri: photo}
-                  : require('../../../../assets/images/drawer/guest/img.png')
+                photo != ""
+                  ? { uri: photo }
+                  : require("../../../../assets/images/drawer/guest/img.png")
               }
               loadingImageStyle={styles.mimageLoader}
-              loadingSource={require('../../../../assets/images/imgLoad/img.jpeg')}
+              loadingSource={require("../../../../assets/images/imgLoad/img.jpeg")}
               blurRadius={5}
             />
           </View>
@@ -42,11 +40,8 @@ export default function Report({modalObj, isMaxHeight, closeModal}) {
           <Text numberOfLines={1} ellipsizeMode="tail" style={styles.title1}>
             {userName}
           </Text>
-          <Text numberOfLines={1} ellipsizeMode="tail" style={styles.title2}>
-            {email}
-          </Text>
 
-          <View style={{width: '93%', alignSelf: 'center'}}>
+          <View style={{ width: "93%", alignSelf: "center" }}>
             <Text style={styles.title3}>
               Thank You! We will review your comments and take any necessary
               actions.
@@ -60,7 +55,7 @@ export default function Report({modalObj, isMaxHeight, closeModal}) {
   return (
     <>
       {isMaxHeight ? (
-        <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}}>
+        <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
           {renderMain()}
         </ScrollView>
       ) : (
