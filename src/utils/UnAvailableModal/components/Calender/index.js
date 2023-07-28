@@ -1,9 +1,9 @@
-import React, {useState} from 'react';
-import {View, SafeAreaView, Modal} from 'react-native';
-import {styles} from './styles';
-import theme from '../../../../theme';
-import Bottom from './components/Bottom';
-import {Calendar} from 'react-native-calendars';
+import React, { useState } from "react";
+import { View, SafeAreaView, Modal } from "react-native";
+import { styles } from "./styles";
+import theme from "../../../../theme";
+import Bottom from "./components/Bottom";
+import { Calendar } from "react-native-calendars";
 
 export default function RangeCalender({
   isShowCalender,
@@ -24,7 +24,11 @@ export default function RangeCalender({
     closeCalender();
   };
 
-  const getSelectedDayEvents = day => {
+  const clearSelectedDates = () => {
+    setDateList(null);
+  };
+
+  const getSelectedDayEvents = (day) => {
     const selectedDate = day.dateString;
 
     if (!dateList) {
@@ -32,7 +36,7 @@ export default function RangeCalender({
       markDates[selectedDate] = theme.dayStyle.markeDateStyle;
       setDateList(markDates);
     } else {
-      let markDates = {...dateList};
+      let markDates = { ...dateList };
       const date = markDates[selectedDate];
       if (date !== undefined) delete markDates[selectedDate];
       else markDates[selectedDate] = theme.dayStyle.markeDateStyle;
@@ -55,7 +59,7 @@ export default function RangeCalender({
             minDate={minDate}
             maxDate={maxDate}
             onDayPress={getSelectedDayEvents}
-            monthFormat={'MMMM yyyy'}
+            monthFormat={"MMMM yyyy"}
             firstDay={7}
             enableSwipeMonths={true}
             disableAllTouchEventsForDisabledDays={false}
@@ -65,7 +69,11 @@ export default function RangeCalender({
               ...unavailableWeeksDates,
             }}
           />
-          <Bottom onClickApply={onClickApply} closeModal={closeCalender} />
+          <Bottom
+            onClickApply={onClickApply}
+            closeModal={closeCalender}
+            clearSelectedDates={clearSelectedDates}
+          />
         </View>
       </SafeAreaView>
     </Modal>

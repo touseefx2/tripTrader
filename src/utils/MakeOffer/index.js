@@ -1,14 +1,14 @@
-import React, {useState, useEffect} from 'react';
-import {View, Modal} from 'react-native';
-import {styles} from './styles';
-import theme from '../../theme';
-import utils from '../../utils';
-import Header from './components/Header';
-import Step1 from './components/Step1';
-import Step2 from './components/Step2';
-import Step3 from './components/Step3';
-import Step4 from './components/Step4';
-import {responsiveHeight} from 'react-native-responsive-dimensions';
+import React, { useState, useEffect } from "react";
+import { View, Modal } from "react-native";
+import { styles } from "./styles";
+import theme from "../../theme";
+import utils from "../../utils";
+import Header from "./components/Header";
+import Step1 from "./components/Step1";
+import Step2 from "./components/Step2";
+import Step3 from "./components/Step3";
+import Step4 from "./components/Step4";
+import { responsiveHeight } from "react-native-responsive-dimensions";
 
 export default function MakeOffer({
   isModal,
@@ -26,21 +26,21 @@ export default function MakeOffer({
   props,
 }) {
   const maxModalHeight = theme.window.Height - responsiveHeight(9.5);
-  const {item} = modalObj;
-  const {value, title} = item.duration;
+  const { item } = modalObj;
+  const { value, title } = item.duration;
 
   const durationList = [
     {
       _id: 0,
       is_active: true,
-      title: 'days',
-      type: 'durType',
+      title: "days",
+      type: "durType",
     },
     {
       _id: 1,
       is_active: true,
-      title: 'weeks',
-      type: 'durType',
+      title: "weeks",
+      type: "durType",
     },
   ];
 
@@ -54,25 +54,25 @@ export default function MakeOffer({
   //3
   const [speciesList, setSpeciesList] = useState([]);
   const [tripType, setTripType] = useState(null);
-  const [city, setCity] = useState('');
+  const [city, setCity] = useState("");
   const [selectedState, setSelectedState] = useState(null);
   const [selectedSpecies, setSelectedSpecies] = useState(null);
   const [durationNum, setDurationNum] = useState(1);
   const [duration, setDuration] = useState(durationList[0]);
   const [availablityDates, setAvailablityDates] = useState(null);
   const [unAvailable, setUnAvailble] = useState(null);
-  const [note, setNote] = useState('');
+  const [note, setNote] = useState("");
 
   let totalDays = 0;
   const titleFormat = utils.functions.formatTitle(value, title);
-  const durationTitle = value + ' ' + titleFormat;
+  const durationTitle = value + " " + titleFormat;
   let minDate;
   let maxDate;
   let rangeValue;
   let unavailableText;
 
-  if (title == 'days') totalDays = value;
-  else if (title == 'weeks') totalDays = value * 7;
+  if (title == "days") totalDays = value;
+  else if (title == "weeks") totalDays = value * 7;
   if (availablityDates) {
     const size = Object.keys(availablityDates).length;
     const startDate = Object.keys(availablityDates)[0];
@@ -86,18 +86,18 @@ export default function MakeOffer({
     }
     rangeValue = utils.functions.checkSameYearFormate(minDate, maxDate);
   } else {
-    minDate = '';
-    maxDate = '';
-    rangeValue = '';
+    minDate = "";
+    maxDate = "";
+    rangeValue = "";
   }
   if (unAvailable) {
     const text1 = unAvailable.dayWeekText;
     const text2 = unAvailable.excludeDateText;
-    if (text1 != '' && text2 != '') unavailableText = text1 + ', ' + text2;
+    if (text1 != "" && text2 != "") unavailableText = text1 + ", " + text2;
 
-    if (text1 == '' && text2 != '') unavailableText = text2;
-    else if (text1 != '' && text2 == '') unavailableText = text1;
-  } else unavailableText = '';
+    if (text1 == "" && text2 != "") unavailableText = text2;
+    else if (text1 != "" && text2 == "") unavailableText = text1;
+  } else unavailableText = "";
 
   useEffect(() => {
     setIssMaxHeight(modalHeight >= maxModalHeight ? true : false);
@@ -106,25 +106,25 @@ export default function MakeOffer({
   useEffect(() => {
     if (selectedTrip) {
       const tripType = utils.functions.findItem(
-        selectedTrip.tradeType || '',
+        selectedTrip.tradeType || "",
         activity,
-        'n',
+        "n"
       );
       const location = selectedTrip.location ? selectedTrip.location : null;
       const specis = utils.functions.findItem(
-        selectedTrip.species || '',
+        selectedTrip.species || "",
         species,
-        'n',
+        "n"
       );
       const duration = utils.functions.findItem(
-        selectedTrip.duration.title || '',
+        selectedTrip.duration.title || "",
         durationList,
-        't',
+        "t"
       );
       if (location) {
         setCity(location.city);
         setSelectedState(
-          utils.functions.findItem(location.state || '', tripLocation, 'n'),
+          utils.functions.findItem(location.state || "", tripLocation, "n")
         );
       }
       setTripType(tripType);
@@ -138,7 +138,7 @@ export default function MakeOffer({
     if (tripType) {
       let list = [];
       if (species.length > 0) {
-        species.map(item => {
+        species.map((item) => {
           if (item.type) {
             if (item.type && item.type.name == tripType.name) list.push(item);
           }
@@ -151,27 +151,27 @@ export default function MakeOffer({
   const offerSuccefullySend = () => {
     closeModal();
     setSuccessModalObj(modalObj);
-    setSuccessCheck('OfferSend');
+    setSuccessCheck("OfferSend");
     setIsSuccessModal(true);
   };
 
-  const onViewLayout = event => {
+  const onViewLayout = (event) => {
     if (!isMaxHeight) {
-      const {height} = event.nativeEvent.layout;
+      const { height } = event.nativeEvent.layout;
       setmodalHeight(height);
     }
   };
 
   const clearStep3Fields = () => {
     setTripType(null);
-    setCity('');
+    setCity("");
     setSelectedState(null);
     setSelectedSpecies(null);
     setDurationNum(1);
     setDuration(durationList[0]);
     setAvailablityDates(null);
     setUnAvailble(null);
-    setNote('');
+    setNote("");
   };
 
   const closeModal = () => {
@@ -210,11 +210,12 @@ export default function MakeOffer({
           style={[
             styles.modal,
             isMaxHeight
-              ? {height: maxModalHeight, paddingTop: 0}
-              : {padding: 15},
-          ]}>
+              ? { height: maxModalHeight, paddingTop: 0 }
+              : { padding: 15 },
+          ]}
+        >
           <Header
-            title={'Make Offer'}
+            title={"Make Offer"}
             loader={loader}
             closeModal={closeModal}
             isMaxHeight={isMaxHeight}

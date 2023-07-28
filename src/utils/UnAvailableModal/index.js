@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -8,14 +8,14 @@ import {
   Pressable,
   Image,
   ScrollView,
-} from 'react-native';
-import {styles} from './styles';
-import Header from './components/Header';
-import Title from './components/Title';
-import Bottom from './components/Bottom';
-import Calender from './components/Calender';
-import theme from '../../theme';
-import utils from '../../utils';
+} from "react-native";
+import { styles } from "./styles";
+import Header from "./components/Header";
+import Title from "./components/Title";
+import Bottom from "./components/Bottom";
+import Calender from "./components/Calender";
+import theme from "../../theme";
+import utils from "../../utils";
 
 export default function UnAvailableModal({
   isModal,
@@ -28,18 +28,18 @@ export default function UnAvailableModal({
 }) {
   const maxModalHeight = theme.window.Height - 70;
   const weekList = [
-    {_id: 1, name: 'Sun', num: 0, isSel: false},
-    {_id: 2, name: 'Mon', num: 1, isSel: false},
-    {_id: 3, name: 'Tue', num: 2, isSel: false},
-    {_id: 4, name: 'Wed', num: 3, isSel: false},
-    {_id: 5, name: 'Thu', num: 4, isSel: false},
-    {_id: 6, name: 'Fri', num: 5, isSel: false},
-    {_id: 7, name: 'Sat', num: 6, isSel: false},
+    { _id: 1, name: "Sun", num: 0, isSel: false },
+    { _id: 2, name: "Mon", num: 1, isSel: false },
+    { _id: 3, name: "Tue", num: 2, isSel: false },
+    { _id: 4, name: "Wed", num: 3, isSel: false },
+    { _id: 5, name: "Thu", num: 4, isSel: false },
+    { _id: 6, name: "Fri", num: 5, isSel: false },
+    { _id: 7, name: "Sat", num: 6, isSel: false },
   ];
   const [isMaxHeight, setIssMaxHeight] = useState(false);
   const [modalHeight, setmodalHeight] = useState(0);
   const [unavailableDates, setUnavailableDates] = useState(null);
-  const [unavailableDatesText, setUnavailableDatesText] = useState('');
+  const [unavailableDatesText, setUnavailableDatesText] = useState("");
   const [unavailableWeeksDates, setUnavailableWeeksDates] = useState(null);
   const [isShowCalender, setIsShowCalender] = useState(false);
   const [daysOfWeeks, setDaysOfWeeks] = useState(weekList); //days of week
@@ -49,13 +49,13 @@ export default function UnAvailableModal({
       let weekArr = [];
       let dateList = [];
       setUnavailableWeeksDates(unAvailable.unavailableDaysOfWeek);
-      unAvailable.excludeSpecificDates.forEach(date => {
+      unAvailable.excludeSpecificDates.forEach((date) => {
         dateList[date] = theme.dayStyle.markeDateStyle;
       });
-      weekList.forEach(item => {
-        const obj = {...item};
+      weekList.forEach((item) => {
+        const obj = { ...item };
         const isFind = unAvailable.daysOfWeek.find(
-          element => element === item.name,
+          (element) => element === item.name
         );
         if (isFind != undefined) obj.isSel = true;
         weekArr.push(obj);
@@ -73,7 +73,7 @@ export default function UnAvailableModal({
     const arr = utils.functions.getWeekDaysBtwnDate(
       daysOfWeeks,
       minDate,
-      maxDate,
+      maxDate
     );
     setUnavailableWeeksDates(arr);
   }, [daysOfWeeks]);
@@ -81,14 +81,14 @@ export default function UnAvailableModal({
   useEffect(() => {
     if (unavailableDates) {
       setUnavailableDatesText(
-        utils.functions.getDateWithFormat(unavailableDates),
+        utils.functions.getDateWithFormat(unavailableDates)
       );
-    } else setUnavailableDatesText('');
+    } else setUnavailableDatesText("");
   }, [unavailableDates]);
 
-  const onViewLayout = event => {
+  const onViewLayout = (event) => {
     if (!isMaxHeight) {
-      const {height} = event.nativeEvent.layout;
+      const { height } = event.nativeEvent.layout;
       setmodalHeight(height);
     }
   };
@@ -109,17 +109,17 @@ export default function UnAvailableModal({
       unavailableDatesText,
       minDate,
       maxDate,
-      totalDays,
+      totalDays
     );
 
-    if (obj == undefined) return;
+    if (obj === undefined) return;
 
     setUnAvailble(obj);
     closeModal();
   };
 
   const renderWeek = () => {
-    const onClickDay = index => {
+    const onClickDay = (index) => {
       const arr = daysOfWeeks.slice();
       arr[index].isSel = !arr[index].isSel;
       setDaysOfWeeks(arr);
@@ -136,17 +136,19 @@ export default function UnAvailableModal({
                 marginRight: index <= arr.length - 1 ? 15 : 0,
               },
             ]}
-            onPress={() => onClickDay(index)}>
+            onPress={() => onClickDay(index)}
+          >
             <View
               style={[
                 styles.dayCheckBox,
                 {
-                  backgroundColor: !item.isSel ? 'white' : theme.color.button1,
+                  backgroundColor: !item.isSel ? "white" : theme.color.button1,
                 },
-              ]}>
+              ]}
+            >
               {item.isSel && (
                 <utils.vectorIcon.FontAwesome5
-                  name={'check'}
+                  name={"check"}
                   color={theme.color.buttonText}
                   size={11}
                 />
@@ -176,10 +178,11 @@ export default function UnAvailableModal({
 
           <Pressable
             onPress={openCalender}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.8 : 1.0},
+            style={({ pressed }) => [
+              { opacity: pressed ? 0.8 : 1.0 },
               [styles.inputContainer],
-            ]}>
+            ]}
+          >
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
@@ -187,18 +190,19 @@ export default function UnAvailableModal({
                 styles.inputText,
                 {
                   color:
-                    unavailableDatesText == ''
+                    unavailableDatesText == ""
                       ? theme.color.subTitleLight
                       : theme.color.title,
                 },
-              ]}>
-              {unavailableDatesText == ''
-                ? 'Select dates this trip is not available'
+              ]}
+            >
+              {unavailableDatesText == ""
+                ? "Select dates this trip is not available"
                 : unavailableDatesText}
             </Text>
             <View style={styles.inputIconContainer}>
               <Image
-                source={require('../../assets/images/cal/img.png')}
+                source={require("../../assets/images/cal/img.png")}
                 style={styles.inputIcon}
               />
             </View>
@@ -216,20 +220,22 @@ export default function UnAvailableModal({
           style={[
             styles.modal,
             isMaxHeight
-              ? {height: maxModalHeight, paddingTop: 0}
-              : {padding: 15},
-          ]}>
+              ? { height: maxModalHeight, paddingTop: 0 }
+              : { padding: 15 },
+          ]}
+        >
           <Header
-            title={'Set Unavailable Days'}
+            title={"Set Unavailable Days"}
             closeModal={closeModal}
             isMaxHeight={isMaxHeight}
           />
 
           {isMaxHeight ? (
             <ScrollView
-              contentContainerStyle={{paddingHorizontal: 15}}
+              contentContainerStyle={{ paddingHorizontal: 15 }}
               showsVerticalScrollIndicator={false}
-              style={{flex: 1}}>
+              style={{ flex: 1 }}
+            >
               <Title />
               {renderWeek()}
               {renderOtherDates()}

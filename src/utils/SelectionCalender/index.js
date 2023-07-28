@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
-import {View, Modal, SafeAreaView} from 'react-native';
-import {styles} from './styles';
-import theme from '../../theme';
-import utils from '../../utils';
-import moment from 'moment';
-import {Calendar} from 'react-native-calendars';
-import Bottom from './components/Bottom';
+import React, { useState } from "react";
+import { View, Modal, SafeAreaView } from "react-native";
+import { styles } from "./styles";
+import theme from "../../theme";
+import utils from "../../utils";
+import moment from "moment";
+import { Calendar } from "react-native-calendars";
+import Bottom from "./components/Bottom";
 
 export default function SelectionCalender({
   modalObj,
@@ -19,34 +19,34 @@ export default function SelectionCalender({
   totalDays,
   screen,
 }) {
-  const {item} = modalObj;
+  const { item } = modalObj;
 
-  const {availableFrom, availableTo, unAvailableDays} =
-    screen == 'received' ? item.hostTrip : item;
+  const { availableFrom, availableTo, unAvailableDays } =
+    screen == "received" ? item.hostTrip : item;
   let numOfDays = totalDays;
   const startDate = utils.functions.DateWithoutFormat(availableFrom);
   const endDate = utils.functions.DateWithoutFormat(availableTo);
-  let all_unavailable_dates = unAvailableDays.allUnavailableDates || [];
-  all_unavailable_dates = all_unavailable_dates.map(e =>
-    utils.functions.DateWithoutFormat(e),
+  let all_unavailable_dates = unAvailableDays?.allUnavailableDates || [];
+  all_unavailable_dates = all_unavailable_dates.map((e) =>
+    utils.functions.DateWithoutFormat(e)
   );
-  const start_date = moment(startDate).format('YYYY-MM-DD');
-  const current_date = moment(new Date()).format('YYYY-MM-DD');
+  const start_date = moment(startDate).format("YYYY-MM-DD");
+  const current_date = moment(new Date()).format("YYYY-MM-DD");
   let unavailableDays = {};
-  if (minDate == '') {
+  if (minDate == "") {
     minDate =
       start_date < current_date
-        ? moment(current_date).format('YYYY-MM-DD')
-        : moment(start_date).format('YYYY-MM-DD');
+        ? moment(current_date).format("YYYY-MM-DD")
+        : moment(start_date).format("YYYY-MM-DD");
   }
-  if (maxDate == '') maxDate = moment(endDate).format('YYYY-MM-DD');
+  if (maxDate == "") maxDate = moment(endDate).format("YYYY-MM-DD");
 
   const [minimumDate, setMinimumDate] = useState(minDate);
   const [maximumDate, setMaximumDate] = useState(maxDate);
   const [markedDates, setMarkedDates] = useState(selectedDates);
 
-  all_unavailable_dates.map(item => {
-    unavailableDays[moment(item).format('YYYY-MM-DD')] = {
+  all_unavailable_dates.map((item) => {
+    unavailableDays[moment(item).format("YYYY-MM-DD")] = {
       marked: false,
       selected: true,
       customStyles: theme.dayStyle.unavailableDaysStyle,
@@ -60,7 +60,7 @@ export default function SelectionCalender({
   };
 
   const onClickApply = () => {
-    let mdd = {...markedDates};
+    let mdd = { ...markedDates };
     let mds = [];
     let fm = {};
 
@@ -69,7 +69,7 @@ export default function SelectionCalender({
       mds.sort();
     }
     if (mds.length > 0) {
-      mds.map(item => {
+      mds.map((item) => {
         fm[item] = {
           customStyles: theme.dayStyle.selectedDaysStyle,
           marked: false,
@@ -85,7 +85,13 @@ export default function SelectionCalender({
     closeModal();
   };
 
-  const selectedDayEvents = day => {
+  const clearSelectedDates = () => {
+    setMinimumDate(minDate);
+    setMaximumDate(maxDate);
+    setMarkedDates(null);
+  };
+
+  const selectedDayEvents = (day) => {
     const date = day.dateString;
     let datesArray = {};
     if (numOfDays <= 1) {
@@ -96,34 +102,34 @@ export default function SelectionCalender({
       let selectedDate = date;
       let unavailableArr = [];
       let datesList = [];
-      all_unavailable_dates.map(item => {
-        unavailableArr.push(moment(item).format('YYYY-MM-DD'));
+      all_unavailable_dates.map((item) => {
+        unavailableArr.push(moment(item).format("YYYY-MM-DD"));
       });
 
       datesList.push(selectedDate);
 
       for (let index = 0; index < numOfDays; index++) {
-        console.log('1 ', selectedDate > moment(endDate).format('YYYY-MM-DD'));
+        console.log("1 ", selectedDate > moment(endDate).format("YYYY-MM-DD"));
 
-        if (selectedDate > moment(endDate).format('YYYY-MM-DD')) {
+        if (selectedDate > moment(endDate).format("YYYY-MM-DD")) {
           break;
         }
 
         if (unavailableArr.length > 0) {
           let ind = 0;
-          ind = unavailableArr.findIndex(element => element === selectedDate);
-          console.log('ind : ', ind);
+          ind = unavailableArr.findIndex((element) => element === selectedDate);
+          console.log("ind : ", ind);
 
           if (ind < 0) datesList.push(selectedDate);
           else numOfDays++;
         } else datesList.push(selectedDate);
 
-        selectedDate = moment(selectedDate).add(1, 'day').format('YYYY-MM-DD');
+        selectedDate = moment(selectedDate).add(1, "day").format("YYYY-MM-DD");
       }
 
       const dates = [...new Set(datesList)];
 
-      dates.forEach(item => {
+      dates.forEach((item) => {
         datesArray[item] = theme.dayStyle.markeDateStyle;
       });
 
@@ -148,12 +154,12 @@ export default function SelectionCalender({
             minDate={minimumDate}
             maxDate={maximumDate}
             onDayPress={selectedDayEvents}
-            monthFormat={'MMMM yyyy'}
+            monthFormat={"MMMM yyyy"}
             firstDay={7}
             enableSwipeMonths={true}
             disableAllTouchEventsForDisabledDays={true}
             markingType="custom"
-            markedDates={{...unavailableDays, ...markedDates}}
+            markedDates={{ ...unavailableDays, ...markedDates }}
           />
           <Bottom
             totalDays={numOfDays}
@@ -161,6 +167,7 @@ export default function SelectionCalender({
             markedDates={markedDates}
             onClickApply={onClickApply}
             closeModal={closeModal}
+            clearSelectedDates={clearSelectedDates}
           />
         </View>
       </SafeAreaView>
