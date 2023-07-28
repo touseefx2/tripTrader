@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,64 +6,64 @@ import {
   Pressable,
   FlatList,
   RefreshControl,
-} from 'react-native';
-import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-import {styles} from './styles';
-import {observer} from 'mobx-react';
-import store from '../../store/index';
-import utils from '../../utils/index';
-import theme from '../../theme';
-import NetInfo from '@react-native-community/netinfo';
-import {ActivityIndicator} from 'react-native-paper';
+} from "react-native";
+import ProgressiveFastImage from "@freakycoder/react-native-progressive-fast-image";
+import { styles } from "./styles";
+import { observer } from "mobx-react";
+import store from "../../store/index";
+import utils from "../../utils/index";
+import theme from "../../theme";
+import NetInfo from "@react-native-community/netinfo";
+import { ActivityIndicator } from "react-native-paper";
 
 export default observer(ShowFollowers);
 
 function ShowFollowers(props) {
   const chk = store.User.cchk;
   const headerTitle = store.User.ffuser;
-  const fscreen = store.User.fscreen || '';
+  const fscreen = store.User.fscreen || "";
   let db = false;
-  if (fscreen == 'Home') {
+  if (fscreen == "Home") {
     db = true;
   }
 
-  const {isInternet} = store.General;
-  const {user} = store.User;
+  const { isInternet } = store.General;
+  const { user } = store.User;
 
-  const data = chk == 'followers' ? store.User.followers : store.User.following;
+  const data = chk == "followers" ? store.User.followers : store.User.following;
 
   const mloader = store.User.fl;
 
   const total =
-    chk == 'followers' ? store.User.totalfollowers : store.User.totalfollowing;
+    chk == "followers" ? store.User.totalfollowers : store.User.totalfollowing;
 
   const [getDataOnce, setgetDataOnce] = useState(false);
-  const setGetDataOnce = C => {
+  const setGetDataOnce = (C) => {
     setgetDataOnce(C);
   };
   const [refreshing, setRefreshing] = React.useState(false);
-  const setrefeshing = c => {
+  const setrefeshing = (c) => {
     setRefreshing(c);
   };
   const onRefresh = React.useCallback(() => {
-    console.warn('onrefresh cal');
+    console.warn("onrefresh cal");
     setRefreshing(true);
     getDbData();
   }, []);
   const getDbData = () => {
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
-        if (chk == 'followers') {
+        if (chk == "followers") {
           store.User.attemptToGetFollowers(
             user._id,
             setGetDataOnce,
-            setrefeshing,
+            setrefeshing
           );
         } else {
           store.User.attemptToGetFollowing(
             user._id,
             setGetDataOnce,
-            setrefeshing,
+            setrefeshing
           );
         }
       } else {
@@ -95,19 +95,20 @@ function ShowFollowers(props) {
         {!mloader && getDataOnce && (
           <Text
             style={{
-              marginTop: '80%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              textAlign: 'center',
+              marginTop: "80%",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
               fontSize: 13,
               color: theme.color.title,
               fontFamily: theme.fonts.fontMedium,
               opacity: 0.4,
             }}
-            onPress={() => getItem(item)}>
-            {chk == 'followers'
-              ? 'No Followers Found'
-              : 'You are not following anyone yet'}
+            onPress={() => getItem(item)}
+          >
+            {chk == "followers"
+              ? "No Followers Found"
+              : "You are not following anyone yet"}
           </Text>
         )}
 
@@ -116,9 +117,8 @@ function ShowFollowers(props) {
             size={30}
             color={theme.color.button1}
             style={{
-              marginTop: '80%',
-
-              alignSelf: 'center',
+              marginTop: "80%",
+              alignSelf: "center",
             }}
           />
         )}
@@ -126,14 +126,14 @@ function ShowFollowers(props) {
     );
   };
 
-  const src = require('../../assets/images/locationPin/img.png');
-  const ItemView = ({item, index}) => {
+  const src = require("../../assets/images/locationPin/img.png");
+  const ItemView = ({ item, index }) => {
     const usrr = item.userId;
-    let photo = '';
-    let userName = 'undefined';
+    let photo = "";
+    let userName = "undefined";
     if (usrr) {
-      photo = usrr.image || '';
-      userName = usrr.firstName + ' ' + usrr.lastName;
+      photo = usrr.image || "";
+      userName = usrr.firstName + " " + usrr.lastName;
     }
 
     const renderProfile = () => {
@@ -142,12 +142,12 @@ function ShowFollowers(props) {
           <ProgressiveFastImage
             style={styles.mProfileImg}
             source={
-              photo != ''
-                ? {uri: photo}
-                : require('../../assets/images/drawer/guest/img.png')
+              photo != ""
+                ? { uri: photo }
+                : require("../../assets/images/drawer/guest/img.png")
             }
             loadingImageStyle={styles.mimageLoader}
-            loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
+            loadingSource={require("../../assets/images/imgLoad/img.jpeg")}
             blurRadius={5}
           />
           {/* {isVeirfy && (
@@ -167,12 +167,13 @@ function ShowFollowers(props) {
             numberOfLines={1}
             ellipsizeMode="tail"
             style={{
-              color: '#3C6B49',
+              color: "#3C6B49",
               fontSize: 15,
               fontFamily: theme.fonts.fontBold,
 
-              textTransform: 'capitalize',
-            }}>
+              textTransform: "capitalize",
+            }}
+          >
             {userName}
           </Text>
         </View>
@@ -185,15 +186,16 @@ function ShowFollowers(props) {
       <Pressable
         disabled={isDisable}
         onPress={() => {
-          store.Userv.setfscreen('my');
+          store.Userv.setfscreen("my");
           store.Userv.setUser(usrr);
           store.Userv.addauthToken(store.User.authToken);
-          props.navigation.navigate('UserProfile');
+          props.navigation.navigate("UserProfile");
         }}
-        style={({pressed}) => [
-          {opacity: pressed ? 0.8 : 1.0},
-          [styles.modalinfoConatiner, {marginTop: index == 0 ? 15 : 0}],
-        ]}>
+        style={({ pressed }) => [
+          { opacity: pressed ? 0.8 : 1.0 },
+          [styles.modalinfoConatiner, { marginTop: index == 0 ? 15 : 0 }],
+        ]}
+      >
         {renderProfile()}
         {renderText()}
       </Pressable>
@@ -201,18 +203,19 @@ function ShowFollowers(props) {
   };
 
   const ListHeader = () => {
-    let t = chk == 'followers' ? 'Followers' : 'Following';
+    let t = chk == "followers" ? "Followers" : "Following";
     let num = total;
     return (
-      <View style={{width: '100%'}}>
+      <View style={{ width: "100%" }}>
         <Text
           style={{
-            color: '#101B10',
+            color: "#101B10",
             fontSize: 16,
             fontFamily: theme.fonts.fontBold,
 
-            textTransform: 'capitalize',
-          }}>
+            textTransform: "capitalize",
+          }}
+        >
           {t} ({num})
         </Text>
       </View>
@@ -238,7 +241,7 @@ function ShowFollowers(props) {
           bell={true}
           props={props}
           headerTitle={headerTitle}
-          screen={'followers'}
+          screen={"followers"}
         />
         {!isInternet && <utils.InternetMessage />}
         <SafeAreaView style={styles.container2}>
@@ -264,9 +267,9 @@ function ShowFollowers(props) {
                 size={30}
                 color={theme.color.button1}
                 style={{
-                  top: '50%',
-                  position: 'absolute',
-                  alignSelf: 'center',
+                  top: "50%",
+                  position: "absolute",
+                  alignSelf: "center",
                 }}
               />
             )}
@@ -275,7 +278,7 @@ function ShowFollowers(props) {
           <utils.Footer
             doubleBack={db}
             nav={props.navigation}
-            screen={'Followers'}
+            screen={"Followers"}
             focusScreen={store.General.focusScreen}
           />
         </SafeAreaView>

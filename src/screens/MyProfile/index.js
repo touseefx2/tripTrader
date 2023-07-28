@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -11,61 +11,61 @@ import {
   Platform,
   Modal as MModal,
   Pressable,
-} from 'react-native';
-import {styles} from './styles';
-import {observer} from 'mobx-react';
-import store from '../../store/index';
-import utils from '../../utils/index';
-import theme from '../../theme';
-import NetInfo from '@react-native-community/netinfo';
-import Toast from 'react-native-easy-toast';
-import {ActivityIndicator} from 'react-native-paper';
-import IntentLauncher from 'react-native-intent-launcher';
-import {request, PERMISSIONS, check} from 'react-native-permissions';
-import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
-import {Image as ImageCompressor} from 'react-native-compressor';
-import {TabView, SceneMap} from 'react-native-tab-view';
-import Reviews from './Reviews';
-import Trips from './Trips';
-import Photos from './Photos';
+} from "react-native";
+import { styles } from "./styles";
+import { observer } from "mobx-react";
+import store from "../../store/index";
+import utils from "../../utils/index";
+import theme from "../../theme";
+import NetInfo from "@react-native-community/netinfo";
+import Toast from "react-native-easy-toast";
+import { ActivityIndicator } from "react-native-paper";
+import IntentLauncher from "react-native-intent-launcher";
+import { request, PERMISSIONS, check } from "react-native-permissions";
+import MultipleImagePicker from "@baronha/react-native-multiple-image-picker";
+import { Image as ImageCompressor } from "react-native-compressor";
+import { TabView, SceneMap } from "react-native-tab-view";
+import Reviews from "./Reviews";
+import Trips from "./Trips";
+import Photos from "./Photos";
 
 export default observer(MyProfile);
 
 function MyProfile(props) {
   const toast = useRef(null);
-  const headerTitle = 'My Profile';
+  const headerTitle = "My Profile";
 
-  const {isInternet} = store.General;
+  const { isInternet } = store.General;
 
-  const {user, regLoader, setregLoader} = store.User;
+  const { user, regLoader, setregLoader } = store.User;
 
-  let userName = '';
-  let phn = '';
-  let phnCntr = '';
+  let userName = "";
+  let phn = "";
+  let phnCntr = "";
   const followers = store.User.totalfollowers;
   const following = store.User.totalfollowing;
-  let src = '';
+  let src = "";
   let isCnicVerf = false;
 
-  if (user == 'guest') {
-    userName = 'guest';
+  if (user == "guest") {
+    userName = "guest";
   }
 
-  if (user != 'guest' && user) {
-    userName = user.firstName + ' ' + user.lastName;
-    phn = user.phone && user.phone !== null ? '+' + user.phone : '';
+  if (user != "guest" && user) {
+    userName = user.firstName + " " + user.lastName;
+    phn = user.phone && user.phone !== null ? "+" + user.phone : "";
     phnCntr =
       user.phoneCountryCode && user.phoneCountryCode !== null
         ? user.phoneCountryCode
-        : '';
+        : "";
 
-    src = user.image && user.image != '' ? user.image : '';
+    src = user.image && user.image != "" ? user.image : "";
 
-    isCnicVerf = user.identityStatus == 'notVerified' ? false : true;
+    isCnicVerf = user.identityStatus == "notVerified" ? false : true;
   }
 
   const [isShowPrmsn, setisShowPrmsn] = useState(false);
-  const [prmsnChk, setprmsnChk] = useState('storage');
+  const [prmsnChk, setprmsnChk] = useState("storage");
   const [isAddPhotoModal, setisAddPhotoModal] = useState(false);
   const [DT, setDT] = useState(false);
 
@@ -74,25 +74,25 @@ function MyProfile(props) {
   const [phone, setPhone] = useState(phn);
 
   const [cntry, setcntry] = useState(phnCntr);
-  const [pwc, setpwc] = useState('');
+  const [pwc, setpwc] = useState("");
 
   const [pvm, setpvm] = useState(false); //show fulll image modal
-  const [pv, setpv] = useState(''); //photo view
+  const [pv, setpv] = useState(""); //photo view
 
   const [profileImageLoader, setprofileImageLoader] = useState(false);
 
   const [isSHowChangePhoto, setisSHowChangePhoto] = useState(false);
   const [cphoto, setcphoto] = useState(false);
 
-  const [errorMessage, seterrorMessage] = useState('');
+  const [errorMessage, seterrorMessage] = useState("");
 
   const [isTabBarShow, setisTabBarShow] = useState(false);
 
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    {key: 'reviews', title: 'Reviews'},
-    {key: 'trips', title: 'Trips'},
-    {key: 'photos', title: 'Photos'},
+    { key: "reviews", title: "Reviews" },
+    { key: "trips", title: "Trips" },
+    { key: "photos", title: "Photos" },
   ]);
   const renderScene = SceneMap({
     reviews: Reviews,
@@ -102,7 +102,7 @@ function MyProfile(props) {
   });
 
   useEffect(() => {
-    if (phone != '' && cntry != '') {
+    if (phone != "" && cntry != "") {
       setTimeout(() => {
         let Countries = utils.Countries;
         for (let index = 0; index < Countries.length; index++) {
@@ -116,7 +116,7 @@ function MyProfile(props) {
         }
       }, 1000);
     } else {
-      setpwc('');
+      setpwc("");
     }
   }, [phone, cntry]);
 
@@ -127,27 +127,27 @@ function MyProfile(props) {
   }, [phone, cntry, pwc]);
   2;
   useEffect(() => {
-    if (user && user !== 'guest') {
-      setPhone(user.phone && user.phone !== null ? '+' + user.phone : '');
+    if (user && user !== "guest") {
+      setPhone(user.phone && user.phone !== null ? "+" + user.phone : "");
       setcntry(
         user.phoneCountryCode && user.phoneCountryCode !== null
           ? user.phoneCountryCode
-          : '',
+          : ""
       );
-      setphoto(user.image && user.image != '' ? user.image : '');
+      setphoto(user.image && user.image != "" ? user.image : "");
     }
   }, [user]);
 
   useEffect(() => {
     store.User.setMyProfileProps(props);
-    if (user && user !== 'guest') {
+    if (user && user !== "guest") {
       setTimeout(() => {
         setisTabBarShow(true);
       }, 100);
     }
   }, []);
 
-  const MultipleImage = async button => {
+  const MultipleImage = async (button) => {
     setisShowPrmsn(false);
     setisAddPhotoModal(false);
     const apiLevel = store.General.apiLevel;
@@ -155,7 +155,7 @@ function MyProfile(props) {
     setTimeout(async () => {
       try {
         const options = {
-          mediaType: 'image',
+          mediaType: "image",
           isPreview: false,
           maxSelectedAssets: 1,
         };
@@ -164,75 +164,75 @@ function MyProfile(props) {
 
         if (resp.length > 0) {
           const res = resp[0];
-          console.log('mutipicker image res true  ');
-          const {path, mime, fileName} = res;
+          console.log("mutipicker image res true  ");
+          const { path, mime, fileName } = res;
           let uri = path;
-          if (Platform.OS == 'android' && apiLevel < 29) {
-            uri = 'file://' + uri;
+          if (Platform.OS == "android" && apiLevel < 29) {
+            uri = "file://" + uri;
           }
 
           ImageCompressor.compress(uri, {
-            compressionMethod: 'auto',
+            compressionMethod: "auto",
           })
-            .then(async res => {
+            .then(async (res) => {
               const imageObject = {
                 uri: res,
                 type: mime,
                 fileName: fileName,
               };
-              console.log('Compress image  : ', imageObject);
-              if (button == 'Profile') {
+              console.log("Compress image  : ", imageObject);
+              if (button == "Profile") {
                 setTimeout(() => {
                   setisSHowChangePhoto(true);
                   setcphoto(imageObject);
                 }, 500);
 
                 return;
-              } else if (button == 'CNICFront') {
+              } else if (button == "CNICFront") {
                 return;
               } else {
                 return;
               }
             })
-            .catch(err => {
-              console.log('Image compress error : ', err);
+            .catch((err) => {
+              console.log("Image compress error : ", err);
             });
         }
       } catch (error) {
-        console.log('multi photo picker error : ', error);
+        console.log("multi photo picker error : ", error);
       }
     }, 500);
   };
 
-  const onclickImage = c => {
-    if (c == 'photoView') {
+  const onclickImage = (c) => {
+    if (c == "photoView") {
       setpv([photo.uri ? photo.uri : photo]);
       setpvm(true);
 
       return;
     }
-    if (c == 'photoViewC') {
+    if (c == "photoViewC") {
       setpv([photo.uri ? photo.uri : photo]);
       setpvm([cphoto.uri ? cphoto.uri : cphoto]);
 
       return;
     }
 
-    if (c == 'Profile') {
+    if (c == "Profile") {
       MultipleImage(c);
       return;
     }
   };
 
   const editProfile = () => {
-    props.navigation.navigate('EditProfile');
+    props.navigation.navigate("EditProfile");
   };
 
-  const uploadPhoto = c => {
+  const uploadPhoto = (c) => {
     let imgArr = [];
 
-    if (c == 'Profile') {
-      cphoto.chk = 'Profile';
+    if (c == "Profile") {
+      cphoto.chk = "Profile";
       imgArr.push(cphoto);
     }
 
@@ -245,39 +245,40 @@ function MyProfile(props) {
       // profileUpdateByUser: true,
     };
 
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         setregLoader(true);
         store.User.attemptToEditUploadImage(body, imgArr, closePhotoModal);
       } else {
         // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
 
-  const ShowFollowersScreen = c => {
+  const ShowFollowersScreen = (c) => {
     // props.navigation.navigate('ShowFollowers', {
     //   chk: c,
     //   user: userName,
     //   cc: 'my',
     // });
 
-    props.navigation.navigate('ShowFollowers');
+    props.navigation.navigate("ShowFollowers");
     store.User.setcchk(c);
     // store.Userv.setUser(store.User.user._id);
     store.User.setffuser(userName);
-    store.User.setccc('my');
+    store.User.setccc("my");
   };
 
   const renderProfileSection = () => {
     const renderProfileShow = () => {
       return (
         <TouchableOpacity
-          disabled={photo == '' ? true : false}
-          onPress={() => onclickImage('photoView')}
+          disabled={photo == "" ? true : false}
+          onPress={() => onclickImage("photoView")}
           activeOpacity={0.9}
-          style={styles.profileImageContainer}>
+          style={styles.profileImageContainer}
+        >
           <Image
             onLoadStart={() => {
               setprofileImageLoader(false);
@@ -287,22 +288,23 @@ function MyProfile(props) {
             }}
             style={styles.ProfileImg}
             source={
-              photo != ''
-                ? {uri: photo.uri ? photo.uri : photo}
-                : require('../../assets/images/drawer/guest/img.png')
+              photo != ""
+                ? { uri: photo.uri ? photo.uri : photo }
+                : require("../../assets/images/drawer/guest/img.png")
             }
           />
-          {user && user !== 'guest' && (
+          {user && user !== "guest" && (
             <TouchableOpacity
               style={styles.changeImgContainer}
               onPress={() => {
                 setisAddPhotoModal(true);
-                setDT('Profile');
+                setDT("Profile");
               }}
-              activeOpacity={0.7}>
+              activeOpacity={0.7}
+            >
               <Image
                 style={styles.changeImg}
-                source={require('../../assets/images/changePhoto/img.png')}
+                source={require("../../assets/images/changePhoto/img.png")}
               />
             </TouchableOpacity>
           )}
@@ -311,7 +313,7 @@ function MyProfile(props) {
             <ActivityIndicator
               size={22}
               color={theme.color.button1}
-              style={{top: 40, position: 'absolute'}}
+              style={{ top: 40, position: "absolute" }}
             />
           )}
         </TouchableOpacity>
@@ -323,10 +325,11 @@ function MyProfile(props) {
         <TouchableOpacity
           style={styles.editImgConatiner}
           onPress={editProfile}
-          activeOpacity={0.5}>
+          activeOpacity={0.5}
+        >
           <Image
             style={styles.editImg}
-            source={require('../../assets/images/editPhoto/img.png')}
+            source={require("../../assets/images/editPhoto/img.png")}
           />
         </TouchableOpacity>
       );
@@ -339,43 +342,48 @@ function MyProfile(props) {
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={styles.profileTitle}>
+              style={styles.profileTitle}
+            >
               {userName}
             </Text>
           </View>
-          {user && user !== 'guest' && (
+          {user && user !== "guest" && (
             <View style={styles.profileTitle2Conatiner}>
               <Pressable
-                style={({pressed}) => [
-                  {opacity: pressed ? 0.8 : 1.0},
+                style={({ pressed }) => [
+                  { opacity: pressed ? 0.8 : 1.0 },
                   [styles.profileTitle2Conatiner1],
                 ]}
-                onPress={() => ShowFollowersScreen('followers')}>
+                onPress={() => ShowFollowersScreen("followers")}
+              >
                 <Text
                   numberOfLines={1}
                   ellipsizeMode="tail"
-                  style={styles.profileTitle2ConatinerTitle}>
+                  style={styles.profileTitle2ConatinerTitle}
+                >
                   <Text style={styles.profileTitle2ConatinerTitle2}>
-                    {parseInt(followers) > 90000 ? '90000+' : followers}
-                    {'  '}
+                    {parseInt(followers) > 90000 ? "90000+" : followers}
+                    {"  "}
                   </Text>
                   followers
                 </Text>
               </Pressable>
 
               <Pressable
-                onPress={() => ShowFollowersScreen('following')}
-                style={({pressed}) => [
-                  {opacity: pressed ? 0.8 : 1.0},
+                onPress={() => ShowFollowersScreen("following")}
+                style={({ pressed }) => [
+                  { opacity: pressed ? 0.8 : 1.0 },
                   [styles.profileTitle2Conatiner2],
-                ]}>
+                ]}
+              >
                 <Text
                   numberOfLines={1}
                   ellipsizeMode="tail"
-                  style={styles.profileTitle2ConatinerTitle}>
+                  style={styles.profileTitle2ConatinerTitle}
+                >
                   <Text style={styles.profileTitle2ConatinerTitle2}>
-                    {parseInt(following) > 90000 ? '90000+' : following}
-                    {'  '}
+                    {parseInt(following) > 90000 ? "90000+" : following}
+                    {"  "}
                   </Text>
                   following
                 </Text>
@@ -387,10 +395,10 @@ function MyProfile(props) {
     };
 
     return (
-      <View style={{paddingHorizontal: 15}}>
+      <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.profileSecConatiner}>
           {renderProfileShow()}
-          {user && user !== 'guest' && renderEditButton()}
+          {user && user !== "guest" && renderEditButton()}
           {renderTextSection()}
         </View>
       </View>
@@ -405,9 +413,10 @@ function MyProfile(props) {
             paddingHorizontal: 15,
             flex: 1,
             marginTop: 10,
-          }}>
+          }}
+        >
           <TabView
-            navigationState={{index, routes}}
+            navigationState={{ index, routes }}
             renderScene={renderScene}
             onIndexChange={setIndex}
           />
@@ -431,16 +440,17 @@ function MyProfile(props) {
 
   const renderShowCahngePhotoModal = () => {
     const renderHeader = () => {
-      let text = 'review profile photo';
+      let text = "review profile photo";
 
       const renderCross = () => {
         return (
           <Pressable
-            style={({pressed}) => [
-              {opacity: pressed ? 0.5 : 1.0},
+            style={({ pressed }) => [
+              { opacity: pressed ? 0.5 : 1.0 },
               styles.modalCross,
             ]}
-            onPress={closePhotoModal}>
+            onPress={closePhotoModal}
+          >
             <utils.vectorIcon.EvilIcons
               name="close"
               color={theme.color.title}
@@ -455,14 +465,14 @@ function MyProfile(props) {
       };
 
       return (
-        <View style={{alignItems: 'center'}}>
+        <View style={{ alignItems: "center" }}>
           {renderTitle()}
           {renderCross()}
         </View>
       );
     };
 
-    const renderButton = c => {
+    const renderButton = (c) => {
       return (
         <>
           <TouchableOpacity
@@ -471,7 +481,8 @@ function MyProfile(props) {
               uploadPhoto(c);
             }}
             activeOpacity={0.7}
-            style={[styles.BottomButton, {marginTop: 40}]}>
+            style={[styles.BottomButton, { marginTop: 40 }]}
+          >
             {!regLoader ? (
               <Text style={styles.buttonTextBottom}>Confirm & Continue</Text>
             ) : (
@@ -493,18 +504,20 @@ function MyProfile(props) {
             activeOpacity={0.7}
             style={[
               styles.BottomButton,
-              {backgroundColor: theme.color.button2},
-            ]}>
+              { backgroundColor: theme.color.button2 },
+            ]}
+          >
             <Text
               style={[
                 styles.buttonTextBottom,
                 {
                   color: theme.color.button2Text,
-                  textTransform: 'none',
+                  textTransform: "none",
                   fontFamily: theme.fonts.fontBold,
                   fontSize: 14,
                 },
-              ]}>
+              ]}
+            >
               Skip for now
             </Text>
           </TouchableOpacity>
@@ -513,8 +526,8 @@ function MyProfile(props) {
     };
 
     const src = cphoto
-      ? {uri: cphoto.uri}
-      : require('../../assets/images/imgLoad/img.jpeg');
+      ? { uri: cphoto.uri }
+      : require("../../assets/images/imgLoad/img.jpeg");
     return (
       <MModal
         animationType="slide"
@@ -522,25 +535,28 @@ function MyProfile(props) {
         transparent
         onRequestClose={() => {
           closePhotoModal();
-        }}>
+        }}
+      >
         <View
           style={{
             flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(0,0,0,0.5)',
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(0,0,0,0.5)",
             padding: 15,
-          }}>
+          }}
+        >
           <View
             style={{
               backgroundColor: theme.color.background,
               borderRadius: 15,
               marginBottom: 15,
               padding: 18,
-              width: '100%',
-            }}>
+              width: "100%",
+            }}
+          >
             {renderHeader()}
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{ alignItems: "center", justifyContent: "center" }}>
               <Text style={styles.section2LogoTitle}>
                 If you are happy with the result, click Confirm & Continue below
                 or try a different photo.
@@ -550,13 +566,14 @@ function MyProfile(props) {
                 style={styles.imageContainerP}
                 activeOpacity={0.7}
                 onPress={() =>
-                  Platform.OS == 'android' ? changePhoto('photoViewC') : null
-                }>
+                  Platform.OS == "android" ? changePhoto("photoViewC") : null
+                }
+              >
                 <Image source={src} style={styles.imageP} />
               </TouchableOpacity>
             </View>
 
-            {renderButton('Profile')}
+            {renderButton("Profile")}
             {renderButtonSkip()}
           </View>
         </View>
@@ -566,28 +583,28 @@ function MyProfile(props) {
 
   const renderAddPhotoModal = () => {
     const reqPermission = async () => {
-      if (Platform.OS == 'android') {
+      if (Platform.OS == "android") {
         try {
           const reqPer = await PermissionsAndroid.request(
-            PERMISSIONS.ANDROID.CAMERA,
+            PERMISSIONS.ANDROID.CAMERA
           );
 
-          if (reqPer == 'never_ask_again') {
-            let title = 'Camera Permission Blocked';
-            let text = 'Please allow grant permission to acces camera';
+          if (reqPer == "never_ask_again") {
+            let title = "Camera Permission Blocked";
+            let text = "Please allow grant permission to acces camera";
 
             Alert.alert(title, text, [
               {
-                text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
-                style: 'cancel',
+                text: "Cancel",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel",
               },
               {
-                text: 'Open Settings',
+                text: "Open Settings",
                 onPress: () => {
                   IntentLauncher.startActivity({
-                    action: 'android.settings.APPLICATION_DETAILS_SETTINGS',
-                    data: 'package:' + store.General.package,
+                    action: "android.settings.APPLICATION_DETAILS_SETTINGS",
+                    data: "package:" + store.General.package,
                   });
                 },
               },
@@ -596,28 +613,28 @@ function MyProfile(props) {
             return;
           }
 
-          if (reqPer == 'granted') {
+          if (reqPer == "granted") {
             const reqPer2 = await PermissionsAndroid.request(
-              PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+              PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE
             );
 
-            if (reqPer2 == 'never_ask_again') {
-              let title = 'Storage Permission Blocked';
+            if (reqPer2 == "never_ask_again") {
+              let title = "Storage Permission Blocked";
               let text =
-                'Please allow grant permission to acces photos in storage';
+                "Please allow grant permission to acces photos in storage";
 
               Alert.alert(title, text, [
                 {
-                  text: 'Cancel',
-                  onPress: () => console.log('Cancel Pressed'),
-                  style: 'cancel',
+                  text: "Cancel",
+                  onPress: () => console.log("Cancel Pressed"),
+                  style: "cancel",
                 },
                 {
-                  text: 'Open Settings',
+                  text: "Open Settings",
                   onPress: () => {
                     IntentLauncher.startActivity({
-                      action: 'android.settings.APPLICATION_DETAILS_SETTINGS',
-                      data: 'package:' + store.General.package,
+                      action: "android.settings.APPLICATION_DETAILS_SETTINGS",
+                      data: "package:" + store.General.package,
                     });
                   },
                 },
@@ -625,57 +642,57 @@ function MyProfile(props) {
               return;
             }
 
-            if (reqPer2 == 'granted') {
+            if (reqPer2 == "granted") {
               onclickImage(DT);
             }
           }
         } catch (error) {
-          console.log('req permsiion error : ', error);
+          console.log("req permsiion error : ", error);
         }
       }
 
-      if (Platform.OS == 'ios') {
+      if (Platform.OS == "ios") {
         const pc = await check(PERMISSIONS.IOS.CAMERA);
         const pp = await check(PERMISSIONS.IOS.PHOTO_LIBRARY);
 
-        if (pc == 'blocked' || pp == 'blocked') {
+        if (pc == "blocked" || pp == "blocked") {
           let title =
-            pc == 'blocked'
-              ? 'Camera Permission Blocked'
-              : 'Photo Permission Blocked';
+            pc == "blocked"
+              ? "Camera Permission Blocked"
+              : "Photo Permission Blocked";
           let text =
-            pc == 'blocked'
-              ? 'Please allow grant permission to acces camera'
-              : 'Please allow grant permission to acces all photos';
+            pc == "blocked"
+              ? "Please allow grant permission to acces camera"
+              : "Please allow grant permission to acces all photos";
           Alert.alert(title, text, [
             {
-              text: 'Cancel',
-              onPress: () => console.log('Cancel Pressed'),
-              style: 'cancel',
+              text: "Cancel",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel",
             },
             {
-              text: 'Open Settings',
+              text: "Open Settings",
               onPress: () => {
-                Linking.openURL('app-settings:');
+                Linking.openURL("app-settings:");
               },
             },
           ]);
           return;
         }
 
-        if (pp == 'limited') {
-          let title = 'Photo Permission Limited';
-          let text = 'Please allow grant permission to select all photos';
+        if (pp == "limited") {
+          let title = "Photo Permission Limited";
+          let text = "Please allow grant permission to select all photos";
           Alert.alert(title, text, [
             {
-              text: 'Cancel',
-              onPress: () => console.log('Cancel Pressed'),
-              style: 'cancel',
+              text: "Cancel",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel",
             },
             {
-              text: 'Open Settings',
+              text: "Open Settings",
               onPress: () => {
-                Linking.openURL('app-settings:');
+                Linking.openURL("app-settings:");
                 //react-native-permissions // openSettings('App-Prefs:root=Photos');
               },
             },
@@ -685,26 +702,26 @@ function MyProfile(props) {
 
         try {
           const reqPer = await request(PERMISSIONS.IOS.CAMERA);
-          if (reqPer == 'granted') {
+          if (reqPer == "granted") {
             const reqPer2 = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
-            if (reqPer2 == 'granted') {
+            if (reqPer2 == "granted") {
               onclickImage(DT);
             }
           }
         } catch (error) {
-          console.log('req permsiion error : ', error);
+          console.log("req permsiion error : ", error);
         }
       }
     };
 
-    const checkPermsn = async c => {
-      if (Platform.OS == 'android') {
+    const checkPermsn = async (c) => {
+      if (Platform.OS == "android") {
         const permissionAndroid = await check(PERMISSIONS.ANDROID.CAMERA);
         const permissionAndroid2 = await check(
-          PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+          PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE
         );
 
-        if (permissionAndroid != 'granted' || permissionAndroid2 != 'granted') {
+        if (permissionAndroid != "granted" || permissionAndroid2 != "granted") {
           setisShowPrmsn(true);
           setprmsnChk(c);
         } else {
@@ -712,19 +729,19 @@ function MyProfile(props) {
         }
       }
 
-      if (Platform.OS == 'ios') {
+      if (Platform.OS == "ios") {
         try {
           const permissionIos = await check(PERMISSIONS.IOS.CAMERA);
           const permissionIos2 = await check(PERMISSIONS.IOS.PHOTO_LIBRARY);
 
-          if (permissionIos != 'granted' || permissionIos2 != 'granted') {
+          if (permissionIos != "granted" || permissionIos2 != "granted") {
             setisShowPrmsn(true);
             setprmsnChk(c);
           } else {
             onclickImage(DT);
           }
         } catch (error) {
-          console.log('Permsiion error : ', error);
+          console.log("Permsiion error : ", error);
         }
       }
     };
@@ -740,11 +757,12 @@ function MyProfile(props) {
     const renderCross = () => {
       return (
         <Pressable
-          style={({pressed}) => [
-            {opacity: pressed ? 0.7 : 1.0},
-            {position: 'absolute', top: 15, right: 15},
+          style={({ pressed }) => [
+            { opacity: pressed ? 0.7 : 1.0 },
+            { position: "absolute", top: 15, right: 15 },
           ]}
-          onPress={closeAddPhotoModal}>
+          onPress={closeAddPhotoModal}
+        >
           <utils.vectorIcon.Ionicons
             name="ios-close-outline"
             color={theme.color.title}
@@ -759,14 +777,16 @@ function MyProfile(props) {
         <View
           style={{
             marginTop: 10,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
           <TouchableOpacity
             onPress={reqPermission}
             activeOpacity={0.7}
-            style={styles.BottomButtonP}>
+            style={styles.BottomButtonP}
+          >
             <Text style={styles.buttonPTextBottom}>Yes</Text>
           </TouchableOpacity>
 
@@ -775,7 +795,8 @@ function MyProfile(props) {
               setisShowPrmsn(false);
             }}
             activeOpacity={0.7}
-            style={styles.BottomButtonP}>
+            style={styles.BottomButtonP}
+          >
             <Text style={styles.buttonPTextBottom}>No</Text>
           </TouchableOpacity>
         </View>
@@ -783,16 +804,17 @@ function MyProfile(props) {
     };
 
     function Sep() {
-      return <View style={{height: 25}} />;
+      return <View style={{ height: 25 }} />;
     }
 
     return (
       <MModal
         visible={isAddPhotoModal}
         transparent
-        onRequestClose={closeAddPhotoModal}>
+        onRequestClose={closeAddPhotoModal}
+      >
         <SafeAreaView style={styles.modalContainerp}>
-          <View style={[styles.modalContainer2p, {margin: 20}]}>
+          <View style={[styles.modalContainer2p, { margin: 20 }]}>
             <View
               style={[
                 styles.modalp,
@@ -801,20 +823,26 @@ function MyProfile(props) {
                   paddingHorizontal: 20,
                   borderRadius: 15,
                 },
-              ]}>
+              ]}
+            >
               {!isShowPrmsn && (
                 <>
                   <View
-                    style={{alignItems: 'center', justifyContent: 'center'}}>
+                    style={{ alignItems: "center", justifyContent: "center" }}
+                  >
                     <Text style={styles.section2Title1}>add profile photo</Text>
 
                     <Image
-                      source={require('../../assets/images/addphoto/img.png')}
+                      source={require("../../assets/images/addphoto/img.png")}
                       style={styles.section2Logo}
                     />
 
                     <Text
-                      style={[styles.section2LogoTitle, {textAlign: 'center'}]}>
+                      style={[
+                        styles.section2LogoTitle,
+                        { textAlign: "center" },
+                      ]}
+                    >
                       Upload a photo to help the community recognize and promote
                       your account.
                     </Text>
@@ -823,20 +851,22 @@ function MyProfile(props) {
                       <TouchableOpacity
                         activeOpacity={0.7}
                         onPress={() => {
-                          checkPermsn('gallery');
-                        }}>
+                          checkPermsn("gallery");
+                        }}
+                      >
                         <Image
-                          source={require('../../assets/images/uploadphoto/img.png')}
+                          source={require("../../assets/images/uploadphoto/img.png")}
                           style={styles.uploadIndicationLogo}
                         />
                       </TouchableOpacity>
                       <TouchableOpacity
                         activeOpacity={0.7}
                         onPress={() => {
-                          checkPermsn('camera');
-                        }}>
+                          checkPermsn("camera");
+                        }}
+                      >
                         <Image
-                          source={require('../../assets/images/takephoto/img.png')}
+                          source={require("../../assets/images/takephoto/img.png")}
                           style={styles.uploadIndicationLogo}
                         />
                       </TouchableOpacity>
@@ -848,21 +878,23 @@ function MyProfile(props) {
                     activeOpacity={0.7}
                     style={{
                       marginTop: 40,
-                      width: '100%',
+                      width: "100%",
                       height: 48,
                       backgroundColor: theme.color.button2,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      alignSelf: 'center',
-                    }}>
+                      alignItems: "center",
+                      justifyContent: "center",
+                      alignSelf: "center",
+                    }}
+                  >
                     <Text
                       style={[
                         styles.buttonTextBottom,
                         {
-                          color: '#B93B3B',
+                          color: "#B93B3B",
                           fontFamily: theme.fonts.fontMedium,
                         },
-                      ]}>
+                      ]}
+                    >
                       Cancel
                     </Text>
                   </TouchableOpacity>
@@ -872,35 +904,37 @@ function MyProfile(props) {
                 <>
                   <View
                     style={{
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}>
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
                     <Text style={styles.section2Title1}>
-                      {prmsnChk == 'camera'
-                        ? 'Camera Access'
-                        : 'Storage Access'}
+                      {prmsnChk == "camera"
+                        ? "Camera Access"
+                        : "Storage Access"}
                     </Text>
 
                     <Image
                       source={
-                        prmsnChk == 'camera'
-                          ? require('../../assets/images/ca/img.png')
-                          : require('../../assets/images/ca/img.png')
+                        prmsnChk == "camera"
+                          ? require("../../assets/images/ca/img.png")
+                          : require("../../assets/images/ca/img.png")
                       }
                       style={styles.section2Logo}
                     />
 
-                    <View style={{width: '80%', alignSelf: 'center'}}>
+                    <View style={{ width: "80%", alignSelf: "center" }}>
                       <Text
                         style={[
                           styles.section2LogoTitle,
                           {
-                            textAlign: 'center',
+                            textAlign: "center",
                           },
-                        ]}>
-                        {prmsnChk == 'camera'
-                          ? 'Trip Trader wants permission to access your camera.'
-                          : 'Trip Trader wants permission to access your storage.'}
+                        ]}
+                      >
+                        {prmsnChk == "camera"
+                          ? "Trip Trader wants permission to access your camera."
+                          : "Trip Trader wants permission to access your storage."}
                       </Text>
                     </View>
 
@@ -926,7 +960,7 @@ function MyProfile(props) {
       <SafeAreaView style={styles.container2}>
         <View style={styles.container3}>
           {renderProfileSection()}
-          <View style={{flex: 1}}>{isTabBarShow && renderTabBar()}</View>
+          <View style={{ flex: 1 }}>{isTabBarShow && renderTabBar()}</View>
           <Toast ref={toast} position="bottom" />
           {/* <utils.Loader2 load={Loader} /> */}
 
@@ -948,7 +982,7 @@ function MyProfile(props) {
           show={pvm}
           closModal={() => {
             setpvm(!pvm);
-            setpv('');
+            setpv("");
           }}
         />
       )}

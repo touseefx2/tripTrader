@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -13,29 +13,29 @@ import {
   KeyboardAvoidingView,
   BackHandler,
   Platform,
-} from 'react-native';
-import {styles} from './styles';
-import {observer} from 'mobx-react';
-import store from '../../store/index';
-import utils from '../../utils/index';
-import theme from '../../theme';
+} from "react-native";
+import { styles } from "./styles";
+import { observer } from "mobx-react";
+import store from "../../store/index";
+import utils from "../../utils/index";
+import theme from "../../theme";
 import {
   responsiveFontSize,
   responsiveHeight,
-} from 'react-native-responsive-dimensions';
-import Toast from 'react-native-easy-toast';
-import NetInfo from '@react-native-community/netinfo';
-import {Notification} from '../../services/Notification';
+} from "react-native-responsive-dimensions";
+import Toast from "react-native-easy-toast";
+import NetInfo from "@react-native-community/netinfo";
+import { Notification } from "../../services/Notification";
 
 import {
   StripeProvider,
   CardField,
   useStripe,
-} from '@stripe/stripe-react-native';
+} from "@stripe/stripe-react-native";
 
 export default observer(Plan);
 function Plan(props) {
-  const {confirmPayment} = useStripe();
+  const { confirmPayment } = useStripe();
 
   const mobileReg = /^[0][3]\d{9}$/;
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
@@ -54,26 +54,26 @@ function Plan(props) {
   const [isShowTermsAndConditions, setIsShowTermsAndConditions] =
     useState(false);
 
-  const [cfn, setcfn] = useState('');
+  const [cfn, setcfn] = useState("");
   const [Emptycfn, setEmptycfn] = useState(false);
-  const [isValidCard, setisValidCard] = useState('null');
-  const [cardErr, setcardErr] = useState('');
-  const [cn, setcn] = useState('');
-  const [ld, setld] = useState(''); //last 4 digit
-  const [ct, setct] = useState(''); //card type
-  const [ce, setce] = useState('');
-  const [ccvc, setccvc] = useState('');
+  const [isValidCard, setisValidCard] = useState("null");
+  const [cardErr, setcardErr] = useState("");
+  const [cn, setcn] = useState("");
+  const [ld, setld] = useState(""); //last 4 digit
+  const [ct, setct] = useState(""); //card type
+  const [ce, setce] = useState("");
+  const [ccvc, setccvc] = useState("");
   const [inValidcn, setinValidcn] = useState(false);
   const [inValidce, setinValidce] = useState(false);
   const [inValidccvc, setinValidccvc] = useState(false);
-  const [pc, setpc] = useState('');
+  const [pc, setpc] = useState("");
   const [isShowPromoFiled, setisShowPromoFiled] = useState(false);
   const [isPromoApply, setisPromoApply] = useState(false);
   const [promoValue, setpromoValue] = useState(0);
 
   const [iscTerms, setiscTerms] = useState(false);
   const [EmptycTerms, setEmptycTerms] = useState(false);
-  const [errorMessage, seterrorMessage] = useState('');
+  const [errorMessage, seterrorMessage] = useState("");
 
   const [plan, setPlan] = useState(false);
 
@@ -85,7 +85,7 @@ function Plan(props) {
   const plans = store.User.plans;
 
   function toFixed(num, fix) {
-    var re = new RegExp('^-?\\d+(?:.\\d{0,' + (fix || -1) + '})?');
+    var re = new RegExp("^-?\\d+(?:.\\d{0," + (fix || -1) + "})?");
     return num.toString().match(re)[0];
   }
 
@@ -95,10 +95,10 @@ function Plan(props) {
       let annualy = 0;
       if (plans && plans.data.length > 0) {
         plans.data.map((e, i, a) => {
-          if (e.type == 'annual') {
+          if (e.type == "annual") {
             annualy = e.charges;
           }
-          if (e.type == 'monthly') {
+          if (e.type == "monthly") {
             monthly = e.charges;
           }
         });
@@ -112,10 +112,10 @@ function Plan(props) {
       if (isPromoApply) {
         let p = (isPromoApply.discount || 0) / 100;
         let discount = 0;
-        if (plan.type == 'monthly') {
+        if (plan.type == "monthly") {
           discount = monthly - p * monthly;
         }
-        if (plan.type == 'annual') {
+        if (plan.type == "annual") {
           discount = totalAnually - p * totalAnually;
         }
 
@@ -135,13 +135,13 @@ function Plan(props) {
 
   useEffect(() => {
     const subscription = BackHandler.addEventListener(
-      'hardwareBackPress',
-      handleBackButtonClick,
+      "hardwareBackPress",
+      handleBackButtonClick
     );
     return () => {
       BackHandler.removeEventListener(
-        'hardwareBackPress',
-        handleBackButtonClick,
+        "hardwareBackPress",
+        handleBackButtonClick
       );
       subscription.remove();
     };
@@ -167,58 +167,58 @@ function Plan(props) {
 
   const clearCard = () => {
     setisPage(1);
-    setcfn('');
-    setccvc('');
-    setcn('');
-    setce('');
-    setct('');
-    setld('');
-    setpc('');
-    setcardErr('');
+    setcfn("");
+    setccvc("");
+    setcn("");
+    setce("");
+    setct("");
+    setld("");
+    setpc("");
+    setcardErr("");
     setEmptycfn(false);
     setisShowPromoFiled(false);
     setisPromoApply(false);
     setiscTerms(false);
     setpromoValue(0);
-    setinValidccvc('null');
-    setinValidce('null');
-    setinValidcn('null');
-    setisValidCard('null');
+    setinValidccvc("null");
+    setinValidce("null");
+    setinValidcn("null");
+    setisValidCard("null");
   };
 
-  const setErrMessage = c => {
+  const setErrMessage = (c) => {
     seterrorMessage(c);
   };
 
   const subscribePlan = () => {
     Keyboard.dismiss();
 
-    if (cfn == '') {
+    if (cfn == "") {
       setEmptycfn(true);
       return;
     }
 
-    if (isValidCard == 'null') {
-      setcardErr('Please enter card number');
+    if (isValidCard == "null") {
+      setcardErr("Please enter card number");
       setisValidCard(false);
       return;
     }
 
     if (isValidCard == false) {
       if (!inValidcn) {
-        setcardErr('Invalid card number');
+        setcardErr("Invalid card number");
         setisValidCard(false);
         return;
       }
 
       if (!inValidce) {
-        setcardErr('Invalid card expiry');
+        setcardErr("Invalid card expiry");
         setisValidCard(false);
         return;
       }
 
       if (!inValidccvc) {
-        setcardErr('Invalid card cvc');
+        setcardErr("Invalid card cvc");
         setisValidCard(false);
         return;
       }
@@ -230,16 +230,16 @@ function Plan(props) {
         return;
       }
 
-      let tv = plan.type == 'annual' ? totalAnually : monthly;
+      let tv = plan.type == "annual" ? totalAnually : monthly;
       tv = isPromoApply ? promoValue : tv;
       let pda = 0;
       if (isPromoApply) {
         let p = (isPromoApply.discount || 0) / 100;
 
-        if (plan.type == 'monthly') {
+        if (plan.type == "monthly") {
           pda = p * monthly;
         }
-        if (plan.type == 'annual') {
+        if (plan.type == "annual") {
           pda = p * totalAnually;
         }
       }
@@ -249,9 +249,9 @@ function Plan(props) {
             charges: plan.charges,
             discount: plan.discount,
             startDate: new Date(),
-            endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
+            endDate: addMonths(new Date(), plan.type == "annual" ? 12 : 1),
             amtPaid: tv,
-            status: 'active',
+            status: "active",
             lastDigit: ld,
             cardBrand: ct,
           }
@@ -260,9 +260,9 @@ function Plan(props) {
             charges: plan.charges,
             discount: plan.discount,
             startDate: new Date(),
-            endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
+            endDate: addMonths(new Date(), plan.type == "annual" ? 12 : 1),
             amtPaid: tv,
-            status: 'active',
+            status: "active",
             promoCode: isPromoApply.code,
             promoCodeDiscount: isPromoApply.discount,
             promoCodeDiscountAmt: pda,
@@ -272,24 +272,24 @@ function Plan(props) {
 
       const obj = {
         subscription: subscription,
-        subscriptionStatus: 'paid',
+        subscriptionStatus: "paid",
       };
 
-      NetInfo.fetch().then(state => {
+      NetInfo.fetch().then((state) => {
         if (state.isConnected) {
           const body = {
             email: store.User.user.email,
             description: plan?.type,
             amount: tv * 100,
           };
-          if (user.customerId && user.customerId != '') {
+          if (user.customerId && user.customerId != "") {
             body.customerId = user.customerId;
           }
 
           store.User.BuyPlan(body, obj, SucGetClientsecret);
         } else {
           // seterrorMessage('Please connect internet');
-          Alert.alert('', 'Please connect internet');
+          Alert.alert("", "Please connect internet");
         }
       });
 
@@ -299,10 +299,10 @@ function Plan(props) {
 
   const SucGetClientsecret = async (dt, obj) => {
     try {
-      const {error, paymentIntent} = await confirmPayment(dt.cs, {
-        paymentMethodType: 'Card', //strip > 0.5.0
+      const { error, paymentIntent } = await confirmPayment(dt.cs, {
+        paymentMethodType: "Card", //strip > 0.5.0
         // type: 'Card', //stripe <= 0.5.0
-        billingDetails: {name: cn},
+        billingDetails: { name: cn },
       });
 
       if (error) {
@@ -315,7 +315,7 @@ function Plan(props) {
         // paymentIntent
         // Alert.alert(`Success`, `Payment Succefull: ${paymentIntent.id}`);
 
-        if (user.customerId && user.customerId != '') {
+        if (user.customerId && user.customerId != "") {
         } else {
           obj.customerId = dt.cid;
         }
@@ -326,7 +326,7 @@ function Plan(props) {
           dt.cid,
           token,
           setErrMessage,
-          subPlanSuc,
+          subPlanSuc
         );
       }
     } catch (err) {
@@ -338,12 +338,12 @@ function Plan(props) {
 
   const applyPromo = () => {
     Keyboard.dismiss();
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.User.applyPromo(pc, setErrMessage, applyPromoSuc);
       } else {
         // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
@@ -357,65 +357,65 @@ function Plan(props) {
     return date;
   }
 
-  const subPlanSuc = c => {
+  const subPlanSuc = (c) => {
     store.User.setUser(c);
     props.navigation.goBack();
     // clearCard();
   };
 
-  const applyPromoSuc = res => {
+  const applyPromoSuc = (res) => {
     setisPromoApply(res);
   };
 
-  const renderShowFieldError = c => {
-    let text = c == 'card' ? cardErr : '';
+  const renderShowFieldError = (c) => {
+    let text = c == "card" ? cardErr : "";
 
-    if (c == 'fn') {
+    if (c == "fn") {
       text = invalidfn
-        ? 'First name is invalid'
+        ? "First name is invalid"
         : Emptyfn
-        ? 'Please enter a first name'
-        : '';
+        ? "Please enter a first name"
+        : "";
     }
 
-    if (c == 'ln') {
+    if (c == "ln") {
       text = invalidln
-        ? 'Last name is invalid'
+        ? "Last name is invalid"
         : Emptyln
-        ? 'Please enter a last name'
-        : '';
+        ? "Please enter a last name"
+        : "";
     }
 
-    if (c == 'email') {
+    if (c == "email") {
       text = invalidemail
-        ? 'Email contains invalid characters'
+        ? "Email contains invalid characters"
         : Emptyemail
-        ? 'Please enter email'
-        : '';
+        ? "Please enter email"
+        : "";
     }
 
-    if (c == 'dob') {
-      text = Emptydob ? 'Please select your birth date' : '';
+    if (c == "dob") {
+      text = Emptydob ? "Please select your birth date" : "";
     }
 
-    if (c == 'pswd') {
+    if (c == "pswd") {
       text = invalidpswd
-        ? 'Password must contains 8 or more characters'
+        ? "Password must contains 8 or more characters"
         : Emptypswd
-        ? 'Please enter password'
-        : '';
+        ? "Please enter password"
+        : "";
     }
 
-    if (c == 'terms') {
-      text = EmptyTerms ? 'Agreeing to Terms and Conditions is required' : '';
+    if (c == "terms") {
+      text = EmptyTerms ? "Agreeing to Terms and Conditions is required" : "";
     }
 
-    if (c == 'cfn') {
-      text = Emptycfn ? 'Please enter a full name' : '';
+    if (c == "cfn") {
+      text = Emptycfn ? "Please enter a full name" : "";
     }
 
-    if (c == 'cterms') {
-      text = EmptycTerms ? 'Agreeing to Terms and Conditions is required' : '';
+    if (c == "cterms") {
+      text = EmptycTerms ? "Agreeing to Terms and Conditions is required" : "";
     }
 
     return (
@@ -428,13 +428,13 @@ function Plan(props) {
   const renderSection2 = () => {
     // Methods
 
-    const entercFn = t => {
+    const entercFn = (t) => {
       setEmptycfn(false);
 
       setcfn(t);
     };
 
-    const enterpc = t => {
+    const enterpc = (t) => {
       setpc(t);
     };
 
@@ -458,14 +458,14 @@ function Plan(props) {
     //   setct(ct);
     // };
 
-    const onChangeCard = t => {
-      console.log('card detials : ', t);
-      setcardErr('');
+    const onChangeCard = (t) => {
+      console.log("card detials : ", t);
+      setcardErr("");
       // let valid = t.complete;
       let valid = false;
-      let cnvalid = t.validNumber == 'Valid' ? true : false;
-      let cevalid = t.validExpiryDate == 'Valid' ? true : false;
-      let ccvcvalid = t.validCVC == 'Valid' ? true : false;
+      let cnvalid = t.validNumber == "Valid" ? true : false;
+      let cevalid = t.validExpiryDate == "Valid" ? true : false;
+      let ccvcvalid = t.validCVC == "Valid" ? true : false;
 
       if (cnvalid && cevalid && ccvcvalid) {
         valid = true;
@@ -504,15 +504,15 @@ function Plan(props) {
       setEmptycfn(false);
       setisPromoApply(false);
       setisShowPromoFiled(false);
-      setpc('');
+      setpc("");
       setpromoValue(0);
-      setcfn('');
-      setcardErr('');
-      setct('');
-      setisValidCard('null');
-      setinValidce('null');
-      setinValidccvc('null');
-      setinValidcn('null');
+      setcfn("");
+      setcardErr("");
+      setct("");
+      setisValidCard("null");
+      setinValidce("null");
+      setinValidccvc("null");
+      setinValidcn("null");
     };
 
     const changePlan = () => {
@@ -520,11 +520,11 @@ function Plan(props) {
     };
 
     const TermsnCndtnClickCard = () => {
-      NetInfo.fetch().then(state => {
+      NetInfo.fetch().then((state) => {
         if (state.isConnected) {
           setIsShowTermsAndConditions(true);
         } else {
-          Alert.alert('Network Error', 'Please connect internet.');
+          Alert.alert("Network Error", "Please connect internet.");
         }
       });
     };
@@ -541,9 +541,10 @@ function Plan(props) {
             activeOpacity={0.9}
             style={[
               styles.BottomButton,
-              {marginTop: 0, width: '60%', height: 55},
-            ]}>
-            <Text style={[styles.buttonTextBottom, {fontSize: 14}]}>
+              { marginTop: 0, width: "60%", height: 55 },
+            ]}
+          >
+            <Text style={[styles.buttonTextBottom, { fontSize: 14 }]}>
               choose {plan.type} plan
             </Text>
           </TouchableOpacity>
@@ -557,7 +558,8 @@ function Plan(props) {
           <TouchableOpacity
             onPress={subscribePlan}
             activeOpacity={0.7}
-            style={styles.BottomButton}>
+            style={styles.BottomButton}
+          >
             <Text style={styles.buttonTextBottom}>Subscribe</Text>
           </TouchableOpacity>
         </>
@@ -590,8 +592,8 @@ function Plan(props) {
     //   );
     // };
 
-    const renderShowError2 = c => {
-      let text = c == 'Profile' ? 'Please upload photo' : '';
+    const renderShowError2 = (c) => {
+      let text = c == "Profile" ? "Please upload photo" : "";
 
       return (
         <View style={styles.errorMessageContainer}>
@@ -602,7 +604,7 @@ function Plan(props) {
 
     const renderPlanBar = () => {
       const p = plans.data.map((e, i, a) => {
-        let name = e.type || '';
+        let name = e.type || "";
 
         return (
           <TouchableOpacity
@@ -613,8 +615,8 @@ function Plan(props) {
             style={{
               paddingHorizontal: 12,
               height: 37,
-              alignItems: 'center',
-              justifyContent: 'center',
+              alignItems: "center",
+              justifyContent: "center",
               backgroundColor:
                 plan.type == name
                   ? theme.color.button1
@@ -623,7 +625,8 @@ function Plan(props) {
               borderBottomLeftRadius: i == 0 ? 8 : 0,
               borderTopRightRadius: i == a.length - 1 ? 8 : 0,
               borderBottomRightRadius: i == a.length - 1 ? 8 : 0,
-            }}>
+            }}
+          >
             <Text
               style={{
                 fontSize: 13,
@@ -632,8 +635,9 @@ function Plan(props) {
                     ? theme.color.buttonText
                     : theme.color.subTitle,
                 fontFamily: theme.fonts.fontMedium,
-                textTransform: 'capitalize',
-              }}>
+                textTransform: "capitalize",
+              }}
+            >
               {name}
             </Text>
           </TouchableOpacity>
@@ -650,11 +654,12 @@ function Plan(props) {
         return (
           <View
             style={{
-              flexDirection: 'row',
+              flexDirection: "row",
               marginTop: 2,
-              width: '100%',
-            }}>
-            <utils.vectorIcon.Entypo name="check" color={'#16953A'} size={20} />
+              width: "100%",
+            }}
+          >
+            <utils.vectorIcon.Entypo name="check" color={"#16953A"} size={20} />
             <Text
               style={{
                 fontSize: 14,
@@ -663,7 +668,8 @@ function Plan(props) {
                 marginLeft: 10,
                 bottom: 1,
                 opacity: 0.6,
-              }}>
+              }}
+            >
               {feature}
             </Text>
           </View>
@@ -686,24 +692,26 @@ function Plan(props) {
                   ellipsizeMode="tail"
                   style={[
                     styles.section2Title1,
-                    {textTransform: 'none', alignSelf: 'flex-start'},
-                  ]}>
+                    { textTransform: "none", alignSelf: "flex-start" },
+                  ]}
+                >
                   Choose a plan
                 </Text>
                 {/* {errorMessage !== '' && renderShowError()} */}
                 <Text
                   style={[
                     styles.section2LogoTitle2c,
-                    {alignSelf: 'flex-start'},
-                  ]}>
+                    { alignSelf: "flex-start" },
+                  ]}
+                >
                   Unlock all features with a subscription.
                 </Text>
               </View>
 
               <View
                 style={{
-                  width: '100%',
-                  alignSelf: 'center',
+                  width: "100%",
+                  alignSelf: "center",
                   height: 0.6,
                   backgroundColor: theme.color.subTitleLight,
                   marginVertical: 15,
@@ -711,14 +719,15 @@ function Plan(props) {
                 }}
               />
 
-              <View style={{marginTop: 7}}>
+              <View style={{ marginTop: 7 }}>
                 {plans && plans.data && (
                   <>
                     <View
                       style={{
-                        alignItems: 'center',
-                        flexDirection: 'row',
-                      }}>
+                        alignItems: "center",
+                        flexDirection: "row",
+                      }}
+                    >
                       {renderPlanBar()}
                     </View>
                   </>
@@ -726,17 +735,19 @@ function Plan(props) {
 
                 {plan && (
                   <>
-                    <View style={{marginTop: 20}}>
+                    <View style={{ marginTop: 20 }}>
                       <View
-                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
                         <Text
                           style={{
                             fontSize: 26,
                             color: theme.color.title,
                             fontFamily: theme.fonts.fontBold,
-                          }}>
+                          }}
+                        >
                           $
-                          {plan.type == 'annual' ? annualy.toFixed(2) : monthly}
+                          {plan.type == "annual" ? annualy.toFixed(2) : monthly}
                         </Text>
                         <Text
                           style={{
@@ -745,52 +756,58 @@ function Plan(props) {
                             fontFamily: theme.fonts.fontBold,
                             opacity: 0.6,
                             marginLeft: 5,
-                          }}>
-                          /month{' '}
-                          {plan.type == 'annual' ? '(Billed annually)' : ''}
+                          }}
+                        >
+                          /month{" "}
+                          {plan.type == "annual" ? "(Billed annually)" : ""}
                         </Text>
                       </View>
-                      {plan.type == 'annual' && (
+                      {plan.type == "annual" && (
                         <Text
                           style={{
                             fontSize: 12,
-                            color: '#16953A',
+                            color: "#16953A",
                             fontFamily: theme.fonts.fontMedium,
-                            textTransform: 'capitalize',
+                            textTransform: "capitalize",
                             top: -5,
-                          }}>
+                          }}
+                        >
                           Best Value • ${toFixed(save, 0)} savings
                         </Text>
                       )}
-                      {plan.type == 'monthly' && (
+                      {plan.type == "monthly" && (
                         <>
                           {save > 0 && (
                             <View
                               style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
+                                flexDirection: "row",
+                                alignItems: "center",
                                 top: -5,
-                              }}>
+                              }}
+                            >
                               <Text
                                 style={{
                                   fontSize: 12,
-                                  color: '#767676',
+                                  color: "#767676",
                                   fontFamily: theme.fonts.fontMedium,
-                                }}>
+                                }}
+                              >
                                 Save ${toFixed(save, 0)} with an
                               </Text>
                               <TouchableOpacity
                                 activeOpacity={0.6}
                                 onPress={() => {
                                   setPlan(plans.data[0]);
-                                }}>
+                                }}
+                              >
                                 <Text
                                   style={{
                                     fontSize: 12,
-                                    color: 'green',
+                                    color: "green",
                                     fontFamily: theme.fonts.fontMedium,
                                     marginLeft: 5,
-                                  }}>
+                                  }}
+                                >
                                   Annual Plan
                                 </Text>
                               </TouchableOpacity>
@@ -800,7 +817,9 @@ function Plan(props) {
                       )}
                     </View>
                     {plan.features.length > 0 && (
-                      <View style={{marginTop: 20}}>{renderPlanDetails()}</View>
+                      <View style={{ marginTop: 20 }}>
+                        {renderPlanDetails()}
+                      </View>
                     )}
                   </>
                 )}
@@ -808,16 +827,18 @@ function Plan(props) {
 
               <View
                 style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
+                  flexDirection: "row",
+                  alignItems: "center",
                   marginTop: 25,
-                }}>
+                }}
+              >
                 {renderButtonPlan()}
                 <TouchableOpacity
                   activeOpacity={0.7}
                   onPress={() => {
                     goBack();
-                  }}>
+                  }}
+                >
                   <Text
                     style={[
                       styles.section2bottomTitle,
@@ -825,9 +846,10 @@ function Plan(props) {
                         marginTop: 0,
                         marginLeft: 25,
                         fontSize: 14,
-                        color: 'rgba(17, 17, 17, 0.6)',
+                        color: "rgba(17, 17, 17, 0.6)",
                       },
-                    ]}>
+                    ]}
+                  >
                     Try for free
                   </Text>
                 </TouchableOpacity>
@@ -847,25 +869,27 @@ function Plan(props) {
                   ellipsizeMode="tail"
                   style={[
                     styles.section2Title1,
-                    {textTransform: 'none', alignSelf: 'flex-start'},
-                  ]}>
+                    { textTransform: "none", alignSelf: "flex-start" },
+                  ]}
+                >
                   Payment Information
                 </Text>
-                {/* {errorMessage !== '' && renderShowError()} */}
+
                 <Text
                   style={[
                     styles.section2LogoTitle2c,
-                    {alignSelf: 'flex-start', marginTop: 5},
-                  ]}>
+                    { alignSelf: "flex-start", marginTop: 5 },
+                  ]}
+                >
                   Your subscription will start after you make your first payment
                   below.
                 </Text>
               </View>
               <View
                 style={{
-                  width: '100%',
+                  width: "100%",
                   height: 0.6,
-                  alignSelf: 'center',
+                  alignSelf: "center",
                   marginVertical: 12,
                   backgroundColor: theme.color.subTitleLight,
                   opacity: 0.5,
@@ -874,9 +898,10 @@ function Plan(props) {
               <View>
                 <View
                   style={{
-                    flexDirection: 'row',
-                    width: '100%',
-                  }}>
+                    flexDirection: "row",
+                    width: "100%",
+                  }}
+                >
                   <Text style={styles.paymenttitle1}>total due Now :</Text>
                   {!isPromoApply && (
                     <Text
@@ -884,14 +909,15 @@ function Plan(props) {
                         styles.paymenttitle1,
                         {
                           color: theme.color.title,
-                          width: '65%',
+                          width: "65%",
                           marginLeft: 5,
-                          textTransform: 'none',
+                          textTransform: "none",
                         },
-                      ]}>
-                      {plan.type == 'annual'
+                      ]}
+                    >
+                      {plan.type == "annual"
                         ? `$${toFixed(totalAnually, 2)} ($${annualy.toFixed(
-                            2,
+                            2
                           )} /mo)`
                         : `$${monthly} /mo`}
                     </Text>
@@ -900,23 +926,25 @@ function Plan(props) {
                   {isPromoApply && (
                     <View
                       style={{
-                        flexDirection: 'row',
+                        flexDirection: "row",
                         marginLeft: 5,
-                        width: '65%',
-                      }}>
+                        width: "65%",
+                      }}
+                    >
                       <Text
                         style={{
                           color: theme.color.title,
                           fontSize: 11,
 
                           fontFamily: theme.fonts.fontBold,
-                          textTransform: 'capitalize',
-                          textDecorationLine: 'line-through',
-                        }}>
-                        {plan.type == 'annual'
+                          textTransform: "capitalize",
+                          textDecorationLine: "line-through",
+                        }}
+                      >
+                        {plan.type == "annual"
                           ? `$${toFixed(totalAnually, 2)}`
                           : `$${monthly}`}
-                        {'  '}
+                        {"  "}
                       </Text>
 
                       <Text
@@ -924,8 +952,9 @@ function Plan(props) {
                           color: theme.color.titleGreen,
                           fontSize: 11,
                           fontFamily: theme.fonts.fontBold,
-                          textTransform: 'capitalize',
-                        }}>
+                          textTransform: "capitalize",
+                        }}
+                      >
                         ${promoValue} ({isPromoApply.discount}% discount)
                       </Text>
                     </View>
@@ -934,9 +963,10 @@ function Plan(props) {
 
                 <View
                   style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}>
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
                   <Text style={styles.paymenttitle2}>your plan :</Text>
                   <Text
                     style={[
@@ -945,7 +975,8 @@ function Plan(props) {
                         color: theme.color.title,
                         marginLeft: 5,
                       },
-                    ]}>
+                    ]}
+                  >
                     {plan.type}
                   </Text>
                   <TouchableOpacity activeOpacity={0.6} onPress={changePlan}>
@@ -956,9 +987,10 @@ function Plan(props) {
                           color: theme.color.titleGreen,
                           marginLeft: 10,
                           fontFamily: theme.fonts.fontNormal,
-                          textDecorationLine: 'underline',
+                          textDecorationLine: "underline",
                         },
-                      ]}>
+                      ]}
+                    >
                       change
                     </Text>
                   </TouchableOpacity>
@@ -979,26 +1011,27 @@ function Plan(props) {
                           ? theme.color.fieldBordeError
                           : theme.color.fieldBorder,
                         fontSize: 12,
-                        color: 'black',
+                        color: "black",
                       },
                     ]}
                   />
-                  {Emptycfn && renderShowFieldError('cfn')}
+                  {Emptycfn && renderShowFieldError("cfn")}
                 </View>
 
                 <View style={styles.Field}>
                   <View
                     style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}>
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
                     <Text style={styles.FieldTitle1}>card</Text>
                   </View>
 
                   <CardField
                     postalCodeEnabled={false}
                     placeholders={{
-                      number: 'Card number',
+                      number: "Card number",
                     }}
                     cardStyle={{
                       textColor: theme.color.title,
@@ -1009,17 +1042,17 @@ function Plan(props) {
                       fontFamily: theme.fonts.fontNormal,
                     }}
                     style={{
-                      width: '100%',
+                      width: "100%",
                       height: 45,
                     }}
-                    onCardChange={cardDetails => {
+                    onCardChange={(cardDetails) => {
                       onChangeCard(cardDetails);
                     }}
-                    onFocus={focusedField => {
-                      console.log('focusField', focusedField);
+                    onFocus={(focusedField) => {
+                      console.log("focusField", focusedField);
                     }}
                   />
-                  {isValidCard == false && renderShowFieldError('card')}
+                  {isValidCard == false && renderShowFieldError("card")}
 
                   {/* <View
                   style={[
@@ -1049,14 +1082,15 @@ function Plan(props) {
                         style={[
                           styles.FieldInput,
                           {
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
                             paddingHorizontal: 0,
                             borderWidth: 1,
                             borderColor: theme.color.fieldBorder,
                           },
-                        ]}>
+                        ]}
+                      >
                         <TextInput
                           placeholder="Add a promo code"
                           value={pc}
@@ -1064,33 +1098,35 @@ function Plan(props) {
                           style={{
                             fontSize: 13,
 
-                            color: 'black',
-                            width: '70%',
-                            height: '100%',
+                            color: "black",
+                            width: "70%",
+                            height: "100%",
                             paddingLeft: 10,
                           }}
                         />
 
-                        {pc != '' && (
+                        {pc != "" && (
                           <TouchableOpacity
                             activeOpacity={0.7}
                             onPress={applyPromo}
                             style={{
                               width: 60,
-                              height: '100%',
+                              height: "100%",
                               borderTopRightRadius: 8,
                               borderBottomRightRadius: 8,
-                              alignItems: 'center',
-                              justifyContent: 'center',
+                              alignItems: "center",
+                              justifyContent: "center",
                               backgroundColor: theme.color.button1,
                               paddingHorizontal: 3,
-                            }}>
+                            }}
+                          >
                             <Text
                               style={{
                                 color: theme.color.buttonText,
                                 fontSize: 13,
                                 fontFamily: theme.fonts.fontMedium,
-                              }}>
+                              }}
+                            >
                               Apply
                             </Text>
                           </TouchableOpacity>
@@ -1102,33 +1138,37 @@ function Plan(props) {
                       <View
                         style={{
                           marginTop: 5,
-                          alignItems: 'center',
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                        }}>
+                          alignItems: "center",
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                        }}
+                      >
                         <Text
                           numberOfLines={1}
                           ellipsizeMode="tail"
                           style={{
-                            width: '50%',
+                            width: "50%",
                             color: theme.color.title,
                             fontSize: 12,
                             fontFamily: theme.fonts.fontMedium,
-                            textTransform: 'uppercase',
-                          }}>
+                            textTransform: "uppercase",
+                          }}
+                        >
                           {isPromoApply.code}
                         </Text>
 
                         <TouchableOpacity
                           activeOpacity={0.7}
-                          onPress={() => setisPromoApply(false)}>
+                          onPress={() => setisPromoApply(false)}
+                        >
                           <Text
                             style={{
                               color: theme.color.titleGreen,
                               fontSize: 12,
                               fontFamily: theme.fonts.fontMedium,
-                              textDecorationLine: 'underline',
-                            }}>
+                              textDecorationLine: "underline",
+                            }}
+                          >
                             Remove
                           </Text>
                         </TouchableOpacity>
@@ -1141,32 +1181,35 @@ function Plan(props) {
                   <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() => setisShowPromoFiled(true)}
-                    style={{marginTop: 20}}>
+                    style={{ marginTop: 20 }}
+                  >
                     <Text
                       style={{
                         fontSize: 12,
                         color: theme.color.titleGreen,
                         fontFamily: theme.fonts.fontMedium,
-                        textDecorationLine: 'underline',
-                      }}>
+                        textDecorationLine: "underline",
+                      }}
+                    >
                       I have a promo code
                     </Text>
                   </TouchableOpacity>
                 )}
 
-                <View style={{marginTop: 20}}>
+                <View style={{ marginTop: 20 }}>
                   <View
-                    style={[styles.Field2, {justifyContent: 'space-between'}]}>
+                    style={[styles.Field2, { justifyContent: "space-between" }]}
+                  >
                     <TouchableOpacity
                       style={{
                         width: 20,
                         height: 20,
                         borderRadius: 4,
                         backgroundColor: !iscTerms
-                          ? 'white'
+                          ? "white"
                           : theme.color.button1,
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        alignItems: "center",
+                        justifyContent: "center",
                         borderWidth: 1,
                         borderColor: theme.color.fieldBorder,
                       }}
@@ -1174,38 +1217,40 @@ function Plan(props) {
                       onPress={() => {
                         setiscTerms(!iscTerms);
                         setEmptycTerms(false);
-                      }}>
+                      }}
+                    >
                       {iscTerms && (
                         <utils.vectorIcon.FontAwesome5
-                          name={'check'}
+                          name={"check"}
                           color={theme.color.buttonText}
                           size={11}
                         />
                       )}
                     </TouchableOpacity>
 
-                    <View style={{width: '90%'}}>
+                    <View style={{ width: "90%" }}>
                       <TouchableOpacity
                         activeOpacity={0.7}
-                        onPress={TermsnCndtnClickCard}>
+                        onPress={TermsnCndtnClickCard}
+                      >
                         <Text style={styles.Field2Titlec}>
-                          I agree to Trip Trader’s{' '}
+                          I agree to Trip Trader’s{" "}
                           <Text style={styles.Field2Titlecc}>
                             Terms & Conditions
                           </Text>
                         </Text>
                       </TouchableOpacity>
-                      <Text style={[styles.Field2Titlec, {top: -3}]}>
+                      <Text style={[styles.Field2Titlec, { top: -3 }]}>
                         and understand that upon clicking “Subscribe” below, I
-                        will be charged{' '}
-                        {plan.type == 'annual'
+                        will be charged{" "}
+                        {plan.type == "annual"
                           ? `$${toFixed(totalAnually, 2)}`
-                          : `$${monthly}`}{' '}
-                        {plan.type == 'annual' ? plan.type + 'y' : plan.type}.
+                          : `$${monthly}`}{" "}
+                        {plan.type == "annual" ? plan.type + "y" : plan.type}.
                       </Text>
                     </View>
                   </View>
-                  {EmptycTerms && renderShowFieldError('cterms')}
+                  {EmptycTerms && renderShowFieldError("cterms")}
                 </View>
               </View>
 
@@ -1215,8 +1260,9 @@ function Plan(props) {
                 <Text
                   style={[
                     styles.section2bottomTitle,
-                    {color: 'rgba(17, 17, 17, 0.6)'},
-                  ]}>
+                    { color: "rgba(17, 17, 17, 0.6)" },
+                  ]}
+                >
                   Cancel and go back
                 </Text>
               </TouchableOpacity>
@@ -1232,8 +1278,8 @@ function Plan(props) {
       <>
         <StatusBar
           translucent={true}
-          backgroundColor={'transparent'}
-          barStyle={'light-content'}
+          backgroundColor={"transparent"}
+          barStyle={"light-content"}
         />
       </>
     );
@@ -1243,7 +1289,7 @@ function Plan(props) {
     <StripeProvider publishableKey={store.General.Stripe_Publish_Key}>
       <View style={styles.container}>
         <Image
-          source={require('../../assets/images/background/img.png')}
+          source={require("../../assets/images/background/img.png")}
           style={styles.container2}
         />
         <SafeAreaView style={styles.container3}>
@@ -1258,7 +1304,8 @@ function Plan(props) {
               paddingHorizontal: 15,
               marginTop: responsiveHeight(3),
             }}
-            behavior={Platform.OS == 'ios' ? 'padding' : undefined}>
+            behavior={Platform.OS == "ios" ? "padding" : undefined}
+          >
             {renderSection2()}
           </KeyboardAvoidingView>
         </SafeAreaView>
