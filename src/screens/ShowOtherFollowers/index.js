@@ -109,7 +109,7 @@ function ShowOtherFollowers(props) {
           >
             {chk == "followers"
               ? "No Followers Found"
-              : `${user.firstName} ${user.lastName} are not following anyone yet`}
+              : `Not Following Anyone Yet`}
           </Text>
         )}
       </>
@@ -223,8 +223,6 @@ function ShowOtherFollowers(props) {
       </>
     );
   };
-
-  console.log("data : ", data);
 
   return (
     <>
