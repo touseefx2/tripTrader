@@ -234,16 +234,18 @@ function NotificationsGuest({
     const isread = item.isRead || false;
     let c = false;
 
-    if (topic == "fullaccess") {
+    if (topic === "fullaccess") {
       c = true;
     }
 
     const photo =
-      title == "Get full access for free"
+      title === "Get full access for free"
         ? pswdchng
-        : title == "Welcome to Trip Trader!"
+        : title === "Welcome to Trip Trader!"
         ? profileupd
         : ntfctn;
+
+    const isDisable = title === "Welcome to Trip Trader!" ? true : false;
 
     const renderProfile = () => {
       return (
@@ -281,7 +283,6 @@ function NotificationsGuest({
                 {subtitle}{" "}
                 {c && (
                   <Text
-                    onPress={JoinNow}
                     style={{
                       color: theme.color.title,
                       fontSize: 14,
@@ -313,20 +314,25 @@ function NotificationsGuest({
     };
 
     return (
-      <View
-        style={[
-          styles.modalinfoConatiner,
-          {
-            marginTop: index == 0 ? 15 : 0,
-            borderBottomWidth: index == notifications.length - 1 ? 0.7 : 0,
-            borderBottomColor: theme.color.fieldBorder,
-            backgroundColor: isread ? theme.color.background : "#EAF1E3",
-          },
+      <Pressable
+        disabled={isDisable}
+        onPress={JoinNow}
+        style={({ pressed }) => [
+          { opacity: pressed ? 0.8 : 1.0 },
+          [
+            styles.modalinfoConatiner,
+            {
+              marginTop: index == 0 ? 15 : 0,
+              borderBottomWidth: index == notifications.length - 1 ? 0.7 : 0,
+              borderBottomColor: theme.color.fieldBorder,
+              backgroundColor: isread ? theme.color.background : "#EAF1E3",
+            },
+          ],
         ]}
       >
         {renderProfile()}
         {renderText()}
-      </View>
+      </Pressable>
     );
   };
 

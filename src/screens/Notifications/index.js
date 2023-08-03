@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,14 +11,14 @@ import {
   Modal,
   RefreshControl,
   FlatList,
-} from 'react-native';
-import {styles} from './styles';
-import {observer} from 'mobx-react';
-import store from '../../store/index';
-import utils from '../../utils/index';
-import theme from '../../theme';
-import NetInfo from '@react-native-community/netinfo';
-import moment from 'moment';
+} from "react-native";
+import { styles } from "./styles";
+import { observer } from "mobx-react";
+import store from "../../store/index";
+import utils from "../../utils/index";
+import theme from "../../theme";
+import NetInfo from "@react-native-community/netinfo";
+import moment from "moment";
 // import {FlashList} from '@shopify/flash-list';
 
 export default observer(Notifications);
@@ -52,7 +52,8 @@ function ListHeaders({
             onPress={() => {
               attemptToReadAllNotifications(onRefresh);
             }}
-            style={styles.resultContainer2}>
+            style={styles.resultContainer2}
+          >
             <Text style={styles.resultText2}>Mark all as read</Text>
           </TouchableOpacity>
         )}
@@ -64,7 +65,7 @@ function ListHeaders({
     return (
       <TouchableOpacity disabled>
         <Image
-          source={require('../../assets/images/searchBar/search/img.png')}
+          source={require("../../assets/images/searchBar/search/img.png")}
           style={styles.Baricon}
         />
       </TouchableOpacity>
@@ -73,9 +74,9 @@ function ListHeaders({
 
   const renderInput = () => {
     return (
-      <View style={{width: '91%'}}>
+      <View style={{ width: "91%" }}>
         <TextInput
-          onChangeText={c => {
+          onChangeText={(c) => {
             setsearch(c);
           }}
           value={search}
@@ -87,12 +88,13 @@ function ListHeaders({
   };
 
   return (
-    <View style={{marginHorizontal: 15}}>
+    <View style={{ marginHorizontal: 15 }}>
       <Pressable
-        style={({pressed}) => [
-          {opacity: pressed ? 0.9 : 1},
+        style={({ pressed }) => [
+          { opacity: pressed ? 0.9 : 1 },
           [styles.SerchBarContainer],
-        ]}>
+        ]}
+      >
         {renderSearch()}
         {renderInput()}
       </Pressable>
@@ -105,12 +107,12 @@ function EmptyListMessage() {
   return <Text style={styles.EmptyText}>No Notifications Found</Text>;
 }
 
-function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
-  const headerTitle = 'Notifications';
+function Notifications({ props, callingScreen, isShowModal, setIsShowModal }) {
+  const headerTitle = "Notifications";
   const windowSize = 21;
   const limit = 16;
-  const {isInternet, setSettingsGoTo, setOfferGoTo} = store.General;
-  const {user, isNotification} = store.User;
+  const { isInternet, setSettingsGoTo, setOfferGoTo } = store.General;
+  const { user, isNotification } = store.User;
   const {
     notifications,
     Loader,
@@ -122,19 +124,19 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
   } = store.Notifications;
 
   const [loadFirst, setloadFirst] = useState(false);
-  const [search, setsearch] = useState('');
+  const [search, setsearch] = useState("");
   const [getDataOnce, setgetDataOnce] = useState(false);
 
-  const setGetDataOnce = C => {
+  const setGetDataOnce = (C) => {
     setgetDataOnce(C);
   };
 
   const onRefresh = React.useCallback(() => {
-    console.log('onrefresh cal');
+    console.log("onrefresh cal");
     getDbData();
   }, []);
   const getDbData = () => {
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.Notifications.attemptToGetNotifications(user._id, setGetDataOnce);
       }
@@ -151,22 +153,22 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
     closeModal();
   };
 
-  const goToUserProfile = senderUser => {
-    store.Userv.setfscreen(callingScreen || '');
+  const goToUserProfile = (senderUser) => {
+    store.Userv.setfscreen(callingScreen || "");
     store.Userv.setUser(senderUser);
     store.Userv.addauthToken(store.User.authToken);
-    props.navigation.navigate('UserProfile');
+    props.navigation.navigate("UserProfile");
   };
 
   function compare(d, dd) {
-    let d1 = moment(d).format('YYYY-MM-DD');
-    let d2 = moment(dd).format('YYYY-MM-DD');
+    let d1 = moment(d).format("YYYY-MM-DD");
+    let d2 = moment(dd).format("YYYY-MM-DD");
     if (d2 > d1) {
-      return 'greater';
+      return "greater";
     } else if (d2 < d1) {
-      return 'smaller';
+      return "smaller";
     } else {
-      return 'equal';
+      return "equal";
     }
   }
 
@@ -177,7 +179,7 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
   }
 
   function CheckDate(d) {
-    let t = '';
+    let t = "";
     let ud = new Date(d); //update date
     let cd = new Date(); //current date
 
@@ -194,44 +196,44 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
     // console.log('updated date : ', moment(ud).format('YYYY-MM-DD hh:mm:ss a'));
     // console.log('currentdate : ', moment(cd).format('YYYY-MM-DD hh:mm:ss a'));
 
-    if (ics == 'greater') {
-      var start = moment(moment(ed).format('YYYY-MM-DD'), 'YYYY-MM-DD');
-      var end = moment(moment(sd).format('YYYY-MM-DD'), 'YYYY-MM-DD');
-      let days = start.diff(end, 'days');
+    if (ics == "greater") {
+      var start = moment(moment(ed).format("YYYY-MM-DD"), "YYYY-MM-DD");
+      var end = moment(moment(sd).format("YYYY-MM-DD"), "YYYY-MM-DD");
+      let days = start.diff(end, "days");
 
       if (days > 3) {
         if (udcy) {
-          t = moment(ud).format('MMM DD');
+          t = moment(ud).format("MMM DD");
         } else {
-          t = moment(ud).format('MMM DD, YYYY');
+          t = moment(ud).format("MMM DD, YYYY");
         }
       } else {
         if (days == 1 || days == 0) {
-          t = '1 day ago';
+          t = "1 day ago";
         }
 
         if (days == 2) {
-          t = '2 days ago';
+          t = "2 days ago";
         }
 
         if (days == 3) {
-          t = '3 days ago';
+          t = "3 days ago";
         }
       }
     } else {
       let min = diff_minutes(ed, sd);
       // console.log('minutes: ', min);
       if (min >= 0 && min <= 1) {
-        t = 'Just now';
+        t = "Just now";
       } else {
         if (min > 1 && min < 60) {
-          t = min + ' mins ago';
+          t = min + " mins ago";
         } else if (min >= 60) {
           const hours = Math.floor(min / 60);
 
           const h = hours.toFixed(0);
-          let tt = h <= 1 ? ' hour' : ' hours';
-          t = h + tt + ' ago';
+          let tt = h <= 1 ? " hour" : " hours";
+          t = h + tt + " ago";
 
           // t = moment(ud).format('hh:mm a');
         }
@@ -246,103 +248,102 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
     const notificationId = item.messageId;
     const senderUser = item.senderId || null;
 
-    if (action == '') {
-      console.log('title : ', title);
+    if (action === "") {
       if (
-        title == 'New Trip Created' ||
-        title == 'Profile Updated' ||
-        title == 'Password Changed' ||
-        title == 'Email Verification'
+        title === "New Trip Created" ||
+        title === "Profile Updated" ||
+        title === "Password Changed" ||
+        title === "Email Verification"
       ) {
-        props.navigation.navigate('MyProfile');
+        props.navigation.navigate("MyProfile");
         if (!isNotification && isInternet && !isRead) {
           store.User.attemptToGetUser();
         }
       }
 
-      if (title == 'Your review was disputed' || title == 'Profile') {
+      if (title === "Your review was disputed" || title === "Profile") {
         goToUserProfile(senderUser);
       }
     }
 
-    if (action != '') {
-      console.log('action : ', action);
+    if (action !== "") {
+      console.log("action : ", action);
       if (
-        action == 'confirmed trip' ||
-        action == 'See confirmed trips' ||
-        action == 'Review the details'
+        action === "confirmed trip" ||
+        action === "See confirmed trips" ||
+        action === "Review the details"
       ) {
-        props.navigation.navigate('ConfirmedTrips');
+        props.navigation.navigate("ConfirmedTrips");
       }
 
       if (
-        action == 'Apply for Verification' ||
-        action == 'reapply for ID Verification' ||
-        action == 'Check it out'
+        action === "Apply for Verification" ||
+        action === "reapply for ID Verification" ||
+        action === "Check it out"
       ) {
-        props.navigation.navigate('EditProfile');
+        props.navigation.navigate("EditProfile");
         if (!isNotification && isInternet && !isRead) {
           store.User.attemptToGetUser();
         }
       }
 
-      if (action == 'Read it now') {
-        props.navigation.navigate('MyProfile');
+      if (action === "Read it now") {
+        props.navigation.navigate("MyProfile");
         if (!isNotification && isInternet && !isRead) {
           store.User.attemptToGetReviews(
             store.User.user._id,
             () => {},
-            () => {},
+            () => {}
           );
         }
       }
 
-      if (action == 'See trip details') {
-        if (title.includes('posted a new trip!')) {
+      if (action === "See trip details") {
+        if (title.includes("posted a new trip!")) {
           goToUserProfile(senderUser);
-        } else if (title.includes('New offer')) {
-          props.navigation.navigate('TradeOffers'); //recieve ofer tab
-          setOfferGoTo('received');
+        } else if (title.includes("New offer")) {
+          props.navigation.navigate("TradeOffers"); //recieve ofer tab
+          setOfferGoTo("received");
           if (!isNotification && isInternet && !isRead) {
             store.Offers.attemptToGetReceiveOffers(
               () => {},
-              () => {},
+              () => {}
             );
           }
         }
       }
 
       if (
-        action == 'Leave a review' ||
-        action == 'Make new offer' ||
-        action == 'Send a message'
+        action === "Leave a review" ||
+        action === "Make new offer" ||
+        action === "Send a message"
       ) {
         goToUserProfile(senderUser);
       }
 
-      if (action == 'Read full message') {
-        props.navigation.navigate('Inbox');
+      if (action === "Read full message") {
+        props.navigation.navigate("Inbox");
         if (!isNotification && isInternet && !isRead) {
-          store.User.attemptToGetInboxes(store.User.user._id, () => {}, '');
+          store.User.attemptToGetInboxes(store.User.user._id, () => {}, "");
         }
       }
 
-      if (action == 'make an offer') {
-        props.navigation.navigate('SavedTrips');
+      if (action === "make an offer") {
+        props.navigation.navigate("SavedTrips");
       }
 
-      if (action == 'Subscribe') {
-        props.navigation.navigate('Plan');
+      if (action === "Subscribe") {
+        props.navigation.navigate("Plan");
       }
 
-      if (action == 'Manage Subscription') {
-        if (callingScreen == 'Settings') {
-          props.navigation.navigate('ManageSubscription');
-          setSettingsGoTo('');
+      if (action === "Manage Subscription") {
+        if (callingScreen === "Settings") {
+          props.navigation.navigate("ManageSubscription");
+          setSettingsGoTo("");
           return;
         }
-        setSettingsGoTo('Manage Subscription');
-        props.navigation.navigate('Settings');
+        setSettingsGoTo("Manage Subscription");
+        props.navigation.navigate("Settings");
       }
     }
 
@@ -350,107 +351,107 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
     if (!isRead && isInternet) attemptToReadNotifications(notificationId);
   };
 
-  const checkPhotoShape = title => {
+  const checkPhotoShape = (title) => {
     const shape =
-      title == 'Your offer was accepted!' ||
-      title.includes('posted a new trip!') ||
-      title == 'You have a new review' ||
-      title == 'A review for you was updated' ||
-      title == 'Don’t forget to leave a review!' ||
-      title == 'An offer was canceled' ||
-      title == 'Your offer was declined' ||
-      title.includes('New offer') ||
-      title.includes('New message') ||
-      title == ''
-        ? 'circle'
-        : title == 'A saved trip is expiring soon' ||
+      title == "Your offer was accepted!" ||
+      title.includes("posted a new trip!") ||
+      title == "You have a new review" ||
+      title == "A review for you was updated" ||
+      title == "Don’t forget to leave a review!" ||
+      title == "An offer was canceled" ||
+      title == "Your offer was declined" ||
+      title.includes("New offer") ||
+      title.includes("New message") ||
+      title == ""
+        ? "circle"
+        : title == "A saved trip is expiring soon" ||
           title.includes(`You’re hosting a trip in`) ||
           title.includes(`Your trip starts in`)
         ? // ? 'square'
-          'circle'
-        : 'normal';
+          "circle"
+        : "normal";
     return shape;
   };
 
-  const getClickableText = title => {
+  const getClickableText = (title) => {
     const check =
-      title == 'Your offer was accepted!'
-        ? 'See confirmed trips'
-        : title.includes('posted a new trip!')
-        ? 'See trip details'
-        : title == 'Trip Confirmed'
-        ? 'confirmed trip'
-        : title == 'You have a new review' ||
-          title == 'A review for you was updated'
-        ? 'Read it now'
-        : title == 'Don’t forget to leave a review!'
-        ? 'Leave a review'
-        : title == 'An offer was canceled'
-        ? 'Send a message'
-        : title.includes('New offer')
-        ? 'See trip details'
-        : title.includes('New message')
-        ? 'Read full message'
-        : title == 'Apply for ID Verification'
-        ? 'Apply for Verification'
-        : title == 'A saved trip is expiring soon'
-        ? 'make an offer'
+      title == "Your offer was accepted!"
+        ? "See confirmed trips"
+        : title.includes("posted a new trip!")
+        ? "See trip details"
+        : title == "Trip Confirmed"
+        ? "confirmed trip"
+        : title == "You have a new review" ||
+          title == "A review for you was updated"
+        ? "Read it now"
+        : title == "Don’t forget to leave a review!"
+        ? "Leave a review"
+        : title == "An offer was canceled"
+        ? "Send a message"
+        : title.includes("New offer")
+        ? "See trip details"
+        : title.includes("New message")
+        ? "Read full message"
+        : title == "Apply for ID Verification"
+        ? "Apply for Verification"
+        : title == "A saved trip is expiring soon"
+        ? "make an offer"
         : title.includes(`You’re hosting a trip in`) ||
           title.includes(`Your trip starts in`)
-        ? 'Review the details'
-        : title == 'Your next adventure awaits!'
-        ? 'Subscribe'
-        : title == 'Your subscription payment failed'
-        ? 'Manage Subscription'
-        : title == 'Your ID has been verified!'
-        ? 'Check it out'
-        : title == 'Your ID has been rejected!'
-        ? 'reapply for ID Verification'
-        : title == 'Your offer was declined'
-        ? 'Make new offer'
-        : '';
+        ? "Review the details"
+        : title == "Your next adventure awaits!"
+        ? "Subscribe"
+        : title == "Your subscription payment failed"
+        ? "Manage Subscription"
+        : title == "Your ID has been verified!"
+        ? "Check it out"
+        : title == "Your ID has been rejected!"
+        ? "reapply for ID Verification"
+        : title == "Your offer was declined"
+        ? "Make new offer"
+        : "";
 
     return check;
   };
 
-  const checkClickableTextPosition = title => {
+  const checkClickableTextPosition = (title) => {
     const pos =
       title.includes(`You’re hosting a trip in`) ||
       title.includes(`Your trip starts in`) ||
-      title == 'Your next adventure awaits!'
-        ? 'first'
-        : 'end';
+      title == "Your next adventure awaits!"
+        ? "first"
+        : "end";
     return pos;
   };
 
-  const checkLocalImage = title => {
+  const checkLocalImage = (title) => {
     const obj =
-      title == 'Password Changed'
-        ? require('../../assets/images/notification/PasswordChanged/img.png')
-        : title == 'Apply for ID Verification'
-        ? require('../../assets/images/notification/Verification/img.png')
-        : title == 'Profile Updated'
-        ? require('../../assets/images/notification/ProfileUpdated/img.png')
-        : title == 'New Trip Created' || title == 'Your next adventure awaits!'
-        ? require('../../assets/images/notification/TripCreated/img.png')
-        : title == 'Your review was disputed' ||
-          title == 'Your ID has been rejected!' ||
-          title == 'Your subscription payment failed'
-        ? require('../../assets/images/notification/Reject/img.png')
-        : title == 'Your ID has been verified!' || title == 'Email Verification'
-        ? require('../../assets/images/notification/Done/img.png')
-        : title == 'Trip Confirmed'
-        ? require('../../assets/images/notification/TripConfirmed/img.png')
+      title == "Password Changed"
+        ? require("../../assets/images/notification/PasswordChanged/img.png")
+        : title == "Apply for ID Verification"
+        ? require("../../assets/images/notification/Verification/img.png")
+        : title == "Profile Updated"
+        ? require("../../assets/images/notification/ProfileUpdated/img.png")
+        : title == "New Trip Created" || title == "Your next adventure awaits!"
+        ? require("../../assets/images/notification/TripCreated/img.png")
+        : title == "Your review was disputed" ||
+          title == "Your ID has been rejected!" ||
+          title == "Your subscription payment failed"
+        ? require("../../assets/images/notification/Reject/img.png")
+        : title == "Your ID has been verified!" || title == "Email Verification"
+        ? require("../../assets/images/notification/Done/img.png")
+        : title == "Trip Confirmed"
+        ? require("../../assets/images/notification/TripConfirmed/img.png")
         : null;
 
     return obj;
   };
 
-  const ItemView = ({item, index}) => {
-    const follwingText = 'is following you';
-    const photo = item.icon || '';
-    const title = item.title || '';
-    const subTitle = item.message || '';
+  const ItemView = ({ item, index }) => {
+    const follwingText = "is following you";
+    const photo = item.icon || "";
+    const title = item.title || "";
+    const subTitle = item.message || "";
     const create = CheckDate(item.createdAt);
     const isRead = item.isRead;
     const senderData = item.senderId || null;
@@ -459,23 +460,23 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
     const clickableTextPosition = checkClickableTextPosition(title);
     const isLocalImage = checkLocalImage(title);
     const isDisabel =
-      clickableText == '' && isRead ? true : clickableText != '' ? true : false;
+      clickableText == "" && isRead ? true : clickableText != "" ? true : false;
     let isFollow = false;
-    let userName = '';
+    let userName = "";
     if (subTitle.includes(follwingText)) {
       isFollow = true;
       if (senderData)
-        userName = senderData.firstName + ' ' + senderData.lastName;
+        userName = senderData.firstName + " " + senderData.lastName;
     }
     const iconSrc = isLocalImage
       ? isLocalImage
-      : photo !== ''
-      ? {uri: photo}
-      : require('../../assets/images/drawer/guest/img.png');
+      : photo !== ""
+      ? { uri: photo }
+      : require("../../assets/images/drawer/guest/img.png");
     const borderRadius =
-      photoSahpe == 'circle' ? 33 / 2 : photoSahpe == 'square' ? 6 : 0;
+      photoSahpe == "circle" ? 33 / 2 : photoSahpe == "square" ? 6 : 0;
     const borderWidth =
-      photoSahpe == 'circle' || photoSahpe == 'square' ? 0.7 : 0;
+      photoSahpe == "circle" || photoSahpe == "square" ? 0.7 : 0;
 
     const renderProfile = () => {
       return (
@@ -485,12 +486,13 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
               style={[
                 styles.mProfileImgContainer,
                 {
-                  width: photoSahpe == 'circle' ? 33 : 28,
-                  height: photoSahpe == 'circle' ? 33 : 28,
+                  width: photoSahpe == "circle" ? 33 : 28,
+                  height: photoSahpe == "circle" ? 33 : 28,
                   borderRadius: borderRadius,
                   borderWidth: borderWidth,
                 },
-              ]}>
+              ]}
+            >
               <Image
                 style={[
                   styles.mProfileImg,
@@ -511,13 +513,15 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
         <View style={styles.mtextContainer}>
           {isFollow && (
             <Text
-              style={[styles.notificationTitle, {color: theme.color.button1}]}>
-              {userName}{' '}
+              style={[styles.notificationTitle, { color: theme.color.button1 }]}
+            >
+              {userName}{" "}
               <Text
                 style={[
                   styles.notificationTitle,
-                  {fontFamily: theme.fonts.fontNormal},
-                ]}>
+                  { fontFamily: theme.fonts.fontNormal },
+                ]}
+              >
                 {follwingText}
               </Text>
             </Text>
@@ -525,35 +529,27 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
 
           {!isFollow && <Text style={styles.notificationTitle}>{title}</Text>}
 
-          {subTitle != '' && !isFollow && (
+          {subTitle !== "" && !isFollow && (
             <>
-              {clickableTextPosition == 'end' ? (
+              {clickableTextPosition === "end" ? (
                 <Text style={styles.notificationSubTitle}>
-                  {subTitle}{' '}
-                  <Text
-                    onPress={() => {
-                      console.log('item : ', item);
-                      onclickNotification(title, clickableText, item, isRead);
-                    }}
-                    style={styles.notificationClickSubTitle}>
+                  {subTitle}{" "}
+                  <Text style={styles.notificationClickSubTitle}>
                     {clickableText}
                   </Text>
-                  {clickableText == 'make an offer' && (
-                    <Text style={[styles.notificationSubTitle, {marginTop: 0}]}>
+                  {clickableText === "make an offer" && (
+                    <Text
+                      style={[styles.notificationSubTitle, { marginTop: 0 }]}
+                    >
                       ?
                     </Text>
                   )}
                 </Text>
               ) : (
-                <Text
-                  onPress={() => {
-                    console.log('item : ', item);
-                    onclickNotification(title, clickableText, item, isRead);
-                  }}
-                  style={[styles.notificationSubTitle, {marginTop: 0}]}>
+                <Text style={[styles.notificationSubTitle, { marginTop: 0 }]}>
                   <Text style={[styles.notificationClickSubTitle]}>
                     {clickableText}
-                  </Text>{' '}
+                  </Text>{" "}
                   {subTitle}
                 </Text>
               )}
@@ -566,7 +562,8 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
               {
                 color: isRead ? theme.color.subTitleLight : theme.color.button1,
               },
-            ]}>
+            ]}
+          >
             {create}
           </Text>
         </View>
@@ -575,27 +572,27 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
 
     return (
       <Pressable
-        disabled={clickableText}
-        onPress={() => {
+        onPress={() =>
           onclickNotification(
-            isFollow ? 'Profile' : title,
+            isFollow ? "Profile" : title,
             clickableText,
             item,
-            isRead,
-          );
-        }}
-        style={({pressed}) => [
-          {opacity: pressed ? 0.8 : 1.0},
+            isRead
+          )
+        }
+        style={({ pressed }) => [
+          { opacity: pressed ? 0.8 : 1.0 },
           [
             styles.notificationConatiner,
             {
               marginTop: index == 0 ? 15 : 0,
               borderBottomWidth: index == notifications.length - 1 ? 0.7 : 0,
               borderBottomColor: theme.color.fieldBorder,
-              backgroundColor: isRead ? theme.color.background : '#EAF1E3',
+              backgroundColor: isRead ? theme.color.background : "#EAF1E3",
             },
           ],
-        ]}>
+        ]}
+      >
         {renderProfile()}
         {renderText()}
       </Pressable>
@@ -636,7 +633,7 @@ function Notifications({props, callingScreen, isShowModal, setIsShowModal}) {
                 ListHeaderComponent={
                   <ListHeaders
                     search={search}
-                    setsearch={c => setsearch(c)}
+                    setsearch={(c) => setsearch(c)}
                     data={notifications}
                     LoaderRead={LoaderRead}
                     attemptToReadAllNotifications={
