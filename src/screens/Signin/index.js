@@ -1,46 +1,35 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
   SafeAreaView,
   TouchableOpacity,
   Image,
-  ImageBackground,
-  Linking,
   ScrollView,
   TextInput,
-  PermissionsAndroid,
-  Dimensions,
   Alert,
   Keyboard,
-  Modal,
   Platform,
-  StatusBar,
   KeyboardAvoidingView,
-} from 'react-native';
-import {styles} from './styles';
-import {inject, observer} from 'mobx-react';
-import store from '../../store/index';
-import utils from '../../utils/index';
-import theme from '../../theme';
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from 'react-native-responsive-dimensions';
-import Toast from 'react-native-easy-toast';
-import NetInfo from '@react-native-community/netinfo';
+} from "react-native";
+import { styles } from "./styles";
+import { observer } from "mobx-react";
+import store from "../../store/index";
+import utils from "../../utils/index";
+import theme from "../../theme";
+import { responsiveHeight } from "react-native-responsive-dimensions";
+import Toast from "react-native-easy-toast";
+import NetInfo from "@react-native-community/netinfo";
 
 export default observer(Signin);
 function Signin(props) {
-  const mobileReg = /^[0][3]\d{9}$/;
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
-  const cnicReg = /\d{5}\d{8}\d/;
 
   const toast = useRef(null);
-  const toastduration = 700;
+
   let loader = store.User.regLoader;
-  let em = store.User.email || '';
-  let pwd = store.User.pswd || '';
+  let em = store.User.email || "";
+  let pwd = store.User.pswd || "";
   let sp = store.User.sp || false;
 
   const [email, setemail] = useState(em);
@@ -54,7 +43,7 @@ function Signin(props) {
 
   const [savePswd, setsavePswd] = useState(sp);
 
-  const [errorMessage, seterrorMessage] = useState('');
+  const [errorMessage, seterrorMessage] = useState("");
 
   const goBack = () => {
     props.navigation.goBack();
@@ -67,7 +56,7 @@ function Signin(props) {
     setEmptypswd(false);
   };
 
-  const setErrMessage = c => {
+  const setErrMessage = (c) => {
     seterrorMessage(c);
   };
 
@@ -75,83 +64,46 @@ function Signin(props) {
     clearAllField();
     Keyboard.dismiss();
 
-    if (email == '') {
+    if (email.trim() === "") {
       setEmptyemail(true);
       return;
     }
 
-    if (emailReg.test(email) === false) {
+    if (emailReg.test(email.trim()) === false) {
       setinvalidemail(true);
       return;
     }
 
-    if (pswd == '') {
+    if (pswd === "") {
       setEmptypswd(true);
       return;
     }
 
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         const body = {
-          email: email.toLowerCase(),
+          email: email.trim().toLowerCase(),
           password: pswd,
           registrationCode: store.User.notificationToken,
         };
         store.User.LoginUser(body, savePswd, setErrMessage);
       } else {
-        // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
 
-  const renderHeader = () => {
-    const renderLogo = () => {
-      return (
-        <View style={styles.section1}>
-          <Image
-            style={styles.logo}
-            source={require('../../assets/images/logo/img.png')}
-          />
-          <Text style={styles.title1}>{store.General.AppName}</Text>
-        </View>
-      );
-    };
-
-    const renderBack = () => {
-      return (
-        <TouchableOpacity
-          activeOpacity={0.7}
-          onPress={goBack}
-          style={{position: 'absolute', left: 20}}>
-          <utils.vectorIcon.Ionicons
-            name={'chevron-back-outline'}
-            color={theme.color.buttonText}
-            size={25}
-          />
-        </TouchableOpacity>
-      );
-    };
-
-    return (
-      <View style={styles.Header}>
-        {renderLogo()}
-        {renderBack()}
-      </View>
-    );
-  };
-
   const renderSection2 = () => {
-    const enterEmail = t => {
+    const enterEmail = (t) => {
       setinvalidemail(false);
       setEmptyemail(false);
       setemail(t);
     };
 
-    const enterPaswd = t => {
+    const enterPaswd = (t) => {
       setinvalidpswd(false);
       setEmptypswd(false);
-      setpswd(t);
+      setpswd(t.trim());
     };
 
     const showPasswd = () => {
@@ -163,11 +115,11 @@ function Signin(props) {
     };
 
     const forgotPswd = () => {
-      props.navigation.navigate('ForgotPasswords', {screen: 'signin'});
+      props.navigation.navigate("ForgotPasswords", { screen: "signin" });
     };
 
     const goToSignup = () => {
-      props.navigation.navigate('Signup');
+      props.navigation.navigate("Signup");
     };
 
     const renderButton = () => {
@@ -176,30 +128,31 @@ function Signin(props) {
           <TouchableOpacity
             onPress={Signin}
             activeOpacity={0.7}
-            style={styles.BottomButton}>
+            style={styles.BottomButton}
+          >
             <Text style={styles.buttonTextBottom}>sign in</Text>
           </TouchableOpacity>
         </>
       );
     };
 
-    const renderShowFieldError = c => {
-      let text = '';
+    const renderShowFieldError = (c) => {
+      let text = "";
 
-      if (c == 'email') {
+      if (c == "email") {
         text = invalidemail
-          ? 'Email contains invalid characters'
+          ? "Email contains invalid characters"
           : Emptyemail
-          ? 'Please enter email'
-          : '';
+          ? "Please enter email"
+          : "";
       }
 
-      if (c == 'pswd') {
+      if (c == "pswd") {
         text = invalidpswd
-          ? 'Password must contains 8 or more characters'
+          ? "Password must contains 8 or more characters"
           : Emptypswd
-          ? 'Please enter password'
-          : '';
+          ? "Please enter password"
+          : "";
       }
 
       return (
@@ -214,7 +167,7 @@ function Signin(props) {
         <ScrollView showsVerticalScrollIndicator={false}>
           <Text style={styles.section2Title1}>Sign in</Text>
 
-          <View style={[styles.Field, {marginTop: 25}]}>
+          <View style={[styles.Field, { marginTop: 25 }]}>
             <Text style={styles.FieldTitle1}>email address</Text>
             <TextInput
               placeholder=""
@@ -230,7 +183,7 @@ function Signin(props) {
                 },
               ]}
             />
-            {(invalidemail || Emptyemail) && renderShowFieldError('email')}
+            {(invalidemail || Emptyemail) && renderShowFieldError("email")}
           </View>
 
           <View style={styles.Field}>
@@ -243,30 +196,31 @@ function Signin(props) {
                     invalidpswd || Emptypswd
                       ? theme.color.fieldBordeError
                       : theme.color.fieldBorder,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 },
-              ]}>
+              ]}
+            >
               <TextInput
                 onChangeText={enterPaswd}
                 secureTextEntry={!showPaswd}
                 placeholder=""
                 value={pswd}
-                style={{width: '85%'}}
+                style={{ width: "85%" }}
               />
 
               {pswd.length > 0 && (
                 <TouchableOpacity activeOpacity={0.5} onPress={showPasswd}>
                   {!showPaswd && (
                     <Image
-                      style={{width: 20, height: 12, resizeMode: 'contain'}}
-                      source={require('../../assets/images/sp/img.png')}
+                      style={{ width: 20, height: 12, resizeMode: "contain" }}
+                      source={require("../../assets/images/sp/img.png")}
                     />
                   )}
                   {showPaswd && (
                     <utils.vectorIcon.Ionicons
-                      name={'eye-off-outline'}
+                      name={"eye-off-outline"}
                       color={theme.color.button1}
                       size={20}
                     />
@@ -275,7 +229,7 @@ function Signin(props) {
               )}
             </View>
 
-            {(invalidpswd || Emptypswd) && renderShowFieldError('pswd')}
+            {(invalidpswd || Emptypswd) && renderShowFieldError("pswd")}
           </View>
 
           <View style={styles.Field2}>
@@ -284,17 +238,18 @@ function Signin(props) {
                 width: 20,
                 height: 20,
                 borderRadius: 4,
-                backgroundColor: !savePswd ? 'white' : theme.color.button1,
-                alignItems: 'center',
-                justifyContent: 'center',
+                backgroundColor: !savePswd ? "white" : theme.color.button1,
+                alignItems: "center",
+                justifyContent: "center",
                 borderWidth: 1,
                 borderColor: theme.color.fieldBorder,
               }}
               activeOpacity={0.5}
-              onPress={savePaswd}>
+              onPress={savePaswd}
+            >
               {savePswd && (
                 <utils.vectorIcon.FontAwesome5
-                  name={'check'}
+                  name={"check"}
                   color={theme.color.buttonText}
                   size={11}
                 />
@@ -325,7 +280,7 @@ function Signin(props) {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../../assets/images/background/img.png')}
+        source={require("../../assets/images/background/img.png")}
         style={styles.container2}
       />
       <SafeAreaView style={styles.container3}>
@@ -337,7 +292,8 @@ function Signin(props) {
             paddingHorizontal: 15,
             marginTop: responsiveHeight(3),
           }}
-          behavior={Platform.OS == 'ios' ? 'padding' : undefined}>
+          behavior={Platform.OS == "ios" ? "padding" : undefined}
+        >
           {renderSection2()}
         </KeyboardAvoidingView>
       </SafeAreaView>
