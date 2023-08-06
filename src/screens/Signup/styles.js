@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
     borderRadius: 15,
     marginBottom: responsiveHeight(1.9),
     paddingHorizontal: 15,
-    paddingVertical: responsiveHeight(1.9),
+    paddingVertical: responsiveHeight(1),
   },
   section2Title1: {
     color: theme.color.title,
@@ -132,7 +132,7 @@ export const styles = StyleSheet.create({
     fontFamily: theme.fonts.fontNormal,
   },
 
-  Field: {marginTop: responsiveHeight(2.1)},
+  Field: {marginTop: responsiveHeight(1.9)},
   FieldTitle1: {
     color: theme.color.titleGreenForm,
     fontSize: responsiveFontSize(1.7),
@@ -186,7 +186,7 @@ export const styles = StyleSheet.create({
   },
 
   Field3: {
-    marginTop: responsiveHeight(2.4),
+    marginTop: responsiveHeight(2),
     alignItems: 'center',
     justifyContent: 'center',
   },

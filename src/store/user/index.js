@@ -2609,14 +2609,14 @@ class user {
     this.setregLoader(true);
 
     try {
-      let resp = await axios.post(`${db.apis.BASE_URL}${db.apis.BUY_PLAN}`, {
+      const resp = await axios.post(`${db.apis.BASE_URL}${db.apis.BUY_PLAN}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(body),
       });
-      // this.setregLoader(false);
+
       console.log(`response Buy Plan   ${db.apis.BUY_PLAN} : `, resp.data);
       let rsp = resp?.data;
       let cid = rsp?.customerId; //customer id
@@ -2625,15 +2625,14 @@ class user {
     } catch (err) {
       this.setregLoader(false);
       store.General.checkServer(err);
-
-      let msg = err.response.data.message || err.response.status || err;
+      const msg = err.response.data.message || err.response.status || err;
       console.log(`Error in Buy Plan ${db.apis.BUY_PLAN} : `, msg);
       if (msg == 503 || msg == 500) {
         Alert.alert("", "Server not response");
-        // store.General.setisServerError(true);
+
         return;
       }
-      // seterror(msg.toString())
+
       Alert.alert("", msg.toString());
     }
   }
