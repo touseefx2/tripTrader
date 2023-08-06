@@ -143,8 +143,9 @@ export const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 10,
     borderWidth: 1,
-    height: responsiveHeight(6.1),
+    height: responsiveHeight(5.8),
     borderRadius: 8,
+    paddingVertical:2
   },
   FieldInputCard: {
     borderWidth: 1,

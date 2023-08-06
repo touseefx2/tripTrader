@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Alert,
   BackHandler,
@@ -27,23 +27,23 @@ import {
 } from 'react-native-responsive-dimensions';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import NetInfo from '@react-native-community/netinfo';
-import {Image as ImageCompressor} from 'react-native-compressor';
+import { Image as ImageCompressor } from 'react-native-compressor';
 import DatePicker from 'react-native-date-picker';
 import Toast from 'react-native-easy-toast';
 import IntentLauncher from 'react-native-intent-launcher';
 import * as RNLocalize from 'react-native-localize';
-import {check, PERMISSIONS, request} from 'react-native-permissions';
-import {observer} from 'mobx-react';
+import { check, PERMISSIONS, request } from 'react-native-permissions';
+import { observer } from 'mobx-react';
 import moment from 'moment';
-import {styles} from './styles';
+import { styles } from './styles';
 import store from '../../store/index';
 import theme from '../../theme';
 import utils from '../../utils/index';
-import {Notification} from '../../services/Notification';
+import { Notification } from '../../services/Notification';
 
 export default observer(Signup);
 function Signup(props) {
-  const {confirmPayment} = useStripe();
+  const { confirmPayment } = useStripe();
 
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
   const toast = useRef(null);
@@ -89,6 +89,12 @@ function Signup(props) {
   const [Emptypswd, setEmptypswd] = useState(false);
   const [invalidpswd, setinvalidpswd] = useState(false);
   const [showPaswd, setshowPaswd] = useState(false);
+
+  const [cpswd, setcpswd] = useState('');
+  const [Emptycpswd, setEmptycpswd] = useState(false);
+  const [invalidcpswd, setinvalidcpswd] = useState(false);
+  const [showcPaswd, setshowcPaswd] = useState(false);
+
 
   const [isShowGalleryPrmsn, setisShowGalleryPrmsn] = useState(false);
   const [isShowCameraPrmsn, setisShowCameraPrmsn] = useState(false);
@@ -478,6 +484,18 @@ function Signup(props) {
       return;
     }
 
+    if (cpswd === '') {
+      setEmptycpswd(true);
+      return;
+    }
+
+    if (cpswd !== pswd) {
+      setinvalidcpswd(true);
+      return;
+    }
+
+
+
     if (isTerms == false) {
       setEmptyTerms(true);
       return;
@@ -606,30 +624,30 @@ function Signup(props) {
       }
       let subscription = !isPromoApply
         ? {
-            title: plan.type,
-            charges: plan.charges,
-            discount: plan.discount,
-            startDate: new Date(),
-            endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
-            amtPaid: tv,
-            status: 'active',
-            lastDigit: ld,
-            cardBrand: ct,
-          }
+          title: plan.type,
+          charges: plan.charges,
+          discount: plan.discount,
+          startDate: new Date(),
+          endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
+          amtPaid: tv,
+          status: 'active',
+          lastDigit: ld,
+          cardBrand: ct,
+        }
         : {
-            title: plan.type,
-            charges: plan.charges,
-            discount: plan.discount,
-            startDate: new Date(),
-            endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
-            amtPaid: tv,
-            status: 'active',
-            promoCode: isPromoApply.code,
-            promoCodeDiscount: isPromoApply.discount,
-            promoCodeDiscountAmt: pda,
-            lastDigit: ld,
-            cardBrand: ct,
-          };
+          title: plan.type,
+          charges: plan.charges,
+          discount: plan.discount,
+          startDate: new Date(),
+          endDate: addMonths(new Date(), plan.type == 'annual' ? 12 : 1),
+          amtPaid: tv,
+          status: 'active',
+          promoCode: isPromoApply.code,
+          promoCodeDiscount: isPromoApply.discount,
+          promoCodeDiscountAmt: pda,
+          lastDigit: ld,
+          cardBrand: ct,
+        };
 
       const obj = {
         subscription: subscription,
@@ -657,10 +675,10 @@ function Signup(props) {
 
   const SucGetClientsecret = async (dt, obj) => {
     try {
-      const {error, paymentIntent} = await confirmPayment(dt.cs, {
+      const { error, paymentIntent } = await confirmPayment(dt.cs, {
         paymentMethodType: 'Card', //strip > 0.5.0
         // type: 'Card', //stripe <= 0.5.0
-        billingDetails: {name: cn},
+        billingDetails: { name: cn },
       });
 
       if (error) {
@@ -814,7 +832,7 @@ function Signup(props) {
         if (resp.length > 0) {
           const res = resp[0];
 
-          const {path, mime, fileName} = res;
+          const { path, mime, fileName } = res;
           let uri = path;
           if (Platform.OS == 'android' && apiLevel < 29) {
             uri = 'file://' + uri;
@@ -1037,24 +1055,24 @@ function Signup(props) {
       text = invalidfn
         ? 'First name is invalid'
         : Emptyfn
-        ? 'Please enter a first name'
-        : '';
+          ? 'Please enter a first name'
+          : '';
     }
 
     if (c == 'ln') {
       text = invalidln
         ? 'Last name is invalid'
         : Emptyln
-        ? 'Please enter a last name'
-        : '';
+          ? 'Please enter a last name'
+          : '';
     }
 
     if (c == 'email') {
       text = invalidemail
         ? 'Email contains invalid characters'
         : Emptyemail
-        ? 'Please enter email'
-        : '';
+          ? 'Please enter email'
+          : '';
     }
 
     if (c == 'dob') {
@@ -1065,9 +1083,19 @@ function Signup(props) {
       text = invalidpswd
         ? 'Password must contains 8 or more characters'
         : Emptypswd
-        ? 'Please enter password'
-        : '';
+          ? 'Please enter password'
+          : '';
     }
+
+
+    if (c === 'cpswd') {
+      text = invalidcpswd
+        ? `Confirm password dosen't match`
+        : Emptycpswd
+          ? 'Please enter confirm password'
+          : '';
+    }
+
 
     if (c == 'terms') {
       text = EmptyTerms ? 'Agreeing to Terms and Conditions is required' : '';
@@ -1126,6 +1154,16 @@ function Signup(props) {
       setshowPaswd(!showPaswd);
     };
 
+    const entercPaswd = t => {
+      setinvalidcpswd(false);
+      setEmptycpswd(false);
+      setcpswd(t);
+    };
+
+    const showcPasswd = () => {
+      setshowcPaswd(!showcPaswd);
+    };
+
     const changeTerms = () => {
       setEmptyTerms(false);
       setisTerms(!isTerms);
@@ -1167,9 +1205,9 @@ function Signup(props) {
           <View
             style={[
               styles.joinFieldContainer,
-              {marginTop: responsiveHeight(2.1)},
+              { marginTop: responsiveHeight(0.5) },
             ]}>
-            <View style={[styles.Field, {width: '48%'}]}>
+            <View style={[styles.Field, { width: '48%' }]}>
               <Text style={styles.FieldTitle1}>first name</Text>
               <TextInput
                 placeholder=""
@@ -1188,7 +1226,7 @@ function Signup(props) {
               {(invalidfn || Emptyfn) && renderShowFieldError('fn')}
             </View>
 
-            <View style={[styles.Field, {width: '48%'}]}>
+            <View style={[styles.Field, { width: '48%' }]}>
               <Text style={styles.FieldTitle1}>last name</Text>
               <TextInput
                 value={ln}
@@ -1228,7 +1266,7 @@ function Signup(props) {
           </View>
 
           <View style={styles.Field}>
-            <Text style={[styles.FieldTitle1, {textTransform: 'none'}]}>
+            <Text style={[styles.FieldTitle1, { textTransform: 'none' }]}>
               Date of Birth
             </Text>
             <TouchableOpacity
@@ -1245,7 +1283,7 @@ function Signup(props) {
                   alignItems: 'center',
                 },
               ]}>
-              <View style={{width: '85%'}}>
+              <View style={{ width: '85%' }}>
                 {dob == '' && (
                   <Text style={styles.DateTextPlaceholder}>mm / dd / yyyy</Text>
                 )}
@@ -1284,14 +1322,18 @@ function Signup(props) {
                 onChangeText={enterPaswd}
                 secureTextEntry={!showPaswd}
                 placeholder=""
-                style={{width: '85%'}}
+                style={{
+                  width: '85%',
+                  height: responsiveHeight(5.8),
+                  paddingVertical: 2
+                }}
               />
 
               {pswd.length > 0 && (
                 <TouchableOpacity activeOpacity={0.5} onPress={showPasswd}>
                   {!showPaswd && (
                     <Image
-                      style={{width: 20, height: 12, resizeMode: 'contain'}}
+                      style={{ width: 20, height: 12, resizeMode: 'contain' }}
                       source={require('../../assets/images/sp/img.png')}
                     />
                   )}
@@ -1308,6 +1350,56 @@ function Signup(props) {
 
             {(invalidpswd || Emptypswd) && renderShowFieldError('pswd')}
           </View>
+
+          <View style={styles.Field}>
+            <Text style={styles.FieldTitle1}>Confirm Password</Text>
+            <View
+              style={[
+                styles.FieldInput,
+                {
+                  borderColor:
+                    invalidcpswd || Emptycpswd
+                      ? theme.color.fieldBordeError
+                      : theme.color.fieldBorder,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                },
+              ]}>
+              <TextInput
+                value={cpswd}
+                onChangeText={entercPaswd}
+                secureTextEntry={!showcPaswd}
+                placeholder=""
+                style={{
+                  width: '85%',
+                  height: responsiveHeight(5.8),
+                  paddingVertical: 2
+                }}
+              />
+
+              {cpswd.length > 0 && (
+                <TouchableOpacity activeOpacity={0.5} onPress={showcPasswd}>
+                  {!showcPaswd && (
+                    <Image
+                      style={{ width: 20, height: 12, resizeMode: 'contain' }}
+                      source={require('../../assets/images/sp/img.png')}
+                    />
+                  )}
+                  {showcPaswd && (
+                    <utils.vectorIcon.Ionicons
+                      name={'eye-off-outline'}
+                      color={theme.color.button1}
+                      size={20}
+                    />
+                  )}
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {(invalidcpswd || Emptycpswd) && renderShowFieldError('cpswd')}
+          </View>
+
 
           <View style={styles.Field}>
             <View style={styles.Field2}>
@@ -1337,7 +1429,7 @@ function Signup(props) {
                 <Text
                   style={[
                     styles.Field2Title,
-                    {textDecorationLine: 'underline', marginLeft: 0},
+                    { textDecorationLine: 'underline', marginLeft: 0 },
                   ]}>
                   Terms & Conditions
                 </Text>
@@ -1348,7 +1440,7 @@ function Signup(props) {
 
           {renderButton()}
           <View style={styles.Field3}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.Field31Title1}>Already a member?</Text>
               <TouchableOpacity activeOpacity={0.7} onPress={goToSignin}>
                 <Text style={styles.Field31Title2}>Sign in</Text>
@@ -1453,7 +1545,7 @@ function Signup(props) {
               }
             }}
             activeOpacity={0.7}
-            style={[styles.BottomButton, {marginTop: 40}]}>
+            style={[styles.BottomButton, { marginTop: 40 }]}>
             {c == 'Profile' && (
               <Text style={styles.buttonTextBottom}>
                 {photo == '' ? 'Continue' : 'Confirm & Continue'}
@@ -1544,9 +1636,9 @@ function Signup(props) {
             activeOpacity={0.9}
             style={[
               styles.BottomButton,
-              {marginTop: 0, width: '60%', height: 55},
+              { marginTop: 0, width: '60%', height: 55 },
             ]}>
-            <Text style={[styles.buttonTextBottom, {fontSize: 14}]}>
+            <Text style={[styles.buttonTextBottom, { fontSize: 14 }]}>
               choose {plan.type} plan
             </Text>
           </TouchableOpacity>
@@ -1689,7 +1781,7 @@ function Signup(props) {
         {isPhoto1Upload == 0 && !isShowCameraPrmsn && !isShowGalleryPrmsn && (
           <View style={styles.section2}>
             <ScrollView showsVerticalScrollIndicator={false}>
-              <View style={{alignItems: 'center', justifyContent: 'center'}}>
+              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={styles.section2Title1}>
                   {photo == '' ? 'add' : 'review'} profile photo
                 </Text>
@@ -1737,7 +1829,7 @@ function Signup(props) {
                     style={styles.imageContainerP}
                     activeOpacity={0.7}
                     onPress={() => onclickImage('profileV')}>
-                    <Image source={{uri: photo.uri}} style={styles.imageP} />
+                    <Image source={{ uri: photo.uri }} style={styles.imageP} />
                   </TouchableOpacity>
                 )}
               </View>
@@ -1758,7 +1850,7 @@ function Signup(props) {
         {isPhoto1Upload == 1 && !isShowCameraPrmsn && !isShowGalleryPrmsn && (
           <View style={styles.section2}>
             <ScrollView showsVerticalScrollIndicator={false}>
-              <View style={{alignItems: 'center', justifyContent: 'center'}}>
+              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={styles.section2Title1}>
                   {cnicFrontImage == ''
                     ? 'verify identity'
@@ -1809,7 +1901,7 @@ function Signup(props) {
                       activeOpacity={0.7}
                       onPress={() => onclickImage('cnicFV')}>
                       <Image
-                        source={{uri: cnicFrontImage.uri}}
+                        source={{ uri: cnicFrontImage.uri }}
                         style={styles.image}
                       />
                     </TouchableOpacity>
@@ -1833,7 +1925,7 @@ function Signup(props) {
         {(isShowCameraPrmsn || isShowGalleryPrmsn) && (
           <View style={styles.section2}>
             <ScrollView showsVerticalScrollIndicator={false}>
-              <View style={{alignItems: 'center', justifyContent: 'center'}}>
+              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={styles.section2Title1}>
                   {isShowCameraPrmsn ? 'Camera Access' : 'Storage Access'}
                 </Text>
@@ -1850,7 +1942,7 @@ function Signup(props) {
                 <Text
                   style={[
                     styles.section2LogoTitle,
-                    {textAlign: 'center', width: '90%', alignSelf: 'center'},
+                    { textAlign: 'center', width: '90%', alignSelf: 'center' },
                   ]}>
                   {isShowCameraPrmsn
                     ? 'Trip Trader wants permission to access your camera.'
@@ -1875,7 +1967,7 @@ function Signup(props) {
                   ellipsizeMode="tail"
                   style={[
                     styles.section2Title1,
-                    {textTransform: 'none', alignSelf: 'flex-start'},
+                    { textTransform: 'none', alignSelf: 'flex-start' },
                   ]}>
                   Choose a plan
                 </Text>
@@ -1883,7 +1975,7 @@ function Signup(props) {
                 <Text
                   style={[
                     styles.section2LogoTitle2c,
-                    {alignSelf: 'flex-start'},
+                    { alignSelf: 'flex-start' },
                   ]}>
                   Unlock all features with a subscription.
                 </Text>
@@ -1900,7 +1992,7 @@ function Signup(props) {
                 }}
               />
 
-              <View style={{marginTop: 7}}>
+              <View style={{ marginTop: 7 }}>
                 {plans && plans.data && (
                   <>
                     <View
@@ -1915,9 +2007,9 @@ function Signup(props) {
 
                 {plan && (
                   <>
-                    <View style={{marginTop: 20}}>
+                    <View style={{ marginTop: 20 }}>
                       <View
-                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                        style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Text
                           style={{
                             fontSize: 26,
@@ -1989,7 +2081,7 @@ function Signup(props) {
                       )}
                     </View>
                     {plan.features.length > 0 && (
-                      <View style={{marginTop: 20}}>{renderPlanDetails()}</View>
+                      <View style={{ marginTop: 20 }}>{renderPlanDetails()}</View>
                     )}
                   </>
                 )}
@@ -2038,7 +2130,7 @@ function Signup(props) {
                   ellipsizeMode="tail"
                   style={[
                     styles.section2Title1,
-                    {textTransform: 'none', alignSelf: 'flex-start'},
+                    { textTransform: 'none', alignSelf: 'flex-start' },
                   ]}>
                   Payment Information
                 </Text>
@@ -2046,7 +2138,7 @@ function Signup(props) {
                 <Text
                   style={[
                     styles.section2LogoTitle2c,
-                    {alignSelf: 'flex-start', marginTop: 5},
+                    { alignSelf: 'flex-start', marginTop: 5 },
                   ]}>
                   Your subscription will start after you make your first payment
                   below.
@@ -2082,8 +2174,8 @@ function Signup(props) {
                       ]}>
                       {plan.type == 'annual'
                         ? `$${toFixed(totalAnually, 2)} ($${annualy.toFixed(
-                            2,
-                          )} /mo)`
+                          2,
+                        )} /mo)`
                         : `$${monthly} /mo`}
                     </Text>
                   )}
@@ -2334,7 +2426,7 @@ function Signup(props) {
                   <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() => setisShowPromoFiled(true)}
-                    style={{marginTop: 20}}>
+                    style={{ marginTop: 20 }}>
                     <Text
                       style={{
                         fontSize: 12,
@@ -2347,9 +2439,9 @@ function Signup(props) {
                   </TouchableOpacity>
                 )}
 
-                <View style={{marginTop: 20}}>
+                <View style={{ marginTop: 20 }}>
                   <View
-                    style={[styles.Field2, {justifyContent: 'space-between'}]}>
+                    style={[styles.Field2, { justifyContent: 'space-between' }]}>
                     <TouchableOpacity
                       style={{
                         width: 20,
@@ -2377,7 +2469,7 @@ function Signup(props) {
                       )}
                     </TouchableOpacity>
 
-                    <View style={{width: '90%'}}>
+                    <View style={{ width: '90%' }}>
                       <TouchableOpacity
                         activeOpacity={0.7}
                         onPress={TermsnCndtnClickCard}>
@@ -2388,7 +2480,7 @@ function Signup(props) {
                           </Text>
                         </Text>
                       </TouchableOpacity>
-                      <Text style={[styles.Field2Titlec, {top: -3}]}>
+                      <Text style={[styles.Field2Titlec, { top: -3 }]}>
                         and understand that upon clicking “Subscribe” below, I
                         will be charged{' '}
                         {plan.type == 'annual'
@@ -2408,7 +2500,7 @@ function Signup(props) {
                 <Text
                   style={[
                     styles.section2bottomTitle,
-                    {color: 'rgba(17, 17, 17, 0.6)'},
+                    { color: 'rgba(17, 17, 17, 0.6)' },
                   ]}>
                   Cancel and go back
                 </Text>
@@ -2421,7 +2513,7 @@ function Signup(props) {
         {isPhoto1Upload == 4 && (
           <View style={styles.section2}>
             <ScrollView showsVerticalScrollIndicator={false}>
-              <View style={{alignItems: 'center', justifyContent: 'center'}}>
+              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                 <Text
                   numberOfLines={1}
                   ellipsizeMode="tail"
@@ -2446,7 +2538,7 @@ function Signup(props) {
                 <Text
                   style={[
                     styles.section2LogoTitle2c,
-                    {color: theme.color.subTitleAuth, textAlign: 'center'},
+                    { color: theme.color.subTitleAuth, textAlign: 'center' },
                   ]}>
                   Good luck on your trips and trades!
                 </Text>
