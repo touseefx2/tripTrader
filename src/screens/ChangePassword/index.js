@@ -1,66 +1,52 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
   SafeAreaView,
   TouchableOpacity,
   Image,
-  TouchableHighlight,
-  StatusBar,
-  BackHandler,
   Alert,
-  Linking,
-  PermissionsAndroid,
   Platform,
-  Dimensions,
   KeyboardAvoidingView,
   TextInput,
+  ScrollView,
   Keyboard,
-} from 'react-native';
-// import Geolocation from 'react-native-geolocation-service';
-// import Geocoder from 'react-native-geocoding';
-import {styles} from './styles';
-import {observer} from 'mobx-react';
-import store from '../../store/index';
-import utils from '../../utils/index';
-import theme from '../../theme';
-
-import NetInfo from '@react-native-community/netinfo';
-import Toast from 'react-native-easy-toast';
-
-import {ScrollView} from 'react-native-gesture-handler';
+} from "react-native";
+import { styles } from "./styles";
+import { observer } from "mobx-react";
+import store from "../../store/index";
+import utils from "../../utils/index";
+import theme from "../../theme";
+import NetInfo from "@react-native-community/netinfo";
+import Toast from "react-native-easy-toast";
+import { responsiveHeight } from "react-native-responsive-dimensions";
 
 export default observer(ChangePassword);
 
 function ChangePassword(props) {
   const toast = useRef(null);
   const toastduration = 700;
-  let headerTitle = 'Change Password';
+  let headerTitle = "Change Password";
 
   let internet = store.General.isInternet;
   let user = store.User.user;
 
   const loader = store.User.regLoader;
 
-  const [np, setnp] = useState('');
+  const [np, setnp] = useState("");
   const [Emptynp, setEmptynp] = useState(false);
   const [snp, setsnp] = useState(false);
   const [invalidnp, setinvalidnp] = useState(false);
 
-  const [cp, setcp] = useState('');
+  const [cp, setcp] = useState("");
   const [Emptycp, setEmptycp] = useState(false);
   const [scp, setscp] = useState(false);
   const [invalidCP, setinvalidCP] = useState(false);
 
-  const [currentp, setcurrentp] = useState('');
+  const [currentp, setcurrentp] = useState("");
   const [Emptycurrentp, setEmptycurrentp] = useState(false);
   const [scurrentp, setscurrentp] = useState(false);
   const [invalidcurrentp, setinvalidcurrentp] = useState(false);
-
-  const [errorMessage, seterrorMessage] = useState('');
-  const setErrMessage = c => {
-    seterrorMessage(c);
-  };
 
   const clearAllField = () => {
     setinvalidCP(false);
@@ -69,37 +55,28 @@ function ChangePassword(props) {
     setEmptycp(false);
     setinvalidcurrentp(false);
     setEmptycurrentp(false);
-    seterrorMessage('');
-  };
-
-  const goBack = () => {
-    props.navigation.goBack();
   };
 
   const showToast = () => {
-    toast?.current?.show('Password update successfully', 1000);
-    setcurrentp('');
-    setcp('');
-    setnp('');
+    toast?.current?.show("Password update successfully", 1000);
+    setcurrentp("");
+    setcp("");
+    setnp("");
     setscurrentp(false);
     setscp(false);
     setsnp(false);
-  };
-
-  const setInvalidCurrentP = c => {
-    setinvalidcurrentp(c);
   };
 
   const updatePassword = () => {
     clearAllField();
     Keyboard.dismiss();
 
-    if (currentp == '') {
+    if (currentp === "") {
       setEmptycurrentp(true);
       return;
     }
 
-    if (np == '') {
+    if (np === "") {
       setEmptynp(true);
       return;
     }
@@ -109,7 +86,7 @@ function ChangePassword(props) {
       return;
     }
 
-    if (cp == '') {
+    if (cp === "") {
       setEmptycp(true);
       return;
     }
@@ -119,7 +96,7 @@ function ChangePassword(props) {
       return;
     }
 
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         let body = {
           email: store.User.user.email.toLowerCase(),
@@ -128,37 +105,36 @@ function ChangePassword(props) {
           confirmPassword: cp,
         };
         store.User.changePasword(body, showToast, () =>
-          setinvalidcurrentp(true),
+          setinvalidcurrentp(true)
         );
       } else {
-        // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
 
   const forgotPswd = () => {
     Keyboard.dismiss();
-    props.navigation.navigate('ForgotPassword', {screen: 'cp'});
+    props.navigation.navigate("ForgotPassword", { screen: "cp" });
   };
 
   const renderMain = () => {
-    const enterCrntp = t => {
+    const enterCrntp = (t) => {
       setEmptycurrentp(false);
       setinvalidcurrentp(false);
-      setcurrentp(t);
+      setcurrentp(t.trim());
     };
 
-    const enterNp = t => {
+    const enterNp = (t) => {
       setEmptynp(false);
       setinvalidnp(false);
-      setnp(t);
+      setnp(t.trim());
     };
 
-    const enterCp = t => {
+    const enterCp = (t) => {
       setEmptycp(false);
       setinvalidCP(false);
-      setcp(t);
+      setcp(t.trim());
     };
 
     const renderButton = () => {
@@ -167,46 +143,39 @@ function ChangePassword(props) {
           <TouchableOpacity
             onPress={updatePassword}
             activeOpacity={0.7}
-            style={styles.BottomButton}>
+            style={styles.BottomButton}
+          >
             <Text style={styles.buttonTextBottom}>update password</Text>
           </TouchableOpacity>
         </>
       );
     };
 
-    const renderShowError = () => {
-      return (
-        <View style={styles.errorMessageContainer}>
-          <Text style={styles.errorMessageText}>{errorMessage}</Text>
-        </View>
-      );
-    };
+    const renderShowFieldError = (c) => {
+      let text = "";
 
-    const renderShowFieldError = c => {
-      let text = '';
-
-      if (c == 'np') {
+      if (c == "np") {
         text = Emptynp
-          ? 'Please enter new password'
+          ? "Please enter new password"
           : invalidnp
-          ? 'Password must contain 8 or more characters'
-          : '';
+          ? "Password must contain 8 or more characters"
+          : "";
       }
 
-      if (c == 'cp') {
+      if (c == "cp") {
         text = Emptycp
-          ? 'Please enter confirm password'
+          ? "Please enter confirm password"
           : invalidCP
-          ? 'Confirm passwords does not match'
-          : '';
+          ? "Confirm passwords does not match"
+          : "";
       }
 
-      if (c == 'currentp') {
+      if (c == "currentp") {
         text = Emptycurrentp
-          ? 'Please enter current password'
+          ? "Please enter current password"
           : invalidcurrentp
-          ? 'Current Password is incorrect'
-          : '';
+          ? "Current Password is incorrect"
+          : "";
       }
 
       return (
@@ -218,7 +187,7 @@ function ChangePassword(props) {
 
     return (
       <View style={styles.section2}>
-        <View style={[styles.Field, {marginTop: 20}]}>
+        <View style={[styles.Field, { marginTop: 20 }]}>
           <Text style={styles.FieldTitle1}>current password</Text>
           <View
             style={[
@@ -228,16 +197,22 @@ function ChangePassword(props) {
                   invalidcurrentp || Emptycurrentp
                     ? theme.color.fieldBordeError
                     : theme.color.fieldBorder,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
               },
-            ]}>
+            ]}
+          >
             <TextInput
+              value={currentp}
               placeholder=""
               secureTextEntry={!scurrentp}
               onChangeText={enterCrntp}
-              style={{width: '85%'}}
+              style={{
+                width: "85%",
+                height: responsiveHeight(6.3),
+                paddingVertical: 2,
+              }}
             />
 
             {currentp.length > 0 && (
@@ -245,16 +220,17 @@ function ChangePassword(props) {
                 activeOpacity={0.5}
                 onPress={() => {
                   setscurrentp(!scurrentp);
-                }}>
+                }}
+              >
                 {!scurrentp && (
                   <Image
-                    style={{width: 20, height: 12, resizeMode: 'contain'}}
-                    source={require('../../assets/images/sp/img.png')}
+                    style={{ width: 20, height: 12, resizeMode: "contain" }}
+                    source={require("../../assets/images/sp/img.png")}
                   />
                 )}
                 {scurrentp && (
                   <utils.vectorIcon.Ionicons
-                    name={'eye-off-outline'}
+                    name={"eye-off-outline"}
                     color={theme.color.button1}
                     size={20}
                   />
@@ -263,10 +239,10 @@ function ChangePassword(props) {
             )}
           </View>
           {(invalidcurrentp || Emptycurrentp) &&
-            renderShowFieldError('currentp')}
+            renderShowFieldError("currentp")}
         </View>
 
-        <View style={[styles.Field, {marginTop: 20}]}>
+        <View style={[styles.Field, { marginTop: 20 }]}>
           <Text style={styles.FieldTitle1}>new password</Text>
           <View
             style={[
@@ -276,16 +252,22 @@ function ChangePassword(props) {
                   invalidnp || Emptynp
                     ? theme.color.fieldBordeError
                     : theme.color.fieldBorder,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
               },
-            ]}>
+            ]}
+          >
             <TextInput
               placeholder=""
+              value={np}
               secureTextEntry={!snp}
               onChangeText={enterNp}
-              style={{width: '85%'}}
+              style={{
+                width: "85%",
+                height: responsiveHeight(6.3),
+                paddingVertical: 2,
+              }}
             />
 
             {np.length > 0 && (
@@ -293,16 +275,17 @@ function ChangePassword(props) {
                 activeOpacity={0.5}
                 onPress={() => {
                   setsnp(!snp);
-                }}>
+                }}
+              >
                 {!snp && (
                   <Image
-                    style={{width: 20, height: 12, resizeMode: 'contain'}}
-                    source={require('../../assets/images/sp/img.png')}
+                    style={{ width: 20, height: 12, resizeMode: "contain" }}
+                    source={require("../../assets/images/sp/img.png")}
                   />
                 )}
                 {snp && (
                   <utils.vectorIcon.Ionicons
-                    name={'eye-off-outline'}
+                    name={"eye-off-outline"}
                     color={theme.color.button1}
                     size={20}
                   />
@@ -310,11 +293,11 @@ function ChangePassword(props) {
               </TouchableOpacity>
             )}
           </View>
-          {(invalidnp || Emptynp) && renderShowFieldError('np')}
+          {(invalidnp || Emptynp) && renderShowFieldError("np")}
         </View>
 
-        <View style={[styles.Field, {marginTop: 20}]}>
-          <Text style={[styles.FieldTitle1, {textTransform: 'none'}]}>
+        <View style={[styles.Field, { marginTop: 20 }]}>
+          <Text style={[styles.FieldTitle1, { textTransform: "none" }]}>
             Confirm Password
           </Text>
           <View
@@ -325,16 +308,22 @@ function ChangePassword(props) {
                   invalidCP || Emptycp
                     ? theme.color.fieldBordeError
                     : theme.color.fieldBorder,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
               },
-            ]}>
+            ]}
+          >
             <TextInput
+              value={cp}
               placeholder=""
               secureTextEntry={!scp}
               onChangeText={enterCp}
-              style={{width: '85%'}}
+              style={{
+                width: "85%",
+                height: responsiveHeight(6.3),
+                paddingVertical: 2,
+              }}
             />
 
             {cp.length > 0 && (
@@ -342,16 +331,17 @@ function ChangePassword(props) {
                 activeOpacity={0.5}
                 onPress={() => {
                   setscp(!scp);
-                }}>
+                }}
+              >
                 {!scp && (
                   <Image
-                    style={{width: 20, height: 12, resizeMode: 'contain'}}
-                    source={require('../../assets/images/sp/img.png')}
+                    style={{ width: 20, height: 12, resizeMode: "contain" }}
+                    source={require("../../assets/images/sp/img.png")}
                   />
                 )}
                 {scp && (
                   <utils.vectorIcon.Ionicons
-                    name={'eye-off-outline'}
+                    name={"eye-off-outline"}
                     color={theme.color.button1}
                     size={20}
                   />
@@ -359,12 +349,12 @@ function ChangePassword(props) {
               </TouchableOpacity>
             )}
           </View>
-          {(invalidCP || Emptycp) && renderShowFieldError('cp')}
+          {(invalidCP || Emptycp) && renderShowFieldError("cp")}
         </View>
 
         {renderButton()}
 
-        <View style={{marginTop: 35}}>
+        <View style={{ marginTop: 35 }}>
           <TouchableOpacity activeOpacity={0.7} onPress={forgotPswd}>
             <Text style={styles.FieldTitle11}>Forgot password?</Text>
           </TouchableOpacity>
@@ -379,20 +369,22 @@ function ChangePassword(props) {
       {!internet && <utils.InternetMessage />}
 
       <KeyboardAvoidingView
-        behavior={Platform.OS == 'ios' ? 'height' : undefined}
-        style={styles.container2}>
+        behavior={Platform.OS == "ios" ? "height" : undefined}
+        style={styles.container2}
+      >
         <SafeAreaView
           style={{
             flex: 1,
-          }}>
+          }}
+        >
           <View style={styles.container3}>
             <ScrollView
               contentContainerStyle={{
                 paddingHorizontal: 15,
                 paddingVertical: 15,
-              }}>
+              }}
+            >
               {renderMain()}
-            
             </ScrollView>
           </View>
           <utils.Footer
