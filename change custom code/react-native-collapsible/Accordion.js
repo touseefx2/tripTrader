@@ -140,7 +140,7 @@ export default class Accordion extends Component {
       return (
         <FlatList
           // estimatedItemSize={180}
-
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingVertical: 12,
             paddingHorizontal: paddingHorizontal,

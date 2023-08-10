@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -16,17 +16,17 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
-} from 'react-native';
-import {styles} from './styles';
-import {observer} from 'mobx-react';
-import store from '../../../store';
-import NetInfo from '@react-native-community/netinfo';
-import theme from '../../../theme';
-import utils from '../../../utils/index';
-import moment from 'moment';
-import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-import StarRating from 'react-native-star-rating';
-import {responsiveHeight} from 'react-native-responsive-dimensions';
+} from "react-native";
+import { styles } from "./styles";
+import { observer } from "mobx-react";
+import store from "../../../store";
+import NetInfo from "@react-native-community/netinfo";
+import theme from "../../../theme";
+import utils from "../../../utils/index";
+import moment from "moment";
+import ProgressiveFastImage from "@freakycoder/react-native-progressive-fast-image";
+import StarRating from "react-native-star-rating";
+import { responsiveHeight } from "react-native-responsive-dimensions";
 
 export default observer(Reviews);
 
@@ -35,17 +35,17 @@ function Reviews(props) {
   let maxModalHeight = theme.window.Height - 100;
 
   const scrollRef = useRef(null);
-  const {OtherProfileProps} = store.User;
+  const { OtherProfileProps } = store.User;
 
   const [modalHeight, setmodalHeight] = useState(0);
 
-  let headerTitle = 'Reviews';
+  let headerTitle = "Reviews";
   let internet = store.General.isInternet;
   const u = store.Userv.user;
-  let userName = '';
+  let userName = "";
   const user = u;
   if (user) {
-    userName = user.firstName + ' ' + user.lastName;
+    userName = user.firstName + " " + user.lastName;
   }
 
   const [data, setdata] = useState([]);
@@ -64,7 +64,7 @@ function Reviews(props) {
   const [EmptyTerms, setEmptyTerms] = useState(false);
 
   let maxCommentLength = 250;
-  const [comment, setcomment] = useState('');
+  const [comment, setcomment] = useState("");
 
   //delete review modal
   const [isdModal, setisdModal] = useState(false);
@@ -75,20 +75,20 @@ function Reviews(props) {
 
   //leave review
   const [rate, setrate] = useState(0);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [isSendReview, setisSendReview] = useState(false);
 
   const [getDataOnce, setgetDataOnce] = useState(false);
-  const setGetDataOnce = C => {
+  const setGetDataOnce = (C) => {
     setgetDataOnce(C);
   };
 
   const [refreshing, setRefreshing] = React.useState(false);
-  const setrefeshing = c => {
+  const setrefeshing = (c) => {
     setRefreshing(c);
   };
   const onRefresh = React.useCallback(() => {
-    console.log('onrefresh cal');
+    console.log("onrefresh cal");
     setRefreshing(true);
     getDbData();
   }, []);
@@ -98,17 +98,17 @@ function Reviews(props) {
   };
 
   const getDbData = () => {
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.Userv.attemptToGetReviews(
           user._id,
           setGetDataOnce,
           setrefeshing,
-          c => setdata(c),
-          c => setisOneReview(c),
-          c => setloader(c),
+          (c) => setdata(c),
+          (c) => setisOneReview(c),
+          (c) => setloader(c)
         );
-        store.Userv.attemptToGetLatestTrip(c => setisAnyTrade(c));
+        store.Userv.attemptToGetLatestTrip((c) => setisAnyTrade(c));
       } else {
         setrefeshing(false);
       }
@@ -126,49 +126,49 @@ function Reviews(props) {
   const postReply = () => {
     Keyboard.dismiss();
 
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.Userv.attemptToReplyComment(modalObj, comment, closeModal);
       } else {
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
   const actionDsipute = () => {
     Keyboard.dismiss();
 
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.Userv.attemptToDisputeComment(modalObj, closeModal);
       } else {
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
   const actionEdit = () => {
     Keyboard.dismiss();
 
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.Userv.attemptToEditComment(modalObj, comment, closeModal);
       } else {
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
   const actionDelete = () => {
     Keyboard.dismiss();
 
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.Userv.attemptToDeleteComment(modalObj, closeModal);
       } else {
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
 
-  const openDeleteModal = c => {
+  const openDeleteModal = (c) => {
     setisdModal(true);
     setisdObj(c);
   };
@@ -180,9 +180,9 @@ function Reviews(props) {
     }
   };
 
-  const openReviewModal = c => {
+  const openReviewModal = (c) => {
     if (c) {
-      // console.log('ccc : ', c);
+      console.log("ccc : ", c);
       setisrObj(c);
       setrate(c.rate);
       setMessage(c.message);
@@ -193,42 +193,42 @@ function Reviews(props) {
     if (!mloader) {
       setisrModal(false);
       setmodalHeight(0);
-      setMessage('');
+      setMessage("");
       setrate(0);
       setisrObj(false);
     }
   };
-  const closeSendReviewModal = c => {
+  const closeSendReviewModal = (c) => {
     setmodalHeight(0);
     setisSendReview(false);
-    if (c == 'goto') {
-      scrollRef?.current?.scrollToOffset({animated: true, offset: 0});
+    if (c == "goto") {
+      scrollRef?.current?.scrollToOffset({ animated: true, offset: 0 });
     }
   };
 
   const postReview = () => {
     Keyboard.dismiss();
 
-    let userName = '';
+    let userName = "";
     const user2 = store.User.user;
     if (user2) {
-      userName = user2.firstName + ' ' + user2.lastName;
+      userName = user2.firstName + " " + user2.lastName;
     }
 
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         let body = {
           featuredDate: new Date(),
           hostId: user._id,
           guestId: store.User.user._id,
           tripDetails: {
-            title: isAnyTrade?.title || '',
+            title: isAnyTrade?.title || "",
           },
           guestRating: rate,
-          status: 'active',
+          status: "active",
           messages: [
             {
-              role: 'guest',
+              role: "guest",
               message: message,
             },
           ],
@@ -241,11 +241,11 @@ function Reviews(props) {
           goBackMain,
           () => setisSendReview(true),
           data,
-          c => setdata(c),
-          c => setisOneReview(c),
+          (c) => setdata(c),
+          (c) => setisOneReview(c)
         );
       } else {
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
@@ -253,7 +253,7 @@ function Reviews(props) {
   const EditReview = () => {
     Keyboard.dismiss();
 
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         isrObj.message = message;
         isrObj.rate = rate;
@@ -262,13 +262,13 @@ function Reviews(props) {
           isrObj,
           user._id,
           data,
-          c => setdata(c),
+          (c) => setdata(c),
           closeReviewModal,
           goBackMain,
-          () => setisSendReview(true),
+          () => setisSendReview(true)
         );
       } else {
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
@@ -276,7 +276,7 @@ function Reviews(props) {
   const DeleteReview = () => {
     Keyboard.dismiss();
 
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.Userv.attemptToDeleteReview(
           isdObj,
@@ -284,11 +284,11 @@ function Reviews(props) {
           closeDeleteModal,
           goBackMain,
           data,
-          c => setdata(c),
-          c => setisOneReview(c),
+          (c) => setdata(c),
+          (c) => setisOneReview(c)
         );
       } else {
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
@@ -299,7 +299,7 @@ function Reviews(props) {
 
       setmodalChk(false);
       setmodalObj(false);
-      setcomment('');
+      setcomment("");
       setisTerms(false);
       setEmptyTerms(false);
       setmodalHeight(0);
@@ -311,12 +311,13 @@ function Reviews(props) {
       <View
         style={{
           marginTop: 10,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          width: '97%',
-          alignSelf: 'center',
-        }}>
-        <View style={{width: '63%'}}>
+          flexDirection: "row",
+          justifyContent: "space-between",
+          width: "97%",
+          alignSelf: "center",
+        }}
+      >
+        <View style={{ width: "63%" }}>
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"
@@ -324,7 +325,8 @@ function Reviews(props) {
               fontSize: 12,
               color: theme.color.subTitle,
               fontFamily: theme.fonts.fontNormal,
-            }}>
+            }}
+          >
             Showing {data.length} of {totalData}
           </Text>
         </View>
@@ -332,13 +334,15 @@ function Reviews(props) {
         {!isOneReview && isAnyTrade != false && getDataOnce && (
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => openReviewModal(false)}>
+            onPress={() => openReviewModal(false)}
+          >
             <Text
               style={{
                 fontSize: 13,
-                color: '#3C6B49',
+                color: "#3C6B49",
                 fontFamily: theme.fonts.fontBold,
-              }}>
+              }}
+            >
               Leave a review
             </Text>
           </TouchableOpacity>
@@ -347,7 +351,7 @@ function Reviews(props) {
     );
   };
 
-  const renderShowData = ({item, index}) => {
+  const renderShowData = ({ item, index }) => {
     let isCurrentUserGuest = false;
 
     let usr = item.guestId || null;
@@ -360,18 +364,18 @@ function Reviews(props) {
 
     //reviewer user
 
-    let photo = '';
+    let photo = "";
     let isuVeirfy = false;
-    let userName = 'trip trader user';
+    let userName = "trip trader user";
     let avgRating = 0;
     let totalReviews = 0;
 
     if (usr) {
       const blockArr = usr?.followers || [];
       const isBlock = blockArr.find(
-        item =>
+        (item) =>
           (item?.block == true && item?.userId == hostId?._id) ||
-          (item?.blockedBy == true && item?.userId == hostId?._id),
+          (item?.blockedBy == true && item?.userId == hostId?._id)
       );
       if (isBlock) {
         usr = null;
@@ -379,25 +383,25 @@ function Reviews(props) {
     }
 
     if (usr) {
-      photo = usr.image || '';
-      isuVeirfy = usr.identityStatus == 'notVerified' ? false : true;
-      userName = usr.firstName + ' ' + usr.lastName;
+      photo = usr.image || "";
+      isuVeirfy = usr.identityStatus == "notVerified" ? false : true;
+      userName = usr.firstName + " " + usr.lastName;
       avgRating = usr.rating || 0;
       totalReviews = usr.reviews || 0;
     }
 
-    let userCommentid = '';
-    let userComment = '';
-    let postDate = '';
+    let userCommentid = "";
+    let userComment = "";
+    let postDate = "";
     const msgs = item.messages || [];
-    let reply = '';
+    let reply = "";
     if (msgs.length > 0) {
-      msgs.map(e => {
-        if (e.role == 'guest') {
+      msgs.map((e) => {
+        if (e.role == "guest") {
           postDate = e.updatedAt;
           userComment = e.message;
           userCommentid = e._id;
-        } else if (e.role == 'host') {
+        } else if (e.role == "host") {
           reply = e;
         }
       });
@@ -405,30 +409,30 @@ function Reviews(props) {
 
     const rusr = user;
     //host
-    let ruserPhoto = '';
-    let ruserName = '';
-    let ruserComment = '';
-    let rpostDate = '';
+    let ruserPhoto = "";
+    let ruserName = "";
+    let ruserComment = "";
+    let rpostDate = "";
     let isrVeirfy = false;
-    if (reply != '') {
-      ruserPhoto = rusr.image || '';
+    if (reply != "") {
+      ruserPhoto = rusr.image || "";
       isrVeirfy = rusr.dentityStatus || false;
-      ruserName = rusr.firstName + ' ' + rusr.lastName;
+      ruserName = rusr.firstName + " " + rusr.lastName;
       ruserComment = reply.message;
       rpostDate = reply.updatedAt;
     }
 
     const status = item.status;
-    const dispute = status == 'dispute' ? true : false;
-    const disputeDate = dispute ? item.disputeOpenDate : '';
+    const dispute = status == "dispute" ? true : false;
+    const disputeDate = dispute ? item.disputeOpenDate : "";
 
-    const formatdisputeDate = date => {
-      var dd = moment(date).format('MMM DD');
+    const formatdisputeDate = (date) => {
+      var dd = moment(date).format("MMM DD");
       return dd;
     };
 
-    const formatDate = date => {
-      var dd = moment(date).format('MMM DD, YYYY');
+    const formatDate = (date) => {
+      var dd = moment(date).format("MMM DD, YYYY");
       return dd;
     };
 
@@ -439,19 +443,19 @@ function Reviews(props) {
             <ProgressiveFastImage
               style={styles.ProfileImg}
               source={
-                photo != ''
-                  ? {uri: photo}
-                  : require('../../../assets/images/drawer/guest/img.png')
+                photo != ""
+                  ? { uri: photo }
+                  : require("../../../assets/images/drawer/guest/img.png")
               }
               loadingImageStyle={styles.imageLoader}
-              loadingSource={require('../../../assets/images/imgLoad/img.jpeg')}
+              loadingSource={require("../../../assets/images/imgLoad/img.jpeg")}
               blurRadius={5}
             />
 
             {isuVeirfy && (
               <Image
                 style={styles.iconVerify}
-                source={require('../../../assets/images/verified/img.png')}
+                source={require("../../../assets/images/verified/img.png")}
               />
             )}
           </View>
@@ -464,23 +468,24 @@ function Reviews(props) {
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={styles.textContainertitle}>
+              style={styles.textContainertitle}
+            >
               {userName}
             </Text>
 
-            <View style={{flexDirection: 'row', marginTop: 1}}>
+            <View style={{ flexDirection: "row", marginTop: 1 }}>
               <utils.vectorIcon.Entypo
                 name="star"
                 color={theme.color.rate}
                 size={14}
               />
               <Text style={styles.textContainerRatetitle1}>
-                {' '}
+                {" "}
                 {avgRating > 0 ? avgRating.toFixed(1) : avgRating}
-                {'  '}
+                {"  "}
               </Text>
               <Text style={styles.textContainerRatetitle2}>
-                {totalReviews > 300 ? '300+' : totalReviews} reviews
+                {totalReviews > 300 ? "300+" : totalReviews} reviews
               </Text>
             </View>
           </View>
@@ -514,10 +519,11 @@ function Reviews(props) {
                   mid: userCommentid,
                 });
               }}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.7 : 1.0},
+              style={({ pressed }) => [
+                { opacity: pressed ? 0.7 : 1.0 },
                 styles.smallButtonContainer,
-              ]}>
+              ]}
+            >
               <Text style={styles.sb1Text}>Edit Review</Text>
             </Pressable>
           );
@@ -533,12 +539,13 @@ function Reviews(props) {
                   mid: userCommentid,
                 });
               }}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.7 : 1.0},
+              style={({ pressed }) => [
+                { opacity: pressed ? 0.7 : 1.0 },
                 styles.smallButtonContainer,
-                {backgroundColor: theme.color.disableSmallButton},
-              ]}>
-              <Text style={[styles.sb2Text, {color: '#B93B3B'}]}>
+                { backgroundColor: theme.color.disableSmallButton },
+              ]}
+            >
+              <Text style={[styles.sb2Text, { color: "#B93B3B" }]}>
                 Delete Review
               </Text>
             </Pressable>
@@ -550,7 +557,7 @@ function Reviews(props) {
             <View style={styles.boxSection3}>
               <utils.vectorIcon.AntDesign
                 name="warning"
-                color={'#B93B3B'}
+                color={"#B93B3B"}
                 size={14}
               />
               <Text style={styles.disputeTitle}>
@@ -565,7 +572,7 @@ function Reviews(props) {
             {!dispute && (
               <View style={styles.boxSection3}>
                 {renderReplyButton()}
-                <View style={{width: 12}} />
+                <View style={{ width: 12 }} />
                 {renderDeleteButton()}
               </View>
             )}
@@ -593,13 +600,14 @@ function Reviews(props) {
         return (
           <View
             style={{
-              width: '15%',
+              width: "15%",
 
-              alignItems: 'flex-end',
-            }}>
+              alignItems: "flex-end",
+            }}
+          >
             <View
               style={{
-                width: '60%',
+                width: "60%",
                 height: 35,
                 borderLeftWidth: 2,
                 borderBottomWidth: 2,
@@ -613,21 +621,26 @@ function Reviews(props) {
       };
 
       const renderReplyBox = () => {
-        let n = user.firstName + ' ' + user.lastName + ' ';
+        let n = user.firstName + " " + user.lastName + " ";
 
         return (
           <View style={styles.repBoxContainer}>
             <Text
               style={[
                 styles.repBoxTitile1,
-                {textTransform: 'capitalize', fontFamily: theme.fonts.fontBold},
-              ]}>
+                {
+                  textTransform: "capitalize",
+                  fontFamily: theme.fonts.fontBold,
+                },
+              ]}
+            >
               {n}
               <Text
                 style={[
                   styles.repBoxTitile1,
-                  {textTransform: 'none', fontFamily: theme.fonts.fontNormal},
-                ]}>
+                  { textTransform: "none", fontFamily: theme.fonts.fontNormal },
+                ]}
+              >
                 replied:{/* on {formatDate(rpostDate)} */}
               </Text>
             </Text>
@@ -648,32 +661,34 @@ function Reviews(props) {
 
     return (
       <>
-        <View style={{marginBottom: 15, marginTop: index == 0 ? 12 : 0}}>
+        <View style={{ marginBottom: 15, marginTop: index == 0 ? 12 : 0 }}>
           {renderShowCommentBox()}
-          {reply != '' && renderShowReplyBox()}
+          {reply != "" && renderShowReplyBox()}
         </View>
       </>
     );
   };
 
-  const renderMessage = c => {
+  const renderMessage = (c) => {
     return (
       <View
         style={{
-          marginTop: '45%',
-          width: '100%',
-        }}>
+          marginTop: "45%",
+          width: "100%",
+        }}
+      >
         <Text
           style={{
             fontSize: 13,
             color: theme.color.subTitle,
             fontFamily: theme.fonts.fontMedium,
-            textAlign: 'center',
-          }}>
+            textAlign: "center",
+          }}
+        >
           {userName} has not received any reviews yet
         </Text>
         {isAnyTrade != false && !isOneReview && getDataOnce && (
-          <View style={{width: '100%', marginTop: 10}}>
+          <View style={{ width: "100%", marginTop: 10 }}>
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
@@ -681,9 +696,10 @@ function Reviews(props) {
                 fontSize: 13,
                 color: theme.color.title,
                 fontFamily: theme.fonts.fontNormal,
-                textAlign: 'center',
+                textAlign: "center",
                 lineHeight: 21,
-              }}>
+              }}
+            >
               Looks like you recently traded with {user.firstName}.
             </Text>
             <Text
@@ -691,20 +707,22 @@ function Reviews(props) {
                 fontSize: 13,
                 color: theme.color.title,
                 fontFamily: theme.fonts.fontNormal,
-                textAlign: 'center',
+                textAlign: "center",
                 lineHeight: 21,
-              }}>
-              Would you like to{' '}
+              }}
+            >
+              Would you like to{" "}
               <Text
                 onPress={() => openReviewModal(false)}
                 style={{
                   fontSize: 13,
-                  color: '#3C6B49',
+                  color: "#3C6B49",
                   fontFamily: theme.fonts.fontBold,
-                  textAlign: 'center',
+                  textAlign: "center",
                   lineHeight: 21,
-                  textDecorationLine: 'underline',
-                }}>
+                  textDecorationLine: "underline",
+                }}
+              >
                 leave a review?
               </Text>
             </Text>
@@ -718,21 +736,22 @@ function Reviews(props) {
     return (
       <View
         style={{
-          position: 'absolute',
-          top: '45%',
-          alignItems: 'center',
-          justifyContent: 'center',
-          alignSelf: 'center',
-        }}>
+          position: "absolute",
+          top: "45%",
+          alignItems: "center",
+          justifyContent: "center",
+          alignSelf: "center",
+        }}
+      >
         <ActivityIndicator size={35} color={theme.color.button1} />
       </View>
     );
   };
 
-  const renderShowFieldError = c => {
-    let text = '';
-    if (c == 'terms') {
-      text = EmptyTerms ? 'Agreeing to Terms and Conditions is required' : '';
+  const renderShowFieldError = (c) => {
+    let text = "";
+    if (c == "terms") {
+      text = EmptyTerms ? "Agreeing to Terms and Conditions is required" : "";
     }
 
     return (
@@ -743,19 +762,20 @@ function Reviews(props) {
   };
 
   const renderModal = () => {
-    if (modalChk == 'reply' || modalChk == 'edit') {
+    if (modalChk == "reply" || modalChk == "edit") {
       const renderHeader = () => {
-        let text = 'Reply to review';
+        let text = "Reply to review";
 
         const renderCross = () => {
           return (
             <Pressable
               disabled={mloader}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.7 : 1.0},
+              style={({ pressed }) => [
+                { opacity: pressed ? 0.7 : 1.0 },
                 styles.modalCross,
               ]}
-              onPress={closeModal}>
+              onPress={closeModal}
+            >
               <utils.vectorIcon.Ionicons
                 name="ios-close-outline"
                 color={theme.color.title}
@@ -770,7 +790,9 @@ function Reviews(props) {
         };
 
         return (
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
             {renderTitle()}
             {renderCross()}
           </View>
@@ -782,10 +804,11 @@ function Reviews(props) {
           return (
             <View
               style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
               <Text style={styles.modalFieldTitle}>Message</Text>
               <Text
                 style={[
@@ -794,10 +817,11 @@ function Reviews(props) {
                     color:
                       comment.length < maxCommentLength
                         ? theme.color.subTitleLight
-                        : 'red',
+                        : "red",
                     fontSize: 12.5,
                   },
-                ]}>
+                ]}
+              >
                 {comment.length} / {maxCommentLength}
               </Text>
             </View>
@@ -806,12 +830,12 @@ function Reviews(props) {
 
         const renderInput = () => {
           return (
-            <View style={{marginTop: 5}}>
+            <View style={{ marginTop: 5 }}>
               <TextInput
                 autoFocus
                 multiline
                 value={comment}
-                onChangeText={t => setcomment(t)}
+                onChangeText={(t) => setcomment(t)}
                 textAlignVertical="top"
                 placeholder="What do you want to say?"
                 style={styles.modalInput}
@@ -822,7 +846,7 @@ function Reviews(props) {
         };
 
         return (
-          <View style={{marginTop: 15}}>
+          <View style={{ marginTop: 15 }}>
             {renderTitle()}
             {renderInput()}
           </View>
@@ -834,11 +858,12 @@ function Reviews(props) {
           return (
             <Pressable
               disabled={mloader || comment.length <= 0}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.7 : comment.length <= 0 ? 0.5 : 1},
+              style={({ pressed }) => [
+                { opacity: pressed ? 0.7 : comment.length <= 0 ? 0.5 : 1 },
                 [styles.ButtonContainer],
               ]}
-              onPress={modalChk == 'reply' ? postReply : actionEdit}>
+              onPress={modalChk == "reply" ? postReply : actionEdit}
+            >
               {mloader && (
                 <ActivityIndicator size={20} color={theme.color.buttonText} />
               )}
@@ -851,13 +876,16 @@ function Reviews(props) {
           return (
             <Pressable
               disabled={mloader}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.7 : 1.0},
+              style={({ pressed }) => [
+                { opacity: pressed ? 0.7 : 1.0 },
                 styles.ButtonContainer,
-                {backgroundColor: theme.color.button2, marginLeft: 15},
+                { backgroundColor: theme.color.button2, marginLeft: 15 },
               ]}
-              onPress={closeModal}>
-              <Text style={[styles.ButtonText, {color: theme.color.subTitle}]}>
+              onPress={closeModal}
+            >
+              <Text
+                style={[styles.ButtonText, { color: theme.color.subTitle }]}
+              >
                 cancel
               </Text>
             </Pressable>
@@ -887,18 +915,21 @@ function Reviews(props) {
       );
     }
 
-    if (modalChk == 'dispute') {
+    if (modalChk == "dispute") {
       let c = modalHeight >= maxModalHeight ? true : false;
-      let style = c ? [styles.modal2, {height: maxModalHeight}] : styles.modal;
+      let style = c
+        ? [styles.modal2, { height: maxModalHeight }]
+        : styles.modal;
 
       const renderHeader = () => {
-        let text = 'Dispute Review';
+        let text = "Dispute Review";
 
         const renderCross = () => {
           return (
             <Pressable
-              style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
-              onPress={closeModal}>
+              style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1.0 }]}
+              onPress={closeModal}
+            >
               <utils.vectorIcon.Ionicons
                 name="ios-close-outline"
                 color={theme.color.title}
@@ -917,13 +948,13 @@ function Reviews(props) {
             style={
               c
                 ? {
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
+                    flexDirection: "row",
+                    justifyContent: "space-between",
                     paddingHorizontal: 15,
                     paddingTop: 15,
                     paddingBottom: 7,
-                    shadowColor: '#000000',
-                    shadowOffset: {width: 0, height: 1}, // change this for more shadow
+                    shadowColor: "#000000",
+                    shadowOffset: { width: 0, height: 1 }, // change this for more shadow
                     shadowOpacity: 0.1,
                     elevation: 1,
                     backgroundColor: theme.color.background,
@@ -931,11 +962,12 @@ function Reviews(props) {
                     borderTopRightRadius: 10,
                   }
                 : {
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
+                    flexDirection: "row",
+                    justifyContent: "space-between",
                   }
-            }>
-            <View style={{width: '80%'}}>{renderTitle()}</View>
+            }
+          >
+            <View style={{ width: "80%" }}>{renderTitle()}</View>
             {renderCross()}
           </View>
         );
@@ -943,14 +975,15 @@ function Reviews(props) {
 
       const renderSec1 = () => {
         return (
-          <View style={{marginTop: 7, width: '100%'}}>
+          <View style={{ marginTop: 7, width: "100%" }}>
             <Text style={styles.modalSec1Title}>
-              You are about to open a dispute on the member review below.{' '}
+              You are about to open a dispute on the member review below.{" "}
               <Text
                 style={[
                   styles.modalSec1Title,
-                  {fontFamily: theme.fonts.fontNormal},
-                ]}>
+                  { fontFamily: theme.fonts.fontNormal },
+                ]}
+              >
                 {`Once a dispute is opened, you will not be able to reply to the review or interact with this member until the dispute is settled.\n\nIf we find that this member violated any terms of our User Agreement or Privacy Policy, we will take appropriate action. We also may contact you if we need more information.`}
               </Text>
             </Text>
@@ -960,14 +993,14 @@ function Reviews(props) {
 
       const renderSec2 = () => {
         let d = modalObj.item;
-        let userName = d.guestId.firstName + ' ' + d.guestId.lastName;
-        let userComment = '';
+        let userName = d.guestId.firstName + " " + d.guestId.lastName;
+        let userComment = "";
 
         let msgs = d.messages || [];
 
         if (msgs.length > 0) {
           msgs.map((e, i, a) => {
-            if (e.role == 'guest') {
+            if (e.role == "guest") {
               userComment = e.message;
             }
           });
@@ -977,8 +1010,8 @@ function Reviews(props) {
           <View style={styles.modalSec2Container}>
             <Text style={styles.modalSec2Title}>
               {userName}
-              <Text style={[styles.modalSec2Title, {textTransform: 'none'}]}>
-                {' '}
+              <Text style={[styles.modalSec2Title, { textTransform: "none" }]}>
+                {" "}
                 wrote:
               </Text>
             </Text>
@@ -991,19 +1024,19 @@ function Reviews(props) {
 
       const renderSec3 = () => {
         return (
-          <View style={{marginTop: 15}}>
-            <View style={{flexDirection: 'row', width: '100%'}}>
+          <View style={{ marginTop: 15 }}>
+            <View style={{ flexDirection: "row", width: "100%" }}>
               <Pressable
                 disabled={mloader}
-                style={({pressed}) => [
-                  {opacity: pressed ? 0.5 : 1.0},
+                style={({ pressed }) => [
+                  { opacity: pressed ? 0.5 : 1.0 },
                   {
                     width: 20,
                     height: 20,
                     borderRadius: 4,
-                    backgroundColor: !isTerms ? 'white' : theme.color.button1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    backgroundColor: !isTerms ? "white" : theme.color.button1,
+                    alignItems: "center",
+                    justifyContent: "center",
                     borderWidth: 1,
                     borderColor: theme.color.fieldBorder,
                   },
@@ -1012,30 +1045,32 @@ function Reviews(props) {
                 onPress={() => {
                   setisTerms(!isTerms);
                   setEmptyTerms(false);
-                }}>
+                }}
+              >
                 {isTerms && (
                   <utils.vectorIcon.FontAwesome5
-                    name={'check'}
+                    name={"check"}
                     color={theme.color.buttonText}
                     size={11}
                   />
                 )}
               </Pressable>
 
-              <View style={{marginLeft: 7, width: '92%'}}>
+              <View style={{ marginLeft: 7, width: "92%" }}>
                 <Text style={styles.modalSec1Title}>
-                  This review may contain personally identifiable information.{' '}
+                  This review may contain personally identifiable information.{" "}
                   <Text
                     style={[
                       styles.modalSec1Title,
-                      {fontFamily: theme.fonts.fontNormal},
-                    ]}>
+                      { fontFamily: theme.fonts.fontNormal },
+                    ]}
+                  >
                     {`I hereby declare that by checking this box, the information provided here is true and correct. I also understand that any willful dishonesty may result in permanent suspension of my account across all Trip Trader services.`}
                   </Text>
                 </Text>
               </View>
             </View>
-            {EmptyTerms && renderShowFieldError('terms')}
+            {EmptyTerms && renderShowFieldError("terms")}
           </View>
         );
       };
@@ -1045,11 +1080,12 @@ function Reviews(props) {
           return (
             <Pressable
               disabled={mloader || !isTerms}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.7 : !isTerms ? 0.5 : 1},
+              style={({ pressed }) => [
+                { opacity: pressed ? 0.7 : !isTerms ? 0.5 : 1 },
                 [styles.ButtonContainer],
               ]}
-              onPress={actionDsipute}>
+              onPress={actionDsipute}
+            >
               {mloader && (
                 <ActivityIndicator size={20} color={theme.color.buttonText} />
               )}
@@ -1064,13 +1100,16 @@ function Reviews(props) {
           return (
             <Pressable
               disabled={mloader}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.7 : 1.0},
+              style={({ pressed }) => [
+                { opacity: pressed ? 0.7 : 1.0 },
                 styles.ButtonContainer,
-                {backgroundColor: theme.color.button2, marginLeft: 15},
+                { backgroundColor: theme.color.button2, marginLeft: 15 },
               ]}
-              onPress={closeModal}>
-              <Text style={[styles.ButtonText, {color: theme.color.subTitle}]}>
+              onPress={closeModal}
+            >
+              <Text
+                style={[styles.ButtonText, { color: theme.color.subTitle }]}
+              >
                 cancel
               </Text>
             </Pressable>
@@ -1088,8 +1127,8 @@ function Reviews(props) {
                 paddingBottom: 15,
                 paddingHorizontal: 15,
                 backgroundColor: theme.color.background,
-                shadowColor: '#000000',
-                shadowOffset: {width: 0, height: -1}, // change this for more shadow
+                shadowColor: "#000000",
+                shadowOffset: { width: 0, height: -1 }, // change this for more shadow
                 shadowOpacity: 0.1,
                 elevation: 22,
               },
@@ -1109,20 +1148,22 @@ function Reviews(props) {
           <SafeAreaView style={styles.modalContainer}>
             <View style={styles.modalContainer2}>
               <View
-                onLayout={event => {
+                onLayout={(event) => {
                   if (!c) {
-                    let {height} = event.nativeEvent.layout;
+                    let { height } = event.nativeEvent.layout;
                     setmodalHeight(height);
                   }
                 }}
-                style={style}>
+                style={style}
+              >
                 {c && (
                   <>
                     {renderHeader()}
                     <ScrollView
-                      contentContainerStyle={{paddingHorizontal: 15}}
+                      contentContainerStyle={{ paddingHorizontal: 15 }}
                       showsVerticalScrollIndicator={false}
-                      style={{flex: 1}}>
+                      style={{ flex: 1 }}
+                    >
                       {renderSec1()}
                       {renderSec2()}
                       {renderSec3()}
@@ -1147,19 +1188,20 @@ function Reviews(props) {
       );
     }
 
-    if (modalChk == 'delete') {
+    if (modalChk == "delete") {
       const renderHeader = () => {
-        let text = 'Delete Comment';
+        let text = "Delete Comment";
 
         const renderCross = () => {
           return (
             <Pressable
               disabled={mloader}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.7 : 1.0},
+              style={({ pressed }) => [
+                { opacity: pressed ? 0.7 : 1.0 },
                 styles.modalCross,
               ]}
-              onPress={closeModal}>
+              onPress={closeModal}
+            >
               <utils.vectorIcon.Ionicons
                 name="ios-close-outline"
                 color={theme.color.title}
@@ -1174,7 +1216,9 @@ function Reviews(props) {
         };
 
         return (
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
             {renderTitle()}
             {renderCross()}
           </View>
@@ -1183,23 +1227,25 @@ function Reviews(props) {
 
       const renderTitle = () => {
         let d = modalObj.item;
-        let userName = d.guestId.firstName + ' ' + d.guestId.lastName;
+        let userName = d.guestId.firstName + " " + d.guestId.lastName;
 
         return (
           <View
             style={{
               marginTop: 15,
-            }}>
+            }}
+          >
             <Text style={styles.modalDeleteTitle}>
-              Are you sure you want to delete your comment to{' '}
+              Are you sure you want to delete your comment to{" "}
               <Text
                 style={[
                   styles.modalDeleteTitle,
                   {
                     fontFamily: theme.fonts.fontBold,
-                    textTransform: 'capitalize',
+                    textTransform: "capitalize",
                   },
-                ]}>
+                ]}
+              >
                 {userName}?
               </Text>
             </Text>
@@ -1212,11 +1258,12 @@ function Reviews(props) {
           return (
             <Pressable
               disabled={mloader}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.7 : 1},
-                [styles.ButtonContainer, {backgroundColor: '#B93B3B'}],
+              style={({ pressed }) => [
+                { opacity: pressed ? 0.7 : 1 },
+                [styles.ButtonContainer, { backgroundColor: "#B93B3B" }],
               ]}
-              onPress={actionDelete}>
+              onPress={actionDelete}
+            >
               {mloader && (
                 <ActivityIndicator size={20} color={theme.color.buttonText} />
               )}
@@ -1231,13 +1278,16 @@ function Reviews(props) {
           return (
             <Pressable
               disabled={mloader}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.7 : 1.0},
+              style={({ pressed }) => [
+                { opacity: pressed ? 0.7 : 1.0 },
                 styles.ButtonContainer,
-                {backgroundColor: theme.color.button2, marginLeft: 15},
+                { backgroundColor: theme.color.button2, marginLeft: 15 },
               ]}
-              onPress={closeModal}>
-              <Text style={[styles.ButtonText, {color: theme.color.subTitle}]}>
+              onPress={closeModal}
+            >
+              <Text
+                style={[styles.ButtonText, { color: theme.color.subTitle }]}
+              >
                 No, keep it
               </Text>
             </Pressable>
@@ -1269,18 +1319,21 @@ function Reviews(props) {
   };
 
   const renderLeaveReviewModal = () => {
-    let c = modalHeight >= maxModalHeight ? true : false;
-    let style = c ? [styles.modal2, {height: maxModalHeight}] : styles.modal;
+    const c = modalHeight >= maxModalHeight ? true : false;
+    const style = c
+      ? [styles.modal2, { height: maxModalHeight }]
+      : styles.modal;
 
     const renderHeader = () => {
-      let text = 'Leave a review';
+      let text = "Leave a review";
 
       const renderCross = () => {
         return (
           <Pressable
             disabled={mloader}
-            style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
-            onPress={closeReviewModal}>
+            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1.0 }]}
+            onPress={closeReviewModal}
+          >
             <utils.vectorIcon.Ionicons
               name="ios-close-outline"
               color={theme.color.title}
@@ -1299,13 +1352,13 @@ function Reviews(props) {
           style={
             c
               ? {
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
+                  flexDirection: "row",
+                  justifyContent: "space-between",
                   paddingHorizontal: 15,
                   paddingTop: 15,
                   paddingBottom: 7,
-                  shadowColor: '#000000',
-                  shadowOffset: {width: 0, height: 1}, // change this for more shadow
+                  shadowColor: "#000000",
+                  shadowOffset: { width: 0, height: 1 }, // change this for more shadow
                   shadowOpacity: 0.1,
                   elevation: 1,
                   backgroundColor: theme.color.background,
@@ -1313,18 +1366,19 @@ function Reviews(props) {
                   borderTopRightRadius: 10,
                 }
               : {
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
+                  flexDirection: "row",
+                  justifyContent: "space-between",
                 }
-          }>
-          <View style={{width: '80%'}}>{renderTitle()}</View>
+          }
+        >
+          <View style={{ width: "80%" }}>{renderTitle()}</View>
           {renderCross()}
         </View>
       );
     };
 
     const renderSec1 = () => {
-      let tt = ''; // review trip title
+      let tt = ""; // review trip title
       let cuid = store.User.user._id; //curetn user id
 
       if (cuid != isAnyTrade.offeredBy._id) {
@@ -1339,43 +1393,45 @@ function Reviews(props) {
             <View
               style={[
                 styles.modalFieldConatiner,
-                {flexDirection: 'row', alignItems: 'center'},
-              ]}>
+                { flexDirection: "row", alignItems: "center" },
+              ]}
+            >
               <Text style={styles.mfT1trp}>Trip Description</Text>
               <Image
                 style={{
                   width: 17,
                   height: 17,
-                  resizeMode: 'contain',
+                  resizeMode: "contain",
                   marginLeft: 4,
                   top: -2,
                 }}
-                source={require('../../../assets/images/info/img.png')}
+                source={require("../../../assets/images/info/img.png")}
               />
             </View>
             <Text style={styles.mfT1trptitle}>{tt}</Text>
           </View>
 
           <View style={styles.modalFieldConatiner}>
-            <Text style={[styles.mfT1, {textTransform: 'none'}]}>
+            <Text style={[styles.mfT1, { textTransform: "none" }]}>
               Rate your overall experience
             </Text>
             <View
               style={{
-                width: '43%',
+                width: "43%",
                 marginTop: 5,
-              }}>
+              }}
+            >
               <StarRating
                 starSize={23}
-                disabled={false}
+                disabled={mloader}
                 maxStars={5}
                 rating={rate}
-                selectedStar={rating => setrate(rating)}
-                emptyStarColor={'#CCCCCC'}
-                fullStarColor={'#FCBC17'}
-                emptyStar={'star'}
-                fullStar={'star'}
-                iconSet={'FontAwesome'}
+                selectedStar={(rating) => setrate(rating)}
+                emptyStarColor={"#CCCCCC"}
+                fullStarColor={"#FCBC17"}
+                emptyStar={"star"}
+                fullStar={"star"}
+                iconSet={"FontAwesome"}
               />
             </View>
           </View>
@@ -1383,10 +1439,11 @@ function Reviews(props) {
           <View style={styles.modalFieldConatiner}>
             <View
               style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
               <Text style={styles.mfT1}>Message</Text>
               <Text style={styles.mfT1msg}>
                 {message.length} / {maxReview}
@@ -1397,7 +1454,7 @@ function Reviews(props) {
               <TextInput
                 maxLength={maxReview}
                 value={message}
-                onChangeText={c => {
+                onChangeText={(c) => {
                   setMessage(c);
                 }}
                 style={styles.mTextInpt}
@@ -1416,11 +1473,12 @@ function Reviews(props) {
         return (
           <Pressable
             onPress={!isrObj ? postReview : EditReview}
-            disabled={mloader == true ? true : message == '' ? true : false}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.9 : message == '' ? 0.5 : 1},
+            disabled={mloader == true ? true : message === "" ? true : false}
+            style={({ pressed }) => [
+              { opacity: pressed ? 0.9 : message == "" ? 0.5 : 1 },
               [styles.ButtonContainer],
-            ]}>
+            ]}
+          >
             {mloader && (
               <ActivityIndicator size={20} color={theme.color.buttonText} />
             )}
@@ -1433,13 +1491,16 @@ function Reviews(props) {
         return (
           <Pressable
             disabled={mloader}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.7 : 1.0},
+            style={({ pressed }) => [
+              { opacity: pressed ? 0.7 : 1.0 },
               styles.ButtonContainer,
-              {backgroundColor: theme.color.button2, marginLeft: 15},
+              { backgroundColor: theme.color.button2, marginLeft: 15 },
             ]}
-            onPress={closeReviewModal}>
-            <Text style={[styles.ButtonText, {color: '#30563A'}]}>cancel</Text>
+            onPress={closeReviewModal}
+          >
+            <Text style={[styles.ButtonText, { color: "#30563A" }]}>
+              cancel
+            </Text>
           </Pressable>
         );
       };
@@ -1455,8 +1516,8 @@ function Reviews(props) {
               paddingBottom: 15,
               paddingHorizontal: 15,
               backgroundColor: theme.color.background,
-              shadowColor: '#000000',
-              shadowOffset: {width: 0, height: -1}, // change this for more shadow
+              shadowColor: "#000000",
+              shadowOffset: { width: 0, height: -1 }, // change this for more shadow
               shadowOpacity: 0.1,
               elevation: 22,
             },
@@ -1474,24 +1535,27 @@ function Reviews(props) {
     return (
       <Modal visible={isrModal} transparent onRequestClose={closeReviewModal}>
         <KeyboardAvoidingView
-          behavior={Platform.OS == 'ios' ? 'height' : undefined}
-          style={styles.modalContainer}>
+          behavior={Platform.OS == "ios" ? "height" : undefined}
+          style={styles.modalContainer}
+        >
           <View style={styles.modalContainer2}>
             <View
-              onLayout={event => {
+              onLayout={(event) => {
                 if (!c) {
-                  let {height} = event.nativeEvent.layout;
+                  let { height } = event.nativeEvent.layout;
                   setmodalHeight(height);
                 }
               }}
-              style={style}>
+              style={style}
+            >
               {c && (
                 <>
                   {renderHeader()}
                   <ScrollView
-                    contentContainerStyle={{paddingHorizontal: 15}}
+                    contentContainerStyle={{ paddingHorizontal: 15 }}
                     showsVerticalScrollIndicator={false}
-                    style={{flex: 1}}>
+                    style={{ flex: 1 }}
+                  >
                     {renderSec1()}
                   </ScrollView>
                   {renderBottom()}
@@ -1515,16 +1579,17 @@ function Reviews(props) {
 
   const renderSendReviewModal = () => {
     let c = modalHeight >= maxModalHeight ? true : false;
-    let style = c ? [styles.modal2, {height: maxModalHeight}] : styles.modal;
+    let style = c ? [styles.modal2, { height: maxModalHeight }] : styles.modal;
 
     const renderHeader = () => {
-      let text = 'Review submitted!';
+      let text = "Review submitted!";
 
       const renderCross = () => {
         return (
           <Pressable
-            style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
-            onPress={() => closeSendReviewModal('')}>
+            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1.0 }]}
+            onPress={() => closeSendReviewModal("")}
+          >
             <utils.vectorIcon.Ionicons
               name="ios-close-outline"
               color={theme.color.title}
@@ -1543,13 +1608,13 @@ function Reviews(props) {
           style={
             c
               ? {
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
+                  flexDirection: "row",
+                  justifyContent: "space-between",
                   paddingHorizontal: 15,
                   paddingTop: 15,
                   paddingBottom: 7,
-                  shadowColor: '#000000',
-                  shadowOffset: {width: 0, height: 1}, // change this for more shadow
+                  shadowColor: "#000000",
+                  shadowOffset: { width: 0, height: 1 }, // change this for more shadow
                   shadowOpacity: 0.1,
                   elevation: 1,
                   backgroundColor: theme.color.background,
@@ -1557,11 +1622,12 @@ function Reviews(props) {
                   borderTopRightRadius: 10,
                 }
               : {
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
+                  flexDirection: "row",
+                  justifyContent: "space-between",
                 }
-          }>
-          <View style={{width: '80%'}}>{renderTitle()}</View>
+          }
+        >
+          <View style={{ width: "80%" }}>{renderTitle()}</View>
           {/* {renderCross()} */}
         </View>
       );
@@ -1569,10 +1635,10 @@ function Reviews(props) {
 
     const renderSec1 = () => {
       let t =
-        'Thanks for your feedback!  We appreciate you taking time to share your experiences with the Trip Trader community.';
+        "Thanks for your feedback!  We appreciate you taking time to share your experiences with the Trip Trader community.";
       return (
         <>
-          <View style={[styles.modalFieldConatiner, {marginTop: 20}]}>
+          <View style={[styles.modalFieldConatiner, { marginTop: 20 }]}>
             <Text style={styles.mfT1trptitleee}>{t}</Text>
           </View>
         </>
@@ -1583,11 +1649,12 @@ function Reviews(props) {
       const renderButton1 = () => {
         return (
           <Pressable
-            onPress={() => closeSendReviewModal('')}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.8 : 1},
+            onPress={() => closeSendReviewModal("")}
+            style={({ pressed }) => [
+              { opacity: pressed ? 0.8 : 1 },
               [styles.ButtonContainer],
-            ]}>
+            ]}
+          >
             <Text style={[styles.ButtonText]}>Done</Text>
           </Pressable>
         );
@@ -1596,13 +1663,14 @@ function Reviews(props) {
       const renderButton2 = () => {
         return (
           <Pressable
-            style={({pressed}) => [
-              {opacity: pressed ? 0.8 : 1.0},
+            style={({ pressed }) => [
+              { opacity: pressed ? 0.8 : 1.0 },
               styles.ButtonContainer,
-              {backgroundColor: theme.color.button2, marginLeft: 15},
+              { backgroundColor: theme.color.button2, marginLeft: 15 },
             ]}
-            onPress={() => closeSendReviewModal('goto')}>
-            <Text style={[styles.ButtonText, {color: '#30563A'}]}>
+            onPress={() => closeSendReviewModal("goto")}
+          >
+            <Text style={[styles.ButtonText, { color: "#30563A" }]}>
               Go to my review
             </Text>
           </Pressable>
@@ -1620,8 +1688,8 @@ function Reviews(props) {
               paddingBottom: 15,
               paddingHorizontal: 15,
               backgroundColor: theme.color.background,
-              shadowColor: '#000000',
-              shadowOffset: {width: 0, height: -1}, // change this for more shadow
+              shadowColor: "#000000",
+              shadowOffset: { width: 0, height: -1 }, // change this for more shadow
               shadowOpacity: 0.1,
               elevation: 22,
             },
@@ -1640,24 +1708,27 @@ function Reviews(props) {
       <Modal
         visible={isSendReview}
         transparent
-        onRequestClose={() => closeSendReviewModal('')}>
+        onRequestClose={() => closeSendReviewModal("")}
+      >
         <SafeAreaView style={styles.modalContainer}>
           <View style={styles.modalContainer2}>
             <View
-              onLayout={event => {
+              onLayout={(event) => {
                 if (!c) {
-                  let {height} = event.nativeEvent.layout;
+                  let { height } = event.nativeEvent.layout;
                   setmodalHeight(height);
                 }
               }}
-              style={style}>
+              style={style}
+            >
               {c && (
                 <>
                   {renderHeader()}
                   <ScrollView
-                    contentContainerStyle={{paddingHorizontal: 15}}
+                    contentContainerStyle={{ paddingHorizontal: 15 }}
                     showsVerticalScrollIndicator={false}
-                    style={{flex: 1}}>
+                    style={{ flex: 1 }}
+                  >
                     {renderSec1()}
                   </ScrollView>
                   {renderBottom()}
@@ -1681,17 +1752,18 @@ function Reviews(props) {
 
   const renderDeleteReviewModal = () => {
     let c = modalHeight >= maxModalHeight ? true : false;
-    let style = c ? [styles.modal2, {height: maxModalHeight}] : styles.modal;
+    let style = c ? [styles.modal2, { height: maxModalHeight }] : styles.modal;
 
     const renderHeader = () => {
-      let text = 'Delete Review';
+      let text = "Delete Review";
 
       const renderCross = () => {
         return (
           <Pressable
             disabled={mloader}
-            style={({pressed}) => [{opacity: pressed ? 0.7 : 1.0}]}
-            onPress={closeDeleteModal}>
+            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1.0 }]}
+            onPress={closeDeleteModal}
+          >
             <utils.vectorIcon.Ionicons
               name="ios-close-outline"
               color={theme.color.title}
@@ -1710,13 +1782,13 @@ function Reviews(props) {
           style={
             c
               ? {
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
+                  flexDirection: "row",
+                  justifyContent: "space-between",
                   paddingHorizontal: 15,
                   paddingTop: 15,
                   paddingBottom: 7,
-                  shadowColor: '#000000',
-                  shadowOffset: {width: 0, height: 1}, // change this for more shadow
+                  shadowColor: "#000000",
+                  shadowOffset: { width: 0, height: 1 }, // change this for more shadow
                   shadowOpacity: 0.1,
                   elevation: 1,
                   backgroundColor: theme.color.background,
@@ -1724,29 +1796,31 @@ function Reviews(props) {
                   borderTopRightRadius: 10,
                 }
               : {
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
+                  flexDirection: "row",
+                  justifyContent: "space-between",
                 }
-          }>
-          <View style={{width: '80%'}}>{renderTitle()}</View>
+          }
+        >
+          <View style={{ width: "80%" }}>{renderTitle()}</View>
           {renderCross()}
         </View>
       );
     };
 
     const renderSec1 = () => {
-      let t = 'Are you sure you want to delete your review for ';
-      let name = user.firstName + ' ' + user.lastName;
+      let t = "Are you sure you want to delete your review for ";
+      let name = user.firstName + " " + user.lastName;
       return (
         <>
-          <View style={[styles.modalFieldConatiner, {marginTop: 20}]}>
+          <View style={[styles.modalFieldConatiner, { marginTop: 20 }]}>
             <Text style={styles.mfT1trptitleee}>
               {t}
               <Text
                 style={[
                   styles.mfT1trptitleee,
-                  {fontFamily: theme.fonts.fontBold},
-                ]}>
+                  { fontFamily: theme.fonts.fontBold },
+                ]}
+              >
                 {name}
               </Text>
               ?
@@ -1762,15 +1836,16 @@ function Reviews(props) {
           <Pressable
             disabled={mloader}
             onPress={DeleteReview}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.8 : 1},
-              [styles.ButtonContainer, {backgroundColor: '#B93B3B'}],
-            ]}>
+            style={({ pressed }) => [
+              { opacity: pressed ? 0.8 : 1 },
+              [styles.ButtonContainer, { backgroundColor: "#B93B3B" }],
+            ]}
+          >
             {mloader && (
               <ActivityIndicator size={20} color={theme.color.buttonText} />
             )}
             {!mloader && (
-              <Text style={[styles.ButtonText, {textTransform: 'none'}]}>
+              <Text style={[styles.ButtonText, { textTransform: "none" }]}>
                 Yes, delete it
               </Text>
             )}
@@ -1782,17 +1857,19 @@ function Reviews(props) {
         return (
           <Pressable
             disabled={mloader}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.8 : 1.0},
+            style={({ pressed }) => [
+              { opacity: pressed ? 0.8 : 1.0 },
               styles.ButtonContainer,
-              {backgroundColor: theme.color.button2, marginLeft: 15},
+              { backgroundColor: theme.color.button2, marginLeft: 15 },
             ]}
-            onPress={closeDeleteModal}>
+            onPress={closeDeleteModal}
+          >
             <Text
               style={[
                 styles.ButtonText,
-                {color: '#30563A', textTransform: 'none'},
-              ]}>
+                { color: "#30563A", textTransform: "none" },
+              ]}
+            >
               No, keep it
             </Text>
           </Pressable>
@@ -1810,8 +1887,8 @@ function Reviews(props) {
               paddingBottom: 15,
               paddingHorizontal: 15,
               backgroundColor: theme.color.background,
-              shadowColor: '#000000',
-              shadowOffset: {width: 0, height: -1}, // change this for more shadow
+              shadowColor: "#000000",
+              shadowOffset: { width: 0, height: -1 }, // change this for more shadow
               shadowOpacity: 0.1,
               elevation: 22,
             },
@@ -1831,20 +1908,22 @@ function Reviews(props) {
         <SafeAreaView style={styles.modalContainer}>
           <View style={styles.modalContainer2}>
             <View
-              onLayout={event => {
+              onLayout={(event) => {
                 if (!c) {
-                  let {height} = event.nativeEvent.layout;
+                  let { height } = event.nativeEvent.layout;
                   setmodalHeight(height);
                 }
               }}
-              style={style}>
+              style={style}
+            >
               {c && (
                 <>
                   {renderHeader()}
                   <ScrollView
-                    contentContainerStyle={{paddingHorizontal: 15}}
+                    contentContainerStyle={{ paddingHorizontal: 15 }}
                     showsVerticalScrollIndicator={false}
-                    style={{flex: 1}}>
+                    style={{ flex: 1 }}
+                  >
                     {renderSec1()}
                   </ScrollView>
                   {renderBottom()}
@@ -1869,8 +1948,8 @@ function Reviews(props) {
   return (
     <SafeAreaView style={styles.container}>
       {data.length > 0 && renderShowRes()}
-      <View style={{marginTop: 3}}>
-        {getDataOnce && data.length <= 0 && !loader && renderMessage('empty')}
+      <View style={{ marginTop: 3 }}>
+        {getDataOnce && data.length <= 0 && !loader && renderMessage("empty")}
 
         {data.length >= 0 && (
           <FlatList
