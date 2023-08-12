@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -10,29 +10,29 @@ import {
   Keyboard,
   Platform,
   KeyboardAvoidingView,
-} from 'react-native';
-import {styles} from './styles';
-import {observer} from 'mobx-react';
-import store from '../../store/index';
-import utils from '../../utils/index';
-import theme from '../../theme';
-import {responsiveHeight} from 'react-native-responsive-dimensions';
-import Toast from 'react-native-easy-toast';
-import NetInfo from '@react-native-community/netinfo';
-import CodeInput from 'react-native-code-input';
-import CountDown from 'react-native-countdown-component';
-import auth from '@react-native-firebase/auth';
+} from "react-native";
+import { styles } from "./styles";
+import { observer } from "mobx-react";
+import store from "../../store/index";
+import utils from "../../utils/index";
+import theme from "../../theme";
+import { responsiveHeight } from "react-native-responsive-dimensions";
+import Toast from "react-native-easy-toast";
+import NetInfo from "@react-native-community/netinfo";
+import CodeInput from "react-native-code-input";
+import CountDown from "react-native-countdown-component";
+import auth from "@react-native-firebase/auth";
 
 export default observer(VerifyCode);
 function VerifyCode(props) {
   let resendTime = 60; //second
-  let screen = props.route.params.screen || '';
+  let screen = props.route.params.screen || "";
 
   const mobileReg = /^[0][3]\d{9}$/;
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
   const cnicReg = /\d{5}\d{8}\d/;
-  let chk = props.route.params.chk || ''; //isemail or isphone
-  let value = props.route.params.value || ''; //email/phone
+  let chk = props.route.params.chk || ""; //isemail or isphone
+  let value = props.route.params.value || ""; //email/phone
 
   const loader = store.User.regLoader;
 
@@ -42,20 +42,19 @@ function VerifyCode(props) {
 
   const prevCodeRef = useRef();
   const [confirmResult, setConfirmResult] = useState(
-    props.route.params.res || null,
+    props.route.params.res || null
   );
 
-  const [code, setcode] = useState('');
-  const [isVerifyCode, setisVerifyCode] = useState('a');
+  const [code, setcode] = useState("");
+  const [isVerifyCode, setisVerifyCode] = useState("a");
   const [isEmptyCode, setisEmptyCode] = useState(false);
   const [isFinish, setFinish] = useState(false);
 
-  const [errorMessage, seterrorMessage] = useState('');
+  const [errorMessage, seterrorMessage] = useState("");
 
   useEffect(() => {
-    const Subscribe = auth().onAuthStateChanged(async user => {
+    const Subscribe = auth().onAuthStateChanged(async (user) => {
       if (user) {
-        console.log('user login aksjasklajsl');
         Keyboard.dismiss();
         store.User.setregLoader(true);
         setTimeout(() => {
@@ -80,26 +79,26 @@ function VerifyCode(props) {
   }, [code]); //run this code when the value of count changes
 
   const clearAllField = () => {
-    setisVerifyCode('a');
+    setisVerifyCode("a");
     setisEmptyCode(false);
-    seterrorMessage('');
+    seterrorMessage("");
     codeInputRef2?.current?.clear();
   };
 
-  const showResentToast = c => {
-    toast?.current?.show('Resend Pin Success', 1200);
+  const showResentToast = (c) => {
+    toast?.current?.show("Resend Pin Success", 1200);
     setFinish(false);
-    setcode('');
+    setcode("");
     codeInputRef2?.current?.clear();
     setConfirmResult(c);
     Keyboard.dismiss();
   };
 
-  const goToResetPassword = v => {
-    props.navigation.navigate('ResetPassword', {screen, value: v, chk: chk});
+  const goToResetPassword = (v) => {
+    props.navigation.navigate("ResetPassword", { screen, value: v, chk: chk });
   };
 
-  const verfyCode = async c => {
+  const verfyCode = async (c) => {
     try {
       Keyboard.dismiss();
       store.User.setregLoader(true);
@@ -107,31 +106,31 @@ function VerifyCode(props) {
       setisVerifyCode(true);
     } catch (error) {
       store.User.setregLoader(false);
-      setcode('');
+      setcode("");
       codeInputRef2?.current?.clear();
-      console.log('Verifyication Code  error: ', error.code);
-      let errorMessage = '';
-      if (error.code == 'auth/unknown') {
+      console.log("Verifyication Code  error: ", error.code);
+      let errorMessage = "";
+      if (error.code == "auth/unknown") {
         errorMessage =
-          'Cannot create PhoneAuthCredential without either verificationProof, sessionInfo, temporary proof, or enrollment ID !';
-      } else if (error.code == 'auth/invalid-verification-code') {
+          "Cannot create PhoneAuthCredential without either verificationProof, sessionInfo, temporary proof, or enrollment ID !";
+      } else if (error.code == "auth/invalid-verification-code") {
         setisVerifyCode(false);
         errorMessage =
-          'Invalid verification code, Please enter correct confirmation code !';
+          "Invalid verification code, Please enter correct confirmation code !";
 
         return;
-      } else if (error.code == 'auth/session-expired') {
+      } else if (error.code == "auth/session-expired") {
         errorMessage =
-          'The sms code has expired or to many invalid code attempt. Please re-send the verification code to try again';
-      } else if (error.code == 'auth/network-request-failed') {
-        errorMessage = 'Network request failed , Please connect internet ! ';
+          "The sms code has expired or to many invalid code attempt. Please re-send the verification code to try again";
+      } else if (error.code == "auth/network-request-failed") {
+        errorMessage = "Network request failed , Please connect internet ! ";
       } else {
         var msg = error.message;
-        var si = msg.indexOf(']') + 1;
+        var si = msg.indexOf("]") + 1;
         var ei = msg.length - 1;
         errorMessage = msg.substr(si, ei);
       }
-      Alert.alert('Failed', errorMessage);
+      Alert.alert("Failed", errorMessage);
     }
   };
 
@@ -142,9 +141,9 @@ function VerifyCode(props) {
       setisEmptyCode(true);
       return;
     }
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
-        if (chk == 'email') {
+        if (chk == "email") {
           let body = {
             email: value,
             pin: code,
@@ -153,19 +152,19 @@ function VerifyCode(props) {
           store.User.attemptToVerifyCode(
             body,
             goToResetPassword,
-            setisVerifyCode,
+            setisVerifyCode
           );
         } else {
           verfyCode(code);
         }
       } else {
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
 
   async function SendOtpCode() {
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         clearAllField();
         store.User.setregLoader(true);
@@ -173,24 +172,24 @@ function VerifyCode(props) {
 
         auth()
           .signInWithPhoneNumber(value, true)
-          .then(res => {
-            console.log('opt code send true: ');
+          .then((res) => {
+            console.log("opt code send true: ");
             store.User.setregLoader(false);
             showResentToast(res);
           })
-          .catch(error => {
-            console.log('signInWithPhoneNumber  error : ', error);
+          .catch((error) => {
+            console.log("signInWithPhoneNumber  error : ", error);
             store.User.setregLoader(false);
             var errorMessage = error.message;
-            var si = errorMessage.indexOf(']') + 1;
+            var si = errorMessage.indexOf("]") + 1;
             var ei = errorMessage.length - 1;
             const message = errorMessage.substr(si, ei);
-            Alert.alert('Failed', message);
+            Alert.alert("Failed", message);
           });
 
         return;
       } else {
-        Alert.alert('Network Error', 'Please check your internet connection');
+        Alert.alert("Network Error", "Please check your internet connection");
       }
     });
   }
@@ -199,8 +198,8 @@ function VerifyCode(props) {
     clearAllField();
     Keyboard.dismiss();
 
-    if (chk == 'email') {
-      NetInfo.fetch().then(state => {
+    if (chk == "email") {
+      NetInfo.fetch().then((state) => {
         if (state.isConnected) {
           let body = {
             email: value,
@@ -209,7 +208,7 @@ function VerifyCode(props) {
           store.User.forgotPassword2(body, showResentToast);
         } else {
           // seterrorMessage('Please connect internet');
-          Alert.alert('', 'Please connect internet');
+          Alert.alert("", "Please connect internet");
         }
       });
     } else {
@@ -217,7 +216,7 @@ function VerifyCode(props) {
     }
   };
 
-  const onFinishCheckingCode = cd => {
+  const onFinishCheckingCode = (cd) => {
     setcode(cd);
   };
 
@@ -228,22 +227,23 @@ function VerifyCode(props) {
           <TouchableOpacity
             onPress={SubmitCode}
             activeOpacity={0.7}
-            style={styles.BottomButton}>
+            style={styles.BottomButton}
+          >
             <Text style={styles.buttonTextBottom}>submit code</Text>
           </TouchableOpacity>
         </>
       );
     };
 
-    const renderShowFieldError = c => {
-      let text = '';
+    const renderShowFieldError = (c) => {
+      let text = "";
 
-      if (c == 'code') {
+      if (c == "code") {
         text = isEmptyCode
-          ? 'Please enter 6-digit pin code'
+          ? "Please enter 6-digit pin code"
           : !isVerifyCode
-          ? 'PIN code is incorrect.'
-          : '';
+          ? "PIN code is incorrect."
+          : "";
       }
 
       return (
@@ -263,13 +263,15 @@ function VerifyCode(props) {
           activeOpacity={0.7}
           disabled={!isFinish ? true : false}
           onPress={resend}
-          style={styles.Timer}>
+          style={styles.Timer}
+        >
           <Text
             style={[
               styles.TimerText,
-              {textDecorationLine: isFinish ? 'underline' : 'none'},
-            ]}>
-            Resend Code{!isFinish ? ' in' : ''}
+              { textDecorationLine: isFinish ? "underline" : "none" },
+            ]}
+          >
+            Resend Code{!isFinish ? " in" : ""}
           </Text>
           {!isFinish && (
             <>
@@ -277,10 +279,10 @@ function VerifyCode(props) {
                 size={14}
                 until={resendTime}
                 onFinish={() => setFinish(true)}
-                digitStyle={{backgroundColor: 'transparent'}}
+                digitStyle={{ backgroundColor: "transparent" }}
                 digitTxtStyle={styles.dtx}
-                timeToShow={['S']}
-                timeLabels={{s: null}}
+                timeToShow={["S"]}
+                timeLabels={{ s: null }}
                 showSeparator
               />
               {/* <Text style={[styles.TimerTextr, {left: -10}]}>Sec</Text> */}
@@ -297,13 +299,13 @@ function VerifyCode(props) {
             <Text style={styles.section2Title1}>Verify PIN Code</Text>
 
             <Text style={styles.section2LogoTitle}>
-              {chk == 'phone'
+              {chk == "phone"
                 ? `Enter the 6-digit verification code we sent to your device at  ${value}`
                 : `Enter the 6-digit verification code we sent to your email at ${value}`}
             </Text>
           </View>
 
-          <View style={[styles.Field, {marginTop: 10}]}>
+          <View style={[styles.Field, { marginTop: 10 }]}>
             <CodeInput
               ref={codeInputRef2}
               activeColor="rgba(49, 180, 4, 1)"
@@ -326,7 +328,7 @@ function VerifyCode(props) {
               }}
             />
             {(isEmptyCode || isVerifyCode == false) &&
-              renderShowFieldError('code')}
+              renderShowFieldError("code")}
           </View>
 
           {renderButton()}
@@ -344,7 +346,7 @@ function VerifyCode(props) {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../../assets/images/background/img.png')}
+        source={require("../../assets/images/background/img.png")}
         style={styles.container2}
       />
       <SafeAreaView style={styles.container3}>
@@ -356,12 +358,13 @@ function VerifyCode(props) {
             paddingHorizontal: 15,
             marginTop: responsiveHeight(3),
           }}
-          behavior={Platform.OS == 'ios' ? 'padding' : undefined}>
+          behavior={Platform.OS == "ios" ? "padding" : undefined}
+        >
           {renderSection2()}
         </KeyboardAvoidingView>
       </SafeAreaView>
 
-      {Platform.OS == 'ios' && <utils.Loader load={loader} />}
+      {Platform.OS == "ios" && <utils.Loader load={loader} />}
       <Toast ref={toast} position="bottom" />
     </View>
   );
