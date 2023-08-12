@@ -30,9 +30,13 @@ import NetInfo from "@react-native-community/netinfo";
 import { Image as ImageCompressor } from "react-native-compressor";
 import DatePicker from "react-native-date-picker";
 import Toast from "react-native-easy-toast";
-import IntentLauncher from "react-native-intent-launcher";
 import * as RNLocalize from "react-native-localize";
-import { check, PERMISSIONS, request } from "react-native-permissions";
+import {
+  check,
+  openSettings,
+  PERMISSIONS,
+  request,
+} from "react-native-permissions";
 import { observer } from "mobx-react";
 import moment from "moment";
 import { styles } from "./styles";
@@ -873,10 +877,7 @@ function Signup(props) {
             {
               text: "Open Settings",
               onPress: () => {
-                IntentLauncher.startActivity({
-                  action: "android.settings.APPLICATION_DETAILS_SETTINGS",
-                  data: "package:" + store.General.package,
-                });
+                openSettings();
               },
             },
           ]);
@@ -903,10 +904,7 @@ function Signup(props) {
               {
                 text: "Open Settings",
                 onPress: () => {
-                  IntentLauncher.startActivity({
-                    action: "android.settings.APPLICATION_DETAILS_SETTINGS",
-                    data: "package:" + store.General.package,
-                  });
+                  openSettings();
                 },
               },
             ]);
@@ -946,7 +944,7 @@ function Signup(props) {
           {
             text: "Open Settings",
             onPress: () => {
-              Linking.openURL("app-settings:");
+              openSettings();
             },
           },
         ]);
@@ -965,8 +963,7 @@ function Signup(props) {
           {
             text: "Open Settings",
             onPress: () => {
-              Linking.openURL("app-settings:");
-              //react-native-permissions // openSettings('App-Prefs:root=Photos');
+              openSettings();
             },
           },
         ]);

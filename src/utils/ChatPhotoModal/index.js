@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -14,22 +14,26 @@ import {
   Alert,
   Platform,
   KeyboardAvoidingView,
-} from 'react-native';
-import {styles} from './styles';
-import {observer} from 'mobx-react';
-import Modal from 'react-native-modal';
-import store from '../../store/index';
-import utils from '../index';
-import theme from '../../theme';
-import NetInfo from '@react-native-community/netinfo';
-import IntentLauncher from 'react-native-intent-launcher';
-import {request, PERMISSIONS, check} from 'react-native-permissions';
-import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
-import {Image as ImageCompressor} from 'react-native-compressor';
+} from "react-native";
+import { styles } from "./styles";
+import { observer } from "mobx-react";
+import Modal from "react-native-modal";
+import store from "../../store/index";
+import utils from "../index";
+import theme from "../../theme";
+import NetInfo from "@react-native-community/netinfo";
+import {
+  request,
+  PERMISSIONS,
+  check,
+  openSettings,
+} from "react-native-permissions";
+import MultipleImagePicker from "@baronha/react-native-multiple-image-picker";
+import { Image as ImageCompressor } from "react-native-compressor";
 import {
   responsiveFontSize,
   responsiveHeight,
-} from 'react-native-responsive-dimensions';
+} from "react-native-responsive-dimensions";
 
 export default observer(ChatPhotoModal);
 
@@ -37,7 +41,7 @@ function ChatPhotoModal(props) {
   let isAddPhotoModal = props.isAddPhotoModal;
   let isShowPrmsn = props.isShowPrmsn;
   let prmsnChk = props.prmsnChk;
-  let DT = 'ChatPhotos';
+  let DT = "ChatPhotos";
   let maxPhotos = 4;
   let photos = props.photos;
   let pmessage = props.pmessage;
@@ -46,37 +50,37 @@ function ChatPhotoModal(props) {
   const [pvm, setpvm] = useState(false);
   const [si, setsi] = useState(0);
 
-  const setisAddPhotoModal = c => {
+  const setisAddPhotoModal = (c) => {
     props.isAddPhotoModal(c);
   };
-  const setisShowPrmsn = c => {
+  const setisShowPrmsn = (c) => {
     props.setisSowPrmsn(c);
   };
-  const setprmsnChk = c => {
+  const setprmsnChk = (c) => {
     props.setprmsnChk(c);
   };
   const closeAddPhotoModal = () => {
     props.ClosePhotoModal();
     setsi(0);
-    setpvm('');
+    setpvm("");
   };
-  const setphotos = c => {
+  const setphotos = (c) => {
     props.setphotos(c);
   };
-  const setpmessage = c => {
+  const setpmessage = (c) => {
     props.setpmessage(c);
   };
 
-  const MultipleImage = async chk => {
+  const MultipleImage = async (chk) => {
     setisShowPrmsn(false);
     const apiLevel = store.General.apiLevel;
     Keyboard.dismiss();
 
     let d = photos.length;
     let max = maxPhotos;
-    let msg = 'You can upload only ' + max + ' images';
+    let msg = "You can upload only " + max + " images";
     if (d == max) {
-      Alert.alert('', msg);
+      Alert.alert("", msg);
       return;
     }
     let maxPhotos = 4 - photos.length;
@@ -84,13 +88,13 @@ function ChatPhotoModal(props) {
     setTimeout(async () => {
       try {
         let options = {
-          mediaType: 'image',
+          mediaType: "image",
           isPreview: false,
           maxSelectedAssets: maxPhotos,
         };
         const res = await MultipleImagePicker.openPicker(options);
         if (res) {
-          console.log('mutipicker image res true  ');
+          console.log("mutipicker image res true  ");
           let data = photos.slice();
           let ar = data;
 
@@ -100,23 +104,23 @@ function ChatPhotoModal(props) {
               let fileName = e.fileName;
               let type = e.mime;
 
-              if (Platform.OS == 'android' && apiLevel < 29) {
-                uri = 'file://' + uri;
+              if (Platform.OS == "android" && apiLevel < 29) {
+                uri = "file://" + uri;
               }
 
               ImageCompressor.compress(uri, {
-                compressionMethod: 'auto',
+                compressionMethod: "auto",
               })
-                .then(async res => {
-                  const imageObject = {uri: res, fileName, type};
-                  console.log('Compress image  : ', imageObject);
+                .then(async (res) => {
+                  const imageObject = { uri: res, fileName, type };
+                  console.log("Compress image  : ", imageObject);
                   let isAlreadySelectimage = data.find(
-                    x => x.fileName == fileName,
+                    (x) => x.fileName == fileName
                   )
                     ? true
                     : false;
 
-                  if (chk == 'ChatPhotos' && !isAlreadySelectimage) {
+                  if (chk == "ChatPhotos" && !isAlreadySelectimage) {
                     ar.push(imageObject);
                   }
 
@@ -124,8 +128,8 @@ function ChatPhotoModal(props) {
                     setphotos(ar);
                   }
                 })
-                .catch(err => {
-                  console.log('Image compress error : ', err);
+                .catch((err) => {
+                  console.log("Image compress error : ", err);
                 });
             });
           } else {
@@ -134,63 +138,60 @@ function ChatPhotoModal(props) {
               let fileName = e.fileName;
               let type = e.mime;
 
-              if (Platform.OS == 'android' && apiLevel < 29) {
-                uri = 'file://' + uri;
+              if (Platform.OS == "android" && apiLevel < 29) {
+                uri = "file://" + uri;
               }
 
               ImageCompressor.compress(uri, {
-                compressionMethod: 'auto',
+                compressionMethod: "auto",
               })
-                .then(async res => {
-                  let imageObject = {uri: res, fileName, type};
-                  console.log('Compress image  : ', imageObject);
-                  if (chk == 'ChatPhotos') {
+                .then(async (res) => {
+                  let imageObject = { uri: res, fileName, type };
+                  console.log("Compress image  : ", imageObject);
+                  if (chk == "ChatPhotos") {
                     ar.push(imageObject);
                   }
                   if (i == a.length - 1) {
                     setphotos(ar);
                   }
                 })
-                .catch(err => {
-                  console.log('Image compress error : ', err);
+                .catch((err) => {
+                  console.log("Image compress error : ", err);
                 });
             });
           }
         }
       } catch (error) {
-        console.log('multi photo picker error : ', error);
+        console.log("multi photo picker error : ", error);
       }
     }, 200);
   };
 
-  const onclickImage = c => {
+  const onclickImage = (c) => {
     MultipleImage(c);
   };
 
   const reqPermission = async () => {
-    if (Platform.OS == 'android') {
+    if (Platform.OS == "android") {
       try {
         const reqPer = await PermissionsAndroid.request(
-          PERMISSIONS.ANDROID.CAMERA,
+          PERMISSIONS.ANDROID.CAMERA
         );
 
-        if (reqPer == 'never_ask_again') {
-          let title = 'Camera Permission Blocked';
-          let text = 'Please allow grant permission to acces camera';
+        if (reqPer == "never_ask_again") {
+          let title = "Camera Permission Blocked";
+          let text = "Please allow grant permission to acces camera";
 
           Alert.alert(title, text, [
             {
-              text: 'Cancel',
-              onPress: () => console.log('Cancel Pressed'),
-              style: 'cancel',
+              text: "Cancel",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel",
             },
             {
-              text: 'Open Settings',
+              text: "Open Settings",
               onPress: () => {
-                IntentLauncher.startActivity({
-                  action: 'android.settings.APPLICATION_DETAILS_SETTINGS',
-                  data: 'package:' + store.General.package,
-                });
+                openSettings();
               },
             },
           ]);
@@ -198,87 +199,83 @@ function ChatPhotoModal(props) {
           return;
         }
 
-        if (reqPer == 'granted') {
+        if (reqPer == "granted") {
           const reqPer2 = await PermissionsAndroid.request(
-            PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+            PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE
           );
 
-          if (reqPer2 == 'never_ask_again') {
-            let title = 'Storage Permission Blocked';
+          if (reqPer2 == "never_ask_again") {
+            let title = "Storage Permission Blocked";
             let text =
-              'Please allow grant permission to acces photos in storage';
+              "Please allow grant permission to acces photos in storage";
 
             Alert.alert(title, text, [
               {
-                text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
-                style: 'cancel',
+                text: "Cancel",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel",
               },
               {
-                text: 'Open Settings',
+                text: "Open Settings",
                 onPress: () => {
-                  IntentLauncher.startActivity({
-                    action: 'android.settings.APPLICATION_DETAILS_SETTINGS',
-                    data: 'package:' + store.General.package,
-                  });
+                  openSettings();
                 },
               },
             ]);
             return;
           }
 
-          if (reqPer2 == 'granted') {
+          if (reqPer2 == "granted") {
             onclickImage(DT);
           }
         }
       } catch (error) {
-        console.log('req permsiion error : ', error);
+        console.log("req permsiion error : ", error);
       }
     }
 
-    if (Platform.OS == 'ios') {
+    if (Platform.OS == "ios") {
       const pc = await check(PERMISSIONS.IOS.CAMERA);
       const pp = await check(PERMISSIONS.IOS.PHOTO_LIBRARY);
 
-      if (pc == 'blocked' || pp == 'blocked') {
+      if (pc == "blocked" || pp == "blocked") {
         let title =
-          pc == 'blocked'
-            ? 'Camera Permission Blocked'
-            : 'Photo Permission Blocked';
+          pc == "blocked"
+            ? "Camera Permission Blocked"
+            : "Photo Permission Blocked";
         let text =
-          pc == 'blocked'
-            ? 'Please allow grant permission to acces camera'
-            : 'Please allow grant permission to acces all photos';
+          pc == "blocked"
+            ? "Please allow grant permission to acces camera"
+            : "Please allow grant permission to acces all photos";
         Alert.alert(title, text, [
           {
-            text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
           },
           {
-            text: 'Open Settings',
+            text: "Open Settings",
             onPress: () => {
-              Linking.openURL('app-settings:');
+              openSettings();
             },
           },
         ]);
         return;
       }
 
-      if (pp == 'limited') {
-        let title = 'Photo Permission Limited';
-        let text = 'Please allow grant permission to select all photos';
+      if (pp == "limited") {
+        let title = "Photo Permission Limited";
+        let text = "Please allow grant permission to select all photos";
         Alert.alert(title, text, [
           {
-            text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
           },
           {
-            text: 'Open Settings',
+            text: "Open Settings",
             onPress: () => {
-              Linking.openURL('app-settings:');
-              //react-native-permissions // openSettings('App-Prefs:root=Photos');
+              openSettings();
             },
           },
         ]);
@@ -287,26 +284,26 @@ function ChatPhotoModal(props) {
 
       try {
         const reqPer = await request(PERMISSIONS.IOS.CAMERA);
-        if (reqPer == 'granted') {
+        if (reqPer == "granted") {
           const reqPer2 = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
-          if (reqPer2 == 'granted') {
+          if (reqPer2 == "granted") {
             onclickImage(DT);
           }
         }
       } catch (error) {
-        console.log('req permsiion error : ', error);
+        console.log("req permsiion error : ", error);
       }
     }
   };
 
-  const checkPermsn = async c => {
-    if (Platform.OS == 'android') {
+  const checkPermsn = async (c) => {
+    if (Platform.OS == "android") {
       const permissionAndroid = await check(PERMISSIONS.ANDROID.CAMERA);
       const permissionAndroid2 = await check(
-        PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+        PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE
       );
 
-      if (permissionAndroid != 'granted' || permissionAndroid2 != 'granted') {
+      if (permissionAndroid != "granted" || permissionAndroid2 != "granted") {
         setisShowPrmsn(true);
         setprmsnChk(c);
       } else {
@@ -314,19 +311,19 @@ function ChatPhotoModal(props) {
       }
     }
 
-    if (Platform.OS == 'ios') {
+    if (Platform.OS == "ios") {
       try {
         const permissionIos = await check(PERMISSIONS.IOS.CAMERA);
         const permissionIos2 = await check(PERMISSIONS.IOS.PHOTO_LIBRARY);
 
-        if (permissionIos != 'granted' || permissionIos2 != 'granted') {
+        if (permissionIos != "granted" || permissionIos2 != "granted") {
           setisShowPrmsn(true);
           setprmsnChk(c);
         } else {
           onclickImage(DT);
         }
       } catch (error) {
-        console.warn('Permsiion error : ', error);
+        console.warn("Permsiion error : ", error);
       }
     }
   };
@@ -334,11 +331,12 @@ function ChatPhotoModal(props) {
   const renderCross = () => {
     return (
       <Pressable
-        style={({pressed}) => [
-          {opacity: pressed ? 0.7 : 1.0},
-          {position: 'absolute', top: 15, right: 15},
+        style={({ pressed }) => [
+          { opacity: pressed ? 0.7 : 1.0 },
+          { position: "absolute", top: 15, right: 15 },
         ]}
-        onPress={closeAddPhotoModal}>
+        onPress={closeAddPhotoModal}
+      >
         <utils.vectorIcon.Ionicons
           name="ios-close-outline"
           color={theme.color.title}
@@ -353,14 +351,16 @@ function ChatPhotoModal(props) {
       <View
         style={{
           marginTop: 10,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         <TouchableOpacity
           onPress={reqPermission}
           activeOpacity={0.7}
-          style={styles.BottomButtonP}>
+          style={styles.BottomButtonP}
+        >
           <Text style={styles.buttonPTextBottom}>Yes</Text>
         </TouchableOpacity>
 
@@ -369,20 +369,21 @@ function ChatPhotoModal(props) {
             setisShowPrmsn(false);
           }}
           activeOpacity={0.7}
-          style={styles.BottomButtonP}>
+          style={styles.BottomButtonP}
+        >
           <Text style={styles.buttonPTextBottom}>No</Text>
         </TouchableOpacity>
       </View>
     );
   };
 
-  const deletePhoto = i => {
+  const deletePhoto = (i) => {
     let p = photos.slice();
     p.splice(i, 1);
     setphotos(p);
   };
 
-  const photoClick = i => {
+  const photoClick = (i) => {
     setsi(i);
     setpvm(true);
   };
@@ -395,14 +396,15 @@ function ChatPhotoModal(props) {
         return (
           <Pressable
             disabled={loader}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.7 : 1.0},
+            style={({ pressed }) => [
+              { opacity: pressed ? 0.7 : 1.0 },
               styles.crossContainer,
             ]}
-            onPress={() => deletePhoto(i)}>
+            onPress={() => deletePhoto(i)}
+          >
             <Image
-              source={require('../../assets/images/cross/img.png')}
-              style={{width: 9, height: 9, resizeMode: 'contain'}}
+              source={require("../../assets/images/cross/img.png")}
+              style={{ width: 9, height: 9, resizeMode: "contain" }}
             />
           </Pressable>
         );
@@ -413,11 +415,12 @@ function ChatPhotoModal(props) {
             <Pressable
               disabled={loader}
               onPress={() => photoClick(i)}
-              style={({pressed}) => [
-                {opacity: pressed ? 0.9 : 1.0},
-                [styles.addImgContainer, {marginTop: 15}],
-              ]}>
-              <Image style={styles.addImg} source={{uri: uri}} />
+              style={({ pressed }) => [
+                { opacity: pressed ? 0.9 : 1.0 },
+                [styles.addImgContainer, { marginTop: 15 }],
+              ]}
+            >
+              <Image style={styles.addImg} source={{ uri: uri }} />
 
               {renderPhotoCross()}
             </Pressable>
@@ -428,11 +431,12 @@ function ChatPhotoModal(props) {
               <Pressable
                 disabled={loader}
                 onPress={() => photoClick(i)}
-                style={({pressed}) => [
-                  {opacity: pressed ? 0.9 : 1.0},
-                  [styles.addImgContainer, {marginTop: 15}],
-                ]}>
-                <Image style={styles.addImg} source={{uri: uri}} />
+                style={({ pressed }) => [
+                  { opacity: pressed ? 0.9 : 1.0 },
+                  [styles.addImgContainer, { marginTop: 15 }],
+                ]}
+              >
+                <Image style={styles.addImg} source={{ uri: uri }} />
                 {renderPhotoCross()}
               </Pressable>
 
@@ -440,20 +444,21 @@ function ChatPhotoModal(props) {
                 <Pressable
                   disabled={loader}
                   onPress={() => onclickImage(DT)}
-                  style={({pressed}) => [
-                    {opacity: pressed ? 0.8 : 1.0},
+                  style={({ pressed }) => [
+                    { opacity: pressed ? 0.8 : 1.0 },
                     [
                       styles.addImgContainer,
                       {
                         marginTop: 15,
-                        borderStyle: 'dashed',
+                        borderStyle: "dashed",
                         borderColor: theme.color.button1,
-                        backgroundColor: '#F2F3F1',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        backgroundColor: "#F2F3F1",
+                        alignItems: "center",
+                        justifyContent: "center",
                       },
                     ],
-                  ]}>
+                  ]}
+                >
                   <utils.vectorIcon.Feather
                     name="plus"
                     color={theme.color.button1}
@@ -470,7 +475,7 @@ function ChatPhotoModal(props) {
     return p;
   };
 
-  const photoUploadSuc = c => {
+  const photoUploadSuc = (c) => {
     setphotos(c);
     props.SendMessage(c);
   };
@@ -478,12 +483,12 @@ function ChatPhotoModal(props) {
   const uploadPhotos = () => {
     Keyboard.dismiss();
 
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.User.attemptToChatUploadImage(photos, photoUploadSuc);
       } else {
         // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
@@ -498,19 +503,21 @@ function ChatPhotoModal(props) {
       coverScreen={false}
       deviceWidth={theme.window.Width}
       deviceHeight={theme.window.Height}
-      style={{padding: 0, margin: 0}}
-      onBackButtonPress={closeAddPhotoModal}>
+      style={{ padding: 0, margin: 0 }}
+      onBackButtonPress={closeAddPhotoModal}
+    >
       <KeyboardAvoidingView
-        behavior={Platform.OS == 'ios' ? 'height' : undefined}
-        style={styles.modalContainerp}>
+        behavior={Platform.OS == "ios" ? "height" : undefined}
+        style={styles.modalContainerp}
+      >
         <View style={styles.modalp}>
           {!isShowPrmsn && (
             <>
-              <View style={{alignItems: 'center', justifyContent: 'center'}}>
+              <View style={{ alignItems: "center", justifyContent: "center" }}>
                 <Text style={styles.section2Title1}>Add photos</Text>
               </View>
 
-              <View style={{marginTop: 10}}>
+              <View style={{ marginTop: 10 }}>
                 <Text style={styles.section2Title2}>
                   Please select photos to send
                 </Text>
@@ -519,28 +526,31 @@ function ChatPhotoModal(props) {
               <View style={styles.fieldContainer}>
                 {photos.length <= 0 && (
                   <TouchableOpacity
-                    onPress={() => checkPermsn('gallery')}
+                    onPress={() => checkPermsn("gallery")}
                     activeOpacity={0.7}
                     style={{
-                      width: '80%',
-                      alignSelf: 'center',
+                      width: "80%",
+                      alignSelf: "center",
                       borderRadius: 12,
                       borderWidth: 2,
-                      borderStyle: 'dashed',
+                      borderStyle: "dashed",
                       borderColor: theme.color.button1,
-                      alignItems: 'center',
-                      justifyContent: 'center',
+                      alignItems: "center",
+                      justifyContent: "center",
                       padding: 10,
                       height: 60,
-                      backgroundColor: '#F2F3F1',
-                    }}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      backgroundColor: "#F2F3F1",
+                    }}
+                  >
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                    >
                       <Image
-                        source={require('../../assets/images/add_photo/img.png')}
+                        source={require("../../assets/images/add_photo/img.png")}
                         style={{
                           width: 24,
                           height: 24,
-                          resizeMode: 'contain',
+                          resizeMode: "contain",
                           marginRight: 10,
                         }}
                       />
@@ -553,7 +563,8 @@ function ChatPhotoModal(props) {
                             fontSize: 14,
                             color: theme.color.button1,
                           },
-                        ]}>
+                        ]}
+                      >
                         Select Photos
                       </Text>
                     </View>
@@ -562,11 +573,12 @@ function ChatPhotoModal(props) {
                 {photos.length > 0 && (
                   <View
                     style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
+                      flexDirection: "row",
+                      alignItems: "center",
                       flexShrink: 1,
-                      flexWrap: 'wrap',
-                    }}>
+                      flexWrap: "wrap",
+                    }}
+                  >
                     {renderShowPhotos()}
                   </View>
                 )}
@@ -577,33 +589,36 @@ function ChatPhotoModal(props) {
                   <View
                     style={{
                       marginTop: 50,
-                    }}>
+                    }}
+                  >
                     {!loader && (
                       <>
                         <View
                           style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
                             marginTop: 10,
-                          }}>
+                          }}
+                        >
                           <View
                             style={{
-                              width: '81%',
-                              backgroundColor: '#F2F3F1',
+                              width: "81%",
+                              backgroundColor: "#F2F3F1",
                               borderRadius: 100,
                               paddingHorizontal: 15,
-                            }}>
+                            }}
+                          >
                             <TextInput
                               placeholder="Add a caption..."
                               value={pmessage}
                               style={{
-                                width: '100%',
+                                width: "100%",
                                 height: responsiveHeight(5.8),
                                 fontSize: responsiveFontSize(1.65),
                                 borderRadius: 100,
                               }}
-                              onChangeText={t => {
+                              onChangeText={(t) => {
                                 setpmessage(t);
                               }}
                             />
@@ -611,14 +626,15 @@ function ChatPhotoModal(props) {
 
                           <TouchableOpacity
                             onPress={uploadPhotos}
-                            activeOpacity={0.8}>
+                            activeOpacity={0.8}
+                          >
                             <Image
                               style={{
                                 width: responsiveFontSize(5.5),
                                 height: responsiveFontSize(5.5),
-                                resizeMode: 'contain',
+                                resizeMode: "contain",
                               }}
-                              source={require('../../assets/images/sendmessage/img.png')}
+                              source={require("../../assets/images/sendmessage/img.png")}
                             />
                           </TouchableOpacity>
                         </View>
@@ -629,7 +645,7 @@ function ChatPhotoModal(props) {
                       <ActivityIndicator
                         color={theme.color.button1}
                         size={40}
-                        style={{alignSelf: 'center', marginVertical: 10}}
+                        style={{ alignSelf: "center", marginVertical: 10 }}
                       />
                     )}
                   </View>
@@ -642,14 +658,15 @@ function ChatPhotoModal(props) {
                   activeOpacity={0.7}
                   style={{
                     marginTop: 40,
-                    width: '100%',
+                    width: "100%",
                     height: 48,
                     borderRadius: 12,
-                    backgroundColor: '#B93B3B',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    alignSelf: 'center',
-                  }}>
+                    backgroundColor: "#B93B3B",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    alignSelf: "center",
+                  }}
+                >
                   <Text
                     style={[
                       styles.buttonTextBottom,
@@ -657,7 +674,8 @@ function ChatPhotoModal(props) {
                         color: theme.color.buttonText,
                         fontFamily: theme.fonts.fontMedium,
                       },
-                    ]}>
+                    ]}
+                  >
                     Cancel
                   </Text>
                 </TouchableOpacity>
@@ -668,33 +686,35 @@ function ChatPhotoModal(props) {
             <>
               <View
                 style={{
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
                 <Text style={styles.section2Title1}>
-                  {prmsnChk == 'camera' ? 'Camera Access' : 'Storage Access'}
+                  {prmsnChk == "camera" ? "Camera Access" : "Storage Access"}
                 </Text>
 
                 <Image
                   source={
-                    prmsnChk == 'camera'
-                      ? require('../../assets/images/ca/img.png')
-                      : require('../../assets/images/ca/img.png')
+                    prmsnChk == "camera"
+                      ? require("../../assets/images/ca/img.png")
+                      : require("../../assets/images/ca/img.png")
                   }
                   style={styles.section2Logo}
                 />
 
-                <View style={{width: '80%', alignSelf: 'center'}}>
+                <View style={{ width: "80%", alignSelf: "center" }}>
                   <Text
                     style={[
                       styles.section2LogoTitle,
                       {
-                        textAlign: 'center',
+                        textAlign: "center",
                       },
-                    ]}>
-                    {prmsnChk == 'camera'
-                      ? 'Trip Trader wants permission to access your camera.'
-                      : 'Trip Trader wants permission to access your storage.'}
+                    ]}
+                  >
+                    {prmsnChk == "camera"
+                      ? "Trip Trader wants permission to access your camera."
+                      : "Trip Trader wants permission to access your storage."}
                   </Text>
                 </View>
 

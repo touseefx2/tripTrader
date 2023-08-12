@@ -20,7 +20,6 @@ import theme from "../../theme";
 import NetInfo from "@react-native-community/netinfo";
 import Toast from "react-native-easy-toast";
 import { ActivityIndicator } from "react-native-paper";
-import IntentLauncher from "react-native-intent-launcher";
 import { request, PERMISSIONS, check } from "react-native-permissions";
 import MultipleImagePicker from "@baronha/react-native-multiple-image-picker";
 import { Image as ImageCompressor } from "react-native-compressor";
@@ -28,6 +27,7 @@ import { TabView, SceneMap } from "react-native-tab-view";
 import Reviews from "./Reviews";
 import Trips from "./Trips";
 import Photos from "./Photos";
+import { openSettings } from "react-native-permissions";
 
 export default observer(MyProfile);
 
@@ -602,10 +602,7 @@ function MyProfile(props) {
               {
                 text: "Open Settings",
                 onPress: () => {
-                  IntentLauncher.startActivity({
-                    action: "android.settings.APPLICATION_DETAILS_SETTINGS",
-                    data: "package:" + store.General.package,
-                  });
+                  openSettings();
                 },
               },
             ]);
@@ -632,10 +629,7 @@ function MyProfile(props) {
                 {
                   text: "Open Settings",
                   onPress: () => {
-                    IntentLauncher.startActivity({
-                      action: "android.settings.APPLICATION_DETAILS_SETTINGS",
-                      data: "package:" + store.General.package,
-                    });
+                    openSettings();
                   },
                 },
               ]);
@@ -673,7 +667,7 @@ function MyProfile(props) {
             {
               text: "Open Settings",
               onPress: () => {
-                Linking.openURL("app-settings:");
+                openSettings();
               },
             },
           ]);
@@ -692,8 +686,7 @@ function MyProfile(props) {
             {
               text: "Open Settings",
               onPress: () => {
-                Linking.openURL("app-settings:");
-                //react-native-permissions // openSettings('App-Prefs:root=Photos');
+                openSettings();
               },
             },
           ]);

@@ -23,7 +23,12 @@ import utils from "../../utils/index";
 import theme from "../../theme";
 import MultipleImagePicker from "@baronha/react-native-multiple-image-picker";
 import { Image as ImageCompressor } from "react-native-compressor";
-import { request, PERMISSIONS, check } from "react-native-permissions";
+import {
+  request,
+  PERMISSIONS,
+  check,
+  openSettings,
+} from "react-native-permissions";
 import ProgressiveFastImage from "@freakycoder/react-native-progressive-fast-image";
 import {
   responsiveFontSize,
@@ -31,7 +36,6 @@ import {
 } from "react-native-responsive-dimensions";
 import NetInfo from "@react-native-community/netinfo";
 import Toast from "react-native-easy-toast";
-import IntentLauncher from "react-native-intent-launcher";
 import { ScrollView } from "react-native-gesture-handler";
 import moment from "moment";
 
@@ -684,10 +688,7 @@ function NewTrips(props) {
               {
                 text: "Open Settings",
                 onPress: () => {
-                  IntentLauncher.startActivity({
-                    action: "android.settings.APPLICATION_DETAILS_SETTINGS",
-                    data: "package:" + store.General.package,
-                  });
+                  openSettings();
                 },
               },
             ]);
@@ -714,10 +715,7 @@ function NewTrips(props) {
                 {
                   text: "Open Settings",
                   onPress: () => {
-                    IntentLauncher.startActivity({
-                      action: "android.settings.APPLICATION_DETAILS_SETTINGS",
-                      data: "package:" + store.General.package,
-                    });
+                    openSettings();
                   },
                 },
               ]);
@@ -755,7 +753,7 @@ function NewTrips(props) {
             {
               text: "Open Settings",
               onPress: () => {
-                Linking.openURL("app-settings:");
+                openSettings();
               },
             },
           ]);
@@ -774,7 +772,7 @@ function NewTrips(props) {
             {
               text: "Open Settings",
               onPress: () => {
-                Linking.openURL("app-settings:");
+                openSettings();
               },
             },
           ]);
