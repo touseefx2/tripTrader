@@ -1391,33 +1391,37 @@ class user {
         },
       })
         .then((response) => response.json())
-        .then((responseData) => {
-          console.log("upload photo success : ");
-          let rsp = responseData.data[0].imgrUrl;
-          ua.push(rsp);
+        .then(
+          (responseData) => {
+            console.log("upload photo success : ");
+            let rsp = responseData.data[0].imgrUrl;
+            ua.push(rsp);
 
-          if (ua.length == a.length) {
-            delete body.photos;
-            body.photos = ua;
-            this.attemptToCreateTrip(body, suc);
-            return;
+            if (ua.length == a.length) {
+              delete body.photos;
+              body.photos = ua;
+              this.attemptToCreateTrip(body, suc);
+              return;
+            }
+          },
+          (err) => {
+            console.log("upload then ", err);
+            this.setctripLoader(false);
           }
-        })
+        )
         .catch((err) => {
           this.setctripLoader(false);
 
-          // err.response.data.message || err.response.status ||
-          let msg = err;
+          const msg = err.response.data.message || err.response.status || err;
           console.log(
             `Error in upload trips photo ${db.apis.IMAGE_UPLOAD} : `,
             msg
           );
           if (msg == 503 || msg == 500) {
             Alert.alert("", "Server not response");
-            // store.General.setisServerError(true);
             return;
           }
-          // seterror(msg.toString())
+
           Alert.alert("", msg.toString());
         });
     });
@@ -1456,17 +1460,17 @@ class user {
         .catch((err) => {
           this.setchatmsgSendLoader(false);
 
-          let msg = err.response.data.message || err.response.status || err;
+          const msg = err.response.data.message || err.response.status || err;
           console.log(
             `Error in upload chat photos ${db.apis.IMAGE_UPLOAD} : `,
             msg
           );
           if (msg == 503 || msg == 500) {
             Alert.alert("", "Server not response");
-            // store.General.setisServerError(true);
+
             return;
           }
-          // seterror(msg.toString())
+
           Alert.alert("", msg.toString());
         });
     });
@@ -1568,36 +1572,42 @@ class user {
         },
       })
         .then((response) => response.json())
-        .then((responseData) => {
-          console.log(
-            "upload update trips photo success : ",
-            responseData.data[0].imgrUrl
-          );
-          let rsp = responseData.data[0].imgrUrl;
-          ua.push(rsp);
+        .then(
+          (responseData) => {
+            console.log(
+              "upload update trips photo success : ",
+              responseData.data[0].imgrUrl
+            );
+            let rsp = responseData.data[0].imgrUrl;
+            ua.push(rsp);
 
-          if (ua.length == a.length) {
-            let body = { ...bd };
-            const pt = body.photos;
+            if (ua.length == a.length) {
+              let body = { ...bd };
+              const pt = body.photos;
 
-            let f = [];
-            if (pt.length > 0) {
-              pt.map((e, i, a) => {
-                f.push(e);
-              });
+              let f = [];
+              if (pt.length > 0) {
+                pt.map((e, i, a) => {
+                  f.push(e);
+                });
+              }
+              if (ua.length > 0) {
+                ua.map((e, i, a) => {
+                  f.push(e);
+                });
+              }
+
+              delete body.photos;
+              body.photos = f;
+              this.attemptToUpdateTrip(body, tid, index, suc);
+              return;
             }
-            if (ua.length > 0) {
-              ua.map((e, i, a) => {
-                f.push(e);
-              });
-            }
-
-            delete body.photos;
-            body.photos = f;
-            this.attemptToUpdateTrip(body, tid, index, suc);
-            return;
+          },
+          (err) => {
+            console.log("upload then ", err);
+            this.setctripLoader(false);
           }
-        })
+        )
         .catch((err) => {
           this.setctripLoader(false);
 
@@ -1608,10 +1618,10 @@ class user {
           );
           if (msg == 503 || msg == 500) {
             Alert.alert("", "Server not response");
-            // store.General.setisServerError(true);
+
             return;
           }
-          // seterror(msg.toString())
+
           Alert.alert("", msg.toString());
         });
     });
@@ -2416,7 +2426,7 @@ class user {
 
   @action.bound
   updateUser(body, c, seterror, setPhoto1Upload, setup, setuc, uid, token) {
-    let bd =
+    const bd =
       c == "Profile"
         ? {
             image: body.photo,
@@ -2430,33 +2440,33 @@ class user {
       ?.then((resp) => {
         this.setregLoader(false);
         console.log(
-          `response update user ${db.apis.UPDATE_USER + uid} : `,
-          resp.data
+          `response update user ${db.apis.UPDATE_USER + uid} true : `
         );
 
-        if (c == "Profile") {
+        if (c === "Profile") {
           setup(body.photo);
           setPhoto1Upload(1);
         }
-        if (c == "CnicF") {
+        if (c === "CnicF") {
           setuc(body.cnic_front_image);
           setPhoto1Upload(2);
         }
       })
       .catch((err) => {
         this.setregLoader(false);
-        let msg = err.response.data.message || err.response.status || err;
+        const msg = err.response.data.message || err.response.status || err;
         console.log(`Error in update user ${db.apis.UPDATE_USER} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert("", "Server not response");
-          // store.General.setisServerError(true);
+
           return;
         }
-        // seterror(msg.toString())
+
         Alert.alert("", msg.toString());
       });
   }
 
+  @action.bound
   attemptToUploadImage(
     imgArr,
     seterror,
@@ -2466,17 +2476,15 @@ class user {
     uid,
     token
   ) {
-    console.log("upload photo body : ", imgArr[0]);
     this.setregLoader(true);
-    let e = imgArr[0];
     let body = {};
+    const e = imgArr[0];
     const data = new FormData();
-    const newFile = {
+    data.append("files", {
       uri: e.uri,
       type: e.type,
       name: e.fileName,
-    };
-    data.append("files", newFile);
+    });
     fetch(db.apis.BASE_URL + db.apis.IMAGE_UPLOAD, {
       method: "post",
       body: data,
@@ -2485,43 +2493,47 @@ class user {
       },
     })
       .then((response) => response.json())
-      .then((responseData) => {
-        console.log("upload photo success : ");
-        let rsp = responseData.data[0].imgrUrl;
-        if (e.chk == "Profile") {
-          body = {
-            photo: rsp,
-          };
-        }
+      .then(
+        (responseData) => {
+          const rsp = responseData.data[0].imgrUrl;
+          if (e.chk === "Profile") {
+            body = {
+              photo: rsp,
+            };
+          }
 
-        if (e.chk == "CnicF") {
-          body = {
-            cnic_front_image: rsp,
-          };
-        }
+          if (e.chk === "CnicF") {
+            body = {
+              cnic_front_image: rsp,
+            };
+          }
 
-        this.updateUser(
-          body,
-          e.chk,
-          seterror,
-          setPhoto1Upload,
-          setup,
-          setuc,
-          uid,
-          token
-        );
-      })
+          this.updateUser(
+            body,
+            e.chk,
+            seterror,
+            setPhoto1Upload,
+            setup,
+            setuc,
+            uid,
+            token
+          );
+        },
+        (err) => {
+          console.log("upload then ", err);
+          this.setregLoader(false);
+        }
+      )
       .catch((err) => {
         this.setregLoader(false);
-        // console.log(`Error in upload image ${db.apis.IMAGE_UPLOAD} : `, err);
-        let msg = err.response.data.message || err.response.status || err;
+        const msg = err.response.data.message || err.response.status || err;
         console.log(`Error in upload image ${db.apis.IMAGE_UPLOAD} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert("", "Server not response");
-          // store.General.setisServerError(true);
+
           return;
         }
-        // seterror(msg.toString())
+
         Alert.alert("", msg.toString());
       });
   }
@@ -3104,23 +3116,29 @@ class user {
         },
       })
         .then((response) => response.json())
-        .then((responseData) => {
-          console.log("upload photo success : ");
-          let rsp = responseData.data[0].imgrUrl;
-          if (e.chk == "Profile") {
-            body.image = rsp;
-          }
+        .then(
+          (responseData) => {
+            console.log("upload photo success : ");
+            const rsp = responseData.data[0].imgrUrl;
+            if (e.chk == "Profile") {
+              body.image = rsp;
+            }
 
-          if (e.chk == "CnicF") {
-            body.identityProof = rsp;
-            body.identityStatus = "appliedFor";
+            if (e.chk == "CnicF") {
+              body.identityProof = rsp;
+              body.identityStatus = "appliedFor";
+            }
+            ii++;
+            if (ii == a.length) {
+              this.attemptToEditupdateUser(body, suc);
+              return;
+            }
+          },
+          (err) => {
+            console.log("upload then ", err);
+            this.setregLoader(false);
           }
-          ii++;
-          if (ii == a.length) {
-            this.attemptToEditupdateUser(body, suc);
-            return;
-          }
-        })
+        )
         .catch((err) => {
           this.setregLoader(false);
 

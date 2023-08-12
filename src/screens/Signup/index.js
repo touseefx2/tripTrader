@@ -43,12 +43,11 @@ import { Notification } from "../../services/Notification";
 
 export default observer(Signup);
 function Signup(props) {
-  const { confirmPayment } = useStripe();
-
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
   const nameRegex = /^[a-zA-Z-' ]+$/;
   const toast = useRef(null);
-  const loader = store.User.regLoader;
+  const { plans, setplans, regLoader, setregLoader } = store.User;
+  const { confirmPayment } = useStripe();
 
   const [isUserCreate, setisUserCreate] = useState(false);
 
@@ -119,11 +118,6 @@ function Signup(props) {
 
   const [plan, setPlan] = useState(false);
   const [sPlan, setsPlan] = useState("free"); //selected Plan
-
-  const plans = store.User.plans;
-  const setplans = (c) => {
-    store.User.setplans(c);
-  };
 
   const [monthly, setmonthly] = useState(0);
   const [annualy, setannualy] = useState(0);
@@ -485,24 +479,24 @@ function Signup(props) {
   };
 
   const uploadPhoto = (c) => {
-    if (c == "Profile" && photo == "") {
+    if (c === "Profile" && photo === "") {
       setisPhotoUpload(false);
       return;
     }
 
-    if (c == "CNICFront" && cnicFrontImage == "") {
+    if (c === "CNICFront" && cnicFrontImage === "") {
       setisCnicFrontUplaod(false);
       return;
     }
 
     let imgArr = [];
 
-    if (c == "Profile") {
+    if (c === "Profile") {
       photo.chk = "Profile";
       imgArr.push(photo);
     }
 
-    if (c == "CNICFront") {
+    if (c === "CNICFront") {
       cnicFrontImage.chk = "CnicF";
       imgArr.push(cnicFrontImage);
     }
@@ -519,7 +513,6 @@ function Signup(props) {
           token
         );
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert("", "Please connect internet");
       }
     });
@@ -635,13 +628,11 @@ function Signup(props) {
       });
 
       if (error) {
-        store.User.setregLoader(false);
+        setregLoader(false);
         Notification.sendPaymentFailedNotification(user._id);
         console.log(`confirmPayment error: `, error);
         Alert.alert(`Payment ${error.code}`, error.message);
       } else if (paymentIntent) {
-        console.log(`confirmPayment response: `, paymentIntent);
-        // Alert.alert(`Success`, `Payment Succefull: ${paymentIntent.id}`);
         obj.customerId = dt.cid;
         store.User.SubPlan(
           obj,
@@ -654,18 +645,13 @@ function Signup(props) {
         );
       }
     } catch (err) {
-      store.User.setregLoader(false);
+      setregLoader(false);
       Notification.sendPaymentFailedNotification(user._id);
       console.log(`confirmPayment cath error: `, err);
     }
   };
 
   const goTOProfile = () => {
-    // let u = {...usr};
-    // // u.photo = uphoto;
-    // // u.cnic_front_image = ucnicF;
-    // // u.plan = sPlan;
-
     NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.User.getUserById(user._id, token, "profile");
@@ -1052,11 +1038,11 @@ function Signup(props) {
       text = EmptyTerms ? "Agreeing to Terms and Conditions is required" : "";
     }
 
-    if (c == "cfn") {
-      text = invalidcfn
-        ? "Full name is invalid"
-        : Emptycfn
+    if (c === "cfn") {
+      text = Emptycfn
         ? "Please enter a full name"
+        : invalidcfn
+        ? "Full name is invalid"
         : "";
     }
 
@@ -2616,7 +2602,7 @@ function Signup(props) {
           />
         )}
         <Toast ref={toast} position="center" />
-        <utils.Loader load={loader} />
+        <utils.Loader load={regLoader} />
 
         {renderStatusBar()}
         {renderDateShowModal()}

@@ -207,7 +207,7 @@ function Signin(props) {
                 secureTextEntry={!showPaswd}
                 placeholder=""
                 value={pswd}
-                style={{ width: "85%" }}
+                style={{ width: "85%", color: theme.color.title }}
               />
 
               {pswd.length > 0 && (

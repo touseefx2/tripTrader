@@ -35,19 +35,10 @@ import {
 
 export default observer(Plan);
 function Plan(props) {
-  const { confirmPayment } = useStripe();
-
-  const mobileReg = /^[0][3]\d{9}$/;
-  const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
-  const cnicReg = /\d{5}\d{8}\d/;
-
+  const nameRegex = /^[a-zA-Z-' ]+$/;
   const toast = useRef(null);
-  const toastduration = 700;
-
-  let user = store.User.user;
-  let token = store.User.authToken;
-
-  let loader = store.User.regLoader;
+  const { plans, user, authToken, regLoader, setregLoader } = store.User;
+  const { confirmPayment } = useStripe();
 
   const [isPage, setisPage] = useState(1);
 
@@ -56,24 +47,14 @@ function Plan(props) {
 
   const [cfn, setcfn] = useState("");
   const [Emptycfn, setEmptycfn] = useState(false);
-  const [isValidCard, setisValidCard] = useState("null");
+  const [invalidcfn, setInvalidcfn] = useState(false);
   const [cardErr, setcardErr] = useState("");
-  const [cn, setcn] = useState("");
-  const [ld, setld] = useState(""); //last 4 digit
-  const [ct, setct] = useState(""); //card type
-  const [ce, setce] = useState("");
-  const [ccvc, setccvc] = useState("");
-  const [inValidcn, setinValidcn] = useState(false);
-  const [inValidce, setinValidce] = useState(false);
-  const [inValidccvc, setinValidccvc] = useState(false);
+  const [cardObj, setCardObj] = useState(null);
+
   const [pc, setpc] = useState("");
   const [isShowPromoFiled, setisShowPromoFiled] = useState(false);
   const [isPromoApply, setisPromoApply] = useState(false);
   const [promoValue, setpromoValue] = useState(0);
-
-  const [iscTerms, setiscTerms] = useState(false);
-  const [EmptycTerms, setEmptycTerms] = useState(false);
-  const [errorMessage, seterrorMessage] = useState("");
 
   const [plan, setPlan] = useState(false);
 
@@ -82,7 +63,8 @@ function Plan(props) {
   const [save, setsave] = useState(0);
   const [totalAnually, settotalAnually] = useState(0);
 
-  const plans = store.User.plans;
+  const [iscTerms, setiscTerms] = useState(false);
+  const [EmptycTerms, setEmptycTerms] = useState(false);
 
   function toFixed(num, fix) {
     var re = new RegExp("^-?\\d+(?:.\\d{0," + (fix || -1) + "})?");
@@ -158,142 +140,126 @@ function Plan(props) {
   }
 
   const goBack = () => {
-    if (isPage == 1) {
+    if (isPage === 1) {
       props.navigation.goBack();
-    } else if (isPage == 2) {
+    } else if (isPage === 2) {
       clearCard();
     }
   };
 
+  const checkCardError = (value) => {
+    const cnvalid = value.validNumber === "Valid" ? true : false;
+    if (!cnvalid) {
+      setcardErr("Card number is invalid");
+      return false;
+    }
+    const cevalid = value.validExpiryDate === "Valid" ? true : false;
+    if (!cevalid) {
+      setcardErr("Card expiry date is invalid");
+      return false;
+    }
+    const ccvcvalid = value.validCVC === "Valid" ? true : false;
+    if (!ccvcvalid) {
+      setcardErr("Card cvc number is invalid");
+      return false;
+    }
+
+    setcardErr("");
+    return true;
+  };
+
   const clearCard = () => {
-    setisPage(1);
     setcfn("");
-    setccvc("");
-    setcn("");
-    setce("");
-    setct("");
-    setld("");
     setpc("");
     setcardErr("");
     setEmptycfn(false);
+    setInvalidcfn(false);
     setisShowPromoFiled(false);
-    setisPromoApply(false);
+    setisPromoApply(null);
     setiscTerms(false);
     setpromoValue(0);
-    setinValidccvc("null");
-    setinValidce("null");
-    setinValidcn("null");
-    setisValidCard("null");
-  };
-
-  const setErrMessage = (c) => {
-    seterrorMessage(c);
+    setCardObj(null);
+    setEmptycTerms(false);
+    setisPage(1);
   };
 
   const subscribePlan = () => {
     Keyboard.dismiss();
 
-    if (cfn == "") {
+    if (cfn.trim() === "") {
       setEmptycfn(true);
       return;
     }
 
-    if (isValidCard == "null") {
-      setcardErr("Please enter card number");
-      setisValidCard(false);
+    if (nameRegex.test(cfn.trim()) === false) {
+      setInvalidcfn(true);
       return;
     }
 
-    if (isValidCard == false) {
-      if (!inValidcn) {
-        setcardErr("Invalid card number");
-        setisValidCard(false);
-        return;
-      }
-
-      if (!inValidce) {
-        setcardErr("Invalid card expiry");
-        setisValidCard(false);
-        return;
-      }
-
-      if (!inValidccvc) {
-        setcardErr("Invalid card cvc");
-        setisValidCard(false);
-        return;
-      }
-    }
-
-    if (isValidCard == true) {
-      if (iscTerms == false) {
-        setEmptycTerms(true);
-        return;
-      }
-
-      let tv = plan.type == "annual" ? totalAnually : monthly;
-      tv = isPromoApply ? promoValue : tv;
-      let pda = 0;
-      if (isPromoApply) {
-        let p = (isPromoApply.discount || 0) / 100;
-
-        if (plan.type == "monthly") {
-          pda = p * monthly;
-        }
-        if (plan.type == "annual") {
-          pda = p * totalAnually;
-        }
-      }
-      let subscription = !isPromoApply
-        ? {
-            title: plan.type,
-            charges: plan.charges,
-            discount: plan.discount,
-            startDate: new Date(),
-            endDate: addMonths(new Date(), plan.type == "annual" ? 12 : 1),
-            amtPaid: tv,
-            status: "active",
-            lastDigit: ld,
-            cardBrand: ct,
-          }
-        : {
-            title: plan.type,
-            charges: plan.charges,
-            discount: plan.discount,
-            startDate: new Date(),
-            endDate: addMonths(new Date(), plan.type == "annual" ? 12 : 1),
-            amtPaid: tv,
-            status: "active",
-            promoCode: isPromoApply.code,
-            promoCodeDiscount: isPromoApply.discount,
-            promoCodeDiscountAmt: pda,
-            lastDigit: ld,
-            cardBrand: ct,
-          };
-
-      const obj = {
-        subscription: subscription,
-        subscriptionStatus: "paid",
-      };
-
-      NetInfo.fetch().then((state) => {
-        if (state.isConnected) {
-          const body = {
-            email: store.User.user.email,
-            description: plan?.type,
-            amount: tv * 100,
-          };
-          if (user.customerId && user.customerId != "") {
-            body.customerId = user.customerId;
-          }
-
-          store.User.BuyPlan(body, obj, SucGetClientsecret);
-        } else {
-          // seterrorMessage('Please connect internet');
-          Alert.alert("", "Please connect internet");
-        }
-      });
-
+    if (!cardObj) {
+      setcardErr("Please enter full Card detials");
       return;
+    } else {
+      if (!checkCardError(cardObj)) {
+        return;
+      } else {
+        if (!iscTerms) {
+          setEmptycTerms(true);
+          return;
+        }
+
+        let tv = plan.type == "annual" ? totalAnually : monthly;
+        tv = isPromoApply ? promoValue : tv;
+        let pda = 0;
+        if (isPromoApply) {
+          const p = (isPromoApply.discount || 0) / 100;
+
+          if (plan.type == "monthly") {
+            pda = p * monthly;
+          }
+          if (plan.type == "annual") {
+            pda = p * totalAnually;
+          }
+        }
+        const subscription = {
+          title: plan.type,
+          charges: plan.charges,
+          discount: plan.discount,
+          startDate: new Date(),
+          endDate: addMonths(new Date(), plan.type == "annual" ? 12 : 1),
+          amtPaid: tv,
+          status: "active",
+          lastDigit: cardObj.last4,
+          cardBrand: cardObj.brand,
+        };
+
+        if (isPromoApply) {
+          subscription.promoCode = isPromoApply.code.trim();
+          subscription.promoCodeDiscount = isPromoApply.discount;
+          subscription.promoCodeDiscountAmt = pda;
+        }
+
+        const obj = {
+          subscription: subscription,
+          subscriptionStatus: "paid",
+        };
+
+        NetInfo.fetch().then((state) => {
+          if (state.isConnected) {
+            const body = {
+              email: user.email,
+              description: plan?.type,
+              amount: tv * 100,
+            };
+
+            store.User.BuyPlan(body, obj, SucGetClientsecret);
+          } else {
+            Alert.alert("", "Please connect internet");
+          }
+        });
+
+        return;
+      }
     }
   };
 
@@ -302,19 +268,15 @@ function Plan(props) {
       const { error, paymentIntent } = await confirmPayment(dt.cs, {
         // paymentMethodType: "Card", //strip > 0.5.0
         type: "Card", //stripe <= 0.5.0
-        billingDetails: { name: cn },
+        billingDetails: { name: cfn.trim() },
       });
 
       if (error) {
-        store.User.setregLoader(false);
+        setregLoader(false);
         Notification.sendPaymentFailedNotification(store.User.user._id);
         console.log(`confirmPayment error: `, error);
         Alert.alert(`Payment ${error.code}`, error.message);
       } else if (paymentIntent) {
-        console.log(`confirmPayment response: true`);
-        // paymentIntent
-        // Alert.alert(`Success`, `Payment Succefull: ${paymentIntent.id}`);
-
         if (user.customerId && user.customerId != "") {
         } else {
           obj.customerId = dt.cid;
@@ -324,13 +286,13 @@ function Plan(props) {
           obj,
           user._id,
           dt.cid,
-          token,
-          setErrMessage,
+          authToken,
+          () => {},
           subPlanSuc
         );
       }
     } catch (err) {
-      store.User.setregLoader(false);
+      setregLoader(false);
       Notification.sendPaymentFailedNotification(store.User.user._id);
       console.log(`confirmPayment cath error: `, err);
     }
@@ -340,7 +302,7 @@ function Plan(props) {
     Keyboard.dismiss();
     NetInfo.fetch().then((state) => {
       if (state.isConnected) {
-        store.User.applyPromo(pc, setErrMessage, applyPromoSuc);
+        store.User.applyPromo(pc.trim(), () => {}, applyPromoSuc);
       } else {
         // seterrorMessage('Please connect internet');
         Alert.alert("", "Please connect internet");
@@ -360,7 +322,6 @@ function Plan(props) {
   const subPlanSuc = (c) => {
     store.User.setUser(c);
     props.navigation.goBack();
-    // clearCard();
   };
 
   const applyPromoSuc = (res) => {
@@ -368,53 +329,17 @@ function Plan(props) {
   };
 
   const renderShowFieldError = (c) => {
-    let text = c == "card" ? cardErr : "";
+    let text = c === "card" ? cardErr : "";
 
-    if (c == "fn") {
-      text = invalidfn
-        ? "First name is invalid"
-        : Emptyfn
-        ? "Please enter a first name"
+    if (c === "cfn") {
+      text = Emptycfn
+        ? "Please enter a full name"
+        : invalidcfn
+        ? "Full name is invalid"
         : "";
     }
 
-    if (c == "ln") {
-      text = invalidln
-        ? "Last name is invalid"
-        : Emptyln
-        ? "Please enter a last name"
-        : "";
-    }
-
-    if (c == "email") {
-      text = invalidemail
-        ? "Email contains invalid characters"
-        : Emptyemail
-        ? "Please enter email"
-        : "";
-    }
-
-    if (c == "dob") {
-      text = Emptydob ? "Please select your birth date" : "";
-    }
-
-    if (c == "pswd") {
-      text = invalidpswd
-        ? "Password must contains 8 or more characters"
-        : Emptypswd
-        ? "Please enter password"
-        : "";
-    }
-
-    if (c == "terms") {
-      text = EmptyTerms ? "Agreeing to Terms and Conditions is required" : "";
-    }
-
-    if (c == "cfn") {
-      text = Emptycfn ? "Please enter a full name" : "";
-    }
-
-    if (c == "cterms") {
+    if (c === "cterms") {
       text = EmptycTerms ? "Agreeing to Terms and Conditions is required" : "";
     }
 
@@ -430,7 +355,7 @@ function Plan(props) {
 
     const entercFn = (t) => {
       setEmptycfn(false);
-
+      setInvalidcfn(false);
       setcfn(t);
     };
 
@@ -438,81 +363,10 @@ function Plan(props) {
       setpc(t);
     };
 
-    // const onChangeCard = t => {
-    //   console.log('card : ', t);
-    //   let valid = t.valid;
-    //   let cnvalid = t.status.number;
-    //   let cevalid = t.status.expiry;
-    //   let ccvcvalid = t.status.cvc;
-    //   setisValidCard(valid);
-    //   setinValidcn(cnvalid);
-    //   setinValidce(cevalid);
-    //   setinValidccvc(ccvcvalid);
-    //   let cn = t.values.number;
-    //   let ce = t.values.expiry;
-    //   let ccvc = t.values.cvc;
-    //   let ct = t.values.type;
-    //   setcn(cn);
-    //   setce(ce);
-    //   setccvc(ccvc);
-    //   setct(ct);
-    // };
-
-    const onChangeCard = (t) => {
-      console.log("card detials : ", t);
+    const onChangeCard = (value) => {
+      setCardObj(value);
+      setEmptycTerms(false);
       setcardErr("");
-      // let valid = t.complete;
-      let valid = false;
-      let cnvalid = t.validNumber == "Valid" ? true : false;
-      let cevalid = t.validExpiryDate == "Valid" ? true : false;
-      let ccvcvalid = t.validCVC == "Valid" ? true : false;
-
-      if (cnvalid && cevalid && ccvcvalid) {
-        valid = true;
-      }
-
-      setisValidCard(valid);
-      setinValidcn(cnvalid);
-      setinValidce(cevalid);
-      setinValidccvc(ccvcvalid);
-
-      let ct = t.brand;
-      let l4 = t.last4;
-      setct(ct);
-      setld(l4);
-      // let cn = t.values.number;
-      // let ce = t.values.expiry;
-      // let ccvc = t.values.cvc;
-      // setcn(cn);
-      // setce(ce);
-      // setccvc(ccvc);
-    };
-
-    const Skip = () => {
-      if (isPhoto1Upload == 0) {
-        setisPhotoUpload(true);
-        setisPhoto1Upload(1);
-      }
-
-      if (isPhoto1Upload == 1) {
-        setisCnicFrontUplaod(true);
-        setisPhoto1Upload(2);
-      }
-    };
-
-    const clearCard = () => {
-      setEmptycfn(false);
-      setisPromoApply(false);
-      setisShowPromoFiled(false);
-      setpc("");
-      setpromoValue(0);
-      setcfn("");
-      setcardErr("");
-      setct("");
-      setisValidCard("null");
-      setinValidce("null");
-      setinValidccvc("null");
-      setinValidcn("null");
     };
 
     const changePlan = () => {
@@ -797,7 +651,7 @@ function Plan(props) {
                               <TouchableOpacity
                                 activeOpacity={0.6}
                                 onPress={() => {
-                                  setPlan(plans.data[0]);
+                                  setPlan(plans.data[1]);
                                 }}
                               >
                                 <Text
@@ -1007,15 +861,16 @@ function Plan(props) {
                     style={[
                       styles.FieldInput,
                       {
-                        borderColor: Emptycfn
-                          ? theme.color.fieldBordeError
-                          : theme.color.fieldBorder,
+                        borderColor:
+                          Emptycfn || invalidcfn
+                            ? theme.color.fieldBordeError
+                            : theme.color.fieldBorder,
                         fontSize: 12,
                         color: "black",
                       },
                     ]}
                   />
-                  {Emptycfn && renderShowFieldError("cfn")}
+                  {(Emptycfn || invalidcfn) && renderShowFieldError("cfn")}
                 </View>
 
                 <View style={styles.Field}>
@@ -1052,25 +907,7 @@ function Plan(props) {
                       console.log("focusField", focusedField);
                     }}
                   />
-                  {isValidCard == false && renderShowFieldError("card")}
-
-                  {/* <View
-                  style={[
-                    [
-                      styles.FieldInputCard,
-                      {
-                        borderColor:
-                          isValidCard == false
-                            ? theme.color.fieldBordeError
-                            : isValidCard == true
-                            ? theme.color.button1
-                            : theme.color.fieldBorder,
-                      },
-                    ],
-                  ]}>
-                  <LiteCreditCardInput onChange={onChangeCard} />
-                </View>
-                {isValidCard == false && renderShowFieldError('card')} */}
+                  {cardErr !== "" && renderShowFieldError("card")}
                 </View>
 
                 {isShowPromoFiled && (
@@ -1304,14 +1141,14 @@ function Plan(props) {
               paddingHorizontal: 15,
               marginTop: responsiveHeight(3),
             }}
-            behavior={Platform.OS == "ios" ? "padding" : undefined}
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
           >
             {renderSection2()}
           </KeyboardAvoidingView>
         </SafeAreaView>
 
         <Toast ref={toast} position="center" />
-        <utils.Loader load={loader} />
+        <utils.Loader load={regLoader} />
 
         {renderStatusBar()}
         {isShowTermsAndConditions && (
