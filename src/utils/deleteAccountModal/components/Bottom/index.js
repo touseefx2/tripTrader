@@ -1,7 +1,7 @@
-import React from 'react';
-import {View, Text, TouchableOpacity, ActivityIndicator} from 'react-native';
-import {styles} from './styles';
-import theme from '../../../../theme';
+import React from "react";
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import { styles } from "./styles";
+import theme from "../../../../theme";
 
 export default function Bottom({
   isMaxHeight,
@@ -16,9 +16,10 @@ export default function Bottom({
           disabled={loader}
           onPress={removeAccount}
           activeOpacity={0.7}
-          style={styles.ButtonContainer}>
+          style={styles.ButtonContainer}
+        >
           {!loader ? (
-            <Text style={styles.ButtonText}> Yes, delete now</Text>
+            <Text style={styles.ButtonText}>Yes, delete now</Text>
           ) : (
             <ActivityIndicator size={22} color={theme.color.buttonText} />
           )}
@@ -40,15 +41,17 @@ export default function Bottom({
               backgroundColor: theme.color.button2,
               marginTop: 12,
             },
-          ]}>
+          ]}
+        >
           <Text
             style={[
               styles.ButtonText,
               {
                 color: theme.color.button2Text,
-                textTransform: 'none',
+                textTransform: "none",
               },
-            ]}>
+            ]}
+          >
             No, keep it
           </Text>
         </TouchableOpacity>
@@ -62,7 +65,8 @@ export default function Bottom({
         marginTop: isMaxHeight ? 15 : 40,
         marginBottom: isMaxHeight ? 15 : 0,
         paddingHorizontal: isMaxHeight ? 15 : 0,
-      }}>
+      }}
+    >
       {renderButton1()}
       {renderButton2()}
     </View>

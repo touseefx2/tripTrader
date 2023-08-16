@@ -27,6 +27,21 @@ class user {
     this.ccc = obj;
   };
 
+  @persist("object") @observable subscriptionObject = null;
+  @action setSubscriptionObject = (obj) => {
+    this.subscriptionObject = obj;
+  };
+
+  @persist("object") @observable userSubscription = null;
+  @action setUserSubscription = (obj) => {
+    this.userSubscription = obj;
+  };
+
+  @persist("object") @observable cardDetails = null;
+  @action setCardDetails = (obj) => {
+    this.cardDetails = obj;
+  };
+
   @observable chk = "";
   @observable fuser = "";
   @observable cc = "";
@@ -2269,10 +2284,10 @@ class user {
               `response get all plan  ${db.apis.GET_All_Plan} : `,
               resp.data
             );
-            let rsp = resp.data.data;
+            const rsp = resp.data.data;
             let plan = { data: [] };
             let dt = [];
-            let features = [
+            const features = [
               "Create trips and get offers",
               "Make trade offers",
               "Send and receive messages",
@@ -2281,7 +2296,7 @@ class user {
             ];
             if (rsp.length > 0) {
               rsp.map((e) => {
-                if (e.type == "annual") {
+                if (e.type === "annual") {
                   plan.annual_discount = e.discount;
                 }
                 const o = { ...e };
@@ -2539,8 +2554,8 @@ class user {
   }
 
   @action.bound
-  SubPlan(body, uid, cid, token, seterror, suc, c) {
-    let chk = c || "";
+  SubPlan(body, uid, customerId, token, suc, c) {
+    const chk = c || "";
     console.log("plan subscribe body : ", body);
 
     db.hitApi(db.apis.UPDATE_USER + uid, "put", body, token)
@@ -2550,69 +2565,76 @@ class user {
           `response plan subscribe  ${db.apis.UPDATE_USER + uid} : `,
           resp.data
         );
-        let rsp = resp.data.data;
+        const rsp = resp.data.data;
         suc(rsp);
 
-        this.getCardInfo(cid, chk != "n" ? "tt" : "", token);
+        this.getCardInfo(customerId, chk !== "n" ? "tt" : "", token);
       })
       .catch((err) => {
         this.setregLoader(false);
         Notification.sendPaymentFailedNotification(uid);
-        let msg = err.response.data.message || err.response.status || err;
+        const msg = err.response.data.message || err.response.status || err;
         console.log(`Error in update user ${db.apis.UPDATE_USER} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert("", "Server not response");
-          // store.General.setisServerError(true);
           return;
         }
-        // seterror(msg.toString())
+
         Alert.alert("", msg.toString());
       });
   }
 
   @action.bound
-  getCardInfo(email, chk, token) {
-    console.log("get card info : ", email);
-    if (chk == "tt") {
+  getCardInfo(customerId, chk, token) {
+    console.log("get card info  : ", customerId);
+
+    if (chk === "tt") {
       this.setucRef(true);
+    }
 
-      setTimeout(() => {
-        db.hitApi(db.apis.CARD_INFO + email, "get", {}, token)
-          ?.then((resp) => {
+    db.hitApi(db.apis.GET_USER_SUBSCRIPTION + customerId, "get", {}, token)
+      ?.then((resp) => {
+        const rsp = resp?.data?.subscriptions?.data;
+        console.log(
+          `response GET_USER_SUBSCRIPTION  ${
+            db.apis.GET_USER_SUBSCRIPTION + customerId
+          } : `,
+          rsp
+        );
+
+        db.hitApi(db.apis.GET_CARD_DETAILS + customerId, "get", {}, token)
+          ?.then((resp2) => {
             this.setucRef(false);
+            const rsp2 = resp2?.data?.data?.data;
+            console.log(
+              `response GET_CARD_DETAILS ${
+                db.apis.GET_CARD_DETAILS + customerId
+              } : `,
+              rsp
+            );
 
-            // console.log(
-            //   `response get card info  ${db.apis.CARD_INFO + email} : `,
-            //   resp.data.data.data[0].card,
-            // );
-            let rsp = resp.data.data;
-            this.setuserCardInfo(rsp.data);
+            this.setUserSubscription(rsp);
+            this.setCardDetails(rsp2);
           })
           .catch((err) => {
             this.setucRef(false);
             console.log(
-              `Error in get card info  ${db.apis.CARD_INFO + email} : `,
+              `Error in GET_CARD_DETAILS  ${
+                db.apis.GET_CARD_DETAILS + customerId
+              } : `,
               err
             );
           });
-      }, 3000);
-    } else {
-      db.hitApi(db.apis.CARD_INFO + email, "get", {}, token)
-        ?.then((resp) => {
-          // console.log(
-          //   `response get card info  ${db.apis.CARD_INFO + email} : `,
-          //   resp.data.data.data[0].card,
-          // );
-          let rsp = resp.data.data;
-          this.setuserCardInfo(rsp.data);
-        })
-        .catch((err) => {
-          console.log(
-            `Error in get card info  ${db.apis.CARD_INFO + email} : `,
-            err
-          );
-        });
-    }
+      })
+      .catch((err) => {
+        this.setucRef(false);
+        console.log(
+          `Error in GET_USER_SUBSCRIPTION  ${
+            db.apis.GET_USER_SUBSCRIPTION + customerId
+          } : `,
+          err
+        );
+      });
   }
 
   @action.bound
@@ -2647,6 +2669,58 @@ class user {
 
       Alert.alert("", msg.toString());
     }
+  }
+
+  @action.bound
+  async attempToSelectPlan(body, authToken, suc) {
+    console.log("attempToSelectPlan : ", body);
+    this.setregLoader(true);
+
+    db.hitApi(
+      `${db.apis.BASE_URL}${db.apis.SELECT_PLAN}`,
+      "post",
+      body,
+      authToken
+    )
+      ?.then((resp) => {
+        this.setregLoader(false);
+        console.log(`response   ${db.apis.SELECT_PLAN} : `, resp.data);
+        this.setSubscriptionObject(resp.data);
+        suc(3);
+      })
+      .catch((err) => {
+        this.setregLoader(false);
+        const msg = err.response.data.message || err.response.status || err;
+        console.log(
+          `Error in attempToSelectPlan ${db.apis.SELECT_PLAN} : `,
+          msg
+        );
+        if (msg == 503 || msg == 500) {
+          Alert.alert("", "Server not response");
+
+          return;
+        }
+
+        Alert.alert("", msg.toString());
+      });
+
+    //   console.log(`response attempToSelectPlan   ${db.apis.SELECT_PLAN} : `, resp.data);
+    //   // let rsp = resp?.data;
+    //   // let cid = rsp?.customerId; //customer id
+    //   // let cs = rsp?.clientSecret; //client secret
+    //   // suc(3);
+    // } catch (err) {
+    //   this.setregLoader(false);
+
+    //   const msg = err.response.data.message || err.response.status || err;
+    //   console.log(`Error in Buy Plan ${db.apis.BUY_PLAN} : `, msg);
+    //   if (msg == 503 || msg == 500) {
+    //     Alert.alert("", "Server not response");
+    //     return;
+    //   }
+
+    //   Alert.alert("", msg.toString());
+    // }
   }
 
   @action.bound
@@ -2716,9 +2790,7 @@ class user {
 
         this.addauthToken(token);
         this.setUser(rsp);
-        if (rsp.customerId && rsp.customerId != "") {
-          this.getCardInfo(rsp.customerId, "", this.authToken);
-        }
+        this.getCardInfo(rsp.customerId, "", this.authToken);
       })
       .catch((err) => {
         const msg = err.response.data.message || err.response.status || err;
@@ -2988,6 +3060,9 @@ class user {
 
   @action clearcurrentUser = () => {
     this.setUser(false);
+    this.setSubscriptionObject(null);
+    this.setUserSubscription(null);
+    this.setCardDetails(null);
     this.setuserCardInfo([]);
     this.setucRef(false);
     this.setphotos([]);

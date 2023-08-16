@@ -5,7 +5,6 @@ import {
   Image,
   Keyboard,
   KeyboardAvoidingView,
-  Linking,
   PermissionsAndroid,
   Platform,
   SafeAreaView,
@@ -50,7 +49,15 @@ function Signup(props) {
   const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
   const nameRegex = /^[a-zA-Z-' ]+$/;
   const toast = useRef(null);
-  const { plans, setplans, regLoader, setregLoader } = store.User;
+  const {
+    plans,
+    setplans,
+    regLoader,
+    setregLoader,
+    attempToSelectPlan,
+    subscriptionObject,
+    setSubscriptionObject,
+  } = store.User;
   const { confirmPayment } = useStripe();
 
   const [isUserCreate, setisUserCreate] = useState(false);
@@ -391,6 +398,105 @@ function Signup(props) {
     seterrorMessage(c);
   };
 
+  const uploadPhoto = (c) => {
+    if (c === "Profile" && photo === "") {
+      setisPhotoUpload(false);
+      return;
+    }
+
+    if (c === "CNICFront" && cnicFrontImage === "") {
+      setisCnicFrontUplaod(false);
+      return;
+    }
+
+    let imgArr = [];
+
+    if (c === "Profile") {
+      photo.chk = "Profile";
+      imgArr.push(photo);
+    }
+
+    if (c === "CNICFront") {
+      cnicFrontImage.chk = "CnicF";
+      imgArr.push(cnicFrontImage);
+    }
+
+    NetInfo.fetch().then((state) => {
+      if (state.isConnected) {
+        store.User.attemptToUploadImage(
+          imgArr,
+          setErrMessage,
+          setPhoto1Upload,
+          SetUP,
+          SetUCnicF,
+          user._id,
+          token
+        );
+      } else {
+        Alert.alert("", "Please connect internet");
+      }
+    });
+  };
+
+  const checkCardError = (value) => {
+    const cnvalid = value.validNumber === "Valid" ? true : false;
+    if (!cnvalid) {
+      setcardErr("Card number is invalid");
+      return false;
+    }
+    const cevalid = value.validExpiryDate === "Valid" ? true : false;
+    if (!cevalid) {
+      setcardErr("Card expiry date is invalid");
+      return false;
+    }
+    const ccvcvalid = value.validCVC === "Valid" ? true : false;
+    if (!ccvcvalid) {
+      setcardErr("Card cvc number is invalid");
+      return false;
+    }
+
+    setcardErr("");
+    return true;
+  };
+
+  const goTOProfile = () => {
+    NetInfo.fetch().then((state) => {
+      if (state.isConnected) {
+        store.User.getUserById(user._id, token, "profile");
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert("", "Please connect internet");
+      }
+    });
+  };
+
+  const goTOFindTrips = () => {
+    NetInfo.fetch().then((state) => {
+      if (state.isConnected) {
+        store.User.getUserById(user._id, token, "home");
+      } else {
+        // seterrorMessage('Please connect internet');
+        Alert.alert("", "Please connect internet");
+      }
+    });
+  };
+
+  // const applyPromo = () => {
+  //   Keyboard.dismiss();
+  //   NetInfo.fetch().then((state) => {
+  //     if (state.isConnected) {
+  //       store.User.applyPromo(pc.trim(), setErrMessage, applyPromoSuc);
+  //     } else {
+  //       // seterrorMessage('Please connect internet');
+  //       Alert.alert("", "Please connect internet");
+  //     }
+  //   });
+  // };
+
+  // const applyPromoSuc = (res) => {
+  //   setisPromoApply(res);
+  // };
+
   const createAccount = () => {
     clearAllField();
     Keyboard.dismiss();
@@ -482,68 +588,25 @@ function Signup(props) {
     });
   };
 
-  const uploadPhoto = (c) => {
-    if (c === "Profile" && photo === "") {
-      setisPhotoUpload(false);
-      return;
-    }
+  const UserCreateSuccess = (token, data, plans) => {
+    setToken(token);
+    setuser(data);
+    setplans(plans);
+    setisUserCreate(true);
+  };
 
-    if (c === "CNICFront" && cnicFrontImage === "") {
-      setisCnicFrontUplaod(false);
-      return;
-    }
-
-    let imgArr = [];
-
-    if (c === "Profile") {
-      photo.chk = "Profile";
-      imgArr.push(photo);
-    }
-
-    if (c === "CNICFront") {
-      cnicFrontImage.chk = "CnicF";
-      imgArr.push(cnicFrontImage);
-    }
-
+  const selectPlan = () => {
     NetInfo.fetch().then((state) => {
       if (state.isConnected) {
-        store.User.attemptToUploadImage(
-          imgArr,
-          setErrMessage,
-          setPhoto1Upload,
-          SetUP,
-          SetUCnicF,
-          user._id,
-          token
-        );
+        const body = { customerId: user?.customerId, priceId: plan?.stripeId };
+        attempToSelectPlan(body, token, setisPhoto1Upload);
       } else {
         Alert.alert("", "Please connect internet");
       }
     });
   };
 
-  const checkCardError = (value) => {
-    const cnvalid = value.validNumber === "Valid" ? true : false;
-    if (!cnvalid) {
-      setcardErr("Card number is invalid");
-      return false;
-    }
-    const cevalid = value.validExpiryDate === "Valid" ? true : false;
-    if (!cevalid) {
-      setcardErr("Card expiry date is invalid");
-      return false;
-    }
-    const ccvcvalid = value.validCVC === "Valid" ? true : false;
-    if (!ccvcvalid) {
-      setcardErr("Card cvc number is invalid");
-      return false;
-    }
-
-    setcardErr("");
-    return true;
-  };
-
-  const subscribePlan = () => {
+  const SucGetClientsecret = async () => {
     Keyboard.dismiss();
 
     if (cfn.trim() === "") {
@@ -568,137 +631,67 @@ function Signup(props) {
           return;
         }
 
-        let tv = plan.type == "annual" ? totalAnually : monthly;
-        tv = isPromoApply ? promoValue : tv;
-        let pda = 0;
-        if (isPromoApply) {
-          const p = (isPromoApply.discount || 0) / 100;
-
-          if (plan.type == "monthly") {
-            pda = p * monthly;
-          }
-          if (plan.type == "annual") {
-            pda = p * totalAnually;
-          }
-        }
-        const subscription = {
-          title: plan.type,
-          charges: plan.charges,
-          discount: plan.discount,
-          startDate: new Date(),
-          endDate: addMonths(new Date(), plan.type == "annual" ? 12 : 1),
-          amtPaid: tv,
-          status: "active",
-          lastDigit: cardObj.last4,
-          cardBrand: cardObj.brand,
-        };
-
-        if (isPromoApply) {
-          subscription.promoCode = isPromoApply.code.trim();
-          subscription.promoCodeDiscount = isPromoApply.discount;
-          subscription.promoCodeDiscountAmt = pda;
-        }
-
-        const obj = {
-          subscription: subscription,
-          subscriptionStatus: "paid",
-        };
-
-        NetInfo.fetch().then((state) => {
+        NetInfo.fetch().then(async (state) => {
           if (state.isConnected) {
-            const body = {
-              email: user.email,
-              description: plan?.type,
-              amount: tv * 100,
+            setregLoader(true);
+            const totalValue = plan.type == "annual" ? totalAnually : monthly;
+            const subscription = {
+              title: plan.type,
+              charges: plan.charges,
+              discount: plan.discount,
+              startDate: new Date(),
+              endDate: addMonths(new Date(), plan.type == "annual" ? 12 : 1),
+              amtPaid: totalValue,
+              status: "active",
             };
 
-            store.User.BuyPlan(body, obj, SucGetClientsecret);
+            const obj = {
+              subscription: subscription,
+              subscriptionStatus: "paid",
+            };
+
+            try {
+              const { error, paymentIntent } = await confirmPayment(
+                subscriptionObject?.clientSecret,
+                {
+                  // paymentMethodType: "Card", //strip > 0.5.0
+                  type: "Card", //stripe <= 0.5.0
+                  billingDetails: { name: cfn.trim() },
+                }
+              );
+
+              if (error) {
+                setregLoader(false);
+                Notification.sendPaymentFailedNotification(user._id);
+                console.log(`confirmPayment error: `, error);
+                Alert.alert(`Payment ${error.code}`, error.message);
+              } else if (paymentIntent) {
+                store.User.SubPlan(
+                  obj,
+                  user._id,
+                  user?.customerId,
+                  token,
+                  subPlanSuc,
+                  "n"
+                );
+              }
+            } catch (err) {
+              setregLoader(false);
+              Notification.sendPaymentFailedNotification(user._id);
+              console.log(`confirmPayment cath error: `, err);
+            }
           } else {
             Alert.alert("", "Please connect internet");
           }
         });
-
-        return;
       }
     }
   };
 
-  const SucGetClientsecret = async (dt, obj) => {
-    try {
-      const { error, paymentIntent } = await confirmPayment(dt.cs, {
-        paymentMethodType: "Card", //strip > 0.5.0
-        // type: "Card", //stripe <= 0.5.0
-        billingDetails: { name: cfn.trim() },
-      });
-
-      if (error) {
-        setregLoader(false);
-        Notification.sendPaymentFailedNotification(user._id);
-        console.log(`confirmPayment error: `, error);
-        Alert.alert(`Payment ${error.code}`, error.message);
-      } else if (paymentIntent) {
-        obj.customerId = dt.cid;
-        store.User.SubPlan(
-          obj,
-          user._id,
-          dt.cid,
-          token,
-          setErrMessage,
-          subPlanSuc,
-          "n"
-        );
-      }
-    } catch (err) {
-      setregLoader(false);
-      Notification.sendPaymentFailedNotification(user._id);
-      console.log(`confirmPayment cath error: `, err);
-    }
-  };
-
-  const goTOProfile = () => {
-    NetInfo.fetch().then((state) => {
-      if (state.isConnected) {
-        store.User.getUserById(user._id, token, "profile");
-      } else {
-        // seterrorMessage('Please connect internet');
-        Alert.alert("", "Please connect internet");
-      }
-    });
-  };
-
-  const goTOFindTrips = () => {
-    // let u = {...usr};
-    // // u.photo = uphoto;
-    // // u.cnic_front_image = ucnicF;
-    // // u.plan = sPlan;
-
-    NetInfo.fetch().then((state) => {
-      if (state.isConnected) {
-        store.User.getUserById(user._id, token, "home");
-      } else {
-        // seterrorMessage('Please connect internet');
-        Alert.alert("", "Please connect internet");
-      }
-    });
-  };
-
-  const applyPromo = () => {
-    Keyboard.dismiss();
-    NetInfo.fetch().then((state) => {
-      if (state.isConnected) {
-        store.User.applyPromo(pc.trim(), setErrMessage, applyPromoSuc);
-      } else {
-        // seterrorMessage('Please connect internet');
-        Alert.alert("", "Please connect internet");
-      }
-    });
-  };
-
-  const UserCreateSuccess = (token, data, plans) => {
-    setToken(token);
-    setuser(data);
-    setplans(plans);
-    setisUserCreate(true);
+  const subPlanSuc = (res) => {
+    setisPhoto1Upload(4);
+    setsPlan(res.subscription);
+    clearCard();
   };
 
   function addMonths(date, months) {
@@ -709,16 +702,6 @@ function Signup(props) {
     }
     return date;
   }
-
-  const subPlanSuc = (p) => {
-    setisPhoto1Upload(4);
-    setsPlan(p.subscription);
-    clearCard();
-  };
-
-  const applyPromoSuc = (res) => {
-    setisPromoApply(res);
-  };
 
   const SetUP = (c) => {
     setuphoto(c);
@@ -1554,9 +1537,7 @@ function Signup(props) {
       return (
         <>
           <TouchableOpacity
-            onPress={() => {
-              setisPhoto1Upload(3);
-            }}
+            onPress={selectPlan}
             activeOpacity={0.9}
             style={[
               styles.BottomButton,
@@ -1575,7 +1556,7 @@ function Signup(props) {
       return (
         <>
           <TouchableOpacity
-            onPress={subscribePlan}
+            onPress={SucGetClientsecret}
             // onPress={buyPlan}
             activeOpacity={0.7}
             style={styles.BottomButton}
@@ -2265,7 +2246,7 @@ function Signup(props) {
                   {cardErr !== "" && renderShowFieldError("card")}
                 </View>
 
-                {isShowPromoFiled && (
+                {/* {isShowPromoFiled && (
                   <View style={styles.Field}>
                     <Text style={styles.FieldTitle1}>promo code</Text>
 
@@ -2387,7 +2368,7 @@ function Signup(props) {
                       I have a promo code
                     </Text>
                   </TouchableOpacity>
-                )}
+                )} */}
 
                 <View style={{ marginTop: 20 }}>
                   <View

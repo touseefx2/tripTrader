@@ -1,17 +1,17 @@
-import React from 'react';
-import {Alert} from 'react-native';
-import moment from 'moment';
+import React from "react";
+import { Alert } from "react-native";
+import moment from "moment";
 
 function isObjectEmpty(value) {
   return (
-    Object.prototype.toString.call(value) === '[object Object]' &&
-    JSON.stringify(value) === '{}'
+    Object.prototype.toString.call(value) === "[object Object]" &&
+    JSON.stringify(value) === "{}"
   );
 }
 
 function CheckisAlreadySaveTrip(obj, saveTripData) {
   if (saveTripData.length > 0) {
-    let ind = saveTripData.findIndex(({tripId}) => tripId?._id === obj?._id);
+    let ind = saveTripData.findIndex(({ tripId }) => tripId?._id === obj?._id);
     if (ind > -1) {
       return true;
     }
@@ -20,7 +20,7 @@ function CheckisAlreadySaveTrip(obj, saveTripData) {
 }
 
 function formatTitle(num, title) {
-  let text = '';
+  let text = "";
   if (num <= 1) {
     text = title.substring(0, title.trim().length - 1);
   } else {
@@ -30,34 +30,34 @@ function formatTitle(num, title) {
 }
 
 function checkSameYearFormate(statDate, endDate) {
-  let dateText = '';
+  let dateText = "";
 
   const startDateYear = parseInt(new Date(statDate).getFullYear());
   const endDateYear = parseInt(new Date(endDate).getFullYear());
 
   if (startDateYear == endDateYear) {
     dateText =
-      moment(statDate).format('MMM DD') +
-      ' - ' +
-      moment(endDate).format('MMM DD, YYYY');
+      moment(statDate).format("MMM DD") +
+      " - " +
+      moment(endDate).format("MMM DD, YYYY");
   } else {
     dateText =
-      moment(statDate).format('MMM DD, YYYY') +
-      ' - ' +
-      moment(endDate).format('MMM DD, YYYY');
+      moment(statDate).format("MMM DD, YYYY") +
+      " - " +
+      moment(endDate).format("MMM DD, YYYY");
   }
 
   return dateText;
 }
 
 function findItem(value, data, check) {
-  let obj = check === 'n' ? {name: value} : {title: value};
+  let obj = check === "n" ? { name: value } : { title: value };
 
   if (data.length > 0) {
     const findIndex =
-      check === 'n'
-        ? data.findIndex(x => x.name === value)
-        : data.findIndex(x => x.title === value);
+      check === "n"
+        ? data.findIndex((x) => x.name === value)
+        : data.findIndex((x) => x.title === value);
     if (findIndex > -1) obj = data[findIndex];
   }
 
@@ -72,13 +72,13 @@ function getDaysBetweenDate(start, end) {
   ) {
     arr.push(new Date(date));
   }
-  const arrr = arr.map(e => DateWithoutFormat(e));
+  const arrr = arr.map((e) => DateWithoutFormat(e));
 
   return arrr;
 }
 
 function getDateWithFormat(unavlblmarkedDates) {
-  let text = '';
+  let text = "";
 
   let dates = [];
   let dateArr = [];
@@ -90,15 +90,15 @@ function getDateWithFormat(unavlblmarkedDates) {
   const sortDates = dates.sort(function (a, b) {
     return Number(new Date(a)) - Number(new Date(b));
   });
-  sortDates.forEach(item => {
-    dateArr.push(moment(item).format('MMM DD'));
+  sortDates.forEach((item) => {
+    dateArr.push(moment(item).format("MMM DD"));
   });
 
   let arr = [];
   const dateArrCopy = dateArr.slice();
   dateArr.forEach((item, index) => {
     let datesLists = [];
-    datesLists.push({d: item});
+    datesLists.push({ d: item });
     delete dateArr[index];
     let num = index;
     let count = 0;
@@ -109,7 +109,7 @@ function getDateWithFormat(unavlblmarkedDates) {
         let number2 = element.slice(4, 6);
         count++;
         if (Number(number1) + count == Number(number2)) {
-          datesLists.push({d: element});
+          datesLists.push({ d: element });
           delete dateArr[index];
         } else break;
       }
@@ -118,7 +118,7 @@ function getDateWithFormat(unavlblmarkedDates) {
     arr.push(datesLists);
   });
 
-  arr.forEach(item => {
+  arr.forEach((item) => {
     if (item.length > 1) {
       //   text =
       //     text +
@@ -130,33 +130,33 @@ function getDateWithFormat(unavlblmarkedDates) {
       //     ', ';
       // } else text = text + moment(item[0].d).format('MMM DD') + ', ';
 
-      text = text + item[0].d + '-' + item[item.length - 1].d + ', ';
-    } else text = text + item[0].d + ', ';
+      text = text + item[0].d + "-" + item[item.length - 1].d + ", ";
+    } else text = text + item[0].d + ", ";
   });
 
-  return text.replace(/, *$/, '');
+  return text.replace(/, *$/, "");
 }
 
 function getWeekDaysBtwnDate(daysOfWeeks, minDate, maxDate) {
-  const selecteDays = daysOfWeeks.filter(item => {
+  const selecteDays = daysOfWeeks.filter((item) => {
     return item.isSel;
   });
   let arr = {};
   var start = moment(minDate);
   var end = moment(maxDate);
-  selecteDays.forEach(element => {
+  selecteDays.forEach((element) => {
     const day = element.num; // Sunday=0
     var result = [];
     let tmp = start.clone().day(day);
-    if (tmp.isAfter(start, 'd')) result.push(tmp.format('YYYY-MM-DD'));
+    if (tmp.isAfter(start, "d")) result.push(tmp.format("YYYY-MM-DD"));
 
     while (tmp.isBefore(end)) {
-      tmp.add(7, 'days');
-      result.push(tmp.format('YYYY-MM-DD'));
+      tmp.add(7, "days");
+      result.push(tmp.format("YYYY-MM-DD"));
     }
     result.pop();
-    result.forEach(element2 => {
-      const date = moment(element2).format('YYYY-MM-DD');
+    result.forEach((element2) => {
+      const date = moment(element2).format("YYYY-MM-DD");
       arr[date] = theme.dayStyle.unMarkeDateStyle;
     });
   });
@@ -171,22 +171,22 @@ function getUnavailableDaysObject(
   unavailableDatesText,
   minDate,
   maxDate,
-  totalDays,
+  totalDays
 ) {
   let obj = null;
-  let weekText = '';
+  let weekText = "";
 
   let selectedDays = [];
-  daysOfWeeks.forEach(item => {
+  daysOfWeeks.forEach((item) => {
     if (item.isSel) selectedDays.push(item.name);
   });
   selectedDays.forEach((item, index, arr) => {
-    let sep = arr[index + 2] == undefined ? ' and ' : ', ';
-    if (sep == ' and ' && index == arr.length - 1) sep = '';
+    let sep = arr[index + 2] == undefined ? " and " : ", ";
+    if (sep == " and " && index == arr.length - 1) sep = "";
 
     weekText = weekText + item + sep;
   });
-  if (weekText != '') weekText = weekText + ' (weekly)';
+  if (weekText != "") weekText = weekText + " (weekly)";
   let weeksDate = [];
   let specificDates = [];
   let dateList = [];
@@ -212,11 +212,11 @@ function getUnavailableDaysObject(
     return Number(new Date(a)) - Number(new Date(b));
   });
 
-  const noOfDays = moment(maxDate).diff(moment(minDate), 'days') + 1;
+  const noOfDays = moment(maxDate).diff(moment(minDate), "days") + 1;
   const availabeDays = noOfDays - dateList.length;
 
   if (availabeDays < totalDays) {
-    Alert.alert('', 'Total available dates is less then duration number days');
+    Alert.alert("", "Total available dates is less then duration number days");
     return;
   }
 
@@ -225,7 +225,7 @@ function getUnavailableDaysObject(
       repeatEvery: {
         endRepeatOn: new Date(),
         value: 1,
-        title: 'days',
+        title: "days",
       },
       daysOfWeek: selectedDays,
       unavailableDaysOfWeek: weeksDate,
@@ -240,20 +240,20 @@ function getUnavailableDaysObject(
 }
 
 function capitalizeTheFirstLetterOfEachWord(words) {
-  var separateWord = words.split(' ');
+  var separateWord = words.split(" ");
   for (var i = 0; i < separateWord.length; i++) {
     separateWord[i] =
       separateWord[i].charAt(0).toUpperCase() + separateWord[i].substring(1);
   }
-  return separateWord.join(' ');
+  return separateWord.join(" ");
 }
 
 function FormatePreferDate(selectedDates) {
-  let text = '';
+  let text = "";
   let datesArr = [];
   if (selectedDates.length > 0) {
-    selectedDates.forEach(item => {
-      datesArr.push(moment(item).format('MMM DD, YYYY'));
+    selectedDates.forEach((item) => {
+      datesArr.push(moment(item).format("MMM DD, YYYY"));
     });
   }
   if (datesArr.length > 0) {
@@ -267,11 +267,11 @@ function FormatePreferDate(selectedDates) {
 
       if (startDateYear == endDateYear) {
         text =
-          moment(startDate).format('MMM DD') +
-          ' - ' +
-          moment(endDate).format('MMM DD, YYYY');
+          moment(startDate).format("MMM DD") +
+          " - " +
+          moment(endDate).format("MMM DD, YYYY");
       } else {
-        text = startDate + ' - ' + endDate;
+        text = startDate + " - " + endDate;
       }
     } else if (datesArr.length <= 1) {
       text = startDate;
@@ -282,7 +282,7 @@ function FormatePreferDate(selectedDates) {
 }
 
 function FormateAvailableDate(startDate, endDate) {
-  let text = '';
+  let text = "";
 
   const firstDate = startDate;
   const firstDateYear = parseInt(new Date(firstDate).getFullYear());
@@ -290,14 +290,14 @@ function FormateAvailableDate(startDate, endDate) {
   const secondDateYear = parseInt(new Date(secondDate).getFullYear());
   if (firstDateYear == secondDateYear) {
     text =
-      moment(firstDate).format('MMM DD') +
-      ' - ' +
-      moment(secondDate).format('MMM DD, YYYY');
+      moment(firstDate).format("MMM DD") +
+      " - " +
+      moment(secondDate).format("MMM DD, YYYY");
   } else {
     text =
-      moment(firstDate).format('MMM DD, YYYY') +
-      ' - ' +
-      moment(secondDate).format('MMM DD, YYYY');
+      moment(firstDate).format("MMM DD, YYYY") +
+      " - " +
+      moment(secondDate).format("MMM DD, YYYY");
   }
 
   return text;
@@ -308,42 +308,42 @@ function DateWithoutFormat(date) {
 }
 
 function formatSelectedDates(selectedDates, c) {
-  let text = '';
+  let text = "";
   let arr = [];
-  if (c != 'arr') {
+  if (c != "arr") {
     const size = Object.keys(selectedDates).length;
     for (let index = 0; index < size; index++) {
       const element = moment(Object.keys(selectedDates)[index]).format(
-        'YYYY-MM-DD',
+        "YYYY-MM-DD"
       );
       arr.push(element);
     }
   } else {
-    selectedDates.forEach(item => {
-      arr.push(moment(item).format('YYYY-MM-DD'));
+    selectedDates.forEach((item) => {
+      arr.push(moment(item).format("YYYY-MM-DD"));
     });
   }
 
   if (arr.length <= 1) {
-    text = moment(arr[0]).format('MMM DD, YYYY');
+    text = moment(arr[0]).format("MMM DD, YYYY");
   } else {
-    text = moment(arr[0]).format('MMM DD, YYYY');
+    text = moment(arr[0]).format("MMM DD, YYYY");
     arr.forEach((item, index) => {
       if (index > 0 && index < arr.length) {
         const prevDate = moment(arr[index - 1])
-          .add(1, 'day')
-          .format('YYYY-MM-DD');
+          .add(1, "day")
+          .format("YYYY-MM-DD");
 
         const mapDate = item;
-        const mapDate2 = moment(item).add(1, 'day').format('YYYY-MM-DD');
+        const mapDate2 = moment(item).add(1, "day").format("YYYY-MM-DD");
         const nextDate = moment(arr[index + 1]);
 
         if (moment(mapDate).isSame(prevDate)) {
           if (!moment(mapDate2).isSame(nextDate)) {
-            text = text + ' - ' + moment(item).format('MMM DD, YYYY');
+            text = text + " - " + moment(item).format("MMM DD, YYYY");
           }
         } else {
-          text = text + ', ' + moment(item).format('MMM DD, YYYY');
+          text = text + ", " + moment(item).format("MMM DD, YYYY");
         }
       }
     });
@@ -358,12 +358,12 @@ const checkAvailability = (
   setAvailablityDates,
   setUnAvailble,
   title,
-  durNum,
+  durNum
 ) => {
-  if (availablityDates && durNum !== '') {
+  if (availablityDates && durNum !== "") {
     let totalDays = 0;
-    if (title === 'days') totalDays = durNum;
-    else if (title === 'weeks') totalDays = durNum * 7;
+    if (title === "days") totalDays = durNum;
+    else if (title === "weeks") totalDays = durNum * 7;
 
     let availablityDatesLength = Object.keys(availablityDates).length;
     let unAvailableDaysLength = 0;
@@ -377,6 +377,40 @@ const checkAvailability = (
       setUnAvailble(null);
     }
   }
+};
+
+const getDate = (unixTimestamp) => {
+  // Convert Unix timestamp to milliseconds
+  var milliseconds = unixTimestamp * 1000;
+
+  // Create a new Date object using the milliseconds
+  var date = new Date(milliseconds);
+
+  // Define month names
+  var monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  // Get the month, day, and year
+  var month = monthNames[date.getMonth()];
+  var day = date.getDate();
+  var year = date.getFullYear();
+
+  // Create the formatted date string
+  var formattedDate = `${month} ${day}, ${year}`;
+
+  return formattedDate;
 };
 
 export const functions = {
@@ -395,4 +429,5 @@ export const functions = {
   formatSelectedDates,
   DateWithoutFormat,
   checkAvailability,
+  getDate,
 };
