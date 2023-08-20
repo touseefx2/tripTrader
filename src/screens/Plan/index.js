@@ -37,7 +37,15 @@ export default observer(Plan);
 function Plan(props) {
   const nameRegex = /^[a-zA-Z-' ]+$/;
   const toast = useRef(null);
-  const { plans, user, authToken, regLoader, setregLoader } = store.User;
+  const {
+    plans,
+    user,
+    authToken,
+    regLoader,
+    setregLoader,
+    attempToCreateSubscription,
+    setUser,
+  } = store.User;
   const { confirmPayment } = useStripe();
 
   const [isPage, setisPage] = useState(1);
@@ -92,7 +100,7 @@ function Plan(props) {
       settotalAnually(ta);
 
       if (isPromoApply) {
-        let p = (isPromoApply.discount || 0) / 100;
+        let p = (isPromoApply.percent_off || 0) / 100;
         let discount = 0;
         if (plan.type == "monthly") {
           discount = monthly - p * monthly;
@@ -183,7 +191,18 @@ function Plan(props) {
     setisPage(1);
   };
 
-  const subscribePlan = () => {
+  const applyPromo = () => {
+    Keyboard.dismiss();
+    NetInfo.fetch().then((state) => {
+      if (state.isConnected) {
+        store.User.applyPromo(pc.trim(), setisPromoApply);
+      } else {
+        Alert.alert("", "Please connect internet");
+      }
+    });
+  };
+
+  const createSubscription = () => {
     Keyboard.dismiss();
 
     if (cfn.trim() === "") {
@@ -208,51 +227,16 @@ function Plan(props) {
           return;
         }
 
-        let tv = plan.type == "annual" ? totalAnually : monthly;
-        tv = isPromoApply ? promoValue : tv;
-        let pda = 0;
-        if (isPromoApply) {
-          const p = (isPromoApply.discount || 0) / 100;
-
-          if (plan.type == "monthly") {
-            pda = p * monthly;
-          }
-          if (plan.type == "annual") {
-            pda = p * totalAnually;
-          }
-        }
-        const subscription = {
-          title: plan.type,
-          charges: plan.charges,
-          discount: plan.discount,
-          startDate: new Date(),
-          endDate: addMonths(new Date(), plan.type == "annual" ? 12 : 1),
-          amtPaid: tv,
-          status: "active",
-          lastDigit: cardObj.last4,
-          cardBrand: cardObj.brand,
-        };
-
-        if (isPromoApply) {
-          subscription.promoCode = isPromoApply.code.trim();
-          subscription.promoCodeDiscount = isPromoApply.discount;
-          subscription.promoCodeDiscountAmt = pda;
-        }
-
-        const obj = {
-          subscription: subscription,
-          subscriptionStatus: "paid",
-        };
-
         NetInfo.fetch().then((state) => {
           if (state.isConnected) {
             const body = {
-              email: user.email,
-              description: plan?.type,
-              amount: tv * 100,
+              customerId: user?.customerId,
+              priceId: plan?.stripeId,
             };
-
-            store.User.BuyPlan(body, obj, SucGetClientsecret);
+            if (isPromoApply) {
+              body.promoCode = pc.trim();
+            }
+            attempToCreateSubscription(body, authToken, SucGetClientsecret);
           } else {
             Alert.alert("", "Please connect internet");
           }
@@ -263,69 +247,57 @@ function Plan(props) {
     }
   };
 
-  const SucGetClientsecret = async (dt, obj) => {
+  const SucGetClientsecret = async (clientSecret) => {
     try {
-      const { error, paymentIntent } = await confirmPayment(dt.cs, {
-        paymentMethodType: "Card", //strip > 0.5.0
-        // type: "Card", //stripe <= 0.5.0
+      const { error, paymentIntent } = await confirmPayment(clientSecret, {
+        // paymentMethodType: "Card", //strip > 0.5.0
+        type: "Card", //stripe <= 0.5.0
         billingDetails: { name: cfn.trim() },
       });
 
       if (error) {
         setregLoader(false);
-        Notification.sendPaymentFailedNotification(store.User.user._id);
+        Notification.sendPaymentFailedNotification(user._id);
         console.log(`confirmPayment error: `, error);
         Alert.alert(`Payment ${error.code}`, error.message);
       } else if (paymentIntent) {
-        if (user.customerId && user.customerId != "") {
-        } else {
-          obj.customerId = dt.cid;
-        }
+        const totalValue = plan.type === "annual" ? totalAnually : monthly;
+        const subscription = {
+          title: plan.type,
+          charges: plan.charges,
+          discount: plan.discount,
+          startDate: new Date(),
+          endDate: utils.functions.addMonths(
+            new Date(),
+            plan.type === "annual" ? 12 : 1
+          ),
+          amtPaid: totalValue,
+          status: "active",
+        };
+        const obj = {
+          subscription: subscription,
+          subscriptionStatus: "paid",
+        };
 
-        store.User.SubPlan(
+        store.User.SubscribePlan(
           obj,
           user._id,
-          dt.cid,
+          user.customerId,
           authToken,
-          () => {},
-          subPlanSuc
+          subPlanSucess,
+          "Load"
         );
       }
     } catch (err) {
       setregLoader(false);
-      Notification.sendPaymentFailedNotification(store.User.user._id);
+      Notification.sendPaymentFailedNotification(user._id);
       console.log(`confirmPayment cath error: `, err);
     }
   };
 
-  const applyPromo = () => {
-    Keyboard.dismiss();
-    NetInfo.fetch().then((state) => {
-      if (state.isConnected) {
-        store.User.applyPromo(pc.trim(), () => {}, applyPromoSuc);
-      } else {
-        // seterrorMessage('Please connect internet');
-        Alert.alert("", "Please connect internet");
-      }
-    });
-  };
-
-  function addMonths(date, months) {
-    var d = date.getDate();
-    date.setMonth(date.getMonth() + +months);
-    if (date.getDate() != d) {
-      date.setDate(0);
-    }
-    return date;
-  }
-
-  const subPlanSuc = (c) => {
-    store.User.setUser(c);
+  const subPlanSucess = (res) => {
+    setUser(res);
     props.navigation.goBack();
-  };
-
-  const applyPromoSuc = (res) => {
-    setisPromoApply(res);
   };
 
   const renderShowFieldError = (c) => {
@@ -410,7 +382,7 @@ function Plan(props) {
       return (
         <>
           <TouchableOpacity
-            onPress={subscribePlan}
+            onPress={createSubscription}
             activeOpacity={0.7}
             style={styles.BottomButton}
           >
@@ -809,7 +781,7 @@ function Plan(props) {
                           textTransform: "capitalize",
                         }}
                       >
-                        ${promoValue} ({isPromoApply.discount}% discount)
+                        ${promoValue} ({isPromoApply.percent_off}% discount)
                       </Text>
                     </View>
                   )}

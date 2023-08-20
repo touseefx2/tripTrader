@@ -413,6 +413,27 @@ const getDate = (unixTimestamp) => {
   return formattedDate;
 };
 
+const checkError = (err) => {
+  let msg = "error";
+  if (err) {
+    msg =
+      err?.response?.data?.error?.message ||
+      err?.response?.data?.message ||
+      err?.response?.status ||
+      err;
+  }
+  return msg;
+};
+
+function addMonths(date, months) {
+  var d = date.getDate();
+  date.setMonth(date.getMonth() + +months);
+  if (date.getDate() != d) {
+    date.setDate(0);
+  }
+  return date;
+}
+
 export const functions = {
   isObjectEmpty,
   findItem,
@@ -430,4 +451,6 @@ export const functions = {
   DateWithoutFormat,
   checkAvailability,
   getDate,
+  checkError,
+  addMonths,
 };

@@ -27,9 +27,9 @@ class user {
     this.ccc = obj;
   };
 
-  @persist("object") @observable subscriptionObject = null;
-  @action setSubscriptionObject = (obj) => {
-    this.subscriptionObject = obj;
+  @persist("object") @observable subscriptionId = "";
+  @action setSubscriptionId = (str) => {
+    this.subscriptionId = str;
   };
 
   @persist("object") @observable userSubscription = null;
@@ -1807,9 +1807,9 @@ class user {
     this.notificationToken = n;
   }
 
-  addUser(token, user, c) {
-    const chk = c || "";
-    store.General.setgoto(chk == "" ? "home" : chk);
+  addUser(token, user, goTo) {
+    const chk = goTo || "";
+    store.General.setgoto(chk === "" ? "home" : chk);
     this.addauthToken(token);
     this.setUser(user);
     store.Trips.setsaveTrips(user.savedTrips || []);
@@ -2309,12 +2309,12 @@ class user {
           })
           .catch((err) => {
             this.setregLoader(false);
-            const msg = err.response.data.message || err.response.status;
+            const msg = utils.functions.checkError(err);
             console.log(
               `Error in get all plan ${db.apis.GET_All_Plan} : `,
               msg
             );
-            if (msg == 503 || msg == 500 || msg == 502) {
+            if (msg === 503 || msg === 500 || msg === 502) {
               Alert.alert("", "Server not response");
 
               return;
@@ -2325,11 +2325,10 @@ class user {
       })
       .catch((err) => {
         this.setregLoader(false);
-        const msg = err.response.data.message || err.response.status || err;
+        const msg = utils.functions.checkError(err);
         console.log(`Error in create ${db.apis.REGISTER_USER} : `, msg);
-        if (msg == 503 || msg == 500 || msg == 502) {
+        if (msg === 503 || msg === 500 || msg === 502) {
           Alert.alert("", "Server not response");
-
           return;
         }
 
@@ -2382,60 +2381,34 @@ class user {
   }
 
   @action.bound
-  applyPromo(body, seterror, suc) {
-    console.log("apply promo body : ", body);
+  applyPromo(promoCode, suc) {
+    console.log("Check Promo Code: ", promoCode);
     this.setregLoader(true);
 
-    db.hitApi(db.apis.CHECK_PROMO + body, "get", {}, null)
-      ?.then((resp) => {
-        this.setregLoader(false);
+    db.hitApi(db.apis.CHECK_PROMO + promoCode, "get", {}, null)
+      ?.then((rep) => {
         console.log(
-          `response check promo  ${db.apis.CHECK_PROMO} : `,
-          resp.data
+          `response Check Promo Code  ${db.apis.CHECK_PROMO} : `,
+          rep.data
         );
-        const rsp = resp.data.data[0];
-        if (rsp.status == "disabled") {
-          Alert.alert("", "Promo code disbaled!");
-          return;
-        }
-        if (
-          rsp.status == "active" &&
-          new Date() >=
-            new Date(utils.functions.DateWithoutFormat(rsp.startDate)) &&
-          new Date() <= new Date(utils.functions.DateWithoutFormat(rsp.endDate))
-        ) {
-          suc(rsp);
-        } else if (
-          rsp.status == "active" &&
-          new Date() <
-            new Date(utils.functions.DateWithoutFormat(rsp.startDate)) &&
-          new Date() <= new Date(utils.functions.DateWithoutFormat(rsp.endDate))
-        ) {
-          Alert.alert("", "Promo code not active!");
-        } else if (
-          rsp.status == "active" &&
-          new Date() >=
-            new Date(utils.functions.DateWithoutFormat(rsp.startDate)) &&
-          new Date() > new Date(utils.functions.DateWithoutFormat(rsp.endDate))
-        ) {
+        const resp = rep?.data?.coupon || null;
+        if (resp && resp.valid === false) {
           Alert.alert("", "Promo code expired!");
+        } else if (resp && resp.valid === true) {
+          suc(resp);
         }
       })
       .catch((err) => {
-        this.setregLoader(false);
-        const msg = err.response.data.message || err.response.status || err;
-        console.log(`Error in check promo  ${db.apis.CHECK_PROMO} : `, msg);
-        if (msg == 503 || msg == 500) {
+        const msg = utils.functions.checkError(err);
+        console.log(`Error in Check Promo Code ${db.apis.CHECK_PROMO} : `, msg);
+        if (msg === 503 || msg === 500) {
           Alert.alert("", "Server not response");
-          // store.General.setisServerError(true);
           return;
         }
-        if (msg == "No records found") {
-          Alert.alert("", "Promo code not exist!");
-          return;
-        }
-        // seterror(msg.toString())
         Alert.alert("", msg.toString());
+      })
+      .finally(() => {
+        this.setregLoader(false);
       });
   }
 
@@ -2554,85 +2527,117 @@ class user {
   }
 
   @action.bound
-  SubPlan(body, uid, customerId, token, suc, c) {
-    const chk = c || "";
-    console.log("plan subscribe body : ", body);
-
+  SubscribePlan(body, uid, customerId, token, suc, check) {
+    const chk = check || "";
+    console.log("SubscribePlan body : ", body);
     db.hitApi(db.apis.UPDATE_USER + uid, "put", body, token)
       ?.then((resp) => {
-        this.setregLoader(false);
         console.log(
           `response plan subscribe  ${db.apis.UPDATE_USER + uid} : `,
           resp.data
         );
-        const rsp = resp.data.data;
-        suc(rsp);
-
-        this.getCardInfo(customerId, chk !== "n" ? "tt" : "", token);
+        if (resp?.data?.data) {
+          suc(resp?.data?.data);
+          this.getCardInfo(customerId, chk, token);
+        }
       })
       .catch((err) => {
-        this.setregLoader(false);
-        Notification.sendPaymentFailedNotification(uid);
-        const msg = err.response.data.message || err.response.status || err;
-        console.log(`Error in update user ${db.apis.UPDATE_USER} : `, msg);
-        if (msg == 503 || msg == 500) {
+        const msg = utils.functions.checkError(err);
+        console.log(`Error in SubscribePlan  ${db.apis.UPDATE_USER} : `, msg);
+        if (msg === 503 || msg === 500) {
           Alert.alert("", "Server not response");
           return;
         }
-
         Alert.alert("", msg.toString());
+      })
+      .finally(() => {
+        this.setregLoader(false);
       });
   }
 
   @action.bound
   getCardInfo(customerId, chk, token) {
-    console.log("get card info  : ", customerId);
-
-    if (chk === "tt") {
+    console.log("getCardInfo  : ", customerId);
+    if (chk === "Load") {
       this.setucRef(true);
     }
 
     db.hitApi(db.apis.GET_USER_SUBSCRIPTION + customerId, "get", {}, token)
       ?.then((resp) => {
-        const rsp = resp?.data?.subscriptions?.data;
+        const result = resp?.data?.subscriptions?.data;
         console.log(
-          `response GET_USER_SUBSCRIPTION  ${
+          `response GET_USER_SUBSCRIPTION ${
             db.apis.GET_USER_SUBSCRIPTION + customerId
           } : `,
-          rsp
+          result
         );
-
-        db.hitApi(db.apis.GET_CARD_DETAILS + customerId, "get", {}, token)
-          ?.then((resp2) => {
-            this.setucRef(false);
-            const rsp2 = resp2?.data?.data?.data;
-            console.log(
-              `response GET_CARD_DETAILS ${
-                db.apis.GET_CARD_DETAILS + customerId
-              } : `,
-              rsp
-            );
-
-            this.setUserSubscription(rsp);
-            this.setCardDetails(rsp2);
-          })
-          .catch((err) => {
-            this.setucRef(false);
-            console.log(
-              `Error in GET_CARD_DETAILS  ${
-                db.apis.GET_CARD_DETAILS + customerId
-              } : `,
-              err
-            );
-          });
+        if (result) {
+          this.setUserSubscription(result[0]);
+        }
       })
       .catch((err) => {
         this.setucRef(false);
+        const msg = utils.functions.checkError(err);
         console.log(
           `Error in GET_USER_SUBSCRIPTION  ${
             db.apis.GET_USER_SUBSCRIPTION + customerId
           } : `,
-          err
+          msg
+        );
+      })
+      .finally(() => {
+        db.hitApi(db.apis.GET_CARD_DETAILS + customerId, "get", {}, token)
+          ?.then((res) => {
+            this.setucRef(false);
+            const result2 = res?.data?.data?.data || null;
+            console.log(
+              `response GET_CARD_DETAILS ${
+                db.apis.GET_CARD_DETAILS + customerId
+              } : `,
+              result2
+            );
+
+            if (result2) {
+              this.setCardDetails(result2[0]);
+            }
+          })
+          .catch((err) => {
+            this.setucRef(false);
+            const msg = utils.functions.checkError(err);
+            console.log(
+              `Error in GET_CARD_DETAILS  ${
+                db.apis.GET_CARD_DETAILS + customerId
+              } : `,
+              msg
+            );
+          });
+      });
+  }
+
+  @action.bound
+  getSubsctiptionStatus() {
+    console.log("getSubsctiptionStatus");
+    db.hitApi(
+      db.apis.GET_SUBSCRIPTION_STATUS + this.user?.customerId,
+      "get",
+      {},
+      this.authToken
+    )
+      ?.then((resp) => {
+        const result = resp?.data || null;
+        console.log(
+          `response getSubsctiptionStatus  ${db.apis.GET_SUBSCRIPTION_STATUS} : `,
+          result
+        );
+        if (result) {
+        }
+      })
+      .catch((err) => {
+        const msg = utils.functions.checkError(err);
+
+        console.log(
+          `Error in getSubsctiptionStatus  ${db.apis.GET_SUBSCRIPTION_STATUS} : `,
+          msg
         );
       });
   }
@@ -2672,10 +2677,9 @@ class user {
   }
 
   @action.bound
-  async attempToSelectPlan(body, authToken, suc) {
-    console.log("attempToSelectPlan : ", body);
+  async attempToCreateSubscription(body, authToken, suc) {
+    console.log("createSubscription : ", body);
     this.setregLoader(true);
-
     db.hitApi(
       `${db.apis.BASE_URL}${db.apis.SELECT_PLAN}`,
       "post",
@@ -2683,89 +2687,65 @@ class user {
       authToken
     )
       ?.then((resp) => {
-        this.setregLoader(false);
         console.log(`response   ${db.apis.SELECT_PLAN} : `, resp.data);
-        this.setSubscriptionObject(resp.data);
-        suc(3);
+        if (resp?.data) {
+          this.setSubscriptionId(resp.data.subscriptionId);
+          suc(resp.data?.clientSecret);
+        }
       })
       .catch((err) => {
         this.setregLoader(false);
-        const msg = err.response.data.message || err.response.status || err;
+        const msg = utils.functions.checkError(err);
         console.log(
-          `Error in attempToSelectPlan ${db.apis.SELECT_PLAN} : `,
+          `Error in createSubscription ${db.apis.SELECT_PLAN} : `,
           msg
         );
-        if (msg == 503 || msg == 500) {
+        if (msg === 503 || msg === 500) {
           Alert.alert("", "Server not response");
-
           return;
         }
-
         Alert.alert("", msg.toString());
       });
-
-    //   console.log(`response attempToSelectPlan   ${db.apis.SELECT_PLAN} : `, resp.data);
-    //   // let rsp = resp?.data;
-    //   // let cid = rsp?.customerId; //customer id
-    //   // let cs = rsp?.clientSecret; //client secret
-    //   // suc(3);
-    // } catch (err) {
-    //   this.setregLoader(false);
-
-    //   const msg = err.response.data.message || err.response.status || err;
-    //   console.log(`Error in Buy Plan ${db.apis.BUY_PLAN} : `, msg);
-    //   if (msg == 503 || msg == 500) {
-    //     Alert.alert("", "Server not response");
-    //     return;
-    //   }
-
-    //   Alert.alert("", msg.toString());
-    // }
   }
 
   @action.bound
-  getUserById(uid, token, c) {
-    console.log(" get user by id : ", uid);
+  getUserById(uid, token, goTo) {
+    console.log("getUserById : ", uid);
     this.setregLoader(true);
     db.hitApi(db.apis.GET_USER_BY_ID + uid, "get", {}, token)
       ?.then((resp) => {
-        this.setregLoader(false);
-        // console.log(
-        //   `response get user by id  ${db.apis.GET_USER_BY_ID + uid} : `,
-        //   resp.data,
-        // );
-        let rsp = resp.data.data[0];
-
-        if (rsp.status == "blocked") {
+        const rsp = resp.data.data[0];
+        if (rsp.status === "blocked") {
           Alert.alert(
             "",
             "Your account has been blocked. Please contact customer support",
             [{ text: "OK", onPress: () => this.Logout() }]
           );
-          return;
+        } else if (rsp) {
+          this.addUser(token, rsp, goTo);
+          store.Trips.setsaveTrips(rsp.savedTrips || []);
         }
-
-        this.addUser(token, rsp, c);
-        store.Trips.setsaveTrips(rsp.savedTrips || []);
       })
       .catch((err) => {
-        this.setregLoader(false);
-        let msg = err.response.data.message || err.response.status || err;
+        const msg = utils.functions.checkError(err);
         console.log(
           `Error in get user by id ${db.apis.GET_USER_BY_ID + uid} : `,
           msg
         );
-        if (msg == 503 || msg == 500) {
+        if (msg === 503 || msg === 500) {
           Alert.alert("", "Server not response");
-          // store.General.setisServerError(true);
+
           return;
         }
-        if (msg == "No records found") {
+        if (msg === "No records found") {
           this.Logout();
           return;
         }
-        // seterror(msg.toString())
+
         Alert.alert("", msg.toString());
+      })
+      .finally(() => {
+        this.setregLoader(false);
       });
   }
 
@@ -2790,7 +2770,8 @@ class user {
 
         this.addauthToken(token);
         this.setUser(rsp);
-        this.getCardInfo(rsp.customerId, "", this.authToken);
+        this.getSubsctiptionStatus();
+        this.getCardInfo(rsp.customerId, "notLoad", this.authToken);
       })
       .catch((err) => {
         const msg = err.response.data.message || err.response.status || err;
@@ -3060,7 +3041,7 @@ class user {
 
   @action clearcurrentUser = () => {
     this.setUser(false);
-    this.setSubscriptionObject(null);
+    this.setSubscriptionId("");
     this.setUserSubscription(null);
     this.setCardDetails(null);
     this.setuserCardInfo([]);

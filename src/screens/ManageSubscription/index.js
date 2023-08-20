@@ -38,9 +38,12 @@ function ManageSubscription(props) {
     userCardInfo,
     authToken,
     getCardInfo,
+    getSubsctiptionStatus,
     userSubscription,
     cardDetails,
   } = store.User;
+  // console.log("userSubscription : ", userSubscription);
+  // console.log("cardDetails : ", cardDetails[0].card);
 
   const [isCancelSubModal, setIsCancelSubModal] = useState(false);
 
@@ -53,26 +56,25 @@ function ManageSubscription(props) {
     number: 4040,
     brand: "visa",
   };
-  if (cardDetails?.length > 0) {
-    const data = cardDetails[cardDetails.length - 1].card;
-    if (data) {
-      card.number = data.last4;
-      card.brand = data.brand;
-    }
+  if (cardDetails?.card) {
+    card.number = cardDetails?.card?.last4;
+    card.brand = cardDetails?.card?.brand;
+  }
+  if (userSubscription) {
+    endDate = utils.functions.getDate(userSubscription.current_period_end);
   }
 
   if (user !== "guest" && user) {
     sub = user.subscriptionStatus || "";
     isSubObj = user.subscription || false;
     isSub = isSubObj.status;
-    endDate = isSubObj.endDate ? isSubObj.endDate : "";
   }
 
-  // console.log("userSubscription : ", userSubscription);
-  // console.log("cardDetails : ", cardDetails[0].card);
-
   useEffect(() => {
-    if (isInternet) getCardInfo(user.customerId, "", authToken);
+    if (isInternet) {
+      getCardInfo(user.customerId, "Load", authToken);
+      getSubsctiptionStatus();
+    }
   }, [isInternet]);
 
   const Cancelsubscription = () => {
@@ -147,19 +149,22 @@ function ManageSubscription(props) {
       );
     };
 
-    const status = isSub;
-    const pt = isSubObj.title ? isSubObj.title : "annual";
-    const pt2 = pt.charAt(0).toUpperCase() + pt.slice(1);
-
     let planType = "";
-
-    if (pt == "annual") {
-      let amnt = toFixed(isSubObj.charges ? isSubObj.charges : 0, 2);
-      planType = pt2 + ` ($${amnt}/mo)`;
-    }
-    if (pt == "monthly") {
-      let amnt = toFixed(isSubObj.charges ? isSubObj.charges : 0, 2);
-      planType = pt2 + ` ($${amnt})`;
+    const SubscribePlan = userSubscription?.plan || null;
+    if (SubscribePlan) {
+      planType =
+        `${
+          SubscribePlan.interval === "month"
+            ? "Monthly"
+            : SubscribePlan.interval === "year"
+            ? "Annual"
+            : SubscribePlan.interval
+        }` +
+        ` ($${
+          SubscribePlan.interval === "year"
+            ? "1.25/mo"
+            : (SubscribePlan.amount / 100).toFixed(2)
+        })`;
     }
 
     return (
@@ -200,7 +205,7 @@ function ManageSubscription(props) {
                   },
                 ]}
               >
-                {card.brand + " ........." + card.number}
+                {card.brand + " ******* " + card.number}
               </Text>
             )}
           </View>
@@ -323,7 +328,6 @@ function ManageSubscription(props) {
           focusScreen={store.General.focusScreen}
         />
       </SafeAreaView>
-      <utils.Loader load={regLoader} />
       <Toast ref={toast} position="bottom" />
       {isCancelSubModal && (
         <utils.CancelSubModal

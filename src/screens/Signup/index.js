@@ -54,9 +54,9 @@ function Signup(props) {
     setplans,
     regLoader,
     setregLoader,
-    attempToSelectPlan,
-    subscriptionObject,
-    setSubscriptionObject,
+    attempToCreateSubscription,
+    subscriptionId,
+    setSubscriptionId,
   } = store.User;
   const { confirmPayment } = useStripe();
 
@@ -148,12 +148,12 @@ function Signup(props) {
       let monthly = 0;
       let annualy = 0;
       if (plans && plans.data.length > 0) {
-        plans.data.map((e, i, a) => {
-          if (e.type == "annual") {
-            annualy = e.charges;
+        plans.data.map((item) => {
+          if (item.type === "annual") {
+            annualy = item.charges;
           }
-          if (e.type == "monthly") {
-            monthly = e.charges;
+          if (item.type === "monthly") {
+            monthly = item.charges;
           }
         });
       }
@@ -164,7 +164,7 @@ function Signup(props) {
       settotalAnually(ta);
 
       if (isPromoApply) {
-        let p = (isPromoApply.discount || 0) / 100;
+        let p = isPromoApply.percent_off / 100;
         let discount = 0;
         if (plan.type == "monthly") {
           discount = monthly - p * monthly;
@@ -394,10 +394,6 @@ function Signup(props) {
     setisPhoto1Upload(c);
   };
 
-  const setErrMessage = (c) => {
-    seterrorMessage(c);
-  };
-
   const uploadPhoto = (c) => {
     if (c === "Profile" && photo === "") {
       setisPhotoUpload(false);
@@ -425,7 +421,7 @@ function Signup(props) {
       if (state.isConnected) {
         store.User.attemptToUploadImage(
           imgArr,
-          setErrMessage,
+          () => {},
           setPhoto1Upload,
           SetUP,
           SetUCnicF,
@@ -464,7 +460,6 @@ function Signup(props) {
       if (state.isConnected) {
         store.User.getUserById(user._id, token, "profile");
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert("", "Please connect internet");
       }
     });
@@ -475,27 +470,21 @@ function Signup(props) {
       if (state.isConnected) {
         store.User.getUserById(user._id, token, "home");
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert("", "Please connect internet");
       }
     });
   };
 
-  // const applyPromo = () => {
-  //   Keyboard.dismiss();
-  //   NetInfo.fetch().then((state) => {
-  //     if (state.isConnected) {
-  //       store.User.applyPromo(pc.trim(), setErrMessage, applyPromoSuc);
-  //     } else {
-  //       // seterrorMessage('Please connect internet');
-  //       Alert.alert("", "Please connect internet");
-  //     }
-  //   });
-  // };
-
-  // const applyPromoSuc = (res) => {
-  //   setisPromoApply(res);
-  // };
+  const applyPromo = () => {
+    Keyboard.dismiss();
+    NetInfo.fetch().then((state) => {
+      if (state.isConnected) {
+        store.User.applyPromo(pc.trim(), setisPromoApply);
+      } else {
+        Alert.alert("", "Please connect internet");
+      }
+    });
+  };
 
   const createAccount = () => {
     clearAllField();
@@ -511,7 +500,7 @@ function Signup(props) {
       return;
     }
 
-    if (ln.trim() == "") {
+    if (ln.trim() === "") {
       setEmptyln(true);
       return;
     }
@@ -521,7 +510,7 @@ function Signup(props) {
       return;
     }
 
-    if (email.trim() == "") {
+    if (email.trim() === "") {
       setEmptyemail(true);
       return;
     }
@@ -536,7 +525,7 @@ function Signup(props) {
       return;
     }
 
-    if (pswd == "") {
+    if (pswd === "") {
       setEmptypswd(true);
       return;
     }
@@ -556,7 +545,7 @@ function Signup(props) {
       return;
     }
 
-    if (isTerms == false) {
+    if (isTerms === false) {
       setEmptyTerms(true);
       return;
     }
@@ -595,18 +584,7 @@ function Signup(props) {
     setisUserCreate(true);
   };
 
-  const selectPlan = () => {
-    NetInfo.fetch().then((state) => {
-      if (state.isConnected) {
-        const body = { customerId: user?.customerId, priceId: plan?.stripeId };
-        attempToSelectPlan(body, token, setisPhoto1Upload);
-      } else {
-        Alert.alert("", "Please connect internet");
-      }
-    });
-  };
-
-  const SucGetClientsecret = async () => {
+  const createSubscription = () => {
     Keyboard.dismiss();
 
     if (cfn.trim() === "") {
@@ -631,55 +609,16 @@ function Signup(props) {
           return;
         }
 
-        NetInfo.fetch().then(async (state) => {
+        NetInfo.fetch().then((state) => {
           if (state.isConnected) {
-            setregLoader(true);
-            const totalValue = plan.type == "annual" ? totalAnually : monthly;
-            const subscription = {
-              title: plan.type,
-              charges: plan.charges,
-              discount: plan.discount,
-              startDate: new Date(),
-              endDate: addMonths(new Date(), plan.type == "annual" ? 12 : 1),
-              amtPaid: totalValue,
-              status: "active",
+            const body = {
+              customerId: user?.customerId,
+              priceId: plan?.stripeId,
             };
-
-            const obj = {
-              subscription: subscription,
-              subscriptionStatus: "paid",
-            };
-
-            try {
-              const { error, paymentIntent } = await confirmPayment(
-                subscriptionObject?.clientSecret,
-                {
-                  // paymentMethodType: "Card", //strip > 0.5.0
-                  type: "Card", //stripe <= 0.5.0
-                  billingDetails: { name: cfn.trim() },
-                }
-              );
-
-              if (error) {
-                setregLoader(false);
-                Notification.sendPaymentFailedNotification(user._id);
-                console.log(`confirmPayment error: `, error);
-                Alert.alert(`Payment ${error.code}`, error.message);
-              } else if (paymentIntent) {
-                store.User.SubPlan(
-                  obj,
-                  user._id,
-                  user?.customerId,
-                  token,
-                  subPlanSuc,
-                  "n"
-                );
-              }
-            } catch (err) {
-              setregLoader(false);
-              Notification.sendPaymentFailedNotification(user._id);
-              console.log(`confirmPayment cath error: `, err);
+            if (isPromoApply) {
+              body.promoCode = pc.trim();
             }
+            attempToCreateSubscription(body, token, SucGetClientsecret);
           } else {
             Alert.alert("", "Please connect internet");
           }
@@ -688,20 +627,59 @@ function Signup(props) {
     }
   };
 
-  const subPlanSuc = (res) => {
+  const SucGetClientsecret = async (clientSecret) => {
+    try {
+      const { error, paymentIntent } = await confirmPayment(clientSecret, {
+        // paymentMethodType: "Card", //strip > 0.5.0
+        type: "Card", //stripe <= 0.5.0
+        billingDetails: { name: cfn.trim() },
+      });
+
+      if (error) {
+        setregLoader(false);
+        Notification.sendPaymentFailedNotification(user._id);
+        console.log(`confirmPayment error: `, error);
+        Alert.alert(`Payment ${error.code}`, error.message);
+      } else if (paymentIntent) {
+        const totalValue = plan.type === "annual" ? totalAnually : monthly;
+        const subscription = {
+          title: plan.type,
+          charges: plan.charges,
+          discount: plan.discount,
+          startDate: new Date(),
+          endDate: utils.functions.addMonths(
+            new Date(),
+            plan.type === "annual" ? 12 : 1
+          ),
+          amtPaid: totalValue,
+          status: "active",
+        };
+        const obj = {
+          subscription: subscription,
+          subscriptionStatus: "paid",
+        };
+
+        store.User.SubscribePlan(
+          obj,
+          user._id,
+          user.customerId,
+          token,
+          subPlanSucess,
+          "notLoad"
+        );
+      }
+    } catch (err) {
+      setregLoader(false);
+      Notification.sendPaymentFailedNotification(user._id);
+      console.log(`confirmPayment cath error: `, err);
+    }
+  };
+
+  const subPlanSucess = (res) => {
     setisPhoto1Upload(4);
     setsPlan(res.subscription);
     clearCard();
   };
-
-  function addMonths(date, months) {
-    var d = date.getDate();
-    date.setMonth(date.getMonth() + +months);
-    if (date.getDate() != d) {
-      date.setDate(0);
-    }
-    return date;
-  }
 
   const SetUP = (c) => {
     setuphoto(c);
@@ -1537,7 +1515,7 @@ function Signup(props) {
       return (
         <>
           <TouchableOpacity
-            onPress={selectPlan}
+            onPress={() => setisPhoto1Upload(3)}
             activeOpacity={0.9}
             style={[
               styles.BottomButton,
@@ -1556,8 +1534,7 @@ function Signup(props) {
       return (
         <>
           <TouchableOpacity
-            onPress={SucGetClientsecret}
-            // onPress={buyPlan}
+            onPress={createSubscription}
             activeOpacity={0.7}
             style={styles.BottomButton}
           >
@@ -2130,13 +2107,12 @@ function Signup(props) {
                         style={{
                           color: theme.color.title,
                           fontSize: 11,
-
                           fontFamily: theme.fonts.fontBold,
                           textTransform: "capitalize",
                           textDecorationLine: "line-through",
                         }}
                       >
-                        {plan.type == "annual"
+                        {plan.type === "annual"
                           ? `$${toFixed(totalAnually, 2)}`
                           : `$${monthly}`}
                         {"  "}
@@ -2150,7 +2126,7 @@ function Signup(props) {
                           textTransform: "capitalize",
                         }}
                       >
-                        ${promoValue} ({isPromoApply.discount}% discount)
+                        ${promoValue} ({isPromoApply.percent_off}% discount)
                       </Text>
                     </View>
                   )}
@@ -2246,7 +2222,7 @@ function Signup(props) {
                   {cardErr !== "" && renderShowFieldError("card")}
                 </View>
 
-                {/* {isShowPromoFiled && (
+                {isShowPromoFiled && (
                   <View style={styles.Field}>
                     <Text style={styles.FieldTitle1}>promo code</Text>
 
@@ -2279,7 +2255,7 @@ function Signup(props) {
                           }}
                         />
 
-                        {pc != "" && (
+                        {pc !== "" && (
                           <TouchableOpacity
                             activeOpacity={0.7}
                             onPress={applyPromo}
@@ -2325,10 +2301,9 @@ function Signup(props) {
                             color: theme.color.title,
                             fontSize: 12,
                             fontFamily: theme.fonts.fontMedium,
-                            textTransform: "uppercase",
                           }}
                         >
-                          {isPromoApply.code.trim()}
+                          {isPromoApply.id.trim()}
                         </Text>
 
                         <TouchableOpacity
@@ -2368,7 +2343,7 @@ function Signup(props) {
                       I have a promo code
                     </Text>
                   </TouchableOpacity>
-                )} */}
+                )}
 
                 <View style={{ marginTop: 20 }}>
                   <View

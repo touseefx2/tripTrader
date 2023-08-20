@@ -28,9 +28,7 @@ export default function CancelSubModal({
   const [loader, setLoader] = useState(false);
 
   if (userSubscription) {
-    endDate = utils.functions.getDate(
-      userSubscription[userSubscription.length - 1]?.current_period_end
-    );
+    endDate = utils.functions.getDate(userSubscription?.current_period_end);
   }
 
   useEffect(() => {

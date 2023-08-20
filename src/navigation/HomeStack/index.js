@@ -1,11 +1,11 @@
-import React from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {createDrawerNavigator} from '@react-navigation/drawer';
-import screens from '../../screens/index';
-import icon from './styles';
-import CustomDrawerContent from './CustomDrawerContent';
-import theme from '../../theme';
-import {responsiveFontSize} from 'react-native-responsive-dimensions';
+import React from "react";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import screens from "../../screens/index";
+import icon from "./styles";
+import CustomDrawerContent from "./CustomDrawerContent";
+import theme from "../../theme";
+import { responsiveFontSize } from "react-native-responsive-dimensions";
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -33,7 +33,8 @@ export default HomeStack = () => {
         drawerItemStyle: {},
         // drawerActiveBackgroundColor: theme.color.backgroundGreen,
       }}
-      drawerContent={props => <CustomDrawerContent {...props} />}>
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+    >
       <Drawer.Screen
         name="Home"
         component={HomeStack}
@@ -106,11 +107,12 @@ let HomeStack = () => {
       screenOptions={{
         animationEnabled: false,
         headerShown: false,
-      }}>
+      }}
+    >
       <Stack.Screen
         name="Homee"
         component={screens.Home}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: true,
@@ -119,7 +121,7 @@ let HomeStack = () => {
       />
 
       <Stack.Screen
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: false,
@@ -132,7 +134,7 @@ let HomeStack = () => {
       <Stack.Screen
         name="UserProfile"
         component={UserProfileStack}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: false,
@@ -150,11 +152,12 @@ let InboxStack = () => {
       screenOptions={{
         animationEnabled: false,
         headerShown: false,
-      }}>
+      }}
+    >
       <Stack.Screen
         name="Inboxe"
         component={screens.Inbox}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: true,
@@ -164,7 +167,7 @@ let InboxStack = () => {
       <Stack.Screen
         name="Chat"
         component={ChatStack}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: false,
@@ -182,11 +185,12 @@ let NewTripsStack = () => {
       screenOptions={{
         animationEnabled: false,
         headerShown: false,
-      }}>
+      }}
+    >
       <Stack.Screen
         name="NewTrips"
         component={screens.NewTrips}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: true,
@@ -195,7 +199,7 @@ let NewTripsStack = () => {
       />
 
       <Stack.Screen
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: false,
@@ -215,11 +219,12 @@ let ProfileStack = () => {
       screenOptions={{
         animationEnabled: false,
         headerShown: false,
-      }}>
+      }}
+    >
       <Stack.Screen
         name="MyProfilee"
         component={screens.MyProfile}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: true,
@@ -230,7 +235,7 @@ let ProfileStack = () => {
       <Stack.Screen
         name="ShowFollowers"
         component={ShowFollowersStack}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: false,
@@ -248,11 +253,12 @@ let ConfirmedTripsStack = () => {
       screenOptions={{
         animationEnabled: false,
         headerShown: false,
-      }}>
+      }}
+    >
       <Stack.Screen
         name="ConfirmedTripss"
         component={screens.ConfirmTrips}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: true,
@@ -263,7 +269,7 @@ let ConfirmedTripsStack = () => {
       <Stack.Screen
         name="UserProfile"
         component={UserProfileStack}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: false,
@@ -281,11 +287,12 @@ let ChatStack = () => {
       screenOptions={{
         animationEnabled: false,
         headerShown: false,
-      }}>
+      }}
+    >
       <Stack.Screen
         name="Chats"
         component={screens.Chat}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: false,
@@ -296,7 +303,7 @@ let ChatStack = () => {
       <Stack.Screen
         name="UserProfile"
         component={UserProfileStack}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: false,
@@ -314,11 +321,12 @@ let SavedTripsStack = () => {
       screenOptions={{
         animationEnabled: false,
         headerShown: false,
-      }}>
+      }}
+    >
       <Stack.Screen
         name="SavedTripse"
         component={screens.SavedTrips}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: true,
@@ -329,7 +337,7 @@ let SavedTripsStack = () => {
       <Stack.Screen
         name="UserProfile"
         component={UserProfileStack}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: false,
@@ -338,7 +346,7 @@ let SavedTripsStack = () => {
       />
 
       <Stack.Screen
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: false,
@@ -358,13 +366,14 @@ let UserProfileStack = () => {
       screenOptions={{
         animationEnabled: false,
         headerShown: false,
-      }}>
+      }}
+    >
       <Stack.Screen name="UserProfilee" component={screens.UserProfile} />
 
       <Stack.Screen name="ShowFollowers" component={ShowOtherFollowersStack} />
 
       <Stack.Screen
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: false,
@@ -384,11 +393,12 @@ let SettingsStack = () => {
       screenOptions={{
         animationEnabled: false,
         headerShown: false,
-      }}>
+      }}
+    >
       <Stack.Screen
         name="Settingss"
         component={screens.Settings}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: true,
@@ -399,7 +409,7 @@ let SettingsStack = () => {
       <Stack.Screen
         name="BlockUsers"
         component={screens.BlockUsers}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: false,
@@ -410,7 +420,7 @@ let SettingsStack = () => {
       <Stack.Screen
         name="ChangePassword"
         component={ChangePasswordStack}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: false,
@@ -421,7 +431,7 @@ let SettingsStack = () => {
       <Stack.Screen
         name="ManageSubscription"
         component={ManageSubscriptionStack}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: false,
@@ -439,7 +449,8 @@ let ChangePasswordStack = () => {
       screenOptions={{
         animationEnabled: false,
         headerShown: false,
-      }}>
+      }}
+    >
       <Stack.Screen name="ChangePasswordd" component={screens.ChangePassword} />
       <Stack.Screen name="ForgotPassword" component={screens.ForgotPassword} />
       <Stack.Screen name="VerifyCode" component={screens.VerifyCode} />
@@ -455,7 +466,8 @@ let ManageSubscriptionStack = () => {
       screenOptions={{
         animationEnabled: false,
         headerShown: false,
-      }}>
+      }}
+    >
       <Stack.Screen
         name="ManageSubscriptionn"
         component={screens.ManageSubscription}
@@ -472,11 +484,12 @@ let ShowFollowersStack = () => {
       screenOptions={{
         animationEnabled: false,
         headerShown: false,
-      }}>
+      }}
+    >
       <Stack.Screen
         name="ShowFollowerss"
         component={screens.ShowFollowers}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: false,
@@ -487,7 +500,7 @@ let ShowFollowersStack = () => {
       <Stack.Screen
         name="UserProfile"
         component={UserProfileStack}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: false,
@@ -505,11 +518,12 @@ let ShowOtherFollowersStack = () => {
       screenOptions={{
         animationEnabled: false,
         headerShown: false,
-      }}>
+      }}
+    >
       <Stack.Screen
         name="ShowFollowersss"
         component={screens.ShowOtherFollowers}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: false,
@@ -520,7 +534,7 @@ let ShowOtherFollowersStack = () => {
       <Stack.Screen
         name="UserProfile"
         component={UserProfileStack}
-        options={props => {
+        options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: false,

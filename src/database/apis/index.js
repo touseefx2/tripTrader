@@ -1,7 +1,7 @@
 const BASE_URL =
-  // 'http://ec2-35-175-134-9.compute-1.amazonaws.com/';
   // "http://192.168.43.170:3001/";
-  "https://api.trip-trader.com/";
+  "https://Devapi.trip-trader.com/";
+// "https://api.trip-trader.com/";
 
 //apis
 const GET_CITIES_AREAS = "api/area/getAllAreas";
@@ -14,6 +14,7 @@ const BUY_PLAN = "api/stripe";
 const CARD_INFO = "api/stripe?customerId=";
 const GET_USER_SUBSCRIPTION = "api/stripe/subscriptions/";
 const GET_CARD_DETAILS = "api/stripe?customerId=";
+const GET_SUBSCRIPTION_STATUS = "api/stripe/getActive/";
 const FORGOT_PSWD = "api/user/password/forgot";
 const LOGIN_USER = "api/user/login";
 const IMAGE_UPLOAD = "api/upload";
@@ -27,7 +28,7 @@ const ADD_ADDRESS_BY_USER_ID = "api/orders?customer=";
 const REMOVE_ADDRESS_BY_USER_ID = "api/orders?customer=";
 const CHANGE_PASSWORD = "api/user/changePassword/";
 const SUBSCRIBE_TOPIC = "api/pushnotification/subscribeToTopic";
-const CHECK_PROMO = "api/code?code=";
+const CHECK_PROMO = "api/stripe/getCodeDetails/";
 const GET_All_PROMOS_BY_ID = "api/promocode/getActiveCodes?city=";
 const GET_All_Plan = "api/plan?status=active";
 const VERIFY_PIN = "api/user/password/verifyOtp";
@@ -169,4 +170,5 @@ export default apis = {
   SELECT_PLAN,
   GET_USER_SUBSCRIPTION,
   GET_CARD_DETAILS,
+  GET_SUBSCRIPTION_STATUS,
 };

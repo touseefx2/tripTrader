@@ -99,7 +99,7 @@ function Home(props) {
   useEffect(() => {
     if (user && user !== "guest" && getDataOnce) {
       setTimeout(() => {
-        setIsEmailPopup(user?.isEmailVerified == false ? true : false);
+        // setIsEmailPopup(user?.isEmailVerified === false ? true : false);
       }, 3000);
     }
   }, [user, getDataOnce]);
@@ -318,7 +318,7 @@ function Home(props) {
   const getDbData = () => {
     NetInfo.fetch().then((state) => {
       if (state.isConnected) {
-        if (user == "guest") {
+        if (user === "guest") {
           store.User.attemptToGetHomeTripsGuest(setGetDataOnce);
         } else {
           store.User.attemptToGetBloackUsers(
