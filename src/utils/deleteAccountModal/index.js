@@ -1,13 +1,20 @@
-import React, {useState, useEffect} from 'react';
-import {View, Modal, SafeAreaView, ScrollView, Text, Alert} from 'react-native';
-import {styles} from './styles';
-import theme from '../../theme';
-import store from '../../store';
-import Header from './components/Header';
-import Bottom from './components/Bottom';
-import NetInfo from '@react-native-community/netinfo';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Modal,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  Alert,
+} from "react-native";
+import { styles } from "./styles";
+import theme from "../../theme";
+import store from "../../store";
+import Header from "./components/Header";
+import Bottom from "./components/Bottom";
+import NetInfo from "@react-native-community/netinfo";
 
-export default function deleteAccountModal({isModal, setIsModal}) {
+export default function deleteAccountModal({ isModal, setIsModal }) {
   const maxModalHeight = theme.window.Height - 70;
 
   const [isMaxHeight, setIssMaxHeight] = useState(false);
@@ -18,9 +25,9 @@ export default function deleteAccountModal({isModal, setIsModal}) {
     setIssMaxHeight(modalHeight >= maxModalHeight ? true : false);
   }, [modalHeight]);
 
-  const onViewLayout = event => {
+  const onViewLayout = (event) => {
     if (!isMaxHeight) {
-      const {height} = event.nativeEvent.layout;
+      const { height } = event.nativeEvent.layout;
       setmodalHeight(height);
     }
   };
@@ -32,14 +39,16 @@ export default function deleteAccountModal({isModal, setIsModal}) {
   };
 
   const removeAccount = () => {
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
-        store.User.attemptToDeleteAccount(
-          store.User.user._id,
+        store.User.getUserSubscription(
+          store.User.user.customerId,
+          store.User.authToken,
+          "delete",
           setLoader,
-          closeModal,
+          closeModal
         );
-      } else Alert.alert('', 'Please connect internet');
+      } else Alert.alert("", "Please connect internet");
     });
   };
 
@@ -63,11 +72,12 @@ export default function deleteAccountModal({isModal, setIsModal}) {
           style={[
             styles.modal,
             isMaxHeight
-              ? {height: maxModalHeight, paddingTop: 0}
-              : {padding: 15},
-          ]}>
+              ? { height: maxModalHeight, paddingTop: 0 }
+              : { padding: 15 },
+          ]}
+        >
           <Header
-            title={'Delete Account?'}
+            title={"Delete Account?"}
             loader={loader}
             closeModal={closeModal}
             isMaxHeight={isMaxHeight}
@@ -75,9 +85,10 @@ export default function deleteAccountModal({isModal, setIsModal}) {
 
           {isMaxHeight ? (
             <ScrollView
-              contentContainerStyle={{paddingHorizontal: 15}}
+              contentContainerStyle={{ paddingHorizontal: 15 }}
               showsVerticalScrollIndicator={false}
-              style={{flex: 1}}>
+              style={{ flex: 1 }}
+            >
               {renderField()}
             </ScrollView>
           ) : (

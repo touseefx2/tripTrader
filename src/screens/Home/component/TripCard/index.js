@@ -21,6 +21,7 @@ function TripCard({
   saveTrip,
   saveLoader,
   user,
+  userSubscription,
 }) {
   const usr = item.hostId;
   //user
@@ -88,7 +89,7 @@ function TripCard({
           <Pressable
             disabled={user == "guest" ? true : false}
             onPress={() => {
-              if (user == "guest") return;
+              if (user === "guest") return;
 
               store.Userv.setfscreen("home");
               store.Userv.setUser(usr);
@@ -130,7 +131,7 @@ function TripCard({
         <Pressable
           disabled={saveLoader}
           onPress={() => {
-            if (user == "guest") {
+            if (user === "guest") {
               store.General.setgoto("guestaccess");
               store.User.Logout();
               return;
@@ -261,13 +262,16 @@ function TripCard({
       <View style={styles.boxSection4}>
         <Pressable
           onPress={() => {
-            if (user == "guest") {
+            if (user === "guest") {
               store.General.setgoto("guestaccess");
               store.User.Logout();
               return;
             }
 
-            if (user.subscriptionStatus == "freemium") {
+            if (
+              (userSubscription && userSubscription?.status !== "active") ||
+              !userSubscription
+            ) {
               props.navigation.navigate("Plan");
             } else openModal({ item: item, selIndex: index }, "offer");
           }}
@@ -286,7 +290,10 @@ function TripCard({
               store.User.Logout();
               return;
             }
-            if (user.subscriptionStatus == "freemium") {
+            if (
+              (userSubscription && userSubscription?.status !== "active") ||
+              !userSubscription
+            ) {
               props.navigation.navigate("Plan");
             } else openModal({ item: item, selIndex: index }, "message");
           }}

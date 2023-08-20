@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -12,50 +12,50 @@ import {
   Keyboard,
   TextInput,
   ScrollView,
-} from 'react-native';
-import RBSheet from 'react-native-raw-bottom-sheet';
-import {styles} from './styles';
-import {observer} from 'mobx-react';
-import store from '../../store/index';
-import utils from '../../utils/index';
-import theme from '../../theme';
-import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-import {responsiveHeight} from 'react-native-responsive-dimensions';
-import NetInfo from '@react-native-community/netinfo';
-import Toast from 'react-native-easy-toast';
-import {ActivityIndicator} from 'react-native-paper';
-import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
-import {Image as ImageCompressor} from 'react-native-compressor';
-import {TabView, SceneMap} from 'react-native-tab-view';
-import Reviews from './Reviews';
-import Trips from './Trips';
-import Photos from './Photos';
+} from "react-native";
+import RBSheet from "react-native-raw-bottom-sheet";
+import { styles } from "./styles";
+import { observer } from "mobx-react";
+import store from "../../store/index";
+import utils from "../../utils/index";
+import theme from "../../theme";
+import ProgressiveFastImage from "@freakycoder/react-native-progressive-fast-image";
+import { responsiveHeight } from "react-native-responsive-dimensions";
+import NetInfo from "@react-native-community/netinfo";
+import Toast from "react-native-easy-toast";
+import { ActivityIndicator } from "react-native-paper";
+import MultipleImagePicker from "@baronha/react-native-multiple-image-picker";
+import { Image as ImageCompressor } from "react-native-compressor";
+import { TabView, SceneMap } from "react-native-tab-view";
+import Reviews from "./Reviews";
+import Trips from "./Trips";
+import Photos from "./Photos";
 
 export default observer(UserProfile);
 
 function UserProfile(props) {
   const refRBSheet = useRef();
   const toast = useRef(null);
-  const headerTitle = 'Profile';
+  const headerTitle = "Profile";
 
-  const {isInternet} = store.General;
-  const {user} = store.Userv;
+  const { isInternet } = store.General;
+  const { user } = store.Userv;
 
-  const {homeModalLoder} = store.User;
+  const { homeModalLoder, userSubscription } = store.User;
 
   const [followers, setfollowers] = useState(0);
   const [following, setfollowing] = useState(0);
   const [loader, setloader] = useState(false);
 
-  let userName = '';
-  let photo = '';
+  let userName = "";
+  let photo = "";
   if (user) {
-    userName = user.firstName + ' ' + user.lastName;
-    photo = user.image ? user.image : '';
+    userName = user.firstName + " " + user.lastName;
+    photo = user.image ? user.image : "";
   }
 
   const [pvm, setpvm] = useState(false); //show fulll image modal
-  const [pv, setpv] = useState(''); //photo view
+  const [pv, setpv] = useState(""); //photo view
 
   const [profileImageLoader, setprofileImageLoader] = useState(false);
 
@@ -69,23 +69,23 @@ function UserProfile(props) {
 
   const [isSuccessModal, setIsSuccessModal] = useState(false);
   const [successModalObj, setSuccessModalObj] = useState(null);
-  const [successCheck, setSuccessCheck] = useState('');
+  const [successCheck, setSuccessCheck] = useState("");
 
   const [modalObj, setModalObj] = useState(false);
 
   const [getDataOnce, setgetDataOnce] = useState(false);
-  const setGetDataOnce = C => {
+  const setGetDataOnce = (C) => {
     setgetDataOnce(C);
   };
   const getDbData = () => {
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.Userv.getUserById(user._id, goBackMain);
         store.Userv.attemptToGetHome(
           user._id,
           setGetDataOnce,
-          c => setfollowers(c),
-          c => setfollowing(c),
+          (c) => setfollowers(c),
+          (c) => setfollowing(c)
         );
       }
     });
@@ -103,7 +103,7 @@ function UserProfile(props) {
       let flw = false;
       let dtt = store.User.user.followers || [];
       if (dtt.length > 0) {
-        let fi = dtt.findIndex(x => x.userId == user._id);
+        let fi = dtt.findIndex((x) => x.userId == user._id);
 
         if (fi > -1) {
           if (dtt[fi].block == true) {
@@ -125,82 +125,82 @@ function UserProfile(props) {
 
   const unFollowUser = () => {
     Keyboard.dismiss();
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.Userv.unFollowUser(
           user._id,
-          c => setfollowers(c),
-          c => setfollowing(c),
-          c => setloader(c),
-          goBackMain,
+          (c) => setfollowers(c),
+          (c) => setfollowing(c),
+          (c) => setloader(c),
+          goBackMain
         );
       } else {
         // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
   const FollowUser = () => {
     Keyboard.dismiss();
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.Userv.FollowUser(
           user._id,
-          c => setfollowers(c),
-          c => setfollowing(c),
-          c => setloader(c),
-          goBackMain,
+          (c) => setfollowers(c),
+          (c) => setfollowing(c),
+          (c) => setloader(c),
+          goBackMain
         );
       } else {
         // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
   const BlockUser = () => {
     closeBottomSheet();
     Keyboard.dismiss();
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.Userv.BlockUser(
           user._id,
           closeBottomSheet,
-          c => setfollowers(c),
-          c => setfollowing(c),
-          c => setloader(c),
-          goBackMain,
+          (c) => setfollowers(c),
+          (c) => setfollowing(c),
+          (c) => setloader(c),
+          goBackMain
         );
       } else {
         // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
   const UnBlockUser = () => {
     closeBottomSheet();
     Keyboard.dismiss();
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.Userv.UnBlockUser(
           user._id,
           closeBottomSheet,
-          c => setfollowers(c),
-          c => setfollowing(c),
-          c => setloader(c),
-          goBackMain,
+          (c) => setfollowers(c),
+          (c) => setfollowing(c),
+          (c) => setloader(c),
+          goBackMain
         );
       } else {
         // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
 
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    {key: 'reviews', title: 'Reviews'},
-    {key: 'trips', title: 'Trips'},
-    {key: 'photos', title: 'Photos'},
+    { key: "reviews", title: "Reviews" },
+    { key: "trips", title: "Trips" },
+    { key: "photos", title: "Photos" },
   ]);
   const renderScene = SceneMap({
     reviews: Reviews,
@@ -214,24 +214,24 @@ function UserProfile(props) {
     return () => {};
   }, []);
 
-  const changePhoto = c => {
-    if (c == 'photoView') {
+  const changePhoto = (c) => {
+    if (c == "photoView") {
       setpv([photo]);
       setpvm(true);
       return;
     }
   };
 
-  const onClickBottomItem = chk => {
-    if (chk == 'message') {
+  const onClickBottomItem = (chk) => {
+    if (chk == "message") {
       closeBottomSheet();
-      const obj = {hostId: user};
-      openModal({item: obj, selIndex: 0}, chk);
+      const obj = { hostId: user };
+      openModal({ item: obj, selIndex: 0 }, chk);
     }
 
-    if (chk == 'report') {
+    if (chk == "report") {
       closeBottomSheet();
-      const obj = {item: user, selIndex: 0};
+      const obj = { item: user, selIndex: 0 };
       openModal(obj, chk);
     }
   };
@@ -248,28 +248,29 @@ function UserProfile(props) {
     refRBSheet?.current?.close();
   };
 
-  const ShowFollowersScreen = c => {
+  const ShowFollowersScreen = (c) => {
     // props.navigation.navigate('ShowFollowers', {
     //   chk: c,
     //   user: userName,
     //   cc: 'other',
     // });
 
-    props.navigation.navigate('ShowFollowers');
+    props.navigation.navigate("ShowFollowers");
     store.Userv.setUser(user);
     store.User.setchk(c);
     store.User.setfuser(userName);
-    store.User.setcc('other');
+    store.User.setcc("other");
   };
 
   const renderProfileSection = () => {
     const renderProfileShow = () => {
       return (
         <TouchableOpacity
-          disabled={photo == '' ? true : false}
-          onPress={() => changePhoto('photoView')}
+          disabled={photo == "" ? true : false}
+          onPress={() => changePhoto("photoView")}
           activeOpacity={0.9}
-          style={styles.profileImageContainer}>
+          style={styles.profileImageContainer}
+        >
           <Image
             onLoadStart={() => {
               setprofileImageLoader(false);
@@ -279,9 +280,9 @@ function UserProfile(props) {
             }}
             style={styles.ProfileImg}
             source={
-              photo != ''
-                ? {uri: photo.uri ? photo.uri : photo}
-                : require('../../assets/images/drawer/guest/img.png')
+              photo != ""
+                ? { uri: photo.uri ? photo.uri : photo }
+                : require("../../assets/images/drawer/guest/img.png")
             }
           />
 
@@ -289,7 +290,7 @@ function UserProfile(props) {
             <ActivityIndicator
               size={22}
               color={theme.color.button1}
-              style={{top: 40, position: 'absolute'}}
+              style={{ top: 40, position: "absolute" }}
             />
           )}
         </TouchableOpacity>
@@ -301,7 +302,7 @@ function UserProfile(props) {
         <TouchableOpacity disabled={true} style={styles.profileImageContainer}>
           <Image
             style={styles.ProfileImg}
-            source={require('../../assets/images/drawer/guest/img.png')}
+            source={require("../../assets/images/drawer/guest/img.png")}
           />
         </TouchableOpacity>
       );
@@ -310,13 +311,14 @@ function UserProfile(props) {
     const renderEditButton = () => {
       return (
         <TouchableOpacity
-          style={{position: 'absolute', right: 15, top: 15}}
+          style={{ position: "absolute", right: 15, top: 15 }}
           onPress={openBottomSheet}
-          activeOpacity={0.7}>
+          activeOpacity={0.7}
+        >
           <View style={styles.editImgConatiner}>
             <Image
               style={styles.editImg}
-              source={require('../../assets/images/editOtherUser/img.png')}
+              source={require("../../assets/images/editOtherUser/img.png")}
             />
           </View>
         </TouchableOpacity>
@@ -330,63 +332,73 @@ function UserProfile(props) {
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={styles.profileTitle}>
-              {isBlock ? 'Trip Trader User' : userName}
+              style={styles.profileTitle}
+            >
+              {isBlock ? "Trip Trader User" : userName}
             </Text>
           </View>
           {user && !isBlock && (
             <View style={styles.profileTitle2Conatiner}>
               <Pressable
-                style={({pressed}) => [
-                  {opacity: pressed ? 0.8 : 1.0},
+                style={({ pressed }) => [
+                  { opacity: pressed ? 0.8 : 1.0 },
                   [styles.profileTitle2Conatiner1],
                 ]}
-                onPress={() => ShowFollowersScreen('followers')}>
+                onPress={() => ShowFollowersScreen("followers")}
+              >
                 <Text style={styles.profileTitle2ConatinerTitle2}>
-                  {parseInt(followers) > 900 ? '900+' : followers}
+                  {parseInt(followers) > 900 ? "900+" : followers}
                 </Text>
 
                 <Text
                   numberOfLines={1}
                   ellipsizeMode="tail"
-                  style={styles.profileTitle2ConatinerTitle}>
+                  style={styles.profileTitle2ConatinerTitle}
+                >
                   followers
                 </Text>
               </Pressable>
 
               <Pressable
                 disabled={loader}
-                style={({pressed}) => [
-                  {opacity: pressed ? 0.8 : 1.0},
+                style={({ pressed }) => [
+                  { opacity: pressed ? 0.8 : 1.0 },
                   [styles.profileTitle2Conatinerm],
                 ]}
                 onPress={() => {
-                  if (store.User.user.subscriptionStatus == 'freemium') {
-                    props.navigation.navigate('Plan');
+                  if (
+                    (userSubscription &&
+                      userSubscription?.status !== "active") ||
+                    !userSubscription
+                  ) {
+                    props.navigation.navigate("Plan");
                   } else {
                     if (!isFollow) FollowUser();
                     else unFollowUser();
                   }
-                }}>
+                }}
+              >
                 <Text style={styles.profileTitle2ConatinerTitle2m}>
-                  {isFollow ? 'Unfollow' : 'Follow'}
+                  {isFollow ? "Unfollow" : "Follow"}
                 </Text>
               </Pressable>
 
               <Pressable
-                onPress={() => ShowFollowersScreen('following')}
-                style={({pressed}) => [
-                  {opacity: pressed ? 0.8 : 1.0},
+                onPress={() => ShowFollowersScreen("following")}
+                style={({ pressed }) => [
+                  { opacity: pressed ? 0.8 : 1.0 },
                   [styles.profileTitle2Conatiner2],
-                ]}>
+                ]}
+              >
                 <Text style={styles.profileTitle2ConatinerTitle2}>
-                  {parseInt(following) > 900 ? '900+' : following}
-                  {'  '}
+                  {parseInt(following) > 900 ? "900+" : following}
+                  {"  "}
                 </Text>
                 <Text
                   numberOfLines={1}
                   ellipsizeMode="tail"
-                  style={styles.profileTitle2ConatinerTitle}>
+                  style={styles.profileTitle2ConatinerTitle}
+                >
                   following
                 </Text>
               </Pressable>
@@ -397,17 +409,22 @@ function UserProfile(props) {
             <View style={styles.profileTitle2Conatinerr}>
               <Pressable
                 disabled={loader}
-                style={({pressed}) => [
-                  {opacity: pressed ? 0.8 : 1.0},
+                style={({ pressed }) => [
+                  { opacity: pressed ? 0.8 : 1.0 },
                   [styles.profileTitle2Conatinerm],
                 ]}
                 onPress={() => {
-                  if (store.User.user.subscriptionStatus == 'freemium') {
-                    props.navigation.navigate('Plan');
+                  if (
+                    (userSubscription &&
+                      userSubscription?.status !== "active") ||
+                    !userSubscription
+                  ) {
+                    props.navigation.navigate("Plan");
                   } else {
                     UnBlockUser();
                   }
-                }}>
+                }}
+              >
                 <Text style={styles.profileTitle2ConatinerTitle2m}>
                   Unblock
                 </Text>
@@ -419,7 +436,7 @@ function UserProfile(props) {
     };
 
     return (
-      <View style={{paddingHorizontal: 15}}>
+      <View style={{ paddingHorizontal: 15 }}>
         <View style={styles.profileSecConatiner}>
           {!isBlock && renderProfileShow()}
           {isBlock && renderProfileShoww()}
@@ -438,9 +455,10 @@ function UserProfile(props) {
             paddingHorizontal: 15,
             flex: 1,
             marginTop: 10,
-          }}>
+          }}
+        >
           <TabView
-            navigationState={{index, routes}}
+            navigationState={{ index, routes }}
             renderScene={renderScene}
             onIndexChange={setIndex}
           />
@@ -456,24 +474,24 @@ function UserProfile(props) {
   };
 
   const renderBottomSheet = () => {
-    const messageIcon = require('../../assets/images/bottomsheet/messages/img.png');
-    const blockIcon = require('../../assets/images/bottomsheet/block/img.png');
-    const reportIcon = require('../../assets/images/bottomsheet/report/img.png');
+    const messageIcon = require("../../assets/images/bottomsheet/messages/img.png");
+    const blockIcon = require("../../assets/images/bottomsheet/block/img.png");
+    const reportIcon = require("../../assets/images/bottomsheet/report/img.png");
     const itemConStyle = {
-      width: '80%',
+      width: "80%",
       // backgroundColor: 'red',
       paddingVertical: 5,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
     };
     const itemiconStyle = {
       width: 24,
       height: 24,
-      resizeMode: 'contain',
+      resizeMode: "contain",
     };
     const itemTextStyle = {
-      color: '#3C6B49',
+      color: "#3C6B49",
       fontSize: 16,
       fontFamily: theme.fonts.fontMedium,
       lineHeight: 25,
@@ -483,8 +501,9 @@ function UserProfile(props) {
     const renderCross = () => {
       return (
         <Pressable
-          style={({pressed}) => [{opacity: pressed ? 0.8 : 1.0}]}
-          onPress={closeBottomSheet}>
+          style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1.0 }]}
+          onPress={closeBottomSheet}
+        >
           <utils.vectorIcon.Ionicons
             name="ios-close-outline"
             color={theme.color.title}
@@ -495,7 +514,7 @@ function UserProfile(props) {
     };
 
     const Sep = () => {
-      return <View style={{height: 15}} />;
+      return <View style={{ height: 15 }} />;
     };
 
     return (
@@ -505,7 +524,7 @@ function UserProfile(props) {
         closeOnPressMask={true}
         customStyles={{
           wrapper: {
-            backgroundColor: 'rgba(0,0,0,0.6)',
+            backgroundColor: "rgba(0,0,0,0.6)",
           },
           container: {
             backgroundColor: theme.color.background,
@@ -515,36 +534,43 @@ function UserProfile(props) {
             height: responsiveHeight(30),
           },
           draggableIcon: {
-            backgroundColor: '#000',
+            backgroundColor: "#000",
           },
-        }}>
+        }}
+      >
         <>
-          <View style={{flex: 1}}>
-            <View style={{width: '100%', alignItems: 'flex-end'}}>
+          <View style={{ flex: 1 }}>
+            <View style={{ width: "100%", alignItems: "flex-end" }}>
               {renderCross()}
             </View>
 
-            <View style={{width: '100%'}}>
+            <View style={{ width: "100%" }}>
               <Pressable
                 onPress={() => {
-                  if (store.User.user.subscriptionStatus == 'freemium') {
-                    props.navigation.navigate('Plan');
+                  if (
+                    (userSubscription &&
+                      userSubscription?.status !== "active") ||
+                    !userSubscription
+                  ) {
+                    props.navigation.navigate("Plan");
                   } else {
-                    onClickBottomItem('message');
+                    onClickBottomItem("message");
                   }
                 }}
-                style={({pressed}) => [
-                  {opacity: pressed ? touchOpacity : 1.0},
+                style={({ pressed }) => [
+                  { opacity: pressed ? touchOpacity : 1.0 },
                   itemConStyle,
-                ]}>
+                ]}
+              >
                 <View style={{}}>
                   <Image style={itemiconStyle} source={messageIcon} />
                 </View>
-                <View style={{width: '84%'}}>
+                <View style={{ width: "84%" }}>
                   <Text
                     numberOfLines={1}
                     ellipsizeMode="tail"
-                    style={itemTextStyle}>
+                    style={itemTextStyle}
+                  >
                     Message
                   </Text>
                 </View>
@@ -554,26 +580,32 @@ function UserProfile(props) {
               <Pressable
                 disabled={loader}
                 onPress={() => {
-                  if (store.User.user.subscriptionStatus == 'freemium') {
-                    props.navigation.navigate('Plan');
+                  if (
+                    (userSubscription &&
+                      userSubscription?.status !== "active") ||
+                    !userSubscription
+                  ) {
+                    props.navigation.navigate("Plan");
                   } else {
                     if (!isBlock) BlockUser();
                     else UnBlockUser();
                   }
                 }}
-                style={({pressed}) => [
-                  {opacity: pressed ? touchOpacity : 1.0},
+                style={({ pressed }) => [
+                  { opacity: pressed ? touchOpacity : 1.0 },
                   itemConStyle,
-                ]}>
+                ]}
+              >
                 <View style={{}}>
                   <Image style={itemiconStyle} source={blockIcon} />
                 </View>
-                <View style={{width: '84%'}}>
+                <View style={{ width: "84%" }}>
                   <Text
                     numberOfLines={1}
                     ellipsizeMode="tail"
-                    style={[itemTextStyle, {color: '#B93B3B'}]}>
-                    {!isBlock ? 'Block' : 'Unblock'}
+                    style={[itemTextStyle, { color: "#B93B3B" }]}
+                  >
+                    {!isBlock ? "Block" : "Unblock"}
                   </Text>
                 </View>
               </Pressable>
@@ -581,24 +613,30 @@ function UserProfile(props) {
 
               <Pressable
                 onPress={() => {
-                  if (store.User.user.subscriptionStatus == 'freemium') {
-                    props.navigation.navigate('Plan');
+                  if (
+                    (userSubscription &&
+                      userSubscription?.status !== "active") ||
+                    !userSubscription
+                  ) {
+                    props.navigation.navigate("Plan");
                   } else {
-                    onClickBottomItem('report');
+                    onClickBottomItem("report");
                   }
                 }}
-                style={({pressed}) => [
-                  {opacity: pressed ? touchOpacity : 1.0},
+                style={({ pressed }) => [
+                  { opacity: pressed ? touchOpacity : 1.0 },
                   itemConStyle,
-                ]}>
+                ]}
+              >
                 <View style={{}}>
                   <Image style={itemiconStyle} source={reportIcon} />
                 </View>
-                <View style={{width: '84%'}}>
+                <View style={{ width: "84%" }}>
                   <Text
                     numberOfLines={1}
                     ellipsizeMode="tail"
-                    style={[itemTextStyle, {color: '#B93B3B'}]}>
+                    style={[itemTextStyle, { color: "#B93B3B" }]}
+                  >
                     Report
                   </Text>
                 </View>
@@ -614,14 +652,14 @@ function UserProfile(props) {
 
   const openModal = (obj, check) => {
     setModalObj(obj);
-    if (check == 'message') setIsMessageModal(true);
-    if (check == 'report') setIsReportModal(true);
+    if (check == "message") setIsMessageModal(true);
+    if (check == "report") setIsReportModal(true);
   };
 
   return (
     <View style={styles.container}>
       <utils.StackHeader
-        screen={'userprofile'}
+        screen={"userprofile"}
         bell={true}
         props={props}
         headerTitle={headerTitle}
@@ -630,7 +668,7 @@ function UserProfile(props) {
       <SafeAreaView style={styles.container2}>
         <View style={styles.container3}>
           {renderProfileSection()}
-          <View style={{flex: 1}}>{!isBlock && renderTabBar()}</View>
+          <View style={{ flex: 1 }}>{!isBlock && renderTabBar()}</View>
           <Toast ref={toast} position="bottom" />
         </View>
       </SafeAreaView>

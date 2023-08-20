@@ -15,6 +15,7 @@ const CARD_INFO = "api/stripe?customerId=";
 const GET_USER_SUBSCRIPTION = "api/stripe/subscriptions/";
 const GET_CARD_DETAILS = "api/stripe?customerId=";
 const GET_SUBSCRIPTION_STATUS = "api/stripe/getActive/";
+const CANCEL_SUBSCRIPTION = "api/stripe/cancel-subscription";
 const FORGOT_PSWD = "api/user/password/forgot";
 const LOGIN_USER = "api/user/login";
 const IMAGE_UPLOAD = "api/upload";
@@ -171,4 +172,5 @@ export default apis = {
   GET_USER_SUBSCRIPTION,
   GET_CARD_DETAILS,
   GET_SUBSCRIPTION_STATUS,
+  CANCEL_SUBSCRIPTION,
 };

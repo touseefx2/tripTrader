@@ -13,23 +13,18 @@ import store from "../../store";
 import Header from "./components/Header";
 import Bottom from "./components/Bottom";
 import NetInfo from "@react-native-community/netinfo";
-import utils from "..";
 
 export default function CancelSubModal({
   isModal,
   setIsModal,
   userSubscription,
+  endDate,
+  regLoader,
 }) {
   const maxModalHeight = theme.window.Height - 70;
-  let endDate = "";
 
   const [isMaxHeight, setIssMaxHeight] = useState(false);
   const [modalHeight, setmodalHeight] = useState(0);
-  const [loader, setLoader] = useState(false);
-
-  if (userSubscription) {
-    endDate = utils.functions.getDate(userSubscription?.current_period_end);
-  }
 
   useEffect(() => {
     setIssMaxHeight(modalHeight >= maxModalHeight ? true : false);
@@ -49,17 +44,22 @@ export default function CancelSubModal({
   };
 
   const cancelSub = () => {
-    // let body = {
-    //   "subscription.status": "canceled",
-    // };
-    // NetInfo.fetch().then((state) => {
-    //   if (state.isConnected) {
-    //     store.User.attemptToCancelSub(body, store.User.user._id);
-    //   } else {
-    //     // seterrorMessage('Please connect internet');
-    //     Alert.alert("", "Please connect internet");
-    //   }
-    // });
+    if (userSubscription) {
+      NetInfo.fetch().then((state) => {
+        if (state.isConnected) {
+          store.User.attemptToCancelSubscription(
+            userSubscription?.id.toString(),
+            "",
+            () => {},
+            () => {}
+          );
+        } else {
+          Alert.alert("", "Please connect internet");
+        }
+      });
+    } else {
+      Alert.alert("", "user subscription not found");
+    }
   };
 
   const renderField = () => {
@@ -117,7 +117,7 @@ export default function CancelSubModal({
 
           <Bottom
             isMaxHeight={isMaxHeight}
-            loader={loader}
+            loader={regLoader}
             closeModal={closeModal}
             cancelSub={cancelSub}
           />

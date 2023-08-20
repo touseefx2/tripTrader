@@ -20,6 +20,7 @@ function Card3({
   showpic,
   animtntime,
   onClickMakeOffer,
+  userSubscription,
 }) {
   const [pvm, setpvm] = useState(false);
   const [pd, setpd] = useState([]);
@@ -303,7 +304,10 @@ function Card3({
               styles.buttonContainer,
             ]}
             onPress={() => {
-              if (store.User.user.subscriptionStatus == "freemium") {
+              if (
+                (userSubscription && userSubscription?.status !== "active") ||
+                !userSubscription
+              ) {
                 props.navigation.navigate("Plan");
               } else {
                 onClickMakeOffer({ item: item, selIndex: index }, "offer");

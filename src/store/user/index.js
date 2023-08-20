@@ -27,11 +27,6 @@ class user {
     this.ccc = obj;
   };
 
-  @persist("object") @observable subscriptionId = "";
-  @action setSubscriptionId = (str) => {
-    this.subscriptionId = str;
-  };
-
   @persist("object") @observable userSubscription = null;
   @action setUserSubscription = (obj) => {
     this.userSubscription = obj;
@@ -78,11 +73,8 @@ class user {
   };
 
   @persist("object") @observable user = false;
-  @persist("object") @observable userCardInfo = [];
+
   @observable ucRef = false;
-  @action setuserCardInfo = (obj) => {
-    this.userCardInfo = obj;
-  };
   @action setucRef = (obj) => {
     this.ucRef = obj;
   };
@@ -2561,9 +2553,51 @@ class user {
     if (chk === "Load") {
       this.setucRef(true);
     }
+    db.hitApi(db.apis.GET_CARD_DETAILS + customerId, "get", {}, token)
+      ?.then((res) => {
+        const result = res?.data?.data?.data || null;
+        console.log(
+          `response GET_CARD_DETAILS ${
+            db.apis.GET_CARD_DETAILS + customerId
+          } : `,
+          result
+        );
+
+        if (result.length > 0) {
+          this.setCardDetails(result[0]);
+        }
+      })
+      .catch((err) => {
+        this.setucRef(false);
+        const msg = utils.functions.checkError(err);
+        console.log(
+          `Error in GET_CARD_DETAILS  ${
+            db.apis.GET_CARD_DETAILS + customerId
+          } : `,
+          msg
+        );
+      })
+      .finally(() => {
+        this.getUserSubscription(
+          customerId,
+          token,
+          "",
+          () => {},
+          () => {}
+        );
+      });
+  }
+
+  @action.bound
+  getUserSubscription(customerId, token, chk, setLoader, closeModal) {
+    console.log("getUserSubscription  : ", customerId);
+    if (chk === "delete") {
+      setLoader(true);
+    }
 
     db.hitApi(db.apis.GET_USER_SUBSCRIPTION + customerId, "get", {}, token)
       ?.then((resp) => {
+        this.setucRef(false);
         const result = resp?.data?.subscriptions?.data;
         console.log(
           `response GET_USER_SUBSCRIPTION ${
@@ -2571,12 +2605,32 @@ class user {
           } : `,
           result
         );
-        if (result) {
-          this.setUserSubscription(result[0]);
+
+        if (chk !== "delete") {
+          if (result.length > 0) {
+            this.setUserSubscription(result[0]);
+          }
+          return;
+        }
+
+        if (result.length == 0) {
+          this.attemptToDeleteAccount(setLoader, closeModal);
+        } else if (result.length > 0) {
+          if (result[0]?.status === "canceled") {
+            this.attemptToDeleteAccount(setLoader, closeModal);
+          } else if (result[0]?.status === "active") {
+            this.attemptToCancelSubscription(
+              result[0]?.id.toString(),
+              chk,
+              setLoader,
+              closeModal
+            );
+          }
         }
       })
       .catch((err) => {
         this.setucRef(false);
+        setLoader(false);
         const msg = utils.functions.checkError(err);
         console.log(
           `Error in GET_USER_SUBSCRIPTION  ${
@@ -2584,63 +2638,36 @@ class user {
           } : `,
           msg
         );
-      })
-      .finally(() => {
-        db.hitApi(db.apis.GET_CARD_DETAILS + customerId, "get", {}, token)
-          ?.then((res) => {
-            this.setucRef(false);
-            const result2 = res?.data?.data?.data || null;
-            console.log(
-              `response GET_CARD_DETAILS ${
-                db.apis.GET_CARD_DETAILS + customerId
-              } : `,
-              result2
-            );
-
-            if (result2) {
-              this.setCardDetails(result2[0]);
-            }
-          })
-          .catch((err) => {
-            this.setucRef(false);
-            const msg = utils.functions.checkError(err);
-            console.log(
-              `Error in GET_CARD_DETAILS  ${
-                db.apis.GET_CARD_DETAILS + customerId
-              } : `,
-              msg
-            );
-          });
       });
   }
 
-  @action.bound
-  getSubsctiptionStatus() {
-    console.log("getSubsctiptionStatus");
-    db.hitApi(
-      db.apis.GET_SUBSCRIPTION_STATUS + this.user?.customerId,
-      "get",
-      {},
-      this.authToken
-    )
-      ?.then((resp) => {
-        const result = resp?.data || null;
-        console.log(
-          `response getSubsctiptionStatus  ${db.apis.GET_SUBSCRIPTION_STATUS} : `,
-          result
-        );
-        if (result) {
-        }
-      })
-      .catch((err) => {
-        const msg = utils.functions.checkError(err);
+  // @action.bound
+  // getSubsctiptionStatus() {
+  //   console.log("getSubsctiptionStatus");
+  //   db.hitApi(
+  //     db.apis.GET_SUBSCRIPTION_STATUS + this.user?.customerId,
+  //     "get",
+  //     {},
+  //     this.authToken
+  //   )
+  //     ?.then((resp) => {
+  //       const result = resp?.data || null;
+  //       console.log(
+  //         `response getSubsctiptionStatus  ${db.apis.GET_SUBSCRIPTION_STATUS} : `,
+  //         result
+  //       );
+  //       if (result) {
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       const msg = utils.functions.checkError(err);
 
-        console.log(
-          `Error in getSubsctiptionStatus  ${db.apis.GET_SUBSCRIPTION_STATUS} : `,
-          msg
-        );
-      });
-  }
+  //       console.log(
+  //         `Error in getSubsctiptionStatus  ${db.apis.GET_SUBSCRIPTION_STATUS} : `,
+  //         msg
+  //       );
+  //     });
+  // }
 
   @action.bound
   async BuyPlan(body, obj, suc) {
@@ -2689,7 +2716,7 @@ class user {
       ?.then((resp) => {
         console.log(`response   ${db.apis.SELECT_PLAN} : `, resp.data);
         if (resp?.data) {
-          this.setSubscriptionId(resp.data.subscriptionId);
+          // resp.data.subscriptionId
           suc(resp.data?.clientSecret);
         }
       })
@@ -2770,19 +2797,16 @@ class user {
 
         this.addauthToken(token);
         this.setUser(rsp);
-        this.getSubsctiptionStatus();
+
         this.getCardInfo(rsp.customerId, "notLoad", this.authToken);
       })
       .catch((err) => {
-        const msg = err.response.data.message || err.response.status || err;
+        const msg = utils.functions.checkError(err);
         console.log(
           `Error in get user by id ${db.apis.GET_USER_BY_ID + uid} : `,
           msg
         );
-        if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
-          return;
-        }
+
         if (msg == "No records found") {
           this.Logout();
           return;
@@ -3041,10 +3065,10 @@ class user {
 
   @action clearcurrentUser = () => {
     this.setUser(false);
-    this.setSubscriptionId("");
+
     this.setUserSubscription(null);
     this.setCardDetails(null);
-    this.setuserCardInfo([]);
+
     this.setucRef(false);
     this.setphotos([]);
     this.setreview([]);
@@ -3117,36 +3141,66 @@ class user {
       });
   }
 
-  attemptToCancelSub(body, uid) {
-    // let body = {...this.user, ...body};
-    console.log("cancel sub   body : ", body);
+  attemptToCancelSubscription(subscriptionId, chk, setLoader, closeModal) {
+    const body = {
+      subscriptionId: subscriptionId,
+    };
+    console.log("attemptToCancelSubscription: ", body);
     this.setregLoader(true);
-    db.hitApi(db.apis.UPDATE_USER + uid, "put", body, this.authToken)
+    db.hitApi(db.apis.CANCEL_SUBSCRIPTION, "post", body, this.authToken)
       ?.then((resp) => {
-        this.setregLoader(false);
         console.log(
-          `response cancel sub  ${db.apis.UPDATE_USER + uid} : `,
+          `response attemptToCancelSubscription  ${db.apis.CANCEL_SUBSCRIPTION} : `,
           resp.data
         );
 
-        let rsp = resp.data.data;
-        this.setUser(rsp);
+        if (resp?.data?.subscriptions) {
+          if (chk === "delete") {
+            this.attemptToDeleteAccount(setLoader, closeModal);
+            return;
+          }
 
-        // store.Notifications.attemptToGetNotifications(
-        //   store.User.user._id,
-        //   () => {},
-        // );
+          const body = {
+            "subscription.status": "canceled",
+          };
+          db.hitApi(
+            db.apis.UPDATE_USER + this.user._id,
+            "put",
+            body,
+            this.authToken
+          )
+            ?.then((resp) => {
+              this.setregLoader(false);
+              console.log(
+                `response UPDATE_USER  ${db.apis.UPDATE_USER} : `,
+                resp.data
+              );
+
+              this.setUserSubscription(resp?.data?.subscriptions || null);
+              if (resp?.data?.data) this.setUser(resp.data.data);
+            })
+            .catch((err) => {
+              this.setregLoader(false);
+              const msg = utils.functions.checkError(err);
+              console.log(
+                `Error in UPDATE_USER  ${db.apis.UPDATE_USER} : `,
+                msg
+              );
+            });
+        }
       })
       .catch((err) => {
+        setLoader(false);
         this.setregLoader(false);
-        let msg = err.response.data.message || err.response.status || err;
-        console.log(`Error in cancel sub  ${db.apis.UPDATE_USER} : `, msg);
-        if (msg == 503 || msg == 500) {
+        const msg = utils.functions.checkError(err);
+        console.log(
+          `Error in attemptToCancelSubscription  ${db.apis.CANCEL_SUBSCRIPTION} : `,
+          msg
+        );
+        if (msg === 503 || msg === 500) {
           Alert.alert("", "Server not response");
-          // store.General.setisServerError(true);
           return;
         }
-        // seterror(msg.toString())
         Alert.alert("", msg.toString());
       });
   }
@@ -3598,27 +3652,27 @@ class user {
       });
   }
 
-  @action attemptToDeleteAccount = (currentUserId, setLoader, suc) => {
+  @action attemptToDeleteAccount = (setLoader, suc) => {
     console.log("delete account");
-    setLoader(true);
-    db.hitApi(db.apis.UPDATE_USER + currentUserId, "delete", {}, this.authToken)
+
+    db.hitApi(db.apis.UPDATE_USER + this.user._id, "delete", {}, this.authToken)
       ?.then((resp) => {
         console.log(`response delete account:`, resp.data);
-        setLoader(false);
         suc();
-        FireStore.updateUserinFirestore(currentUserId, null);
+        FireStore.updateUserinFirestore(this.user._id, null);
         this.Logout();
       })
       .catch((err) => {
-        setLoader(false);
-        const msg = err.response.data.message || err.response.status || err;
+        const msg = utils.functions.checkError(err);
         console.log(`Error in delete account: `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert("", "Server not response");
           return;
         }
-
         Alert.alert("", msg.toString());
+      })
+      .finally(() => {
+        setLoader(false);
       });
   };
 

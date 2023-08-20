@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -15,36 +15,36 @@ import {
   RefreshControl,
   ActivityIndicator,
   Platform,
-} from 'react-native';
-import ProgressiveFastImage from '@freakycoder/react-native-progressive-fast-image';
-import {styles} from './styles';
-import {observer} from 'mobx-react';
-import store from '../../store/index';
-import utils from '../../utils/index';
-import theme from '../../theme';
-import NetInfo from '@react-native-community/netinfo';
-import Toast from 'react-native-easy-toast';
-import moment from 'moment';
-import EmojiModal from 'react-native-emoji-modal';
-import RBSheet from 'react-native-raw-bottom-sheet';
-import {responsiveHeight} from 'react-native-responsive-dimensions';
-import {FireStore} from '../../services/FireStore';
-import firestore from '@react-native-firebase/firestore';
-import {Notification} from '../../services/Notification';
-import KeyboardAvoidingView from 'react-native/Libraries/Components/Keyboard/KeyboardAvoidingView';
+} from "react-native";
+import ProgressiveFastImage from "@freakycoder/react-native-progressive-fast-image";
+import { styles } from "./styles";
+import { observer } from "mobx-react";
+import store from "../../store/index";
+import utils from "../../utils/index";
+import theme from "../../theme";
+import NetInfo from "@react-native-community/netinfo";
+import Toast from "react-native-easy-toast";
+import moment from "moment";
+import EmojiModal from "react-native-emoji-modal";
+import RBSheet from "react-native-raw-bottom-sheet";
+import { responsiveHeight } from "react-native-responsive-dimensions";
+import { FireStore } from "../../services/FireStore";
+import firestore from "@react-native-firebase/firestore";
+import { Notification } from "../../services/Notification";
+import KeyboardAvoidingView from "react-native/Libraries/Components/Keyboard/KeyboardAvoidingView";
 
 export default observer(Chat);
 
-const guest = require('../../assets/images/drawer/guest/img.png');
+const guest = require("../../assets/images/drawer/guest/img.png");
 
 function Chat(props) {
   const dir = {
-    width: '100%',
-    alignItems: 'flex-end',
+    width: "100%",
+    alignItems: "flex-end",
   };
 
   const mc = {
-    backgroundColor: '#F2F3F1',
+    backgroundColor: "#F2F3F1",
     borderTopLeftRadius: 12,
     borderBottomLeftRadius: 12,
     borderBottomRightRadius: 12,
@@ -73,23 +73,29 @@ function Chat(props) {
   };
 
   const mx = {
-    maxWidth: '70%',
+    maxWidth: "70%",
   };
 
   const mx2 = {
-    maxWidth: '70%',
-    flexDirection: 'row',
+    maxWidth: "70%",
+    flexDirection: "row",
   };
 
   const toast = useRef(null);
   const scrollRef = useRef(null);
-  const {isInternet} = store.General;
-  const {homeModalLoder} = store.User;
-  const {pasObj, setpasObj, user, setSendMessageLoader, sendMessageLoader} =
-    store.User;
+  const { isInternet } = store.General;
+  const { homeModalLoder } = store.User;
+  const {
+    pasObj,
+    setpasObj,
+    user,
+    setSendMessageLoader,
+    sendMessageLoader,
+    userSubscription,
+  } = store.User;
   const obj = pasObj?.obj || false;
-  const headerTitle = pasObj?.title || '';
-  const rid = pasObj?.rid || '';
+  const headerTitle = pasObj?.title || "";
+  const rid = pasObj?.rid || "";
   const ruser = pasObj?.ruser || null;
 
   const [isOpenSheet, setisOpenSheet] = useState(false);
@@ -115,7 +121,7 @@ function Chat(props) {
       let flw = false;
       let dtt = user.followers || [];
       if (dtt.length > 0) {
-        let fi = dtt.findIndex(x => x.userId == rid);
+        let fi = dtt.findIndex((x) => x.userId == rid);
 
         if (fi > -1) {
           if (dtt[fi].block == true) {
@@ -135,7 +141,7 @@ function Chat(props) {
     let blk = false;
     if (receiverBlockArr.length > 0) {
       const dtt = receiverBlockArr;
-      const fi = dtt.findIndex(x => x.userId == user._id);
+      const fi = dtt.findIndex((x) => x.userId == user._id);
       if (fi > -1) {
         if (dtt[fi].block == true) blk = true;
       }
@@ -149,20 +155,20 @@ function Chat(props) {
 
   const [isSuccessModal, setIsSuccessModal] = useState(false);
   const [successModalObj, setSuccessModalObj] = useState(null);
-  const [successCheck, setSuccessCheck] = useState('');
+  const [successCheck, setSuccessCheck] = useState("");
 
   const [loader, setloader] = useState(false);
 
-  const [message, setmessage] = useState('');
+  const [message, setmessage] = useState("");
   const ClearMessage = () => {
-    setmessage('');
+    setmessage("");
   };
-  const [pmessage, setpmessage] = useState('');
+  const [pmessage, setpmessage] = useState("");
   const [photos, setphotos] = useState([]);
   const ClosePhotoModal = () => {
     if (!isShowPrmsn) {
       setisAddPhotoModal(false);
-      setpmessage('');
+      setpmessage("");
       setphotos([]);
       store.User.setchatmsgSendLoader(false);
     } else {
@@ -172,7 +178,7 @@ function Chat(props) {
   };
 
   const [isShowPrmsn, setisShowPrmsn] = useState(false);
-  const [prmsnChk, setprmsnChk] = useState('storage');
+  const [prmsnChk, setprmsnChk] = useState("storage");
   const [isAddPhotoModal, setisAddPhotoModal] = useState(false);
 
   const [pvm, setpvm] = useState(false);
@@ -184,17 +190,17 @@ function Chat(props) {
   const [data, setdata] = useState([]);
 
   const [getDataOnce, setgetDataOnce] = useState(false);
-  const setGetDataOnce = C => {
+  const setGetDataOnce = (C) => {
     setgetDataOnce(C);
   };
   const refreshing = store.User.messagesLoader;
   const onRefresh = React.useCallback(() => {
-    console.log('onrefresh cal');
+    console.log("onrefresh cal");
     getDbData();
   }, []);
 
   const getDbData = () => {
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         FireStore.getAllMessageInRoom(obj._id, rid, setGetDataOnce, setdata);
       }
@@ -207,24 +213,24 @@ function Chat(props) {
     var initState2 = true;
     const curentUserId = user._id;
     const roomId = obj._id;
-    const chatroomsRef = firestore().collection('chatrooms');
+    const chatroomsRef = firestore().collection("chatrooms");
     const ref = chatroomsRef
       .doc(roomId)
-      .collection('messages')
-      .orderBy('createdAt', 'asc');
-    const observer = ref.onSnapshot(documentSnapshot => {
+      .collection("messages")
+      .orderBy("createdAt", "asc");
+    const observer = ref.onSnapshot((documentSnapshot) => {
       if (initState) {
         initState = false;
       } else {
-        console.log('---> onSnapshot Call Chat ref1 <----');
+        console.log("---> onSnapshot Call Chat ref1 <----");
         let fdata = [];
 
         const data = documentSnapshot?.docs || [];
         fdata = data
-          .map(item => ({...item.data(), _id: item.id}))
-          .filter(item => {
+          .map((item) => ({ ...item.data(), _id: item.id }))
+          .filter((item) => {
             let isShow = true;
-            item.deletedBy.forEach(element => {
+            item.deletedBy.forEach((element) => {
               if (element == curentUserId) {
                 isShow = false;
               }
@@ -240,12 +246,12 @@ function Chat(props) {
 
     const ref2 = chatroomsRef.doc(roomId);
 
-    const observer2 = ref2.onSnapshot(documentSnapshot => {
+    const observer2 = ref2.onSnapshot((documentSnapshot) => {
       if (initState2) {
         initState2 = false;
       } else {
         const item = documentSnapshot.data() || [];
-        console.log('---> onSnapshot Call Chat ref2 <----');
+        console.log("---> onSnapshot Call Chat ref2 <----");
 
         let userObj = null;
         if (item) {
@@ -265,7 +271,7 @@ function Chat(props) {
       observer();
       observer2();
       setpasObj(false);
-      store.General.setIsCurrentCahtId('');
+      store.General.setIsCurrentCahtId("");
     };
   }, []);
   useEffect(() => {
@@ -278,70 +284,70 @@ function Chat(props) {
 
   const unFollowUser = () => {
     Keyboard.dismiss();
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.Userv.unFollowUser(
           rid,
           () => () => {},
           () => () => {},
-          c => setloader(c),
-          goBackMain,
+          (c) => setloader(c),
+          goBackMain
         );
       } else {
         // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
   const FollowUser = () => {
     Keyboard.dismiss();
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.Userv.FollowUser(
           rid,
           () => () => {},
           () => () => {},
-          c => setloader(c),
-          goBackMain,
+          (c) => setloader(c),
+          goBackMain
         );
       } else {
         // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
   const BlockUser = () => {
     Keyboard.dismiss();
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.Userv.BlockUser(
           rid,
           () => () => {},
           () => () => {},
           () => () => {},
-          c => setloader(c),
-          goBackMain,
+          (c) => setloader(c),
+          goBackMain
         );
       } else {
         // seterrorMessage('Please connect internet');
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
   const UnBlockUser = () => {
     Keyboard.dismiss();
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.Userv.UnBlockUser(
           rid,
           () => () => {},
           () => () => {},
           () => () => {},
-          c => setloader(c),
-          goBackMain,
+          (c) => setloader(c),
+          goBackMain
         );
       } else {
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
@@ -357,19 +363,19 @@ function Chat(props) {
   };
 
   function compare(d, dd) {
-    let d1 = moment(d).format('YYYY-MM-DD');
-    let d2 = moment(dd).format('YYYY-MM-DD');
+    let d1 = moment(d).format("YYYY-MM-DD");
+    let d2 = moment(dd).format("YYYY-MM-DD");
     if (d2 > d1) {
-      return 'greater';
+      return "greater";
     } else if (d2 < d1) {
-      return 'smaller';
+      return "smaller";
     } else {
-      return 'equal';
+      return "equal";
     }
   }
 
   function CheckDate(d) {
-    let t = '';
+    let t = "";
     let ud = new Date(d); //update date
     let cd = new Date(); //current date
 
@@ -387,11 +393,11 @@ function Chat(props) {
     // console.log('currentdate : ', moment(cd).format('YYYY-MM-DD hh:mm:ss a'));
     // console.log('ics ', ics);
 
-    if (ics == 'greater') {
+    if (ics == "greater") {
       if (udcy) {
-        t = moment(ud).format('MMM DD, h:mm A');
+        t = moment(ud).format("MMM DD, h:mm A");
       } else {
-        t = moment(ud).format('MMM DD YYYY, h:mm a');
+        t = moment(ud).format("MMM DD YYYY, h:mm a");
       }
     } else {
       // let min = diff_minutes(ed, sd);
@@ -399,7 +405,7 @@ function Chat(props) {
       // if (min >= 0 && min <= 1) {
       // t = 'Just now';
       // } else if (min > 1) {
-      t = moment(ud).format('h:mm A');
+      t = moment(ud).format("h:mm A");
       // }
     }
 
@@ -410,12 +416,13 @@ function Chat(props) {
     return (
       <View
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
+          flexDirection: "row",
+          alignItems: "center",
           flexShrink: 1,
-          flexWrap: 'wrap',
-          marginBottom: msg == '' ? 0 : 10,
-        }}>
+          flexWrap: "wrap",
+          marginBottom: msg == "" ? 0 : 10,
+        }}
+      >
         {renderShowPhotos(images)}
       </View>
     );
@@ -427,7 +434,7 @@ function Chat(props) {
     setpvm(true);
   };
 
-  const renderShowPhotos = img => {
+  const renderShowPhotos = (img) => {
     let p = img.map((e, i, a) => {
       let uri = e;
       // console.log('e : ', e);
@@ -435,19 +442,20 @@ function Chat(props) {
         <>
           <Pressable
             onPress={() => photoClick(i, img)}
-            style={({pressed}) => [
-              {opacity: pressed ? 0.9 : 1.0},
+            style={({ pressed }) => [
+              { opacity: pressed ? 0.9 : 1.0 },
               [
                 img.length <= 1
                   ? styles.chatImgContainerOne
-                  : [styles.chatImgContainer, {marginBottom: 5}],
+                  : [styles.chatImgContainer, { marginBottom: 5 }],
               ],
-            ]}>
+            ]}
+          >
             <ProgressiveFastImage
               style={styles.chatImg}
-              source={{uri: uri}}
+              source={{ uri: uri }}
               loadingImageStyle={styles.chatImageLoader}
-              loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
+              loadingSource={require("../../assets/images/imgLoad/img.jpeg")}
               blurRadius={0}
             />
           </Pressable>
@@ -517,15 +525,15 @@ function Chat(props) {
 
   function dateConvert(timestamp) {
     const date = new Date(
-      timestamp?.seconds * 1000 + timestamp?.nanoseconds / 1000000,
+      timestamp?.seconds * 1000 + timestamp?.nanoseconds / 1000000
     );
 
     return new Date(date.getTime());
   }
 
-  const ItemView = ({item, index}) => {
+  const ItemView = ({ item, index }) => {
     const usr = item?.user || null;
-    const msg = item.message || '';
+    const msg = item.message || "";
     const images = item.image || [];
     const type = item.type;
     const isRead = item.isRead || false;
@@ -535,7 +543,7 @@ function Chat(props) {
     }
     let photo = guest;
     if (usr) {
-      photo = usr.image ? {uri: usr.image} : guest;
+      photo = usr.image ? { uri: usr.image } : guest;
     }
     let isCu = false;
     if (usr && user._id == usr._id) {
@@ -545,9 +553,9 @@ function Chat(props) {
     const renderMsg = () => {
       return (
         <>
-          {type == 'image' && images.length > 0 && renderPhoto(msg, images)}
-          {msg != '' && (
-            <Text style={[mt, {color: theme.color.subTitleAuth}]}>{msg}</Text>
+          {type == "image" && images.length > 0 && renderPhoto(msg, images)}
+          {msg != "" && (
+            <Text style={[mt, { color: theme.color.subTitleAuth }]}>{msg}</Text>
           )}
         </>
       );
@@ -557,16 +565,17 @@ function Chat(props) {
       return (
         <>
           <View style={mc2}>
-            {type == 'image' && images.length > 0 && renderPhoto(msg, images)}
+            {type == "image" && images.length > 0 && renderPhoto(msg, images)}
 
-            {msg != '' && (
+            {msg != "" && (
               <Text
                 style={[
                   mt,
                   {
                     color: theme.color.buttonText,
                   },
-                ]}>
+                ]}
+              >
                 {msg}
               </Text>
             )}
@@ -577,10 +586,10 @@ function Chat(props) {
 
     const renderDate = () => {
       return (
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={[md, {marginRight: 5}]}>{date}</Text>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Text style={[md, { marginRight: 5 }]}>{date}</Text>
           <utils.vectorIcon.MaterialCommunityIcons
-            name={!isRead ? 'check' : 'check-all'}
+            name={!isRead ? "check" : "check-all"}
             color={!isRead ? theme.color.subTitleLight : theme.color.button1}
             size={16}
           />
@@ -599,7 +608,7 @@ function Chat(props) {
             style={styles.ProfileImg}
             source={photo}
             loadingImageStyle={styles.imageLoader}
-            loadingSource={require('../../assets/images/imgLoad/img.jpeg')}
+            loadingSource={require("../../assets/images/imgLoad/img.jpeg")}
             blurRadius={5}
           />
         </View>
@@ -609,13 +618,13 @@ function Chat(props) {
     return (
       <>
         {/* {showDateSection(item.createdAt)} */}
-        <View style={[dir, {alignItems: isCu ? 'flex-end' : 'flex-start'}]}>
+        <View style={[dir, { alignItems: isCu ? "flex-end" : "flex-start" }]}>
           {isCu && (
             <>
               <View style={mx}>
                 <View style={mc}>{renderMsg()}</View>
 
-                <View style={{alignItems: 'flex-end'}}>
+                <View style={{ alignItems: "flex-end" }}>
                   {renderDate()}
                   {/* {renderDate2()} */}
                 </View>
@@ -626,16 +635,17 @@ function Chat(props) {
           {!isCu && (
             <>
               <View style={mx2}>
-                <View style={{justifyContent: 'flex-end'}}>
+                <View style={{ justifyContent: "flex-end" }}>
                   {renderProfile()}
                 </View>
 
                 <View
                   style={{
                     marginLeft: 10,
-                  }}>
+                  }}
+                >
                   {renderMsg2()}
-                  <View style={{alignItems: 'flex-start'}}>
+                  <View style={{ alignItems: "flex-start" }}>
                     {renderDate2()}
                   </View>
                 </View>
@@ -647,17 +657,17 @@ function Chat(props) {
     );
   };
 
-  const sendMessageSuccess = check => {
-    console.log('Message sent ', check);
+  const sendMessageSuccess = (check) => {
+    console.log("Message sent ", check);
 
-    if (check == '') {
+    if (check == "") {
       const senderName =
         utils.functions.capitalizeTheFirstLetterOfEachWord(
-          user.firstName.trim(),
+          user.firstName.trim()
         ) +
-        ' ' +
+        " " +
         utils.functions.capitalizeTheFirstLetterOfEachWord(
-          user.lastName.trim(),
+          user.lastName.trim()
         );
 
       const notificationBody = {
@@ -665,18 +675,18 @@ function Chat(props) {
         senderId: user._id,
         userId: rid,
         message: message,
-        icon: user?.image || '',
-        data: {topic: 'newMessagePush', senderId: user._id},
+        icon: user?.image || "",
+        data: { topic: "newMessagePush", senderId: user._id },
       };
 
       Notification.sendMessageNotificationPush(notificationBody);
     }
   };
 
-  const SendMessage = p => {
+  const SendMessage = (p) => {
     closeEmoji();
     Keyboard.dismiss();
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         setSendMessageLoader(true);
         const timestamp = firestore.FieldValue.serverTimestamp();
@@ -684,8 +694,8 @@ function Chat(props) {
           user: user,
           isRead: false,
           message: !isAddPhotoModal ? message : pmessage,
-          type: !isAddPhotoModal ? 'text' : 'image',
-          image: p != '' ? p : [],
+          type: !isAddPhotoModal ? "text" : "image",
+          image: p != "" ? p : [],
           deletedBy: [],
           createdAt: timestamp,
           updatedAt: timestamp,
@@ -696,14 +706,14 @@ function Chat(props) {
           rid,
           chatMessageObject,
           sendMessageSuccess,
-          '',
-          '',
+          "",
+          ""
         );
 
         if (isAddPhotoModal) ClosePhotoModal();
         else ClearMessage();
       } else {
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
@@ -723,10 +733,10 @@ function Chat(props) {
     setisEmoji(!isEmoji);
   };
 
-  const onClickBottomItem = chk => {
-    if (chk == 'report') {
+  const onClickBottomItem = (chk) => {
+    if (chk == "report") {
       closeBottomSheet();
-      const obj = {item: ruser, selIndex: 0};
+      const obj = { item: ruser, selIndex: 0 };
       openModal(obj, chk);
     }
   };
@@ -737,28 +747,31 @@ function Chat(props) {
         <>
           <View
             style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              width: '98%',
-              alignSelf: 'center',
-            }}>
+              flexDirection: "row",
+              alignItems: "center",
+              width: "98%",
+              alignSelf: "center",
+            }}
+          >
             <TouchableOpacity
               onPress={onclickFile}
               style={{}}
-              activeOpacity={0.6}>
+              activeOpacity={0.6}
+            >
               <Image
-                style={{width: 26, height: 26, resizeMode: 'contain'}}
-                source={require('../../assets/images/sentfilemessage/img.png')}
+                style={{ width: 26, height: 26, resizeMode: "contain" }}
+                source={require("../../assets/images/sentfilemessage/img.png")}
               />
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={onclickEmoji}
-              style={{marginLeft: 20}}
-              activeOpacity={0.6}>
+              style={{ marginLeft: 20 }}
+              activeOpacity={0.6}
+            >
               <Image
-                style={{width: 27, height: 27, resizeMode: 'contain'}}
-                source={require('../../assets/images/emojimessage/img.png')}
+                style={{ width: 27, height: 27, resizeMode: "contain" }}
+                source={require("../../assets/images/emojimessage/img.png")}
               />
             </TouchableOpacity>
           </View>
@@ -768,7 +781,7 @@ function Chat(props) {
 
     const renderInputContainer = () => {
       const disable =
-        message == ''
+        message == ""
           ? true
           : refreshing == true
           ? true
@@ -778,37 +791,40 @@ function Chat(props) {
       return (
         <View
           style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
             marginTop: 10,
-          }}>
+          }}
+        >
           <View
             style={{
-              width: '82%',
-              backgroundColor: '#F2F3F1',
+              width: "82%",
+              backgroundColor: "#F2F3F1",
               borderRadius: 100,
               paddingHorizontal: 15,
-            }}>
+            }}
+          >
             <TextInput
               onFocus={closeEmoji}
               placeholder="Type a message"
               value={message}
-              style={{width: '100%', borderRadius: 100, height: 48}}
-              onChangeText={t => {
+              style={{ width: "100%", borderRadius: 100, height: 48 }}
+              onChangeText={(t) => {
                 setmessage(t);
               }}
             />
           </View>
 
           <TouchableOpacity
-            onPress={() => SendMessage('')}
+            onPress={() => SendMessage("")}
             disabled={disable}
-            style={{opacity: disable ? 0.5 : 1}}
-            activeOpacity={0.8}>
+            style={{ opacity: disable ? 0.5 : 1 }}
+            activeOpacity={0.8}
+          >
             <Image
-              style={{width: 47, height: 47, resizeMode: 'contain'}}
-              source={require('../../assets/images/sendmessage/img.png')}
+              style={{ width: 47, height: 47, resizeMode: "contain" }}
+              source={require("../../assets/images/sendmessage/img.png")}
             />
           </TouchableOpacity>
         </View>
@@ -822,8 +838,9 @@ function Chat(props) {
           borderTopWidth: 1,
           borderTopColor: theme.color.fieldBorder,
           paddingHorizontal: 20,
-          paddingVertical: Platform.OS == 'ios' ? 25 : 20,
-        }}>
+          paddingVertical: Platform.OS == "ios" ? 25 : 20,
+        }}
+      >
         {!isBlock && !isBlockOther && (
           <>
             {renderOthers()}
@@ -838,10 +855,11 @@ function Chat(props) {
                 color: theme.color.subTitleLight,
                 fontSize: 14,
                 fontFamily: theme.fonts.fontMedium,
-                textAlign: 'center',
-              }}>
+                textAlign: "center",
+              }}
+            >
               {isBlock
-                ? 'You have blocked this user'
+                ? "You have blocked this user"
                 : `You can't send message to this user. `}
             </Text>
           </>
@@ -853,29 +871,29 @@ function Chat(props) {
   const openModal = (obj, check) => {
     setModalObj(obj);
 
-    if (check == 'report') setIsReportModal(true);
+    if (check == "report") setIsReportModal(true);
   };
 
   const renderBottomSheet = () => {
-    let vpIcon = require('../../assets/images/bottomsheet/ViewProfile/img.png');
-    let followIcon = require('../../assets/images/bottomsheet/Follow/img.png');
-    let blockIcon = require('../../assets/images/bottomsheet/block/img.png');
-    let reportIcon = require('../../assets/images/bottomsheet/report/img.png');
+    let vpIcon = require("../../assets/images/bottomsheet/ViewProfile/img.png");
+    let followIcon = require("../../assets/images/bottomsheet/Follow/img.png");
+    let blockIcon = require("../../assets/images/bottomsheet/block/img.png");
+    let reportIcon = require("../../assets/images/bottomsheet/report/img.png");
     let itemConStyle = {
-      width: '80%',
+      width: "80%",
       // backgroundColor: 'red',
       paddingVertical: 5,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
     };
     let itemiconStyle = {
       width: 24,
       height: 24,
-      resizeMode: 'contain',
+      resizeMode: "contain",
     };
     let itemTextStyle = {
-      color: '#3C6B49',
+      color: "#3C6B49",
       fontSize: 16,
       fontFamily: theme.fonts.fontMedium,
       lineHeight: 25,
@@ -885,8 +903,9 @@ function Chat(props) {
     const renderCross = () => {
       return (
         <Pressable
-          style={({pressed}) => [{opacity: pressed ? 0.8 : 1.0}]}
-          onPress={closeBottomSheet}>
+          style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1.0 }]}
+          onPress={closeBottomSheet}
+        >
           <utils.vectorIcon.Ionicons
             name="ios-close-outline"
             color={theme.color.title}
@@ -897,7 +916,7 @@ function Chat(props) {
     };
 
     const Sep = () => {
-      return <View style={{height: 15}} />;
+      return <View style={{ height: 15 }} />;
     };
 
     return (
@@ -907,7 +926,7 @@ function Chat(props) {
         closeOnPressMask={true}
         customStyles={{
           wrapper: {
-            backgroundColor: 'rgba(0,0,0,0.6)',
+            backgroundColor: "rgba(0,0,0,0.6)",
           },
           container: {
             backgroundColor: theme.color.background,
@@ -917,42 +936,45 @@ function Chat(props) {
             height: responsiveHeight(isBlock ? 15 : 37),
           },
           draggableIcon: {
-            backgroundColor: '#000',
+            backgroundColor: "#000",
           },
-        }}>
+        }}
+      >
         <>
-          <View style={{flex: 1}}>
-            <View style={{width: '100%', alignItems: 'flex-end'}}>
+          <View style={{ flex: 1 }}>
+            <View style={{ width: "100%", alignItems: "flex-end" }}>
               {renderCross()}
             </View>
 
-            <View style={{width: '100%'}}>
+            <View style={{ width: "100%" }}>
               {!isBlock && (
                 <>
                   <Pressable
                     onPress={() => {
-                      if (user == 'guest') {
+                      if (user == "guest") {
                         return;
                       }
 
-                      store.Userv.setfscreen('chat');
+                      store.Userv.setfscreen("chat");
                       store.Userv.setUser(ruser);
                       store.Userv.addauthToken(store.User.authToken);
-                      props.navigation.navigate('UserProfile');
+                      props.navigation.navigate("UserProfile");
                       closeBottomSheet();
                     }}
-                    style={({pressed}) => [
-                      {opacity: pressed ? touchOpacity : 1.0},
+                    style={({ pressed }) => [
+                      { opacity: pressed ? touchOpacity : 1.0 },
                       itemConStyle,
-                    ]}>
+                    ]}
+                  >
                     <View style={{}}>
                       <Image style={itemiconStyle} source={vpIcon} />
                     </View>
-                    <View style={{width: '84%'}}>
+                    <View style={{ width: "84%" }}>
                       <Text
                         numberOfLines={1}
                         ellipsizeMode="tail"
-                        style={itemTextStyle}>
+                        style={itemTextStyle}
+                      >
                         View Profile
                       </Text>
                     </View>
@@ -960,78 +982,96 @@ function Chat(props) {
                   <Sep />
                   <Pressable
                     onPress={() => {
-                      if (store.User.user.subscriptionStatus == 'freemium') {
-                        props.navigation.navigate('Plan');
+                      if (
+                        (userSubscription &&
+                          userSubscription?.status !== "active") ||
+                        !userSubscription
+                      ) {
+                        props.navigation.navigate("Plan");
                       } else {
                         if (!isFollow) FollowUser();
                         else unFollowUser();
                         closeBottomSheet();
                       }
                     }}
-                    style={({pressed}) => [
-                      {opacity: pressed ? touchOpacity : 1.0},
+                    style={({ pressed }) => [
+                      { opacity: pressed ? touchOpacity : 1.0 },
                       itemConStyle,
-                    ]}>
+                    ]}
+                  >
                     <View style={{}}>
                       <Image style={itemiconStyle} source={followIcon} />
                     </View>
-                    <View style={{width: '84%'}}>
+                    <View style={{ width: "84%" }}>
                       <Text
                         numberOfLines={1}
                         ellipsizeMode="tail"
-                        style={itemTextStyle}>
-                        {!isFollow ? 'Follow' : 'Unfollow'}
+                        style={itemTextStyle}
+                      >
+                        {!isFollow ? "Follow" : "Unfollow"}
                       </Text>
                     </View>
                   </Pressable>
                   <Sep />
                   <Pressable
                     onPress={() => {
-                      if (store.User.user.subscriptionStatus == 'freemium') {
-                        props.navigation.navigate('Plan');
+                      if (
+                        (userSubscription &&
+                          userSubscription?.status !== "active") ||
+                        !userSubscription
+                      ) {
+                        props.navigation.navigate("Plan");
                       } else {
                         if (!isBlock) BlockUser();
                         else UnBlockUser();
                         closeBottomSheet();
                       }
                     }}
-                    style={({pressed}) => [
-                      {opacity: pressed ? touchOpacity : 1.0},
+                    style={({ pressed }) => [
+                      { opacity: pressed ? touchOpacity : 1.0 },
                       itemConStyle,
-                    ]}>
+                    ]}
+                  >
                     <View style={{}}>
                       <Image style={itemiconStyle} source={blockIcon} />
                     </View>
-                    <View style={{width: '84%'}}>
+                    <View style={{ width: "84%" }}>
                       <Text
                         numberOfLines={1}
                         ellipsizeMode="tail"
-                        style={[itemTextStyle, {color: '#B93B3B'}]}>
-                        {!isBlock ? 'Block' : 'Unblock'}
+                        style={[itemTextStyle, { color: "#B93B3B" }]}
+                      >
+                        {!isBlock ? "Block" : "Unblock"}
                       </Text>
                     </View>
                   </Pressable>
                   <Sep />
                   <Pressable
                     onPress={() => {
-                      if (store.User.user.subscriptionStatus == 'freemium') {
-                        props.navigation.navigate('Plan');
+                      if (
+                        (userSubscription &&
+                          userSubscription?.status !== "active") ||
+                        !userSubscription
+                      ) {
+                        props.navigation.navigate("Plan");
                       } else {
-                        onClickBottomItem('report');
+                        onClickBottomItem("report");
                       }
                     }}
-                    style={({pressed}) => [
-                      {opacity: pressed ? touchOpacity : 1.0},
+                    style={({ pressed }) => [
+                      { opacity: pressed ? touchOpacity : 1.0 },
                       itemConStyle,
-                    ]}>
+                    ]}
+                  >
                     <View style={{}}>
                       <Image style={itemiconStyle} source={reportIcon} />
                     </View>
-                    <View style={{width: '84%'}}>
+                    <View style={{ width: "84%" }}>
                       <Text
                         numberOfLines={1}
                         ellipsizeMode="tail"
-                        style={[itemTextStyle, {color: '#B93B3B'}]}>
+                        style={[itemTextStyle, { color: "#B93B3B" }]}
+                      >
                         Report
                       </Text>
                     </View>
@@ -1044,27 +1084,33 @@ function Chat(props) {
                 <>
                   <Pressable
                     onPress={() => {
-                      if (store.User.user.subscriptionStatus == 'freemium') {
-                        props.navigation.navigate('Plan');
+                      if (
+                        (userSubscription &&
+                          userSubscription?.status !== "active") ||
+                        !userSubscription
+                      ) {
+                        props.navigation.navigate("Plan");
                       } else {
                         if (!isBlock) BlockUser();
                         else UnBlockUser();
                         closeBottomSheet();
                       }
                     }}
-                    style={({pressed}) => [
-                      {opacity: pressed ? touchOpacity : 1.0},
+                    style={({ pressed }) => [
+                      { opacity: pressed ? touchOpacity : 1.0 },
                       itemConStyle,
-                    ]}>
+                    ]}
+                  >
                     <View style={{}}>
                       <Image style={itemiconStyle} source={blockIcon} />
                     </View>
-                    <View style={{width: '84%'}}>
+                    <View style={{ width: "84%" }}>
                       <Text
                         numberOfLines={1}
                         ellipsizeMode="tail"
-                        style={[itemTextStyle, {color: '#B93B3B'}]}>
-                        {!isBlock ? 'Block' : 'Unblock'}
+                        style={[itemTextStyle, { color: "#B93B3B" }]}
+                      >
+                        {!isBlock ? "Block" : "Unblock"}
                       </Text>
                     </View>
                   </Pressable>
@@ -1108,12 +1154,13 @@ function Chat(props) {
 
         {!isInternet && <utils.InternetMessage />}
         <KeyboardAvoidingView
-          behavior={Platform.OS == 'ios' ? 'height' : undefined}
-          style={styles.container2}>
+          behavior={Platform.OS == "ios" ? "height" : undefined}
+          style={styles.container2}
+        >
           <View style={styles.container3}>
             <FlatList
               onContentSizeChange={() =>
-                scrollRef?.current?.scrollToEnd({animated: true})
+                scrollRef?.current?.scrollToEnd({ animated: true })
               }
               ref={scrollRef}
               refreshControl={
@@ -1132,16 +1179,16 @@ function Chat(props) {
 
           {isEmoji && (
             <EmojiModal
-              onEmojiSelected={emoji => {
+              onEmojiSelected={(emoji) => {
                 let m = message;
                 m = m + emoji;
                 setmessage(m);
               }}
               onPressOutside={closeEmoji}
-              modalStyle={{paddingBottom: responsiveHeight(4.5)}}
-              backgroundStyle={{backgroundColor: '#fcfcfc'}}
+              modalStyle={{ paddingBottom: responsiveHeight(4.5) }}
+              backgroundStyle={{ backgroundColor: "#fcfcfc" }}
               containerStyle={{
-                shadowColor: '#000',
+                shadowColor: "#000",
                 shadowOffset: {
                   width: 0,
                   height: 1,

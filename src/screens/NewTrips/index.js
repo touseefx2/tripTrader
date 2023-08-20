@@ -62,6 +62,7 @@ function NewTrips(props) {
     seteditTripObj,
     Logout,
     setctripLoader,
+    userSubscription,
   } = store.User;
   const stateDataList = [...store.Filters.tripLocation];
   const speciesDataList = [...store.Filters.species];
@@ -477,7 +478,11 @@ function NewTrips(props) {
           },
           availableFrom: moment(minDate).format("MMM DD, YYYY"),
           availableTo: moment(maxDate).format("MMM DD, YYYY"),
-          status: user.subscriptionStatus === "freemium" ? "suspended" : status,
+          status:
+            (userSubscription && userSubscription?.status !== "active") ||
+            !userSubscription
+              ? "suspended"
+              : status,
           photos: photos,
           unAvailableDays: unAvailable,
           location: { city: city, state: state?.name || "" },
@@ -533,7 +538,11 @@ function NewTrips(props) {
           },
           availableFrom: moment(minDate).format("MMM DD, YYYY"),
           availableTo: moment(maxDate).format("MMM DD, YYYY"),
-          status: user.subscriptionStatus === "freemium" ? "suspended" : status,
+          status:
+            (userSubscription && userSubscription?.status !== "active") ||
+            !userSubscription
+              ? "suspended"
+              : status,
           photos: photoArr1,
           unAvailableDays: unAvailable,
           location: { city: city, state: state?.name || "" },
@@ -1803,7 +1812,10 @@ function NewTrips(props) {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => {
-            if (store.User.user.subscriptionStatus == "freemium") {
+            if (
+              (userSubscription && userSubscription?.status !== "active") ||
+              !userSubscription
+            ) {
               props.navigation.navigate("Plan");
             } else {
               setmodalChk(!ch ? "suspend" : "activate");
@@ -2331,7 +2343,9 @@ function NewTrips(props) {
                   >
                     {!isTripCreate && renderTitle()}
                     {isTripCreate &&
-                      store.User.user.subscriptionStatus == "freemium" &&
+                      ((userSubscription &&
+                        userSubscription?.status !== "active") ||
+                        !userSubscription) &&
                       renderSubscribe()}
                     {renderFields()}
                   </ScrollView>
@@ -2344,7 +2358,9 @@ function NewTrips(props) {
                   {renderHeader()}
                   {!isTripCreate && renderTitle()}
                   {isTripCreate &&
-                    store.User.user.subscriptionStatus == "freemium" &&
+                    ((userSubscription &&
+                      userSubscription?.status !== "active") ||
+                      !userSubscription) &&
                     renderSubscribe()}
                   {renderFields()}
 

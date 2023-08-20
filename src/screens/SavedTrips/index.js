@@ -25,7 +25,7 @@ function SavedTrips(props) {
   const toast = useRef(null);
 
   const { isInternet } = store.General;
-  const { user, homeModalLoder } = store.User;
+  const { user, homeModalLoder, userSubscription } = store.User;
   const { deleteLoader, saveTrips } = store.Trips;
   const { activity, tripLocation, species } = store.Filters;
 
@@ -212,6 +212,7 @@ function SavedTrips(props) {
                   showpic={showpic}
                   animtntime={animtntime}
                   openModal={openModal}
+                  userSubscription={userSubscription}
                 />
               )}
               ListFooterComponent={

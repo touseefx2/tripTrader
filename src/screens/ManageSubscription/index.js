@@ -20,11 +20,6 @@ import { ActivityIndicator } from "react-native-paper";
 
 export default observer(ManageSubscription);
 
-function toFixed(num, fix) {
-  var re = new RegExp("^-?\\d+(?:.\\d{0," + (fix || -1) + "})?");
-  return num.toString().match(re)[0];
-}
-
 function ManageSubscription(props) {
   const toast = useRef(null);
   const toastduration = 700;
@@ -33,25 +28,20 @@ function ManageSubscription(props) {
   const { isInternet } = store.General;
   const {
     user,
-    regLoader,
     ucRef,
-    userCardInfo,
     authToken,
     getCardInfo,
-    getSubsctiptionStatus,
     userSubscription,
     cardDetails,
+    regLoader,
   } = store.User;
   // console.log("userSubscription : ", userSubscription);
   // console.log("cardDetails : ", cardDetails[0].card);
 
   const [isCancelSubModal, setIsCancelSubModal] = useState(false);
 
-  let sub = "";
-  let isSub = "";
-  let isSubObj = false;
+  let subscriptionStatus = "freemium";
   let endDate = "";
-
   const card = {
     number: 4040,
     brand: "visa",
@@ -61,19 +51,13 @@ function ManageSubscription(props) {
     card.brand = cardDetails?.card?.brand;
   }
   if (userSubscription) {
-    endDate = utils.functions.getDate(userSubscription.current_period_end);
-  }
-
-  if (user !== "guest" && user) {
-    sub = user.subscriptionStatus || "";
-    isSubObj = user.subscription || false;
-    isSub = isSubObj.status;
+    endDate = utils.functions.getDate(userSubscription?.current_period_end);
+    subscriptionStatus = userSubscription?.status || "";
   }
 
   useEffect(() => {
     if (isInternet) {
       getCardInfo(user.customerId, "Load", authToken);
-      getSubsctiptionStatus();
     }
   }, [isInternet]);
 
@@ -232,13 +216,19 @@ function ManageSubscription(props) {
       );
     };
 
-    const status = isSub;
-    const pt = isSubObj.title ? isSubObj.title : "annual";
-    const planType = pt + " (" + status + ")";
-    const txt =
-      status == "canceled"
-        ? `Your subscription plan has been ${status} and will not be renewed at the end of your billing cycle. You will continue to have full access until your plan ends on`
-        : `Your subscription plan has been ${status} at`;
+    let planType = "";
+    const SubscribePlan = userSubscription?.plan || null;
+    if (SubscribePlan) {
+      planType =
+        `${
+          SubscribePlan.interval === "month"
+            ? "Monthly"
+            : SubscribePlan.interval === "year"
+            ? "Annual"
+            : SubscribePlan.interval
+        }` + ` (${subscriptionStatus})`;
+    }
+    const txt = `Your subscription plan has been ${subscriptionStatus} and will not be renewed at the end of your billing cycle. You will continue to have full access until your plan ends on`;
 
     return (
       <View style={styles.section2}>
@@ -248,7 +238,7 @@ function ManageSubscription(props) {
             <Text
               style={[styles.FieldTitle1, { fontFamily: theme.fonts.fontBold }]}
             >
-              {moment(endDate).format("MMMM DD, YYYY")}.
+              {endDate}.
             </Text>
           </Text>
         </View>
@@ -316,9 +306,9 @@ function ManageSubscription(props) {
                 paddingVertical: 15,
               }}
             >
-              {sub == "freemium" && renderMain()}
-              {sub == "paid" && isSub === "active" && renderMain2()}
-              {sub == "paid" && isSub !== "active" && renderMain3()}
+              {subscriptionStatus === "freemium" && renderMain()}
+              {subscriptionStatus === "active" && renderMain2()}
+              {subscriptionStatus === "canceled" && renderMain3()}
             </ScrollView>
           </KeyboardAvoidingView>
         </View>
@@ -334,6 +324,8 @@ function ManageSubscription(props) {
           isModal={isCancelSubModal}
           setIsModal={setIsCancelSubModal}
           userSubscription={userSubscription}
+          endDate={endDate}
+          regLoader={regLoader}
         />
       )}
     </View>

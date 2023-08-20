@@ -28,7 +28,7 @@ function Trips(props) {
 
   const { isInternet } = store.General;
   const { user } = store.Userv;
-  const { homeModalLoder, OtherProfileProps } = store.User;
+  const { homeModalLoder, OtherProfileProps, userSubscription } = store.User;
   const { activity, tripLocation, species } = store.Filters;
 
   const [data, setdata] = useState([]);
@@ -182,6 +182,7 @@ function Trips(props) {
                 showpic={showpic}
                 animtntime={animtntime}
                 onClickMakeOffer={openModal}
+                userSubscription={userSubscription}
               />
             )}
           />

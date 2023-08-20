@@ -49,9 +49,9 @@ function Home(props) {
     homeModalLoder,
     Hometrips,
     setisNotification,
-    blockUsers,
     HomeLoader,
     attemptToGetInboxes,
+    userSubscription,
   } = store.User;
   const {
     deleteLoader,
@@ -328,11 +328,6 @@ function Home(props) {
             setGetDataOnce,
             "all"
           );
-          // store.User.attemptToGetHomeTripsSearch(
-          //   setGetDataOnce,
-          //   blockUsers,
-          //   'all',
-          // );
         }
       }
     });
@@ -367,11 +362,6 @@ function Home(props) {
         if (user == "guest") {
           store.User.attemptToGetHomeTripsGuest(setGetDataOnce);
         } else {
-          // store.User.attemptToGetHomeTripsSearch(
-          //   setGetDataOnce,
-          //   blockUsers,
-          //   '',
-          // );
           store.User.attemptToGetBloackUsers(
             store.User.user._id,
             () => {},
@@ -459,6 +449,7 @@ function Home(props) {
         saveTrip={saveTrip}
         saveLoader={saveLoader}
         user={user}
+        userSubscription={userSubscription}
       />
     ),
     [saveTrips]
