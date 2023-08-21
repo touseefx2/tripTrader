@@ -413,6 +413,16 @@ const getDate = (unixTimestamp) => {
   return formattedDate;
 };
 
+const isSubscribeDateEnd = (unixTimestamp) => {
+  const currentDate = new Date();
+  // Convert Unix timestamp to milliseconds
+  const milliseconds = unixTimestamp * 1000;
+  // Create a new Date object using the milliseconds
+  const subscribeEndDate = new Date(milliseconds);
+
+  return currentDate > subscribeEndDate;
+};
+
 const checkError = (err) => {
   let msg = "error";
   if (err) {
@@ -453,4 +463,5 @@ export const functions = {
   getDate,
   checkError,
   addMonths,
+  isSubscribeDateEnd,
 };

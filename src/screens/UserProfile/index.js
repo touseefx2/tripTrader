@@ -368,7 +368,10 @@ function UserProfile(props) {
                 onPress={() => {
                   if (
                     (userSubscription &&
-                      userSubscription?.status !== "active") ||
+                      userSubscription?.status !== "active" &&
+                      utils.functions.isSubscribeDateEnd(
+                        userSubscription?.current_period_end
+                      )) ||
                     !userSubscription
                   ) {
                     props.navigation.navigate("Plan");
@@ -416,7 +419,10 @@ function UserProfile(props) {
                 onPress={() => {
                   if (
                     (userSubscription &&
-                      userSubscription?.status !== "active") ||
+                      userSubscription?.status !== "active" &&
+                      utils.functions.isSubscribeDateEnd(
+                        userSubscription?.current_period_end
+                      )) ||
                     !userSubscription
                   ) {
                     props.navigation.navigate("Plan");
@@ -549,7 +555,10 @@ function UserProfile(props) {
                 onPress={() => {
                   if (
                     (userSubscription &&
-                      userSubscription?.status !== "active") ||
+                      userSubscription?.status !== "active" &&
+                      utils.functions.isSubscribeDateEnd(
+                        userSubscription?.current_period_end
+                      )) ||
                     !userSubscription
                   ) {
                     props.navigation.navigate("Plan");
@@ -582,7 +591,10 @@ function UserProfile(props) {
                 onPress={() => {
                   if (
                     (userSubscription &&
-                      userSubscription?.status !== "active") ||
+                      userSubscription?.status !== "active" &&
+                      utils.functions.isSubscribeDateEnd(
+                        userSubscription?.current_period_end
+                      )) ||
                     !userSubscription
                   ) {
                     props.navigation.navigate("Plan");
@@ -615,7 +627,10 @@ function UserProfile(props) {
                 onPress={() => {
                   if (
                     (userSubscription &&
-                      userSubscription?.status !== "active") ||
+                      userSubscription?.status !== "active" &&
+                      utils.functions.isSubscribeDateEnd(
+                        userSubscription?.current_period_end
+                      )) ||
                     !userSubscription
                   ) {
                     props.navigation.navigate("Plan");

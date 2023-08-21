@@ -99,8 +99,8 @@ function Home(props) {
   useEffect(() => {
     if (user && user !== "guest" && getDataOnce) {
       setTimeout(() => {
-        // setIsEmailPopup(user?.isEmailVerified === false ? true : false);
-      }, 3000);
+        setIsEmailPopup(user?.isEmailVerified === false ? true : false);
+      }, 2000);
     }
   }, [user, getDataOnce]);
 
@@ -452,7 +452,7 @@ function Home(props) {
         userSubscription={userSubscription}
       />
     ),
-    [saveTrips]
+    [saveTrips, userSubscription]
   );
 
   const ListHeader = () => {

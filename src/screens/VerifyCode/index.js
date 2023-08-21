@@ -82,7 +82,7 @@ function VerifyCode(props) {
     setisVerifyCode("a");
     setisEmptyCode(false);
     seterrorMessage("");
-    codeInputRef2?.current?.clear();
+    // codeInputRef2?.current?.clear();
   };
 
   const showResentToast = (c) => {

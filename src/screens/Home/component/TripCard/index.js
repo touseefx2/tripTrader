@@ -269,7 +269,11 @@ function TripCard({
             }
 
             if (
-              (userSubscription && userSubscription?.status !== "active") ||
+              (userSubscription &&
+                userSubscription?.status !== "active" &&
+                utils.functions.isSubscribeDateEnd(
+                  userSubscription?.current_period_end
+                )) ||
               !userSubscription
             ) {
               props.navigation.navigate("Plan");
@@ -290,8 +294,13 @@ function TripCard({
               store.User.Logout();
               return;
             }
+
             if (
-              (userSubscription && userSubscription?.status !== "active") ||
+              (userSubscription &&
+                userSubscription?.status !== "active" &&
+                utils.functions.isSubscribeDateEnd(
+                  userSubscription?.current_period_end
+                )) ||
               !userSubscription
             ) {
               props.navigation.navigate("Plan");

@@ -305,7 +305,11 @@ function Card3({
             ]}
             onPress={() => {
               if (
-                (userSubscription && userSubscription?.status !== "active") ||
+                (userSubscription &&
+                  userSubscription?.status !== "active" &&
+                  utils.functions.isSubscribeDateEnd(
+                    userSubscription?.current_period_end
+                  )) ||
                 !userSubscription
               ) {
                 props.navigation.navigate("Plan");
