@@ -3146,7 +3146,10 @@ class user {
       subscriptionId: subscriptionId,
     };
     console.log("attemptToCancelSubscription: ", body);
-    this.setregLoader(true);
+    if (chk !== "delete") {
+      this.setregLoader(true);
+    }
+
     db.hitApi(db.apis.CANCEL_SUBSCRIPTION, "post", body, this.authToken)
       ?.then((resp) => {
         console.log(
@@ -3154,7 +3157,7 @@ class user {
           resp.data
         );
 
-        if (resp?.data?.subscriptions) {
+        if (resp?.data?.subscription?.status === "canceled") {
           if (chk === "delete") {
             this.attemptToDeleteAccount(setLoader, closeModal);
             return;
@@ -3169,18 +3172,20 @@ class user {
             body,
             this.authToken
           )
-            ?.then((resp) => {
+            ?.then((res) => {
               this.setregLoader(false);
+
               console.log(
                 `response UPDATE_USER  ${db.apis.UPDATE_USER} : `,
-                resp.data
+                res.data
               );
-
-              this.setUserSubscription(resp?.data?.subscriptions || null);
-              if (resp?.data?.data) this.setUser(resp.data.data);
+              closeModal();
+              this.setUserSubscription(resp?.data?.subscription || null);
+              if (res?.data?.data) this.setUser(res.data.data);
             })
             .catch((err) => {
               this.setregLoader(false);
+              setLoader(false);
               const msg = utils.functions.checkError(err);
               console.log(
                 `Error in UPDATE_USER  ${db.apis.UPDATE_USER} : `,
@@ -3653,8 +3658,7 @@ class user {
   }
 
   @action attemptToDeleteAccount = (setLoader, suc) => {
-    console.log("delete account");
-
+    console.log("attemptToDeleteAccount");
     db.hitApi(db.apis.UPDATE_USER + this.user._id, "delete", {}, this.authToken)
       ?.then((resp) => {
         console.log(`response delete account:`, resp.data);

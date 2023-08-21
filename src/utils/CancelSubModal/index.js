@@ -38,7 +38,7 @@ export default function CancelSubModal({
   };
 
   const closeModal = () => {
-    if (!loader) {
+    if (!regLoader) {
       setIsModal(false);
     }
   };
@@ -51,7 +51,7 @@ export default function CancelSubModal({
             userSubscription?.id.toString(),
             "",
             () => {},
-            () => {}
+            closeModal
           );
         } else {
           Alert.alert("", "Please connect internet");
@@ -98,7 +98,7 @@ export default function CancelSubModal({
         >
           <Header
             title={"Cancel Subscription"}
-            loader={loader}
+            loader={regLoader}
             closeModal={closeModal}
             isMaxHeight={isMaxHeight}
           />
