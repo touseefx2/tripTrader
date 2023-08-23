@@ -99,7 +99,7 @@ function Home(props) {
   useEffect(() => {
     if (user && user !== "guest" && getDataOnce) {
       setTimeout(() => {
-        setIsEmailPopup(user?.isEmailVerified === false ? true : false);
+        // setIsEmailPopup(user?.isEmailVerified === false ? true : false);
       }, 2000);
     }
   }, [user, getDataOnce]);

@@ -1,27 +1,27 @@
-import React, {useEffect, useState, useRef} from 'react';
-import {View, SafeAreaView} from 'react-native';
-import {styles} from './styles';
-import {observer} from 'mobx-react';
-import store from '../../store/index';
-import utils from '../../utils/index';
-import Toast from 'react-native-easy-toast';
-import {TabView, SceneMap} from 'react-native-tab-view';
-import Received from './Received';
-import Sent from './Sent';
+import React, { useEffect, useState, useRef } from "react";
+import { View, SafeAreaView } from "react-native";
+import { styles } from "./styles";
+import { observer } from "mobx-react";
+import store from "../../store/index";
+import utils from "../../utils/index";
+import Toast from "react-native-easy-toast";
+import { TabView, SceneMap } from "react-native-tab-view";
+import Received from "./Received";
+import Sent from "./Sent";
 
 export default observer(TradeOffers);
 
 function TradeOffers(props) {
   const toast = useRef(null);
-  const headerTitle = 'Trade Offers';
-  const internet = store.General.isInternet;
-  const user = store.User.user;
+  const headerTitle = "Trade Offers";
+  const { isInternet } = store.General;
+  const { user, setOfferProfileProps } = store.User;
 
   const [isTabBarShow, setisTabBarShow] = useState(false);
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    {key: 'sent', title: 'Sent'},
-    {key: 'received', title: 'Received'},
+    { key: "sent", title: "Sent" },
+    { key: "received", title: "Received" },
   ]);
 
   const renderScene = SceneMap({
@@ -30,16 +30,16 @@ function TradeOffers(props) {
   });
 
   useEffect(() => {
-    if (user == 'guest') {
-      store.General.setgoto('guestaccess');
+    if (user == "guest") {
+      store.General.setgoto("guestaccess");
       store.User.Logout();
       return;
     }
   }, []);
 
   useEffect(() => {
-    store.User.setOfferProfileProps(props);
-    if (user && user !== 'guest') {
+    setOfferProfileProps(props);
+    if (user && user !== "guest") {
       setTimeout(() => {
         setisTabBarShow(true);
       }, 100);
@@ -54,9 +54,10 @@ function TradeOffers(props) {
             paddingHorizontal: 15,
             flex: 1,
             marginTop: 10,
-          }}>
+          }}
+        >
           <TabView
-            navigationState={{index, routes}}
+            navigationState={{ index, routes }}
             renderScene={renderScene}
             onIndexChange={setIndex}
           />
@@ -74,10 +75,10 @@ function TradeOffers(props) {
   return (
     <View style={styles.container}>
       <utils.DrawerHeader props={props} headerTitle={headerTitle} />
-      {!internet && <utils.InternetMessage />}
+      {!isInternet && <utils.InternetMessage />}
       <SafeAreaView style={styles.container2}>
         <View style={styles.container3}>
-          <View style={{flex: 1}}>{isTabBarShow && renderTabBar()}</View>
+          <View style={{ flex: 1 }}>{isTabBarShow && renderTabBar()}</View>
           <Toast ref={toast} position="bottom" />
 
           {!isTabBarShow && (

@@ -182,7 +182,6 @@ function Reviews(props) {
 
   const openReviewModal = (c) => {
     if (c) {
-      console.log("ccc : ", c);
       setisrObj(c);
       setrate(c.rate);
       setMessage(c.message);
@@ -334,7 +333,13 @@ function Reviews(props) {
         {!isOneReview && isAnyTrade != false && getDataOnce && (
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => openReviewModal(false)}
+            onPress={() => {
+              const userPlanStatus =
+                utils.functions.checkUserPalnStatus(OtherProfileProps);
+              if (userPlanStatus) {
+                openReviewModal(false);
+              }
+            }}
           >
             <Text
               style={{
@@ -511,13 +516,17 @@ function Reviews(props) {
           return (
             <Pressable
               onPress={() => {
-                openReviewModal({
-                  _id: item._id,
-                  i: index,
-                  rate: rate,
-                  message: userComment,
-                  mid: userCommentid,
-                });
+                const userPlanStatus =
+                  utils.functions.checkUserPalnStatus(OtherProfileProps);
+                if (userPlanStatus) {
+                  openReviewModal({
+                    _id: item._id,
+                    i: index,
+                    rate: rate,
+                    message: userComment,
+                    mid: userCommentid,
+                  });
+                }
               }}
               style={({ pressed }) => [
                 { opacity: pressed ? 0.7 : 1.0 },
@@ -533,11 +542,15 @@ function Reviews(props) {
           return (
             <Pressable
               onPress={() => {
-                openDeleteModal({
-                  _id: item._id,
-                  i: index,
-                  mid: userCommentid,
-                });
+                const userPlanStatus =
+                  utils.functions.checkUserPalnStatus(OtherProfileProps);
+                if (userPlanStatus) {
+                  openDeleteModal({
+                    _id: item._id,
+                    i: index,
+                    mid: userCommentid,
+                  });
+                }
               }}
               style={({ pressed }) => [
                 { opacity: pressed ? 0.7 : 1.0 },
@@ -713,7 +726,13 @@ function Reviews(props) {
             >
               Would you like to{" "}
               <Text
-                onPress={() => openReviewModal(false)}
+                onPress={() => {
+                  const userPlanStatus =
+                    utils.functions.checkUserPalnStatus(OtherProfileProps);
+                  if (userPlanStatus) {
+                    openReviewModal(false);
+                  }
+                }}
                 style={{
                   fontSize: 13,
                   color: "#3C6B49",

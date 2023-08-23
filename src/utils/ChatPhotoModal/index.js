@@ -487,7 +487,6 @@ function ChatPhotoModal(props) {
       if (state.isConnected) {
         store.User.attemptToChatUploadImage(photos, photoUploadSuc);
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert("", "Please connect internet");
       }
     });
@@ -625,7 +624,15 @@ function ChatPhotoModal(props) {
                           </View>
 
                           <TouchableOpacity
-                            onPress={uploadPhotos}
+                            onPress={() => {
+                              const userPlanStatus =
+                                utils.functions.checkUserPalnStatus(
+                                  props.props
+                                );
+                              if (userPlanStatus) {
+                                uploadPhotos();
+                              }
+                            }}
                             activeOpacity={0.8}
                           >
                             <Image

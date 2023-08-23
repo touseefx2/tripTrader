@@ -304,16 +304,8 @@ function Card3({
               styles.buttonContainer,
             ]}
             onPress={() => {
-              if (
-                (userSubscription &&
-                  userSubscription?.status !== "active" &&
-                  utils.functions.isSubscribeDateEnd(
-                    userSubscription?.current_period_end
-                  )) ||
-                !userSubscription
-              ) {
-                props.navigation.navigate("Plan");
-              } else {
+              const userPlanStatus = utils.functions.checkUserPalnStatus(props);
+              if (userPlanStatus) {
                 onClickMakeOffer({ item: item, selIndex: index }, "offer");
               }
             }}

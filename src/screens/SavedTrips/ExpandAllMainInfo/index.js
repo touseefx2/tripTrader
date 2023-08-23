@@ -212,16 +212,10 @@ function ExpandAllMainInfo({
         <View style={styles.boxSection4}>
           <Pressable
             onPress={() => {
-              if (
-                (userSubscription &&
-                  userSubscription?.status !== "active" &&
-                  utils.functions.isSubscribeDateEnd(
-                    userSubscription?.current_period_end
-                  )) ||
-                !userSubscription
-              ) {
-                props.navigation.navigate("Plan");
-              } else openModal({ item: item, selIndex: index }, "offer");
+              const userPlanStatus = utils.functions.checkUserPalnStatus(props);
+              if (userPlanStatus) {
+                openModal({ item: item, selIndex: index }, "offer");
+              }
             }}
             style={({ pressed }) => [
               { opacity: pressed ? 0.9 : 1.0 },
@@ -233,16 +227,10 @@ function ExpandAllMainInfo({
 
           <Pressable
             onPress={() => {
-              if (
-                (userSubscription &&
-                  userSubscription?.status !== "active" &&
-                  utils.functions.isSubscribeDateEnd(
-                    userSubscription?.current_period_end
-                  )) ||
-                !userSubscription
-              ) {
-                props.navigation.navigate("Plan");
-              } else openModal({ item: item, selIndex: index }, "message");
+              const userPlanStatus = utils.functions.checkUserPalnStatus(props);
+              if (userPlanStatus) {
+                openModal({ item: item, selIndex: index }, "message");
+              }
             }}
             style={({ pressed }) => [
               { opacity: pressed ? 0.9 : 1.0 },

@@ -817,7 +817,12 @@ function Chat(props) {
           </View>
 
           <TouchableOpacity
-            onPress={() => SendMessage("")}
+            onPress={() => {
+              const userPlanStatus = utils.functions.checkUserPalnStatus(props);
+              if (userPlanStatus) {
+                SendMessage("");
+              }
+            }}
             disabled={disable}
             style={{ opacity: disable ? 0.5 : 1 }}
             activeOpacity={0.8}
@@ -982,16 +987,9 @@ function Chat(props) {
                   <Sep />
                   <Pressable
                     onPress={() => {
-                      if (
-                        (userSubscription &&
-                          userSubscription?.status !== "active" &&
-                          utils.functions.isSubscribeDateEnd(
-                            userSubscription?.current_period_end
-                          )) ||
-                        !userSubscription
-                      ) {
-                        props.navigation.navigate("Plan");
-                      } else {
+                      const userPlanStatus =
+                        utils.functions.checkUserPalnStatus(props);
+                      if (userPlanStatus) {
                         if (!isFollow) FollowUser();
                         else unFollowUser();
                         closeBottomSheet();
@@ -1018,16 +1016,9 @@ function Chat(props) {
                   <Sep />
                   <Pressable
                     onPress={() => {
-                      if (
-                        (userSubscription &&
-                          userSubscription?.status !== "active" &&
-                          utils.functions.isSubscribeDateEnd(
-                            userSubscription?.current_period_end
-                          )) ||
-                        !userSubscription
-                      ) {
-                        props.navigation.navigate("Plan");
-                      } else {
+                      const userPlanStatus =
+                        utils.functions.checkUserPalnStatus(props);
+                      if (userPlanStatus) {
                         if (!isBlock) BlockUser();
                         else UnBlockUser();
                         closeBottomSheet();
@@ -1054,16 +1045,9 @@ function Chat(props) {
                   <Sep />
                   <Pressable
                     onPress={() => {
-                      if (
-                        (userSubscription &&
-                          userSubscription?.status !== "active" &&
-                          utils.functions.isSubscribeDateEnd(
-                            userSubscription?.current_period_end
-                          )) ||
-                        !userSubscription
-                      ) {
-                        props.navigation.navigate("Plan");
-                      } else {
+                      const userPlanStatus =
+                        utils.functions.checkUserPalnStatus(props);
+                      if (userPlanStatus) {
                         onClickBottomItem("report");
                       }
                     }}
@@ -1093,16 +1077,9 @@ function Chat(props) {
                 <>
                   <Pressable
                     onPress={() => {
-                      if (
-                        (userSubscription &&
-                          userSubscription?.status !== "active" &&
-                          utils.functions.isSubscribeDateEnd(
-                            userSubscription?.current_period_end
-                          )) ||
-                        !userSubscription
-                      ) {
-                        props.navigation.navigate("Plan");
-                      } else {
+                      const userPlanStatus =
+                        utils.functions.checkUserPalnStatus(props);
+                      if (userPlanStatus) {
                         if (!isBlock) BlockUser();
                         else UnBlockUser();
                         closeBottomSheet();
@@ -1141,6 +1118,7 @@ function Chat(props) {
       <View style={styles.container}>
         {isAddPhotoModal && (
           <utils.ChatPhotoModal
+            props={props}
             isAddPhotoModal={isAddPhotoModal}
             isShowPrmsn={isShowPrmsn}
             prmsnChk={prmsnChk}

@@ -37,7 +37,7 @@ function MyProfile(props) {
 
   const { isInternet } = store.General;
 
-  const { user, regLoader, setregLoader } = store.User;
+  const { user, regLoader, setregLoader, setMyProfileProps } = store.User;
 
   let userName = "";
   let phn = "";
@@ -139,7 +139,7 @@ function MyProfile(props) {
   }, [user]);
 
   useEffect(() => {
-    store.User.setMyProfileProps(props);
+    setMyProfileProps(props);
     if (user && user !== "guest") {
       setTimeout(() => {
         setisTabBarShow(true);

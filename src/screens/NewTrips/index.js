@@ -478,15 +478,7 @@ function NewTrips(props) {
           },
           availableFrom: moment(minDate).format("MMM DD, YYYY"),
           availableTo: moment(maxDate).format("MMM DD, YYYY"),
-          status:
-            (userSubscription &&
-              userSubscription?.status !== "active" &&
-              utils.functions.isSubscribeDateEnd(
-                userSubscription?.current_period_end
-              )) ||
-            !userSubscription
-              ? "suspended"
-              : status,
+          status: utils.functions.isUserFreemium() ? "suspended" : status,
           photos: photos,
           unAvailableDays: unAvailable,
           location: { city: city, state: state?.name || "" },
@@ -542,15 +534,7 @@ function NewTrips(props) {
           },
           availableFrom: moment(minDate).format("MMM DD, YYYY"),
           availableTo: moment(maxDate).format("MMM DD, YYYY"),
-          status:
-            (userSubscription &&
-              userSubscription?.status !== "active" &&
-              utils.functions.isSubscribeDateEnd(
-                userSubscription?.current_period_end
-              )) ||
-            !userSubscription
-              ? "suspended"
-              : status,
+          status: utils.functions.isUserFreemium() ? "suspended" : status,
           photos: photoArr1,
           unAvailableDays: unAvailable,
           location: { city: city, state: state?.name || "" },
@@ -596,7 +580,6 @@ function NewTrips(props) {
           status: "suspended",
         };
         store.User.setctripLoader(true);
-
         store.User.attemptToUpdateTrip(
           obj,
           editTripObj.data._id,
@@ -1820,17 +1803,15 @@ function NewTrips(props) {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => {
-            if (
-              (userSubscription &&
-                userSubscription?.status !== "active" &&
-                utils.functions.isSubscribeDateEnd(
-                  userSubscription?.current_period_end
-                )) ||
-              !userSubscription
-            ) {
-              props.navigation.navigate("Plan");
-            } else {
-              setmodalChk(!ch ? "suspend" : "activate");
+            if (!ch) {
+              setmodalChk("suspend");
+              setisModal(true);
+              return;
+            }
+
+            const userPlanStatus = utils.functions.checkUserPalnStatus(props);
+            if (userPlanStatus) {
+              setmodalChk("activate");
               setisModal(true);
             }
           }}
@@ -2355,12 +2336,7 @@ function NewTrips(props) {
                   >
                     {!isTripCreate && renderTitle()}
                     {isTripCreate &&
-                      ((userSubscription &&
-                        userSubscription?.status !== "active" &&
-                        utils.functions.isSubscribeDateEnd(
-                          userSubscription?.current_period_end
-                        )) ||
-                        !userSubscription) &&
+                      utils.functions.isUserFreemium() &&
                       renderSubscribe()}
                     {renderFields()}
                   </ScrollView>
@@ -2373,12 +2349,7 @@ function NewTrips(props) {
                   {renderHeader()}
                   {!isTripCreate && renderTitle()}
                   {isTripCreate &&
-                    ((userSubscription &&
-                      userSubscription?.status !== "active" &&
-                      utils.functions.isSubscribeDateEnd(
-                        userSubscription?.current_period_end
-                      )) ||
-                      !userSubscription) &&
+                    utils.functions.isUserFreemium() &&
                     renderSubscribe()}
                   {renderFields()}
 

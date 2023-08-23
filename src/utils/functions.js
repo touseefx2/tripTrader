@@ -1,6 +1,7 @@
 import React from "react";
 import { Alert } from "react-native";
 import moment from "moment";
+import store from "../store";
 
 function isObjectEmpty(value) {
   return (
@@ -444,6 +445,41 @@ function addMonths(date, months) {
   return date;
 }
 
+const checkUserPalnStatus = (props, isCheck = true) => {
+  const { user, userSubscription, Logout } = store.User;
+  const { setgoto } = store.General;
+
+  if (user === "guest") {
+    setgoto("guestaccess");
+    Logout();
+    return false;
+  }
+
+  if (
+    isCheck &&
+    ((userSubscription &&
+      userSubscription?.status !== "active" &&
+      isSubscribeDateEnd(userSubscription?.current_period_end)) ||
+      !userSubscription)
+  ) {
+    props.navigation.navigate("Plan");
+    return false;
+  }
+
+  return true;
+};
+
+const isUserFreemium = () => {
+  const { userSubscription } = store.User;
+
+  return (
+    (userSubscription &&
+      userSubscription?.status !== "active" &&
+      isSubscribeDateEnd(userSubscription?.current_period_end)) ||
+    !userSubscription
+  );
+};
+
 export const functions = {
   isObjectEmpty,
   findItem,
@@ -464,4 +500,6 @@ export const functions = {
   checkError,
   addMonths,
   isSubscribeDateEnd,
+  checkUserPalnStatus,
+  isUserFreemium,
 };

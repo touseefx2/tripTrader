@@ -131,14 +131,14 @@ function TripCard({
         <Pressable
           disabled={saveLoader}
           onPress={() => {
-            if (user === "guest") {
-              store.General.setgoto("guestaccess");
-              store.User.Logout();
-              return;
+            const userPlanStatus = utils.functions.checkUserPalnStatus(
+              props,
+              false
+            );
+            if (userPlanStatus) {
+              if (!isSave) saveTrip(item, index);
+              else openModal({ item: item, selIndex: index }, "tripRemove");
             }
-
-            if (!isSave) saveTrip(item, index);
-            else openModal({ item: item, selIndex: index }, "tripRemove");
           }}
           style={({ pressed }) => [
             { opacity: pressed ? 0.6 : 1.0 },
@@ -262,22 +262,10 @@ function TripCard({
       <View style={styles.boxSection4}>
         <Pressable
           onPress={() => {
-            if (user === "guest") {
-              store.General.setgoto("guestaccess");
-              store.User.Logout();
-              return;
+            const userPlanStatus = utils.functions.checkUserPalnStatus(props);
+            if (userPlanStatus) {
+              openModal({ item: item, selIndex: index }, "offer");
             }
-
-            if (
-              (userSubscription &&
-                userSubscription?.status !== "active" &&
-                utils.functions.isSubscribeDateEnd(
-                  userSubscription?.current_period_end
-                )) ||
-              !userSubscription
-            ) {
-              props.navigation.navigate("Plan");
-            } else openModal({ item: item, selIndex: index }, "offer");
           }}
           style={({ pressed }) => [
             { opacity: pressed ? 0.9 : 1.0 },
@@ -289,22 +277,10 @@ function TripCard({
 
         <Pressable
           onPress={() => {
-            if (user == "guest") {
-              store.General.setgoto("guestaccess");
-              store.User.Logout();
-              return;
+            const userPlanStatus = utils.functions.checkUserPalnStatus(props);
+            if (userPlanStatus) {
+              openModal({ item: item, selIndex: index }, "message");
             }
-
-            if (
-              (userSubscription &&
-                userSubscription?.status !== "active" &&
-                utils.functions.isSubscribeDateEnd(
-                  userSubscription?.current_period_end
-                )) ||
-              !userSubscription
-            ) {
-              props.navigation.navigate("Plan");
-            } else openModal({ item: item, selIndex: index }, "message");
           }}
           style={({ pressed }) => [
             { opacity: pressed ? 0.9 : 1.0 },

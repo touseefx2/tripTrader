@@ -366,16 +366,9 @@ function UserProfile(props) {
                   [styles.profileTitle2Conatinerm],
                 ]}
                 onPress={() => {
-                  if (
-                    (userSubscription &&
-                      userSubscription?.status !== "active" &&
-                      utils.functions.isSubscribeDateEnd(
-                        userSubscription?.current_period_end
-                      )) ||
-                    !userSubscription
-                  ) {
-                    props.navigation.navigate("Plan");
-                  } else {
+                  const userPlanStatus =
+                    utils.functions.checkUserPalnStatus(props);
+                  if (userPlanStatus) {
                     if (!isFollow) FollowUser();
                     else unFollowUser();
                   }
@@ -417,16 +410,9 @@ function UserProfile(props) {
                   [styles.profileTitle2Conatinerm],
                 ]}
                 onPress={() => {
-                  if (
-                    (userSubscription &&
-                      userSubscription?.status !== "active" &&
-                      utils.functions.isSubscribeDateEnd(
-                        userSubscription?.current_period_end
-                      )) ||
-                    !userSubscription
-                  ) {
-                    props.navigation.navigate("Plan");
-                  } else {
+                  const userPlanStatus =
+                    utils.functions.checkUserPalnStatus(props);
+                  if (userPlanStatus) {
                     UnBlockUser();
                   }
                 }}
@@ -553,16 +539,9 @@ function UserProfile(props) {
             <View style={{ width: "100%" }}>
               <Pressable
                 onPress={() => {
-                  if (
-                    (userSubscription &&
-                      userSubscription?.status !== "active" &&
-                      utils.functions.isSubscribeDateEnd(
-                        userSubscription?.current_period_end
-                      )) ||
-                    !userSubscription
-                  ) {
-                    props.navigation.navigate("Plan");
-                  } else {
+                  const userPlanStatus =
+                    utils.functions.checkUserPalnStatus(props);
+                  if (userPlanStatus) {
                     onClickBottomItem("message");
                   }
                 }}
@@ -589,16 +568,9 @@ function UserProfile(props) {
               <Pressable
                 disabled={loader}
                 onPress={() => {
-                  if (
-                    (userSubscription &&
-                      userSubscription?.status !== "active" &&
-                      utils.functions.isSubscribeDateEnd(
-                        userSubscription?.current_period_end
-                      )) ||
-                    !userSubscription
-                  ) {
-                    props.navigation.navigate("Plan");
-                  } else {
+                  const userPlanStatus =
+                    utils.functions.checkUserPalnStatus(props);
+                  if (userPlanStatus) {
                     if (!isBlock) BlockUser();
                     else UnBlockUser();
                   }
@@ -625,16 +597,9 @@ function UserProfile(props) {
 
               <Pressable
                 onPress={() => {
-                  if (
-                    (userSubscription &&
-                      userSubscription?.status !== "active" &&
-                      utils.functions.isSubscribeDateEnd(
-                        userSubscription?.current_period_end
-                      )) ||
-                    !userSubscription
-                  ) {
-                    props.navigation.navigate("Plan");
-                  } else {
+                  const userPlanStatus =
+                    utils.functions.checkUserPalnStatus(props);
+                  if (userPlanStatus) {
                     onClickBottomItem("report");
                   }
                 }}

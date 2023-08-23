@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -11,17 +11,17 @@ import {
   TextInput,
   Keyboard,
   RefreshControl,
-} from 'react-native';
-import {styles} from './styles';
-import {observer} from 'mobx-react';
-import store from '../../store/index';
-import utils from '../../utils/index';
-import theme from '../../theme';
-import NetInfo from '@react-native-community/netinfo';
-import {SwipeListView} from 'react-native-swipe-list-view';
-import Card from './Card/index';
-import CardDelete from './CardDelete';
-import {FireStore} from '../../services/FireStore';
+} from "react-native";
+import { styles } from "./styles";
+import { observer } from "mobx-react";
+import store from "../../store/index";
+import utils from "../../utils/index";
+import theme from "../../theme";
+import NetInfo from "@react-native-community/netinfo";
+import { SwipeListView } from "react-native-swipe-list-view";
+import Card from "./Card/index";
+import CardDelete from "./CardDelete";
+import { FireStore } from "../../services/FireStore";
 
 export default observer(Inbox);
 
@@ -31,13 +31,13 @@ function ItemSeparatorView() {
       style={{
         height: 0.7,
         backgroundColor: theme.color.fieldBorder,
-        width: '100%',
+        width: "100%",
       }}
     />
   );
 }
 
-function ListHeader({search, setsearch, data, totalUnread}) {
+function ListHeader({ search, setsearch, data, totalUnread }) {
   const renderResult = () => {
     return (
       <View style={styles.resultContainer}>
@@ -52,7 +52,7 @@ function ListHeader({search, setsearch, data, totalUnread}) {
     return (
       <TouchableOpacity disabled>
         <Image
-          source={require('../../assets/images/searchBar/search/img.png')}
+          source={require("../../assets/images/searchBar/search/img.png")}
           style={styles.Baricon}
         />
       </TouchableOpacity>
@@ -61,12 +61,12 @@ function ListHeader({search, setsearch, data, totalUnread}) {
 
   const renderInput = () => {
     return (
-      <View style={{width: '91%'}}>
+      <View style={{ width: "91%" }}>
         <TextInput
           value={search}
           style={styles.SerchBarInput}
           placeholder="Search"
-          onChangeText={c => {
+          onChangeText={(c) => {
             setsearch(c);
           }}
         />
@@ -75,10 +75,10 @@ function ListHeader({search, setsearch, data, totalUnread}) {
   };
 
   return (
-    <View style={{marginHorizontal: 15}}>
+    <View style={{ marginHorizontal: 15 }}>
       <Pressable
-        style={({pressed}) => [
-          {opacity: pressed ? 0.9 : 1},
+        style={({ pressed }) => [
+          { opacity: pressed ? 0.9 : 1 },
           [styles.SerchBarContainer],
         ]}
         // onPress={onclickSearchBar}
@@ -107,14 +107,15 @@ function EmptyListMessage() {
     <>
       <Text
         style={{
-          marginTop: '25%',
-          alignItems: 'center',
-          justifyContent: 'center',
-          alignSelf: 'center',
+          marginTop: "25%",
+          alignItems: "center",
+          justifyContent: "center",
+          alignSelf: "center",
           fontSize: 13,
           color: theme.color.subTitleLight,
           fontFamily: theme.fonts.fontMedium,
-        }}>
+        }}
+      >
         No Chats Found
       </Text>
     </>
@@ -122,55 +123,55 @@ function EmptyListMessage() {
 }
 
 function Inbox(props) {
-  const guest = require('../../assets/images/drawer/guest/img.png');
+  const guest = require("../../assets/images/drawer/guest/img.png");
   const scrollRef = useRef(null);
   const swipRef = useRef(null);
   const closeSwipe = () => {
     swipRef?.current?.safeCloseOpenRow();
   };
 
-  const headerTitle = 'Inbox';
-  const {isInternet} = store.General;
-  const {user, attemptToGetInboxes, inbox} = store.User;
+  const headerTitle = "Inbox";
+  const { isInternet } = store.General;
+  const { user, attemptToGetInboxes, inbox } = store.User;
 
-  const [search, setsearch] = useState('');
+  const [search, setsearch] = useState("");
   const [sdata, setsdata] = useState([]);
 
   const loader = store.User.dlc;
-  const data = search == '' ? inbox : sdata;
+  const data = search == "" ? inbox : sdata;
   const totalUnread = store.User.unreadInbox;
 
   useEffect(() => {
-    if (search != '') {
-      BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+    if (search != "") {
+      BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
     }
 
-    if (search == '') {
+    if (search == "") {
       scrollToTop();
 
       BackHandler.removeEventListener(
-        'hardwareBackPress',
-        handleBackButtonClick,
+        "hardwareBackPress",
+        handleBackButtonClick
       );
     }
 
     return () => {
       BackHandler.removeEventListener(
-        'hardwareBackPress',
-        handleBackButtonClick,
+        "hardwareBackPress",
+        handleBackButtonClick
       );
     };
   }, [search]);
 
   const scrollToTop = () => {
-    scrollRef?.current?.scrollToOffset({animated: false, offset: 0});
+    scrollRef?.current?.scrollToOffset({ animated: false, offset: 0 });
   };
 
   function handleBackButtonClick() {
     if (!props.navigation.isFocused()) {
       return false;
     } else {
-      setsearch('');
+      setsearch("");
 
       return true;
     }
@@ -178,10 +179,10 @@ function Inbox(props) {
 
   useEffect(() => {
     let data = [...store.User.inbox];
-    if (search != '') {
+    if (search != "") {
       if (data.length > 0) {
         let uid = user._id;
-        let ar = data.filter(item => {
+        let ar = data.filter((item) => {
           let u = false;
           if (item.userId1 && item.userId1._id != uid) {
             u = item.userId1;
@@ -189,7 +190,7 @@ function Inbox(props) {
           if (item.userId2 && item.userId2._id != uid) {
             u = item.userId2;
           }
-          let title = u.firstName + ' ' + u.lastName;
+          let title = u.firstName + " " + u.lastName;
 
           return title.toLowerCase().includes(search.toLowerCase());
         });
@@ -204,20 +205,20 @@ function Inbox(props) {
   }, [search, store.User.inbox]);
 
   const [getDataOnce, setgetDataOnce] = useState(false);
-  const setGetDataOnce = C => {
+  const setGetDataOnce = (C) => {
     setgetDataOnce(C);
   };
   const refreshing = store.User.ibl;
   const onRefresh = React.useCallback(() => {
-    console.log('onrefresh cal');
-    if (user !== 'guest') {
+    console.log("onrefresh cal");
+    if (user !== "guest") {
       getDbData();
     }
   }, []);
   const getDbData = () => {
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
-        attemptToGetInboxes(user._id, setGetDataOnce, '');
+        attemptToGetInboxes(user._id, setGetDataOnce, "");
       }
     });
   };
@@ -230,8 +231,8 @@ function Inbox(props) {
   }, [isInternet]);
 
   useEffect(() => {
-    if (user == 'guest') {
-      store.General.setgoto('guestaccess');
+    if (user == "guest") {
+      store.General.setgoto("guestaccess");
       store.User.Logout();
       return;
     }
@@ -239,7 +240,7 @@ function Inbox(props) {
 
   const deleteChat = (chatId, i) => {
     Keyboard.dismiss();
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         FireStore.deleteChat(
           inbox,
@@ -248,10 +249,10 @@ function Inbox(props) {
           search,
           sdata,
           setsdata,
-          closeSwipe,
+          closeSwipe
         );
       } else {
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
@@ -267,7 +268,7 @@ function Inbox(props) {
         <SafeAreaView style={styles.container2}>
           <View style={styles.container3}>
             <SwipeListView
-              decelerationRate={'fast'}
+              decelerationRate={"fast"}
               useFlatList
               removeClippedSubviews
               initialNumToRender={limit}
@@ -289,7 +290,7 @@ function Inbox(props) {
               ListHeaderComponent={
                 <ListHeader
                   search={search}
-                  setsearch={c => setsearch(c)}
+                  setsearch={(c) => setsearch(c)}
                   data={data}
                   totalUnread={totalUnread}
                 />
@@ -301,7 +302,7 @@ function Inbox(props) {
                 getDataOnce && data.length <= 0 && <EmptyListMessage />
               }
               ItemSeparatorComponent={ItemSeparatorView}
-              renderItem={({item, index}) => (
+              renderItem={({ item, index }) => (
                 <Card
                   item={item}
                   index={index}
@@ -309,16 +310,25 @@ function Inbox(props) {
                   data={data}
                   user={store.User.user}
                   props={props}
-                  setsearch={c => setsearch(c)}
+                  setsearch={(c) => setsearch(c)}
                   closeSwipe={closeSwipe}
                 />
               )}
-              renderHiddenItem={({item, index}) => (
+              renderHiddenItem={({ item, index }) => (
                 <CardDelete
                   item={item}
                   index={index}
                   refreshing={refreshing}
-                  deleteChat={(c, i) => deleteChat(c, i)}
+                  deleteChat={(c, i) => {
+                    const userPlanStatus =
+                      utils.functions.checkUserPalnStatus(props);
+
+                    if (userPlanStatus) {
+                      deleteChat(c, i);
+                    } else {
+                      closeSwipe();
+                    }
+                  }}
                 />
               )}
             />
@@ -327,7 +337,7 @@ function Inbox(props) {
           <utils.Footer
             nav={props.navigation}
             screen={headerTitle}
-            setsearch={() => setsearch('')}
+            setsearch={() => setsearch("")}
             focusScreen={store.General.focusScreen}
             closeSwipe={() => closeSwipe()}
           />

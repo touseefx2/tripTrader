@@ -37,7 +37,7 @@ export default HomeStack = () => {
     >
       <Drawer.Screen
         name="Home"
-        component={HomeStack}
+        component={HomeStacks}
         options={icon.Homeicon}
       />
       <Drawer.Screen
@@ -64,7 +64,7 @@ export default HomeStack = () => {
       {/* sec */}
       <Drawer.Screen
         name="TradeOffers"
-        component={screens.TradeOffers}
+        component={TradeOffersStack}
         options={icon.TradeOffersicon}
       />
       <Drawer.Screen
@@ -100,7 +100,7 @@ export default HomeStack = () => {
   );
 };
 
-let HomeStack = () => {
+const HomeStacks = () => {
   return (
     <Stack.Navigator
       initialRouteName="Homee"
@@ -145,7 +145,7 @@ let HomeStack = () => {
   );
 };
 
-let InboxStack = () => {
+const InboxStack = () => {
   return (
     <Stack.Navigator
       initialRouteName="Inboxe"
@@ -174,11 +174,22 @@ let InboxStack = () => {
           });
         }}
       />
+
+      <Stack.Screen
+        options={(props) => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+        name="Plan"
+        component={screens.Plan}
+      />
     </Stack.Navigator>
   );
 };
 
-let NewTripsStack = () => {
+const NewTripsStack = () => {
   return (
     <Stack.Navigator
       initialRouteName="NewTrips"
@@ -212,7 +223,7 @@ let NewTripsStack = () => {
   );
 };
 
-let ProfileStack = () => {
+const ProfileStack = () => {
   return (
     <Stack.Navigator
       initialRouteName="MyProfilee"
@@ -242,11 +253,22 @@ let ProfileStack = () => {
           });
         }}
       />
+
+      <Stack.Screen
+        options={(props) => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+        name="Plan"
+        component={screens.Plan}
+      />
     </Stack.Navigator>
   );
 };
 
-let ConfirmedTripsStack = () => {
+const ConfirmedTripsStack = () => {
   return (
     <Stack.Navigator
       initialRouteName="ConfirmedTripss"
@@ -276,11 +298,22 @@ let ConfirmedTripsStack = () => {
           });
         }}
       />
+
+      <Stack.Screen
+        options={(props) => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+        name="Plan"
+        component={screens.Plan}
+      />
     </Stack.Navigator>
   );
 };
 
-let ChatStack = () => {
+const ChatStack = () => {
   return (
     <Stack.Navigator
       initialRouteName="Chats"
@@ -314,7 +347,7 @@ let ChatStack = () => {
   );
 };
 
-let SavedTripsStack = () => {
+const SavedTripsStack = () => {
   return (
     <Stack.Navigator
       initialRouteName="SavedTripse"
@@ -359,7 +392,7 @@ let SavedTripsStack = () => {
   );
 };
 
-let UserProfileStack = () => {
+const UserProfileStack = () => {
   return (
     <Stack.Navigator
       initialRouteName="UserProfilee"
@@ -386,7 +419,7 @@ let UserProfileStack = () => {
   );
 };
 
-let SettingsStack = () => {
+const SettingsStack = () => {
   return (
     <Stack.Navigator
       initialRouteName="Settingss"
@@ -442,7 +475,7 @@ let SettingsStack = () => {
   );
 };
 
-let ChangePasswordStack = () => {
+const ChangePasswordStack = () => {
   return (
     <Stack.Navigator
       initialRouteName="ChangePasswordd"
@@ -459,7 +492,7 @@ let ChangePasswordStack = () => {
   );
 };
 
-let ManageSubscriptionStack = () => {
+const ManageSubscriptionStack = () => {
   return (
     <Stack.Navigator
       initialRouteName="ManageSubscriptionn"
@@ -477,7 +510,7 @@ let ManageSubscriptionStack = () => {
   );
 };
 
-let ShowFollowersStack = () => {
+const ShowFollowersStack = () => {
   return (
     <Stack.Navigator
       initialRouteName="ShowFollowerss"
@@ -511,7 +544,7 @@ let ShowFollowersStack = () => {
   );
 };
 
-let ShowOtherFollowersStack = () => {
+const ShowOtherFollowersStack = () => {
   return (
     <Stack.Navigator
       initialRouteName="ShowFollowersss"
@@ -540,6 +573,40 @@ let ShowOtherFollowersStack = () => {
             swipeEnabled: false,
           });
         }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const TradeOffersStack = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="TradeOfferss"
+      screenOptions={{
+        animationEnabled: false,
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen
+        options={(props) => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: true,
+          });
+        }}
+        name="TradeOfferss"
+        component={screens.TradeOffers}
+      />
+
+      <Stack.Screen
+        options={(props) => {
+          let parent = props.navigation.getParent();
+          parent.setOptions({
+            swipeEnabled: false,
+          });
+        }}
+        name="Plan"
+        component={screens.Plan}
       />
     </Stack.Navigator>
   );
