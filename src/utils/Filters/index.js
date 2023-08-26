@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,39 +11,39 @@ import {
   Pressable,
   Alert,
   Platform,
-} from 'react-native';
-import {styles} from './styles';
-import {observer} from 'mobx-react';
-import Modal from 'react-native-modal';
-import store from '../../store/index';
-import utils from '../index';
-import theme from '../../theme';
-import StarRating from 'react-native-star-rating';
-import NetInfo from '@react-native-community/netinfo';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+} from "react-native";
+import { styles } from "./styles";
+import { observer } from "mobx-react";
+import Modal from "react-native-modal";
+import store from "../../store/index";
+import utils from "../index";
+import theme from "../../theme";
+import StarRating from "react-native-star-rating";
+import NetInfo from "@react-native-community/netinfo";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 function Sep(props) {
-  return <View style={{height: props.height || 20}} />;
+  return <View style={{ height: props.height || 20 }} />;
 }
 
 export default observer(Filters);
 function Filters(props) {
-  let locSrc = require('../../assets/images/filters/location/img.png');
-  let actSrc = require('../../assets/images/filters/activity/img.png');
-  let spcSrc = require('../../assets/images/filters/species/img.png');
+  let locSrc = require("../../assets/images/filters/location/img.png");
+  let actSrc = require("../../assets/images/filters/activity/img.png");
+  let spcSrc = require("../../assets/images/filters/species/img.png");
   let activeOpacity = 0.8;
-  let headerTitle = 'Filters';
+  let headerTitle = "Filters";
   let isModalVisible = props.isVisible;
   let isApplyFilter = store.Filters.isFilter;
 
-  const {user} = store.User;
-  const {isInternet} = store.General;
+  const { user } = store.User;
+  const { isInternet } = store.General;
 
   const [rfrsh, setrfrsh] = useState(false);
   const [isFilter, setisFilter] = useState(false);
 
   const trptype = [...store.Filters.tripType];
-  const settripType = c => {
+  const settripType = (c) => {
     store.Filters.settripType(c);
   };
   const [isDropDownLoc, setisDropDownLoc] = useState(false);
@@ -63,27 +63,27 @@ function Filters(props) {
   const stripType = store.Filters.stripType
     ? [...store.Filters.stripType]
     : false;
-  const setstripType = c => {
+  const setstripType = (c) => {
     store.Filters.setstripType(c);
   };
   let stripLoc = store.Filters.stripLocation;
-  const setstripLoc = c => {
+  const setstripLoc = (c) => {
     store.Filters.setstripLocation(c);
   };
   let sactivity = store.Filters.sactivity;
-  const setsactivity = c => {
+  const setsactivity = (c) => {
     store.Filters.setsactivity(c);
   };
   let sspecies = store.Filters.sspecies;
-  const setsspecies = c => {
+  const setsspecies = (c) => {
     store.Filters.setsspecies(c);
   };
   let shostRating = store.Filters.shostRating;
-  const setshostRating = c => {
+  const setshostRating = (c) => {
     store.Filters.setshostRating(c);
   };
   let svu = store.Filters.svu;
-  const setsvu = c => {
+  const setsvu = (c) => {
     store.Filters.setsvu(c);
   };
 
@@ -104,7 +104,7 @@ function Filters(props) {
         if (dt.length > 0) {
           dt.map((e, i, a) => {
             if (ST.length > 0) {
-              let index = ST.findIndex(d => d === e.name);
+              let index = ST.findIndex((d) => d === e.name);
               if (index > -1) {
                 dt[i].isSel = true;
               } else {
@@ -121,7 +121,7 @@ function Filters(props) {
 
       if (sactivity) {
         if (activity.length > 0) {
-          let index = activity.findIndex(e => e.name === sactivity);
+          let index = activity.findIndex((e) => e.name === sactivity);
           if (index > -1) {
             setactvty(activity[index]);
           }
@@ -130,7 +130,7 @@ function Filters(props) {
 
       if (sspecies) {
         if (species.length > 0) {
-          let index = species.findIndex(e => e.name === sspecies);
+          let index = species.findIndex((e) => e.name === sspecies);
           if (index > -1) {
             setspcs(species[index]);
           }
@@ -176,21 +176,21 @@ function Filters(props) {
   }, [isModalVisible, trptype, loc, actvty, spcs, host]);
 
   const onrefrshdata = () => {
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
-        if (user == 'guest') {
-          store.User.attemptToGetHomeTripsGuest(c => props.setGetDataOnce(c));
+        if (user == "guest") {
+          store.User.attemptToGetHomeTripsGuest((c) => props.setGetDataOnce(c));
         } else {
           store.User.attemptToGetBloackUsers(
             store.User.user._id,
             () => {},
             () => {},
-            c => props.setGetDataOnce(c),
-            '',
+            (c) => props.setGetDataOnce(c),
+            ""
           );
         }
       } else {
-        Alert.alert('Please connect internet');
+        Alert.alert("Please connect internet");
       }
     });
   };
@@ -241,7 +241,7 @@ function Filters(props) {
         onrefrshdata();
       }
     } else {
-      Alert.alert('Please connect internet');
+      Alert.alert("Please connect internet");
     }
   };
 
@@ -290,7 +290,7 @@ function Filters(props) {
         <StatusBar
           translucent={false}
           backgroundColor={theme.color.background}
-          barStyle={'dark-content'}
+          barStyle={"dark-content"}
         />
       </>
     );
@@ -299,7 +299,7 @@ function Filters(props) {
   const renderContent = () => {
     const renderHeder = () => {
       const render1 = () => {
-        let src = require('../../assets/images/back/imgg.png');
+        let src = require("../../assets/images/back/imgg.png");
         return (
           <TouchableOpacity activeOpacity={activeOpacity} onPress={closeModal}>
             <Image source={src} style={styles.headerIcon} />
@@ -311,14 +311,16 @@ function Filters(props) {
         return (
           <View
             style={{
-              width: '50%',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
+              width: "50%",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={styles.headerTitle}>
+              style={styles.headerTitle}
+            >
               {headerTitle}
             </Text>
           </View>
@@ -330,7 +332,8 @@ function Filters(props) {
           <TouchableOpacity
             onPress={resetFilters}
             disabled={isFilter ? false : true}
-            activeOpacity={activeOpacity}>
+            activeOpacity={activeOpacity}
+          >
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
@@ -341,7 +344,8 @@ function Filters(props) {
                     ? theme.color.subTitle
                     : theme.color.subTitleLight,
                 },
-              ]}>
+              ]}
+            >
               Reset
             </Text>
           </TouchableOpacity>
@@ -365,17 +369,18 @@ function Filters(props) {
               width: 23,
               height: 23,
               borderRadius: 4,
-              backgroundColor: !vu ? 'white' : theme.color.button1,
-              alignItems: 'center',
-              justifyContent: 'center',
+              backgroundColor: !vu ? "white" : theme.color.button1,
+              alignItems: "center",
+              justifyContent: "center",
               borderWidth: 1,
               borderColor: theme.color.fieldBorder,
             }}
             activeOpacity={0.5}
-            onPress={() => setvu(!vu)}>
+            onPress={() => setvu(!vu)}
+          >
             {vu && (
               <utils.vectorIcon.FontAwesome5
-                name={'check'}
+                name={"check"}
                 color={theme.color.buttonText}
                 size={11}
               />
@@ -390,13 +395,14 @@ function Filters(props) {
       const ListHeader = () => {
         return (
           <View style={styles.itemHeader}>
-            <View style={{width: '100%'}}>
+            <View style={{ width: "100%" }}>
               <Text
                 style={{
                   fontSize: 17,
-                  color: '#101B10',
+                  color: "#101B10",
                   fontFamily: theme.fonts.fontBold,
-                }}>
+                }}
+              >
                 Popular Filters
               </Text>
             </View>
@@ -404,7 +410,7 @@ function Filters(props) {
         );
       };
 
-      const ItemView = ({item, index}) => {
+      const ItemView = ({ item, index }) => {
         const onClickItem = () => {
           const dt = [...trptype];
           dt[index].isSel = !dt[index].isSel;
@@ -418,7 +424,7 @@ function Filters(props) {
           <>
             <Pressable
               onPress={() => onClickItem(index)}
-              style={({pressed}) => [
+              style={({ pressed }) => [
                 {
                   opacity: pressed ? activeOpacity : 1,
                 },
@@ -431,14 +437,16 @@ function Filters(props) {
                       : theme.color.button1,
                   },
                 ],
-              ]}>
+              ]}
+            >
               <Text
                 style={{
                   fontSize: 14,
-                  color: !isSel ? '#30563A' : '#FAFAFA',
+                  color: !isSel ? "#30563A" : "#FAFAFA",
                   fontFamily: theme.fonts.fontMedium,
-                  textTransform: 'capitalize',
-                }}>
+                  textTransform: "capitalize",
+                }}
+              >
                 {title}
               </Text>
             </Pressable>
@@ -452,7 +460,7 @@ function Filters(props) {
           <FlatList
             numColumns={2}
             extraData={rfrsh}
-            columnWrapperStyle={{justifyContent: 'space-between'}}
+            columnWrapperStyle={{ justifyContent: "space-between" }}
             data={trptype}
             renderItem={ItemView}
             keyExtractor={(item, index) => index.toString()}
@@ -462,47 +470,46 @@ function Filters(props) {
     };
 
     const renderDropDownFields = () => {
-      const renderShowDropDown = c => {
+      const renderShowDropDown = (c) => {
         let data = [];
 
-        if (c == 'loc') {
+        if (c == "loc") {
           data = tripLoc;
         }
-        if (c == 'actvty') {
+        if (c == "actvty") {
           data = activity;
         }
-        if (c == 'spcs') {
+        if (c == "spcs") {
           data = species;
         }
 
-        const onclickSelect = d => {
-          if (c == 'loc') {
+        const onclickSelect = (d) => {
+          if (c == "loc") {
             setloc(d);
             return;
           }
-          if (c == 'actvty') {
+          if (c == "actvty") {
             setactvty(d);
             return;
           }
-          if (c == 'spcs') {
+          if (c == "spcs") {
             setspcs(d);
             return;
           }
         };
 
-        const abs = Platform.OS == 'ios' ? false : true;
         return (
           <utils.DropDown
             search={true}
             data={data}
-            onSelectItem={d => {
+            onSelectItem={(d) => {
               onclickSelect(d);
             }}
-            setVisible={d => {
+            setVisible={(d) => {
               closeAllDropDown();
             }}
             c={c}
-            // absolute={abs}
+            absolute={false}
           />
         );
       };
@@ -512,17 +519,18 @@ function Filters(props) {
           {/* location */}
           <View style={styles.dropDownMainConatiner}>
             <Text style={styles.dropdownFieldTitle}>Trip Location</Text>
-            <View style={{width: '100%', marginTop: 5}}>
+            <View style={{ width: "100%", marginTop: 5 }}>
               <TouchableOpacity
                 onPress={() => {
                   closeAllDropDown();
                   setisDropDownLoc(!isDropDownLoc);
                 }}
                 activeOpacity={activeOpacity}
-                style={[styles.dropDowninputConatiner]}>
+                style={[styles.dropDowninputConatiner]}
+              >
                 <Image style={styles.dropDownIcon} source={locSrc} />
 
-                <View style={{width: '79%'}}>
+                <View style={{ width: "79%" }}>
                   <Text
                     numberOfLines={1}
                     ellipsizeMode="tail"
@@ -530,36 +538,38 @@ function Filters(props) {
                       styles.dropDownText,
                       {
                         opacity: !loc ? 0.4 : 1,
-                        textTransform: !loc ? 'none' : 'capitalize',
+                        textTransform: !loc ? "none" : "capitalize",
                       },
-                    ]}>
-                    {!loc ? 'Select state' : loc.name}
+                    ]}
+                  >
+                    {!loc ? "Select state" : loc.name}
                   </Text>
                 </View>
                 <utils.vectorIcon.Fontisto
                   name="angle-down"
-                  color={'#14181F'}
+                  color={"#14181F"}
                   size={13}
                 />
               </TouchableOpacity>
-              {isDropDownLoc && renderShowDropDown('loc')}
+              {isDropDownLoc && renderShowDropDown("loc")}
             </View>
           </View>
           <Sep />
           {/* Activity */}
           <View style={styles.dropDownMainConatiner}>
             <Text style={styles.dropdownFieldTitle}>Activity</Text>
-            <View style={{width: '100%', marginTop: 5}}>
+            <View style={{ width: "100%", marginTop: 5 }}>
               <TouchableOpacity
                 onPress={() => {
                   closeAllDropDown();
                   setisDropDownActivity(!isDropDownActivity);
                 }}
                 activeOpacity={activeOpacity}
-                style={[styles.dropDowninputConatiner]}>
+                style={[styles.dropDowninputConatiner]}
+              >
                 <Image style={styles.dropDownIcon} source={actSrc} />
 
-                <View style={{width: '79%'}}>
+                <View style={{ width: "79%" }}>
                   <Text
                     numberOfLines={1}
                     ellipsizeMode="tail"
@@ -567,19 +577,20 @@ function Filters(props) {
                       styles.dropDownText,
                       {
                         opacity: !actvty ? 0.4 : 1,
-                        textTransform: !actvty ? 'none' : 'capitalize',
+                        textTransform: !actvty ? "none" : "capitalize",
                       },
-                    ]}>
-                    {!actvty ? 'Select activity' : actvty.name}
+                    ]}
+                  >
+                    {!actvty ? "Select activity" : actvty.name}
                   </Text>
                 </View>
                 <utils.vectorIcon.Fontisto
                   name="angle-down"
-                  color={'#14181F'}
+                  color={"#14181F"}
                   size={13}
                 />
               </TouchableOpacity>
-              {isDropDownActivity && renderShowDropDown('actvty')}
+              {isDropDownActivity && renderShowDropDown("actvty")}
             </View>
           </View>
           <Sep />
@@ -587,17 +598,18 @@ function Filters(props) {
           {/* Species*/}
           <View style={styles.dropDownMainConatiner}>
             <Text style={styles.dropdownFieldTitle}>Species</Text>
-            <View style={{width: '100%', marginTop: 5}}>
+            <View style={{ width: "100%", marginTop: 5 }}>
               <TouchableOpacity
                 onPress={() => {
                   closeAllDropDown();
                   setisDropDownSpecies(!isDropDownSpecies);
                 }}
                 activeOpacity={activeOpacity}
-                style={[styles.dropDowninputConatiner]}>
+                style={[styles.dropDowninputConatiner]}
+              >
                 <Image style={styles.dropDownIcon} source={spcSrc} />
 
-                <View style={{width: '79%'}}>
+                <View style={{ width: "79%" }}>
                   <Text
                     numberOfLines={1}
                     ellipsizeMode="tail"
@@ -605,19 +617,20 @@ function Filters(props) {
                       styles.dropDownText,
                       {
                         opacity: !spcs ? 0.4 : 1,
-                        textTransform: !spcs ? 'none' : 'capitalize',
+                        textTransform: !spcs ? "none" : "capitalize",
                       },
-                    ]}>
-                    {!spcs ? 'Select species' : spcs.name}
+                    ]}
+                  >
+                    {!spcs ? "Select species" : spcs.name}
                   </Text>
                 </View>
                 <utils.vectorIcon.Fontisto
                   name="angle-down"
-                  color={'#14181F'}
+                  color={"#14181F"}
                   size={13}
                 />
               </TouchableOpacity>
-              {isDropDownSpecies && renderShowDropDown('spcs')}
+              {isDropDownSpecies && renderShowDropDown("spcs")}
             </View>
           </View>
         </>
@@ -628,14 +641,15 @@ function Filters(props) {
       const ListHeader = () => {
         return (
           <View style={styles.itemHeader}>
-            <View style={{width: '100%'}}>
+            <View style={{ width: "100%" }}>
               <Text
                 style={{
                   fontSize: 16,
-                  color: '#101B10',
+                  color: "#101B10",
                   fontFamily: theme.fonts.fontBold,
-                  textTransform: 'capitalize',
-                }}>
+                  textTransform: "capitalize",
+                }}
+              >
                 Host Rating
               </Text>
             </View>
@@ -647,20 +661,21 @@ function Filters(props) {
         return (
           <View
             style={{
-              width: '46%',
+              width: "46%",
               marginTop: 10,
-            }}>
+            }}
+          >
             <StarRating
               starSize={27}
               disabled={false}
               maxStars={5}
               rating={host}
-              selectedStar={rating => sethost(rating)}
-              emptyStarColor={'rgba(17, 17, 17, 0.3)'}
-              fullStarColor={'#FCBC17'}
-              emptyStar={'star'}
-              fullStar={'star'}
-              iconSet={'FontAwesome'}
+              selectedStar={(rating) => sethost(rating)}
+              emptyStarColor={"rgba(17, 17, 17, 0.3)"}
+              fullStarColor={"#FCBC17"}
+              emptyStar={"star"}
+              fullStar={"star"}
+              iconSet={"FontAwesome"}
             />
           </View>
         );
@@ -678,7 +693,8 @@ function Filters(props) {
       return (
         <TouchableOpacity
           onPress={onClickApplyFilters}
-          style={[styles.bottomFullButtonContainer]}>
+          style={[styles.bottomFullButtonContainer]}
+        >
           <Text style={styles.bottomFullButtonText}>Apply Filters</Text>
         </TouchableOpacity>
       );
@@ -689,7 +705,7 @@ function Filters(props) {
         <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
           {renderHeder()}
           <Sep />
-          <ScrollView showsVerticalScrollIndicator={false}>
+          <View>
             {renderVerifedchk()}
             <Sep />
             {/* {trptype.length > 0 && renderTripTypes()} */}
@@ -701,7 +717,7 @@ function Filters(props) {
             <Sep height={30} />
             {renderBottom()}
             <Sep />
-          </ScrollView>
+          </View>
         </KeyboardAwareScrollView>
       </>
     );
@@ -716,9 +732,10 @@ function Filters(props) {
         animationIn="fadeIn"
         animationOut="fadeOut"
         coverScreen={false}
-        deviceHeight={Dimensions.get('screen').height}
-        style={{padding: 0, margin: 0}}
-        onBackButtonPress={closeModal}>
+        deviceHeight={Dimensions.get("screen").height}
+        style={{ padding: 0, margin: 0 }}
+        onBackButtonPress={closeModal}
+      >
         <View style={styles.mainContainer}>
           {renderStatusBar()}
           {renderContent()}

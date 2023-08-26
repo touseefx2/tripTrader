@@ -14,68 +14,57 @@ import store from "../../store/index";
 import utils from "../../utils/index";
 import theme from "../../theme";
 import NetInfo from "@react-native-community/netinfo";
-import { ActivityIndicator } from "react-native-paper";
 
 export default observer(ShowFollowers);
 
 function ShowFollowers(props) {
-  const chk = store.User.cchk;
-  const headerTitle = store.User.ffuser;
-  const fscreen = store.User.fscreen || "";
-  let db = false;
-  if (fscreen == "Home") {
-    db = true;
-  }
-
+  const {
+    check,
+    user,
+    userName: headerTitle,
+    callingScreen,
+  } = props?.route?.params;
   const { isInternet } = store.General;
-  const { user } = store.User;
 
-  const data = chk == "followers" ? store.User.followers : store.User.following;
-
-  const mloader = store.User.fl;
-
-  const total =
-    chk == "followers" ? store.User.totalfollowers : store.User.totalfollowing;
-
+  const [data, setdata] = useState([]);
+  const [refreshing, setrefreshing] = useState(false);
   const [getDataOnce, setgetDataOnce] = useState(false);
 
-  const [refreshing, setRefreshing] = React.useState(false);
-  const setrefeshing = (c) => {
-    setRefreshing(c);
-  };
+  useEffect(() => {
+    if (!getDataOnce && isInternet) {
+      getDbData();
+    }
+  }, [getDataOnce, isInternet]);
   const onRefresh = React.useCallback(() => {
-    console.warn("onrefresh cal");
-    setRefreshing(true);
+    console.log("onrefresh cal");
+
     getDbData();
   }, []);
   const getDbData = () => {
     NetInfo.fetch().then((state) => {
       if (state.isConnected) {
-        if (chk == "followers") {
-          store.User.attemptToGetFollowers(
+        if (check === "followers") {
+          store.Userv.attemptToGetFollowers(
             user._id,
             setgetDataOnce,
-            setrefeshing
+            () => {},
+            () => {},
+            setdata,
+            setrefreshing
           );
         } else {
-          store.User.attemptToGetFollowing(
+          store.Userv.attemptToGetFollowing(
             user._id,
             setgetDataOnce,
-            setrefeshing
+            () => {},
+            () => {},
+            setdata,
+            setrefreshing
           );
         }
-      } else {
-        setrefeshing(false);
       }
     });
   };
-  useEffect(() => {
-    if (!getDataOnce && isInternet) {
-      getDbData();
-    }
-    return () => {};
-  }, [getDataOnce, isInternet]);
-
   const ItemSeparatorView = () => {
     return (
       <View
@@ -90,7 +79,7 @@ function ShowFollowers(props) {
     return (
       // Flat List Item
       <>
-        {!mloader && getDataOnce && (
+        {!refreshing && getDataOnce && (
           <Text
             style={{
               marginTop: "80%",
@@ -104,29 +93,18 @@ function ShowFollowers(props) {
             }}
             onPress={() => getItem(item)}
           >
-            {chk == "followers"
+            {check === "followers"
               ? "No Followers Found"
-              : "You are not following anyone yet"}
+              : `Not Following Anyone Yet`}
           </Text>
-        )}
-
-        {mloader && !getDataOnce && (
-          <ActivityIndicator
-            size={30}
-            color={theme.color.button1}
-            style={{
-              marginTop: "80%",
-              alignSelf: "center",
-            }}
-          />
         )}
       </>
     );
   };
 
-  const src = require("../../assets/images/locationPin/img.png");
   const ItemView = ({ item, index }) => {
     const usrr = item.userId;
+    //user
     let photo = "";
     let userName = "undefined";
     if (usrr) {
@@ -148,12 +126,6 @@ function ShowFollowers(props) {
             loadingSource={require("../../assets/images/imgLoad/img.jpeg")}
             blurRadius={5}
           />
-          {/* {isVeirfy && (
-              <Image
-                style={styles.miconVerify}
-                source={require('../../assets/images/verified/img.png')}
-              />
-            )} */}
         </View>
       );
     };
@@ -184,7 +156,7 @@ function ShowFollowers(props) {
       <Pressable
         disabled={isDisable}
         onPress={() => {
-          utils.functions.goToUserProfile(props, "my", usrr);
+          utils.functions.goToUserProfile(props, usrr, usrr?._id.toString());
         }}
         style={({ pressed }) => [
           { opacity: pressed ? 0.8 : 1.0 },
@@ -194,38 +166,6 @@ function ShowFollowers(props) {
         {renderProfile()}
         {renderText()}
       </Pressable>
-    );
-  };
-
-  const ListHeader = () => {
-    let t = chk == "followers" ? "Followers" : "Following";
-    let num = total;
-    return (
-      <View style={{ width: "100%" }}>
-        <Text
-          style={{
-            color: "#101B10",
-            fontSize: 16,
-            fontFamily: theme.fonts.fontBold,
-
-            textTransform: "capitalize",
-          }}
-        >
-          {t} ({num})
-        </Text>
-      </View>
-    );
-  };
-
-  const ListFooter = () => {
-    return (
-      <>
-        <View>
-          <View style={styles.listFooter}>
-            <Text style={styles.listFooterT}>End of results</Text>
-          </View>
-        </View>
-      </>
     );
   };
 
@@ -254,24 +194,10 @@ function ShowFollowers(props) {
               keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={EmptyListMessage}
               ItemSeparatorComponent={ItemSeparatorView}
-              // ListHeaderComponent={data.length > 0 ? ListHeader : null}
-              // ListFooterComponent={data.length > 0 ? ListFooter : null}
             />
-            {data.length > 0 && !getDataOnce && mloader && (
-              <ActivityIndicator
-                size={30}
-                color={theme.color.button1}
-                style={{
-                  top: "50%",
-                  position: "absolute",
-                  alignSelf: "center",
-                }}
-              />
-            )}
           </View>
 
           <utils.Footer
-            doubleBack={db}
             nav={props.navigation}
             screen={"Followers"}
             focusScreen={store.General.focusScreen}

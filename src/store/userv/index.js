@@ -647,12 +647,7 @@ class userv {
 
   @action attemptToGetHome = (uid, setgetdata, sflwrs, sflwng) => {
     console.log("Get AllGenralData : ", "true");
-    this.allGetGeneralUserData(
-      uid,
-      setgetdata,
-      (c) => sflwrs(c),
-      (c) => sflwng(c)
-    );
+    this.allGetGeneralUserData(uid, setgetdata, sflwrs, sflwng);
   };
 
   //
@@ -2085,16 +2080,16 @@ class userv {
     this.attemptToGetFollowers(
       uid,
       sgd,
-      (c) => sflwrs(c),
-      (c) => sflwng(c),
+      sflwrs,
+      sflwng,
       () => {},
       () => {}
     );
     this.attemptToGetFollowing(
       uid,
       sgd,
-      (c) => sflwrs(c),
-      (c) => sflwng(c),
+      sflwrs,
+      sflwng,
       () => {},
       () => {}
     );

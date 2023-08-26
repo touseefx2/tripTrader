@@ -959,7 +959,7 @@ function Chat(props) {
                       if (user == "guest") {
                         return;
                       }
-                      utils.functions.goToUserProfile(props, "chat", ruser);
+                      utils.functions.goToUserProfile(props, ruser);
                       closeBottomSheet();
                     }}
                     style={({ pressed }) => [

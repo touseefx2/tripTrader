@@ -2,7 +2,6 @@ import Plan from "./Plan";
 import Chat from "./Chat";
 import ManageSubscription from "./ManageSubscription/index";
 import ShowFollowers from "./ShowFollowers/index";
-import ShowOtherFollowers from "./ShowOtherFollowers/index";
 import Splash from "./Splash";
 import Home from "./Home";
 import Notifications from "./Notifications";
@@ -53,7 +52,7 @@ export default screens = {
   Settings,
   ChangePassword,
   ShowFollowers,
-  ShowOtherFollowers,
+
   UserProfile,
   ManageSubscription,
   Plan,

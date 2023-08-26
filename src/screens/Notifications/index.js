@@ -154,7 +154,7 @@ function Notifications({ props, callingScreen, isShowModal, setIsShowModal }) {
   };
 
   const goToUserProfile = (senderUser) => {
-    utils.functions.goToUserProfile(props, callingScreen || "", senderUser);
+    utils.functions.goToUserProfile(props, senderUser);
   };
 
   function compare(d, dd) {

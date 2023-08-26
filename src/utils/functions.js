@@ -485,13 +485,19 @@ const isUserFreemium = () => {
   );
 };
 
-const goToUserProfile = (props, screen, user) => {
+const goToUserProfile = (props, user, refresh = "") => {
   const { authToken } = store.User;
+  const { setUser, addauthToken } = store.Userv;
 
-  store.Userv.setfscreen(screen);
-  store.Userv.setUser(user);
-  store.Userv.addauthToken(authToken);
-  props.navigation.navigate("UserProfile");
+  setUser(user);
+  addauthToken(authToken);
+  props.navigation.navigate("UserProfileStack", {
+    screen: "UserProfile",
+    params: {
+      user: user,
+      refresh: refresh,
+    },
+  });
 };
 
 export const functions = {

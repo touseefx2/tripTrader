@@ -1,12 +1,18 @@
-import React, {useState} from 'react';
-import {Text, ScrollView, Platform} from 'react-native';
-import {styles} from './styles';
-import utils from '../../../../utils';
-import store from '../../../../store';
-import {observer} from 'mobx-react';
-import Bottom from './components/Bottom';
-import Fields from './components/Fields';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import React, { useState } from "react";
+import {
+  Text,
+  ScrollView,
+  Platform,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
+import { styles } from "./styles";
+import utils from "../../../../utils";
+import store from "../../../../store";
+import { observer } from "mobx-react";
+import Bottom from "./components/Bottom";
+import Fields from "./components/Fields";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default observer(Step3);
 function Step3({
@@ -40,7 +46,7 @@ function Step3({
   setNote,
   clearStep3Fields,
 }) {
-  const {tripLocation, activityList} = store.Filters;
+  const { tripLocation, activityList } = store.Filters;
 
   const [isShowCalender, setIsShowCalender] = useState(false);
   const [isShowUnAvailable, setIsShowUnAvailable] = useState(false);
@@ -51,17 +57,17 @@ function Step3({
 
   let totalDays = 0;
   if (duration) {
-    if (duration.title === 'days') totalDays = durationNum;
-    else if (duration.title === 'weeks') totalDays = durationNum * 7;
+    if (duration.title === "days") totalDays = durationNum;
+    else if (duration.title === "weeks") totalDays = durationNum * 7;
   }
 
   let isDisable;
   if (
     availablityDates &&
-    durationNum != '' &&
-    tripType != '' &&
+    durationNum != "" &&
+    tripType != "" &&
     selectedSpecies != null &&
-    city != '' &&
+    city != "" &&
     selectedState
   )
     isDisable = false;
@@ -94,28 +100,28 @@ function Step3({
     );
   };
 
-  const renderShowDropDown = check => {
+  const renderShowDropDown = (check) => {
     const data =
-      check === 'tt'
+      check === "tt"
         ? activityList
-        : check === 'state'
+        : check === "state"
         ? tripLocation
-        : check === 'spcs'
+        : check === "spcs"
         ? speciesList
-        : check === 'dur'
+        : check === "dur"
         ? durationList
         : [];
 
-    const onclickSelect = obj => {
-      if (check === 'tt') {
+    const onclickSelect = (obj) => {
+      if (check === "tt") {
         setTripType(obj);
         if (tripType && tripType.name !== obj.name) setSelectedSpecies(null);
       }
-      if (check === 'state') setSelectedState(obj);
+      if (check === "state") setSelectedState(obj);
 
-      if (check === 'spcs') setSelectedSpecies(obj);
+      if (check === "spcs") setSelectedSpecies(obj);
 
-      if (check === 'dur') {
+      if (check === "dur") {
         setDuration(obj);
         utils.functions.checkAvailability(
           availablityDates,
@@ -123,7 +129,7 @@ function Step3({
           setAvailablityDates,
           setUnAvailble,
           obj.title,
-          durationNum,
+          durationNum
         );
       }
     };
@@ -135,7 +141,7 @@ function Step3({
         onSelectItem={onclickSelect}
         setVisible={closeAllDropDown}
         c={check}
-        absolute={Platform.OS === 'ios' ? false : true}
+        absolute={Platform.OS === "ios" ? false : true}
       />
     );
   };
@@ -186,15 +192,15 @@ function Step3({
 
   return (
     <>
-      <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
+      <KeyboardAwareScrollView
+        nestedScrollEnabled
+        showsVerticalScrollIndicator={false}
+      >
         {isMaxHeight ? (
-          <ScrollView
-            contentContainerStyle={{paddingHorizontal: 15}}
-            showsVerticalScrollIndicator={false}
-            style={{flex: 1}}>
+          <View style={{ flex: 1, paddingHorizontal: 15 }}>
             {renderTitle()}
             {renderField()}
-          </ScrollView>
+          </View>
         ) : (
           <>
             {renderTitle()}
@@ -219,7 +225,7 @@ function Step3({
           setUnAvailble={setUnAvailble}
           title={duration.title}
           durationNum={durationNum}
-          minDate={minDate != '' ? minDate : new Date()}
+          minDate={minDate != "" ? minDate : new Date()}
           totalDays={totalDays}
         />
       )}

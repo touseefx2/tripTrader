@@ -38,7 +38,7 @@ export default MainStack = () => {
     >
       <Drawer.Screen
         name="Home"
-        component={stack.HomeStack}
+        component={screens.Home}
         options={icon.Homeicon}
       />
       <Drawer.Screen

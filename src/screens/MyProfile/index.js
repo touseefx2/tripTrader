@@ -256,13 +256,15 @@ function MyProfile(props) {
     });
   };
 
-  const ShowFollowersScreen = (c) => {
-    store.User.setcchk(c);
-    store.User.setffuser(userName);
-    store.User.setccc("my");
+  const ShowFollowersScreen = (check) => {
     props.navigation.navigate("ShowFollowersStack", {
       screen: "ShowFollowers",
-      params: {},
+      params: {
+        check: check,
+        user: user,
+        userName: userName,
+        callingScreen: "MyProfile",
+      },
     });
   };
 
@@ -415,6 +417,7 @@ function MyProfile(props) {
             navigationState={{ index, routes }}
             renderScene={renderScene}
             onIndexChange={setIndex}
+            lazy
           />
         </View>
 

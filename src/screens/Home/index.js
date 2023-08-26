@@ -103,7 +103,7 @@ function Home(props) {
   useEffect(() => {
     if (user && user !== "guest" && getDataOnce) {
       setTimeout(() => {
-        // setIsEmailPopup(user?.isEmailVerified === false ? true : false);
+        setIsEmailPopup(user?.isEmailVerified === false ? true : false);
       }, 2000);
     }
   }, [user, getDataOnce]);
@@ -284,7 +284,7 @@ function Home(props) {
       setOfferGoTo("received");
     }
     if (action.includes("Message")) {
-      utils.functions.goToUserProfile(props, headerTitle, senderId);
+      utils.functions.goToUserProfile(props, senderId);
     }
     if (action == "Review Trip Details") {
       //  offerAccepted tripStarts tripHosting
@@ -301,7 +301,7 @@ function Home(props) {
       action == "dispute"
     ) {
       //newTripAdded  reviewReminder userFollow disputeReview
-      utils.functions.goToUserProfile(props, headerTitle, senderId);
+      utils.functions.goToUserProfile(props, senderId);
     }
   };
 

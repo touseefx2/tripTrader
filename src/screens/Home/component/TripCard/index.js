@@ -91,7 +91,7 @@ function TripCard({
             disabled={user == "guest" ? true : false}
             onPress={() => {
               if (user === "guest") return;
-              utils.functions.goToUserProfile(props, "home", usr);
+              utils.functions.goToUserProfile(props, usr);
             }}
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1.0 }]}
           >

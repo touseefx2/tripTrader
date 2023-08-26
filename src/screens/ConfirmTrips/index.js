@@ -560,11 +560,7 @@ function ConfirmTrips(props) {
                   false
                 );
                 if (userPlanStatus) {
-                  utils.functions.goToUserProfile(
-                    props,
-                    "confirmedtrips",
-                    user
-                  );
+                  utils.functions.goToUserProfile(props, user);
                 }
               }}
               style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }, bc]}

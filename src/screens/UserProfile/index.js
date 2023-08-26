@@ -27,33 +27,32 @@ import Photos from "./Photos";
 export default observer(UserProfile);
 
 function UserProfile(props) {
+  let userName = "";
+  let photo = "";
   const refRBSheet = useRef();
   const toast = useRef(null);
   const headerTitle = "Profile";
-
-  const { isInternet } = store.General;
-  const { user } = store.Userv;
-
-  const { homeModalLoder, setOtherProfileProps } = store.User;
-
-  const [followers, setfollowers] = useState(0);
-  const [following, setfollowing] = useState(0);
-  const [loader, setloader] = useState(false);
-
-  let userName = "";
-  let photo = "";
+  const { user, refresh } = props?.route?.params;
   if (user) {
     userName = user.firstName + " " + user.lastName;
     photo = user.image ? user.image : "";
   }
 
+  const { isInternet } = store.General;
+  const { homeModalLoder, setOtherProfileProps } = store.User;
+
+  const [getDataOnce, setgetDataOnce] = useState(false);
+
+  const [followers, setfollowers] = useState(0);
+  const [following, setfollowing] = useState(0);
+  const [loader, setloader] = useState(false);
+  const [isFollow, setisFollow] = useState(false);
+  const [isBlock, setisBlock] = useState(false);
+
   const [pvm, setpvm] = useState(false); //show fulll image modal
   const [pv, setpv] = useState(""); //photo view
 
   const [profileImageLoader, setprofileImageLoader] = useState(false);
-
-  const [isFollow, setisFollow] = useState(false);
-  const [isBlock, setisBlock] = useState(false);
 
   const [isOpenSheet, setisOpenSheet] = useState(false);
 
@@ -66,23 +65,39 @@ function UserProfile(props) {
 
   const [modalObj, setModalObj] = useState(false);
 
-  const [getDataOnce, setgetDataOnce] = useState(false);
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    { key: "reviews", title: "Reviews" },
+    { key: "trips", title: "Trips" },
+    { key: "photos", title: "Photos" },
+  ]);
+  const renderScene = SceneMap({
+    // trips: () => <Trips p={props} />,
+    // reviews: Reviews,
+    // trips: Trips,
+    // photos: Photos,
 
-  console.log("====> user profile callll  getDataOnce", getDataOnce);
+    reviews: () => <Reviews p={props} />,
+    trips: () => <Trips p={props} />,
+    photos: () => <Photos p={props} />,
+  });
 
-  const getDbData = () => {
-    NetInfo.fetch().then((state) => {
-      if (state.isConnected) {
-        store.Userv.getUserById(user._id, goBackMain);
-        store.Userv.attemptToGetHome(
-          user._id,
-          setgetDataOnce,
-          (c) => setfollowers(c),
-          (c) => setfollowing(c)
-        );
-      }
-    });
+  useEffect(() => {
+    if (refresh !== "") {
+      clearState();
+      console.log("===============> UserProfile ================>", refresh);
+    }
+  }, [refresh]);
+
+  const clearState = () => {
+    setgetDataOnce(false);
+    setfollowers(0);
+    setfollowing(0);
+    setloader(false);
+    setisFollow(false);
+    setisBlock(false);
   };
+
   useEffect(() => {
     if (!getDataOnce && isInternet) {
       getDbData();
@@ -111,6 +126,20 @@ function UserProfile(props) {
       setisFollow(flw);
     }
   }, [store.User.user]);
+
+  const getDbData = () => {
+    NetInfo.fetch().then((state) => {
+      if (state.isConnected) {
+        store.Userv.getUserById(user._id, goBackMain);
+        store.Userv.attemptToGetHome(
+          user._id,
+          setgetDataOnce,
+          setfollowers,
+          setfollowing
+        );
+      }
+    });
+  };
 
   const goBackMain = () => {
     props.navigation.goBack();
@@ -189,19 +218,6 @@ function UserProfile(props) {
     });
   };
 
-  const [index, setIndex] = useState(0);
-  const [routes] = useState([
-    { key: "reviews", title: "Reviews" },
-    { key: "trips", title: "Trips" },
-    { key: "photos", title: "Photos" },
-  ]);
-  const renderScene = SceneMap({
-    reviews: Reviews,
-    // trips: () => <Trips p={props} />,
-    trips: Trips,
-    photos: Photos,
-  });
-
   useEffect(() => {
     setOtherProfileProps(props);
   }, []);
@@ -240,13 +256,16 @@ function UserProfile(props) {
     refRBSheet?.current?.close();
   };
 
-  const ShowFollowersScreen = (c) => {
-    store.Userv.setUser(user);
-    store.User.setchk(c);
-    store.User.setfuser(userName);
-    store.User.setcc("other");
-
-    props.navigation.navigate("ShowOtherFollowers");
+  const ShowFollowersScreen = (check) => {
+    props.navigation.navigate("ShowFollowersStack", {
+      screen: "ShowFollowers",
+      params: {
+        check: check,
+        user: user,
+        userName: userName,
+        callingScreen: "UserProfile",
+      },
+    });
   };
 
   const renderProfileSection = () => {
@@ -440,6 +459,7 @@ function UserProfile(props) {
             navigationState={{ index, routes }}
             renderScene={renderScene}
             onIndexChange={setIndex}
+            lazy
           />
         </View>
 

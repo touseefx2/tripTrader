@@ -1344,7 +1344,7 @@ function Reviews(props) {
       : styles.modal;
 
     const renderHeader = () => {
-      let text = "Leave a review";
+      const text = !isrObj ? "Leave a review" : "Update a review ";
 
       const renderCross = () => {
         return (
@@ -1430,30 +1430,32 @@ function Reviews(props) {
             <Text style={styles.mfT1trptitle}>{tt}</Text>
           </View>
 
-          <View style={styles.modalFieldConatiner}>
-            <Text style={[styles.mfT1, { textTransform: "none" }]}>
-              Rate your overall experience
-            </Text>
-            <View
-              style={{
-                width: "43%",
-                marginTop: 5,
-              }}
-            >
-              <StarRating
-                starSize={23}
-                disabled={mloader}
-                maxStars={5}
-                rating={rate}
-                selectedStar={(rating) => setrate(rating)}
-                emptyStarColor={"#CCCCCC"}
-                fullStarColor={"#FCBC17"}
-                emptyStar={"star"}
-                fullStar={"star"}
-                iconSet={"FontAwesome"}
-              />
+          {!isrObj && (
+            <View style={styles.modalFieldConatiner}>
+              <Text style={[styles.mfT1, { textTransform: "none" }]}>
+                Rate your overall experience
+              </Text>
+              <View
+                style={{
+                  width: "43%",
+                  marginTop: 5,
+                }}
+              >
+                <StarRating
+                  starSize={23}
+                  disabled={mloader}
+                  maxStars={5}
+                  rating={rate}
+                  selectedStar={(rating) => setrate(rating)}
+                  emptyStarColor={"#CCCCCC"}
+                  fullStarColor={"#FCBC17"}
+                  emptyStar={"star"}
+                  fullStar={"star"}
+                  iconSet={"FontAwesome"}
+                />
+              </View>
             </View>
-          </View>
+          )}
 
           <View style={styles.modalFieldConatiner}>
             <View

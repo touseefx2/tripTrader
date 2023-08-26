@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
-import {View, Text, ScrollView, Pressable} from 'react-native';
-import {styles} from './styles';
-import theme from '../../../../theme';
-import utils from '../../../../utils';
-import store from '../../../../store';
-import {observer} from 'mobx-react';
-import Bottom from './components/Bottom';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import React, { useState } from "react";
+import { View, Text, ScrollView, Pressable } from "react-native";
+import { styles } from "./styles";
+import theme from "../../../../theme";
+import utils from "../../../../utils";
+import store from "../../../../store";
+import { observer } from "mobx-react";
+import Bottom from "./components/Bottom";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default observer(Step2);
 function Step2({
@@ -19,7 +19,7 @@ function Step2({
   isTripRefresh,
   setIsTripRefresh,
 }) {
-  const {trips} = store.User;
+  const { trips } = store.User;
   const [isDropDownTrip, setisDropDownTrip] = useState(false);
 
   const closeDropDown = () => {
@@ -47,16 +47,16 @@ function Step2({
     );
   };
 
-  const renderShowDropDown = check => {
-    const data = check == 'trip' ? trips : [];
+  const renderShowDropDown = (check) => {
+    const data = check == "trip" ? trips : [];
 
-    const onclickSelect = obj => {
-      if (obj === 'customOffer') {
+    const onclickSelect = (obj) => {
+      if (obj === "customOffer") {
         setSelectedTrip(null);
         goNext();
         return;
       }
-      if (check === 'trip') {
+      if (check === "trip") {
         setSelectedTrip(obj);
         return;
       }
@@ -81,16 +81,17 @@ function Step2({
         <Text style={styles.dropdownFieldTitle}>
           What are you offering to trade?
         </Text>
-        <View style={{width: '100%', marginTop: 5}}>
+        <View style={{ width: "100%", marginTop: 5 }}>
           <Pressable
             onPress={() => setisDropDownTrip(!isDropDownTrip)}
-            style={({pressed}) => [
+            style={({ pressed }) => [
               styles.dropDowninputConatiner,
               {
                 opacity: pressed ? 0.7 : 1.0,
               },
-            ]}>
-            <View style={{width: '91%'}}>
+            ]}
+          >
+            <View style={{ width: "91%" }}>
               <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
@@ -101,10 +102,11 @@ function Step2({
                       ? theme.color.title
                       : theme.color.subTitleLight,
                   },
-                ]}>
+                ]}
+              >
                 {selectedTrip
                   ? selectedTrip.species
-                  : 'Select a trip or create custom offer...'}
+                  : "Select a trip or create custom offer..."}
               </Text>
             </View>
 
@@ -115,7 +117,7 @@ function Step2({
             />
           </Pressable>
 
-          {isDropDownTrip && renderShowDropDown('trip')}
+          {isDropDownTrip && renderShowDropDown("trip")}
         </View>
       </View>
     );
@@ -125,13 +127,10 @@ function Step2({
     <>
       <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
         {isMaxHeight ? (
-          <ScrollView
-            contentContainerStyle={{paddingHorizontal: 15}}
-            showsVerticalScrollIndicator={false}
-            style={{flex: 1}}>
+          <View style={{ flex: 1, paddingHorizontal: 15 }}>
             {renderTitle()}
             {renderDropDown()}
-          </ScrollView>
+          </View>
         ) : (
           <>
             {renderTitle()}
