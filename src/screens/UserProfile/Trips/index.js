@@ -167,18 +167,18 @@ function Trips(props) {
                 item={item}
                 index={index}
                 isActive={isActive}
-                props={props}
+                props={OtherProfileProps}
               />
             )}
             renderSectionTitle={(item, index) => (
-              <Card2 item={item} index={index} props={props} />
+              <Card2 item={item} index={index} props={OtherProfileProps} />
             )}
             renderContent={(item, index, isActive) => (
               <Card3
                 item={item}
                 index={index}
                 isActive={isActive}
-                props={props}
+                props={OtherProfileProps}
                 showpic={showpic}
                 animtntime={animtntime}
                 onClickMakeOffer={openModal}

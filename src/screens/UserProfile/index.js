@@ -6,12 +6,8 @@ import {
   TouchableOpacity,
   Image,
   Alert,
-  Platform,
-  Modal as MModal,
   Pressable,
   Keyboard,
-  TextInput,
-  ScrollView,
 } from "react-native";
 import RBSheet from "react-native-raw-bottom-sheet";
 import { styles } from "./styles";
@@ -19,13 +15,10 @@ import { observer } from "mobx-react";
 import store from "../../store/index";
 import utils from "../../utils/index";
 import theme from "../../theme";
-import ProgressiveFastImage from "@freakycoder/react-native-progressive-fast-image";
 import { responsiveHeight } from "react-native-responsive-dimensions";
 import NetInfo from "@react-native-community/netinfo";
 import Toast from "react-native-easy-toast";
 import { ActivityIndicator } from "react-native-paper";
-import MultipleImagePicker from "@baronha/react-native-multiple-image-picker";
-import { Image as ImageCompressor } from "react-native-compressor";
 import { TabView, SceneMap } from "react-native-tab-view";
 import Reviews from "./Reviews";
 import Trips from "./Trips";
@@ -41,7 +34,7 @@ function UserProfile(props) {
   const { isInternet } = store.General;
   const { user } = store.Userv;
 
-  const { homeModalLoder, userSubscription } = store.User;
+  const { homeModalLoder, setOtherProfileProps } = store.User;
 
   const [followers, setfollowers] = useState(0);
   const [following, setfollowing] = useState(0);
@@ -210,8 +203,7 @@ function UserProfile(props) {
   });
 
   useEffect(() => {
-    store.User.setOtherProfileProps(props);
-    return () => {};
+    setOtherProfileProps(props);
   }, []);
 
   const changePhoto = (c) => {
@@ -249,17 +241,15 @@ function UserProfile(props) {
   };
 
   const ShowFollowersScreen = (c) => {
-    // props.navigation.navigate('ShowFollowers', {
-    //   chk: c,
-    //   user: userName,
-    //   cc: 'other',
-    // });
-
-    props.navigation.navigate("ShowFollowers");
     store.Userv.setUser(user);
     store.User.setchk(c);
     store.User.setfuser(userName);
     store.User.setcc("other");
+
+    props.navigation.navigate("ShowOtherFollowersStack", {
+      screen: "ShowOtherFollowers",
+      params: {},
+    });
   };
 
   const renderProfileSection = () => {

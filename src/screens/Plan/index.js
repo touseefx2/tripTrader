@@ -37,6 +37,7 @@ export default observer(Plan);
 function Plan(props) {
   const nameRegex = /^[a-zA-Z-' ]+$/;
   const toast = useRef(null);
+
   const {
     plans,
     user,

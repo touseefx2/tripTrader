@@ -560,10 +560,11 @@ function ConfirmTrips(props) {
                   false
                 );
                 if (userPlanStatus) {
-                  store.Userv.setfscreen("confirmedtrips");
-                  store.Userv.setUser(user);
-                  store.Userv.addauthToken(store.User.authToken);
-                  props.navigation.navigate("UserProfile");
+                  utils.functions.goToUserProfile(
+                    props,
+                    "confirmedtrips",
+                    user
+                  );
                 }
               }}
               style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }, bc]}

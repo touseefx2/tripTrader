@@ -7,6 +7,7 @@ import { styles } from "./styles";
 import store from "../../../../store";
 import utils from "../../../../utils";
 import theme from "../../../../theme";
+import { useNavigation } from "@react-navigation/native";
 
 export default memo(TripCard);
 function TripCard({
@@ -90,11 +91,7 @@ function TripCard({
             disabled={user == "guest" ? true : false}
             onPress={() => {
               if (user === "guest") return;
-
-              store.Userv.setfscreen("home");
-              store.Userv.setUser(usr);
-              store.Userv.addauthToken(store.User.authToken);
-              props.navigation.navigate("UserProfile");
+              utils.functions.goToUserProfile(props, "home", usr);
             }}
             style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1.0 }]}
           >

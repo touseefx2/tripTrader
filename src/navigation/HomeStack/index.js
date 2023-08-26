@@ -85,12 +85,6 @@ export default HomeStack = () => {
         options={icon.Supporticon}
       />
 
-      {/* <Drawer.Screen
-        name="LatestNews"
-        component={LatestNewsstack}
-        options={icon.LatestNewsicon}
-      /> */}
-
       <Drawer.Screen
         name="Settings"
         component={SettingsStack}
@@ -116,28 +110,6 @@ const HomeStacks = () => {
           let parent = props.navigation.getParent();
           parent.setOptions({
             swipeEnabled: true,
-          });
-        }}
-      />
-
-      <Stack.Screen
-        options={(props) => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-        name="Plan"
-        component={screens.Plan}
-      />
-
-      <Stack.Screen
-        name="UserProfile"
-        component={UserProfileStack}
-        options={(props) => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
           });
         }}
       />
@@ -174,17 +146,6 @@ const InboxStack = () => {
           });
         }}
       />
-
-      <Stack.Screen
-        options={(props) => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-        name="Plan"
-        component={screens.Plan}
-      />
     </Stack.Navigator>
   );
 };
@@ -207,17 +168,6 @@ const NewTripsStack = () => {
             swipeEnabled: true,
           });
         }}
-      />
-
-      <Stack.Screen
-        options={(props) => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-        name="Plan"
-        component={screens.Plan}
       />
     </Stack.Navigator>
   );
@@ -242,28 +192,6 @@ const ProfileStack = () => {
           });
         }}
       />
-
-      <Stack.Screen
-        name="ShowFollowers"
-        component={ShowFollowersStack}
-        options={(props) => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-      />
-
-      <Stack.Screen
-        options={(props) => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-        name="Plan"
-        component={screens.Plan}
-      />
     </Stack.Navigator>
   );
 };
@@ -287,28 +215,6 @@ const ConfirmedTripsStack = () => {
           });
         }}
       />
-
-      <Stack.Screen
-        name="UserProfile"
-        component={UserProfileStack}
-        options={(props) => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-      />
-
-      <Stack.Screen
-        options={(props) => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-        name="Plan"
-        component={screens.Plan}
-      />
     </Stack.Navigator>
   );
 };
@@ -325,17 +231,6 @@ const ChatStack = () => {
       <Stack.Screen
         name="Chats"
         component={screens.Chat}
-        options={(props) => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-      />
-
-      <Stack.Screen
-        name="UserProfile"
-        component={UserProfileStack}
         options={(props) => {
           let parent = props.navigation.getParent();
           parent.setOptions({
@@ -365,55 +260,6 @@ const SavedTripsStack = () => {
             swipeEnabled: true,
           });
         }}
-      />
-
-      <Stack.Screen
-        name="UserProfile"
-        component={UserProfileStack}
-        options={(props) => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-      />
-
-      <Stack.Screen
-        options={(props) => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-        name="Plan"
-        component={screens.Plan}
-      />
-    </Stack.Navigator>
-  );
-};
-
-const UserProfileStack = () => {
-  return (
-    <Stack.Navigator
-      initialRouteName="UserProfilee"
-      screenOptions={{
-        animationEnabled: false,
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="UserProfilee" component={screens.UserProfile} />
-
-      <Stack.Screen name="ShowFollowers" component={ShowOtherFollowersStack} />
-
-      <Stack.Screen
-        options={(props) => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-        name="Plan"
-        component={screens.Plan}
       />
     </Stack.Navigator>
   );
@@ -505,75 +351,6 @@ const ManageSubscriptionStack = () => {
         name="ManageSubscriptionn"
         component={screens.ManageSubscription}
       />
-      <Stack.Screen name="Plan" component={screens.Plan} />
-    </Stack.Navigator>
-  );
-};
-
-const ShowFollowersStack = () => {
-  return (
-    <Stack.Navigator
-      initialRouteName="ShowFollowerss"
-      screenOptions={{
-        animationEnabled: false,
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen
-        name="ShowFollowerss"
-        component={screens.ShowFollowers}
-        options={(props) => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-      />
-
-      <Stack.Screen
-        name="UserProfile"
-        component={UserProfileStack}
-        options={(props) => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-      />
-    </Stack.Navigator>
-  );
-};
-
-const ShowOtherFollowersStack = () => {
-  return (
-    <Stack.Navigator
-      initialRouteName="ShowFollowersss"
-      screenOptions={{
-        animationEnabled: false,
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen
-        name="ShowFollowersss"
-        component={screens.ShowOtherFollowers}
-        options={(props) => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-      />
-
-      <Stack.Screen
-        name="UserProfile"
-        component={UserProfileStack}
-        options={(props) => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-      />
     </Stack.Navigator>
   );
 };
@@ -597,40 +374,6 @@ const TradeOffersStack = () => {
         name="TradeOfferss"
         component={screens.TradeOffers}
       />
-
-      <Stack.Screen
-        options={(props) => {
-          let parent = props.navigation.getParent();
-          parent.setOptions({
-            swipeEnabled: false,
-          });
-        }}
-        name="Plan"
-        component={screens.Plan}
-      />
     </Stack.Navigator>
   );
 };
-
-// let LatestNewsstack = () => {
-//   return (
-//     <Stack.Navigator
-//       initialRouteName="LatestNewss"
-//       screenOptions={{
-//         animationEnabled: false,
-//         headerShown: false,
-//       }}>
-//       <Stack.Screen
-//         name="LatestNewss"
-//         component={screens.LatestNews}
-//         options={props => {
-//           let parent = props.navigation.getParent();
-//           parent.setOptions({
-//             swipeEnabled: true,
-//           });
-//         }}
-//       />
-
-//     </Stack.Navigator>
-//   );
-// };

@@ -85,6 +85,23 @@ function App() {
         {!Loading && user && (
           <Stack.Screen name="HomeStack" component={stack.HomeStack} />
         )}
+
+        <Stack.Screen name="PlanStack" component={stack.PlanStack} />
+
+        <Stack.Screen
+          name="UserProfileStack"
+          component={stack.UserProfileStack}
+        />
+
+        <Stack.Screen
+          name="ShowFollowersStack"
+          component={stack.ShowFollowersStack}
+        />
+
+        <Stack.Screen
+          name="ShowOtherFollowersStack"
+          component={stack.ShowOtherFollowersStack}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

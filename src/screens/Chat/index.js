@@ -959,11 +959,7 @@ function Chat(props) {
                       if (user == "guest") {
                         return;
                       }
-
-                      store.Userv.setfscreen("chat");
-                      store.Userv.setUser(ruser);
-                      store.Userv.addauthToken(store.User.authToken);
-                      props.navigation.navigate("UserProfile");
+                      utils.functions.goToUserProfile(props, "chat", ruser);
                       closeBottomSheet();
                     }}
                     style={({ pressed }) => [

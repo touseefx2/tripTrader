@@ -65,12 +65,19 @@ function ManageSubscription(props) {
     setIsCancelSubModal(true);
   };
 
+  const goToPlanStack = () => {
+    props.navigation.navigate("PlanStack", {
+      screen: "Plan",
+      params: {},
+    });
+  };
+
   const renderMain = () => {
     const renderButton = () => {
       return (
         <>
           <TouchableOpacity
-            onPress={() => props.navigation.navigate("Plan")}
+            onPress={goToPlanStack}
             activeOpacity={0.7}
             style={styles.BottomButton}
           >
@@ -104,7 +111,7 @@ function ManageSubscription(props) {
       return (
         <>
           <TouchableOpacity
-            onPress={() => props.navigation.navigate("Plan")}
+            onPress={goToPlanStack}
             activeOpacity={0.7}
             style={styles.BottomButton}
           >
@@ -206,7 +213,7 @@ function ManageSubscription(props) {
       return (
         <>
           <TouchableOpacity
-            onPress={() => props.navigation.navigate("Plan")}
+            onPress={goToPlanStack}
             activeOpacity={0.7}
             style={styles.BottomButton}
           >

@@ -154,10 +154,7 @@ function Notifications({ props, callingScreen, isShowModal, setIsShowModal }) {
   };
 
   const goToUserProfile = (senderUser) => {
-    store.Userv.setfscreen(callingScreen || "");
-    store.Userv.setUser(senderUser);
-    store.Userv.addauthToken(store.User.authToken);
-    props.navigation.navigate("UserProfile");
+    utils.functions.goToUserProfile(props, callingScreen || "", senderUser);
   };
 
   function compare(d, dd) {
@@ -333,7 +330,10 @@ function Notifications({ props, callingScreen, isShowModal, setIsShowModal }) {
       }
 
       if (action === "Subscribe") {
-        props.navigation.navigate("Plan");
+        props.navigation.navigate("PlanStack", {
+          screen: "Plan",
+          params: {},
+        });
       }
 
       if (action === "Manage Subscription") {

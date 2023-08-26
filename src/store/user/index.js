@@ -716,7 +716,7 @@ class user {
   @action attemptToGetHomeTripsSearch = (setgetdata, blocksUsersArr, c) => {
     const isApplySearch = store.Search.isApplySearch;
     const isApplyFilter = store.Filters.isFilter;
-    const query = isApplySearch ? this.titleCase(store.Search.search) : "";
+    const query = isApplySearch ? this.titleCase(store.Search.search.trim()) : "";
     let rate = "";
     let userStatus = "";
     let location = "";

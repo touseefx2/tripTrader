@@ -382,13 +382,13 @@ const checkAvailability = (
 
 const getDate = (unixTimestamp) => {
   // Convert Unix timestamp to milliseconds
-  var milliseconds = unixTimestamp * 1000;
+  const milliseconds = unixTimestamp * 1000;
 
   // Create a new Date object using the milliseconds
-  var date = new Date(milliseconds);
+  const date = new Date(milliseconds);
 
   // Define month names
-  var monthNames = [
+  const monthNames = [
     "January",
     "February",
     "March",
@@ -404,17 +404,19 @@ const getDate = (unixTimestamp) => {
   ];
 
   // Get the month, day, and year
-  var month = monthNames[date.getMonth()];
-  var day = date.getDate();
-  var year = date.getFullYear();
+  const month = monthNames[date.getMonth()];
+  const day = date.getDate();
+  const year = date.getFullYear();
 
   // Create the formatted date string
-  var formattedDate = `${month} ${day}, ${year}`;
+  const formattedDate = `${month} ${day}, ${year}`;
 
   return formattedDate;
 };
 
 const isSubscribeDateEnd = (unixTimestamp) => {
+  // const currentDate = new Date(1761696000 * 1000);
+
   const currentDate = new Date();
   // Convert Unix timestamp to milliseconds
   const milliseconds = unixTimestamp * 1000;
@@ -462,7 +464,10 @@ const checkUserPalnStatus = (props, isCheck = true) => {
       isSubscribeDateEnd(userSubscription?.current_period_end)) ||
       !userSubscription)
   ) {
-    props.navigation.navigate("Plan");
+    props.navigation.navigate("PlanStack", {
+      screen: "Plan",
+      params: {},
+    });
     return false;
   }
 
@@ -478,6 +483,18 @@ const isUserFreemium = () => {
       isSubscribeDateEnd(userSubscription?.current_period_end)) ||
     !userSubscription
   );
+};
+
+const goToUserProfile = (props, screen, user) => {
+  const { authToken } = store.User;
+  const { setfscreen, setUser, addauthToken } = store.Userv;
+  setfscreen(screen);
+  setUser(user);
+  addauthToken(authToken);
+  props.navigation.navigate("UserProfileStack", {
+    screen: "UserProfile",
+    params: {},
+  });
 };
 
 export const functions = {
@@ -502,4 +519,5 @@ export const functions = {
   isSubscribeDateEnd,
   checkUserPalnStatus,
   isUserFreemium,
+  goToUserProfile,
 };

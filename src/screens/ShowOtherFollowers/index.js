@@ -176,10 +176,7 @@ function ShowOtherFollowers(props) {
       <Pressable
         disabled={isDisable}
         onPress={() => {
-          store.Userv.setfscreen("home");
-          store.Userv.setUser(usrr);
-          store.Userv.addauthToken(store.User.authToken);
-          props.navigation.navigate("UserProfile");
+          utils.functions.goToUserProfile(props, "home", usrr);
         }}
         style={({ pressed }) => [
           { opacity: pressed ? 0.8 : 1.0 },

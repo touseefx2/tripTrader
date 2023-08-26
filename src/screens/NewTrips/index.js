@@ -1992,7 +1992,10 @@ function NewTrips(props) {
               },
               Platform.OS == "ios" ? 0 : 1000
             );
-            props.navigation.navigate("Plan");
+            props.navigation.navigate("PlanStack", {
+              screen: "Plan",
+              params: {},
+            });
           }}
           style={{
             marginTop: responsiveHeight(2),

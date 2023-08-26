@@ -21,11 +21,13 @@ import PushNotification from "react-native-push-notification";
 import firestore from "@react-native-firebase/firestore";
 import { responsiveFontSize } from "react-native-responsive-dimensions";
 import TripCard from "./component/TripCard";
+import { useIsFocused } from "@react-navigation/native";
 
 export default observer(Home);
 function Home(props) {
   const headerTitle = "Home";
   const toast = useRef(null);
+
   const {
     isInternet,
     goto,
@@ -33,9 +35,9 @@ function Home(props) {
     setIsEmailPopup,
     setSettingsGoTo,
     setOfferGoTo,
+    goToo: notify,
   } = store.General;
   const { isApplySearch } = store.Search;
-
   const {
     activity,
     tripLocation,
@@ -78,9 +80,11 @@ function Home(props) {
   const [fullImageArr, setFullImageArr] = useState([]);
   const [fullImageIndication, setFullImageIndication] = useState("");
 
-  const setGetDataOnce = (C) => {
-    setgetDataOnce(C);
-  };
+  useEffect(() => {
+    if (goto === "profile") {
+      props.navigation.navigate("MyProfile");
+    }
+  }, []);
 
   useEffect(() => {
     if (!getDataOnce && isInternet) {
@@ -121,24 +125,16 @@ function Home(props) {
   }, [species, activity, activityList]);
 
   useEffect(() => {
-    if (goto == "profile") {
-      props.navigation.navigate("MyProfile");
-    }
-  }, []);
-
-  const notify = store.General.goToo;
-
-  useEffect(() => {
     if (notify) {
       try {
         const topic = notify?.tag || "";
         let action = notify?.action || "";
-        if (action == "") {
+        if (action === "") {
           const arr = JSON.parse(notify?.actions) || [];
           if (arr.length > 0) action = arr[0];
         }
 
-        if (action != "") onClickNotificationAction(action, notify);
+        if (action !== "") onClickNotificationAction(action, notify);
         else onOpenNotification(topic, action, notify);
         store.General.setgoToo(null);
       } catch (error) {
@@ -170,13 +166,13 @@ function Home(props) {
       NetInfo.fetch().then((state) => {
         if (state.isConnected) {
           if (user == "guest") {
-            store.User.attemptToGetHomeTripsGuest(setGetDataOnce);
+            store.User.attemptToGetHomeTripsGuest(setgetDataOnce);
           } else {
             store.User.attemptToGetBloackUsers(
               store.User.user._id,
               () => {},
               () => {},
-              setGetDataOnce,
+              setgetDataOnce,
               ""
             );
           }
@@ -203,13 +199,6 @@ function Home(props) {
 
   const goToConfirmTrips = (props) => {
     props.navigation.navigate("ConfirmedTrips");
-  };
-
-  const goToUserProfile = (props, senderUser) => {
-    store.Userv.setfscreen(headerTitle || "");
-    store.Userv.setUser(senderUser);
-    store.Userv.addauthToken(store.User.authToken);
-    props.navigation.navigate("UserProfile");
   };
 
   const goToSavedTrips = (props) => {
@@ -248,11 +237,17 @@ function Home(props) {
     }
 
     if (topic == "subscriptionStatus") {
-      props.navigation.navigate("Plan");
+      props.navigation.navigate("PlanStack", {
+        screen: "Plan",
+        params: {},
+      });
     }
 
     if (topic == "subscriptionStatus") {
-      props.navigation.navigate("Plan");
+      props.navigation.navigate("PlanStack", {
+        screen: "Plan",
+        params: {},
+      });
     }
 
     if (topic == "paymentFailed") {
@@ -289,7 +284,7 @@ function Home(props) {
       setOfferGoTo("received");
     }
     if (action.includes("Message")) {
-      goToUserProfile(props, senderId);
+      utils.functions.goToUserProfile(props, headerTitle, senderId);
     }
     if (action == "Review Trip Details") {
       //  offerAccepted tripStarts tripHosting
@@ -306,7 +301,7 @@ function Home(props) {
       action == "dispute"
     ) {
       //newTripAdded  reviewReminder userFollow disputeReview
-      goToUserProfile(props, senderId);
+      utils.functions.goToUserProfile(props, headerTitle, senderId);
     }
   };
 
@@ -319,13 +314,13 @@ function Home(props) {
     NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         if (user === "guest") {
-          store.User.attemptToGetHomeTripsGuest(setGetDataOnce);
+          store.User.attemptToGetHomeTripsGuest(setgetDataOnce);
         } else {
           store.User.attemptToGetBloackUsers(
             store.User.user._id,
             () => {},
             () => {},
-            setGetDataOnce,
+            setgetDataOnce,
             "all"
           );
         }
@@ -360,13 +355,13 @@ function Home(props) {
     NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         if (user == "guest") {
-          store.User.attemptToGetHomeTripsGuest(setGetDataOnce);
+          store.User.attemptToGetHomeTripsGuest(setgetDataOnce);
         } else {
           store.User.attemptToGetBloackUsers(
             store.User.user._id,
             () => {},
             () => {},
-            setGetDataOnce,
+            setgetDataOnce,
             ""
           );
         }
@@ -613,14 +608,14 @@ function Home(props) {
           <utils.Search
             isVisible={isShowSearch}
             setisVisible={(c) => setisShowSearch(c)}
-            setGetDataOnce={(c) => setGetDataOnce(c)}
+            setGetDataOnce={(c) => setgetDataOnce(c)}
           />
         )}
         {isShowFilters && (
           <utils.Filters
             isVisible={isShowFilters}
             setisVisible={(c) => setisShowFilters(c)}
-            setGetDataOnce={(c) => setGetDataOnce(c)}
+            setGetDataOnce={(c) => setgetDataOnce(c)}
           />
         )}
         {fullImageModal && (
