@@ -487,14 +487,11 @@ const isUserFreemium = () => {
 
 const goToUserProfile = (props, screen, user) => {
   const { authToken } = store.User;
-  const { setfscreen, setUser, addauthToken } = store.Userv;
-  setfscreen(screen);
-  setUser(user);
-  addauthToken(authToken);
-  props.navigation.navigate("UserProfileStack", {
-    screen: "UserProfile",
-    params: {},
-  });
+
+  store.Userv.setfscreen(screen);
+  store.Userv.setUser(user);
+  store.Userv.addauthToken(authToken);
+  props.navigation.navigate("UserProfile");
 };
 
 export const functions = {

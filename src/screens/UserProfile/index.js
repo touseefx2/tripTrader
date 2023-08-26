@@ -67,16 +67,16 @@ function UserProfile(props) {
   const [modalObj, setModalObj] = useState(false);
 
   const [getDataOnce, setgetDataOnce] = useState(false);
-  const setGetDataOnce = (C) => {
-    setgetDataOnce(C);
-  };
+
+  console.log("====> user profile callll  getDataOnce", getDataOnce);
+
   const getDbData = () => {
     NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.Userv.getUserById(user._id, goBackMain);
         store.Userv.attemptToGetHome(
           user._id,
-          setGetDataOnce,
+          setgetDataOnce,
           (c) => setfollowers(c),
           (c) => setfollowing(c)
         );
@@ -246,10 +246,7 @@ function UserProfile(props) {
     store.User.setfuser(userName);
     store.User.setcc("other");
 
-    props.navigation.navigate("ShowOtherFollowersStack", {
-      screen: "ShowOtherFollowers",
-      params: {},
-    });
+    props.navigation.navigate("ShowOtherFollowers");
   };
 
   const renderProfileSection = () => {

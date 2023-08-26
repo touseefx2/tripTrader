@@ -38,9 +38,7 @@ function ShowFollowers(props) {
     chk == "followers" ? store.User.totalfollowers : store.User.totalfollowing;
 
   const [getDataOnce, setgetDataOnce] = useState(false);
-  const setGetDataOnce = (C) => {
-    setgetDataOnce(C);
-  };
+
   const [refreshing, setRefreshing] = React.useState(false);
   const setrefeshing = (c) => {
     setRefreshing(c);
@@ -56,13 +54,13 @@ function ShowFollowers(props) {
         if (chk == "followers") {
           store.User.attemptToGetFollowers(
             user._id,
-            setGetDataOnce,
+            setgetDataOnce,
             setrefeshing
           );
         } else {
           store.User.attemptToGetFollowing(
             user._id,
-            setGetDataOnce,
+            setgetDataOnce,
             setrefeshing
           );
         }
