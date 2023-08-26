@@ -2303,7 +2303,7 @@ function Signup(props) {
                             fontFamily: theme.fonts.fontMedium,
                           }}
                         >
-                          {isPromoApply.id.trim()}
+                          {isPromoApply?.id.trim()}
                         </Text>
 
                         <TouchableOpacity

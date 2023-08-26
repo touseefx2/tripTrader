@@ -15,6 +15,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { styles } from "./styles";
 import { observer } from "mobx-react";
@@ -168,7 +169,7 @@ function Reviews(props) {
   };
 
   const openModal = (obj, c) => {
-    if (c == "edit") {
+    if (c === "edit") {
       let d = obj.item;
       let reply = "";
       let msgs = d.messages || [];
@@ -702,7 +703,6 @@ function Reviews(props) {
           return (
             <View style={{ marginTop: 5 }}>
               <TextInput
-                autoFocus
                 multiline
                 value={comment}
                 onChangeText={(t) => setcomment(t)}
@@ -772,18 +772,19 @@ function Reviews(props) {
 
       return (
         <Modal visible={isModal} transparent onRequestClose={closeModal}>
-          <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "height" : undefined}
-            style={styles.modalContainer}
-          >
-            <View style={styles.modalContainer2}>
+          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : undefined}
+              keyboardVerticalOffset={Platform.select({ ios: 0, android: 500 })}
+              style={styles.modalContainer}
+            >
               <View style={styles.modal}>
                 {renderHeader()}
                 {renderField()}
                 {renderBottom()}
               </View>
-            </View>
-          </KeyboardAvoidingView>
+            </KeyboardAvoidingView>
+          </TouchableWithoutFeedback>
         </Modal>
       );
     }
@@ -1019,42 +1020,40 @@ function Reviews(props) {
       return (
         <Modal visible={isModal} transparent onRequestClose={closeModal}>
           <SafeAreaView style={styles.modalContainer}>
-            <View style={styles.modalContainer2}>
-              <View
-                onLayout={(event) => {
-                  if (!c) {
-                    let { height } = event.nativeEvent.layout;
-                    setmodalHeight(height);
-                  }
-                }}
-                style={style}
-              >
-                {c && (
-                  <>
-                    {renderHeader()}
-                    <ScrollView
-                      contentContainerStyle={{ paddingHorizontal: 15 }}
-                      showsVerticalScrollIndicator={false}
-                      style={{ flex: 1 }}
-                    >
-                      {renderSec1()}
-                      {renderSec2()}
-                      {renderSec3()}
-                    </ScrollView>
-                    {renderBottom()}
-                  </>
-                )}
-
-                {!c && (
-                  <>
-                    {renderHeader()}
+            <View
+              onLayout={(event) => {
+                if (!c) {
+                  let { height } = event.nativeEvent.layout;
+                  setmodalHeight(height);
+                }
+              }}
+              style={style}
+            >
+              {c && (
+                <>
+                  {renderHeader()}
+                  <ScrollView
+                    contentContainerStyle={{ paddingHorizontal: 15 }}
+                    showsVerticalScrollIndicator={false}
+                    style={{ flex: 1 }}
+                  >
                     {renderSec1()}
                     {renderSec2()}
                     {renderSec3()}
-                    {renderBottom()}
-                  </>
-                )}
-              </View>
+                  </ScrollView>
+                  {renderBottom()}
+                </>
+              )}
+
+              {!c && (
+                <>
+                  {renderHeader()}
+                  {renderSec1()}
+                  {renderSec2()}
+                  {renderSec3()}
+                  {renderBottom()}
+                </>
+              )}
             </View>
           </SafeAreaView>
         </Modal>
@@ -1178,12 +1177,10 @@ function Reviews(props) {
       return (
         <Modal visible={isModal} transparent onRequestClose={closeModal}>
           <SafeAreaView style={styles.modalContainer}>
-            <View style={styles.modalContainer2}>
-              <View style={styles.modal}>
-                {renderHeader()}
-                {renderTitle()}
-                {renderBottom()}
-              </View>
+            <View style={styles.modal}>
+              {renderHeader()}
+              {renderTitle()}
+              {renderBottom()}
             </View>
           </SafeAreaView>
         </Modal>

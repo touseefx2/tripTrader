@@ -961,10 +961,9 @@ function Plan(props) {
                             color: theme.color.title,
                             fontSize: 12,
                             fontFamily: theme.fonts.fontMedium,
-                            textTransform: "uppercase",
                           }}
                         >
-                          {isPromoApply.code}
+                          {isPromoApply?.id.trim()}
                         </Text>
 
                         <TouchableOpacity

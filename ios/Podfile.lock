@@ -589,15 +589,15 @@ PODS:
   - nanopb/encode (2.30908.0)
   - NextLevelSessionExporter (0.4.6)
   - OpenSSL-Universal (1.1.1100)
-  - Permission-Camera (3.8.1):
+  - Permission-Camera (3.8.4):
     - RNPermissions
-  - Permission-MediaLibrary (3.8.1):
+  - Permission-MediaLibrary (3.8.4):
     - RNPermissions
-  - Permission-Notifications (3.8.1):
+  - Permission-Notifications (3.8.4):
     - RNPermissions
-  - Permission-PhotoLibrary (3.8.1):
+  - Permission-PhotoLibrary (3.8.4):
     - RNPermissions
-  - Permission-PhotoLibraryAddOnly (3.8.1):
+  - Permission-PhotoLibraryAddOnly (3.8.4):
     - RNPermissions
   - PromisesObjC (2.3.1)
   - RCT-Folly (2021.06.28.00-v2):
@@ -929,7 +929,7 @@ PODS:
     - React-Core
   - RNLocalize (2.2.6):
     - React-Core
-  - RNPermissions (3.8.1):
+  - RNPermissions (3.8.4):
     - React-Core
   - RNReanimated (2.17.0):
     - DoubleConversion
@@ -1295,11 +1295,11 @@ SPEC CHECKSUMS:
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   NextLevelSessionExporter: 4d8aa5e617f1c709724f2453efe5d4628480f65a
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
-  Permission-Camera: 7e6f6b84c8f08d81e012f9f122b6541633308e2c
-  Permission-MediaLibrary: ad9cb52e7e9e165a6a94d65253cadd105b028553
-  Permission-Notifications: 3f51a1f7fdee600c6aeb5ffeafbdb7614f0d13ee
-  Permission-PhotoLibrary: 3e76aece6fb9bc2736e4c7bf1f455b1e1124fcbb
-  Permission-PhotoLibraryAddOnly: 8838979e1555a682006f2f911b740f33c3fd9ca2
+  Permission-Camera: 7ec9ee99704766ff9b90198183387a7f5d82b0c1
+  Permission-MediaLibrary: c5bb0ad28143730f154820f3efd993985025ff18
+  Permission-Notifications: e06c4b115105e9aed6ed8d03c9894c23c1051731
+  Permission-PhotoLibrary: 6db9318df71ad74e9774cecedde95285f5a32d6a
+  Permission-PhotoLibraryAddOnly: 3393b7c3a58d2e3b458204692859ed2a23ad7c03
   PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
   RCT-Folly: 4d8508a426467c48885f1151029bc15fa5d7b3b8
   RCTRequired: 3e917ea5377751094f38145fdece525aa90545a0
@@ -1345,7 +1345,7 @@ SPEC CHECKSUMS:
   RNFBMessaging: 8415ec196e5c1196caa26ec0742cdb48ed4d0f97
   RNGestureHandler: dec4645026e7401a0899f2846d864403478ff6a5
   RNLocalize: d4b8af4e442d4bcca54e68fc687a2129b4d71a81
-  RNPermissions: b471c990fd2bc1c5550af807d9f4e0313ee0b081
+  RNPermissions: f1b49dd05fa9b83993cd05a9ee115247944d8f1a
   RNReanimated: 1f117be601c59177816351a965bc57320b766c15
   RNScreens: aa9a97835afbbdc18a4757870b2b59b7d9fae16a
   RNSentry: 4ea90ea061624364637e8077d965bf2e50478066

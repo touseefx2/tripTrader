@@ -231,7 +231,7 @@ function Inbox(props) {
   }, [isInternet]);
 
   useEffect(() => {
-    if (user == "guest") {
+    if (user === "guest") {
       store.General.setgoto("guestaccess");
       store.User.Logout();
       return;

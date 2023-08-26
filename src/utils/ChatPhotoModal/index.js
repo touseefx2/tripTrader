@@ -14,6 +14,7 @@ import {
   Alert,
   Platform,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { styles } from "./styles";
 import { observer } from "mobx-react";
@@ -505,234 +506,239 @@ function ChatPhotoModal(props) {
       style={{ padding: 0, margin: 0 }}
       onBackButtonPress={closeAddPhotoModal}
     >
-      <KeyboardAvoidingView
-        behavior={Platform.OS == "ios" ? "height" : undefined}
-        style={styles.modalContainerp}
-      >
-        <View style={styles.modalp}>
-          {!isShowPrmsn && (
-            <>
-              <View style={{ alignItems: "center", justifyContent: "center" }}>
-                <Text style={styles.section2Title1}>Add photos</Text>
-              </View>
-
-              <View style={{ marginTop: 10 }}>
-                <Text style={styles.section2Title2}>
-                  Please select photos to send
-                </Text>
-              </View>
-
-              <View style={styles.fieldContainer}>
-                {photos.length <= 0 && (
-                  <TouchableOpacity
-                    onPress={() => checkPermsn("gallery")}
-                    activeOpacity={0.7}
-                    style={{
-                      width: "80%",
-                      alignSelf: "center",
-                      borderRadius: 12,
-                      borderWidth: 2,
-                      borderStyle: "dashed",
-                      borderColor: theme.color.button1,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      padding: 10,
-                      height: 60,
-                      backgroundColor: "#F2F3F1",
-                    }}
-                  >
-                    <View
-                      style={{ flexDirection: "row", alignItems: "center" }}
-                    >
-                      <Image
-                        source={require("../../assets/images/add_photo/img.png")}
-                        style={{
-                          width: 24,
-                          height: 24,
-                          resizeMode: "contain",
-                          marginRight: 10,
-                        }}
-                      />
-
-                      <Text
-                        style={[
-                          styles.fieldText2,
-                          {
-                            fontFamily: theme.fonts.fontBold,
-                            fontSize: 14,
-                            color: theme.color.button1,
-                          },
-                        ]}
-                      >
-                        Select Photos
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                )}
-                {photos.length > 0 && (
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      flexShrink: 1,
-                      flexWrap: "wrap",
-                    }}
-                  >
-                    {renderShowPhotos()}
-                  </View>
-                )}
-              </View>
-
-              {photos.length > 0 && (
-                <>
-                  <View
-                    style={{
-                      marginTop: 50,
-                    }}
-                  >
-                    {!loader && (
-                      <>
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            marginTop: 10,
-                          }}
-                        >
-                          <View
-                            style={{
-                              width: "81%",
-                              backgroundColor: "#F2F3F1",
-                              borderRadius: 100,
-                              paddingHorizontal: 15,
-                            }}
-                          >
-                            <TextInput
-                              placeholder="Add a caption..."
-                              value={pmessage}
-                              style={{
-                                width: "100%",
-                                height: responsiveHeight(5.8),
-                                fontSize: responsiveFontSize(1.65),
-                                borderRadius: 100,
-                              }}
-                              onChangeText={(t) => {
-                                setpmessage(t);
-                              }}
-                            />
-                          </View>
-
-                          <TouchableOpacity
-                            onPress={() => {
-                              const userPlanStatus =
-                                utils.functions.checkUserPalnStatus(
-                                  props.props
-                                );
-                              if (userPlanStatus) {
-                                uploadPhotos();
-                              }
-                            }}
-                            activeOpacity={0.8}
-                          >
-                            <Image
-                              style={{
-                                width: responsiveFontSize(5.5),
-                                height: responsiveFontSize(5.5),
-                                resizeMode: "contain",
-                              }}
-                              source={require("../../assets/images/sendmessage/img.png")}
-                            />
-                          </TouchableOpacity>
-                        </View>
-                      </>
-                    )}
-
-                    {loader && (
-                      <ActivityIndicator
-                        color={theme.color.button1}
-                        size={40}
-                        style={{ alignSelf: "center", marginVertical: 10 }}
-                      />
-                    )}
-                  </View>
-                </>
-              )}
-
-              {!loader && (
-                <TouchableOpacity
-                  onPress={closeAddPhotoModal}
-                  activeOpacity={0.7}
-                  style={{
-                    marginTop: 40,
-                    width: "100%",
-                    height: 48,
-                    borderRadius: 12,
-                    backgroundColor: "#B93B3B",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    alignSelf: "center",
-                  }}
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : null}
+          keyboardVerticalOffset={Platform.select({ ios: 0, android: 500 })}
+          style={styles.modalContainerp}
+        >
+          <View style={styles.modalp}>
+            {!isShowPrmsn && (
+              <>
+                <View
+                  style={{ alignItems: "center", justifyContent: "center" }}
                 >
-                  <Text
-                    style={[
-                      styles.buttonTextBottom,
-                      {
-                        color: theme.color.buttonText,
-                        fontFamily: theme.fonts.fontMedium,
-                      },
-                    ]}
-                  >
-                    Cancel
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </>
-          )}
-          {isShowPrmsn && (
-            <>
-              <View
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Text style={styles.section2Title1}>
-                  {prmsnChk == "camera" ? "Camera Access" : "Storage Access"}
-                </Text>
+                  <Text style={styles.section2Title1}>Add photos</Text>
+                </View>
 
-                <Image
-                  source={
-                    prmsnChk == "camera"
-                      ? require("../../assets/images/ca/img.png")
-                      : require("../../assets/images/ca/img.png")
-                  }
-                  style={styles.section2Logo}
-                />
-
-                <View style={{ width: "80%", alignSelf: "center" }}>
-                  <Text
-                    style={[
-                      styles.section2LogoTitle,
-                      {
-                        textAlign: "center",
-                      },
-                    ]}
-                  >
-                    {prmsnChk == "camera"
-                      ? "Trip Trader wants permission to access your camera."
-                      : "Trip Trader wants permission to access your storage."}
+                <View style={{ marginTop: 10 }}>
+                  <Text style={styles.section2Title2}>
+                    Please select photos to send
                   </Text>
                 </View>
 
-                <Text style={styles.section2LogoTitlee}>Grant access?</Text>
-              </View>
+                <View style={styles.fieldContainer}>
+                  {photos.length <= 0 && (
+                    <TouchableOpacity
+                      onPress={() => checkPermsn("gallery")}
+                      activeOpacity={0.7}
+                      style={{
+                        width: "80%",
+                        alignSelf: "center",
+                        borderRadius: 12,
+                        borderWidth: 2,
+                        borderStyle: "dashed",
+                        borderColor: theme.color.button1,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: 10,
+                        height: 60,
+                        backgroundColor: "#F2F3F1",
+                      }}
+                    >
+                      <View
+                        style={{ flexDirection: "row", alignItems: "center" }}
+                      >
+                        <Image
+                          source={require("../../assets/images/add_photo/img.png")}
+                          style={{
+                            width: 24,
+                            height: 24,
+                            resizeMode: "contain",
+                            marginRight: 10,
+                          }}
+                        />
 
-              {renderButtonPermission()}
-            </>
-          )}
-        </View>
-      </KeyboardAvoidingView>
+                        <Text
+                          style={[
+                            styles.fieldText2,
+                            {
+                              fontFamily: theme.fonts.fontBold,
+                              fontSize: 14,
+                              color: theme.color.button1,
+                            },
+                          ]}
+                        >
+                          Select Photos
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                  {photos.length > 0 && (
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        flexShrink: 1,
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      {renderShowPhotos()}
+                    </View>
+                  )}
+                </View>
+
+                {photos.length > 0 && (
+                  <>
+                    <View
+                      style={{
+                        marginTop: 50,
+                      }}
+                    >
+                      {!loader && (
+                        <>
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              marginTop: 10,
+                            }}
+                          >
+                            <View
+                              style={{
+                                width: "81%",
+                                backgroundColor: "#F2F3F1",
+                                borderRadius: 100,
+                                paddingHorizontal: 15,
+                              }}
+                            >
+                              <TextInput
+                                placeholder="Add a caption..."
+                                value={pmessage}
+                                style={{
+                                  width: "100%",
+                                  height: responsiveHeight(5.8),
+                                  fontSize: responsiveFontSize(1.65),
+                                  borderRadius: 100,
+                                }}
+                                onChangeText={(t) => {
+                                  setpmessage(t);
+                                }}
+                              />
+                            </View>
+
+                            <TouchableOpacity
+                              onPress={() => {
+                                const userPlanStatus =
+                                  utils.functions.checkUserPalnStatus(
+                                    props.props
+                                  );
+                                if (userPlanStatus) {
+                                  uploadPhotos();
+                                }
+                              }}
+                              activeOpacity={0.8}
+                            >
+                              <Image
+                                style={{
+                                  width: responsiveFontSize(5.5),
+                                  height: responsiveFontSize(5.5),
+                                  resizeMode: "contain",
+                                }}
+                                source={require("../../assets/images/sendmessage/img.png")}
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        </>
+                      )}
+
+                      {loader && (
+                        <ActivityIndicator
+                          color={theme.color.button1}
+                          size={40}
+                          style={{ alignSelf: "center", marginVertical: 10 }}
+                        />
+                      )}
+                    </View>
+                  </>
+                )}
+
+                {!loader && (
+                  <TouchableOpacity
+                    onPress={closeAddPhotoModal}
+                    activeOpacity={0.7}
+                    style={{
+                      marginTop: 40,
+                      width: "100%",
+                      height: 48,
+                      borderRadius: 12,
+                      backgroundColor: "#B93B3B",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      alignSelf: "center",
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.buttonTextBottom,
+                        {
+                          color: theme.color.buttonText,
+                          fontFamily: theme.fonts.fontMedium,
+                        },
+                      ]}
+                    >
+                      Cancel
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </>
+            )}
+            {isShowPrmsn && (
+              <>
+                <View
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text style={styles.section2Title1}>
+                    {prmsnChk == "camera" ? "Camera Access" : "Storage Access"}
+                  </Text>
+
+                  <Image
+                    source={
+                      prmsnChk == "camera"
+                        ? require("../../assets/images/ca/img.png")
+                        : require("../../assets/images/ca/img.png")
+                    }
+                    style={styles.section2Logo}
+                  />
+
+                  <View style={{ width: "80%", alignSelf: "center" }}>
+                    <Text
+                      style={[
+                        styles.section2LogoTitle,
+                        {
+                          textAlign: "center",
+                        },
+                      ]}
+                    >
+                      {prmsnChk == "camera"
+                        ? "Trip Trader wants permission to access your camera."
+                        : "Trip Trader wants permission to access your storage."}
+                    </Text>
+                  </View>
+
+                  <Text style={styles.section2LogoTitlee}>Grant access?</Text>
+                </View>
+
+                {renderButtonPermission()}
+              </>
+            )}
+          </View>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
 
       {pvm && (
         <utils.FullimageModal

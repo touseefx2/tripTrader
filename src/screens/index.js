@@ -16,14 +16,12 @@ import VerifyCode from "./VerifyCode";
 import Inbox from "./Inbox";
 import NewTrips from "./NewTrips";
 import UserProfile from "./UserProfile";
-
 import MyProfile from "./MyProfile";
 import EditProfile from "./EditProfile";
 import TradeOffers from "./TradeOffers";
 import ConfirmTrips from "./ConfirmTrips";
 import SavedTrips from "./SavedTrips";
 import Support from "./Support";
-import LatestNews from "./LatestNews";
 import Settings from "./Settings";
 import ChangePassword from "./ChangePassword";
 import BlockUsers from "./BlockUsers";
@@ -48,11 +46,9 @@ export default screens = {
   ConfirmTrips,
   SavedTrips,
   Support,
-  LatestNews,
   Settings,
   ChangePassword,
   ShowFollowers,
-
   UserProfile,
   ManageSubscription,
   Plan,
