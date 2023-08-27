@@ -16,6 +16,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { styles } from "./styles";
 import { observer } from "mobx-react";
@@ -1555,45 +1556,47 @@ function Reviews(props) {
 
     return (
       <Modal visible={isrModal} transparent onRequestClose={closeReviewModal}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS == "ios" ? "height" : undefined}
-          style={styles.modalContainer}
-        >
-          <View style={styles.modalContainer2}>
-            <View
-              onLayout={(event) => {
-                if (!c) {
-                  let { height } = event.nativeEvent.layout;
-                  setmodalHeight(height);
-                }
-              }}
-              style={style}
-            >
-              {c && (
-                <>
-                  {renderHeader()}
-                  <ScrollView
-                    contentContainerStyle={{ paddingHorizontal: 15 }}
-                    showsVerticalScrollIndicator={false}
-                    style={{ flex: 1 }}
-                  >
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "height" : undefined}
+            style={styles.modalContainer}
+          >
+            <View style={styles.modalContainer2}>
+              <View
+                onLayout={(event) => {
+                  if (!c) {
+                    let { height } = event.nativeEvent.layout;
+                    setmodalHeight(height);
+                  }
+                }}
+                style={style}
+              >
+                {c && (
+                  <>
+                    {renderHeader()}
+                    <ScrollView
+                      contentContainerStyle={{ paddingHorizontal: 15 }}
+                      showsVerticalScrollIndicator={false}
+                      style={{ flex: 1 }}
+                    >
+                      {renderSec1()}
+                    </ScrollView>
+                    {renderBottom()}
+                  </>
+                )}
+
+                {!c && (
+                  <>
+                    {renderHeader()}
                     {renderSec1()}
-                  </ScrollView>
-                  {renderBottom()}
-                </>
-              )}
 
-              {!c && (
-                <>
-                  {renderHeader()}
-                  {renderSec1()}
-
-                  {renderBottom()}
-                </>
-              )}
+                    {renderBottom()}
+                  </>
+                )}
+              </View>
             </View>
-          </View>
-        </KeyboardAvoidingView>
+          </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
       </Modal>
     );
   };

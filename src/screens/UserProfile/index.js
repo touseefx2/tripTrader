@@ -7,6 +7,7 @@ import {
   Image,
   Alert,
   Pressable,
+  ActivityIndicator,
   Keyboard,
 } from "react-native";
 import RBSheet from "react-native-raw-bottom-sheet";
@@ -18,11 +19,7 @@ import theme from "../../theme";
 import { responsiveHeight } from "react-native-responsive-dimensions";
 import NetInfo from "@react-native-community/netinfo";
 import Toast from "react-native-easy-toast";
-import { ActivityIndicator } from "react-native-paper";
-import { TabView, SceneMap } from "react-native-tab-view";
-import Reviews from "./Reviews";
-import Trips from "./Trips";
-import Photos from "./Photos";
+import TabBar from "./components/TabBar";
 
 export default observer(UserProfile);
 
@@ -64,23 +61,6 @@ function UserProfile(props) {
   const [successCheck, setSuccessCheck] = useState("");
 
   const [modalObj, setModalObj] = useState(false);
-
-  const [index, setIndex] = useState(0);
-  const [routes] = useState([
-    { key: "reviews", title: "Reviews" },
-    { key: "trips", title: "Trips" },
-    { key: "photos", title: "Photos" },
-  ]);
-  const renderScene = SceneMap({
-    // trips: () => <Trips p={props} />,
-    // reviews: Reviews,
-    // trips: Trips,
-    // photos: Photos,
-
-    reviews: () => <Reviews p={props} />,
-    trips: () => <Trips p={props} />,
-    photos: () => <Photos p={props} />,
-  });
 
   useEffect(() => {
     if (refresh !== "") {
@@ -445,33 +425,6 @@ function UserProfile(props) {
     );
   };
 
-  const renderTabBar = () => {
-    return (
-      <>
-        <View
-          style={{
-            paddingHorizontal: 15,
-            flex: 1,
-            marginTop: 10,
-          }}
-        >
-          <TabView
-            navigationState={{ index, routes }}
-            renderScene={renderScene}
-            onIndexChange={setIndex}
-            lazy
-          />
-        </View>
-
-        <utils.Footer
-          nav={props.navigation}
-          screen={headerTitle}
-          focusScreen={store.General.focusScreen}
-        />
-      </>
-    );
-  };
-
   const renderBottomSheet = () => {
     const messageIcon = require("../../assets/images/bottomsheet/messages/img.png");
     const blockIcon = require("../../assets/images/bottomsheet/block/img.png");
@@ -655,7 +608,15 @@ function UserProfile(props) {
       <SafeAreaView style={styles.container2}>
         <View style={styles.container3}>
           {renderProfileSection()}
-          <View style={{ flex: 1 }}>{!isBlock && renderTabBar()}</View>
+          <View style={{ flex: 1 }}>
+            {!isBlock && <TabBar props={props} />}
+          </View>
+
+          <utils.Footer
+            nav={props.navigation}
+            screen={headerTitle}
+            focusScreen={store.General.focusScreen}
+          />
           <Toast ref={toast} position="bottom" />
         </View>
       </SafeAreaView>

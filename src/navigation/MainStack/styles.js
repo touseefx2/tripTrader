@@ -1,6 +1,29 @@
 import React from "react";
 import { Image } from "react-native";
 import { responsiveFontSize } from "react-native-responsive-dimensions";
+import theme from "../../theme";
+
+const drawerScreenOption = {
+  // swipeEnabled: true,
+  // unmountOnBlur: true,
+  headerShown: false,
+  drawerStyle: {
+    backgroundColor: theme.color.background,
+    width: theme.window.Width - 50,
+    height: theme.window.Height,
+  },
+  drawerLabelStyle: {
+    color: theme.color.backgroundGreenText,
+    fontSize: responsiveFontSize(1.9),
+  },
+  drawerItemStyle: {},
+  // drawerActiveBackgroundColor: theme.color.backgroundGreen,
+};
+
+const stackScreenOption = {
+  animationEnabled: false,
+  headerShown: false,
+};
 
 const styles = {
   icon: {
@@ -106,28 +129,6 @@ const Supporticon = {
   ),
 };
 
-const LatestNewsicon = {
-  drawerLabel: "Latest News",
-  unmountOnBlur: true,
-  drawerIcon: ({ focused, size }) => (
-    <Image
-      style={styles.icon}
-      source={require("../../assets/images/drawer/latestnews/img.png")}
-    />
-  ),
-};
-
-const PrivacyPolicyicon = {
-  drawerLabel: "Privacy Policy",
-  unmountOnBlur: true,
-  drawerIcon: ({ focused, size }) => (
-    <Image
-      style={styles.icon}
-      source={require("../../assets/images/drawer/privacypolicy/img.png")}
-    />
-  ),
-};
-
 const Settingsicons = {
   drawerLabel: "Settings",
   unmountOnBlur: true,
@@ -139,34 +140,18 @@ const Settingsicons = {
   ),
 };
 
-const Notificationsicons = {
-  drawerLabel: "Notifications",
-
-  drawerIcon: ({ focused, size }) => (
-    <Image
-      style={styles.icon}
-      source={require("../../assets/images/drawer/settings/img.png")}
-    />
-  ),
-};
-
 const icon = {
+  drawerScreenOption,
+  stackScreenOption,
   Homeicon,
   Inboxicon,
   TradeOffersicon,
   SavedTripsicons,
-
   MyProfileicon,
   EditProfileicon,
   NewTripicon,
   ConfirmedTripsicon,
-
   Supporticon,
-  LatestNewsicon,
-  PrivacyPolicyicon,
-
   Settingsicons,
-  Notificationsicons,
 };
-
 export default icon;
