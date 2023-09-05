@@ -23,14 +23,9 @@ import UIKit
 
     @objc public var productUsage: Set<String> = Set()
     private var additionalInfoSet: Set<String> = Set()
-    private var urlSession: URLSession {
-        // Set up a configuration with a background session ID
-        let configuration = URLSessionConfiguration.background(withIdentifier: "com.stripe.analyticsclient")
-
-        // Set configuration to discretionary
-        configuration.isDiscretionary = true
-        return URLSession(configuration: configuration)
-    }
+    private(set) var urlSession: URLSession = URLSession(
+        configuration: StripeAPIConfiguration.sharedUrlSessionConfiguration
+    )
 
     @objc public class func tokenType(fromParameters parameters: [AnyHashable: Any]) -> String? {
         let parameterKeys = parameters.keys
@@ -144,7 +139,6 @@ extension STPAnalyticsClient {
         payload["app_name"] = Bundle.stp_applicationName() ?? ""
         payload["app_version"] = Bundle.stp_applicationVersion() ?? ""
         payload["plugin_type"] = PluginDetector.shared.pluginType?.rawValue
-        payload["network_type"] = NetworkDetector.getConnectionType()
         payload["install"] = InstallMethod.current.rawValue
         payload["publishable_key"] = apiClient.sanitizedPublishableKey ?? "unknown"
 

@@ -8,7 +8,7 @@ function Card({
   item,
   bottomText = "",
   deleteCard = () => {},
-  clearCard = () => {},
+  changeCard = () => {},
 }) {
   const name = item?.billing_details?.name || "unnamed";
   const card = {};

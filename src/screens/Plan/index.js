@@ -49,6 +49,7 @@ function Plan(props) {
     cardDetails,
     allCardDetails,
     getCardInfo,
+    userSubscription,
   } = store.User;
   const { isInternet, Stripe_Publish_Key } = store.General;
   const { usrData = null, callingScreen = "" } = props?.route.params;
@@ -62,7 +63,6 @@ function Plan(props) {
   const [data, setData] = useState(plans);
 
   const [selectedCard, setSelectedCard] = useState(null);
-
   const [isCardModal, setIsCardModal] = useState(false);
 
   const [isAutoRenew, setIsAutoRenew] = useState(false);
@@ -88,6 +88,14 @@ function Plan(props) {
 
   const [iscTerms, setiscTerms] = useState(false);
   const [EmptycTerms, setEmptycTerms] = useState(false);
+
+  let subscriptionStatus = "";
+  let subscribePlanType = "";
+
+  if (userSubscription) {
+    subscriptionStatus = userSubscription?.status;
+    subscribePlanType = userSubscription?.plan?.interval;
+  }
 
   function toFixed(num, fix) {
     var re = new RegExp("^-?\\d+(?:.\\d{0," + (fix || -1) + "})?");
@@ -289,8 +297,8 @@ function Plan(props) {
   const SucGetClientsecret = async (clientSecret) => {
     try {
       const { error, paymentIntent } = await confirmPayment(clientSecret, {
-        // paymentMethodType: "Card", //strip > 0.5.0
-        type: "Card", //stripe <= 0.5.0
+        paymentMethodType: "Card", //strip > 0.5.0
+        // type: "Card", //stripe <= 0.5.0
         billingDetails: { name: cfn.trim() },
         // autoRenew:isAutoRenew
       });
@@ -437,9 +445,26 @@ function Plan(props) {
       );
     };
 
+    const renderButtonCancel = () => {
+      return (
+        <>
+          <TouchableOpacity activeOpacity={0.7} onPress={goBack}>
+            <Text
+              style={[
+                styles.section2bottomTitle,
+                { color: "rgba(17, 17, 17, 0.6)" },
+              ]}
+            >
+              Cancel and go back
+            </Text>
+          </TouchableOpacity>
+        </>
+      );
+    };
+
     const renderPlanBar = () => {
       const p = data.data.map((e, i, a) => {
-        let name = e.type || "";
+        const name = e.type;
 
         return (
           <TouchableOpacity
@@ -483,9 +508,7 @@ function Plan(props) {
     };
 
     const renderPlanDetails = () => {
-      const pd = plan.features.map((e, i, a) => {
-        let feature = e;
-
+      const pd = plan.features.map((feature) => {
         return (
           <View
             style={{
@@ -597,7 +620,7 @@ function Plan(props) {
                           {plan.type == "annual" ? "(Billed annually)" : ""}
                         </Text>
                       </View>
-                      {plan.type == "annual" && (
+                      {plan.type === "annual" && (
                         <Text
                           style={{
                             fontSize: 12,
@@ -696,434 +719,472 @@ function Plan(props) {
         {isPage == 2 && (
           <View style={styles.section2}>
             <ScrollView showsVerticalScrollIndicator={false}>
-              <View style={{}}>
-                <Text
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                  style={[
-                    styles.section2Title1,
-                    { textTransform: "none", alignSelf: "flex-start" },
-                  ]}
-                >
-                  Payment Information
-                </Text>
-
-                <Text
-                  style={[
-                    styles.section2LogoTitle2c,
-                    { alignSelf: "flex-start", marginTop: 5 },
-                  ]}
-                >
-                  Your subscription will start after you make your first payment
-                  below.
-                </Text>
-              </View>
-              <View
-                style={{
-                  width: "100%",
-                  height: 0.6,
-                  alignSelf: "center",
-                  marginVertical: 12,
-                  backgroundColor: theme.color.subTitleLight,
-                  opacity: 0.5,
-                }}
-              />
-              <View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    width: "100%",
-                  }}
-                >
-                  <Text style={styles.paymenttitle1}>total due Now :</Text>
-                  {!isPromoApply && (
+              {((subscribePlanType === "year" && plan.type === "annual") ||
+                (subscribePlanType === "month" && plan.type === "monthly")) &&
+              subscriptionStatus === "active" ? (
+                <>
+                  <View
+                    style={{
+                      flex: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      paddingTop: 50,
+                    }}
+                  >
                     <Text
+                      style={{
+                        width: "95%",
+                        alignSelf: "center",
+                        fontSize: responsiveFontSize(2.8),
+                        color: theme.color.button1,
+                        fontFamily: theme.fonts.fontMedium,
+                        textAlign: "center",
+                        marginBottom: 20,
+                      }}
+                    >
+                      You have already subscribed to this plan
+                    </Text>
+
+                    {renderButtonCancel()}
+                  </View>
+                </>
+              ) : (
+                <>
+                  <View style={{}}>
+                    <Text
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
                       style={[
-                        styles.paymenttitle1,
-                        {
-                          color: theme.color.title,
-                          width: "65%",
-                          marginLeft: 5,
-                          textTransform: "none",
-                        },
+                        styles.section2Title1,
+                        { textTransform: "none", alignSelf: "flex-start" },
                       ]}
                     >
-                      {plan.type == "annual"
-                        ? `$${toFixed(totalAnually, 2)} ($${annualy.toFixed(
-                            2
-                          )} /mo)`
-                        : `$${monthly} /mo`}
+                      Payment Information
                     </Text>
-                  )}
 
-                  {isPromoApply && (
+                    <Text
+                      style={[
+                        styles.section2LogoTitle2c,
+                        { alignSelf: "flex-start", marginTop: 5 },
+                      ]}
+                    >
+                      Your subscription will start after you make your first
+                      payment below.
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      width: "100%",
+                      height: 0.6,
+                      alignSelf: "center",
+                      marginVertical: 12,
+                      backgroundColor: theme.color.subTitleLight,
+                      opacity: 0.5,
+                    }}
+                  />
+                  <View>
                     <View
                       style={{
                         flexDirection: "row",
-                        marginLeft: 5,
-                        width: "65%",
+                        width: "100%",
                       }}
                     >
-                      <Text
-                        style={{
-                          color: theme.color.title,
-                          fontSize: 11,
+                      <Text style={styles.paymenttitle1}>total due Now :</Text>
+                      {!isPromoApply && (
+                        <Text
+                          style={[
+                            styles.paymenttitle1,
+                            {
+                              color: theme.color.title,
+                              width: "65%",
+                              marginLeft: 5,
+                              textTransform: "none",
+                            },
+                          ]}
+                        >
+                          {plan.type == "annual"
+                            ? `$${toFixed(totalAnually, 2)} ($${annualy.toFixed(
+                                2
+                              )} /mo)`
+                            : `$${monthly} /mo`}
+                        </Text>
+                      )}
 
-                          fontFamily: theme.fonts.fontBold,
-                          textTransform: "capitalize",
-                          textDecorationLine: "line-through",
-                        }}
-                      >
-                        {plan.type == "annual"
-                          ? `$${toFixed(totalAnually, 2)}`
-                          : `$${monthly}`}
-                        {"  "}
-                      </Text>
+                      {isPromoApply && (
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            marginLeft: 5,
+                            width: "65%",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              color: theme.color.title,
+                              fontSize: 11,
 
-                      <Text
-                        style={{
-                          color: theme.color.titleGreen,
-                          fontSize: 11,
-                          fontFamily: theme.fonts.fontBold,
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        ${promoValue} ({isPromoApply.percent_off}% discount)
-                      </Text>
+                              fontFamily: theme.fonts.fontBold,
+                              textTransform: "capitalize",
+                              textDecorationLine: "line-through",
+                            }}
+                          >
+                            {plan.type == "annual"
+                              ? `$${toFixed(totalAnually, 2)}`
+                              : `$${monthly}`}
+                            {"  "}
+                          </Text>
+
+                          <Text
+                            style={{
+                              color: theme.color.titleGreen,
+                              fontSize: 11,
+                              fontFamily: theme.fonts.fontBold,
+                              textTransform: "capitalize",
+                            }}
+                          >
+                            ${promoValue} ({isPromoApply.percent_off}% discount)
+                          </Text>
+                        </View>
+                      )}
                     </View>
-                  )}
-                </View>
 
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text style={styles.paymenttitle2}>your plan :</Text>
-                  <Text
-                    style={[
-                      styles.paymenttitle2,
-                      {
-                        color: theme.color.title,
-                        marginLeft: 5,
-                      },
-                    ]}
-                  >
-                    {plan.type}
-                  </Text>
-                  <TouchableOpacity activeOpacity={0.6} onPress={changePlan}>
-                    <Text
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text style={styles.paymenttitle2}>your plan :</Text>
+                      <Text
+                        style={[
+                          styles.paymenttitle2,
+                          {
+                            color: theme.color.title,
+                            marginLeft: 5,
+                          },
+                        ]}
+                      >
+                        {plan.type}
+                      </Text>
+                      <TouchableOpacity
+                        activeOpacity={0.6}
+                        onPress={changePlan}
+                      >
+                        <Text
+                          style={[
+                            styles.paymenttitle2,
+                            {
+                              color: theme.color.titleGreen,
+                              marginLeft: 10,
+                              fontFamily: theme.fonts.fontNormal,
+                              textDecorationLine: "underline",
+                            },
+                          ]}
+                        >
+                          change
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  <View>
+                    {!selectedCard ? (
+                      <>
+                        <View style={styles.Field}>
+                          {allCardDetails.length > 0 && (
+                            <TouchableOpacity
+                              onPress={toggleCardModal}
+                              activeOpacity={0.7}
+                            >
+                              <Text style={styles.selectCard}>Select card</Text>
+                            </TouchableOpacity>
+                          )}
+
+                          <Text style={styles.FieldTitle1}>full name</Text>
+                          <TextInput
+                            placeholder="Card holder’s first and last name"
+                            value={cfn}
+                            onChangeText={entercFn}
+                            style={[
+                              styles.FieldInput,
+                              {
+                                borderColor:
+                                  Emptycfn || invalidcfn
+                                    ? theme.color.fieldBordeError
+                                    : theme.color.fieldBorder,
+                                fontSize: 12,
+                                color: "black",
+                              },
+                            ]}
+                          />
+                          {(Emptycfn || invalidcfn) &&
+                            renderShowFieldError("cfn")}
+                        </View>
+
+                        <View style={styles.Field}>
+                          <Text style={styles.FieldTitle1}>card</Text>
+
+                          <CardField
+                            postalCodeEnabled={false}
+                            placeholders={{
+                              number: "Card number",
+                            }}
+                            cardStyle={{
+                              textColor: theme.color.title,
+                              fontSize: responsiveFontSize(1.5),
+                              borderColor: theme.color.fieldBorder,
+                              borderWidth: 1,
+                              borderRadius: 8,
+                              fontFamily: theme.fonts.fontNormal,
+                            }}
+                            style={{
+                              width: "100%",
+                              height: 45,
+                            }}
+                            onCardChange={(cardDetails) => {
+                              onChangeCard(cardDetails);
+                            }}
+                            onFocus={(focusedField) => {
+                              console.log("focusField", focusedField);
+                            }}
+                          />
+                          {cardErr !== "" && renderShowFieldError("card")}
+                        </View>
+                      </>
+                    ) : (
+                      <>
+                        <View style={[styles.Field, { paddingHorizontal: 5 }]}>
+                          <Card
+                            item={selectedCard}
+                            bottomText={
+                              allCardDetails.length > 0 ? "change" : ""
+                            }
+                            changeCard={toggleCardModal}
+                          />
+                          <TouchableOpacity
+                            onPress={() => setSelectedCard(null)}
+                            activeOpacity={0.7}
+                            style={{
+                              position: "absolute",
+                              top: -10,
+                              right: -1,
+                            }}
+                          >
+                            <utils.vectorIcon.Entypo
+                              name="circle-with-cross"
+                              color={theme.color.button1}
+                              size={responsiveFontSize(2.2)}
+                            />
+                          </TouchableOpacity>
+                        </View>
+                      </>
+                    )}
+
+                    <View
                       style={[
-                        styles.paymenttitle2,
+                        styles.Field,
                         {
-                          color: theme.color.titleGreen,
-                          marginLeft: 10,
-                          fontFamily: theme.fonts.fontNormal,
-                          textDecorationLine: "underline",
+                          flexDirection: "row",
+                          justifyContent: "space-between",
                         },
                       ]}
                     >
-                      change
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-
-              <View>
-                {!selectedCard ? (
-                  <>
-                    <View style={styles.Field}>
-                      {allCardDetails.length > 0 && (
-                        <TouchableOpacity
-                          onPress={toggleCardModal}
-                          activeOpacity={0.7}
-                        >
-                          <Text style={styles.selectCard}>Select card</Text>
-                        </TouchableOpacity>
-                      )}
-
-                      <Text style={styles.FieldTitle1}>full name</Text>
-                      <TextInput
-                        placeholder="Card holder’s first and last name"
-                        value={cfn}
-                        onChangeText={entercFn}
-                        style={[
-                          styles.FieldInput,
-                          {
-                            borderColor:
-                              Emptycfn || invalidcfn
-                                ? theme.color.fieldBordeError
-                                : theme.color.fieldBorder,
-                            fontSize: 12,
-                            color: "black",
-                          },
-                        ]}
+                      <Text style={styles.FieldTitle1}>Auto Renew</Text>
+                      <utils.CheckBox
+                        isSel={isAutoRenew}
+                        setIsSel={setIsAutoRenew}
                       />
-                      {(Emptycfn || invalidcfn) && renderShowFieldError("cfn")}
                     </View>
 
-                    <View style={styles.Field}>
-                      <Text style={styles.FieldTitle1}>card</Text>
+                    {isShowPromoFiled && (
+                      <View style={styles.Field}>
+                        <Text style={styles.FieldTitle1}>promo code</Text>
 
-                      <CardField
-                        postalCodeEnabled={false}
-                        placeholders={{
-                          number: "Card number",
-                        }}
-                        cardStyle={{
-                          textColor: theme.color.title,
-                          fontSize: responsiveFontSize(1.5),
-                          borderColor: theme.color.fieldBorder,
-                          borderWidth: 1,
-                          borderRadius: 8,
-                          fontFamily: theme.fonts.fontNormal,
-                        }}
-                        style={{
-                          width: "100%",
-                          height: 45,
-                        }}
-                        onCardChange={(cardDetails) => {
-                          onChangeCard(cardDetails);
-                        }}
-                        onFocus={(focusedField) => {
-                          console.log("focusField", focusedField);
-                        }}
-                      />
-                      {cardErr !== "" && renderShowFieldError("card")}
-                    </View>
-                  </>
-                ) : (
-                  <>
-                    <View style={[styles.Field, { paddingHorizontal: 5 }]}>
-                      <Card
-                        item={selectedCard}
-                        bottomText={allCardDetails.length > 0 ? "change" : ""}
-                        changeCard={toggleCardModal}
-                      />
-                      <TouchableOpacity
-                        onPress={() => setSelectedCard(null)}
-                        activeOpacity={0.7}
-                        style={{ position: "absolute", top: -10, right: -1 }}
-                      >
-                        <utils.vectorIcon.Entypo
-                          name="circle-with-cross"
-                          color={theme.color.button1}
-                          size={responsiveFontSize(2.2)}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  </>
-                )}
+                        {!isPromoApply && (
+                          <View
+                            style={[
+                              styles.FieldInput,
+                              {
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                paddingHorizontal: 0,
+                                borderWidth: 1,
+                                borderColor: theme.color.fieldBorder,
+                              },
+                            ]}
+                          >
+                            <TextInput
+                              placeholder="Add a promo code"
+                              value={pc}
+                              onChangeText={enterpc}
+                              style={{
+                                fontSize: 13,
 
-                <View
-                  style={[
-                    styles.Field,
-                    {
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                    },
-                  ]}
-                >
-                  <Text style={styles.FieldTitle1}>Auto Renew</Text>
-                  <utils.CheckBox
-                    isSel={isAutoRenew}
-                    setIsSel={setIsAutoRenew}
-                  />
-                </View>
+                                color: "black",
+                                width: "70%",
+                                height: "100%",
+                                paddingLeft: 10,
+                              }}
+                            />
 
-                {isShowPromoFiled && (
-                  <View style={styles.Field}>
-                    <Text style={styles.FieldTitle1}>promo code</Text>
+                            {pc != "" && (
+                              <TouchableOpacity
+                                activeOpacity={0.7}
+                                onPress={applyPromo}
+                                style={{
+                                  width: 60,
+                                  height: "100%",
+                                  borderTopRightRadius: 8,
+                                  borderBottomRightRadius: 8,
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  backgroundColor: theme.color.button1,
+                                  paddingHorizontal: 3,
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    color: theme.color.buttonText,
+                                    fontSize: 13,
+                                    fontFamily: theme.fonts.fontMedium,
+                                  }}
+                                >
+                                  Apply
+                                </Text>
+                              </TouchableOpacity>
+                            )}
+                          </View>
+                        )}
 
-                    {!isPromoApply && (
-                      <View
-                        style={[
-                          styles.FieldInput,
-                          {
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            paddingHorizontal: 0,
-                            borderWidth: 1,
-                            borderColor: theme.color.fieldBorder,
-                          },
-                        ]}
-                      >
-                        <TextInput
-                          placeholder="Add a promo code"
-                          value={pc}
-                          onChangeText={enterpc}
-                          style={{
-                            fontSize: 13,
-
-                            color: "black",
-                            width: "70%",
-                            height: "100%",
-                            paddingLeft: 10,
-                          }}
-                        />
-
-                        {pc != "" && (
-                          <TouchableOpacity
-                            activeOpacity={0.7}
-                            onPress={applyPromo}
+                        {isPromoApply && (
+                          <View
                             style={{
-                              width: 60,
-                              height: "100%",
-                              borderTopRightRadius: 8,
-                              borderBottomRightRadius: 8,
+                              marginTop: 5,
                               alignItems: "center",
-                              justifyContent: "center",
-                              backgroundColor: theme.color.button1,
-                              paddingHorizontal: 3,
+                              flexDirection: "row",
+                              justifyContent: "space-between",
                             }}
                           >
                             <Text
+                              numberOfLines={1}
+                              ellipsizeMode="tail"
                               style={{
-                                color: theme.color.buttonText,
-                                fontSize: 13,
+                                width: "50%",
+                                color: theme.color.title,
+                                fontSize: 12,
                                 fontFamily: theme.fonts.fontMedium,
                               }}
                             >
-                              Apply
+                              {isPromoApply?.id.trim()}
                             </Text>
-                          </TouchableOpacity>
+
+                            <TouchableOpacity
+                              activeOpacity={0.7}
+                              onPress={() => setisPromoApply(false)}
+                            >
+                              <Text
+                                style={{
+                                  color: theme.color.titleGreen,
+                                  fontSize: 12,
+                                  fontFamily: theme.fonts.fontMedium,
+                                  textDecorationLine: "underline",
+                                }}
+                              >
+                                Remove
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
                         )}
                       </View>
                     )}
 
-                    {isPromoApply && (
-                      <View
-                        style={{
-                          marginTop: 5,
-                          alignItems: "center",
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <Text
-                          numberOfLines={1}
-                          ellipsizeMode="tail"
-                          style={{
-                            width: "50%",
-                            color: theme.color.title,
-                            fontSize: 12,
-                            fontFamily: theme.fonts.fontMedium,
-                          }}
-                        >
-                          {isPromoApply?.id.trim()}
-                        </Text>
-
-                        <TouchableOpacity
-                          activeOpacity={0.7}
-                          onPress={() => setisPromoApply(false)}
-                        >
-                          <Text
-                            style={{
-                              color: theme.color.titleGreen,
-                              fontSize: 12,
-                              fontFamily: theme.fonts.fontMedium,
-                              textDecorationLine: "underline",
-                            }}
-                          >
-                            Remove
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    )}
-                  </View>
-                )}
-
-                {!isShowPromoFiled && (
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => setisShowPromoFiled(true)}
-                    style={{ marginTop: 20 }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        color: theme.color.titleGreen,
-                        fontFamily: theme.fonts.fontMedium,
-                        textDecorationLine: "underline",
-                      }}
-                    >
-                      I have a promo code
-                    </Text>
-                  </TouchableOpacity>
-                )}
-
-                <View style={{ marginTop: 20 }}>
-                  <View
-                    style={[styles.Field2, { justifyContent: "space-between" }]}
-                  >
-                    <TouchableOpacity
-                      style={{
-                        width: 20,
-                        height: 20,
-                        borderRadius: 4,
-                        backgroundColor: !iscTerms
-                          ? "white"
-                          : theme.color.button1,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderWidth: 1,
-                        borderColor: theme.color.fieldBorder,
-                      }}
-                      activeOpacity={0.5}
-                      onPress={() => {
-                        setiscTerms(!iscTerms);
-                        setEmptycTerms(false);
-                      }}
-                    >
-                      {iscTerms && (
-                        <utils.vectorIcon.FontAwesome5
-                          name={"check"}
-                          color={theme.color.buttonText}
-                          size={11}
-                        />
-                      )}
-                    </TouchableOpacity>
-
-                    <View style={{ width: "90%" }}>
+                    {!isShowPromoFiled && (
                       <TouchableOpacity
                         activeOpacity={0.7}
-                        onPress={TermsnCndtnClickCard}
+                        onPress={() => setisShowPromoFiled(true)}
+                        style={{ marginTop: 20 }}
                       >
-                        <Text style={styles.Field2Titlec}>
-                          I agree to Trip Trader’s{" "}
-                          <Text style={styles.Field2Titlecc}>
-                            Terms & Conditions
-                          </Text>
+                        <Text
+                          style={{
+                            fontSize: 12,
+                            color: theme.color.titleGreen,
+                            fontFamily: theme.fonts.fontMedium,
+                            textDecorationLine: "underline",
+                          }}
+                        >
+                          I have a promo code
                         </Text>
                       </TouchableOpacity>
-                      <Text style={[styles.Field2Titlec, { top: -3 }]}>
-                        and understand that upon clicking “Subscribe” below, I
-                        will be charged{" "}
-                        {plan.type == "annual"
-                          ? `$${toFixed(totalAnually, 2)}`
-                          : `$${monthly}`}{" "}
-                        {plan.type == "annual" ? plan.type + "y" : plan.type}.
-                      </Text>
+                    )}
+
+                    <View style={{ marginTop: 20 }}>
+                      <View
+                        style={[
+                          styles.Field2,
+                          { justifyContent: "space-between" },
+                        ]}
+                      >
+                        <TouchableOpacity
+                          style={{
+                            width: 20,
+                            height: 20,
+                            borderRadius: 4,
+                            backgroundColor: !iscTerms
+                              ? "white"
+                              : theme.color.button1,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            borderWidth: 1,
+                            borderColor: theme.color.fieldBorder,
+                          }}
+                          activeOpacity={0.5}
+                          onPress={() => {
+                            setiscTerms(!iscTerms);
+                            setEmptycTerms(false);
+                          }}
+                        >
+                          {iscTerms && (
+                            <utils.vectorIcon.FontAwesome5
+                              name={"check"}
+                              color={theme.color.buttonText}
+                              size={11}
+                            />
+                          )}
+                        </TouchableOpacity>
+
+                        <View style={{ width: "90%" }}>
+                          <TouchableOpacity
+                            activeOpacity={0.7}
+                            onPress={TermsnCndtnClickCard}
+                          >
+                            <Text style={styles.Field2Titlec}>
+                              I agree to Trip Trader’s{" "}
+                              <Text style={styles.Field2Titlecc}>
+                                Terms & Conditions
+                              </Text>
+                            </Text>
+                          </TouchableOpacity>
+                          <Text style={[styles.Field2Titlec, { top: -3 }]}>
+                            and understand that upon clicking “Subscribe” below,
+                            I will be charged{" "}
+                            {plan.type == "annual"
+                              ? `$${toFixed(totalAnually, 2)}`
+                              : `$${monthly}`}{" "}
+                            {plan.type == "annual"
+                              ? plan.type + "y"
+                              : plan.type}
+                            .
+                          </Text>
+                        </View>
+                      </View>
+                      {EmptycTerms && renderShowFieldError("cterms")}
                     </View>
                   </View>
-                  {EmptycTerms && renderShowFieldError("cterms")}
-                </View>
-              </View>
-
-              {renderButtonSubscribe()}
-
-              <TouchableOpacity activeOpacity={0.7} onPress={goBack}>
-                <Text
-                  style={[
-                    styles.section2bottomTitle,
-                    { color: "rgba(17, 17, 17, 0.6)" },
-                  ]}
-                >
-                  Cancel and go back
-                </Text>
-              </TouchableOpacity>
+                  {renderButtonSubscribe()}
+                  {renderButtonCancel()}
+                </>
+              )}
             </ScrollView>
           </View>
         )}

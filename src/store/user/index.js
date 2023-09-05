@@ -2306,15 +2306,15 @@ class user {
         ];
         if (rsp.length > 0) {
           rsp.map((item) => {
-            if (item.type == "annual") {
+            if (item.type === "annual") {
               plan.annual_discount = item.discount;
             }
-            let o = { ...item };
+            const o = { ...item };
             o.features = features;
             dt.push(o);
           });
         }
-        plan.data = dt;
+        plan.data = dt.sort((a) => (a.type === "monthly" ? -1 : 1));
         this.setplans(plan);
       })
       .catch((err) => {
@@ -2486,8 +2486,7 @@ class user {
       ?.then((res) => {
         const result = res?.data?.data?.data || null;
         console.log(
-          `response getCardInfo ${db.apis.GET_CARD_DETAILS + customerId} : `,
-          result
+          `response getCardInfo ${db.apis.GET_CARD_DETAILS + customerId} : `
         );
 
         if (result.length > 0) {

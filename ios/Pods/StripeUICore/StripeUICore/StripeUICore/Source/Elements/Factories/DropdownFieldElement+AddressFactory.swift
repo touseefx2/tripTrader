@@ -21,8 +21,7 @@ import Foundation
             countryCodes: [String],
             theme: ElementsUITheme = .default,
             defaultCountry: String? = nil,
-            locale: Locale = Locale.current,
-            disableDropdownWithSingleCountry: Bool = false
+            locale: Locale = Locale.current
         ) -> DropdownFieldElement {
             let dropdownItems: [DropdownItem] = countryCodes.map {
                 let flagEmoji = String.countryFlagEmoji(for: $0) ?? ""              // 🇺🇸
@@ -39,8 +38,7 @@ import Foundation
                 items: dropdownItems,
                 defaultIndex: defaultCountryIndex,
                 label: String.Localized.country_or_region,
-                theme: theme,
-                disableDropdownWithSingleElement: disableDropdownWithSingleCountry
+                theme: theme
             )
         }
     }

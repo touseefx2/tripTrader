@@ -30,8 +30,6 @@
 
 "County" = "Okraj";
 
-"Date is empty." = "Polje z datumom je prazno.";
-
 "Department" = "Oddelek";
 
 "District" = "Okrožje";
@@ -90,7 +88,7 @@
 
 "Remove bank account ending in %@" = "Odstranite bančni račun, ki se konča s števkami %@";
 
-"Search" = "Išči";
+"Search" = "Iskanje";
 
 "State" = "Zvezna država";
 

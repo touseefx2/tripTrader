@@ -16,7 +16,6 @@ import Foundation
     public enum IDNumberType {
         case BR_CPF
         case BR_CPF_CNPJ
-        case SG_NRIC_OR_FIN
         case US_SSN_LAST4
     }
 
@@ -36,11 +35,10 @@ import Foundation
     public var disallowedCharacters: CharacterSet {
         switch type {
         case .BR_CPF,
-            .BR_CPF_CNPJ,
-            .US_SSN_LAST4:
+             .BR_CPF_CNPJ,
+             .US_SSN_LAST4:
             return CharacterSet.stp_asciiDigit.inverted
-        case .SG_NRIC_OR_FIN,
-            .none:
+        case .none:
             return .newlines
         }
     }
@@ -53,8 +51,7 @@ import Foundation
             return 14
         case .US_SSN_LAST4:
             return 4
-        case .SG_NRIC_OR_FIN,
-            .none:
+        case .none:
             return .max
         }
     }
@@ -65,18 +62,15 @@ import Foundation
 
      - Returns: The format consisting of a string using pound signs `#` for numeric placeholders,  and `*` for  letters.
      */
-    func format(text: String) -> String? {
+   func format(text: String) -> String? {
         switch type {
         case .BR_CPF,
-            .BR_CPF_CNPJ where text.count <= 11:
+             .BR_CPF_CNPJ where text.count <= 11:
             return "###.###.###-##"
         case .BR_CPF_CNPJ:
             return "###.###.###/###-##"
-        case .US_SSN_LAST4:
-            return "••• - •• - ####"
-        case .none:
-            return nil
-        case .some(.SG_NRIC_OR_FIN):
+        case .US_SSN_LAST4,
+             .none:
             return nil
         }
     }
@@ -89,28 +83,23 @@ import Foundation
         switch type {
         // CPF is 11 digits but CNPJ is 14 (maxLength), so we will allow 11 here
         case .BR_CPF_CNPJ where text.count == 11,
-            .none:
-            return .valid
-        case .SG_NRIC_OR_FIN:
+             .none:
             return .valid
         default:
-            return maxLength(for: text) == text.count
-                ? .valid
-                : .invalid(
-                    TextFieldElement.Error.incomplete(
-                        localizedDescription: STPLocalizedString(
-                            "The ID number you entered is incomplete.",
-                            "An error message."
-                        )
+            return maxLength(for: text) == text.count ? .valid : .invalid(
+                TextFieldElement.Error.incomplete(
+                    localizedDescription: STPLocalizedString(
+                        "The ID number you entered is incomplete.",
+                        "An error message."
                     )
                 )
+            )
         }
     }
 
     public func makeDisplayText(for text: String) -> NSAttributedString {
         guard let format = format(text: text),
-            let formatter = TextFieldFormatter(format: format)
-        else {
+              let formatter = TextFieldFormatter(format: format) else {
             return NSAttributedString(string: text)
         }
 
@@ -124,8 +113,8 @@ import Foundation
     public func keyboardProperties(for text: String) -> TextFieldElement.KeyboardProperties {
         switch type {
         case .BR_CPF,
-            .BR_CPF_CNPJ,
-            .US_SSN_LAST4:
+             .BR_CPF_CNPJ,
+             .US_SSN_LAST4:
             return .init(
                 type: .asciiCapableNumberPad,
                 textContentType: nil,

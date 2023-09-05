@@ -24,7 +24,7 @@ function ManageSubscription(props) {
   const { isInternet } = store.General;
   const { user, ucRef, getCardInfo, userSubscription, cardDetails, regLoader } =
     store.User;
-  // console.log("userSubscription : ", userSubscription);
+  console.log("userSubscription : ", userSubscription);
   // console.log("cardDetails : ", cardDetails[0].card);
 
   const [isCancelSubModal, setIsCancelSubModal] = useState(false);
@@ -302,7 +302,9 @@ function ManageSubscription(props) {
                 paddingVertical: 15,
               }}
             >
-              {subscriptionStatus === "freemium" && renderMain()}
+              {(subscriptionStatus === "freemium" ||
+                subscriptionStatus === "incomplete") &&
+                renderMain()}
               {subscriptionStatus === "active" && renderMain2()}
               {subscriptionStatus === "canceled" && renderMain3()}
             </ScrollView>

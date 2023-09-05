@@ -54,8 +54,6 @@ import UIKit
         }
     }
     public var didUpdate: DidUpdateSelectedIndex?
-    /// A label displayed in the dropdown field UI e.g. "Country or region" for a country dropdown
-    public let label: String?
 
     private(set) lazy var pickerView: UIPickerView = {
         let picker = UIPickerView()
@@ -66,21 +64,18 @@ import UIKit
     private(set) lazy var pickerFieldView: PickerFieldView = {
         let pickerFieldView = PickerFieldView(
             label: label,
-            shouldShowChevron: disableDropdownWithSingleElement ? items.count != 1 : true,
+            shouldShowChevron: true,
             pickerView: pickerView,
             delegate: self,
             theme: theme
         )
-        if disableDropdownWithSingleElement && items.count == 1 {
-            pickerFieldView.isUserInteractionEnabled = false
-        }
         return pickerFieldView
     }()
 
     // MARK: - Private properties
+    private let label: String?
     private let theme: ElementsUITheme
     private var previouslySelectedIndex: Int
-    private let disableDropdownWithSingleElement: Bool
 
     /**
      - Parameters:
@@ -99,7 +94,6 @@ import UIKit
         defaultIndex: Int = 0,
         label: String?,
         theme: ElementsUITheme = .default,
-        disableDropdownWithSingleElement: Bool = false,
         didUpdate: DidUpdateSelectedIndex? = nil
     ) {
         assert(!items.isEmpty, "`items` must contain at least one item")
@@ -107,7 +101,6 @@ import UIKit
         self.label = label
         self.theme = theme
         self.items = items
-        self.disableDropdownWithSingleElement = disableDropdownWithSingleElement
         self.didUpdate = didUpdate
 
         // Default to defaultIndex, if in bounds

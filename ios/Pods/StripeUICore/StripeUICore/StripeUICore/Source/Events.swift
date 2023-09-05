@@ -22,7 +22,6 @@ import UIKit
 @frozen @_spi(STP) public enum STPEvent {
     case shouldEnableUserInteraction
     case shouldDisableUserInteraction
-    case viewDidAppear
 }
 
 @_spi(STP) public protocol EventHandler {

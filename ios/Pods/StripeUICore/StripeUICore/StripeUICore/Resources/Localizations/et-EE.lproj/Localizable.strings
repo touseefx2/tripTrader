@@ -30,8 +30,6 @@
 
 "County" = "Maakond";
 
-"Date is empty." = "Kuupäev on tühi.";
-
 "Department" = "Departemang";
 
 "District" = "Regioon";
@@ -90,7 +88,7 @@
 
 "Remove bank account ending in %@" = "Eemaldage pangakonto lõpuga %@";
 
-"Search" = "Otsing";
+"Search" = "Otsi";
 
 "State" = "Osariik";
 

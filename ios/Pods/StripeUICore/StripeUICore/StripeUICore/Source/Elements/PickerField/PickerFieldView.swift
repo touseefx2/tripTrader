@@ -127,7 +127,11 @@ final class PickerFieldView: UIView {
 
     override var isUserInteractionEnabled: Bool {
         didSet {
-            textField.textColor = theme.colors.textFieldText.disabled(!isUserInteractionEnabled)
+            if isUserInteractionEnabled {
+                textField.textColor = theme.colors.textFieldText
+            } else {
+                textField.textColor = .tertiaryLabel
+            }
             if frame.size != .zero {
                 textField.layoutIfNeeded()  // Fixes an issue on iOS 15 where setting textField properties causes it to lay out from zero size.
             }
@@ -173,8 +177,6 @@ extension PickerFieldView: EventHandler {
             isUserInteractionEnabled = true
         case .shouldDisableUserInteraction:
             isUserInteractionEnabled = false
-        default:
-            break
         }
     }
 }
