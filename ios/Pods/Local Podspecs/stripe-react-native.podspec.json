@@ -1,24 +1,47 @@
 {
   "name": "stripe-react-native",
-  "version": "0.5.0",
+  "version": "0.30.0",
   "summary": "Stripe SDK for React Native",
   "homepage": "https://github.com/stripe/stripe-react-native/#readme",
   "license": "MIT",
   "authors": "Stripe",
   "platforms": {
-    "ios": "11.0"
+    "ios": "13.0"
   },
   "source": {
     "git": "https://github.com/stripe/stripe-react-native.git",
-    "tag": "0.5.0"
+    "tag": "0.30.0"
   },
   "source_files": "ios/**/*.{h,m,mm,swift}",
+  "exclude_files": "ios/Tests/",
   "dependencies": {
     "React-Core": [
 
     ],
     "Stripe": [
-      "~> 21.13.0"
+      "~> 23.12.0"
+    ],
+    "StripePaymentSheet": [
+      "~> 23.12.0"
+    ],
+    "StripePayments": [
+      "~> 23.12.0"
+    ],
+    "StripePaymentsUI": [
+      "~> 23.12.0"
+    ],
+    "StripeApplePay": [
+      "~> 23.12.0"
+    ],
+    "StripeFinancialConnections": [
+      "~> 23.12.0"
     ]
-  }
+  },
+  "testspecs": [
+    {
+      "name": "Tests",
+      "test_type": "unit",
+      "source_files": "ios/Tests/**/*.{m,swift}"
+    }
+  ]
 }

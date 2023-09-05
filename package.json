@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "ios2": "react-native run-ios --simulator='iPhone 14 Pro Max'",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
@@ -32,7 +33,7 @@
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/native-stack": "^6.9.13",
     "@sentry/react-native": "^4.15.2",
-    "@stripe/stripe-react-native": "^0.5.0",
+    "@stripe/stripe-react-native": "^0.30.0",
     "axios": "^0.27.2",
     "mobx": "^6.9.0",
     "mobx-persist": "^0.4.1",

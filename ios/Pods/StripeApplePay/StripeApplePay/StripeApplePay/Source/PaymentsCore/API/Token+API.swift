@@ -1,6 +1,6 @@
 //
 //  Token+API.swift
-//  StripeiOS
+//  StripeApplePay
 //
 //  Created by David Estes on 8/10/21.
 //  Copyright © 2021 Stripe, Inc. All rights reserved.
@@ -15,26 +15,30 @@ extension StripeAPI.Token {
     /// - Parameters:
     ///   - token: The Stripe token from the response. Will be nil if an error occurs. - seealso: STPToken
     ///   - error: The error returned from the response, or nil if none occurs. - seealso: StripeError.h for possible values.
-    typealias TokenCompletionBlock = (Result<StripeAPI.Token, Error>) -> Void
+    @_spi(StripeApplePayTokenization) public typealias TokenCompletionBlock = (Result<StripeAPI.Token, Error>) -> Void
 
     /// Converts a PKPayment object into a Stripe token using the Stripe API.
     /// - Parameters:
     ///   - payment:     The user's encrypted payment information as returned from a PKPaymentAuthorizationController. Cannot be nil.
     ///   - completion:  The callback to run with the returned Stripe token (and any errors that may have occurred).
-    static func create(apiClient: STPAPIClient = .shared,
-                       payment: PKPayment,
-                       completion: @escaping TokenCompletionBlock)
-    {
+    @_spi(StripeApplePayTokenization) public static func create(
+        apiClient: STPAPIClient = .shared,
+        payment: PKPayment,
+        completion: @escaping TokenCompletionBlock
+    ) {
+        // Internal note: @_spi(StripeApplePayTokenization) is intended for limited public use. See https://docs.google.com/document/d/1Z9bTUBvDDufoqTaQeI3A0Cxdsoj_D0IkxdWX-GB-RTQ
         let params = payment.stp_tokenParameters(apiClient: apiClient)
         create(
             apiClient: apiClient,
             parameters: params,
-            completion: completion)
+            completion: completion
+        )
     }
-    
-    static func create(apiClient: STPAPIClient = .shared,
-                       parameters: [String: Any],
-                       completion: @escaping TokenCompletionBlock
+
+    static func create(
+        apiClient: STPAPIClient = .shared,
+        parameters: [String: Any],
+        completion: @escaping TokenCompletionBlock
     ) {
         let tokenType = STPAnalyticsClient.tokenType(fromParameters: parameters)
         var mutableParams = parameters
@@ -44,11 +48,11 @@ extension StripeAPI.Token {
         apiClient.post(resource: Resource, parameters: mutableParams, completion: completion)
         STPTelemetryClient.shared.sendTelemetryData()
     }
-    
+
     static let Resource = "tokens"
 }
 
-@_spi(STP) public extension PKPayment {
+extension PKPayment {
     func stp_tokenParameters(apiClient: STPAPIClient) -> [String: Any] {
         let paymentString = String(data: self.token.paymentData, encoding: .utf8)
         var payload: [String: Any] = [:]
@@ -78,7 +82,7 @@ extension StripeAPI.Token {
         var transactionIdentifier = self.token.transactionIdentifier
         if transactionIdentifier != "" {
             if self.stp_isSimulated() {
-                transactionIdentifier = PKPayment.stp_testTransactionIdentifier() ?? ""
+                transactionIdentifier = PKPayment.stp_testTransactionIdentifier()
             }
             payload["pk_token_transaction_id"] = transactionIdentifier
         }
