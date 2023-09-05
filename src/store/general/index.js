@@ -1,8 +1,8 @@
-import {observable, makeObservable, action} from 'mobx';
-import {AppState, Alert} from 'react-native';
-import {persist} from 'mobx-persist';
-import NetInfo from '@react-native-community/netinfo';
-import store from '..';
+import { observable, makeObservable, action } from "mobx";
+import { AppState, Alert } from "react-native";
+import { persist } from "mobx-persist";
+import NetInfo from "@react-native-community/netinfo";
+import store from "..";
 
 class general {
   constructor() {
@@ -10,16 +10,16 @@ class general {
   }
 
   sentryDsn =
-    'https://8f2c307cb0e547088a57b23622928be6@o4505512458452992.ingest.sentry.io/4505517120487424';
+    "https://8f2c307cb0e547088a57b23622928be6@o4505512458452992.ingest.sentry.io/4505517120487424";
   Stripe_Publish_Key =
-    'pk_test_51M9HIuBmhbfqULZ4IstWDtc73GFl6mVRnA4jUcOR9BVRkndz1Ou2FSlOeP4WjGgYqlH4LflMtgUY8foGkY58lHAq00OGfQUjlR';
+    "pk_test_51M9HIuBmhbfqULZ4IstWDtc73GFl6mVRnA4jUcOR9BVRkndz1Ou2FSlOeP4WjGgYqlH4LflMtgUY8foGkY58lHAq00OGfQUjlR";
   // pk_live_51M9HIuBmhbfqULZ4zLBVSrEMd8hpXSfnEcUQvRnZHdPfkzKy5mXtLINeAaglb9ZoIg3muBImsh2X6Q01b8nylFXU00SiTzkpZp
   Terms_and_Conditions_Link =
-    'http://trip-trader.com.s3-website-us-east-1.amazonaws.com/termsandconditionsapp';
+    "http://trip-trader.com.s3-website-us-east-1.amazonaws.com/termsandconditionsapp";
   Privacy_and_Policy_Link =
-    'http://trip-trader.com.s3-website-us-east-1.amazonaws.com/privacypolicyapp';
-  NotificationChannel = 'NotifcationChannel1';
-  @observable AppName = 'Trip Trader';
+    "http://trip-trader.com.s3-website-us-east-1.amazonaws.com/privacypolicyapp";
+  NotificationChannel = "NotifcationChannel1";
+  @observable AppName = "Trip Trader";
   @observable isServerError = false;
   @observable photoSelInd = 0;
   @observable Loading = true;
@@ -29,42 +29,42 @@ class general {
   @observable selectedFilter = [];
   @observable isUpdateNeeded = false;
   @observable isEmailPopup = false;
-  @observable isCurrentCahtId = '';
+  @observable isCurrentCahtId = "";
 
-  @persist('object') @observable isGLocation = false;
-  @persist('object') @observable apiLevel = '';
-  @persist('object') @observable appBuildNumber = '';
-  @persist('object') @observable appVersionNumber = '';
-  @persist('object') @observable package = '';
+  @persist("object") @observable isGLocation = false;
+  @persist("object") @observable apiLevel = "";
+  @persist("object") @observable appBuildNumber = "";
+  @persist("object") @observable appVersionNumber = "";
+  @persist("object") @observable package = "";
 
   @observable isSheetOpen = false;
-  @observable focusScreen = '';
-  @observable goto = 'home';
-  @observable settingsGoTo = '';
-  @observable offerGoTo = '';
+  @observable focusScreen = "";
+  @observable goto = "Home";
+  @observable settingsGoTo = "";
+  @observable offerGoTo = "";
 
   @observable goToo = null;
-  @action setgoToo = obj => {
+  @action setgoToo = (obj) => {
     this.goToo = obj;
   };
 
-  @action setIsCurrentCahtId = obj => {
+  @action setIsCurrentCahtId = (obj) => {
     this.isCurrentCahtId = obj;
   };
 
-  @action checkServer = err => {
+  @action checkServer = (err) => {
     if (err.response.data == undefined && err.response.status == 0) {
-      Alert.alert('Network Error', 'Server not responding');
+      Alert.alert("Network Error", "Server not responding");
       return;
     }
   };
 
-  @action refreshAlert = msg => {
-    Alert.alert('', msg, [
+  @action refreshAlert = (msg) => {
+    Alert.alert("", msg, [
       {
-        text: 'Refresh',
+        text: "Refresh",
         onPress: () => {
-          NetInfo.fetch().then(state => {
+          NetInfo.fetch().then((state) => {
             if (state.isConnected) {
               // store.User.attemptToGetHomeTripsSearch(
               //   () => {},
@@ -76,10 +76,10 @@ class general {
                 () => {},
                 () => {},
                 () => {},
-                'all',
+                "all"
               );
             } else {
-              Alert.alert('', 'Please connect internet');
+              Alert.alert("", "Please connect internet");
             }
           });
         },
@@ -88,71 +88,71 @@ class general {
     return;
   };
 
-  @action setphotoSelInd = obj => {
+  @action setphotoSelInd = (obj) => {
     this.photoSelInd = obj;
   };
 
-  @action setIsEmailPopup = obj => {
+  @action setIsEmailPopup = (obj) => {
     this.isEmailPopup = obj;
   };
 
-  @action setgoto = obj => {
+  @action setgoto = (obj) => {
     this.goto = obj;
   };
 
-  @action setSettingsGoTo = obj => {
+  @action setSettingsGoTo = (obj) => {
     this.settingsGoTo = obj;
   };
 
-  @action setOfferGoTo = obj => {
+  @action setOfferGoTo = (obj) => {
     this.offerGoTo = obj;
   };
 
-  @action setFocusScreen = obj => {
+  @action setFocusScreen = (obj) => {
     this.focusScreen = obj;
   };
 
-  @action setisSheetOpen = obj => {
+  @action setisSheetOpen = (obj) => {
     this.isSheetOpen = obj;
   };
 
-  @action setisUpdateNeeded = obj => {
+  @action setisUpdateNeeded = (obj) => {
     this.isUpdateNeeded = obj;
   };
 
-  @action setselectedFilter = obj => {
+  @action setselectedFilter = (obj) => {
     this.selectedFilter = obj;
   };
 
-  @action setisServerError = obj => {
+  @action setisServerError = (obj) => {
     this.isServerError = obj;
   };
 
-  @action setappBuildNumber = obj => {
+  @action setappBuildNumber = (obj) => {
     this.appBuildNumber = obj;
   };
 
-  @action setappVersionNumber = obj => {
+  @action setappVersionNumber = (obj) => {
     this.appVersionNumber = obj;
   };
 
-  @action setpackage = obj => {
+  @action setpackage = (obj) => {
     this.package = obj;
   };
 
-  @action setLoading = obj => {
+  @action setLoading = (obj) => {
     this.Loading = obj;
   };
 
-  @action setInternet = obj => {
+  @action setInternet = (obj) => {
     this.isInternet = obj;
   };
 
-  @action setLocation = obj => {
+  @action setLocation = (obj) => {
     this.isLocation = obj;
   };
 
-  @action setGLocation = obj => {
+  @action setGLocation = (obj) => {
     this.isGLocation = obj;
   };
 
@@ -161,7 +161,7 @@ class general {
     this.apiLevel = val;
   }
 
-  @action setappState = obj => {
+  @action setappState = (obj) => {
     this.appState = obj;
   };
 }

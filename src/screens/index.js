@@ -25,6 +25,8 @@ import Support from "./Support";
 import Settings from "./Settings";
 import ChangePassword from "./ChangePassword";
 import BlockUsers from "./BlockUsers";
+import Welcome from "./Welcome";
+import Cards from "./Cards";
 
 export default screens = {
   Splash,
@@ -54,4 +56,6 @@ export default screens = {
   Plan,
   BlockUsers,
   Chat,
+  Welcome,
+  Cards,
 };

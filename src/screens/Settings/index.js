@@ -58,6 +58,10 @@ function Settings(props) {
     setSettingsGoTo("");
   };
 
+  const goToCards = () => {
+    props.navigation.navigate("Cards");
+  };
+
   useEffect(() => {
     if (settingsGoTo != "") {
       if (settingsGoTo == "Manage Subscription") goToManageSubscription();
@@ -115,6 +119,8 @@ function Settings(props) {
     if (c == "Blocked Users") props.navigation.navigate("BlockUsers");
 
     if (c == "Manage Subscription") goToManageSubscription();
+
+    if (c == "Cards") goToCards();
 
     if (c == "privacy") openWebView();
 
@@ -325,6 +331,35 @@ function Settings(props) {
       );
     };
 
+    const renderCards = () => {
+      const title = "Cards";
+      return (
+        <TouchableOpacity
+          activeOpacity={activeOpacity}
+          onPress={() => {
+            onClick(title);
+          }}
+          style={styles.mainContainer}
+        >
+          <View style={styles.sec1Container}>
+            <View style={styles.iconConatiner}>
+              <Image source={subIcon} style={styles.icon} />
+            </View>
+          </View>
+
+          <View style={styles.sec2Container}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={styles.sec2Title}
+            >
+              {title}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      );
+    };
+
     const renderPrivacy = () => {
       let title = "privacy";
       return (
@@ -426,6 +461,7 @@ function Settings(props) {
               {renderNotifications()}
               {renderBlockUser()}
               {renderManageSubscription()}
+              {renderCards()}
               {renderPrivacy()}
               {renderDeleteAccount()}
               {renderLogout()}

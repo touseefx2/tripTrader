@@ -43,7 +43,6 @@ export default function deleteAccountModal({ isModal, setIsModal }) {
       if (state.isConnected) {
         store.User.getUserSubscription(
           store.User.user.customerId,
-          store.User.authToken,
           "delete",
           setLoader,
           closeModal

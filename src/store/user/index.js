@@ -32,6 +32,11 @@ class user {
     this.userSubscription = obj;
   };
 
+  @persist("object") @observable allCardDetails = [];
+  @action setAllCardDetails = (obj) => {
+    this.allCardDetails = obj;
+  };
+
   @persist("object") @observable cardDetails = null;
   @action setCardDetails = (obj) => {
     this.cardDetails = obj;
@@ -260,7 +265,7 @@ class user {
         this.setfl(false);
         setrfrsh(false);
 
-        const msg = err.response.data.message || err.response.status || err;
+        const msg = utils.functions.checkError(err);
         console.log(
           `Error in GET BloackUsers ${db.apis.GET_BLOCK_USER + uid} : `,
           msg
@@ -300,7 +305,7 @@ class user {
         this.setHomeLoader(false);
         this.setfl(false);
         setrfrsh(false);
-        const msg = err.response.data.message || err.response.status || err;
+        const msg = utils.functions.checkError(err);
         console.log(
           `Error in GET   GetBloackAnotherUsers  
             ${db.apis.GET_BLOCK_ANOTHER_USER + uid} : `,
@@ -716,7 +721,9 @@ class user {
   @action attemptToGetHomeTripsSearch = (setgetdata, blocksUsersArr, c) => {
     const isApplySearch = store.Search.isApplySearch;
     const isApplyFilter = store.Filters.isFilter;
-    const query = isApplySearch ? this.titleCase(store.Search.search.trim()) : "";
+    const query = isApplySearch
+      ? this.titleCase(store.Search.search.trim())
+      : "";
     let rate = "";
     let userStatus = "";
     let location = "";
@@ -1799,10 +1806,9 @@ class user {
     this.notificationToken = n;
   }
 
-  addUser(token, user, goTo) {
-    const chk = goTo || "";
-    store.General.setgoto(chk === "" ? "home" : chk);
+  addUser(token, user, suc) {
     this.addauthToken(token);
+    suc();
     this.setUser(user);
     store.Trips.setsaveTrips(user.savedTrips || []);
   }
@@ -2096,7 +2102,7 @@ class user {
       ?.then((resp: any) => {
         // console.log(`response  ${db.apis.LOGIN_USER} : `, resp.data);
         this.setloginLoader(false);
-        this.addUser(resp.data.token, resp.data.doc);
+        this.addUser(resp.data.token, resp.data.doc, () => {});
         store.Orders.getOrderById();
         if (s == "checkout") {
           goCheckout();
@@ -2208,7 +2214,7 @@ class user {
           return;
         }
 
-        this.addUser(token, rsp, "");
+        this.addUser(token, rsp, () => {});
         this.setemail(body.email);
         this.setsp(svp);
         if (svp) {
@@ -2266,54 +2272,9 @@ class user {
     db.hitApi(db.apis.REGISTER_USER, "post", body, null)
       ?.then((resp) => {
         console.log(`response create ${db.apis.REGISTER_USER} : `, resp.data);
-        const token = resp.data.token;
-        const reslt = resp.data.data;
-
-        db.hitApi(db.apis.GET_All_Plan, "get", {}, null)
-          ?.then((resp) => {
-            this.setregLoader(false);
-            console.log(
-              `response get all plan  ${db.apis.GET_All_Plan} : `,
-              resp.data
-            );
-            const rsp = resp.data.data;
-            let plan = { data: [] };
-            let dt = [];
-            const features = [
-              "Create trips and get offers",
-              "Make trade offers",
-              "Send and receive messages",
-              "Bookmark trips",
-              "Advanced trip search",
-            ];
-            if (rsp.length > 0) {
-              rsp.map((e) => {
-                if (e.type === "annual") {
-                  plan.annual_discount = e.discount;
-                }
-                const o = { ...e };
-                o.features = features;
-                dt.push(o);
-              });
-            }
-            plan.data = dt;
-            suc(token, reslt, plan);
-          })
-          .catch((err) => {
-            this.setregLoader(false);
-            const msg = utils.functions.checkError(err);
-            console.log(
-              `Error in get all plan ${db.apis.GET_All_Plan} : `,
-              msg
-            );
-            if (msg === 503 || msg === 500 || msg === 502) {
-              Alert.alert("", "Server not response");
-
-              return;
-            }
-
-            Alert.alert("", msg.toString());
-          });
+        suc(resp.data.data);
+        this.addauthToken(resp.data.token);
+        this.attemptToGetPlan();
       })
       .catch((err) => {
         this.setregLoader(false);
@@ -2330,15 +2291,13 @@ class user {
 
   @action.bound
   attemptToGetPlan() {
-    console.log(`get all plan`);
     db.hitApi(db.apis.GET_All_Plan, "get", {}, null)
       ?.then((resp) => {
-        this.setregLoader(false);
         console.log(`response get all plan  ${db.apis.GET_All_Plan}  true: `);
-        let rsp = resp.data.data;
-        let plan = { data: [] };
-        let dt = [];
-        let features = [
+        const rsp = resp.data.data;
+        const plan = { data: [] };
+        const dt = [];
+        const features = [
           "Create trips and get offers",
           "Make trade offers",
           "Send and receive messages",
@@ -2346,11 +2305,11 @@ class user {
           "Advanced trip search",
         ];
         if (rsp.length > 0) {
-          rsp.map((e, i, a) => {
-            if (e.type == "annual") {
-              plan.annual_discount = e.discount;
+          rsp.map((item) => {
+            if (item.type == "annual") {
+              plan.annual_discount = item.discount;
             }
-            let o = { ...e };
+            let o = { ...item };
             o.features = features;
             dt.push(o);
           });
@@ -2359,16 +2318,11 @@ class user {
         this.setplans(plan);
       })
       .catch((err) => {
-        this.setregLoader(false);
         const msg = err.response.data.message || err.response.status;
-        console.log(`Error in get all plan ${db.apis.GET_All_Plan} : `, msg);
-        if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
-          return;
-        }
-
-        // Alert.alert('', msg.toString());
+        console.log(`attemptToGetPlan error ${db.apis.GET_All_Plan} : `, msg);
+      })
+      .finally(() => {
+        this.setregLoader(false);
       });
   }
 
@@ -2405,9 +2359,9 @@ class user {
   }
 
   @action.bound
-  updateUser(body, c, seterror, setPhoto1Upload, setup, setuc, uid, token) {
-    const bd =
-      c == "Profile"
+  updateUser(body, check, setSteps, user, gotoPlanScreen) {
+    const obj =
+      check == "Profile"
         ? {
             image: body.photo,
           }
@@ -2415,49 +2369,39 @@ class user {
             identityProof: body.cnic_front_image,
             identityStatus: "appliedFor",
           };
-    console.log("Update user photo body : ", bd);
-    db.hitApi(db.apis.UPDATE_USER + uid, "put", bd, token)
+    console.log("Update user photo body : ", obj);
+    db.hitApi(db.apis.UPDATE_USER + user?._id, "put", obj, this.authToken)
       ?.then((resp) => {
-        this.setregLoader(false);
         console.log(
-          `response update user ${db.apis.UPDATE_USER + uid} true : `
+          `response update user ${db.apis.UPDATE_USER + user?._id} true : `
         );
 
-        if (c === "Profile") {
-          setup(body.photo);
-          setPhoto1Upload(1);
+        if (check === "Profile") {
+          setSteps(1);
         }
-        if (c === "CnicF") {
-          setuc(body.cnic_front_image);
-          setPhoto1Upload(2);
+        if (check === "CnicF") {
+          gotoPlanScreen(user);
         }
       })
       .catch((err) => {
-        this.setregLoader(false);
-        const msg = err.response.data.message || err.response.status || err;
+        const msg = utils.functions.checkError(err);
         console.log(`Error in update user ${db.apis.UPDATE_USER} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert("", "Server not response");
-
           return;
         }
 
         Alert.alert("", msg.toString());
+      })
+      .finally(() => {
+        this.setregLoader(false);
       });
   }
 
   @action.bound
-  attemptToUploadImage(
-    imgArr,
-    seterror,
-    setPhoto1Upload,
-    setup,
-    setuc,
-    uid,
-    token
-  ) {
+  attemptToUploadImage(imgArr, setSteps, user, gotoPlanScreen) {
     this.setregLoader(true);
-    let body = {};
+    const body = {};
     const e = imgArr[0];
     const data = new FormData();
     data.append("files", {
@@ -2477,27 +2421,14 @@ class user {
         (responseData) => {
           const rsp = responseData.data[0].imgrUrl;
           if (e.chk === "Profile") {
-            body = {
-              photo: rsp,
-            };
+            body.photo = rsp;
           }
 
           if (e.chk === "CnicF") {
-            body = {
-              cnic_front_image: rsp,
-            };
+            body.cnic_front_image = rsp;
           }
 
-          this.updateUser(
-            body,
-            e.chk,
-            seterror,
-            setPhoto1Upload,
-            setup,
-            setuc,
-            uid,
-            token
-          );
+          this.updateUser(body, e.chk, setSteps, user, gotoPlanScreen);
         },
         (err) => {
           console.log("upload then ", err);
@@ -2506,11 +2437,10 @@ class user {
       )
       .catch((err) => {
         this.setregLoader(false);
-        const msg = err.response.data.message || err.response.status || err;
+        const msg = utils.functions.checkError(err);
         console.log(`Error in upload image ${db.apis.IMAGE_UPLOAD} : `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert("", "Server not response");
-
           return;
         }
 
@@ -2519,10 +2449,9 @@ class user {
   }
 
   @action.bound
-  SubscribePlan(body, uid, customerId, token, suc, check) {
-    const chk = check || "";
+  SubscribePlan(body, uid, customerId, suc) {
     console.log("SubscribePlan body : ", body);
-    db.hitApi(db.apis.UPDATE_USER + uid, "put", body, token)
+    db.hitApi(db.apis.UPDATE_USER + uid, "put", body, this.authToken)
       ?.then((resp) => {
         console.log(
           `response plan subscribe  ${db.apis.UPDATE_USER + uid} : `,
@@ -2530,7 +2459,7 @@ class user {
         );
         if (resp?.data?.data) {
           suc(resp?.data?.data);
-          this.getCardInfo(customerId, chk, token);
+          this.getCardInfo(customerId);
         }
       })
       .catch((err) => {
@@ -2548,27 +2477,25 @@ class user {
   }
 
   @action.bound
-  getCardInfo(customerId, chk, token) {
+  getCardInfo(customerId, chk = "") {
     console.log("getCardInfo  : ", customerId);
     if (chk === "Load") {
       this.setucRef(true);
     }
-    db.hitApi(db.apis.GET_CARD_DETAILS + customerId, "get", {}, token)
+    db.hitApi(db.apis.GET_CARD_DETAILS + customerId, "get", {}, this.authToken)
       ?.then((res) => {
         const result = res?.data?.data?.data || null;
         console.log(
-          `response GET_CARD_DETAILS ${
-            db.apis.GET_CARD_DETAILS + customerId
-          } : `,
+          `response getCardInfo ${db.apis.GET_CARD_DETAILS + customerId} : `,
           result
         );
 
         if (result.length > 0) {
+          this.setAllCardDetails(result);
           this.setCardDetails(result[0]);
         }
       })
       .catch((err) => {
-        this.setucRef(false);
         const msg = utils.functions.checkError(err);
         console.log(
           `Error in GET_CARD_DETAILS  ${
@@ -2578,24 +2505,29 @@ class user {
         );
       })
       .finally(() => {
-        this.getUserSubscription(
-          customerId,
-          token,
-          "",
-          () => {},
-          () => {}
-        );
+        this.setucRef(false);
+        this.getUserSubscription(customerId);
       });
   }
 
   @action.bound
-  getUserSubscription(customerId, token, chk, setLoader, closeModal) {
+  getUserSubscription(
+    customerId = "",
+    chk = "",
+    setLoader = () => {},
+    closeModal = () => {}
+  ) {
     console.log("getUserSubscription  : ", customerId);
     if (chk === "delete") {
       setLoader(true);
     }
 
-    db.hitApi(db.apis.GET_USER_SUBSCRIPTION + customerId, "get", {}, token)
+    db.hitApi(
+      db.apis.GET_USER_SUBSCRIPTION + customerId,
+      "get",
+      {},
+      this.authToken
+    )
       ?.then((resp) => {
         this.setucRef(false);
         const result = resp?.data?.subscriptions?.data;
@@ -2704,14 +2636,14 @@ class user {
   }
 
   @action.bound
-  async attempToCreateSubscription(body, authToken, suc) {
+  attempToCreateSubscription(body, suc) {
     console.log("createSubscription : ", body);
     this.setregLoader(true);
     db.hitApi(
       `${db.apis.BASE_URL}${db.apis.SELECT_PLAN}`,
       "post",
       body,
-      authToken
+      this.authToken
     )
       ?.then((resp) => {
         console.log(`response   ${db.apis.SELECT_PLAN} : `, resp.data);
@@ -2736,10 +2668,9 @@ class user {
   }
 
   @action.bound
-  getUserById(uid, token, goTo) {
-    console.log("getUserById : ", uid);
+  getUserById(uid, suc) {
     this.setregLoader(true);
-    db.hitApi(db.apis.GET_USER_BY_ID + uid, "get", {}, token)
+    db.hitApi(db.apis.GET_USER_BY_ID + uid, "get", {}, this.authToken)
       ?.then((resp) => {
         const rsp = resp.data.data[0];
         if (rsp.status === "blocked") {
@@ -2749,7 +2680,7 @@ class user {
             [{ text: "OK", onPress: () => this.Logout() }]
           );
         } else if (rsp) {
-          this.addUser(token, rsp, goTo);
+          this.addUser(this.authToken, rsp, suc);
           store.Trips.setsaveTrips(rsp.savedTrips || []);
         }
       })
@@ -2794,11 +2725,9 @@ class user {
           );
           return;
         }
-
         this.addauthToken(token);
         this.setUser(rsp);
-
-        this.getCardInfo(rsp.customerId, "notLoad", this.authToken);
+        this.getCardInfo(rsp.customerId);
       })
       .catch((err) => {
         const msg = utils.functions.checkError(err);
@@ -3067,6 +2996,7 @@ class user {
     this.setUser(false);
 
     this.setUserSubscription(null);
+    this.setAllCardDetails([]);
     this.setCardDetails(null);
 
     this.setucRef(false);
@@ -3432,77 +3362,6 @@ class user {
 
       this.updateUser2(body, seterror, sp, cpm);
     }, 2000);
-
-    // if (imgArr.length > 0) {
-    //   let ra = [];
-    //   this.setregLoader(true);
-    //   try {
-    //     imgArr.map((e, i, a) => {
-    //       const data = new FormData();
-    //       const newFile = {
-    //         uri: e.uri,
-    //         type: e.type,
-    //         name: e.fileName,
-    //       };
-    //       data.append('files', newFile);
-    //       fetch(db.apis.BASE_URL + db.apis.IMAGE_UPLOAD, {
-    //         method: 'post',
-    //         body: data,
-    //         headers: {
-    //           'Content-Type': 'multipart/form-data',
-    //         },
-    //       })
-    //         .then(response => response.json())
-    //         .then(responseData => {
-    //           let c = responseData.data[0].imgrUrl;
-    //           if (e.chk == 'Profile') {
-    //             ra.push({c: e.chk, uri: c});
-    //           }
-    //           if (i == a.length - 1) {
-    //             if (ra.length > 0) {
-    //               if (ra[0].c == 'Profile') {
-    //                 const body = {
-    //                   photo: ra[0].uri,
-    //                 };
-    //                 this.updateUser(body, ra[0].c,seterror,setPhoto1Upload, setup,setuc);
-    //                 return;
-    //               }
-
-    //               if (ra[0].c == 'CnicF') {
-    //                 const body = {
-    //                 cnic_front_image: ra[0].uri,
-    //                 };
-    //                 this.updateUser(body, ra[0].c,,seterror,setPhoto1Upload);
-    //                 return;
-    //               }
-
-    //             }
-    //           }
-    //         })
-    //         .catch(err => {
-    //           this.setregLoader(false);
-    //           let msg = err.response.data.message || err.response.status;
-    //           console.log('Error in Upload Images arr', msg);
-    //           if (msg == 503 || msg == 500) {
-    //             store.General.setisServerError(true);
-    //             return;
-    //           }
-    //           // seterror(msg.toString())
-    //           Alert.alert('', msg.toString());
-    //         });
-    //     });
-    //   } catch (err) {
-    //     this.setregLoader(false);
-    //     let msg = err.response.data.message || err.response.status;
-    //     console.log('Error in Upload Images arr', msg);
-    //     if (msg == 503 || msg == 500) {
-    //       store.General.setisServerError(true);
-    //       return;
-    //     }
-    //     // seterror(msg.toString())
-    //     Alert.alert('', msg.toString());
-    //   }
-    // }
   }
 
   @action.bound
@@ -3516,110 +3375,7 @@ class user {
     this.setUser(myObject);
     cpm();
     sp(false);
-    // hitApi('user/' + this.user._id, 'put', body, this.authToken)
-    //   ?.then((resp: any) => {
-    //     console.log('Update user  resp : ', resp.data.data);
-    //     this.setregLoader(false);
-    //     // this.setUser(resp.data.data);
-    //   })
-    //   .catch(err => {
-    //     // this.setregLoader(false);
-    //     //     let msg = err.response.data.message || err.response.status;
-    //     //     console.log(`Error in ${db.apis.REGISTER_USER} : `, msg);
-    //     //     if (msg == 503 || msg == 500) {
-    //     //       store.General.setisServerError(true);
-    //     //       return;
-    //     //     }
-    //     //     seterror(msg.toString())
-    //     //     // Alert.alert('', msg.toString());
-    //   });
   }
-
-  // attemptToUploadImageEP(body, imgArr, seterror, suc) {
-  //   this.setregLoader(true);
-
-  //   // if (imgArr.length > 0) {
-
-  //   // } else {
-  //   setTimeout(() => {
-  //     let myObject = {...this.user, ...body};
-
-  //     this.setUser(myObject);
-  //     this.setregLoader(false);
-  //     suc();
-  //   }, 1000);
-  //   }
-
-  // if (imgArr.length > 0) {
-  //   let ra = [];
-  //   this.setregLoader(true);
-  //   try {
-  //     imgArr.map((e, i, a) => {
-  //       const data = new FormData();
-  //       const newFile = {
-  //         uri: e.uri,
-  //         type: e.type,
-  //         name: e.fileName,
-  //       };
-  //       data.append('files', newFile);
-  //       fetch(db.apis.BASE_URL + db.apis.IMAGE_UPLOAD, {
-  //         method: 'post',
-  //         body: data,
-  //         headers: {
-  //           'Content-Type': 'multipart/form-data',
-  //         },
-  //       })
-  //         .then(response => response.json())
-  //         .then(responseData => {
-  //           let c = responseData.data[0].imgrUrl;
-  //           if (e.chk == 'Profile') {
-  //             ra.push({c: e.chk, uri: c});
-  //           }
-  //           if (i == a.length - 1) {
-  //             if (ra.length > 0) {
-  //               if (ra[0].c == 'Profile') {
-  //                 const body = {
-  //                   photo: ra[0].uri,
-  //                 };
-  //                 this.updateUser(body, ra[0].c,seterror,setPhoto1Upload, setup,setuc);
-  //                 return;
-  //               }
-
-  //               if (ra[0].c == 'CnicF') {
-  //                 const body = {
-  //                 cnic_front_image: ra[0].uri,
-  //                 };
-  //                 this.updateUser(body, ra[0].c,,seterror,setPhoto1Upload);
-  //                 return;
-  //               }
-
-  //             }
-  //           }
-  //         })
-  //         .catch(err => {
-  //           this.setregLoader(false);
-  //           let msg = err.response.data.message || err.response.status;
-  //           console.log('Error in Upload Images arr', msg);
-  //           if (msg == 503 || msg == 500) {
-  //             store.General.setisServerError(true);
-  //             return;
-  //           }
-  //           // seterror(msg.toString())
-  //           Alert.alert('', msg.toString());
-  //         });
-  //     });
-  //   } catch (err) {
-  //     this.setregLoader(false);
-  //     let msg = err.response.data.message || err.response.status;
-  //     console.log('Error in Upload Images arr', msg);
-  //     if (msg == 503 || msg == 500) {
-  //       store.General.setisServerError(true);
-  //       return;
-  //     }
-  //     // seterror(msg.toString())
-  //     Alert.alert('', msg.toString());
-  //   }
-  // }
 
   changePasword(body, sucs, invldcp) {
     console.log("CHANGE_PASSWORD user body : ", body);
@@ -3681,35 +3437,9 @@ class user {
   };
 
   getData(seterror) {
-    // console.log('get home data');
-    // this.setregLoader(true);
-
-    // setTimeout(() => {
-    //   this.setregLoader(false);
     let token = "";
     let rslt = "guest";
-    this.addUser(token, rslt);
-    // Alert.alert('', msg.toString());
-    // seterror('asa as');
-    // }, 1200);
-
-    // db.hitApi(db.apis.REGISTER_USER, 'post', body, null)
-    //   ?.then(resp => {
-    //     console.log(`response  ${db.apis.REGISTER_USER} : `, resp.data);
-    //     this.setregLoader(false);
-    //     this.addUser(resp.data.token, resp.data.data);
-    //   })
-    //   .catch(err => {
-    //     this.setregLoader(false);
-    //     let msg = err.response.data.message || err.response.status;
-    //     console.log(`Error in ${db.apis.REGISTER_USER} : `, msg);
-    //     if (msg == 503 || msg == 500) {
-    //       store.General.setisServerError(true);
-    //       return;
-    //     }
-    //     seterror(msg.toString())
-    //     // Alert.alert('', msg.toString());
-    //   });
+    this.addUser(token, rslt, () => {});
   }
 }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -26,6 +26,7 @@ import {
 import Toast from "react-native-easy-toast";
 import NetInfo from "@react-native-community/netinfo";
 import { Notification } from "../../services/Notification";
+import Card from "../Cards/Card";
 
 import {
   StripeProvider,
@@ -37,22 +38,37 @@ export default observer(Plan);
 function Plan(props) {
   const nameRegex = /^[a-zA-Z-' ]+$/;
   const toast = useRef(null);
-
   const {
     plans,
     user,
-    authToken,
     regLoader,
     setregLoader,
-    attempToCreateSubscription,
     setUser,
+    attemptToGetPlan,
+    SubscribePlan,
+    cardDetails,
+    allCardDetails,
+    getCardInfo,
   } = store.User;
-  const { confirmPayment } = useStripe();
+  const { isInternet, Stripe_Publish_Key } = store.General;
+  const { usrData = null, callingScreen = "" } = props?.route.params;
 
-  const [isPage, setisPage] = useState(1);
+  const { confirmPayment } = useStripe();
 
   const [isShowTermsAndConditions, setIsShowTermsAndConditions] =
     useState(false);
+
+  const [userData, setUserData] = useState(usrData || user);
+  const [data, setData] = useState(plans);
+
+  const [selectedCard, setSelectedCard] = useState(null);
+
+  const [isCardModal, setIsCardModal] = useState(false);
+
+  const [isAutoRenew, setIsAutoRenew] = useState(false);
+
+  const [plan, setPlan] = useState(false);
+  const [isPage, setisPage] = useState(1);
 
   const [cfn, setcfn] = useState("");
   const [Emptycfn, setEmptycfn] = useState(false);
@@ -64,8 +80,6 @@ function Plan(props) {
   const [isShowPromoFiled, setisShowPromoFiled] = useState(false);
   const [isPromoApply, setisPromoApply] = useState(false);
   const [promoValue, setpromoValue] = useState(0);
-
-  const [plan, setPlan] = useState(false);
 
   const [monthly, setmonthly] = useState(0);
   const [annualy, setannualy] = useState(0);
@@ -81,11 +95,32 @@ function Plan(props) {
   }
 
   useEffect(() => {
+    if (isInternet) {
+      attemptToGetPlan();
+      if (callingScreen !== "Signup") {
+        getCardInfo(userData.customerId);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (cardDetails) {
+      setSelectedCard(cardDetails);
+    }
+  }, [cardDetails]);
+
+  useEffect(() => {
+    if (plans) {
+      setData(plans);
+    }
+  }, [plans]);
+
+  useEffect(() => {
     if (plan) {
       let monthly = 0;
       let annualy = 0;
-      if (plans && plans.data.length > 0) {
-        plans.data.map((e, i, a) => {
+      if (data && data.data.length > 0) {
+        data.data.map((e, i, a) => {
           if (e.type == "annual") {
             annualy = e.charges;
           }
@@ -116,13 +151,13 @@ function Plan(props) {
   }, [plan, isPromoApply]);
 
   useEffect(() => {
-    if (plans && plans.data.length > 0) {
-      setPlan(plans.data[0]);
-      if (plans.annual_discount) {
-        setsave(plans.annual_discount);
+    if (data && data.data.length > 0) {
+      setPlan(data.data[0]);
+      if (data.annual_discount) {
+        setsave(data.annual_discount);
       }
     }
-  }, [plans]);
+  }, [data]);
 
   useEffect(() => {
     const subscription = BackHandler.addEventListener(
@@ -143,10 +178,13 @@ function Plan(props) {
       return false;
     } else {
       goBack();
-
       return true;
     }
   }
+
+  const toggleCardModal = useCallback(() => {
+    setIsCardModal(!isCardModal);
+  }, [isCardModal]);
 
   const goBack = () => {
     if (isPage === 1) {
@@ -231,13 +269,13 @@ function Plan(props) {
         NetInfo.fetch().then((state) => {
           if (state.isConnected) {
             const body = {
-              customerId: user?.customerId,
+              customerId: userData?.customerId,
               priceId: plan?.stripeId,
             };
             if (isPromoApply) {
               body.promoCode = pc.trim();
             }
-            attempToCreateSubscription(body, authToken, SucGetClientsecret);
+            store.User.attempToCreateSubscription(body, SucGetClientsecret);
           } else {
             Alert.alert("", "Please connect internet");
           }
@@ -251,14 +289,15 @@ function Plan(props) {
   const SucGetClientsecret = async (clientSecret) => {
     try {
       const { error, paymentIntent } = await confirmPayment(clientSecret, {
-        paymentMethodType: "Card", //strip > 0.5.0
-        // type: "Card", //stripe <= 0.5.0
+        // paymentMethodType: "Card", //strip > 0.5.0
+        type: "Card", //stripe <= 0.5.0
         billingDetails: { name: cfn.trim() },
+        // autoRenew:isAutoRenew
       });
 
       if (error) {
         setregLoader(false);
-        Notification.sendPaymentFailedNotification(user._id);
+        Notification.sendPaymentFailedNotification(userData._id);
         console.log(`confirmPayment error: `, error);
         Alert.alert(`Payment ${error.code}`, error.message);
       } else if (paymentIntent) {
@@ -280,23 +319,28 @@ function Plan(props) {
           subscriptionStatus: "paid",
         };
 
-        store.User.SubscribePlan(
-          obj,
-          user._id,
-          user.customerId,
-          authToken,
-          subPlanSucess,
-          "Load"
-        );
+        SubscribePlan(obj, userData._id, userData.customerId, subPlanSucess);
       }
     } catch (err) {
       setregLoader(false);
-      Notification.sendPaymentFailedNotification(user._id);
+      Notification.sendPaymentFailedNotification(userData._id);
       console.log(`confirmPayment cath error: `, err);
     }
   };
 
+  const goToWelcome = () => {
+    props.navigation.navigate("PlanStack", {
+      screen: "Welcome",
+      params: { user: userData },
+    });
+  };
+
   const subPlanSucess = (res) => {
+    if (callingScreen === "Signup") {
+      goToWelcome();
+      return;
+    }
+
     setUser(res);
     props.navigation.goBack();
   };
@@ -393,44 +437,8 @@ function Plan(props) {
       );
     };
 
-    // const renderCross = c => {
-
-    //   return (
-    //     <TouchableOpacity
-    //       onPress={() => onClickCross(c)}
-    //       activeOpacity={0.7}
-    //       style={{
-    //         width: 16,
-    //         height: 16,
-    //         borderRadius: 16 / 2,
-    //         backgroundColor: theme.color.button1,
-    //         alignItems: 'center',
-    //         justifyContent: 'center',
-    //         position: 'absolute',
-    //         right: -6,
-    //         top: -7,
-    //       }}>
-    //       <utils.vectorIcon.Entypo
-    //         name="cross"
-    //         color={theme.color.buttonText}
-    //         size={14}
-    //       />
-    //     </TouchableOpacity>
-    //   );
-    // };
-
-    const renderShowError2 = (c) => {
-      let text = c == "Profile" ? "Please upload photo" : "";
-
-      return (
-        <View style={styles.errorMessageContainer}>
-          <Text style={styles.errorMessageText}>{text}</Text>
-        </View>
-      );
-    };
-
     const renderPlanBar = () => {
-      const p = plans.data.map((e, i, a) => {
+      const p = data.data.map((e, i, a) => {
         let name = e.type || "";
 
         return (
@@ -547,7 +555,7 @@ function Plan(props) {
               />
 
               <View style={{ marginTop: 7 }}>
-                {plans && plans.data && (
+                {data && data.data && (
                   <>
                     <View
                       style={{
@@ -624,7 +632,7 @@ function Plan(props) {
                               <TouchableOpacity
                                 activeOpacity={0.6}
                                 onPress={() => {
-                                  setPlan(plans.data[1]);
+                                  setPlan(data.data[1]);
                                 }}
                               >
                                 <Text
@@ -662,9 +670,7 @@ function Plan(props) {
                 {renderButtonPlan()}
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={() => {
-                    goBack();
-                  }}
+                  onPress={callingScreen === "Signup" ? goToWelcome : goBack}
                 >
                   <Text
                     style={[
@@ -825,62 +831,105 @@ function Plan(props) {
               </View>
 
               <View>
-                <View style={styles.Field}>
-                  <Text style={styles.FieldTitle1}>full name</Text>
-                  <TextInput
-                    placeholder="Card holder’s first and last name"
-                    value={cfn}
-                    onChangeText={entercFn}
-                    style={[
-                      styles.FieldInput,
-                      {
-                        borderColor:
-                          Emptycfn || invalidcfn
-                            ? theme.color.fieldBordeError
-                            : theme.color.fieldBorder,
-                        fontSize: 12,
-                        color: "black",
-                      },
-                    ]}
-                  />
-                  {(Emptycfn || invalidcfn) && renderShowFieldError("cfn")}
-                </View>
+                {!selectedCard ? (
+                  <>
+                    <View style={styles.Field}>
+                      {allCardDetails.length > 0 && (
+                        <TouchableOpacity
+                          onPress={toggleCardModal}
+                          activeOpacity={0.7}
+                        >
+                          <Text style={styles.selectCard}>Select card</Text>
+                        </TouchableOpacity>
+                      )}
 
-                <View style={styles.Field}>
-                  <View
-                    style={{
+                      <Text style={styles.FieldTitle1}>full name</Text>
+                      <TextInput
+                        placeholder="Card holder’s first and last name"
+                        value={cfn}
+                        onChangeText={entercFn}
+                        style={[
+                          styles.FieldInput,
+                          {
+                            borderColor:
+                              Emptycfn || invalidcfn
+                                ? theme.color.fieldBordeError
+                                : theme.color.fieldBorder,
+                            fontSize: 12,
+                            color: "black",
+                          },
+                        ]}
+                      />
+                      {(Emptycfn || invalidcfn) && renderShowFieldError("cfn")}
+                    </View>
+
+                    <View style={styles.Field}>
+                      <Text style={styles.FieldTitle1}>card</Text>
+
+                      <CardField
+                        postalCodeEnabled={false}
+                        placeholders={{
+                          number: "Card number",
+                        }}
+                        cardStyle={{
+                          textColor: theme.color.title,
+                          fontSize: responsiveFontSize(1.5),
+                          borderColor: theme.color.fieldBorder,
+                          borderWidth: 1,
+                          borderRadius: 8,
+                          fontFamily: theme.fonts.fontNormal,
+                        }}
+                        style={{
+                          width: "100%",
+                          height: 45,
+                        }}
+                        onCardChange={(cardDetails) => {
+                          onChangeCard(cardDetails);
+                        }}
+                        onFocus={(focusedField) => {
+                          console.log("focusField", focusedField);
+                        }}
+                      />
+                      {cardErr !== "" && renderShowFieldError("card")}
+                    </View>
+                  </>
+                ) : (
+                  <>
+                    <View style={[styles.Field, { paddingHorizontal: 5 }]}>
+                      <Card
+                        item={selectedCard}
+                        bottomText={allCardDetails.length > 0 ? "change" : ""}
+                        changeCard={toggleCardModal}
+                      />
+                      <TouchableOpacity
+                        onPress={() => setSelectedCard(null)}
+                        activeOpacity={0.7}
+                        style={{ position: "absolute", top: -10, right: -1 }}
+                      >
+                        <utils.vectorIcon.Entypo
+                          name="circle-with-cross"
+                          color={theme.color.button1}
+                          size={responsiveFontSize(2.2)}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                )}
+
+                <View
+                  style={[
+                    styles.Field,
+                    {
                       flexDirection: "row",
                       justifyContent: "space-between",
-                    }}
-                  >
-                    <Text style={styles.FieldTitle1}>card</Text>
-                  </View>
-
-                  <CardField
-                    postalCodeEnabled={false}
-                    placeholders={{
-                      number: "Card number",
-                    }}
-                    cardStyle={{
-                      textColor: theme.color.title,
-                      fontSize: responsiveFontSize(1.5),
-                      borderColor: theme.color.fieldBorder,
-                      borderWidth: 1,
-                      borderRadius: 8,
-                      fontFamily: theme.fonts.fontNormal,
-                    }}
-                    style={{
-                      width: "100%",
-                      height: 45,
-                    }}
-                    onCardChange={(cardDetails) => {
-                      onChangeCard(cardDetails);
-                    }}
-                    onFocus={(focusedField) => {
-                      console.log("focusField", focusedField);
-                    }}
+                    },
+                  ]}
+                >
+                  <Text style={styles.FieldTitle1}>Auto Renew</Text>
+                  <utils.CheckBox
+                    isSel={isAutoRenew}
+                    setIsSel={setIsAutoRenew}
                   />
-                  {cardErr !== "" && renderShowFieldError("card")}
                 </View>
 
                 {isShowPromoFiled && (
@@ -1095,18 +1144,14 @@ function Plan(props) {
   };
 
   return (
-    <StripeProvider publishableKey={store.General.Stripe_Publish_Key}>
+    <StripeProvider publishableKey={Stripe_Publish_Key}>
       <View style={styles.container}>
         <Image
           source={require("../../assets/images/background/img.png")}
           style={styles.container2}
         />
         <SafeAreaView style={styles.container3}>
-          <utils.AuthHeader
-            props={props}
-            screen="plan"
-            goBack={() => goBack()}
-          />
+          <utils.AuthHeader props={props} screen="plan" goBack={goBack} />
           <KeyboardAvoidingView
             style={{
               flex: 1,

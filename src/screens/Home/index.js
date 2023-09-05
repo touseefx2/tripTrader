@@ -21,7 +21,6 @@ import PushNotification from "react-native-push-notification";
 import firestore from "@react-native-firebase/firestore";
 import { responsiveFontSize } from "react-native-responsive-dimensions";
 import TripCard from "./component/TripCard";
-import { useIsFocused } from "@react-navigation/native";
 
 export default observer(Home);
 function Home(props) {
@@ -30,14 +29,13 @@ function Home(props) {
 
   const {
     isInternet,
-    goto,
     isEmailPopup,
     setIsEmailPopup,
     setSettingsGoTo,
     setOfferGoTo,
     goToo: notify,
+    goto,
   } = store.General;
-  const { isApplySearch } = store.Search;
   const {
     activity,
     tripLocation,
@@ -62,6 +60,7 @@ function Home(props) {
     setsaveTrips,
     attemptToSaveTrip,
   } = store.Trips;
+  const { isApplySearch } = store.Search;
 
   const [modalObj, setModalObj] = useState(null);
   const [isOfferModal, setIsOfferModal] = useState(false);
@@ -81,9 +80,24 @@ function Home(props) {
   const [fullImageIndication, setFullImageIndication] = useState("");
 
   useEffect(() => {
-    if (goto === "profile") {
-      props.navigation.navigate("MyProfile");
+    if (goto === "MyProfile") {
+      props.navigation.navigate(goto);
     }
+    const chatroomsRef = firestore().collection("chatrooms");
+    var initState = true;
+    const observer = chatroomsRef
+      .where(`user.${user._id}`, "==", true)
+      .onSnapshot((documentSnapshot) => {
+        if (initState) {
+          initState = false;
+        } else {
+          console.log("---> onSnapshot Call Home <----");
+          attemptToGetInboxes(user._id, () => {}, "");
+        }
+      });
+
+    // Stop listening for updates when no longer required
+    return () => observer();
   }, []);
 
   useEffect(() => {
@@ -93,6 +107,14 @@ function Home(props) {
     return () => {};
   }, [getDataOnce, isInternet]);
 
+  // useEffect(() => {
+  //   if (user && user !== "guest" && getDataOnce) {
+  //     setTimeout(() => {
+  //       setIsEmailPopup(user?.isEmailVerified === false ? true : false);
+  //     }, 2000);
+  //   }
+  // }, [user, getDataOnce]);
+
   useEffect(() => {
     if (user && user !== "guest") {
       setsaveTrips(user.savedTrips || []);
@@ -101,17 +123,9 @@ function Home(props) {
   }, [user]);
 
   useEffect(() => {
-    if (user && user !== "guest" && getDataOnce) {
-      setTimeout(() => {
-        setIsEmailPopup(user?.isEmailVerified === false ? true : false);
-      }, 2000);
-    }
-  }, [user, getDataOnce]);
-
-  useEffect(() => {
     if (activity.length > 0 && species.length > 0 && activityList.length <= 0) {
-      let activityLists = [];
-      activity.map((element, index) => {
+      const activityLists = [];
+      activity.map((element) => {
         for (let index = 0; index < species.length; index++) {
           const item = species[index];
           if (item.type && item.type._id === element._id) {
@@ -142,24 +156,6 @@ function Home(props) {
       }
     }
   }, [notify]);
-
-  useEffect(() => {
-    const chatroomsRef = firestore().collection("chatrooms");
-    var initState = true;
-    const observer = chatroomsRef
-      .where(`user.${user._id}`, "==", true)
-      .onSnapshot((documentSnapshot) => {
-        if (initState) {
-          initState = false;
-        } else {
-          console.log("---> onSnapshot Call Home <----");
-          attemptToGetInboxes(user._id, () => {}, "");
-        }
-      });
-
-    // Stop listening for updates when no longer required
-    return () => observer();
-  }, []);
 
   useEffect(() => {
     if (isApplySearch) {

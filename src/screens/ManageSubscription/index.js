@@ -4,7 +4,6 @@ import {
   Text,
   SafeAreaView,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
 } from "react-native";
 import { styles } from "./styles";
@@ -12,29 +11,19 @@ import { observer } from "mobx-react";
 import store from "../../store/index";
 import utils from "../../utils/index";
 import theme from "../../theme";
-import NetInfo from "@react-native-community/netinfo";
 import Toast from "react-native-easy-toast";
 import { ScrollView } from "react-native-gesture-handler";
-import moment from "moment";
 import { ActivityIndicator } from "react-native-paper";
 
 export default observer(ManageSubscription);
 
 function ManageSubscription(props) {
   const toast = useRef(null);
-  const toastduration = 700;
   const headerTitle = "Manage Subscription";
 
   const { isInternet } = store.General;
-  const {
-    user,
-    ucRef,
-    authToken,
-    getCardInfo,
-    userSubscription,
-    cardDetails,
-    regLoader,
-  } = store.User;
+  const { user, ucRef, getCardInfo, userSubscription, cardDetails, regLoader } =
+    store.User;
   // console.log("userSubscription : ", userSubscription);
   // console.log("cardDetails : ", cardDetails[0].card);
 
@@ -57,7 +46,7 @@ function ManageSubscription(props) {
 
   useEffect(() => {
     if (isInternet) {
-      getCardInfo(user.customerId, "Load", authToken);
+      getCardInfo(user.customerId, "Load");
     }
   }, [isInternet]);
 

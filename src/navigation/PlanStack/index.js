@@ -14,6 +14,7 @@ export default PlanStack = () => {
       }}
     >
       <Stack.Screen name="Plan" component={screens.Plan} />
+      <Stack.Screen name="Welcome" component={screens.Welcome} />
     </Stack.Navigator>
   );
 };

@@ -3,6 +3,7 @@ import AuthStack from "./AuthStack";
 import PlanStack from "./PlanStack";
 import UserProfileStack from "./UserProfileStack";
 import ShowFollowersStack from "./ShowFollowersStack";
+import DrawerStack from "./DrawerStack";
 
 const stack = {
   MainStack,
@@ -10,6 +11,7 @@ const stack = {
   PlanStack,
   UserProfileStack,
   ShowFollowersStack,
+  DrawerStack,
 };
 
 export default stack;

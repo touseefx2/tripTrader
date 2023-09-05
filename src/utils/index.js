@@ -28,6 +28,7 @@ import ConfirmTripDate from "./ConfirmTripDate";
 import CancelOfferModal from "./CancelOfferModal";
 import reportUserModal from "./reportUserModal";
 import CancelSubModal from "./CancelSubModal";
+import CheckBox from "./CheckBox";
 
 const utils = {
   vectorIcon,
@@ -60,6 +61,7 @@ const utils = {
   CancelOfferModal,
   reportUserModal,
   CancelSubModal,
+  CheckBox,
 };
 
 export default utils;
