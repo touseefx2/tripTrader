@@ -109,7 +109,7 @@ function Plan(props) {
         getCardInfo(userData.customerId);
       }
     }
-  }, []);
+  }, [isInternet]);
 
   useEffect(() => {
     if (cardDetails) {
@@ -146,10 +146,10 @@ function Plan(props) {
       if (isPromoApply) {
         let p = (isPromoApply.percent_off || 0) / 100;
         let discount = 0;
-        if (plan.type == "monthly") {
+        if (plan.type === "monthly") {
           discount = monthly - p * monthly;
         }
-        if (plan.type == "annual") {
+        if (plan.type === "annual") {
           discount = totalAnually - p * totalAnually;
         }
 
@@ -297,8 +297,8 @@ function Plan(props) {
   const SucGetClientsecret = async (clientSecret) => {
     try {
       const { error, paymentIntent } = await confirmPayment(clientSecret, {
-        paymentMethodType: "Card", //strip > 0.5.0
-        // type: "Card", //stripe <= 0.5.0
+        // paymentMethodType: "Card", //strip > 0.5.0
+        type: "Card", //stripe <= 0.5.0
         billingDetails: { name: cfn.trim() },
         // autoRenew:isAutoRenew
       });

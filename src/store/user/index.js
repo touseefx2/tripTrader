@@ -2533,25 +2533,46 @@ class user {
         console.log(
           `response GET_USER_SUBSCRIPTION ${
             db.apis.GET_USER_SUBSCRIPTION + customerId
-          } : `,
-          result
+          } : `
         );
 
-        if (chk !== "delete") {
-          if (result.length > 0) {
-            this.setUserSubscription(result[0]);
+        let data = null;
+        if (result.length > 0) {
+          const filterData = result.filter(
+            (val) => val?.status === "active" || val?.status === "canceled"
+          );
+
+          for (let index = 0; index < result.length; index++) {
+            const element = result[index];
+            data = element;
+            if (filterData.length > 0) {
+              if (element.status === "active") {
+                break;
+              }
+
+              if (element.status === "canceled") {
+                data = element;
+                break;
+              }
+            } else {
+              break;
+            }
           }
+        }
+
+        if (chk !== "delete") {
+          this.setUserSubscription(data);
           return;
         }
 
-        if (result.length == 0) {
+        if (!data) {
           this.attemptToDeleteAccount(setLoader, closeModal);
-        } else if (result.length > 0) {
-          if (result[0]?.status === "canceled") {
+        } else {
+          if (data?.status !== "active") {
             this.attemptToDeleteAccount(setLoader, closeModal);
-          } else if (result[0]?.status === "active") {
+          } else if (data?.status === "active") {
             this.attemptToCancelSubscription(
-              result[0]?.id.toString(),
+              data?.id.toString(),
               chk,
               setLoader,
               closeModal
