@@ -32,6 +32,11 @@ class user {
     this.userSubscription = obj;
   };
 
+  @persist("object") @observable subscriptionStatus = "No subscriptions found";
+  @action setSubscriptionStatus = (obj) => {
+    this.subscriptionStatus = obj;
+  };
+
   @persist("object") @observable allCardDetails = [];
   @action setAllCardDetails = (obj) => {
     this.allCardDetails = obj;
@@ -163,37 +168,27 @@ class user {
 
     db.hitApi(db.apis.GET_FOLLOWERS + uid, "get", {}, this.authToken)
       ?.then((resp) => {
-        this.setfl(false);
-        setrfrsh(false);
-        // console.log(
-        //   `response GET Followers   ${db.apis.GET_FOLLOWERS + uid} : `,
-        //   resp.data,
-        // );
-        let dt = resp.data.follower || [];
+        const dt = resp.data.follower || [];
         setgetdata(true);
         this.setfollowers(dt);
         this.settotalfollowers(dt.length);
       })
       .catch((err) => {
-        this.setfl(false);
-        setrfrsh(false);
-        let msg = err.response.data.message || err.response.status || err;
+        const msg = utils.functions.checkError(err);
         console.log(
           `Error in GET Followers  ${db.apis.GET_FOLLOWERS + uid} : `,
           msg
         );
-        if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
-          // store.General.setisServerError(true);
-          return;
-        }
+
         if (msg == "No records found") {
           this.setfollowers([]);
           this.settotalfollowers(0);
           return;
         }
-
-        // Alert.alert('', msg.toString());
+      })
+      .finally(() => {
+        this.setfl(false);
+        setrfrsh(false);
       });
   };
   @action attemptToGetFollowing = (uid, setgetdata, setrfrsh) => {
@@ -202,38 +197,28 @@ class user {
 
     db.hitApi(db.apis.GET_FOLLOWING + uid, "get", {}, this.authToken)
       ?.then((resp) => {
-        this.setfl(false);
-        setrfrsh(false);
-        // console.log(
-        //   `response GET FOLLOWING  ${db.apis.GET_FOLLOWING + uid} : `,
-        //   resp.data,
-        // );
-        let dt = resp.data.following || [];
-        // console.log('dttt flwng : ', dt);
+        const dt = resp.data.following || [];
+
         setgetdata(true);
         this.setfollowing(dt);
         this.settotalfollowing(dt.length);
       })
       .catch((err) => {
-        this.setfl(false);
-        setrfrsh(false);
-        let msg = err.response.data.message || err.response.status || err;
+        const msg = utils.functions.checkError(err);
         console.log(
           `Error in GET FOLLOWING ${db.apis.GET_FOLLOWING + uid} : `,
           msg
         );
-        if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
 
-          return;
-        }
-        if (msg == "No records found") {
+        if (msg === "No records found") {
           this.setfollowing([]);
           this.settotalfollowing(0);
           return;
         }
-
-        // Alert.alert('', msg.toString());
+      })
+      .finally(() => {
+        this.setfl(false);
+        setrfrsh(false);
       });
   };
   @action attemptToGetBloackUsers = (
@@ -264,18 +249,11 @@ class user {
         this.setHomeLoader(false);
         this.setfl(false);
         setrfrsh(false);
-
         const msg = utils.functions.checkError(err);
         console.log(
           `Error in GET BloackUsers ${db.apis.GET_BLOCK_USER + uid} : `,
           msg
         );
-        if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
-          return;
-        }
-
-        // Alert.alert('', msg.toString());
       });
   };
 
@@ -296,9 +274,7 @@ class user {
         const data2 = resp.data.blockedBy || [];
         const farr = data1.concat(data2);
         setgetdata(true);
-
         this.attemptToGetHomeTripsSearch(setgetdatahome, farr, c);
-
         this.setblockUsers(farr);
       })
       .catch((err) => {
@@ -311,12 +287,6 @@ class user {
             ${db.apis.GET_BLOCK_ANOTHER_USER + uid} : `,
           msg
         );
-        if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
-          return;
-        }
-
-        // Alert.alert('', msg.toString());
       });
   };
 
@@ -566,18 +536,16 @@ class user {
 
     db.hitApi(db.apis.GET_ALL_REVIEWS + uid, "get", {}, this.authToken)
       ?.then((resp) => {
-        this.setreviewLoader(false);
-        setrfrsh(false);
         console.log(
           `response GET_ALL_REVIEWS   ${db.apis.GET_ALL_REVIEWS + uid} : true `
         );
         let dt = resp.data.doc;
         let ar = [];
         if (dt.length > 0) {
-          dt.map((e, i, a) => {
+          dt.map((e) => {
             let msgs = e.messages || [];
             if (msgs.length > 0) {
-              msgs.map((ee, i, a) => {
+              msgs.map((ee) => {
                 if (ee.role == "guest") {
                   ar.push(e);
                 }
@@ -590,25 +558,21 @@ class user {
         this.setreview(ar);
       })
       .catch((err) => {
-        this.setreviewLoader(false);
-        setrfrsh(false);
-        let msg = err.response.data.message || err.response.status || err;
+        const msg = utils.functions.checkError(err);
         console.log(
           `Error in GET_ALL_REVIEWS ${db.apis.GET_ALL_REVIEWS + uid} : `,
           msg
         );
-        if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
 
-          return;
-        }
-        if (msg == "No records found") {
+        if (msg === "No records found") {
           setgetdata(true);
           this.setreview([]);
           return;
         }
-        // seterror(msg.toString())
-        // Alert.alert('', msg.toString());
+      })
+      .finally(() => {
+        this.setreviewLoader(false);
+        setrfrsh(false);
       });
   };
 
@@ -618,8 +582,6 @@ class user {
 
     db.hitApi(db.apis.GET_ALL_TRIP + uid, "get", {}, this.authToken)
       ?.then((resp) => {
-        this.settripLoader(false);
-        setrfrsh(false);
         console.log(
           `response GET_ALL_TRIP   ${db.apis.GET_ALL_TRIP + uid} : true `
         );
@@ -628,25 +590,20 @@ class user {
         this.settrips(dt);
       })
       .catch((err) => {
-        this.settripLoader(false);
-        setrfrsh(false);
-        let msg = err.response.data.message || err.response.status || err;
+        const msg = utils.functions.checkError(err);
         console.log(
           `Error in GET_ALL_TRIP  ${db.apis.GET_ALL_TRIP + uid} : `,
           msg
         );
-        if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
-
-          return;
-        }
-        if (msg == "No records found") {
+        if (msg === "No records found") {
           setgetdata(true);
           this.settrips([]);
           return;
         }
-
-        // Alert.alert('', msg.toString());
+      })
+      .finally(() => {
+        this.settripLoader(false);
+        setrfrsh(false);
       });
   };
 
@@ -754,7 +711,6 @@ class user {
     }
     db.hitApi(db.apis.GET_ALL_HOME_TRIPS + params, "get", {}, this.authToken)
       ?.then((resp) => {
-        this.setHomeLoader(false);
         console.log(
           `response Get AllHomeTrip User   ${db.apis.GET_ALL_HOME_TRIPS}  true : `
         );
@@ -767,19 +723,16 @@ class user {
         }
       })
       .catch((err) => {
-        this.setHomeLoader(false);
-
-        const msg = err.response.data.message || err.response.status || err;
+        const msg = utils.functions.checkError(err);
         console.log(
           `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS}${params} }: `,
           msg
         );
         if (msg == 503 || msg == 500 || msg == 502) {
           Alert.alert("", "Server not response");
-
           return;
         }
-        if (msg == "No records found") {
+        if (msg === "No records found") {
           setgetdata(true);
           this.setHomeTrips([]);
           if (c == "all") {
@@ -790,6 +743,9 @@ class user {
         }
 
         Alert.alert("", msg.toString());
+      })
+      .finally(() => {
+        this.setHomeLoader(false);
       });
   };
 
@@ -825,23 +781,15 @@ class user {
     this.setHomeLoader(true);
     db.hitApi(db.apis.GET_ALL_HOME_TRIPS + params, "get", {}, this.authToken)
       ?.then((resp) => {
-        this.setHomeLoader(false);
-        // console.log(
-        //   `response Get AllHomeTrip Guest  ${db.apis.GET_ALL_HOME_TRIPS}  : `,
-        //   resp.data.data.length,
-        // );
-        let dt = resp.data.data;
-
+        const dt = resp.data.data;
         this.setHomeTrips(dt);
         setgetdata(true);
-
         this.allGetGeneralData();
         store.Notifications.attemptToGetNotificationsGuest();
       })
       .catch((err) => {
-        this.setHomeLoader(false);
         store.Notifications.attemptToGetNotificationsGuest();
-        const msg = err.response.data.message || err.response.status || err;
+        const msg = utils.functions.checkError(err);
         console.log(
           `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS} }: `,
           msg
@@ -851,59 +799,17 @@ class user {
 
           return;
         }
-        if (msg == "No records found") {
+        if (msg === "No records found") {
           setgetdata(true);
           this.setHomeTrips([]);
-
           return;
         }
 
         Alert.alert("", msg.toString());
+      })
+      .finally(() => {
+        this.setHomeLoader(false);
       });
-
-    // console.log('Get AllHomeTrip : ', 'true');
-    // this.setHomeLoader(true);
-
-    // db.hitApi(db.apis.GET_ALL_HOME_TRIPS_GUEST, 'get', {}, this.authToken)
-    //   ?.then(resp => {
-    //     this.setHomeLoader(false);
-
-    //     console.log(
-    //       `response Get AllHomeTrip   ${db.apis.GET_ALL_HOME_TRIPS} : `,
-    //       resp.data,
-    //     );
-    //     let dt = resp.data.data;
-
-    //     this.setHomeTrips(dt);
-    //     setgetdata(true);
-
-    //     this.allGetGeneralData();
-    //     store.Notifications.attemptToGetNotificationsGuest();
-    //   })
-    //   .catch(err => {
-    //     this.setHomeLoader(false);
-
-    //     let msg = err.response.data.message || err.response.status || err;
-    //     console.log(
-    //       `Error in Get AllHomeTrip  ${db.apis.GET_ALL_HOME_TRIPS} : `,
-    //       msg,
-    //     );
-    //     if (msg == 503 || msg == 500) {
-    //       Alert.alert('', 'Server not response');
-    //       // store.General.setisServerError(true);
-    //       return;
-    //     }
-    //     if (msg == 'No records found') {
-    //       setgetdata(true);
-    //       this.setHomeTrips([]);
-
-    //       this.allGetGeneralData();
-
-    //       return;
-    //     }
-    //     // seterror(msg.toString())
-    //     Alert.alert('', msg.toString());
-    //   });
   };
 
   //
@@ -1806,11 +1712,11 @@ class user {
     this.notificationToken = n;
   }
 
-  addUser(token, user, suc) {
+  addUser(token, user, suc = () => {}) {
     this.addauthToken(token);
     suc();
     this.setUser(user);
-    store.Trips.setsaveTrips(user.savedTrips || []);
+    store.Trips.setsaveTrips(user?.savedTrips || []);
   }
 
   @action.bound
@@ -2251,17 +2157,18 @@ class user {
           `response reSendVerificationLink ${db.apis.RESEND_VERIFICATION_LINK} : `,
           resp.data
         );
-        this.setResendLoader(false);
       })
       .catch((err) => {
-        this.setResendLoader(false);
         store.General.checkServer(err);
-        const msg = err.response.data.message || err.response.status || err;
+        const msg = utils.functions.checkError(err);
         console.log(
           `Error in reSendVerificationLink ${db.apis.RESEND_VERIFICATION_LINK} : `,
           msg
         );
         Alert.alert("", msg.toString());
+      })
+      .finally(() => {
+        this.setResendLoader(false);
       });
   }
 
@@ -2458,8 +2365,8 @@ class user {
           resp.data
         );
         if (resp?.data?.data) {
-          suc(resp?.data?.data);
           this.getCardInfo(customerId);
+          suc(resp?.data?.data);
         }
       })
       .catch((err) => {
@@ -2506,6 +2413,7 @@ class user {
       .finally(() => {
         this.setucRef(false);
         this.getUserSubscription(customerId);
+        this.getSubsctiptionStatus();
       });
   }
 
@@ -2593,33 +2501,33 @@ class user {
       });
   }
 
-  // @action.bound
-  // getSubsctiptionStatus() {
-  //   console.log("getSubsctiptionStatus");
-  //   db.hitApi(
-  //     db.apis.GET_SUBSCRIPTION_STATUS + this.user?.customerId,
-  //     "get",
-  //     {},
-  //     this.authToken
-  //   )
-  //     ?.then((resp) => {
-  //       const result = resp?.data || null;
-  //       console.log(
-  //         `response getSubsctiptionStatus  ${db.apis.GET_SUBSCRIPTION_STATUS} : `,
-  //         result
-  //       );
-  //       if (result) {
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       const msg = utils.functions.checkError(err);
-
-  //       console.log(
-  //         `Error in getSubsctiptionStatus  ${db.apis.GET_SUBSCRIPTION_STATUS} : `,
-  //         msg
-  //       );
-  //     });
-  // }
+  @action.bound
+  getSubsctiptionStatus() {
+    console.log("getSubsctiptionStatus");
+    db.hitApi(
+      db.apis.GET_SUBSCRIPTION_STATUS + this.user?.customerId,
+      "get",
+      {},
+      this.authToken
+    )
+      ?.then((resp) => {
+        const result = resp?.data || null;
+        console.log(
+          `-----> response getSubsctiptionStatus  ${db.apis.GET_SUBSCRIPTION_STATUS} : `,
+          result
+        );
+        if (result?.status) {
+          this.setSubscriptionStatus(result.status);
+        }
+      })
+      .catch((err) => {
+        const msg = utils.functions.checkError(err);
+        console.log(
+          `Error in getSubsctiptionStatus  ${db.apis.GET_SUBSCRIPTION_STATUS} : `,
+          msg
+        );
+      });
+  }
 
   @action.bound
   async BuyPlan(body, obj, suc) {
@@ -2900,14 +2808,13 @@ class user {
     )
       ?.then((resp) => {
         console.log("Logout resp true");
-        this.setLogoutLoader(false);
+
         store.General.setIsEmailPopup(false);
         store.General.setgoto("home");
         this.Logout();
       })
       .catch((err) => {
-        this.setLogoutLoader(false);
-        const msg = err.response.data.message || err.response.status || err;
+        const msg = utils.functions.checkError(err);
         console.log(`Error in Logout  ${db.apis.LOGOUT_ACCOUNT}: `, msg);
         if (msg == 503 || msg == 500) {
           Alert.alert("", "Server not response");
@@ -2915,6 +2822,9 @@ class user {
         }
 
         Alert.alert("", msg.toString());
+      })
+      .finally(() => {
+        this.setLogoutLoader(false);
       });
   }
 
@@ -3016,6 +2926,7 @@ class user {
     this.setUser(false);
 
     this.setUserSubscription(null);
+    this.setSubscriptionStatus("No subscriptions found");
     this.setAllCardDetails([]);
     this.setCardDetails(null);
 
@@ -3037,11 +2948,9 @@ class user {
 
   attemptToEditupdateUser(body, suc) {
     console.log("Edit Update user   body : ", body);
-
     const uid = this.user._id;
     db.hitApi(db.apis.UPDATE_USER + uid, "put", body, this.authToken)
       ?.then((resp) => {
-        this.setregLoader(false);
         suc();
         console.log(
           `response Edit Update user  ${db.apis.UPDATE_USER + uid} : `,
@@ -3054,19 +2963,20 @@ class user {
         FireStore.updateUserinFirestore(this.user._id, this.user);
       })
       .catch((err) => {
-        this.setregLoader(false);
-        let msg = err.response.data.message || err.response.status || err;
+        const msg = utils.functions.checkError(err);
         console.log(
           `Error in Edit Update user  ${db.apis.UPDATE_USER} : `,
           msg
         );
         if (msg == 503 || msg == 500) {
           Alert.alert("", "Server not response");
-
           return;
         }
 
         Alert.alert("", msg.toString());
+      })
+      .finally(() => {
+        this.setregLoader(false);
       });
   }
 
@@ -3130,6 +3040,7 @@ class user {
                 res.data
               );
               closeModal();
+              this.getCardInfo(this.user?.customerId);
               this.setUserSubscription(resp?.data?.subscription || null);
               if (res?.data?.data) this.setUser(res.data.data);
             })

@@ -106,7 +106,7 @@ function Plan(props) {
     if (isInternet) {
       attemptToGetPlan();
       if (callingScreen !== "Signup") {
-        getCardInfo(userData.customerId);
+        getCardInfo(userData?.customerId);
       }
     }
   }, [isInternet]);
@@ -297,17 +297,18 @@ function Plan(props) {
   const SucGetClientsecret = async (clientSecret) => {
     try {
       const { error, paymentIntent } = await confirmPayment(clientSecret, {
-        // paymentMethodType: "Card", //strip > 0.5.0
-        type: "Card", //stripe <= 0.5.0
+        paymentMethodType: "Card", //strip > 0.5.0
+        // type: "Card", //stripe <= 0.5.0
         billingDetails: { name: cfn.trim() },
         // autoRenew:isAutoRenew
       });
 
       if (error) {
         setregLoader(false);
+        getCardInfo(userData?.customerId);
         Notification.sendPaymentFailedNotification(userData._id);
         console.log(`confirmPayment error: `, error);
-        Alert.alert(`Payment ${error.code}`, error.message);
+        // Alert.alert(`Payment ${error.code}`, error.message);
       } else if (paymentIntent) {
         const totalValue = plan.type === "annual" ? totalAnually : monthly;
         const subscription = {
@@ -742,7 +743,9 @@ function Plan(props) {
                         marginBottom: 20,
                       }}
                     >
-                      You have already subscribed to this plan
+                      {`You have already subscribed to this ${
+                        subscribePlanType === "year" ? "annual" : "monthly"
+                      } plan`}
                     </Text>
 
                     {renderButtonCancel()}
@@ -1234,6 +1237,14 @@ function Plan(props) {
             link={store.General.Terms_and_Conditions_Link}
             isVisible={isShowTermsAndConditions}
             setisVisible={setIsShowTermsAndConditions}
+          />
+        )}
+
+        {isCardModal && (
+          <utils.SelectCardModal
+            isModal={isCardModal}
+            closeModal={toggleCardModal}
+            setSelectedCard={setSelectedCard}
           />
         )}
       </View>

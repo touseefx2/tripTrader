@@ -1,10 +1,10 @@
-import {observable, makeObservable, action} from 'mobx';
-import {AppState} from 'react-native';
-import {persist} from 'mobx-persist';
-import db from '../../database/index';
-import {Alert} from 'react-native';
-import store from '../index';
-import NetInfo from '@react-native-community/netinfo';
+import { observable, makeObservable, action } from "mobx";
+import { AppState } from "react-native";
+import { persist } from "mobx-persist";
+import db from "../../database/index";
+import { Alert } from "react-native";
+import store from "../index";
+import utils from "../../utils";
 
 class offers {
   constructor() {
@@ -12,171 +12,151 @@ class offers {
   }
 
   @observable Loader = false;
-  @action setLoader = obj => {
+  @action setLoader = (obj) => {
     this.Loader = obj;
   };
 
   @observable Loader2 = false;
-  @action setLoader2 = obj => {
+  @action setLoader2 = (obj) => {
     this.Loader2 = obj;
   };
 
   @observable Loader3 = false;
-  @action setLoader3 = obj => {
+  @action setLoader3 = (obj) => {
     this.Loader3 = obj;
   };
 
   @observable mLoader = false;
-  @action setmLoader = obj => {
+  @action setmLoader = (obj) => {
     this.mLoader = obj;
   };
 
-  @persist('object') @observable sentOffers = [];
-  @action setsentOffers = obj => {
+  @persist("object") @observable sentOffers = [];
+  @action setsentOffers = (obj) => {
     this.sentOffers = obj;
   };
 
-  @persist('object') @observable rcvOffers = [];
-  @action setrcvOffers = obj => {
+  @persist("object") @observable rcvOffers = [];
+  @action setrcvOffers = (obj) => {
     this.rcvOffers = obj;
   };
 
-  @persist('object') @observable cnfrmOffers = [];
-  @action setcnfrmOffers = obj => {
+  @persist("object") @observable cnfrmOffers = [];
+  @action setcnfrmOffers = (obj) => {
     this.cnfrmOffers = obj;
   };
 
   @action attemptToGetSentOffers = (setgetdata, setrfrsh) => {
-    console.log('Get sent offers true: ');
+    console.log("Get sent offers true: ");
     this.setLoader(true);
 
     let token = store.User.authToken;
-    let params = store.User.user._id + '&status=pending&type=sent';
-    db.hitApi(db.apis.GET_SENT_OFFERS + params, 'get', {}, token)
-      ?.then(resp => {
-        this.setLoader(false);
-        setrfrsh(false);
+    let params = store.User.user._id + "&status=pending&type=sent";
+    db.hitApi(db.apis.GET_SENT_OFFERS + params, "get", {}, token)
+      ?.then((resp) => {
         console.log(
-          `response Get sent offers   ${db.apis.GET_SENT_OFFERS}${params} : true`,
+          `response Get sent offers   ${db.apis.GET_SENT_OFFERS}${params} : true`
         );
         let dt = resp.data.data || [];
-        // console.log(dt);
+
         setgetdata(true);
         this.setsentOffers(dt);
         return;
       })
-      .catch(err => {
-        this.setLoader(false);
-        setrfrsh(false);
-        let msg = err.response.data.message || err.response.status || err;
+      .catch((err) => {
+        const msg = utils.functions.checkError(err);
         console.log(
           `Error in Get sent offers ${db.apis.GET_SENT_OFFERS}${params} : `,
-          msg,
+          msg
         );
-        if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
 
-          return;
-        }
-        if (msg == 'No records found') {
+        if (msg === "No records found") {
           setgetdata(true);
           this.setsentOffers([]);
 
           return;
         }
-
-        // Alert.alert('', msg.toString());
+      })
+      .finally(() => {
+        this.setLoader(false);
+        setrfrsh(false);
       });
   };
 
   @action attemptToGetReceiveOffers = (setgetdata, setrfrsh) => {
-    console.log('Get receive offers true: ');
+    console.log("Get receive offers true: ");
     this.setLoader2(true);
 
-    let token = store.User.authToken;
-    let params = store.User.user._id + '&status=pending&type=received';
-    db.hitApi(db.apis.GET_RECEIVED_OFFERS + params, 'get', {}, token)
-      ?.then(resp => {
-        this.setLoader2(false);
-        setrfrsh(false);
+    const token = store.User.authToken;
+    const params = store.User.user._id + "&status=pending&type=received";
+    db.hitApi(db.apis.GET_RECEIVED_OFFERS + params, "get", {}, token)
+      ?.then((resp) => {
         console.log(
-          `response Get receive offers   ${db.apis.GET_RECEIVED_OFFERS}${params} true: `,
+          `response Get receive offers   ${db.apis.GET_RECEIVED_OFFERS}${params} true: `
         );
         let dt = resp.data.data || [];
-        // console.log(dt);
         setgetdata(true);
         this.setrcvOffers(dt);
         return;
       })
-      .catch(err => {
-        this.setLoader2(false);
-        setrfrsh(false);
-        let msg = err.response.data.message || err.response.status || err;
+      .catch((err) => {
+        const msg = utils.functions.checkError(err);
         console.log(
           `Error in Get receive offers ${db.apis.GET_RECEIVED_OFFERS}${params} : `,
-          msg,
+          msg
         );
-        if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
 
-          return;
-        }
-        if (msg == 'No records found') {
+        if (msg === "No records found") {
           setgetdata(true);
           this.setrcvOffers([]);
 
           return;
         }
-
-        // Alert.alert('', msg.toString());
+      })
+      .finally(() => {
+        this.setLoader2(false);
+        setrfrsh(false);
       });
   };
 
   @action attemptToGetConfirmOffers = (setgetdata, setrfrsh) => {
-    console.log('Get Confirm  offers true: ');
+    console.log("Get Confirm  offers true: ");
     this.setLoader3(true);
 
-    let token = store.User.authToken;
-    let params = store.User.user._id;
-    // let params = `offeredBy=${uid}&offeredTo=${uid}&status=confirmed`;
-    db.hitApi(db.apis.GET_CONFIRM_OFFERS + params, 'get', {}, token)
-      ?.then(resp => {
-        this.setLoader3(false);
-        setrfrsh(false);
+    const token = store.User.authToken;
+    const params = store.User.user._id;
+
+    db.hitApi(db.apis.GET_CONFIRM_OFFERS + params, "get", {}, token)
+      ?.then((resp) => {
         console.log(
-          `response Get Confirm offers   ${db.apis.GET_CONFIRM_OFFERS}${params} true: `,
+          `response Get Confirm offers   ${db.apis.GET_CONFIRM_OFFERS}${params} true: `
         );
         let dt = resp.data.data || [];
         setgetdata(true);
         this.setcnfrmOffers(dt);
         return;
       })
-      .catch(err => {
-        this.setLoader3(false);
-        setrfrsh(false);
-        let msg = err.response.data.message || err.response.status || err;
+      .catch((err) => {
+        const msg = utils.functions.checkError(err);
         console.log(
           `Error in Get Confirm offers ${db.apis.GET_CONFIRM_OFFERS}${params} : `,
-          msg,
+          msg
         );
-        if (msg == 503 || msg == 500) {
-          // Alert.alert('', 'Server not response');
 
-          return;
-        }
-        if (msg == 'No records found') {
+        if (msg === "No records found") {
           setgetdata(true);
           this.setcnfrmOffers([]);
-
           return;
         }
-
-        // Alert.alert('', msg.toString());
+      })
+      .finally(() => {
+        this.setLoader3(false);
+        setrfrsh(false);
       });
   };
 
   @action attemptToCancelOffer = (obj, suc) => {
-    console.log('cancel offers true: ');
+    console.log("cancel offers true: ");
     store.User.setHomeModalLoder(true);
 
     let token = store.User.authToken;
@@ -184,21 +164,21 @@ class offers {
     let tid = obj.item._id;
     db.hitApi(
       db.apis.CANCEL_OFFER + tid,
-      'put',
+      "put",
       {
         received: false,
         sent: true,
         isCanceled: true,
       },
-      token,
+      token
     )
-      ?.then(resp => {
+      ?.then((resp) => {
         store.User.setHomeModalLoder(false);
         console.log(
-          `response cancel offers   ${db.apis.CANCEL_OFFER}${tid} true : `,
+          `response cancel offers   ${db.apis.CANCEL_OFFER}${tid} true : `
         );
 
-        if (resp.data && resp.data.check == 'reload') {
+        if (resp.data && resp.data.check == "reload") {
           suc();
           store.General.refreshAlert(resp.data.message);
           return;
@@ -211,27 +191,27 @@ class offers {
 
         return;
       })
-      .catch(err => {
+      .catch((err) => {
         store.User.setHomeModalLoder(false);
 
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in cancel offers ${db.apis.CANCEL_OFFER}${tid}   : `,
-          msg,
+          msg
         );
         if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
+          Alert.alert("", "Server not response");
           // store.General.setisServerError(true);
           return;
         }
 
         // seterror(msg.toString())
-        Alert.alert('', msg.toString());
+        Alert.alert("", msg.toString());
       });
   };
 
   @action attemptToDeclineOffer = (obj, suc) => {
-    console.log('deline offers true: ');
+    console.log("deline offers true: ");
     store.User.setHomeModalLoder(true);
 
     let token = store.User.authToken;
@@ -239,18 +219,18 @@ class offers {
     let tid = obj.item._id;
     db.hitApi(
       db.apis.CANCEL_OFFER + tid,
-      'put',
-      {isCanceled: false, isDeclined: true, received: true},
+      "put",
+      { isCanceled: false, isDeclined: true, received: true },
 
-      token,
+      token
     )
-      ?.then(resp => {
+      ?.then((resp) => {
         store.User.setHomeModalLoder(false);
         console.log(
-          `response decline offers   ${db.apis.CANCEL_OFFER}${tid}  : `,
+          `response decline offers   ${db.apis.CANCEL_OFFER}${tid}  : `
         );
 
-        if (resp.data && resp.data.check == 'reload') {
+        if (resp.data && resp.data.check == "reload") {
           suc();
           store.General.refreshAlert(resp.data.message);
           return;
@@ -263,39 +243,39 @@ class offers {
 
         return;
       })
-      .catch(err => {
+      .catch((err) => {
         store.User.setHomeModalLoder(false);
 
         let msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in decline offers ${db.apis.CANCEL_OFFER}${tid}   : `,
-          msg,
+          msg
         );
         if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
+          Alert.alert("", "Server not response");
           // store.General.setisServerError(true);
           return;
         }
 
         // seterror(msg.toString())
-        Alert.alert('', msg.toString());
+        Alert.alert("", msg.toString());
       });
   };
 
   @action attemptToConfirmOffer = (obj, body, suc, closeModal) => {
-    console.log('confirm offers body : ', body);
+    console.log("confirm offers body : ", body);
     store.User.setHomeModalLoder(true);
 
     let token = store.User.authToken;
     let i = obj.selIndex;
     let tid = obj.item._id;
-    db.hitApi(db.apis.CONFIRM_OFFERS + tid, 'put', body, token)
-      ?.then(resp => {
+    db.hitApi(db.apis.CONFIRM_OFFERS + tid, "put", body, token)
+      ?.then((resp) => {
         store.User.setHomeModalLoder(false);
         console.log(
-          `response confirm offers   ${db.apis.CONFIRM_OFFERS}${tid}  true : `,
+          `response confirm offers   ${db.apis.CONFIRM_OFFERS}${tid}  true : `
         );
-        if (resp.data && resp.data.check == 'reload') {
+        if (resp.data && resp.data.check == "reload") {
           closeModal();
           store.General.refreshAlert(resp.data.message);
           return;
@@ -307,26 +287,26 @@ class offers {
         suc();
         this.attemptToGetConfirmOffers(
           () => {},
-          () => {},
+          () => {}
         );
         return;
       })
-      .catch(err => {
+      .catch((err) => {
         store.User.setHomeModalLoder(false);
 
         const msg = err.response.data.message || err.response.status || err;
         console.log(
           `Error in confirm offers ${db.apis.CONFIRM_OFFERS}${tid}   : `,
-          msg,
+          msg
         );
         if (msg == 503 || msg == 500) {
-          Alert.alert('', 'Server not response');
+          Alert.alert("", "Server not response");
           // store.General.setisServerError(true);
           return;
         }
 
         // seterror(msg.toString())
-        Alert.alert('', msg.toString());
+        Alert.alert("", msg.toString());
       });
   };
 

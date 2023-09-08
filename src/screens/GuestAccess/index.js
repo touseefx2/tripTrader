@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, { useRef } from "react";
 import {
   View,
   Text,
@@ -8,14 +8,14 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-} from 'react-native';
-import {styles} from './styles';
-import {observer} from 'mobx-react';
-import store from '../../store/index';
-import utils from '../../utils/index';
-import theme from '../../theme';
-import {responsiveHeight} from 'react-native-responsive-dimensions';
-import Toast from 'react-native-easy-toast';
+} from "react-native";
+import { styles } from "./styles";
+import { observer } from "mobx-react";
+import store from "../../store/index";
+import utils from "../../utils/index";
+import theme from "../../theme";
+import { responsiveHeight } from "react-native-responsive-dimensions";
+import Toast from "react-native-easy-toast";
 
 export default observer(GuestAccess);
 function GuestAccess(props) {
@@ -23,8 +23,8 @@ function GuestAccess(props) {
   const loader = store.User.regLoader;
 
   const continueGuest = () => {
-    store.General.setgoto('home');
-    store.User.addUser('', 'guest', '');
+    store.General.setgoto("home");
+    store.User.addUser("", "guest", () => {});
   };
 
   const renderSection2 = () => {
@@ -32,14 +32,15 @@ function GuestAccess(props) {
 
     const renderButton1 = () => {
       const onClickButton = () => {
-        props.navigation.navigate('Signup');
+        props.navigation.navigate("Signup");
       };
       return (
         <>
           <TouchableOpacity
             onPress={onClickButton}
             activeOpacity={0.9}
-            style={styles.BottomButton}>
+            style={styles.BottomButton}
+          >
             <Text style={styles.buttonTextBottom}>Join now</Text>
           </TouchableOpacity>
         </>
@@ -48,7 +49,7 @@ function GuestAccess(props) {
 
     const renderButton2 = () => {
       const onClickButton = () => {
-        props.navigation.navigate('Signin');
+        props.navigation.navigate("Signin");
       };
       return (
         <>
@@ -62,15 +63,17 @@ function GuestAccess(props) {
 
                 marginTop: 12,
               },
-            ]}>
+            ]}
+          >
             <Text
               style={[
                 styles.buttonTextBottom,
                 {
-                  color: '#30563A',
+                  color: "#30563A",
                   fontFamily: theme.fonts.fontBold,
                 },
-              ]}>
+              ]}
+            >
               sign in
             </Text>
           </TouchableOpacity>
@@ -82,9 +85,9 @@ function GuestAccess(props) {
       <>
         <View style={styles.section2}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{ alignItems: "center", justifyContent: "center" }}>
               <Image
-                source={require('../../assets/images/guestacs/img.png')}
+                source={require("../../assets/images/guestacs/img.png")}
                 style={styles.section2Logo}
               />
 
@@ -94,10 +97,11 @@ function GuestAccess(props) {
 
               <View
                 style={{
-                  width: '98%',
+                  width: "98%",
 
-                  alignSelf: 'center',
-                }}>
+                  alignSelf: "center",
+                }}
+              >
                 <Text style={styles.section2LogoTitle}>
                   You may use Trip Trader as a guest, but some features will not
                   be available. For the best experience, we recommend creating
@@ -124,7 +128,7 @@ function GuestAccess(props) {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../../assets/images/background/img.png')}
+        source={require("../../assets/images/background/img.png")}
         style={styles.container2}
       />
       <SafeAreaView style={styles.container3}>
@@ -136,7 +140,8 @@ function GuestAccess(props) {
             paddingHorizontal: 15,
             marginTop: responsiveHeight(3),
           }}
-          behavior={Platform.OS == 'ios' ? 'padding' : undefined}>
+          behavior={Platform.OS == "ios" ? "padding" : undefined}
+        >
           {renderSection2()}
         </KeyboardAvoidingView>
       </SafeAreaView>

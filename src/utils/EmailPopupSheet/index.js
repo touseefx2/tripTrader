@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   Modal,
@@ -9,21 +9,21 @@ import {
   Image,
   ActivityIndicator,
   Alert,
-} from 'react-native';
+} from "react-native";
 import {
   responsiveFontSize,
   responsiveHeight,
-} from 'react-native-responsive-dimensions';
-import NetInfo from '@react-native-community/netinfo';
-import {styles} from './styles';
-import theme from '../../theme';
-import store from '../../store';
-import {observer} from 'mobx-react';
+} from "react-native-responsive-dimensions";
+import NetInfo from "@react-native-community/netinfo";
+import { styles } from "./styles";
+import theme from "../../theme";
+import store from "../../store";
+import { observer } from "mobx-react";
 
 export default observer(EmailPopupSheet);
-function EmailPopupSheet({isModal, setIsModal, email, user}) {
+function EmailPopupSheet({ isModal, setIsModal, email, user }) {
   const maxModalHeight = theme.window.Height - 70;
-  const {reSendVerificationLink, resendLoder, logoutLoader} = store.User;
+  const { reSendVerificationLink, resendLoder, logoutLoader } = store.User;
 
   const [isMaxHeight, setIssMaxHeight] = useState(false);
   const [modalHeight, setmodalHeight] = useState(0);
@@ -32,9 +32,9 @@ function EmailPopupSheet({isModal, setIsModal, email, user}) {
     setIssMaxHeight(modalHeight >= maxModalHeight ? true : false);
   }, [modalHeight]);
 
-  const onViewLayout = event => {
+  const onViewLayout = (event) => {
     if (!isMaxHeight) {
-      const {height} = event.nativeEvent.layout;
+      const { height } = event.nativeEvent.layout;
       setmodalHeight(height);
     }
   };
@@ -44,20 +44,20 @@ function EmailPopupSheet({isModal, setIsModal, email, user}) {
   };
 
   const reSendLink = () => {
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         reSendVerificationLink(email, user);
       } else {
-        Alert.alert('', 'Please connect internet');
+        Alert.alert("", "Please connect internet");
       }
     });
   };
 
   const logoutAccount = () => {
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         store.User.attemptToLogoutAccount();
-      } else Alert.alert('', 'Please connect internet');
+      } else Alert.alert("", "Please connect internet");
     });
   };
 
@@ -74,19 +74,20 @@ function EmailPopupSheet({isModal, setIsModal, email, user}) {
       <View style={styles.main}>
         <Image
           style={styles.image}
-          source={require('../../assets/images/emailSent/img.png')}
+          source={require("../../assets/images/emailSent/img.png")}
         />
 
         <Text style={styles.text1}>
           To activate your account, click the button in the verification email
-          we sent to:{' '}
+          we sent to:{" "}
           <Text
             style={[
               styles.text1 && {
                 color: theme.color.title,
                 fontFamily: theme.fonts.fontNormal,
               },
-            ]}>
+            ]}
+          >
             {email}
           </Text>
         </Text>
@@ -106,7 +107,8 @@ function EmailPopupSheet({isModal, setIsModal, email, user}) {
           activeOpacity={0.7}
           disabled={resendLoder || logoutLoader}
           onPress={reSendLink}
-          style={styles.button}>
+          style={styles.button}
+        >
           {!resendLoder ? (
             <Text style={styles.buttonText}>Resend Verification Email</Text>
           ) : (
@@ -125,9 +127,10 @@ function EmailPopupSheet({isModal, setIsModal, email, user}) {
             styles.button,
             {
               marginTop: responsiveHeight(1.2),
-              backgroundColor: '#B93B3B',
+              backgroundColor: "#B93B3B",
             },
-          ]}>
+          ]}
+        >
           {!logoutLoader ? (
             <Text style={styles.buttonText}>Logout</Text>
           ) : (
@@ -149,9 +152,10 @@ function EmailPopupSheet({isModal, setIsModal, email, user}) {
           style={[
             styles.modal,
             isMaxHeight
-              ? {height: maxModalHeight, paddingTop: 0}
-              : {padding: 15},
-          ]}>
+              ? { height: maxModalHeight, paddingTop: 0 }
+              : { padding: 15 },
+          ]}
+        >
           {renderHeader()}
 
           {isMaxHeight ? (
@@ -161,7 +165,8 @@ function EmailPopupSheet({isModal, setIsModal, email, user}) {
                 paddingTop: isMaxHeight ? responsiveHeight(3.2) : 0,
               }}
               showsVerticalScrollIndicator={false}
-              style={{flex: 1}}>
+              style={{ flex: 1 }}
+            >
               {renderMain()}
             </ScrollView>
           ) : (

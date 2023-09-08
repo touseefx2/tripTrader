@@ -22,7 +22,6 @@ function TripCard({
   saveTrip,
   saveLoader,
   user,
-  userSubscription,
 }) {
   const usr = item.hostId;
   //user
@@ -260,6 +259,7 @@ function TripCard({
         <Pressable
           onPress={() => {
             const userPlanStatus = utils.functions.checkUserPalnStatus(props);
+
             if (userPlanStatus) {
               openModal({ item: item, selIndex: index }, "offer");
             }

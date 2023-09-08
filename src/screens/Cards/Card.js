@@ -7,8 +7,10 @@ export default memo(Card);
 function Card({
   item,
   bottomText = "",
+  modal = false,
   deleteCard = () => {},
   changeCard = () => {},
+  selectCard = () => {},
 }) {
   const name = item?.billing_details?.name || "unnamed";
   const card = {};
@@ -20,7 +22,12 @@ function Card({
 
   return (
     <>
-      <View style={styles.cardContainer}>
+      <TouchableOpacity
+        onPress={() => selectCard(item)}
+        disabled={!modal}
+        activeOpacity={0.7}
+        style={styles.cardContainer}
+      >
         <View style={styles.section}>
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.expiry}>{card?.expiry}</Text>
@@ -32,7 +39,7 @@ function Card({
             {card.brand + " ******* " + card.number}
           </Text>
         </View>
-        {bottomText !== "" && (
+        {bottomText !== "" && !modal && (
           <View style={styles.sectionBottom}>
             <TouchableOpacity
               activeOpacity={0.7}
@@ -51,7 +58,7 @@ function Card({
             </TouchableOpacity>
           </View>
         )}
-      </View>
+      </TouchableOpacity>
     </>
   );
 }

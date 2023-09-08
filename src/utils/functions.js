@@ -448,7 +448,7 @@ function addMonths(date, months) {
 }
 
 const checkUserPalnStatus = (props, isCheck = true) => {
-  const { user, userSubscription, Logout } = store.User;
+  const { user, userSubscription, Logout, subscriptionStatus } = store.User;
   const { setgoto } = store.General;
 
   if (user === "guest") {
@@ -457,13 +457,7 @@ const checkUserPalnStatus = (props, isCheck = true) => {
     return false;
   }
 
-  if (
-    isCheck &&
-    ((userSubscription &&
-      userSubscription?.status !== "active" &&
-      isSubscribeDateEnd(userSubscription?.current_period_end)) ||
-      !userSubscription)
-  ) {
+  if (isCheck && subscriptionStatus !== "Premium") {
     props.navigation.navigate("PlanStack", {
       screen: "Plan",
       params: {},
@@ -475,14 +469,9 @@ const checkUserPalnStatus = (props, isCheck = true) => {
 };
 
 const isUserFreemium = () => {
-  const { userSubscription } = store.User;
+  const { userSubscription, subscriptionStatus } = store.User;
 
-  return (
-    (userSubscription &&
-      userSubscription?.status !== "active" &&
-      isSubscribeDateEnd(userSubscription?.current_period_end)) ||
-    !userSubscription
-  );
+  return subscriptionStatus !== "Premium";
 };
 
 const goToUserProfile = (props, user, refresh = "") => {

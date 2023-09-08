@@ -4,7 +4,7 @@ import { styles } from "./styles";
 import { observer } from "mobx-react";
 import store from "../../store/index";
 import utils from "../../utils/index";
-import Card from "./Card.js";
+import Card from "./Card";
 import { responsiveFontSize } from "react-native-responsive-dimensions";
 
 export default observer(Cards);
@@ -21,7 +21,7 @@ function Cards(props) {
   }, [isInternet]);
 
   const deleteCard = useCallback((item) => {
-    console.log(item);
+    console.log("card delete : ", item);
   }, []);
 
   const EmptyListMessage = () => {
