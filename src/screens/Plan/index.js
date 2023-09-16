@@ -296,8 +296,8 @@ function Plan(props) {
   const SucGetClientsecret = async (clientSecret) => {
     try {
       const { error, paymentIntent } = await confirmPayment(clientSecret, {
-        // paymentMethodType: "Card", //strip > 0.5.0
-        type: "Card", //stripe <= 0.5.0
+        paymentMethodType: "Card", //strip > 0.5.0
+        // type: "Card", //stripe <= 0.5.0
         billingDetails: { name: cfn.trim() },
         // autoRenew:isAutoRenew
       });
