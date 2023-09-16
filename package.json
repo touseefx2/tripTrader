@@ -12,7 +12,7 @@
     "gclean": "cd android && ./gradlew clean",
     "bundle": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/",
     "clean": "npm run gclean && cd .. && npm run bundle && cd android",
-    "debug-apk": "./gradlew assembleDebug",
+    "debug-apk": "cd android && ./gradlew assembleDebug",
     "release-apk": "./gradlew assembleRelease",
     "release-bundle": "./gradlew bundleRelease -x bundleReleaseJsAndAssets",
     "sha1-key": "cd android && ./gradlew signingReport"

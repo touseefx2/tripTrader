@@ -64,7 +64,7 @@ function Signup(props) {
   const [Emptyemail, setEmptyemail] = useState(false);
   const [invalidemail, setinvalidemail] = useState(false);
 
-  const [dob, setdob] = useState(new Date());
+  const [dob, setdob] = useState("");
   const [pudshow, setPUdShow] = useState(false);
   const [Emptydob, setEmptydob] = useState(false);
 
@@ -657,7 +657,6 @@ function Signup(props) {
     const showPUDatepicker = () => {
       Keyboard.dismiss();
       setEmptydob(false);
-
       setPUdShow(true);
     };
 
@@ -1328,7 +1327,7 @@ function Signup(props) {
         mode="date"
         format="MM-DD-YYYY"
         open={pudshow}
-        date={dob}
+        date={dob === "" ? new Date() : dob}
         onConfirm={(date) => {
           setPUdShow(false);
           setdob(date);

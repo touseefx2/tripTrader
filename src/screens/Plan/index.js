@@ -53,7 +53,6 @@ function Plan(props) {
   } = store.User;
   const { isInternet, Stripe_Publish_Key } = store.General;
   const { usrData = null, callingScreen = "" } = props?.route.params;
-
   const { confirmPayment } = useStripe();
 
   const [isShowTermsAndConditions, setIsShowTermsAndConditions] =
@@ -65,7 +64,7 @@ function Plan(props) {
   const [selectedCard, setSelectedCard] = useState(null);
   const [isCardModal, setIsCardModal] = useState(false);
 
-  const [isAutoRenew, setIsAutoRenew] = useState(false);
+  const [isAutoRenew, setIsAutoRenew] = useState(true);
 
   const [plan, setPlan] = useState(false);
   const [isPage, setisPage] = useState(1);
@@ -297,8 +296,8 @@ function Plan(props) {
   const SucGetClientsecret = async (clientSecret) => {
     try {
       const { error, paymentIntent } = await confirmPayment(clientSecret, {
-        paymentMethodType: "Card", //strip > 0.5.0
-        // type: "Card", //stripe <= 0.5.0
+        // paymentMethodType: "Card", //strip > 0.5.0
+        type: "Card", //stripe <= 0.5.0
         billingDetails: { name: cfn.trim() },
         // autoRenew:isAutoRenew
       });
