@@ -78,4 +78,15 @@ export const styles = StyleSheet.create({
     textDecorationLine: "underline",
     textDecorationColor: "red",
   },
+  addTextContainer: {
+    alignItems: "flex-end",
+    padding: responsiveFontSize(2),
+  },
+  addText: {
+    fontFamily: theme.fonts.fontMedium,
+    color: theme.color.buttonTextGreen,
+    fontSize: responsiveFontSize(1.6),
+    textDecorationLine: "underline",
+    textDecorationColor: theme.color.buttonTextGreen,
+  },
 });

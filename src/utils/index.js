@@ -30,6 +30,7 @@ import reportUserModal from "./reportUserModal";
 import CancelSubModal from "./CancelSubModal";
 import CheckBox from "./CheckBox";
 import SelectCardModal from "./SelectCardModal";
+import AddCardModal from "./AddCardModal";
 
 const utils = {
   vectorIcon,
@@ -64,6 +65,7 @@ const utils = {
   CancelSubModal,
   CheckBox,
   SelectCardModal,
+  AddCardModal,
 };
 
 export default utils;

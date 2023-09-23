@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
     padding: 15,
   },
   emptyTitle: {
-    marginTop: "70%",
+    marginTop: "45%",
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
@@ -39,5 +39,8 @@ export const styles = StyleSheet.create({
     color: theme.color.title,
     fontFamily: theme.fonts.fontMedium,
     opacity: 0.4,
+  },
+  load: {
+    marginTop: "45%",
   },
 });

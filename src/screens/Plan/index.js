@@ -64,7 +64,7 @@ function Plan(props) {
   const [selectedCard, setSelectedCard] = useState(null);
   const [isCardModal, setIsCardModal] = useState(false);
 
-  const [isAutoRenew, setIsAutoRenew] = useState(true);
+  // const [isAutoRenew, setIsAutoRenew] = useState(true);
 
   const [plan, setPlan] = useState(false);
   const [isPage, setisPage] = useState(1);
@@ -752,7 +752,7 @@ function Plan(props) {
                 </>
               ) : (
                 <>
-                  <View style={{}}>
+                  <View>
                     <Text
                       numberOfLines={1}
                       ellipsizeMode="tail"
@@ -982,7 +982,7 @@ function Plan(props) {
                       </>
                     )}
 
-                    <View
+                    {/* <View
                       style={[
                         styles.Field,
                         {
@@ -996,7 +996,7 @@ function Plan(props) {
                         isSel={isAutoRenew}
                         setIsSel={setIsAutoRenew}
                       />
-                    </View>
+                    </View> */}
 
                     {isShowPromoFiled && (
                       <View style={styles.Field}>

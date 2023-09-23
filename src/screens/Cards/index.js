@@ -1,5 +1,11 @@
-import React, { useEffect, useCallback } from "react";
-import { View, SafeAreaView, FlatList, Text, Alert } from "react-native";
+import React, { useEffect, useCallback, useState } from "react";
+import {
+  View,
+  SafeAreaView,
+  FlatList,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import { styles } from "./styles";
 import { observer } from "mobx-react";
 import store from "../../store/index";
@@ -14,11 +20,17 @@ function Cards(props) {
   const { isInternet } = store.General;
   const { user, ucRef, getCardInfo, allCardDetails } = store.User;
 
+  const [isAddCardModal, setIsAddCardModal] = useState(false);
+
   useEffect(() => {
     if (isInternet) {
       getCardInfo(user.customerId, "Load");
     }
   }, [isInternet]);
+
+  const toggleAddCardModal = useCallback(() => {
+    setIsAddCardModal(!isAddCardModal);
+  }, [isAddCardModal]);
 
   const deleteCard = useCallback((item) => {
     console.log("card delete : ", item);
@@ -36,7 +48,7 @@ function Cards(props) {
     return (
       <View
         style={{
-          height: responsiveFontSize(3),
+          height: responsiveFontSize(2.5),
         }}
       />
     );
@@ -56,6 +68,11 @@ function Cards(props) {
       {!isInternet && <utils.InternetMessage />}
       <SafeAreaView style={styles.container2}>
         <View style={styles.container3}>
+          <View style={styles.addTextContainer}>
+            <TouchableOpacity onPress={toggleAddCardModal}>
+              <Text style={styles.addText}>Add New Card</Text>
+            </TouchableOpacity>
+          </View>
           <FlatList
             contentContainerStyle={styles.listContainer}
             data={allCardDetails}
@@ -66,6 +83,13 @@ function Cards(props) {
           />
         </View>
       </SafeAreaView>
+
+      {isAddCardModal && (
+        <utils.AddCardModal
+          isModal={isAddCardModal}
+          closeModal={toggleAddCardModal}
+        />
+      )}
     </View>
   );
 }

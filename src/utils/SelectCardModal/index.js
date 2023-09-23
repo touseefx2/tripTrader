@@ -7,6 +7,7 @@ import {
   Platform,
   TouchableWithoutFeedback,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 import { styles } from "./styles";
 import theme from "../../theme";
@@ -32,7 +33,15 @@ function SelectCardModal({ isModal, closeModal, setSelectedCard }) {
   const EmptyListMessage = () => {
     return (
       <>
-        {!ucRef && <Text style={styles.emptyTitle}>No Credit Cards Found</Text>}
+        {!ucRef ? (
+          <Text style={styles.emptyTitle}>No Credit Cards Found</Text>
+        ) : (
+          <ActivityIndicator
+            size={responsiveFontSize(4)}
+            color="blue"
+            style={styles.load}
+          />
+        )}
       </>
     );
   };
@@ -46,7 +55,7 @@ function SelectCardModal({ isModal, closeModal, setSelectedCard }) {
     return (
       <View
         style={{
-          height: responsiveFontSize(3),
+          height: responsiveFontSize(2.5),
         }}
       />
     );
