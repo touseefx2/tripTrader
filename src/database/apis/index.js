@@ -1,6 +1,5 @@
-const BASE_URL =
-  // "http://192.168.43.170:3001/";
-  "https://Devapi.trip-trader.com/";
+const BASE_URL = "http://192.168.1.4:3001/";
+// "https://Devapi.trip-trader.com/";
 // "https://api.trip-trader.com/";
 
 //apis
@@ -10,8 +9,13 @@ const GET_FOOD_CATEGORY = "api/category/getAllCategories?branch=";
 const PLACE_ORDER = "api/orders";
 const REGISTER_USER = "api/user";
 const UPDATE_USER = "api/user/";
+const UPDATE_SUBSCRIBED_CARD =
+  "api/cardmangment/UpdateSubcribedCardInformation";
+const DELETE_CARD = "api/cardmangment/deleteCard";
+
 const BUY_PLAN = "api/stripe";
 const CARD_INFO = "api/stripe?customerId=";
+const UPDATE_CARD = "api/cardmangment/updateCardInfo";
 const GET_USER_SUBSCRIPTION = "api/stripe/subscriptions/";
 const GET_CARD_DETAILS = "api/stripe?customerId=";
 const GET_SUBSCRIPTION_STATUS = "api/stripe/getActive/";
@@ -97,6 +101,7 @@ export default apis = {
   PLACE_ORDER,
   REGISTER_USER,
   UPDATE_USER,
+  UPDATE_SUBSCRIBED_CARD,
   LOGIN_USER,
   IMAGE_UPLOAD,
   GET_USER_BY_ID,
@@ -165,10 +170,12 @@ export default apis = {
   READ_All_Meesages,
   BUY_PLAN,
   CARD_INFO,
+  UPDATE_CARD,
   RESEND_VERIFICATION_LINK,
   LOGOUT_ACCOUNT,
   READ_ALL_NOTIFICATIONS,
   SELECT_PLAN,
+  DELETE_CARD,
   GET_USER_SUBSCRIPTION,
   GET_CARD_DETAILS,
   GET_SUBSCRIPTION_STATUS,

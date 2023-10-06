@@ -9,7 +9,7 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "gclean": "cd android && ./gradlew clean",
+    "gclean": "cd android && ./gradlew clean && cd ..",
     "bundle": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/",
     "clean": "npm run gclean && cd .. && npm run bundle && cd android",
     "debug-apk": "cd android && ./gradlew assembleDebug",

@@ -107,13 +107,13 @@ function Home(props) {
     return () => {};
   }, [getDataOnce, isInternet]);
 
-  useEffect(() => {
-    if (user && user !== "guest" && getDataOnce) {
-      setTimeout(() => {
-        setIsEmailPopup(user?.isEmailVerified === false ? true : false);
-      }, 1500);
-    }
-  }, [user, getDataOnce]);
+  // useEffect(() => {
+  //   if (user && user !== "guest" && getDataOnce) {
+  //     setTimeout(() => {
+  //       setIsEmailPopup(user?.isEmailVerified === false ? true : false);
+  //     }, 1500);
+  //   }
+  // }, [user, getDataOnce]);
 
   useEffect(() => {
     if (user && user !== "guest") {

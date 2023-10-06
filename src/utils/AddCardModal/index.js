@@ -17,11 +17,7 @@ import theme from "../../theme";
 import store from "../../store";
 import Header from "./components/Header";
 import { observer } from "mobx-react";
-import {
-  StripeProvider,
-  CardField,
-  useStripe,
-} from "@stripe/stripe-react-native";
+import { StripeProvider, CardField } from "@stripe/stripe-react-native";
 import { responsiveFontSize } from "react-native-responsive-dimensions";
 import NetInfo from "@react-native-community/netinfo";
 
@@ -30,6 +26,7 @@ export default observer(AddCardModal);
 function AddCardModal({ isModal, closeModal }) {
   const nameRegex = /^[a-zA-Z-' ]+$/;
   const { Stripe_Publish_Key } = store.General;
+  const { attempToAddCard } = store.User;
 
   const [firstName, setFirstName] = useState("");
   const [emptyFirstName, setEmptyFirstName] = useState(false);
@@ -101,10 +98,14 @@ function AddCardModal({ isModal, closeModal }) {
       } else {
         NetInfo.fetch().then((state) => {
           if (state.isConnected) {
-            // const body = {
-            //   customerId: userData?.customerId,
-            // };
-            closeModal();
+            const body = {
+              type: "card",
+              card: cardObj,
+              billingDetails: {
+                name: firstName.trim(),
+              },
+            };
+            attempToAddCard(body, closeModal, setLoader);
           } else {
             Alert.alert("", "Please connect internet");
           }
@@ -189,9 +190,6 @@ function AddCardModal({ isModal, closeModal }) {
                   }}
                   onCardChange={(cardDetails) => {
                     onChangeCard(cardDetails);
-                  }}
-                  onFocus={(focusedField) => {
-                    console.log("focusField", focusedField);
                   }}
                 />
                 {cardErr !== "" && renderShowFieldError("card")}

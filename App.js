@@ -11,18 +11,18 @@ import NetInfo from "@react-native-community/netinfo";
 import store from "./src/store/index";
 import { observer } from "mobx-react";
 // import crashlytics from "@react-native-firebase/crashlytics";
-import * as Sentry from "@sentry/react-native";
-Sentry.init({
-  dsn: store.General.sentryDsn,
-  debug: true,
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
-  tracesSampleRate: 1.0,
-});
-export default Sentry.wrap(observer(App));
+// import * as Sentry from "@sentry/react-native";
+// Sentry.init({
+//   dsn: store.General.sentryDsn,
+//   debug: true,
+//   // Set tracesSampleRate to 1.0 to capture 100%
+//   // of transactions for performance monitoring.
+//   // We recommend adjusting this value in production
+//   tracesSampleRate: 1.0,
+// });
+// export default Sentry.wrap(observer(App));
 
-// export default observer(App);
+export default observer(App);
 function App() {
   const { user } = store.User;
   const {

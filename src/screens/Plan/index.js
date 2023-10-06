@@ -26,7 +26,6 @@ import {
 import Toast from "react-native-easy-toast";
 import NetInfo from "@react-native-community/netinfo";
 import { Notification } from "../../services/Notification";
-import Card from "../Cards/Card";
 
 import {
   StripeProvider,
@@ -50,6 +49,7 @@ function Plan(props) {
     allCardDetails,
     getCardInfo,
     userSubscription,
+    UpdateSubcribedCardInformation,
   } = store.User;
   const { isInternet, Stripe_Publish_Key } = store.General;
   const { usrData = null, callingScreen = "" } = props?.route.params;
@@ -60,9 +60,6 @@ function Plan(props) {
 
   const [userData, setUserData] = useState(usrData || user);
   const [data, setData] = useState(plans);
-
-  const [selectedCard, setSelectedCard] = useState(null);
-  const [isCardModal, setIsCardModal] = useState(false);
 
   // const [isAutoRenew, setIsAutoRenew] = useState(true);
 
@@ -109,12 +106,6 @@ function Plan(props) {
       }
     }
   }, [isInternet]);
-
-  useEffect(() => {
-    if (cardDetails) {
-      setSelectedCard(cardDetails);
-    }
-  }, [cardDetails]);
 
   useEffect(() => {
     if (plans) {
@@ -189,10 +180,6 @@ function Plan(props) {
     }
   }
 
-  const toggleCardModal = useCallback(() => {
-    setIsCardModal(!isCardModal);
-  }, [isCardModal]);
-
   const goBack = () => {
     if (isPage === 1) {
       props.navigation.goBack();
@@ -250,56 +237,58 @@ function Plan(props) {
 
   const createSubscription = () => {
     Keyboard.dismiss();
+    const body = {
+      customerId: userData?.customerId,
+      priceId: plan?.stripeId,
+    };
 
-    if (cfn.trim() === "") {
-      setEmptycfn(true);
-      return;
-    }
-
-    if (nameRegex.test(cfn.trim()) === false) {
-      setInvalidcfn(true);
-      return;
-    }
-
-    if (!cardObj) {
-      setcardErr("Please enter full Card detials");
-      return;
-    } else {
-      if (!checkCardError(cardObj)) {
-        return;
-      } else {
-        if (!iscTerms) {
-          setEmptycTerms(true);
+    NetInfo.fetch().then((state) => {
+      if (state.isConnected) {
+        if (cfn.trim() === "") {
+          setEmptycfn(true);
           return;
         }
 
-        NetInfo.fetch().then((state) => {
-          if (state.isConnected) {
-            const body = {
-              customerId: userData?.customerId,
-              priceId: plan?.stripeId,
-            };
+        if (nameRegex.test(cfn.trim()) === false) {
+          setInvalidcfn(true);
+          return;
+        }
+
+        if (!cardObj) {
+          setcardErr("Please enter full Card detials");
+          return;
+        } else {
+          if (!checkCardError(cardObj)) {
+            return;
+          } else {
+            if (!iscTerms) {
+              setEmptycTerms(true);
+              return;
+            }
+
             if (isPromoApply) {
               body.promoCode = pc.trim();
             }
             store.User.attempToCreateSubscription(body, SucGetClientsecret);
-          } else {
-            Alert.alert("", "Please connect internet");
-          }
-        });
 
-        return;
+            return;
+          }
+        }
+      } else {
+        Alert.alert("", "Please connect internet");
       }
-    }
+    });
   };
 
-  const SucGetClientsecret = async (clientSecret) => {
+  const SucGetClientsecret = async (clientSecret, subscriptionId) => {
     try {
       const { error, paymentIntent } = await confirmPayment(clientSecret, {
-        paymentMethodType: "Card", //strip > 0.5.0
-        // type: "Card", //stripe <= 0.5.0
-        billingDetails: { name: cfn.trim() },
-        // autoRenew:isAutoRenew
+        // paymentMethodType: "Card", //strip > 0.5.0
+        type: "Card", //stripe <= 0.5.0
+        billingDetails: {
+          name: cfn.trim(),
+        },
+        card: cardObj,
       });
 
       if (error) {
@@ -307,7 +296,6 @@ function Plan(props) {
         getCardInfo(userData?.customerId);
         Notification.sendPaymentFailedNotification(userData._id);
         console.log(`confirmPayment error: `, error);
-        // Alert.alert(`Payment ${error.code}`, error.message);
       } else if (paymentIntent) {
         const totalValue = plan.type === "annual" ? totalAnually : monthly;
         const subscription = {
@@ -327,7 +315,14 @@ function Plan(props) {
           subscriptionStatus: "paid",
         };
 
-        SubscribePlan(obj, userData._id, userData.customerId, subPlanSucess);
+        const body = {
+          subscriptionId: "", // subscribed key in the primaryCard
+          newPaymentMethod: paymentIntent?.paymentMethodId, //card Id
+        };
+
+        UpdateSubcribedCardInformation(body, "notLoad", () =>
+          SubscribePlan(obj, userData._id, userData.customerId, subPlanSucess)
+        );
       }
     } catch (err) {
       setregLoader(false);
@@ -890,97 +885,56 @@ function Plan(props) {
                   </View>
 
                   <View>
-                    {!selectedCard ? (
-                      <>
-                        <View style={styles.Field}>
-                          {allCardDetails.length > 0 && (
-                            <TouchableOpacity
-                              onPress={toggleCardModal}
-                              activeOpacity={0.7}
-                            >
-                              <Text style={styles.selectCard}>Select card</Text>
-                            </TouchableOpacity>
-                          )}
+                    <View style={styles.Field}>
+                      <Text style={styles.FieldTitle1}>full name</Text>
+                      <TextInput
+                        placeholder="Card holder’s first and last name"
+                        value={cfn}
+                        onChangeText={entercFn}
+                        style={[
+                          styles.FieldInput,
+                          {
+                            borderColor:
+                              Emptycfn || invalidcfn
+                                ? theme.color.fieldBordeError
+                                : theme.color.fieldBorder,
+                            fontSize: 12,
+                            color: "black",
+                          },
+                        ]}
+                      />
+                      {(Emptycfn || invalidcfn) && renderShowFieldError("cfn")}
+                    </View>
 
-                          <Text style={styles.FieldTitle1}>full name</Text>
-                          <TextInput
-                            placeholder="Card holder’s first and last name"
-                            value={cfn}
-                            onChangeText={entercFn}
-                            style={[
-                              styles.FieldInput,
-                              {
-                                borderColor:
-                                  Emptycfn || invalidcfn
-                                    ? theme.color.fieldBordeError
-                                    : theme.color.fieldBorder,
-                                fontSize: 12,
-                                color: "black",
-                              },
-                            ]}
-                          />
-                          {(Emptycfn || invalidcfn) &&
-                            renderShowFieldError("cfn")}
-                        </View>
+                    <View style={styles.Field}>
+                      <Text style={styles.FieldTitle1}>card</Text>
 
-                        <View style={styles.Field}>
-                          <Text style={styles.FieldTitle1}>card</Text>
-
-                          <CardField
-                            postalCodeEnabled={false}
-                            placeholders={{
-                              number: "Card number",
-                            }}
-                            cardStyle={{
-                              textColor: theme.color.title,
-                              fontSize: responsiveFontSize(1.5),
-                              borderColor: theme.color.fieldBorder,
-                              borderWidth: 1,
-                              borderRadius: 8,
-                              fontFamily: theme.fonts.fontNormal,
-                            }}
-                            style={{
-                              width: "100%",
-                              height: 45,
-                            }}
-                            onCardChange={(cardDetails) => {
-                              onChangeCard(cardDetails);
-                            }}
-                            onFocus={(focusedField) => {
-                              console.log("focusField", focusedField);
-                            }}
-                          />
-                          {cardErr !== "" && renderShowFieldError("card")}
-                        </View>
-                      </>
-                    ) : (
-                      <>
-                        <View style={[styles.Field, { paddingHorizontal: 5 }]}>
-                          <Card
-                            item={selectedCard}
-                            bottomText={
-                              allCardDetails.length > 0 ? "change" : ""
-                            }
-                            changeCard={toggleCardModal}
-                          />
-                          <TouchableOpacity
-                            onPress={() => setSelectedCard(null)}
-                            activeOpacity={0.7}
-                            style={{
-                              position: "absolute",
-                              top: -10,
-                              right: -1,
-                            }}
-                          >
-                            <utils.vectorIcon.Entypo
-                              name="circle-with-cross"
-                              color={theme.color.button1}
-                              size={responsiveFontSize(2.2)}
-                            />
-                          </TouchableOpacity>
-                        </View>
-                      </>
-                    )}
+                      <CardField
+                        postalCodeEnabled={false}
+                        placeholders={{
+                          number: "Card number",
+                        }}
+                        cardStyle={{
+                          textColor: theme.color.title,
+                          fontSize: responsiveFontSize(1.5),
+                          borderColor: theme.color.fieldBorder,
+                          borderWidth: 1,
+                          borderRadius: 8,
+                          fontFamily: theme.fonts.fontNormal,
+                        }}
+                        style={{
+                          width: "100%",
+                          height: 45,
+                        }}
+                        onCardChange={(cardDetails) => {
+                          onChangeCard(cardDetails);
+                        }}
+                        onFocus={(focusedField) => {
+                          console.log("focusField", focusedField);
+                        }}
+                      />
+                      {cardErr !== "" && renderShowFieldError("card")}
+                    </View>
 
                     {/* <View
                       style={[
@@ -1236,14 +1190,6 @@ function Plan(props) {
             link={store.General.Terms_and_Conditions_Link}
             isVisible={isShowTermsAndConditions}
             setisVisible={setIsShowTermsAndConditions}
-          />
-        )}
-
-        {isCardModal && (
-          <utils.SelectCardModal
-            isModal={isCardModal}
-            closeModal={toggleCardModal}
-            setSelectedCard={setSelectedCard}
           />
         )}
       </View>

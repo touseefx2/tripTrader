@@ -1,18 +1,10 @@
 import React, { memo } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { styles } from "./styles";
-import theme from "../../theme";
 
 export default memo(Card);
-function Card({
-  item,
-  bottomText = "",
-  modal = false,
-  deleteCard = () => {},
-  changeCard = () => {},
-  selectCard = () => {},
-}) {
-  const name = item?.billing_details?.name || "unnamed";
+function Card({ item, toggleIsModal, isPrimary = false }) {
+  const name = item?.billing_details?.name || "N/A";
   const card = {};
   if (item?.card) {
     card.number = item?.card?.last4;
@@ -23,10 +15,15 @@ function Card({
   return (
     <>
       <TouchableOpacity
-        onPress={() => selectCard(item)}
-        disabled={!modal}
+        disabled={isPrimary}
+        onPress={() => {
+          toggleIsModal({ check: "updateCard", data: item });
+        }}
         activeOpacity={0.7}
-        style={styles.cardContainer}
+        style={[
+          styles.cardContainer,
+          isPrimary && { backgroundColor: "#e8f3ff" },
+        ]}
       >
         <View style={styles.section}>
           <Text style={styles.name}>{name}</Text>
@@ -35,26 +32,16 @@ function Card({
 
         <View style={[styles.section, { marginTop: 5, width: "85%" }]}>
           <Text style={styles.card}>
-            {" "}
             {card.brand + " ******* " + card.number}
           </Text>
         </View>
-        {bottomText !== "" && !modal && (
+        {!isPrimary && (
           <View style={styles.sectionBottom}>
             <TouchableOpacity
               activeOpacity={0.7}
-              onPress={() =>
-                bottomText === "delete" ? deleteCard(item) : changeCard()
-              }
+              onPress={() => toggleIsModal({ check: "deleteCard", data: item })}
             >
-              <Text
-                style={[
-                  styles.delete,
-                  bottomText === "change" && { color: theme.color.button1 },
-                ]}
-              >
-                {bottomText}
-              </Text>
+              <Text style={styles.delete}>delete</Text>
             </TouchableOpacity>
           </View>
         )}

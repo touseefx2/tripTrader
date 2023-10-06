@@ -5,9 +5,10 @@ import { persist } from "mobx-persist";
 import { Alert } from "react-native";
 import db from "../../database/index";
 import store from "../index";
-import { Notification } from "../../services/Notification";
+
 import { FireStore } from "../../services/FireStore";
 import utils from "../../utils";
+import { createPaymentMethod } from "@stripe/stripe-react-native";
 
 class user {
   constructor() {
@@ -2356,6 +2357,39 @@ class user {
   }
 
   @action.bound
+  UpdateSubcribedCardInformation(
+    body = {},
+    check = "load",
+    subFunc = () => {}
+  ) {
+    console.log("UpdateSubcribedCardInformation body : ", body);
+    if (check === "load") {
+      this.setucRef(true);
+    }
+    db.hitApi(db.apis.UPDATE_SUBSCRIBED_CARD, "post", body, this.authToken)
+      ?.then((resp) => {
+        console.log(
+          `response  ${db.apis.UPDATE_SUBSCRIBED_CARD} : `,
+          resp?.data
+        );
+        if (resp?.data?.message === "card information updated") {
+          subFunc();
+        }
+      })
+      .catch((err) => {
+        this.setregLoader(false);
+        this.setucRef(false);
+        const msg = utils.functions.checkError(err);
+        console.log(`Error in ${db.apis.UPDATE_SUBSCRIBED_CARD} : `, msg);
+        if (msg === 503 || msg === 500) {
+          Alert.alert("", "Server not response");
+          return;
+        }
+        Alert.alert("", msg.toString());
+      });
+  }
+
+  @action.bound
   SubscribePlan(body, uid, customerId, suc) {
     console.log("SubscribePlan body : ", body);
     db.hitApi(db.apis.UPDATE_USER + uid, "put", body, this.authToken)
@@ -2398,7 +2432,6 @@ class user {
 
         if (result.length > 0) {
           this.setAllCardDetails(result);
-          this.setCardDetails(result[0]);
         }
       })
       .catch((err) => {
@@ -2470,6 +2503,7 @@ class user {
 
         if (chk !== "delete") {
           this.setUserSubscription(data);
+          this.setCardDetails(data?.default_payment_method);
           return;
         }
 
@@ -2576,8 +2610,7 @@ class user {
       ?.then((resp) => {
         console.log(`response   ${db.apis.SELECT_PLAN} : `, resp.data);
         if (resp?.data) {
-          // resp.data.subscriptionId
-          suc(resp.data?.clientSecret);
+          suc(resp.data?.clientSecret, resp.data.subscriptionId);
         }
       })
       .catch((err) => {
@@ -2592,6 +2625,86 @@ class user {
           return;
         }
         Alert.alert("", msg.toString());
+      });
+  }
+
+  @action.bound
+  attempToDelteCard(body, closeModal, getCardInfo) {
+    this.setucRef(true);
+    console.log("attempToDelteCard : ", body);
+    db.hitApi(
+      `${db.apis.BASE_URL}${db.apis.DELETE_CARD}`,
+      "post",
+      body,
+      this.authToken
+    )
+      ?.then((resp) => {
+        console.log(`response ${db.apis.DELETE_CARD} : `, resp.data);
+        if (resp?.data) {
+          closeModal();
+          getCardInfo();
+        }
+      })
+      .catch((err) => {
+        this.setucRef(false);
+        const msg = utils.functions.checkError(err);
+        console.log(
+          `Error in attempToDelteCard ${db.apis.DELETE_CARD} : `,
+          msg
+        );
+        if (msg === 503 || msg === 500) {
+          Alert.alert("", "Server not response");
+          return;
+        }
+        Alert.alert("", msg.toString());
+      });
+  }
+
+  @action.bound
+  attempToAddCard(body, closeModal, setLoader) {
+    setLoader(true);
+    console.log("attempToAddCard : ", body);
+    createPaymentMethod(body)
+      ?.then((resp) => {
+        console.log(`response  attempToAddCard : `, resp);
+        if (resp?.paymentMethod?.id) {
+          const obj = {
+            payment_card_id: resp?.paymentMethod?.id,
+            customer_id: this.user?.customerId,
+          };
+          this.attempToUpdateCard(obj, closeModal, setLoader);
+        }
+      })
+      .catch((err) => {
+        setLoader(false);
+        console.log("attempToAddCard catch err : ", err);
+        Alert.alert("", err.message);
+      });
+  }
+
+  @action.bound
+  attempToUpdateCard(body, closeModal, setLoader) {
+    const route = db.apis.UPDATE_CARD;
+    console.log(route, " ", body);
+    db.hitApi(route, "post", body, this.authToken)
+      ?.then((resp) => {
+        console.log(`response ${route} : `, resp?.data?.message);
+        if (resp?.data?.message === "card information updated Successfully") {
+          closeModal(false);
+          this.getCardInfo(this.user?.customerId, "Load");
+        }
+      })
+      .catch((err) => {
+        const msg = utils.functions.checkError(err);
+        console.log(`Error in ${route} : `, msg);
+        if (msg === 503 || msg === 500) {
+          Alert.alert("", "Server not response");
+          return;
+        }
+        Alert.alert("", msg.toString());
+      })
+      .finally(() => {
+        setLoader(false);
       });
   }
 

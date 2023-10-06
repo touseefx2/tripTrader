@@ -448,7 +448,7 @@ function addMonths(date, months) {
 }
 
 const checkUserPalnStatus = (props, isCheck = true) => {
-  const { user, userSubscription, Logout, subscriptionStatus } = store.User;
+  const { user, Logout, subscriptionStatus } = store.User;
   const { setgoto } = store.General;
 
   if (user === "guest") {
@@ -469,7 +469,7 @@ const checkUserPalnStatus = (props, isCheck = true) => {
 };
 
 const isUserFreemium = () => {
-  const { userSubscription, subscriptionStatus } = store.User;
+  const { subscriptionStatus } = store.User;
 
   return subscriptionStatus !== "Premium";
 };

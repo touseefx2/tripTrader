@@ -34,7 +34,8 @@ function Settings(props) {
   const activeOpacity = 0.8;
   const { isInternet, settingsGoTo, setSettingsGoTo, setgoto, isEmailPopup } =
     store.General;
-  const { user, isNotification, Logout, logoutLoader } = store.User;
+  const { user, isNotification, Logout, logoutLoader, allCardDetails } =
+    store.User;
 
   let phn = "";
   let phnCntr = "";
@@ -59,7 +60,14 @@ function Settings(props) {
   };
 
   const goToCards = () => {
-    props.navigation.navigate("Cards");
+    if (allCardDetails.length > 0) {
+      props.navigation.navigate("Cards");
+    } else {
+      props.navigation.navigate("PlanStack", {
+        screen: "Plan",
+        params: {},
+      });
+    }
   };
 
   useEffect(() => {
