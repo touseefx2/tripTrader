@@ -2472,9 +2472,10 @@ class user {
         this.setucRef(false);
         const result = resp?.data?.subscriptions?.data;
         console.log(
-          `response GET_USER_SUBSCRIPTION ${
+          `response GET_USER_SUBSCRIPTIONS ${
             db.apis.GET_USER_SUBSCRIPTION + customerId
-          } : `
+          } : `,
+          JSON.stringify(result)
         );
 
         let data = null;

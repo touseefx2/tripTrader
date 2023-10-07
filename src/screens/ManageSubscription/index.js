@@ -24,9 +24,8 @@ function ManageSubscription(props) {
   const { isInternet } = store.General;
   const { user, ucRef, getCardInfo, userSubscription, cardDetails, regLoader } =
     store.User;
-  // console.log("userSubscription : ", userSubscription);
-  // console.log("cardDetails : ", cardDetails);
-  // console.log("cardDetails : ", cardDetails?.[0]?.card);
+  console.log("userSubscription current : ", userSubscription?.id);
+  console.log("cardDetails primary : ", cardDetails?.id);
 
   const [isCancelSubModal, setIsCancelSubModal] = useState(false);
 

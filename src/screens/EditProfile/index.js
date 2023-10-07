@@ -257,7 +257,6 @@ function EditProfile(props) {
           }
         }
       } else {
-        // seterrorMessage('Please connect internet');
         Alert.alert("", "Please connect internet");
       }
     });

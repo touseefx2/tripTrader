@@ -1,6 +1,6 @@
-import NetInfo from '@react-native-community/netinfo';
-import auth from '@react-native-firebase/auth';
-import React, {useEffect, useState} from 'react';
+import NetInfo from "@react-native-community/netinfo";
+import auth from "@react-native-firebase/auth";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -11,31 +11,31 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
+} from "react-native";
 import {
   CodeField,
   Cursor,
   useBlurOnFulfill,
   useClearByFocusCell,
-} from 'react-native-confirmation-code-field';
-import CountDown from 'react-native-countdown-component';
-import Modal from 'react-native-modal';
+} from "react-native-confirmation-code-field";
+import CountDown from "react-native-countdown-component";
+import Modal from "react-native-modal";
 import {
   responsiveFontSize,
   responsiveHeight,
   responsiveWidth,
-} from 'react-native-responsive-dimensions';
-import theme from '../theme/index';
+} from "react-native-responsive-dimensions";
+import theme from "../theme/index";
 
 const CELL_COUNT = 6;
 
 export default function OtpModal(props) {
   const isModal = props.isModal;
-  const setisModal = c => {
+  const setisModal = (c) => {
     props.setisModal(c);
   };
 
-  const mobile = props.phone || '';
+  const mobile = props.phone || "";
 
   let resendTime = 60; //second
 
@@ -48,23 +48,23 @@ export default function OtpModal(props) {
   const [isFinish, setFinish] = useState(false);
   const [confirmResult, setConfirmResult] = useState(null);
 
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState("");
   const [prop, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
   });
-  const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
+  const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
 
   useEffect(() => {
-    const Subscribe = auth().onAuthStateChanged(async user => {
+    const Subscribe = auth().onAuthStateChanged(async (user) => {
       if (user) {
         setvLoader(false);
-        console.log('user verify');
-        NetInfo.fetch().then(state => {
+        console.log("user verify");
+        NetInfo.fetch().then((state) => {
           if (state.isConnected) {
             gotoNext();
           } else {
-            Alert.alert('', 'Please connect internet.');
+            Alert.alert("", "Please connect internet.");
           }
         });
       }
@@ -75,38 +75,38 @@ export default function OtpModal(props) {
   }, []);
 
   async function SendOtpCode() {
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         setloader(true);
-        setValue('');
+        setValue("");
         setConfirmResult(null);
 
         auth()
           .signInWithPhoneNumber(mobile, true)
-          .then(res => {
-            console.log('confirmation : ', res);
+          .then((res) => {
+            console.log("confirmation : ", res);
             setloader(false);
             setSeconds(resendTime);
             setsendCodeOnce(true);
             setConfirmResult(res);
             setFinish(false);
           })
-          .catch(error => {
-            console.log('signInWithPhoneNumber  error : ', error);
+          .catch((error) => {
+            console.log("signInWithPhoneNumber  error : ", error);
             setloader(false);
-            setValue('');
+            setValue("");
             setConfirmResult(null);
             setFinish(false);
             var errorMessage = error.message;
-            var si = errorMessage.indexOf(']') + 1;
+            var si = errorMessage.indexOf("]") + 1;
             var ei = errorMessage.length - 1;
             const message = errorMessage.substr(si, ei);
-            Alert.alert('Failed', message);
+            Alert.alert("Failed", message);
           });
 
         return;
       } else {
-        Alert.alert('Network Error', 'Please check your internet connection');
+        Alert.alert("Network Error", "Please check your internet connection");
       }
     });
   }
@@ -118,36 +118,36 @@ export default function OtpModal(props) {
 
       await confirmResult.confirm(value);
     } catch (error) {
-      console.log('Verifyication Code  error: ', error);
+      console.log("Verifyication Code  error: ", error);
       setvLoader(false);
-      setValue('');
-      let errorMessage = '';
-      if (error.code == 'auth/unknown') {
+      setValue("");
+      let errorMessage = "";
+      if (error.code == "auth/unknown") {
         errorMessage =
-          'Cannot create PhoneAuthCredential without either verificationProof, sessionInfo, temporary proof, or enrollment ID !';
+          "Cannot create PhoneAuthCredential without either verificationProof, sessionInfo, temporary proof, or enrollment ID !";
         return;
-      } else if (error.code == 'auth/invalid-verification-code') {
+      } else if (error.code == "auth/invalid-verification-code") {
         errorMessage =
-          'Invalid verification code, Please enter correct confirmation code !';
-      } else if (error.code == 'auth/session-expired') {
+          "Invalid verification code, Please enter correct confirmation code !";
+      } else if (error.code == "auth/session-expired") {
         errorMessage =
-          'The sms code has expired or to many invalid code attempt. Please re-send the verification code to try again';
-      } else if (error.code == 'auth/network-request-failed') {
-        errorMessage = 'Network request failed , Please connect internet ! ';
+          "The sms code has expired or to many invalid code attempt. Please re-send the verification code to try again";
+      } else if (error.code == "auth/network-request-failed") {
+        errorMessage = "Network request failed , Please connect internet ! ";
       } else {
         var msg = error.message;
-        var si = msg.indexOf(']') + 1;
+        var si = msg.indexOf("]") + 1;
         var ei = msg.length - 1;
         errorMessage = msg.substr(si, ei);
       }
-      Alert.alert('Failed', errorMessage);
+      Alert.alert("Failed", errorMessage);
     }
   }
 
   const gotoNext = () => {
     setisModal(false);
     setloader(false);
-    setValue('');
+    setValue("");
     setConfirmResult(null);
     setFinish(false);
     props.attemptTosaveProfile();
@@ -168,11 +168,12 @@ export default function OtpModal(props) {
           rootStyle={styles.codeFieldRoot}
           keyboardType="number-pad"
           textContentType="oneTimeCode"
-          renderCell={({index, symbol, isFocused}) => (
+          renderCell={({ index, symbol, isFocused }) => (
             <Text
               key={index}
               style={[styles.cell, isFocused && styles.focusCell]}
-              onLayout={getCellOnLayoutHandler(index)}>
+              onLayout={getCellOnLayoutHandler(index)}
+            >
               {symbol || (isFocused ? <Cursor /> : null)}
             </Text>
           )}
@@ -182,14 +183,15 @@ export default function OtpModal(props) {
   };
 
   const renderBottonButton1 = () => {
-    let text = 'Get Code';
+    let text = "Get Code";
     let disable = loader;
     return (
       <TouchableOpacity
         disabled={disable}
         activeOpacity={0.6}
         onPress={() => SendOtpCode()}
-        style={styles.Button}>
+        style={styles.Button}
+      >
         <>
           {!loader ? (
             <Text style={styles.ButtonText}>{text}</Text>
@@ -202,14 +204,15 @@ export default function OtpModal(props) {
   };
 
   const renderBottonButton11 = () => {
-    let text = 'Resend Code';
+    let text = "Resend Code";
     let disable = loader;
     return (
       <TouchableOpacity
         disabled={disable}
         activeOpacity={0.6}
         onPress={() => SendOtpCode()}
-        style={styles.Button}>
+        style={styles.Button}
+      >
         {!loader ? (
           <Text style={styles.ButtonText}>{text}</Text>
         ) : (
@@ -221,7 +224,7 @@ export default function OtpModal(props) {
 
   const renderBottonButton2 = () => {
     let disable = value.length < 6 || loader ? true : false;
-    let text = 'Confirm Code';
+    let text = "Confirm Code";
 
     return (
       <TouchableOpacity
@@ -235,7 +238,8 @@ export default function OtpModal(props) {
               ? theme.color.disableBack
               : theme.color.button1,
           },
-        ]}>
+        ]}
+      >
         <>
           {!disable ? (
             <>
@@ -259,7 +263,7 @@ export default function OtpModal(props) {
     if (!loader) {
       setisModal(false);
       setloader(false);
-      setValue('');
+      setValue("");
       setConfirmResult(null);
       setFinish(false);
       props.signoutCurrentUser();
@@ -267,14 +271,15 @@ export default function OtpModal(props) {
   };
 
   const renderBottonButton3 = () => {
-    let text = 'Cancel';
+    let text = "Cancel";
 
     return (
       <TouchableOpacity
         activeOpacity={0.6}
         disabled={loader}
         onPress={closeModal}
-        style={styles.Buttonc}>
+        style={styles.Buttonc}
+      >
         <Text style={styles.ButtonTextc}>{text}</Text>
       </TouchableOpacity>
     );
@@ -284,27 +289,21 @@ export default function OtpModal(props) {
     return (
       <TouchableOpacity disabled style={styles.Timer}>
         <>
-          {/* <Text style={[styles.TimerTextr, {color: '#ed5045', left: 5}]}>
-            (
-          </Text> */}
           <CountDown
             size={14}
             until={seconds}
             onFinish={() => setFinish(true)}
-            digitStyle={{backgroundColor: 'transparent'}}
+            digitStyle={{ backgroundColor: "transparent" }}
             digitTxtStyle={{
               color: theme.color.button1,
               fontSize: responsiveFontSize(1.8),
               fontFamily: theme.fonts.fontMedium,
-              fontWeight: '500',
+              fontWeight: "500",
             }}
-            timeToShow={['S']}
-            timeLabels={{s: null}}
+            timeToShow={["S"]}
+            timeLabels={{ s: null }}
             showSeparator
           />
-          {/* <Text style={[styles.TimerTextr, {color: '#ed5045', left: -5}]}>
-            Sec )
-          </Text> */}
         </>
       </TouchableOpacity>
     );
@@ -313,22 +312,24 @@ export default function OtpModal(props) {
   return (
     <>
       <Modal
-        style={{padding: 0, margin: 0}}
+        style={{ padding: 0, margin: 0 }}
         backdropOpacity={0.6}
         onRequestClose={() => {
           if (!sendCodeOnce) {
             closeModal();
           }
         }}
-        isVisible={isModal}>
+        isVisible={isModal}
+      >
         <View
           style={[
             styles.modalCont,
-            {height: responsiveHeight(!sendCodeOnce ? 50 : 42)},
-          ]}>
-          <KeyboardAvoidingView style={{flex: 1}} enabled>
+            { height: responsiveHeight(!sendCodeOnce ? 50 : 42) },
+          ]}
+        >
+          <KeyboardAvoidingView style={{ flex: 1 }} enabled>
             <ScrollView showsVerticalScrollIndicator={false}>
-              <View style={{paddingVertical: 12, paddingHorizontal: 15}}>
+              <View style={{ paddingVertical: 12, paddingHorizontal: 15 }}>
                 <Text style={styles.title}>Verify your mobile number</Text>
                 <Text style={styles.subtitle}>
                   You will receive an OTP on your provided number {mobile}
@@ -338,7 +339,7 @@ export default function OtpModal(props) {
               </View>
             </ScrollView>
           </KeyboardAvoidingView>
-          <View style={{paddingVertical: 12, paddingHorizontal: 15}}>
+          <View style={{ paddingVertical: 12, paddingHorizontal: 15 }}>
             {/* //cnfrm */}
             {renderBottonButton2()}
             {/* //snd */}
@@ -361,12 +362,12 @@ const styles = StyleSheet.create({
     backgroundColor: theme.color.background,
     width: responsiveWidth(80),
     height: responsiveHeight(50),
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   logo: {
     height: responsiveHeight(12),
     width: responsiveWidth(60),
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
   title: {
     color: theme.color.title,
@@ -379,36 +380,36 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(1.8),
     marginTop: 10,
     fontFamily: theme.fonts.fontMedium,
-    width: '100%',
-    alignSelf: 'center',
+    width: "100%",
+    alignSelf: "center",
     lineHeight: 20,
   },
   BottomButton: {
     backgroundColor: theme.color.disableColor,
     borderRadius: 10,
     height: responsiveHeight(6),
-    justifyContent: 'center',
+    justifyContent: "center",
     width: responsiveWidth(90),
-    alignSelf: 'center',
+    alignSelf: "center",
     fontFamily: theme.fonts.fontNormal,
     marginVertical: responsiveHeight(3),
   },
   ButtonLeft: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     width: 160,
     borderRadius: 4,
     height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 5,
   },
   ButtonRight: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     width: 160,
     borderRadius: 4,
     height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginLeft: 5,
   },
   buttonText: {
@@ -421,9 +422,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.color.background,
   },
   Header: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
 
     padding: 15,
   },
@@ -436,22 +437,22 @@ const styles = StyleSheet.create({
     width: 30,
   },
   ConfirmButton: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 4,
     height: 48,
-    justifyContent: 'center',
+    justifyContent: "center",
     top: 80,
-    width: '85%',
-    alignSelf: 'center',
+    width: "85%",
+    alignSelf: "center",
   },
   ButtonText: {
-    alignSelf: 'center',
+    alignSelf: "center",
     color: theme.color.buttonText,
     fontSize: responsiveFontSize(2),
     fontFamily: theme.fonts.fontBold,
   },
   ButtonTextc: {
-    alignSelf: 'center',
+    alignSelf: "center",
     color: theme.color.button1,
     fontSize: responsiveFontSize(2),
     fontFamily: theme.fonts.fontBold,
@@ -460,11 +461,11 @@ const styles = StyleSheet.create({
     backgroundColor: theme.color.button1,
     borderRadius: 7,
     height: 35,
-    justifyContent: 'center',
-    width: '100%',
-    alignSelf: 'center',
+    justifyContent: "center",
+    width: "100%",
+    alignSelf: "center",
     fontFamily: theme.fonts.fontNormal,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 10,
   },
 
@@ -472,32 +473,32 @@ const styles = StyleSheet.create({
     backgroundColor: theme.color.background,
     borderRadius: 7,
     height: 35,
-    justifyContent: 'center',
-    width: '100%',
-    alignSelf: 'center',
+    justifyContent: "center",
+    width: "100%",
+    alignSelf: "center",
     fontFamily: theme.fonts.fontNormal,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 10,
     borderWidth: 0.7,
     borderColor: theme.color.button1,
   },
   LinearGradient: {
-    height: '100%',
-    width: '100%',
+    height: "100%",
+    width: "100%",
     borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   loader: {
-    alignSelf: 'center',
-    justifyContent: 'center',
+    alignSelf: "center",
+    justifyContent: "center",
     marginVertical: 30,
   },
   Timer: {
-    alignSelf: 'center',
+    alignSelf: "center",
     marginVertical: 30,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   TimerTextr: {
     fontSize: responsiveFontSize(1.8),
@@ -518,8 +519,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   codeContainer: {
-    width: '100%',
-    alignSelf: 'center',
+    width: "100%",
+    alignSelf: "center",
     marginTop: 5,
   },
   codeFieldRoot: {},
@@ -529,11 +530,11 @@ const styles = StyleSheet.create({
     lineHeight: 35,
     fontSize: responsiveFontSize(2),
     borderWidth: 0.7,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 6,
     borderColor: theme.color.subTitle,
-    textAlign: 'center',
+    textAlign: "center",
     color: theme.color.title,
     fontFamily: theme.fonts.fontMedium,
     marginTop: 10,

@@ -316,7 +316,7 @@ function Plan(props) {
         };
 
         const body = {
-          subscriptionId: "", // subscribed key in the primaryCard
+          subscriptionId: subscriptionId, // subscribed key in the primaryCard
           newPaymentMethod: paymentIntent?.paymentMethodId, //card Id
         };
 
