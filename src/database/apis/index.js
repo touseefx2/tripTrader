@@ -1,5 +1,6 @@
-const BASE_URL = "http://192.168.1.15:3001/";
-// "https://Devapi.trip-trader.com/";
+const BASE_URL =
+  //  "http://192.168.1.15:3001/";
+  "https://devapi.trip-trader.com/";
 // "https://api.trip-trader.com/";
 
 //apis
@@ -12,7 +13,6 @@ const UPDATE_USER = "api/user/";
 const UPDATE_SUBSCRIBED_CARD =
   "api/cardmangment/UpdateSubcribedCardInformation";
 const DELETE_CARD = "api/cardmangment/deleteCard";
-
 const BUY_PLAN = "api/stripe";
 const CARD_INFO = "api/stripe?customerId=";
 const UPDATE_CARD = "api/cardmangment/updateCardInfo";
@@ -59,7 +59,6 @@ const GET_FOLLOWERS = "api/user/followers/";
 const GET_FOLLOWING = "api/user/following/";
 const GET_BLOCK_USER = "api/user/blockedUsers/";
 const GET_BLOCK_ANOTHER_USER = "api/user/blockedByUsers/";
-
 const BLOCK_USER = "api/user/blockAUser/";
 const UNBLOCK_USER = "api/user/unBlockAUser/";
 const FOLLOW_USER = "api/user/followAUser/";
@@ -81,7 +80,6 @@ const LEAVE_REVIEW = "api/review";
 const UPDATE_LEAVE_REVIEW = "api/review/editAReply/";
 const GET_LATEST_TRIP = "api/review/getLatestTrip/v2/";
 const SELECT_PLAN = "api/stripe/create-subscription";
-
 const GET_NOTIFICATIONS = "api/notification/app/";
 const READ_NOTIFICATIONS = "api/notification/markRead/";
 const READ_ALL_NOTIFICATIONS = "api/notification/markAllRead/";

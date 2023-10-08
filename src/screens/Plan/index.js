@@ -936,22 +936,6 @@ function Plan(props) {
                       {cardErr !== "" && renderShowFieldError("card")}
                     </View>
 
-                    {/* <View
-                      style={[
-                        styles.Field,
-                        {
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                        },
-                      ]}
-                    >
-                      <Text style={styles.FieldTitle1}>Auto Renew</Text>
-                      <utils.CheckBox
-                        isSel={isAutoRenew}
-                        setIsSel={setIsAutoRenew}
-                      />
-                    </View> */}
-
                     {isShowPromoFiled && (
                       <View style={styles.Field}>
                         <Text style={styles.FieldTitle1}>promo code</Text>
