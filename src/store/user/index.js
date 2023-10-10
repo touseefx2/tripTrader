@@ -33,7 +33,7 @@ class user {
     this.userSubscription = obj;
   };
 
-  @persist("object") @observable subscriptionStatus = "No subscriptions found";
+  @persist("object") @observable subscriptionStatus = "freemium";
   @action setSubscriptionStatus = (obj) => {
     this.subscriptionStatus = obj;
   };
@@ -3040,7 +3040,7 @@ class user {
     this.setUser(false);
 
     this.setUserSubscription(null);
-    this.setSubscriptionStatus("No subscriptions found");
+    this.setSubscriptionStatus("freemium");
     this.setAllCardDetails([]);
     this.setCardDetails(null);
 
@@ -3155,7 +3155,6 @@ class user {
               );
               closeModal();
               this.getCardInfo(this.user?.customerId);
-              this.setUserSubscription(resp?.data?.subscription || null);
               if (res?.data?.data) this.setUser(res.data.data);
             })
             .catch((err) => {

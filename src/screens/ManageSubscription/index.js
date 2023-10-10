@@ -22,14 +22,20 @@ function ManageSubscription(props) {
   const headerTitle = "Manage Subscription";
 
   const { isInternet } = store.General;
-  const { user, ucRef, getCardInfo, userSubscription, cardDetails, regLoader } =
-    store.User;
+  const {
+    user,
+    ucRef,
+    getCardInfo,
+    userSubscription,
+    cardDetails,
+    regLoader,
+    subscriptionStatus,
+  } = store.User;
   console.log("userSubscription current : ", userSubscription?.id);
   console.log("cardDetails primary : ", cardDetails?.id);
 
   const [isCancelSubModal, setIsCancelSubModal] = useState(false);
 
-  let subscriptionStatus = "freemium";
   let endDate = "";
   const card = {
     number: 4040,
@@ -41,7 +47,6 @@ function ManageSubscription(props) {
   }
   if (userSubscription) {
     endDate = utils.functions.getDate(userSubscription?.current_period_end);
-    subscriptionStatus = userSubscription?.status || "";
   }
 
   useEffect(() => {

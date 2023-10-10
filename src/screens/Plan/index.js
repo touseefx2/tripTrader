@@ -45,8 +45,6 @@ function Plan(props) {
     setUser,
     attemptToGetPlan,
     SubscribePlan,
-    cardDetails,
-    allCardDetails,
     getCardInfo,
     userSubscription,
     UpdateSubcribedCardInformation,
@@ -60,34 +58,26 @@ function Plan(props) {
 
   const [userData, setUserData] = useState(usrData || user);
   const [data, setData] = useState(plans);
-
-  // const [isAutoRenew, setIsAutoRenew] = useState(true);
-
-  const [plan, setPlan] = useState(false);
-  const [isPage, setisPage] = useState(1);
-
-  const [cfn, setcfn] = useState("");
-  const [Emptycfn, setEmptycfn] = useState(false);
-  const [invalidcfn, setInvalidcfn] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(false);
+  const [page, setPage] = useState(1);
+  const [name, setName] = useState("");
+  const [isEmptyName, setIsEmptyName] = useState(false);
+  const [isInvalidName, setIsInvalidName] = useState(false);
   const [cardErr, setcardErr] = useState("");
   const [cardObj, setCardObj] = useState(null);
-
-  const [pc, setpc] = useState("");
+  const [promoCode, setPromoCode] = useState("");
   const [isShowPromoFiled, setisShowPromoFiled] = useState(false);
   const [isPromoApply, setisPromoApply] = useState(false);
   const [promoValue, setpromoValue] = useState(0);
-
   const [monthly, setmonthly] = useState(0);
   const [annualy, setannualy] = useState(0);
   const [save, setsave] = useState(0);
   const [totalAnually, settotalAnually] = useState(0);
-
-  const [iscTerms, setiscTerms] = useState(false);
-  const [EmptycTerms, setEmptycTerms] = useState(false);
+  const [isTermsAndConditions, setIsTermsAndConditions] = useState(false);
+  const [isEmptyTerms, setIsEmptyTerms] = useState(false);
 
   let subscriptionStatus = "";
   let subscribePlanType = "";
-
   if (userSubscription) {
     subscriptionStatus = userSubscription?.status;
     subscribePlanType = userSubscription?.plan?.interval;
@@ -114,7 +104,7 @@ function Plan(props) {
   }, [plans]);
 
   useEffect(() => {
-    if (plan) {
+    if (selectedPlan) {
       let monthly = 0;
       let annualy = 0;
       if (data && data.data.length > 0) {
@@ -136,21 +126,21 @@ function Plan(props) {
       if (isPromoApply) {
         let p = (isPromoApply.percent_off || 0) / 100;
         let discount = 0;
-        if (plan.type === "monthly") {
+        if (selectedPlan.type === "monthly") {
           discount = monthly - p * monthly;
         }
-        if (plan.type === "annual") {
+        if (selectedPlan.type === "annual") {
           discount = totalAnually - p * totalAnually;
         }
 
         setpromoValue((discount + 0.01).toFixed(2));
       }
     }
-  }, [plan, isPromoApply]);
+  }, [selectedPlan, isPromoApply]);
 
   useEffect(() => {
     if (data && data.data.length > 0) {
-      setPlan(data.data[0]);
+      setSelectedPlan(data.data[0]);
       if (data.annual_discount) {
         setsave(data.annual_discount);
       }
@@ -169,7 +159,7 @@ function Plan(props) {
       );
       subscription.remove();
     };
-  }, [isPage]);
+  }, [page]);
 
   function handleBackButtonClick() {
     if (!props.navigation.isFocused()) {
@@ -181,9 +171,9 @@ function Plan(props) {
   }
 
   const goBack = () => {
-    if (isPage === 1) {
+    if (page === 1) {
       props.navigation.goBack();
-    } else if (isPage === 2) {
+    } else if (page === 2) {
       clearCard();
     }
   };
@@ -210,25 +200,25 @@ function Plan(props) {
   };
 
   const clearCard = () => {
-    setcfn("");
-    setpc("");
+    setName("");
+    setPromoCode("");
     setcardErr("");
-    setEmptycfn(false);
-    setInvalidcfn(false);
+    setIsEmptyName(false);
+    setIsInvalidName(false);
     setisShowPromoFiled(false);
     setisPromoApply(null);
-    setiscTerms(false);
+    setIsTermsAndConditions(false);
     setpromoValue(0);
     setCardObj(null);
-    setEmptycTerms(false);
-    setisPage(1);
+    setIsEmptyTerms(false);
+    setPage(1);
   };
 
   const applyPromo = () => {
     Keyboard.dismiss();
     NetInfo.fetch().then((state) => {
       if (state.isConnected) {
-        store.User.applyPromo(pc.trim(), setisPromoApply);
+        store.User.applyPromo(promoCode.trim(), setisPromoApply);
       } else {
         Alert.alert("", "Please connect internet");
       }
@@ -239,18 +229,18 @@ function Plan(props) {
     Keyboard.dismiss();
     const body = {
       customerId: userData?.customerId,
-      priceId: plan?.stripeId,
+      priceId: selectedPlan?.stripeId,
     };
 
     NetInfo.fetch().then((state) => {
       if (state.isConnected) {
-        if (cfn.trim() === "") {
-          setEmptycfn(true);
+        if (name.trim() === "") {
+          setIsEmptyName(true);
           return;
         }
 
-        if (nameRegex.test(cfn.trim()) === false) {
-          setInvalidcfn(true);
+        if (nameRegex.test(name.trim()) === false) {
+          setIsInvalidName(true);
           return;
         }
 
@@ -261,13 +251,13 @@ function Plan(props) {
           if (!checkCardError(cardObj)) {
             return;
           } else {
-            if (!iscTerms) {
-              setEmptycTerms(true);
+            if (!isTermsAndConditions) {
+              setIsEmptyTerms(true);
               return;
             }
 
             if (isPromoApply) {
-              body.promoCode = pc.trim();
+              body.promoCode = promoCode.trim();
             }
             store.User.attempToCreateSubscription(body, SucGetClientsecret);
 
@@ -286,7 +276,7 @@ function Plan(props) {
         // paymentMethodType: "Card", //strip > 0.5.0
         type: "Card", //stripe <= 0.5.0
         billingDetails: {
-          name: cfn.trim(),
+          name: name.trim(),
         },
         card: cardObj,
       });
@@ -297,15 +287,16 @@ function Plan(props) {
         Notification.sendPaymentFailedNotification(userData._id);
         console.log(`confirmPayment error: `, error);
       } else if (paymentIntent) {
-        const totalValue = plan.type === "annual" ? totalAnually : monthly;
+        const totalValue =
+          selectedPlan.type === "annual" ? totalAnually : monthly;
         const subscription = {
-          title: plan.type,
-          charges: plan.charges,
-          discount: plan.discount,
+          title: selectedPlan.type,
+          charges: selectedPlan.charges,
+          discount: selectedPlan.discount,
           startDate: new Date(),
           endDate: utils.functions.addMonths(
             new Date(),
-            plan.type === "annual" ? 12 : 1
+            selectedPlan.type === "annual" ? 12 : 1
           ),
           amtPaid: totalValue,
           status: "active",
@@ -352,15 +343,15 @@ function Plan(props) {
     let text = c === "card" ? cardErr : "";
 
     if (c === "cfn") {
-      text = Emptycfn
+      text = isEmptyName
         ? "Please enter a full name"
-        : invalidcfn
+        : isInvalidName
         ? "Full name is invalid"
         : "";
     }
 
     if (c === "cterms") {
-      text = EmptycTerms ? "Agreeing to Terms and Conditions is required" : "";
+      text = isEmptyTerms ? "Agreeing to Terms and Conditions is required" : "";
     }
 
     return (
@@ -374,18 +365,18 @@ function Plan(props) {
     // Methods
 
     const entercFn = (t) => {
-      setEmptycfn(false);
-      setInvalidcfn(false);
-      setcfn(t);
+      setIsEmptyName(false);
+      setIsInvalidName(false);
+      setName(t);
     };
 
     const enterpc = (t) => {
-      setpc(t);
+      setPromoCode(t);
     };
 
     const onChangeCard = (value) => {
       setCardObj(value);
-      setEmptycTerms(false);
+      setIsEmptyTerms(false);
       setcardErr("");
     };
 
@@ -410,7 +401,7 @@ function Plan(props) {
         <>
           <TouchableOpacity
             onPress={() => {
-              setisPage(2);
+              setPage(2);
             }}
             activeOpacity={0.9}
             style={[
@@ -419,7 +410,7 @@ function Plan(props) {
             ]}
           >
             <Text style={[styles.buttonTextBottom, { fontSize: 14 }]}>
-              choose {plan.type} plan
+              choose {selectedPlan.type} plan
             </Text>
           </TouchableOpacity>
         </>
@@ -465,7 +456,7 @@ function Plan(props) {
           <TouchableOpacity
             activeOpacity={0.6}
             onPress={() => {
-              setPlan(e);
+              setSelectedPlan(e);
             }}
             style={{
               paddingHorizontal: 12,
@@ -473,7 +464,7 @@ function Plan(props) {
               alignItems: "center",
               justifyContent: "center",
               backgroundColor:
-                plan.type == name
+                selectedPlan.type == name
                   ? theme.color.button1
                   : theme.color.disableBack,
               borderTopLeftRadius: i == 0 ? 8 : 0,
@@ -486,7 +477,7 @@ function Plan(props) {
               style={{
                 fontSize: 13,
                 color:
-                  plan.type == name
+                  selectedPlan.type == name
                     ? theme.color.buttonText
                     : theme.color.subTitle,
                 fontFamily: theme.fonts.fontMedium,
@@ -503,7 +494,7 @@ function Plan(props) {
     };
 
     const renderPlanDetails = () => {
-      const pd = plan.features.map((feature) => {
+      const pd = selectedPlan.features.map((feature) => {
         return (
           <View
             style={{
@@ -536,7 +527,7 @@ function Plan(props) {
       <>
         {/* Plan 1 */}
 
-        {isPage == 1 && (
+        {page == 1 && (
           <View style={styles.section2}>
             <ScrollView showsVerticalScrollIndicator={false}>
               <View>
@@ -586,7 +577,7 @@ function Plan(props) {
                   </>
                 )}
 
-                {plan && (
+                {selectedPlan && (
                   <>
                     <View style={{ marginTop: 20 }}>
                       <View
@@ -600,7 +591,9 @@ function Plan(props) {
                           }}
                         >
                           $
-                          {plan.type == "annual" ? annualy.toFixed(2) : monthly}
+                          {selectedPlan.type == "annual"
+                            ? annualy.toFixed(2)
+                            : monthly}
                         </Text>
                         <Text
                           style={{
@@ -612,10 +605,12 @@ function Plan(props) {
                           }}
                         >
                           /month{" "}
-                          {plan.type == "annual" ? "(Billed annually)" : ""}
+                          {selectedPlan.type == "annual"
+                            ? "(Billed annually)"
+                            : ""}
                         </Text>
                       </View>
-                      {plan.type === "annual" && (
+                      {selectedPlan.type === "annual" && (
                         <Text
                           style={{
                             fontSize: 12,
@@ -628,7 +623,7 @@ function Plan(props) {
                           Best Value • ${toFixed(save, 0)} savings
                         </Text>
                       )}
-                      {plan.type == "monthly" && (
+                      {selectedPlan.type == "monthly" && (
                         <>
                           {save > 0 && (
                             <View
@@ -650,7 +645,7 @@ function Plan(props) {
                               <TouchableOpacity
                                 activeOpacity={0.6}
                                 onPress={() => {
-                                  setPlan(data.data[1]);
+                                  setSelectedPlan(data.data[1]);
                                 }}
                               >
                                 <Text
@@ -669,7 +664,7 @@ function Plan(props) {
                         </>
                       )}
                     </View>
-                    {plan.features.length > 0 && (
+                    {selectedPlan.features.length > 0 && (
                       <View style={{ marginTop: 20 }}>
                         {renderPlanDetails()}
                       </View>
@@ -711,11 +706,13 @@ function Plan(props) {
 
         {/* Payment 2 */}
 
-        {isPage == 2 && (
+        {page == 2 && (
           <View style={styles.section2}>
             <ScrollView showsVerticalScrollIndicator={false}>
-              {((subscribePlanType === "year" && plan.type === "annual") ||
-                (subscribePlanType === "month" && plan.type === "monthly")) &&
+              {((subscribePlanType === "year" &&
+                selectedPlan.type === "annual") ||
+                (subscribePlanType === "month" &&
+                  selectedPlan.type === "monthly")) &&
               subscriptionStatus === "active" ? (
                 <>
                   <View
@@ -799,7 +796,7 @@ function Plan(props) {
                             },
                           ]}
                         >
-                          {plan.type == "annual"
+                          {selectedPlan.type == "annual"
                             ? `$${toFixed(totalAnually, 2)} ($${annualy.toFixed(
                                 2
                               )} /mo)`
@@ -825,7 +822,7 @@ function Plan(props) {
                               textDecorationLine: "line-through",
                             }}
                           >
-                            {plan.type == "annual"
+                            {selectedPlan.type == "annual"
                               ? `$${toFixed(totalAnually, 2)}`
                               : `$${monthly}`}
                             {"  "}
@@ -861,7 +858,7 @@ function Plan(props) {
                           },
                         ]}
                       >
-                        {plan.type}
+                        {selectedPlan.type}
                       </Text>
                       <TouchableOpacity
                         activeOpacity={0.6}
@@ -889,13 +886,13 @@ function Plan(props) {
                       <Text style={styles.FieldTitle1}>full name</Text>
                       <TextInput
                         placeholder="Card holder’s first and last name"
-                        value={cfn}
+                        value={name}
                         onChangeText={entercFn}
                         style={[
                           styles.FieldInput,
                           {
                             borderColor:
-                              Emptycfn || invalidcfn
+                              isEmptyName || isInvalidName
                                 ? theme.color.fieldBordeError
                                 : theme.color.fieldBorder,
                             fontSize: 12,
@@ -903,7 +900,8 @@ function Plan(props) {
                           },
                         ]}
                       />
-                      {(Emptycfn || invalidcfn) && renderShowFieldError("cfn")}
+                      {(isEmptyName || isInvalidName) &&
+                        renderShowFieldError("cfn")}
                     </View>
 
                     <View style={styles.Field}>
@@ -956,7 +954,7 @@ function Plan(props) {
                           >
                             <TextInput
                               placeholder="Add a promo code"
-                              value={pc}
+                              value={promoCode}
                               onChangeText={enterpc}
                               style={{
                                 fontSize: 13,
@@ -968,7 +966,7 @@ function Plan(props) {
                               }}
                             />
 
-                            {pc != "" && (
+                            {promoCode != "" && (
                               <TouchableOpacity
                                 activeOpacity={0.7}
                                 onPress={applyPromo}
@@ -1070,7 +1068,7 @@ function Plan(props) {
                             width: 20,
                             height: 20,
                             borderRadius: 4,
-                            backgroundColor: !iscTerms
+                            backgroundColor: !isTermsAndConditions
                               ? "white"
                               : theme.color.button1,
                             alignItems: "center",
@@ -1080,11 +1078,11 @@ function Plan(props) {
                           }}
                           activeOpacity={0.5}
                           onPress={() => {
-                            setiscTerms(!iscTerms);
-                            setEmptycTerms(false);
+                            setIsTermsAndConditions(!isTermsAndConditions);
+                            setIsEmptyTerms(false);
                           }}
                         >
-                          {iscTerms && (
+                          {isTermsAndConditions && (
                             <utils.vectorIcon.FontAwesome5
                               name={"check"}
                               color={theme.color.buttonText}
@@ -1108,17 +1106,17 @@ function Plan(props) {
                           <Text style={[styles.Field2Titlec, { top: -3 }]}>
                             and understand that upon clicking “Subscribe” below,
                             I will be charged{" "}
-                            {plan.type == "annual"
+                            {selectedPlan.type == "annual"
                               ? `$${toFixed(totalAnually, 2)}`
                               : `$${monthly}`}{" "}
-                            {plan.type == "annual"
-                              ? plan.type + "y"
-                              : plan.type}
+                            {selectedPlan.type == "annual"
+                              ? selectedPlan.type + "y"
+                              : selectedPlan.type}
                             .
                           </Text>
                         </View>
                       </View>
-                      {EmptycTerms && renderShowFieldError("cterms")}
+                      {isEmptyTerms && renderShowFieldError("cterms")}
                     </View>
                   </View>
                   {renderButtonSubscribe()}
